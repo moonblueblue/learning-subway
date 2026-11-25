@@ -150,6 +150,16 @@ const entities = {
 const lesson = [
   {
     label: '캐시 없이 조회',
+    readingDiagram: {
+      title: "같은 값을 다시 물어도 매번 DB까지 간다",
+      description: "캐시가 없어서 같은 값의 두 요청이 각각 DB에 도달합니다.",
+      nodes: [],
+      edges: [],
+      labels: [
+        [28, 254, "요청 1: DB 조회 1회     +     요청 2: DB 조회 1회"],
+      ],
+      keepWorld: true,
+    },
     example: ["같은 값 재요청", "클라이언트 → DB", "매번 DB가 응답"],
     title: '모든 읽기가 DB에 도달한다',
     body: '클라이언트가 값을 요청하면 DB가 직접 조회해 응답합니다. 같은 값을 반복해서 읽어도 매번 DB를 거칩니다.',
@@ -161,6 +171,16 @@ const lesson = [
   },
   {
     label: '캐시 적중',
+    readingDiagram: {
+      title: "캐시에 값이 있으므로 여기서 응답한다",
+      description: "요청이 캐시에서 값을 찾아 바로 돌아갑니다. DB에는 요청이 가지 않습니다.",
+      nodes: [],
+      edges: [],
+      labels: [
+        [28, 254, "Cache: 값 있음       Client에 반환       DB 조회 0회"],
+      ],
+      keepWorld: true,
+    },
     example: ["캐시에 값 있음", "클라이언트 → 캐시", "DB 조회 0회"],
     title: '캐시에서 바로 응답한다',
     body: '요청한 값이 캐시에 이미 있습니다. 캐시가 저장해 둔 값으로 바로 응답하므로 이 읽기에는 DB 조회가 필요 없습니다.',
@@ -172,6 +192,16 @@ const lesson = [
   },
   {
     label: '캐시 미스',
+    readingDiagram: {
+      title: "캐시에 값이 없어서 DB에서 읽어 채운다",
+      description: "첫 요청은 캐시가 비어 DB에서 읽고, 읽은 값을 캐시에 저장합니다. 같은 값의 다음 요청은 DB에 가지 않습니다.",
+      nodes: [],
+      edges: [],
+      labels: [
+        [28, 254, "Cache: 비어 있음  →  DB에서 읽기  →  Cache에 저장"],
+      ],
+      keepWorld: true,
+    },
     example: ["캐시에 값 없음", "DB에서 읽고 캐시에 저장", "다음 요청은 캐시 적중"],
     title: '캐시에 값이 없으면 DB를 조회한다',
     body: '캐시에 값이 없어서 DB에서 읽습니다. 조회 결과를 캐시에 채운 뒤 클라이언트에 응답하면, 같은 값의 다음 읽기는 캐시에서 처리할 수 있습니다.',

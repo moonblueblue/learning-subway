@@ -371,6 +371,16 @@ function tableFrom(src, weights) {
 const lesson = [
   {
     label: '한 칸씩 전달',
+    readingDiagram: {
+      title: "A에서 I까지 링크 네 개를 지나 전달",
+      description: "A, B, E, H, I 순서로 4ms, 1ms, 2ms, 5ms를 더하면 12ms입니다.",
+      nodes: [],
+      edges: [],
+      labels: [
+        [28, 254, "A  ─4→  B  ─1→  E  ─2→  H  ─5→  I     합계 12ms"],
+      ],
+      keepWorld: true,
+    },
     readingRoute: {"hops": ["A", "B", "E", "H", "I"], "cut": false},
     example: ["A에서 I로 전송", "A → B → E → H → I", "합계 12ms"],
     title: '라우터는 다음 한 칸만 안다',
@@ -385,6 +395,16 @@ const lesson = [
   },
   {
     label: '라우팅 표',
+    readingDiagram: {
+      title: "B는 목적지 I에 대한 다음 홉 E만 고른다",
+      description: "각 라우터는 자신의 표에서 목적지 I에 해당하는 다음 라우터를 고릅니다. B는 E, E는 H, H는 I를 고릅니다.",
+      nodes: [],
+      edges: [],
+      labels: [
+        [28, 254, "B의 표: I → E       E의 표: I → H       H의 표: I → I"],
+      ],
+      keepWorld: true,
+    },
     readingRoute: {"hops": ["B", "E", "H"], "cut": false},
     example: ["B에서 목적지 I 조회", "B의 표는 다음 홉 E를 지정", "E가 다시 H로 전달"],
     title: '라우팅 표는 목적지마다 다음 라우터를 적은 목록',
@@ -399,6 +419,16 @@ const lesson = [
   },
   {
     label: '링크가 끊기면',
+    readingDiagram: {
+      title: "E–H가 끊기면 그 링크를 피해 간다",
+      description: "12ms 경로의 E–H 링크가 끊겨 A, C, F, H, I를 잇는 14ms 경로를 사용합니다.",
+      nodes: [],
+      edges: [],
+      labels: [
+        [28, 254, "E–H ×      A  ─2→  C  ─3→  F  ─4→  H  ─5→  I     14ms"],
+      ],
+      keepWorld: true,
+    },
     readingRoute: {"hops": ["A", "C", "F", "H", "I"], "cut": true},
     example: ["E–H 링크 단절", "A → C → F → H → I", "우회로 14ms"],
     title: '길이 끊기면 표를 고쳐 돌아간다',
@@ -413,7 +443,17 @@ const lesson = [
   },
   {
     label: '주소와 수명',
-    readingRoute: {"hops": ["A", "B", "E", "H"], "cut": false},
+    readingDiagram: {
+      title: "TTL이 0이 된 H에서 전달을 멈춘다",
+      description: "A에서 TTL 3으로 출발한 패킷은 B에서 2, E에서 1, H에서 0이 됩니다. H에서 폐기되어 I에는 도착하지 않습니다.",
+      nodes: [],
+      edges: [],
+      labels: [
+        [28, 254, "A (3)  →  B (2)  →  E (1)  →  H (0)   ×   I"],
+      ],
+      keepWorld: true,
+    },
+    readingRoute: {"hops": ["A", "B", "E", "H"], "cut": false, "ttl": {"A": "TTL 3", "B": "TTL 2", "E": "TTL 1", "H": "TTL 0"}},
     example: ["TTL 3 · 네 홉 필요", "라우터마다 TTL 1 감소", "목적지 전에 폐기"],
     title: 'IP 주소는 묶음으로, 패킷은 수명을 가진다',
     body: 'IP 주소는 10.0.8.1처럼 네 칸의 수입니다. 앞부분이 같은 주소들은 한 줄(예: 10.0.8.x는 모두 I 쪽)로 묶어 표를 짧게 합니다. 또 패킷에는 수명(TTL)이 있어 라우터를 지날 때마다 1씩 줄고 0이 되면 버려집니다. 표가 잘못돼 패킷이 빙빙 돌아도 언젠가 사라지게 하는 안전장치입니다.',
@@ -495,13 +535,14 @@ function buildScene() {
 }
 function paint() {
   const w = weights();
-  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? lesson[state.index].readingRoute : null;
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading:is(.course-step-preview, .course-diagram-open)') ? lesson[state.index].readingRoute : null;
   const hops = preview?.hops ?? state.hops;
   const at = preview ? hops.at(-1) : state.at;
   const hopsRoads = hops.slice(1).map((p, i) => roadOf(hops[i], p));
   for (const [name, view] of Object.entries(nodeViews)) {
     view.node.setAttribute('class', 'node place' + (hops.includes(name) ? ' settled' : '') + (at === name ? ' current' : '') + (state.selected === name ? ' current' : ''));
-    view.text.textContent = ipOf[name].split('.').slice(2).join('.');
+    const ttl = preview?.ttl?.[name];
+    view.text.textContent = ttl === undefined ? ipOf[name].split('.').slice(2).join('.') : ttl;
   }
   for (const [road, view] of Object.entries(roadViews)) {
     const cut = (preview?.cut ?? state.cut) && road === 'EH';

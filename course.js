@@ -296,31 +296,113 @@
   let previewStep = null;
   workspace.addEventListener('course-playback-start', () => {
     workspace.classList.remove('course-step-preview');
+    if (!workspace.classList.contains('course-diagram-open')) showExample();
+  });
+  function drawSvg(parent, tag, attrs, value) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, val] of Object.entries(attrs)) node.setAttribute(key, val);
+    if (value !== undefined) node.textContent = value;
+    parent.append(node);
+    return node;
+  }
+  const drawingControl = element('div', 'course-diagram-tools');
+  const drawingButton = element('button', 'action', '실행 장면 보기');
+  drawingButton.type = 'button';
+  drawingButton.setAttribute('aria-controls', 'scene');
+  drawingControl.append(drawingButton);
+  let worldFrame;
+  if (scene && lesson.some(step => step.readingDiagram)) {
+    canvas.querySelector('.controls .actions').append(drawingControl);
+    if (lesson.some(step => step.readingDiagram?.keepWorld)) {
+      const world = scene.querySelector('#world');
+      worldFrame = drawSvg(scene, 'g', {});
+      worldFrame.append(world);
+    }
+  }
+  let showSimulation = false;
+  drawingButton.addEventListener('click', () => {
+    showSimulation = !showSimulation;
     showExample();
   });
+
+  function drawDiagram(diagram) {
+    scene?.querySelector('.course-diagram')?.remove();
+    const reading = Boolean(diagram && workspace.classList.contains('course-reading'));
+    const visible = reading && !showSimulation;
+    drawingControl.hidden = !reading;
+    drawingButton.textContent = visible ? '실행 장면 보기' : '도식 보기';
+    workspace.classList.toggle('course-diagram-open', visible);
+    workspace.classList.toggle('course-diagram-native', visible && Boolean(diagram.keepWorld));
+    if (worldFrame) worldFrame.setAttribute('transform', visible && diagram.keepWorld ? 'translate(37 20) scale(.88 .79)' : '');
+    if (drawingControl.isConnected) scene.setAttribute('aria-labelledby', visible ? 'scene-title course-diagram-desc' : 'scene-title scene-desc');
+    if (!visible) return false;
+
+    const group = drawSvg(scene, 'g', {class: 'course-diagram'});
+    drawSvg(group, 'desc', {id: 'course-diagram-desc'}, diagram.description);
+    drawSvg(group, 'text', {x: 28, y: 34, class: 'course-diagram-title'}, diagram.title);
+    const nodes = new Map(diagram.nodes.map(([id, ...node]) => [id, node]));
+    const defs = drawSvg(group, 'defs', {});
+    for (const tone of ['plain', 'active', 'blocked', 'muted']) {
+      const marker = drawSvg(defs, 'marker', {
+        id: 'diagram-tip-' + tone, viewBox: '0 0 10 10',
+        markerWidth: 8, markerHeight: 8, markerUnits: 'userSpaceOnUse',
+        refX: 8, refY: 5, orient: 'auto'
+      });
+      drawSvg(marker, 'path', {d: 'M 1 1 L 8 5 L 1 9', class: 'diagram-tip ' + tone});
+    }
+    // Edges end at each object's boundary, so the arrow points to the destination.
+    for (const [from, to, tone = 'plain', label = '', bend = 0] of diagram.edges) {
+      const [x, y, width, height] = nodes.get(from);
+      const [tx, ty, targetWidth, targetHeight] = nodes.get(to);
+      const dx = tx - x;
+      const dy = ty - y;
+      const border = (w, h) => Math.min((w / 2 + 3) / Math.abs(dx), (h / 2 + 3) / Math.abs(dy));
+      const a = border(width, height);
+      const b = border(targetWidth, targetHeight);
+      const cx = (x + tx) / 2;
+      const cy = (y + ty) / 2 + bend;
+      const arrow = tone !== 'undirected' ? {'marker-end': `url(#diagram-tip-${tone})`} : {};
+      drawSvg(group, 'path', {
+        d: `M ${x + a * dx} ${y + a * dy} Q ${cx} ${cy} ${tx - b * dx} ${ty - b * dy}`,
+        class: 'diagram-edge ' + tone, ...arrow
+      });
+      if (label) drawSvg(group, 'text', {x: cx, y: cy - 10, class: 'diagram-edge-label', 'text-anchor': 'middle'}, label);
+    }
+    for (const [x, y, width, height, lines, tone = 'plain'] of nodes.values()) {
+      drawSvg(group, 'rect', {x: x - width / 2, y: y - height / 2, width, height, rx: 6, class: 'diagram-node ' + tone});
+      lines.forEach((line, i) => {
+        drawSvg(group, 'text', {
+          x, y: y + 5 + (i - (lines.length - 1) / 2) * 20,
+          'text-anchor': 'middle', class: i === 0 ? 'diagram-node-name' : 'diagram-node-detail'
+        }, line);
+      });
+    }
+    for (const [x, y, width, height, value, tone] of diagram.bars || []) {
+      drawSvg(group, 'rect', {x, y, width, height, rx: 5, class: 'diagram-node ' + tone});
+      drawSvg(group, 'text', {x: x + width + 10, y: y + height / 2 + 5, class: 'diagram-note'}, value);
+    }
+    for (const [x, y, value] of diagram.labels || []) {
+      drawSvg(group, 'text', {x, y, class: 'diagram-note'}, value);
+    }
+    return true;
+  }
+
   function drawComparison(step) {
     scene?.querySelector('.course-comparison')?.remove();
     const visible = step.readingRows && workspace.classList.contains('course-reading') && (reducedMotion.matches || step.staticComparison || workspace.classList.contains('course-step-preview'));
     workspace.classList.toggle('course-static-comparison', Boolean(visible && (reducedMotion.matches || step.staticComparison)));
     if (!visible) return;
-    const draw = (parent, tag, attrs, value) => {
-      const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
-      for (const [key, val] of Object.entries(attrs)) node.setAttribute(key, val);
-      if (value !== undefined) node.textContent = value;
-      parent.append(node);
-      return node;
-    };
-    const group = draw(scene, 'g', {class: 'course-comparison', 'aria-hidden': 'true'});
+    const group = drawSvg(scene, 'g', {class: 'course-comparison', 'aria-hidden': 'true'});
     step.readingRows.forEach(([label, ...items], row) => {
       const y = 73 + row * 112;
-      draw(group, 'text', {x: 30, y: y - 22, class: 'course-row-label'}, label);
+      drawSvg(group, 'text', {x: 30, y: y - 22, class: 'course-row-label'}, label);
       const gap = 14;
       const width = (560 - gap * (items.length - 1)) / items.length;
       items.forEach((item, i) => {
         const x = 30 + i * (width + gap);
-        draw(group, 'rect', {x, y, width, height: 44, rx: 6, class: row ? 'course-row-result' : 'course-row-input'});
-        draw(group, 'text', {x: x + width / 2, y: y + 28, 'text-anchor': 'middle'}, item);
-        if (i < items.length - 1) draw(group, 'path', {d: 'M' + (x + width + 2) + ' ' + (y + 22) + 'h9m-4 -4 4 4 -4 4', class: 'course-row-link'});
+        drawSvg(group, 'rect', {x, y, width, height: 44, rx: 6, class: row ? 'course-row-result' : 'course-row-input'});
+        drawSvg(group, 'text', {x: x + width / 2, y: y + 28, 'text-anchor': 'middle'}, item);
+        if (i < items.length - 1) drawSvg(group, 'path', {d: 'M' + (x + width + 2) + ' ' + (y + 22) + 'h9m-4 -4 4 4 -4 4', class: 'course-row-link'});
       });
     });
   }
@@ -331,9 +413,11 @@
     if (!step) return;
     if (step !== previewStep) {
       previewStep = step;
+      showSimulation = false;
       workspace.classList.toggle('course-step-preview', Boolean(step.readingRows || step.readingStage || step.readingMemory || step.readingSearch || step.readingRoute || step.readingSchedule));
     }
-    drawComparison(step);
+    drawDiagram(step.readingDiagram);
+    drawComparison(step.readingDiagram ? {} : step);
     let values = step.example;
     if (step.readingStage) {
       const event = step.stages[step.readingStage - 1];

@@ -596,3 +596,29 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 .course-comparison .course-row-result { fill: #d6ebdc; stroke: #658f75; }
 .course-comparison .course-row-link { fill: none; stroke: #516e60; stroke-width: 1.8; }
 .course-static-comparison .course-canvas .controls { display: none; }
+
+.course-reading.course-diagram-open:not(.course-diagram-native) #scene #world { visibility: hidden; }
+.course-diagram-open .course-canvas .controls > :not(.actions),
+.course-diagram-open .course-canvas .controls .actions > :not(.course-diagram-tools) {
+  display: none;
+}
+.course-diagram-open .course-canvas .controls { justify-content: flex-end; }
+.course-shell .course-diagram-tools .action { min-height: 32px; padding: 3px 9px; font-size: .8rem; }
+.course-diagram { font: 650 15px system-ui, sans-serif; fill: #142620; }
+.course-diagram .course-diagram-title { font-size: 21px; font-weight: 750; }
+.course-diagram .diagram-node { fill: #fff; stroke: #9aac9f; }
+.course-diagram .diagram-node.active { fill: #d2ebdc; stroke: #277354; }
+.course-diagram .diagram-node.blocked { fill: #fff0e9; stroke: #a14c2d; }
+.course-diagram .diagram-node.muted { fill: #e2e9e4; stroke: #a1afa6; stroke-dasharray: 4 3; }
+.course-diagram .diagram-node-name { font-size: 16px; font-weight: 750; }
+.course-diagram .diagram-node-detail, .course-diagram .diagram-note { fill: #344e43; }
+.course-diagram .diagram-edge, .course-diagram .diagram-tip {
+  fill: none;
+  stroke: #587265;
+  stroke-width: 2;
+}
+.course-diagram :is(.diagram-edge, .diagram-tip).active { stroke: #12634b; stroke-width: 3; }
+.course-diagram :is(.diagram-edge, .diagram-tip).blocked { stroke: #a14c2d; stroke-dasharray: 5 3; }
+.course-diagram :is(.diagram-edge, .diagram-tip).muted { stroke: #768e82; stroke-dasharray: 4 4; }
+.course-diagram .diagram-edge-label { font-size: 14px; paint-order: stroke; stroke: #e8f0e9; stroke-width: 5; stroke-linejoin: round; }
+.course-diagram-native #scene #packets { visibility: hidden; }

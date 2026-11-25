@@ -330,6 +330,7 @@ const lesson = [
     takeaway: 'n = 4, 8, 16, 32에서 비교는 3, 4, 5, 6번입니다. 선형의 4, 8, 16, 32번과 기둥을 나란히 보면 차이가 뚜렷합니다. 데이터를 정렬해 두는 수고(4.4)가 이 속도를 삽니다.',
     description: '정렬된 값 n개와 기둥이 있습니다. 실행하면 가운데 상자를 비추고 범위를 절반으로 줄이며 마지막 값을 찾습니다.',
     algos: ['binary', 'sum'],
+    staticN: 16,
     tasks: [
       { text: '"이진 탐색"을 n = 16과 n = 32로 실행해 보세요.', test: (r) => r.binary?.[16] && r.binary?.[32], ok: '5번과 6번. n이 2배가 되어도 한 번만 늘었습니다.' },
       { ask: 'n이 100만이면 이진 탐색은 대략 몇 번 비교할까요?', choices: ['20번', '1000번', '50만 번'], answer: '20번', why: '2를 20번 곱하면 약 100만(1,048,576)이라 20번이면 됩니다.' },
@@ -416,6 +417,12 @@ function buildScene() {
     const text = svg('text', { class: 'box-value', x: 0, y: -boxHeight + .5 }, node);
     text.textContent = lesson[state.index].algos.includes('binary') ? String(i * 3 + 2) : String((i * 7 + 3) % 10);
     boxes.push({ node, faces });
+  }
+  // How big the input is, above the first box: the towers are counts for this n.
+  {
+    const { u, v } = boxAt(0);
+    const sizeNote = svg('g', { transform: `translate(${flat(u, v).join(' ')})` }, byId('nodes'));
+    addPlate(sizeNote, 'tag tower-value', 0, -30, `n = ${n}`);
   }
   const algos = lesson[state.index].algos;
   algos.forEach((id, k) => {
@@ -648,7 +655,8 @@ function showStep(index, announce = true) {
   state.solved = '';
   state.wrong = '';
   state.demoPosition = 0;
-  state.n = s.all ? 32 : 8;
+  // The still picture uses the example's size where it names one (16 sorted boxes for halving).
+  state.n = motion.matches && s.staticN ? s.staticN : s.all ? 32 : 8;
   byId('step-title').textContent = s.title;
   byId('body').textContent = s.body;
   byId('takeaway').textContent = s.takeaway;
@@ -663,6 +671,8 @@ function showStep(index, announce = true) {
   try { localStorage.setItem(storageKey, String(index)); } catch {}
   buildControls();
   setSize(state.n);
+  // Nothing plays with reduced motion, so the still picture shows every tower after its run on this n.
+  if (motion.matches) runAll(false);
   syncResults();
   syncTask();
   state.wait = 800;

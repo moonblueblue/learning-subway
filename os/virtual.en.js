@@ -32,7 +32,7 @@ window.lessonText = {
   '페이지 테이블이 프로세스마다 따로 있어 같은 가상 번호도 다른 실제 칸으로 바뀝니다.': 'Each process has its own page table, so the same virtual number turns into a different real cell.',
   // Step 2
   '보호': 'Protection', 'A가 B의 프레임 5 요청': 'A asks for B\'s frame 5', 'A의 표에 경로 없음': 'No route in A\'s table', '접근 차단': 'Access blocked',
-  'A가 프레임 5 요청': 'A asks for frame 5', 'A의 표에 없음': 'Not in A\'s table', '차단': 'Blocked', 'B의 페이지 1': 'B\'s page 1', '세그멘테이션 오류': 'Segmentation fault',
+  'A가 B의 데이터를 노림': 'A goes after B\'s data', 'A의 표에 프레임 5 없음': 'Frame 5 is not in A\'s table', '차단': 'Blocked', 'B의 페이지 1': 'B\'s page 1', '세그멘테이션 오류': 'Segmentation fault',
   '페이지 테이블에 없는 곳은 갈 수 없다': 'Nowhere outside the page table can be reached',
   '프로세스는 자기 페이지 테이블에 적힌 프레임에만 갈 수 있습니다. A가 B의 프레임 주소를 알아내 읽으려 해도, A의 페이지 테이블에는 그 프레임으로 가는 줄이 없어서 MMU가 막고 운영체제가 A를 멈춥니다. 흔히 보는 "세그멘테이션 오류"가 이것입니다.':
     'A process can only reach the frames written in its own page table. Even if A finds out the address of B\'s frame and tries to read it, A\'s page table has no row leading there, so the MMU blocks it and the operating system stops A. This is the familiar "segmentation fault".',

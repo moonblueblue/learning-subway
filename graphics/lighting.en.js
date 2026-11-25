@@ -74,4 +74,11 @@ window.lessonText = {
   '그 칸에서 빛에 가장 가까운 것이 자기 자신이므로 가려지지 않았습니다.': 'The thing nearest the light in that cell is itself, so nothing blocks it.',
   '그림자 색': 'Shadow color', '확산광과 반짝임 빼고 주변광만': 'Ambient only, no diffuse or highlight', '바닥색 × 0.1 → 어두운 그림자': 'Floor color × 0.1 → a dark shadow',
   '그림자 속 점은 주변광만 받습니다.': 'A point in shadow gets only ambient light.', '어두움': 'Dark',
+  '(255, 182, 182) (255에서 자름)': '(255, 182, 182) (capped at 255)',
+  // Example note on the still picture.
+  '거리 비교 · 그림자': 'Compare · shadow',
+  '법선 n (0, 1)과 빛 l의 내적': 'normal n (0, 1) dot light l', '정면이면 1.0': 'head-on: 1.0', '60° 기울면 0.5 (절반 밝기)': 'tilted 60°: 0.5 (half as bright)',
+  '반짝임 = cos(거울 방향과 눈의 각도)³²': 'shine = cos(mirror-to-eye angle)³²', '10°면 0.62': '10°: 0.62', '30°면 0.01 (거의 없음)': '30°: 0.01 (almost none)',
+  '(200, 40, 40) × (주변광 0.1 + 확산광 0.5) = (120, 24, 24)': '(200, 40, 40) × (ambient 0.1 + diffuse 0.5) = (120, 24, 24)', '+ 0.62 × 흰색': '+ 0.62 × white',
+  '빛 자리에서 본 이 칸의 거리 6': 'from the light, this cell: 6', '바닥 점은 빛에서 10': 'floor point: 10', '10 > 6이라 가린 것이 있음: 그림자': '10 > 6, blocked: shadow',
 };

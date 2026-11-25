@@ -1,5 +1,10 @@
 // English for 4.3 Stacks and queues. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Notes on the still pictures
+  'A, B, C를 쌓음 → 꺼내면 C → B → A': 'A, B, C stacked → they come out C → B → A',
+  'A, B, C가 줄 섬 → 꺼내면 A → B → C': 'A, B, C queued → they come out A → B → C',
+  '( 다음 [ 를 쌓음 → 닫는 ) 와 맨 위 [ 가 다름 → 짝 불일치': '( then [ stacked → the closing ) does not match [ on top → mismatch',
+  '먼저 처리: 큐는 앞의 A · 스택은 맨 위의 D': 'Handled first: A at the front of the queue · D on top of the stack',
   // Page
   '스택과 큐 · 레슨 4.3': 'Stacks and queues · Lesson 4.3',
   '값을 스택에 쌓고 큐에 줄 세우며 LIFO와 FIFO를 비교하고, 스택으로 괄호 짝을 확인해 보세요.':

@@ -54,7 +54,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
 .item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
-.choices{display:flex;gap:6px}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
 .choice{min-width:68px}
 .choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
 .choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
@@ -136,7 +136,7 @@ const lesson = [
     label: '같은 계산의 반복',
     example: ["fib(4)의 두 갈래", "양쪽에서 fib(2) 호출", "같은 덧셈 반복"],
     title: '재귀는 같은 계산을 몇 번이고 다시 한다',
-    body: '피보나치 수는 fib(n) = fib(n − 1) + fib(n − 2), fib(1) = fib(2) = 1입니다. 1.5의 재귀로 그대로 옮기면 fib(5)를 구하는 동안 fib(3)을 두 번, fib(2)를 세 번 다시 계산합니다. n이 커지면 같은 계산이 폭발적으로 늘어 fib(40)만 해도 호출이 3억 번을 넘습니다.',
+    body: '피보나치 수는 fib(n) = fib(n − 1) + fib(n − 2), fib(1) = fib(2) = 1입니다. 1.5의 재귀로 그대로 옮기면 fib(5)를 구하는 동안 fib(3)을 두 번, fib(2)를 세 번 다시 계산합니다. n이 커지면 같은 계산이 폭발적으로 늘어 fib(40)만 해도 호출이 2억 번을 넘습니다.',
     link: '1.5에서 본 호출 스택이 fib(5) 한 번에 함수 9번 호출로 쌓였다 줄었다 합니다. 4.1의 말로는 O(2ⁿ)쯤으로, O(n²)보다도 훨씬 빠르게 늘어납니다.',
     case: '재귀로 fib를 계산할 때 다음 문장이 참인지 고르세요.',
     choices: [['true', '참'], ['false', '거짓']],

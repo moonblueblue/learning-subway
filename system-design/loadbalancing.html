@@ -375,6 +375,8 @@ const lesson = [
   {
     label: '한 서버에 몰리면',
     readingStage: 3,
+    note: ['1초에 300개', ' → ', '서버 A는 100개만 처리', ' → ', '2초 뒤 줄 400 · 시간 초과로 오류'],
+    noteTone: 'bad',
     title: '서버 하나가 감당할 수 있는 양을 넘으면 줄이 길어진다',
     body: '6.9의 문구점이 인기를 얻어 1초에 요청이 300개씩 옵니다. 서버 한 대는 1초에 100개를 처리할 수 있습니다. 처리하지 못한 요청은 줄을 서고, 줄이 길어질수록 응답이 늦어지다가 결국 시간 초과와 오류가 납니다. 서버 한 대를 더 좋은 것으로 바꾸는 방법(수직 확장)은 한계가 있고 비쌉니다.',
     takeaway: '들어오는 양(300/초)이 처리량(100/초)보다 많으면 줄은 1초에 200개씩 늘어납니다. 서버를 여러 대 두고 요청을 나눠야 합니다(수평 확장).',
@@ -383,14 +385,15 @@ const lesson = [
     start: { title: '부하', lines: ['들어오는 요청: 1초에 300개', '서버 A 처리량: 1초에 100개'], holds: { users: '300/초', a: '처리 100/초' } },
     stages: [
       { from: 'users', to: 'a', label: '300개', title: '1초 뒤', lines: ['100개 처리, 200개 줄 섬', '응답 시간: 2초'], text: '처리하지 못한 200개가 줄을 섭니다.', holds: { a: '줄 200' } },
-      { from: 'users', to: 'a', label: '300개', title: '2초 뒤', lines: ['또 100개 처리, 줄 400개', '응답 시간: 4초'], text: '줄이 계속 길어집니다.', holds: { a: '줄 400' },
+      { from: 'users', to: 'a', label: '300개', title: '2초 뒤', lines: ['또 100개 처리, 줄 400개', '응답 시간: 4초'], text: '줄이 계속 길어집니다.', error: 'a', holds: { a: '줄 400' },
         ask: { q: '이대로 10초가 지나면 줄은 몇 개일까요?', choices: ['2,000개', '200개', '0개'], answer: '2,000개', why: '1초에 300 − 100 = 200개씩 늘어나므로 10초면 2,000개입니다.' } },
-      { from: 'a', to: 'users', label: '시간 초과', title: '오류', lines: ['응답 시간 20초 → 사용자 쪽에서 시간 초과', '503 Service Unavailable'], error: 'a', text: '너무 오래 걸려 요청이 실패합니다.', holds: { a: '과부하', users: '오류' } },
+      { from: 'a', to: 'users', label: '시간 초과', title: '오류', lines: ['응답 시간 20초 → 사용자 쪽에서 시간 초과', '503 Service Unavailable'], error: 'users', text: '너무 오래 걸려 요청이 실패합니다.', holds: { a: '과부하', users: '오류' } },
     ],
   },
   {
     label: '돌아가며 나누기',
     readingStage: 5,
+    note: ['요청 1–4', ' → ', 'A, B, C, A 차례로', ' → ', '다음은 B'],
     title: '로드밸런서가 요청을 서버들에 차례로 나눠 준다',
     body: '로드밸런서는 사용자 앞에 서서 요청을 받아 뒤의 서버 여러 대에 나눠 줍니다. 사용자는 로드밸런서 주소 하나만 압니다. 가장 간단한 방법은 A, B, C, A, B, C… 차례로 돌아가며 주는 라운드 로빈입니다. 서버 셋이면 1초에 300개를 100개씩 나눠 받아 줄이 생기지 않습니다.',
     takeaway: '요청 1, 2, 3이 A, B, C로 가고 4는 다시 A로 갑니다. 같은 사용자의 요청이 매번 다른 서버로 갈 수 있으므로, 6.12의 세션은 서버 메모리가 아니라 모든 서버가 함께 보는 저장소에 둬야 합니다.',
@@ -411,6 +414,7 @@ const lesson = [
   {
     label: '가장 한가한 서버',
     readingStage: 2,
+    note: ['처리 중 A 2 · B 1 · C 0', ' → ', '새 목록 요청은 가장 한가한 C로', ' → ', 'C 처리 중 1'],
     title: '요청마다 무게가 다르면 한가한 서버를 고른다',
     body: '요청은 무게가 다릅니다. 상품 목록은 10ms면 되지만, 엑셀 보고서 만들기는 3초가 걸립니다. 라운드 로빈은 무게를 모르고 차례만 지키므로, 무거운 요청이 몰린 서버는 바쁘고 다른 서버는 놉니다. 그래서 지금 처리 중인 요청이 가장 적은 서버로 보내는 방법(최소 연결)을 씁니다.',
     takeaway: '서버 A가 무거운 보고서 두 개를 처리하느라 바쁠 때, 최소 연결은 새 요청을 처리 중인 것이 없는 B나 C로 보냅니다. 로드밸런서가 각 서버의 처리 중 개수를 세고 있어야 합니다.',
@@ -421,7 +425,7 @@ const lesson = [
     stages: [
       { from: 'users', to: 'lb', label: '새 요청', title: '새 요청', lines: ['상품 목록 요청 하나'], text: '새 요청이 옵니다.', holds: { lb: '어디로?' },
         ask: { q: '최소 연결 규칙이면 새 요청은 어디로 갈까요?', choices: ['서버 C (처리 중 0)', '서버 A (차례상 다음)'], answer: '서버 C (처리 중 0)', why: '처리 중인 요청이 가장 적은 C가 가장 빨리 처리할 가능성이 큽니다.' } },
-      { from: 'lb', to: 'c', label: '목록', title: '→ C', lines: ['C: 처리 중 1'], text: '한가한 C로 보냅니다.', holds: { c: '처리 중 1' } },
+      { from: 'lb', to: 'c', label: '목록', title: '→ C', lines: ['C: 처리 중 1'], text: '한가한 C로 보냅니다.', holds: { c: '처리 중 1', lb: 'C로' } },
       { from: 'users', to: 'lb', label: '새 요청', title: '또 새 요청', lines: ['A 2 · B 1 · C 1'], text: '또 요청이 옵니다.', holds: { lb: '어디로?' } },
       { from: 'lb', to: 'b', label: '목록', title: '→ B', lines: ['B와 C가 1로 같음 → 그중 하나(B)', 'A는 보고서가 끝날 때까지 새 요청을 덜 받음'], text: '바쁜 A는 피하고 B로 보냅니다.', holds: { b: '처리 중 2' } },
     ],
@@ -429,6 +433,7 @@ const lesson = [
   {
     label: '서버가 죽으면',
     readingStage: 4,
+    note: ['GET /health에 B 응답 없음', ' → ', 'B를 빼고 서버 2대', ' → ', 'A, C가 150/초씩 · 정상 응답'],
     title: '건강 검사로 죽은 서버를 빼고 나머지로 나눈다',
     body: '서버는 고장 나고, 배포하느라 다시 켜지기도 합니다. 로드밸런서는 몇 초마다 각 서버에 "살아 있니?"(건강 검사, 예: GET /health)를 보내고, 연속으로 답이 없으면 그 서버를 목록에서 뺍니다. 그동안 요청은 살아 있는 서버들이 나눠 받습니다. 서버가 돌아오면 다시 넣습니다.',
     takeaway: '서버 B가 죽어도 사용자는 오류를 거의 보지 않습니다. 다만 남은 A, C가 1초에 150개씩 받아야 하므로, 평소에 여유를 두거나 서버를 자동으로 더 띄워야 합니다. 로드밸런서 자신도 하나면 그곳이 고장 지점이 되므로 보통 두 대 이상 둡니다.',
@@ -519,8 +524,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -567,6 +573,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what was sent where, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

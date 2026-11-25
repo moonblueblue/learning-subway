@@ -54,7 +54,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
 .item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
-.choices{display:flex;gap:6px}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
 .choice{min-width:68px}
 .choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
 .choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
@@ -325,17 +325,16 @@ function syncSide() {
   const w = state.world;
   byId('prompt').textContent = `${w.cwd} $`;
   const tree = byId('tree');
-  tree.replaceChildren(...[...w.dirs].sort().map((d) => {
+  // Folders and files in one list sorted by path, so a file sits right under its own folder
+  // (listing files after every folder put ~/레슨/메모.txt under 사진/).
+  const entries = [...[...w.dirs].map((d) => [d, true]), ...Object.keys(w.files).map((f) => [f, false])]
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+  tree.replaceChildren(...entries.map(([path, isDir]) => {
     const li = document.createElement('li');
-    const depth = d.split('/').length - 1;
-    li.textContent = `${'  '.repeat(depth)}${name(d)}/${d === w.cwd ? '  ← 지금 여기' : ''}`;
+    const depth = path.split('/').length - 1;
+    li.textContent = `${'  '.repeat(depth)}${name(path)}${isDir ? '/' : ''}${isDir && path === w.cwd ? '  ← 지금 여기' : ''}`;
     li.style.whiteSpace = 'pre';
-    li.classList.toggle('here', d === w.cwd);
-    return li;
-  }), ...Object.keys(w.files).map((f) => {
-    const li = document.createElement('li');
-    li.textContent = `${'  '.repeat(f.split('/').length - 1)}${name(f)}`;
-    li.style.whiteSpace = 'pre';
+    li.classList.toggle('here', isDir && path === w.cwd);
     return li;
   }));
   const history = byId('history');

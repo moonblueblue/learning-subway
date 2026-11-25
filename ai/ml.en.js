@@ -99,4 +99,9 @@ window.lessonText = {
   '본 것만 맞히고 처음 보는 것을 못 맞히면 규칙이 아니라 우연까지 외운 것입니다.': 'Getting only what it saw right and missing the unseen means it memorized accidents, not the rule.',
   '이 엉뚱한 예측의 원인은?': 'What caused this absurd prediction?',
   '예시가 여름에 치우쳐 겨울을 배운 적이 없어서': 'The examples lean toward summer, so it never learned winter', '계산 실수': 'A calculation mistake',
+  // Example note on the still picture.
+  '예시 20°C → 40개 · 25°C → 50개 · 30°C → 60개': 'examples 20°C → 40 · 25°C → 50 · 30°C → 60', '판매량 = w × 기온에서 w = 2를 배움': 'learns w = 2 in sales = w × temperature', '28°C → 56개': '28°C → 56',
+  'w = 1로 예측 20, 25, 30': 'with w = 1 predicts 20, 25, 30', '정답 40, 50, 60과 비교해 오차 642': 'vs answers 40, 50, 60: error 642', 'w를 1.64로 키우니 오차 82': 'w raised to 1.64: error 82',
+  '처음 보는 22°C, 33°C': 'unseen 22°C, 33°C', 'w ≈ 2.0으로 예측 44, 66': 'w ≈ 2.0 predicts 44, 66', '실제 45, 65와 차이 ±1': 'real 45, 65: off by ±1',
+  '여름(20–33°C) 예시로만 배운 w = 2': 'w = 2 learned from summer only (20–33°C)', '−5°C에 그대로 쓰면 −10개': 'at −5°C it says −10', '본 적 없는 겨울에서는 엉뚱함': 'wrong in a winter it never saw',
 };

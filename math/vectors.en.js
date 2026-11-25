@@ -32,7 +32,7 @@ window.lessonText = {
   '지우·민지 = 22, 지우·서준 = 5입니다. 지우와 민지가 훨씬 닮았으니, 민지가 좋아한 영화를 지우에게 추천할 수 있습니다. 검색, 추천, 언어 모델이 "의미가 가까운 것"을 찾을 때 이 계산을 씁니다.':
     'Jiwoo·Minji = 22 and Jiwoo·Seojun = 5. Jiwoo and Minji are far more alike, so movies Minji liked can be recommended to Jiwoo. Search, recommendation and language models use this calculation to find "things close in meaning".',
   '같은 장면입니다. 두 취향 벡터의 내적을 계산합니다.': 'The same scene. It computes the dot product of two taste vectors.',
-  '두 벡터': 'Two vectors', '내적': 'Dot product', '두 벡터 → 내적': 'Two vectors → dot product', '내적 → 닮은 정도': 'Dot product → likeness', '내적 · 22 > 5': 'Dot product · 22 > 5',
+  '내적': 'Dot product', '내적 → 닮은 정도': 'Dot product → likeness', '내적 · 22 > 5': 'Dot product · 22 > 5',
   '영화 취향 [액션, 로맨스]': 'Movie taste [action, romance]', '지우, 민지, 서준': '3 tastes',
   '지우 · 민지': 'Jiwoo · Minji', '지우 · 서준': 'Jiwoo · Seojun', '지우와 민지': 'Jiwoo and Minji', '지우와 서준': 'Jiwoo and Seojun',
   '같은 자리끼리 곱해 더합니다.': 'Multiply place by place and add.', '이번에는 지우와 서준입니다.': 'Now Jiwoo and Seojun.',
@@ -67,8 +67,7 @@ window.lessonText = {
   '3×3 그림(9칸)과 뉴런 2개면 2 × 9 가중치 행렬이고, 곱셈 18번으로 숨은 층 [2, 0]이 나옵니다. 784칸 그림과 뉴런 100개면 곱셈 78,400번입니다. 큰 모델은 이런 행렬 곱을 수십억 번 합니다.':
     'A 3×3 picture (9 cells) and 2 neurons make a 2 × 9 weight matrix, and 18 multiplications give the hidden layer [2, 0]. A 784-cell picture and 100 neurons take 78,400 multiplications. Large models do matrix products like this billions of times.',
   '왼쪽부터 그림 벡터, 가중치 행렬 곱, 숨은 층 벡터가 놓여 있습니다.': 'From the left: the picture vector, the weight-matrix product and the hidden-layer vector.',
-  '그림 벡터 (9칸)': 'Picture (9)', '가중치 행렬 × 그림': 'W × picture', '숨은 층 (2개)': 'Hidden (2)', '숨은 층': 'Hidden layer',
-  '그림 벡터 (9칸) → 가중치 행렬 × 그림': 'Picture vector → weight matrix × picture', '가중치 행렬 × 그림 → 숨은 층 (2개)': 'Weight matrix × picture → hidden layer', '가중치 행렬 × 그림 · [2, 0]': 'Weight matrix × picture · [2, 0]',
+  '숨은 층': 'Hidden layer',
   '7.11의 세로선 그림과 가중치': 'The vertical-line picture and weights from 7.11', '9칸': '9 cells',
   '그림 x = [0,1,0, 0,1,0, 0,1,0]': 'picture x = [0,1,0, 0,1,0, 0,1,0]',
   'W 첫 줄 (뉴런 1) = [0,+1,0, −1,0,−1, 0,+1,0]': 'W row 1 (neuron 1) = [0,+1,0, −1,0,−1, 0,+1,0]',
@@ -82,4 +81,10 @@ window.lessonText = {
   '784칸': '784 cells', '큰 그림이라면': 'For a bigger picture', '28 × 28 = 784칸, 뉴런 100개': '28 × 28 = 784 cells, 100 neurons',
   '→ 100 × 784 행렬, 곱셈 78,400번': '→ 100 × 784 matrix, 78,400 multiplications', 'GPU가 동시에 계산': 'The GPU computes them at once',
   '그림과 층이 커져도 계산 모양은 같습니다.': 'Bigger pictures and layers, same shape of calculation.',
+  // Example note on the still picture.
+  '세 사람 벡터': 'Three people', '세 명': 'Three', '90° 돌림': 'Turned 90°', '세 사람 벡터 → 내적': 'Three people → dot product', '그림 (9칸) → W × 그림': 'Picture (9) → W × picture', 'W × 그림 → 숨은 층 (2칸)': 'W × picture → hidden (2)', 'W × 그림 · [2, 0]': 'W × picture · [2, 0]', '그림 (9칸)': 'Picture (9)', 'W × 그림': 'W × picture', '숨은 층 (2칸)': 'Hidden (2)',
+  '지우 [5, 1] + 민지 [4, 2]': 'Jiwoo [5, 1] + Minji [4, 2]', '같은 자리끼리 더함': 'add place by place',
+  '지우 · 민지 = 5×4 + 1×2 = 22': 'Jiwoo · Minji = 5×4 + 1×2 = 22', '지우 · 서준 = 5×0 + 1×5 = 5': 'Jiwoo · Seojun = 5×0 + 1×5 = 5', '22 > 5라 지우는 민지와 더 닮음': '22 > 5: Jiwoo is closer to Minji',
+  '[1, 2]에 돌리기 R = [[0, −1], [1, 0]]를 곱함': 'rotate [1, 2] by R = [[0, −1], [1, 0]]', '왼쪽으로 90° 돈 점': 'the point turned 90° left',
+  '9칸 그림 x에 W (2 × 9)를 곱함': 'W (2 × 9) × 9-cell picture x', '뉴런마다 합 2, 0': 'sums 2, 0 per neuron', '숨은 층 [2, 0] (7.11과 같은 값)': 'hidden layer [2, 0] (same as 7.11)',
 };

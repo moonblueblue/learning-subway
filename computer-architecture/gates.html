@@ -308,6 +308,9 @@ const lesson = [
       { id: 'L', type: 'LAMP', in: ['x'], u: 27, v: 0 },
     ],
     demo: [[1, 0], [1, 1], [0, 1], [0, 0]],
+    // The example is 1 and 1: both on, so the NOT below blocks the lamp. The lamp is named for the new rule.
+    staticInitial: [1, 1],
+    lampName: 'XOR 램프',
     expr: (v) => `(A OR B) AND NOT (A AND B) = ${v.o} AND NOT ${v.a} = ${v.o} AND ${v.n} = ${v.L}`,
     tasks: [
       { text: '램프를 켜 보세요.', test: (v) => v.L === 1, ok: '스위치가 하나만 켜졌을 때 XOR는 1입니다.' },
@@ -487,7 +490,7 @@ function createNode(spec) {
     svg('circle', { class: 'halo', cx: 0, cy: -H - 9, r: 17, filter: 'url(#soft-glow)' }, node);
     svg('circle', { class: 'bulb', cx: 0, cy: -H - 9, r: 8.5 }, node);
     const [cx, cy] = project(h, -h, 0);
-    addPlate(node, 'tag', cx + 4, cy + 13, '램프');
+    addPlate(node, 'tag', cx + 4, cy + 13, lesson[state.index].lampName ?? '램프');
     return view;
   }
   view.plate = addPlate(node, 'tag', 0, -H - 14 * h - 12, spec.type, { pad: 1.3, round: false });
@@ -807,7 +810,8 @@ function startStep() {
   buildButtons();
   buildTable();
   // Start from the demo's last combination so the first tick visibly changes something.
-  const first = motion.matches ? step.demo[0] : step.demo[step.demo.length - 1];
+  // A still picture (reduced motion) shows `staticInitial` when the step's example needs other inputs than the demo's first.
+  const first = motion.matches ? step.staticInitial ?? step.demo[0] : step.demo[step.demo.length - 1];
   setInputs(Object.fromEntries(inputIds().map((id, k) => [id, first[k]])), { send: true });
   state.wait = 900;
 }

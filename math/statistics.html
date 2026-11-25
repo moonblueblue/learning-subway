@@ -56,7 +56,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
 .workspace>*,.items>li,.item>*{min-width:0}
 .item-text.code{font:600 .9375rem/1.5 var(--mono);white-space:pre;overflow-x:auto;background:#1f2d29;color:#e8f2ec;padding:8px 12px;border-radius:8px;max-width:100%}
-.choices{display:flex;gap:6px}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
 .choice{min-width:68px}
 .choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
 .choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
@@ -136,7 +136,7 @@ const TF = [['true', '참'], ['false', '거짓']];
 const lesson = [
   {
     label: '대푯값',
-    example: ["용돈 3, 3, 4, 5, 35", "총 50을 5로 나눔", "평균 10 · 중앙값 4"],
+    example: ["용돈 3, 3, 4, 5, 35", "평균 10 · 중앙값 4", "35 하나가 평균만 끌어올림"],
     title: '평균은 튀는 값 하나에 크게 흔들린다',
     body: '데이터를 한 숫자로 요약할 때 평균(모두 더해 개수로 나눔)과 중앙값(크기순으로 줄 세운 가운데 값)을 씁니다. 대부분은 비슷하고 한 값만 크게 튀면, 평균은 그 값 쪽으로 끌려가지만 중앙값은 거의 그대로입니다. 그래서 소득이나 응답 시간처럼 튀는 값이 있는 데이터는 중앙값이나 상위 몇 %를 함께 봅니다.',
     link: '2.4에서 경우의 수와 확률을 셌습니다. 7.10의 오차(차이 제곱의 평균)도 평균의 한 가지입니다.',
@@ -153,7 +153,7 @@ const lesson = [
   },
   {
     label: '조건부 확률',
-    example: ["1,000명 중 실제 환자 10명", "진짜 양성과 거짓 양성이 각각 약 10명", "양성 중 환자는 약 절반"],
+    example: ["1,000명 중 환자 10명", "진짜 양성 ≈ 10 · 거짓 양성 ≈ 10", "양성 20명 중 환자는 약 절반"],
     title: '양성이 나와도 병일 확률은 생각보다 낮을 수 있다',
     body: '"A가 일어났을 때 B일 확률"을 조건부 확률이라 합니다. 1,000명 중 10명(1%)만 걸리는 병이 있고, 검사는 병이 있으면 99% 양성, 병이 없어도 1%는 잘못 양성이 나온다고 합시다. 양성이 나온 사람만 모으면, 진짜 환자 약 10명과 잘못 양성인 약 10명(990명의 1%)이 섞여 있습니다.',
     link: '스팸 필터는 "이 단어가 있을 때 스팸일 확률"을, 그림을 분류하는 신경망(7.11)은 "이 그림일 때 세로선일 확률"을 계산합니다. 모두 조건부 확률입니다.',
@@ -170,7 +170,7 @@ const lesson = [
   },
   {
     label: '표본과 오차',
-    example: ["운동장에서만 조사", "운동을 자주 하는 사람이 많이 뽑힘", "표본을 키워도 편향이 남음"],
+    example: ["앱 사용자 10만 명에게만 물음", "앱을 안 쓰는 사람은 빠짐", "크게 물어도 전 국민과 다름"],
     title: '적게 보면 우연에 속고, 치우치게 보면 크게 봐도 틀린다',
     body: '전체를 다 볼 수 없으니 일부(표본)를 보고 추측합니다. 표본이 작으면 우연 때문에 크게 틀릴 수 있고, 표본이 클수록 비율이 참값에 가까워집니다(큰 수의 법칙). 하지만 표본을 한쪽에서만 뽑으면 아무리 많아도 틀립니다. 7.10에서 여름 데이터만으로 배운 모델이 겨울을 틀린 것과 같습니다.',
     link: '7.10에서 학습 데이터와 시험 데이터를 나눈 것도 표본으로 실력을 추측하는 일입니다.',

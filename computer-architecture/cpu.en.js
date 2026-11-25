@@ -1,5 +1,8 @@
 // English for 3.5 One CPU cycle. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Reading diagrams: the ADD result going back into A, and the SUB result deciding the jump
+  'ALU · ADD': 'ALU · ADD', '3 + 4 = 7': '3 + 4 = 7', 'A: 7': 'A: 7',
+  '2번지 SUB': 'Address 2 SUB', 'A = 1 − 1 = 0': 'A = 1 − 1 = 0', '3번지 JZ 5': 'Address 3 JZ 5', '0이라 점프': 'jumps since it is 0',
   // Page
   'CPU의 한 사이클 · 레슨 3.5': 'One CPU cycle · Lesson 3.5',
   '작은 CPU를 클럭 한 번씩 움직이며 명령을 가져오고, 해석하고, 실행하는 과정과 점프로 만드는 반복을 살펴보세요.':

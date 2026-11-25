@@ -84,6 +84,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .total.max text{fill:#a24c14}
 .total{transform-box:fill-box;transform-origin:center}
 .total.bump{animation:bump .32s ease-out}
+.total.long text{font-size:14px}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
 .note{animation:note 1.6s ease-out forwards}
 .note path{fill:none;stroke:#43574f;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
@@ -93,7 +94,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
-@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
+@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.total.long text{font-size:18px}.packet-label{font-size:13px}.note text{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:none}.note,.total.bump{animation:none}}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -330,6 +331,7 @@ const lesson = [
   {
     label: '증상 확인',
     readingMemory: [["합계", 12], ["i", 4], ["평균", "6.0"]],
+    readingCpu: '평균 = 12 / 2 = 6.0 · 기대 4.0',
     example: ["입력 2, 4, 6", "합 12를 2로 나눔", "기대 4 · 실제 6"],
     title: '먼저 기대한 값과 실제 값을 비교한다',
     body: '이 프로그램은 2, 4, 6의 평균인 4.0을 구하려고 만들었습니다. 그런데 실행해 보면 다른 값이 나옵니다. 디버깅의 첫걸음은 "무엇을 기대했고 실제로 무엇이 나왔는지"를 정확히 적는 것입니다. 그래야 어디서 어긋났는지 찾을 수 있습니다.',
@@ -350,6 +352,7 @@ const lesson = [
   {
     label: '반씩 좁히기',
     readingMemory: [["합계", 12], ["i", 4]],
+    readingCpu: '중간 확인: 합계 12 = 기대 12 → 나눗셈 의심',
     example: ["잘못된 평균 6", "중간값 합계는 12로 정상", "마지막 나눗셈 확인"],
     title: '중간 값을 확인해 버그가 있는 쪽을 좁힌다',
     body: '프로그램 중간에서 값이 맞는지 확인하면, 버그가 그 앞에 있는지 뒤에 있는지 알 수 있습니다. 0.6의 이진 탐색처럼 의심 구간을 반씩 줄이는 방법입니다. 반복이 끝났을 때 합계가 2 + 4 + 6 = 12로 맞다면, 버그는 반복 뒤에 있습니다.',
@@ -370,6 +373,7 @@ const lesson = [
   {
     label: '고치고 확인',
     readingMemory: [["합계", 12], ["i", 4], ["평균", "4.0"]],
+    readingCpu: '평균 = 12 / 3 = 4.0 = 기대 4.0',
     example: ["합계 12", "나누는 수 2 → 3", "실제 4 = 기대 4"],
     title: '고친 뒤에는 다시 실행해 확인한다',
     body: '값이 세 개이니 3으로 나눠야 합니다. 고친 뒤에는 반드시 다시 실행해서 기대한 값이 나오는지 확인합니다. 고쳤다고 생각한 곳이 사실은 다른 버그를 만들 수도 있기 때문입니다.',
@@ -390,6 +394,7 @@ const lesson = [
   {
     label: '하나 차이 버그',
     readingMemory: [["합계", 6], ["i", 3], ["평균", "2.0"]],
+    readingCpu: '3 < 3 → 거짓 → 6 빠짐 · 6 / 3 = 2.0 ≠ 기대 4.0',
     example: ["i < 3", "마지막 값 6을 건너뜀", "합 6 ÷ 3 = 2"],
     title: '경계 조건은 한 끗 차이로 틀린다',
     body: '이번에는 while 조건이 i <= 3이 아니라 i < 3으로 잘못 적혔습니다. 그러면 i가 3일 때 반복이 끝나 버려 6이 더해지지 않습니다. 반복 횟수가 하나 모자라거나 남는 실수를 "하나 차이(off-by-one) 버그"라고 하며, 프로그래머가 가장 자주 만드는 버그 중 하나입니다.',
@@ -494,6 +499,7 @@ function buildScene() {
   addPlate(node, 'tag', cx, cy + 16, 'CPU');
   const work = addPlate(node, 'total', 0, -H - 14 * h - 18, '대기', { pad: 1.1, round: false });
   cpu = { node, work };
+  new MutationObserver(() => requestAnimationFrame(placeReadingCpu)).observe(work.label, { childList: true, characterData: true, subtree: true });
 }
 
 // ---------- Packets: reads travel cell → CPU, writes travel CPU → cell ----------
@@ -590,6 +596,17 @@ function setPlate(plate, text) {
 }
 
 // ---------- Drawing ----------
+// Anchor the long CPU plate's right end at the chip. The page translation swaps the text (and resizes the plate)
+// after paint, so the plate is placed again whenever its text changes.
+function placeReadingCpu() {
+  if (!cpu.work.group.classList.contains('long')) return;
+  cpu.work.x = 0;
+  sizePlate(cpu.work);
+  cpu.work.x = 30 - Number(cpu.work.rect.getAttribute('width')) / 2;
+  cpu.work.y = cpu.work.home - 46;
+  sizePlate(cpu.work);
+}
+
 function paint(changed = -1) {
   const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? step().readingMemory : null;
   cells.forEach((cell, k) => {
@@ -600,6 +617,14 @@ function paint(changed = -1) {
     cell.name.group.style.opacity = name ? 1 : 0;
     cell.wire.classList.toggle('active', Boolean(name));
   });
+  // The reading preview shows the step's computation and the expected value on the CPU
+  // (rules in references/visual-language.md, 1장 "정지 화면의 CPU 판"). Smaller, growing left, above the name tags.
+  cpu.work.group.classList.toggle('long', Boolean(preview && step().readingCpu));
+  cpu.work.home ??= cpu.work.y;
+  cpu.work.x = 0;
+  cpu.work.y = cpu.work.home;
+  if (preview) setPlate(cpu.work, step().readingCpu ?? '대기');
+  placeReadingCpu();
   if (changed >= 0) {
     const node = cells[changed].node;
     node.classList.remove('changed');

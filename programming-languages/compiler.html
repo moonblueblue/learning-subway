@@ -364,6 +364,7 @@ const lesson = [
   {
     label: '앞단',
     readingStage: 4,
+    note: ['int x = 2 * 3 + y', ' → ', '토큰·트리 (노드 6개)', ' → ', '의미 분석 통과', ' · ', 'int z = "hi" + 1은 타입 오류'],
     title: '토큰, 트리, 그리고 뜻 검사',
     body: '컴파일러는 크게 앞단, 중간, 뒷단으로 나뉩니다. 앞단은 6.3의 인터프리터처럼 코드를 토큰으로 자르고 구문 트리로 엮습니다. 컴파일러는 여기에 의미 분석을 더합니다. 변수가 선언되었는지, 타입이 맞는지(정수에 글자를 더하지 않는지)를 실행하기 전에 모두 확인합니다.',
     takeaway: '"int x = 2 * 3 + y;"는 트리가 되고 타입 검사를 통과합니다. "int z = "hi" + 1;"은 문법은 맞지만 정수 칸에 글자를 넣으려 해 실행 전에 오류가 납니다. 인터프리터라면 실행하다가야 알았을 오류입니다(6.3의 이름 오류).',
@@ -381,6 +382,7 @@ const lesson = [
   {
     label: '중간 표현',
     readingStage: 2,
+    note: ['x = 2 * 3 + y의 트리', ' → ', 'IR 3줄: t1 = 2 * 3 · t2 = t1 + y · x = t2'],
     title: '트리를 기계와 상관없는 단순한 명령 줄로 펼친다',
     body: '중간 단계는 트리를 중간 표현(IR)으로 바꿉니다. 흔한 모양은 한 줄에 연산 하나만 하는 3주소 코드입니다. 계산 중간값은 t1, t2 같은 임시 이름에 담습니다. IR은 특정 CPU와 상관이 없어서, 같은 IR에서 여러 CPU용 기계어를 만들 수 있고 최적화도 여기서 합니다.',
     takeaway: '트리가 "t1 = 2 * 3; t2 = t1 + y; x = t2" 세 줄이 되었습니다. 트리의 아래쪽(먼저 계산할 것)이 위 줄로 갑니다. 앞단은 언어마다, 뒷단은 CPU마다 따로 만들고 IR에서 만나게 하면 언어 n개 × CPU m개를 n + m개로 만들 수 있습니다.',
@@ -388,7 +390,7 @@ const lesson = [
     stations: [['ast', '구문 트리', 'file'], ['gen', 'IR 만들기', 'tool'], ['ir', '중간 표현 (IR)', 'file']],
     start: { title: '구문 트리', lines: ['대입 x ← (더하기 (곱하기 2 3) y)'], holds: { ast: '노드 6개' } },
     stages: [
-      { from: 'ast', to: 'gen', label: '트리', title: '아래부터 펼치기', lines: ['곱하기 노드 → t1 = 2 * 3', '더하기 노드 → t2 = t1 + y', '대입 노드 → x = t2'], text: '트리를 아래부터 한 줄씩 펼칩니다.', holds: { gen: '3줄' } },
+      { from: 'ast', to: 'gen', label: '트리', title: '아래부터 펼치기', lines: ['곱하기 노드 → t1 = 2 * 3', '더하기 노드 → t2 = t1 + y', '대입 노드 → x = t2'], text: '트리를 아래부터 한 줄씩 펼칩니다.', holds: { gen: '펼침' } },
       { from: 'gen', to: 'ir', label: '3주소 코드', title: '중간 표현', lines: ['t1 = 2 * 3', 't2 = t1 + y', 'x = t2'], text: '한 줄에 연산 하나씩인 IR이 나왔습니다.', holds: { ir: '3줄' },
         ask: { q: 'IR 첫 줄이 "t1 = 2 * 3"인 까닭은?', choices: ['트리에서 가장 아래(먼저 계산할) 노드가 곱하기라서', '곱하기가 알파벳 순으로 앞이라서'], answer: '트리에서 가장 아래(먼저 계산할) 노드가 곱하기라서', why: '더하기는 곱하기의 결과가 있어야 계산할 수 있으므로 곱하기가 먼저 줄로 나옵니다.' } },
     ],
@@ -396,6 +398,7 @@ const lesson = [
   {
     label: '최적화',
     readingStage: 3,
+    note: ['IR 4줄 (안 쓰이는 z = x * 0 포함)', ' → ', '6으로 접고 t1·t2를 합치고 z 줄을 지움', ' → ', 'x = 6 + y 1줄'],
     title: '같은 결과를 내는 더 짧은 코드로 바꾼다',
     body: '최적화는 결과는 그대로 두고 일을 줄입니다. 상수 접기는 "2 * 3"처럼 컴파일할 때 이미 아는 계산을 미리 해 6으로 바꿉니다. 복사 전파는 "x = t2"처럼 옮겨 담기만 하는 줄을 없앱니다. 죽은 코드 제거는 결과에 쓰이지 않는 계산을 지웁니다. 실행할 때마다 할 일을 컴파일할 때 한 번만 하는 셈입니다.',
     takeaway: '네 줄이 한 줄 "x = 6 + y"로 줄었습니다. 프로그램이 백만 번 돌면 줄인 일도 백만 번 아낍니다. 최적화는 결과가 같을 때만 해야 하므로, 컴파일러는 바꿔도 안전한지 꼼꼼히 따집니다.',
@@ -405,7 +408,7 @@ const lesson = [
     stages: [
       { from: 'ir', to: 'opt', label: '4줄', title: '상수 접기', lines: ['t1 = 2 * 3 → t1 = 6 (컴파일할 때 계산)', 't2 = 6 + y'], text: '이미 아는 곱하기를 미리 계산합니다.', holds: { opt: '상수 접기' },
         ask: { q: '"t1 = 2 * 3"을 "t1 = 6"으로 바꿔도 되는 까닭은?', choices: ['2와 3은 실행할 때마다 같아서 미리 계산해도 결과가 같다', 'y가 6이라서'], answer: '2와 3은 실행할 때마다 같아서 미리 계산해도 결과가 같다', why: '값이 바뀌지 않는 상수끼리의 계산은 컴파일할 때 한 번 하면 됩니다.' } },
-      { from: 'opt', to: 'opt', label: '줄 줄이기', title: '복사 전파 · 죽은 코드 제거', lines: ['x = t2 → x = 6 + y (옮겨 담기 없앰)', 'z = x * 0 → z를 쓰는 곳이 없으니 지움'], text: '쓸모없는 줄을 지웁니다.', holds: { opt: '2줄 지움' } },
+      { from: 'opt', to: 'opt', label: '줄 줄이기', title: '복사 전파 · 죽은 코드 제거', lines: ['x = t2 → x = 6 + y (옮겨 담기 없앰)', 'z = x * 0 → z를 쓰는 곳이 없으니 지움'], text: '쓸모없는 줄을 지웁니다.', holds: { opt: '3줄 줄임' } },
       { from: 'opt', to: 'ir2', label: '1줄', title: '최적화된 IR', lines: ['x = 6 + y', '4줄 → 1줄'], text: '같은 결과를 내는 한 줄이 남았습니다.', holds: { ir2: '1줄' },
         ask: { q: 'z = x * 0을 지워도 되는 조건은?', choices: ['z를 읽는 곳이 어디에도 없을 때', 'z가 0일 때는 언제나'], answer: 'z를 읽는 곳이 어디에도 없을 때', why: '쓰이지 않는 계산은 결과에 영향이 없습니다. 어딘가에서 z를 읽는다면 지우면 안 됩니다.' } },
     ],
@@ -413,6 +416,7 @@ const lesson = [
   {
     label: '코드 생성',
     readingStage: 3,
+    note: ['x = 6 + y', ' → ', '레지스터 A, B로 명령 4개', ' → ', '명령마다 1바이트, 기계어 4바이트'],
     title: '뒷단이 CPU 명령과 레지스터를 고른다',
     body: '뒷단은 최적화된 IR을 특정 CPU의 명령으로 바꿉니다. 변수는 메모리 주소에, 계산 중간값은 레지스터에 둡니다. 레지스터는 몇 개 안 되므로(3.5의 A, B) 무엇을 어느 레지스터에 둘지 정하는 레지스터 할당이 중요합니다. 같은 IR이라도 다른 CPU용 뒷단을 쓰면 다른 기계어가 나옵니다.',
     takeaway: '"x = 6 + y" 한 줄이 명령 네 개가 되었습니다. 최적화 전 IR을 그대로 옮겼다면 곱하기와 옮겨 담기까지 더 많은 명령이 필요했습니다. 3.8에서 한 번에 본 컴파일러 안에서 이렇게 여러 단계가 일합니다.',
@@ -420,7 +424,7 @@ const lesson = [
     stations: [['ir2', '최적화된 IR', 'file'], ['back', '뒷단', 'tool'], ['asm', '어셈블리', 'file'], ['bin', '기계어', 'cpu']],
     start: { title: 'IR과 메모리 배치', lines: ['x = 6 + y', 'y는 5번지, x는 6번지, 상수 6은 7번지'], holds: { ir2: '1줄' } },
     stages: [
-      { from: 'ir2', to: 'back', label: 'x = 6 + y', title: '레지스터 정하기', lines: ['y → 레지스터 A', '6 → 레지스터 B', '결과 → A에 두었다가 x로'], text: '뒷단이 값을 어느 레지스터에 둘지 정합니다.', holds: { back: 'A, B 사용' } },
+      { from: 'ir2', to: 'back', label: 'x = 6 + y', title: '레지스터 정하기', lines: ['y → 레지스터 A', '6 → 레지스터 B', '결과 → A에 두었다가 x로'], text: '뒷단이 값을 어느 레지스터에 둘지 정합니다.', holds: { back: '레지스터 A, B' } },
       { from: 'back', to: 'asm', label: '명령 4개', title: '어셈블리', lines: ['LOAD A, [5]    ; y', 'LOAD B, [7]    ; 상수 6', 'ADD A, B', 'STORE A, [6]   ; x'], text: '3.5 CPU의 명령 네 개가 나왔습니다.', holds: { asm: '4줄' },
         ask: { q: '같은 IR을 다른 종류의 CPU용으로 컴파일하면?', choices: ['뒷단만 바꾸면 그 CPU의 다른 명령이 나온다', '앞단부터 모두 다시 만들어야 한다'], answer: '뒷단만 바꾸면 그 CPU의 다른 명령이 나온다', why: 'IR까지는 CPU와 상관이 없습니다. 휴대폰용(ARM)과 PC용(x86) 기계어가 같은 코드에서 나오는 방법입니다.' } },
       { from: 'asm', to: 'bin', label: '비트', title: '기계어', lines: ['0010 0101', '0011 0111', '0110 0000', '0100 0110'], text: '어셈블러가 3.6의 표로 비트를 만듭니다.', holds: { bin: '4바이트' } },
@@ -530,6 +534,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names the code at each stage, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

@@ -24,7 +24,6 @@ const text = {
   'is_even의 버그를 고친 뒤 위 네 테스트를 다시 돌리면 결과가 어떻게 될까요?': 'After fixing is_even\'s bug, what happens when you rerun the four tests above?',
   'return n % 2 == 0으로 고치면 네 테스트가 모두 통과합니다. 테스트를 남겨 두면 나중에 누가 다시 망가뜨려도 바로 알 수 있습니다.': 'Change it to return n % 2 == 0 and all four tests pass. Keep the tests and you will know at once if someone breaks it again later.',
   // Diagram (step 1)
-  'double(3) 실행': 'Run double(3)', '예상값 6과 비교': 'Compare with expected 6', '실제 6이면 통과': 'Passes if actually 6',
   // Step 2
   '경계값': 'Boundary values',
   '경계와 이상한 입력을 골라 시험한다': 'Choose boundaries and odd inputs to test',
@@ -42,7 +41,7 @@ const text = {
   '목록의 최댓값을 돌려주는 max_of(xs)를 시험한다면, 어떤 입력들을 고르겠어요?': 'If you were testing max_of(xs), which returns the largest value in a list, which inputs would you choose?',
   '보통 목록 [3, 7, 2], 맨 앞이나 맨 끝이 최댓값인 목록, 원소가 하나인 목록, 같은 값이 여럿인 목록, 음수만 있는 목록, 그리고 빈 목록(오류를 내야 함)입니다.': 'An ordinary list [3, 7, 2], lists with the largest value first or last, a one-element list, a list with repeated values, a list of only negatives, and an empty list (which should raise an error).',
   // Diagram (step 2)
-  'A 기준 90점': 'A starts at 90', '89점과 90점을 함께 입력': 'Enter 89 and 90 together', '등급이 바뀌는 경계 확인': 'Check the boundary where the grade changes',
+  'A 기준 90점': 'A starts at 90',
   // Step 3
   '테스트의 쓰임': 'What tests are for',
   '고칠 때마다 다시 돌려 망가진 곳을 잡는다': 'Rerun after every change to catch what broke',
@@ -60,7 +59,6 @@ const text = {
   '팀원이 "급하니 테스트는 나중에 쓰자"고 합니다. 어떤 위험이 있을까요?': 'A teammate says "We\'re in a hurry, let\'s write tests later." What is the risk?',
   '나중은 잘 오지 않고, 테스트 없이 쌓인 코드는 고칠 때마다 무엇이 망가질지 몰라 점점 손대기 무서워집니다. 최소한 핵심 경로와 방금 고친 버그의 테스트는 바로 남기는 편이 좋습니다.': '"Later" rarely comes, and code piled up without tests becomes scarier to touch, since every change might break something unknown. At least keep tests for the core paths and the bug you just fixed right away.',
   // Diagram (step 3)
-  '코드를 수정': 'Change the code', '이전에 통과한 테스트도 다시 실행': 'Rerun tests that passed before', '기존 기능의 회귀 발견': 'Regression in an existing feature found',
   // Step 4
   '시험하기 쉬운 코드': 'Code easy to test',
   '입력과 출력이 분명한 코드가 시험하기 쉽다': 'Code with clear input and output is easy to test',
@@ -77,7 +75,8 @@ const text = {
   'greeting()을 시험하기 쉽게 바꾸려면 어떻게 고치면 될까요?': 'How would you change greeting() to make it easy to test?',
   'def greeting(hour)로 시각을 인자로 받게 하고, 부르는 쪽에서 greeting(현재_시각().hour)로 넘깁니다. 테스트는 greeting(9)와 greeting(12)처럼 경계를 바로 시험할 수 있습니다.': 'Make it take the time as an argument, def greeting(hour), and have the caller pass greeting(current_time().hour). Tests can then hit the boundary directly, as in greeting(9) and greeting(12).',
   // Diagram (step 4)
-  '함수 안에서 현재 시각 읽기': 'Reads the current time inside the function', '시각을 인자로 받게 변경': 'Changed to take the time as an argument', '같은 시각으로 재현 가능': 'Reproducible with the same time',
+  // Reading examples
+  'is_even(4) == True라고 적어 둠': 'Write down is_even(4) == True', '실행하니 False가 나옴': 'Running it gives False', '기대와 달라 실패 · % 2 == 1이 버그': 'Fails: not as expected · % 2 == 1 is the bug', '89점은 "B", 90점은 "A"인지 확인': 'Check 89 gives "B" and 90 gives "A"', '실수로 >를 쓰면 90점에서 실패': 'With > by mistake, 90 fails', 'is_even의 버그를 고침': 'Fix the is_even bug', 'double 테스트까지 네 개를 다시 실행': 'Rerun all four, double tests too', '다른 기능이 망가졌다면(회귀) 바로 발견': 'Any other feature broken (regression) shows up at once', 'greeting()이 안에서 현재 시각을 읽음': 'greeting() reads the current time inside', '시각을 인자 hour로 받게 고침': 'Take the time as hour', 'greeting(9)는 늘 "좋은 아침"': 'greeting(9) is always "Good morning"',
 };
 for (const [ko, en] of Object.entries(text)) if (ko.includes('\n')) text[ko.replace(/\n/g, '\\n')] = en.replace(/\n/g, '\\n');
 return text;

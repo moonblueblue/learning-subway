@@ -103,4 +103,10 @@ window.lessonText = {
   '서버를 3대가 아니라 2대로 두면 무엇이 문제일까요?': 'What is wrong with 2 servers instead of 3?',
   '한 대만 죽어도 과반(2대)이 없어 아무것도 확정할 수 없다': 'If just one dies, there is no majority (2) and nothing can be committed', '더 빨라진다': 'It gets faster',
   '2대의 과반은 2대라 한 대도 잃을 수 없습니다. 그래서 합의 집단은 보통 3대나 5대처럼 홀수로 둡니다.': 'A majority of 2 is 2, so not one can be lost. That is why consensus groups usually have an odd number, like 3 or 5.',
+  // Example note on the still picture.
+  'A에 x = 5 · B에 x = 7이 따로 들어옴': 'x = 5 reaches A · x = 7 reaches B', 'A와 B가 각각 C에 알림': 'A and B each tell C', 'C는 어느 쪽이 맞는지 모름': 'C cannot tell which is right',
+  '리더 A가 x = 5를 로그에 적음': 'leader A logs x = 5', 'B도 기록 (3대 중 2대)': 'B records it too (2 of 3)', '과반이라 확정': 'a majority, so committed',
+  '리더 A가 죽어 하트비트가 끊김': 'leader A dies, heartbeats stop', 'B가 임기 2로 표를 청하고 C가 찬성': 'B asks for votes in term 2, C agrees', 'B가 새 리더': 'B is the new leader',
+  '네트워크가 갈라져 A만 따로 남음': 'the network splits, A is alone', 'A의 x = 9는 과반이 없어 확정 못 함': 'A cannot commit x = 9: no majority', 'B, C는 새 리더 B로 x = 8 확정': 'B, C elect B and commit x = 8',
+  '리더 · x = 5 확정': 'Leader · x = 5 committed',
 };

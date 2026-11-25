@@ -72,4 +72,10 @@ window.lessonText = {
   '그림자를 더해 색칠이 9ms에서 14ms로 늘면?': 'If adding shadows makes shading grow from 9ms to 14ms?',
   '합계 19ms > 16.7ms → 60프레임을 못 지킨다': 'Total 19ms > 16.7ms → cannot keep 60 frames', '여전히 60프레임': 'Still 60 frames',
   '3 + 2 + 14 = 19ms로 예산을 넘습니다. 그림자 품질을 낮추거나 30프레임(33.3ms)을 목표로 합니다.': '3 + 2 + 14 = 19ms breaks the budget. Lower the shadow quality or aim for 30 frames (33.3ms).',
+  // Example note on the still picture.
+  '꼭짓점 (1, 1, 1)': 'vertex (1, 1, 1)', '상자를 (3, 0, 10)에 놓아 (4, 1, 11)': 'box placed at (3, 0, 10): (4, 1, 11)', '카메라 (0, 0, 3)을 빼서 (4, 1, 8)': 'minus camera (0, 0, 3): (4, 1, 8)',
+  '(4, 1, 8)을 거리 8로 나눔': 'divide (4, 1, 8) by distance 8', '(0.5, 0.125)': '(0.5, 0.125)', '400배 해서 가운데 (400, 300)에 더함 (y는 위로 빼기): (600, 250)': '×400 from center (400, 300), y up: (600, 250)',
+  '상자 삼각형 12개': '12 triangles in the box', '카메라 반대쪽을 향한 6개를 버림': 'drop the 6 facing away', '6개만 그림': 'draw only 6',
+  '변환 3ms + 삼각형 2ms + 픽셀 9ms': 'transforms 3ms + triangles 2ms + pixels 9ms', '합계 14ms < 60프레임 예산 16.7ms': 'total 14ms < 60 fps budget 16.7ms', '제때 그림': 'drawn in time',
+  '합계 14ms': 'Total 14ms', '원근 · 6개': 'Perspective · 6',
 };

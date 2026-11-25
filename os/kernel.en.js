@@ -22,7 +22,7 @@ window.lessonText = {
   '전원': 'Power', '검사': 'Check', '부트로더 찾기': 'Find bootloader', '커널 파일 읽기': 'Read kernel file', '점프': 'Jump', '페이지 표': 'Page table', '드라이버': 'Drivers', '켜기': 'Switch on',
   '띄우기': 'Start', '로그인': 'Log in', '시스템 콜': 'System call',
   '실행 중': 'Running', '검사 통과': 'Passed', '부트로더 찾음': 'Found', '커널 파일': 'Kernel file', '커널 12MB': 'Kernel 12MB',
-  '실행 시작': 'Started', '준비 시작': 'Setting up', '드라이버 준비': 'Drivers ready', '10ms마다': 'Every 10ms', '준비 완료': 'Ready', '서비스 12개': '12 services', '부를 때만': 'Only when called',
+  '실행 시작': 'Started', '준비 시작': 'Setting up', '드라이버 준비': 'Drivers ready', '10ms마다': 'Every 10ms', '준비 완료': 'Ready', '서비스 12개': '12 services', '부를 때만': 'On call',
   // Work panel
   '전원을 켜기 직전': 'Just before power on', 'RAM: 비어 있음 · 운영체제: SSD 안에': 'RAM: empty · operating system: on the SSD',
   'CPU가 깨어남': 'The CPU wakes up', 'PC = 정해진 시작 주소 → 펌웨어 칩의 첫 명령': 'PC = fixed start address → first instruction on the firmware chip',
@@ -39,7 +39,7 @@ window.lessonText = {
   '드라이버 시작 · 파일 시스템 붙이기 (5.5)': 'Start drivers · mount the file system (5.5)',
   '타이머 켜기': 'Switching on the timer', '10ms마다 타이머 인터럽트': 'A timer interrupt every 10ms', '→ 스케줄러가 CPU를 다른 프로세스에 넘길 기회 (5.2)': '→ a chance for the scheduler to give the CPU to another process (5.2)',
   '판이 차려짐': 'The stage is set', '메모리, 인터럽트, 장치, 타이머 준비 완료': 'Memory, interrupts, devices and timer ready',
-  '첫 프로세스': 'First process', '/sbin/init 실행 → PID 1': 'Run /sbin/init → PID 1', '사용자 영역에서 실행 (커널 권한 없음)': 'Runs in user space (no kernel rights)',
+  '첫 프로세스': 'First process', 'RAM · 점프': 'RAM · jump', '로그인 화면 · 시스템 콜': 'Login screen · system call', '/sbin/init 실행 → PID 1': 'Run /sbin/init → PID 1', '사용자 영역에서 실행 (커널 권한 없음)': 'Runs in user space (no kernel rights)',
   '서비스 띄우기': 'Starting services', '네트워크, 시간 맞추기, 로그 기록 서비스': 'Network, time sync and logging services', '각각 PID 1의 자식 프로세스': 'Each a child process of PID 1',
   '화면 서비스가 로그인 화면을 그림': 'The display service draws the login screen', '부팅 끝 · 약 8초': 'Boot done · about 8 seconds',
   '이제 커널은': 'From now on, the kernel', '프로그램이 파일을 열 때(시스템 콜)': 'When a program opens a file (system call)', '키보드를 누를 때(인터럽트)': 'When a key is pressed (interrupt)',
@@ -95,4 +95,10 @@ window.lessonText = {
   '부팅이 끝난 뒤 커널이 끼어드는 때가 아닌 것은?': 'After booting, which is not a time the kernel steps in?',
   '프로그램이 자기 변수끼리 더할 때': 'When a program adds its own variables', '프로그램이 파일을 열 때': 'When a program opens a file', '타이머 인터럽트가 울릴 때': 'When a timer interrupt goes off',
   '자기 메모리 안의 계산은 CPU가 바로 합니다. 커널은 시스템 콜과 인터럽트로만 끼어듭니다.': 'The CPU does arithmetic in a program\'s own memory directly. The kernel steps in only through system calls and interrupts.',
+  // Example note on the still picture.
+  '펌웨어가 하드웨어 검사': 'firmware checks the hardware', '펌웨어가 SSD에서 부트로더를 찾아 실행': 'firmware finds the bootloader on the SSD and runs it',
+  '부트로더가 SSD의 커널 파일 12MB를 읽음': 'bootloader reads the 12MB kernel file from the SSD', 'RAM에 올림': 'into RAM', '커널로 넘김': 'hand over to the kernel',
+  '커널이 하나씩 준비': 'the kernel sets up in turn', 'RAM에 페이지 표': 'page tables in RAM', '장치 드라이버': 'device drivers', '타이머 10ms마다': 'timer every 10ms',
+  '커널이 첫 프로세스 PID 1을 띄움': 'the kernel starts PID 1', '로그인 대기 · 커널은 시스템 콜로 부를 때만': 'login waits · kernel only on system calls',
+  '첫 프로세스': 'First process', 'RAM · 점프': 'RAM · jump', '로그인 화면 · 시스템 콜': 'Login screen · system call',
 };

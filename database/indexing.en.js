@@ -12,7 +12,7 @@ window.lessonText = {
   '질의, 인덱스, 결과': 'Query, index, result', '데이터베이스 엔진': 'Database engine', 'SQL 질의': 'SQL query', 'DB 엔진': 'DB engine', 'users 표': 'users table', 'email 인덱스': 'email index', 'email 인덱스 (B-트리)': 'email index (B-tree)', '없음': 'None', '질의 두 개': 'Two queries',
   // Legs and badges
   'SQL 질의 → DB 엔진': 'SQL query → DB engine', 'DB 엔진 → users 표': 'DB engine → users table', 'DB 엔진 → email 인덱스': 'DB engine → email index', 'users 표 → email 인덱스': 'users table → email index', 'email 인덱스 → users 표': 'email index → users table', 'users 표 → 결과': 'users table → result',
-  '한 행씩': 'Row by row', 'DB 엔진 · 한 행씩': 'DB engine · row by row', '첫 행': 'First row', '다음 행': 'Next row', '… 마지막 행': '… last row', '… 반복': '… and so on', '전체 스캔': 'Full scan', '다시 전체 스캔': 'Full scan again', '비교 1,000,000번': '1,000,000 comparisons', '100만 번 비교': '1M comparisons', '100만 행': '1M rows', '1행': '1 row', '734,201행': 'Row 734,201', '행 734,201': 'Row 734,201', '해당 행만': 'That row only', '그 행만 읽기': 'Read that row only',
+  '한 행씩': 'Row by row', 'DB 엔진 · 한 행씩': 'DB engine · row by row', '첫 행': 'First row', '다음 행': 'Next row', '… 반복': '… and so on', '전체 스캔': 'Full scan', '다시 전체 스캔': 'Full scan again', '비교 1,000,000번': '1,000,000 comparisons', '100만 번 비교': '1M comparisons', '100만 행': '1M rows', '1행': '1 row', '734,201행': 'Row 734,201', '행 734,201': 'Row 734,201', '해당 행만': 'That row only', '그 행만 읽기': 'Read that row only',
   '1,000,000행 모두': 'All 1,000,000 rows', '1,000,001행을 모두 비교': 'Compare all 1,000,001 rows', '1행만 읽음': 'Read 1 row only', '734,201행만 표에서 읽음': 'Read only row 734,201 from the table',
   '1행 minji@… ✗': 'Row 1 minji@… ✗', '2행 seojun@… ✗': 'Row 2 seojun@… ✗', '734,201행 jiu@example.com ✓': 'Row 734,201 jiu@example.com ✓', '1,000,000행 yejun@… ✗': 'Row 1,000,000 yejun@… ✗',
   '734,201 | 지우 | jiu@example.com': '734,201 | Jiwoo | jiu@example.com', '1,000,001 | 하준 | hajun@example.com': '1,000,001 | Hajun | hajun@example.com',
@@ -21,7 +21,7 @@ window.lessonText = {
   '검색 키 jiu': 'Search key jiu', '검색 키: jiu…': 'Key: jiu…',
   // Index
   '만드는 중': 'Building', '한 번 훑음': 'One pass', 'users 표 · 정렬': 'users table · sorted', 'email 읽기': 'Read email', 'email과 행 위치 뽑기': 'Pick out email and row position', 'email과 다른 열': 'email and other columns', 'email → 행 번호': 'email → row number',
-  'users의 email 칸으로 B-트리를 만들기로 함': 'Decides to build a B-tree on users\' email column', 'email과 행 번호만 골라 범위별로 나눈다': 'Picks just email and row number and splits them by range', '표는 한 번 읽고, 인덱스는 email 순으로 저장': 'The table is read once; the index is stored in email order',
+  'users의 email 칸으로 B-트리를 만들기로 함': 'Decides to build a B-tree on users\' email column', 'email과 행 번호만 골라 범위별로 나눈다': 'Picks just email and row number and splits them by range',
   'minji@… → 1행': 'minji@… → row 1', 'seojun@… → 2행': 'seojun@… → row 2', 'jiu@example.com → 734,201행': 'jiu@example.com → row 734,201',
   'B-트리 3층': 'B-tree, 3 levels', '뿌리': 'Root', '뿌리:  a–f | g–m | n–s | t–z': 'Root:  a–f | g–m | n–s | t–z', '├ g–m 가지:  ga–ha | hb–jh | ji–ka | …': '├ g–m branch:  ga–ha | hb–jh | ji–ka | …',
   '│  └ ji–ka 잎:  jihun@ → 52,310행': '│  └ ji–ka leaf:  jihun@ → row 52,310', '│              jiu@example.com → 734,201행': '│              jiu@example.com → row 734,201', '│              jiwon@ → 9,876행': '│              jiwon@ → row 9,876',
@@ -53,7 +53,7 @@ window.lessonText = {
   '비교는 노드 세 개를 거치며 몇십 번, 표에서 읽는 행은 하나입니다. 행이 10억 개로 늘어도 한두 층이 더해질 뿐입니다.': 'It takes a few dozen comparisons across three nodes, and one row is read from the table. Even with a billion rows, only a level or two is added.',
   '같은 장면입니다. 엔진이 인덱스를 거쳐 표의 한 행으로 바로 갑니다.': 'The same scene. The engine goes through the index straight to one row of the table.',
   '엔진이 이번에는 인덱스를 쓰기로 합니다.': 'This time the engine decides to use the index.', '엔진이 뿌리, 가지, 잎 세 노드를 거쳐 행 위치를 얻습니다.': 'The engine gets the row position through three nodes: root, branch, leaf.', '얻은 위치의 행 하나만 표에서 읽습니다.': 'It reads just the one row at that position from the table.', '같은 답을 백만 배 가까이 적은 일로 얻었습니다.': 'It got the same answer with nearly a million times less work.',
-  '뿌리: j → g–m 가지로': 'Root: j → to the g–m branch', '가지: ji → ji–ka 잎으로': 'Branch: ji → to the ji–ka leaf', '잎: jiu@example.com → 734,201행': 'Leaf: jiu@example.com → row 734,201', '노드 3개 + 행 1개 읽음 (전에는 100만 행)': 'Read 3 nodes + 1 row (1M rows before)', '잎: ji–ka': 'Leaf: ji–ka',
+  '뿌리: j → g–m 가지로': 'Root: j → to the g–m branch', '가지: ji → ji–ka 잎으로': 'Branch: ji → to the ji–ka leaf', '잎: jiu@example.com → 734,201행': 'Leaf: jiu@example.com → row 734,201', '노드 3개 + 행 1개 읽음 (전에는 100만 행)': 'Read 3 nodes + 1 row (1M rows before)',
   '인덱스를 쓰면 엔진이 읽는 노드는 몇 개쯤일까요?': 'With the index, about how many nodes does the engine read?', '3개 정도': 'About 3', '1,000,000개': '1,000,000',
   '한 노드에 가지가 수백 개라 백만 개도 세 층이면 닿습니다.': 'Each node has hundreds of branches, so even a million entries are reached in three levels.',
   '행이 10억 개로 늘면 인덱스로 찾는 일은 어떻게 될까요?': 'If the rows grow to a billion, what happens to finding with the index?', '한두 층이 더해질 뿐이다': 'Only a level or two is added', '1,000배 늘어난다': 'It grows 1,000 times',
@@ -77,4 +77,7 @@ window.lessonText = {
   '앞부분이 정해져 있으면 정렬된 나무에서 ji로 시작하는 구간으로 바로 갈 수 있습니다.': 'With the start fixed, it can go straight to the stretch starting with ji in the sorted tree.',
   '인덱스가 있으면 읽기는 줄고 쓰기는 늘어난다': 'With an index, reads shrink and writes grow', 'email 인덱스는 앞부분 순서로 정렬됨': 'The email index is sorted by the start', 'email 끝부분으로 검색하면 범위를 못 골라 다시 전체 스캔': 'Searching by the end of email cannot pick a range, so it is a full scan again',
   '새 회원을 표에 쓰고, email 인덱스에도 같은 회원의 행 번호를 적어야 합니다. 끝부분 검색은 앞에서부터 정렬한 범위로 가지를 고를 수 없습니다.': 'A new member is written to the table, and the same member\'s row number must also be written in the email index. A search by the ending cannot choose a branch by ranges sorted from the start.',
+  '100만 쌍': '1M pairs', 'g–m 안의 잎 ji–ka': 'leaf ji–ka inside g–m', 'jiu → 행 734,201': 'jiu → row 734,201', '… 마지막 행 1,000,000': '… last row 1,000,000', '가지 g–m': 'branch g–m',
+  '같은 값이 또 있을 수 있어 끝까지': 'to the end: there may be another match', '100만 행 · 열 여러 개': '1M rows · many columns', '표를 한 번 읽어 모든 email을 순서대로 범위에 나눠 저장': 'Read the table once, store every email in order by range',
+  '읽기는 인덱스로 빨라지지만 쓸 때마다 두 곳을 고친다': 'Reads get faster with the index, but every write changes two places',
 };

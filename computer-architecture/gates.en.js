@@ -1,5 +1,6 @@
 // English for 3.1 Logic gates. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  'XOR 램프': 'XOR lamp',
   // Page
   '논리 게이트 · 레슨 3.1': 'Logic gates · Lesson 3.1',
   '스위치를 켜고 끄며 AND, OR, NOT 게이트가 신호를 어떻게 바꾸는지 진리표와 함께 살펴보세요.':

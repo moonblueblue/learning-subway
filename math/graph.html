@@ -261,8 +261,10 @@ const lesson = [
       edges: [
         ["a", "b", "active", "1"],
         ["b", "c", "active", "2"],
-        ["c", "e", "active", "3"],
-        ["d", "b", "undirected"],
+        ["c", "e", "active", "3", 20],
+        // Same follow graph as step 3: 라희 → 나래 keeps its arrow, only greyed as it is off the path.
+        ["d", "b", "muted"],
+        ["e", "c", "muted", "", -20],
       ],
       labels: [
         [28, 254, "가람  →¹  나래  →²  다온  →³  마루"],

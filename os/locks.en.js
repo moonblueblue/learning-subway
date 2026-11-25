@@ -30,7 +30,7 @@ window.lessonText = {
   'count = count + 1은 CPU에서 몇 걸음일까요?': 'How many steps on the CPU is count = count + 1?', '1걸음': '1 step', '3걸음(읽기, 더하기, 쓰기)': '3 steps (read, add, write)',
   '메모리 값을 바로 더할 수 없어 레지스터로 읽고, 더하고, 다시 씁니다.': 'A value in memory cannot be added to directly, so it is read into a register, added to, and written back.',
   // Step 2
-  '경쟁 상태': 'Race conditions', 'T1·T2 모두 0을 읽음': 'T1 and T2 both read 0', '각자 1을 써서 덮어씀': 'Each writes 1, overwriting', '두 번 더했지만 1': 'Added twice, but 1', '겹친 스레드 2': 'Thread 2 overlapping', '최종 1': 'Final 1',
+  '경쟁 상태': 'Race conditions', 'T1·T2 모두 0을 읽음': 'T1 and T2 both read 0', '각자 1을 써서 덮어씀': 'Each writes 1, overwriting', '두 번 더했지만 1': 'Added twice, but 1', '겹친 스레드 2': 'Thread 2 overlapping', '최종 1': 'Final 1', '최종 2': 'Final 2', '잠금 보유 스레드 1': 'Thread 1 holds the lock', '기다린 스레드 2': 'Thread 2, after waiting', '잠금 A 보유': 'Holds lock A', '잠금 B 보유': 'Holds lock B', '잠금 A 대기': 'Waits for lock A', '잠금 B 대기': 'Waits for lock B',
   '걸음이 섞이면 더한 값을 잃는다': 'When steps mix, an addition is lost',
   '스케줄러(5.2)는 스레드를 아무 때나 바꿉니다. 스레드 1이 count(0)를 읽은 직후 스레드 2로 바뀌어 스레드 2도 0을 읽으면, 둘 다 1을 써서 count는 2가 아니라 1이 됩니다. 실행 순서에 따라 결과가 달라지는 이런 버그를 경쟁 상태라고 합니다.':
     'The scheduler (5.2) switches threads at any moment. If it switches to thread 2 just after thread 1 reads count (0), and thread 2 reads 0 too, both write 1 and count becomes 1, not 2. A bug like this, where the result depends on the order of execution, is called a race condition.',

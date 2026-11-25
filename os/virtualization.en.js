@@ -111,4 +111,9 @@ window.lessonText = {
   '한도 2GB를 넘으면 커널은 무엇을 할까요?': 'What does the kernel do when the 2 GB limit is passed?',
   '컨테이너 1의 프로세스만 강제로 끝낸다': 'Kills only container 1\'s processes', '컨테이너 2의 메모리를 빼앗아 준다': 'Takes memory from container 2 to give it', '호스트 전체를 다시 켠다': 'Restarts the whole host',
   '한도는 다른 컨테이너를 지키려는 것입니다. 넘은 쪽만 끝내고 나머지는 그대로 둡니다.': 'The limit is there to protect the other containers. Only the one that went over is killed; the rest are left alone.',
+  // Example note on the still picture.
+  'VM 1 앱이 파일 읽기': 'VM 1 app reads a file', 'VM 1 커널은 가상 디스크를 읽음': 'VM 1 kernel reads its virtual disk', '하이퍼바이저가 실제 vm1.img 읽기로 바꿈': 'hypervisor reads vm1.img',
+  'VM 1 커널이 잘못된 요청에 멈춤': 'VM 1 kernel halts on a bad request', 'VM 2는 주문을 계속 처리': 'VM 2 keeps handling orders', 'VM 1만 다시 켬': 'only VM 1 restarts',
+  '두 컨테이너가 호스트 커널 하나를 함께 씀': '2 containers share 1 kernel', '각자 자기 프로세스와 파일만 보임': 'each sees only its own', '실제 장치는 커널 하나가 처리': '1 kernel drives the devices',
+  '웹이 한도 2GB를 넘음 (2.1GB)': 'web over 2GB (2.1GB)', '커널이 웹 컨테이너만 강제 종료': 'kernel kills only web', 'DB는 멀쩡 · 웹은 다시 실행': 'DB is fine · web restarts', '내 것만 보임': 'Sees only its own', '커널 (VM 2) · 디스크 쓰기': 'Kernel (VM 2) · disk write', '하이퍼바이저 · 데이터': 'Hypervisor · data', '호스트 커널 하나 · 다시 띄우기': 'One host kernel · start again',
 };

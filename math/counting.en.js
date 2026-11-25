@@ -55,13 +55,13 @@ window.lessonText = {
   '동전을 두 번 던져 한 번이라도 앞면이 나올 확률은?': 'Tossing a coin twice, what is the probability of at least one head?',
   '두 번 모두 뒷면일 확률 1/4을 1에서 빼면 3/4입니다. "적어도 한 번"은 반대 경우를 빼는 것이 쉽습니다.': 'Take the chance of two tails, 1/4, away from 1 to get 3/4. For "at least once", subtracting the opposite case is easiest.',
   // Step 4
-  '컴퓨터 속 확률': 'Probability in computers', '비트 한 자리 추가': 'Add one bit', '각 기존 값 뒤에 0 또는 1': 'A 0 or 1 after each existing value', '가능한 값 두 배': 'Twice as many values',
+  '컴퓨터 속 확률': 'Probability in computers', '소문자 12자리 비밀번호': 'A 12-letter lower-case password', '자리마다 26가지를 곱함': 'Multiply 26 choices for each place', '26¹² ≈ 9.5경 가지': '26¹² ≈ 95 quadrillion passwords',
   '보안과 해시는 경우의 수와 확률 위에 서 있다': 'Security and hashing stand on counting and probability',
   '비밀번호가 안전한 이유는 경우의 수가 너무 커서 하나씩 다 시도할 수 없기 때문입니다. 반대로 경우의 수가 넉넉해 보여도 겹칠 확률은 생각보다 빨리 커집니다. 23명만 모여도 생일이 같은 두 사람이 있을 확률이 50%를 넘습니다(생일 문제). 이 생각이 4.5 해시 테이블과 6.11 암호화에서 다시 나옵니다.':
     'A password is safe because there are too many cases to try one by one. On the other hand, even when the number of cases looks ample, the chance of a clash grows faster than you think. With just 23 people, the chance that two share a birthday is over 50% (the birthday problem). This idea comes back in 4.5 Hash tables and 6.11 Encryption.',
   '0.6에서 1부터 100 사이의 수를 반씩 줄여 맞히면 7번이면 충분했습니다. 2⁷ = 128 ≥ 100이기 때문입니다.': 'In 0.6, guessing a number from 1 to 100 by halving took 7 tries at most, because 2⁷ = 128 ≥ 100.',
-  '소문자 26개로 만든 12자리 비밀번호는 26¹² ≈ 95조 가지다.': 'There are 26¹² ≈ 95 trillion 12-character passwords made of 26 lower-case letters.',
-  '26을 12번 곱하면 약 9.5 × 10¹⁶입니다. 조 단위를 훌쩍 넘습니다.': '26 multiplied 12 times is about 9.5 × 10¹⁶, far beyond trillions.',
+  '소문자 26개로 만든 12자리 비밀번호는 26¹² ≈ 9.5경 가지다.': 'There are 26¹² ≈ 95 quadrillion 12-character passwords made of 26 lower-case letters.',
+  '26을 12번 곱하면 약 9.5 × 10¹⁶, 곧 9.5경입니다. 조 단위를 훌쩍 넘습니다.': '26 multiplied 12 times is about 9.5 × 10¹⁶, or 95 quadrillion, far beyond trillions.',
   '23명이 모이면 생일이 같은 두 사람이 있을 확률이 50%를 넘는다.': 'With 23 people, the probability that two share a birthday is over 50%.',
   '두 사람 짝이 253쌍이나 되어, 모두 다를 확률이 50% 아래로 떨어집니다.': 'There are as many as 253 pairs of people, so the chance that all differ falls below 50%.',
   '1–100 중 하나를 "크다/작다" 힌트로 맞히려면 최대 7번이면 된다.': 'Guessing one of 1–100 with "higher/lower" hints takes at most 7 tries.',

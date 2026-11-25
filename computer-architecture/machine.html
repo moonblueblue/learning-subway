@@ -256,6 +256,8 @@ const lesson = [
     takeaway: '스위치 위 색이 부분을 나눕니다. 연산 코드 001은 LOAD, 레지스터 0은 A, 주소 0101은 5라서 0010 0101은 "LOAD A, [5]"입니다. 같은 비트를 그냥 수로 읽으면 37입니다.',
     description: '스위치 여덟 개가 한 줄로 놓여 있고, 왼쪽 세 개는 연산 코드, 다음 하나는 레지스터, 오른쪽 네 개는 주소를 맡습니다. 줄 끝의 해석기가 켜진 비트를 읽어 어셈블리 명령으로 보여 줍니다.',
     initial: 128,
+    // The still picture (reduced motion) shows the example: 0010 0101 = LOAD A, [5].
+    staticInitial: 37,
     demo: { values: [37, 53, 0, 128], interval: 2600 },
     tasks: [
       { target: 37, text: '"LOAD A, [5]"를 만들어 보세요: 연산 001, 레지스터 0, 주소 0101.' },
@@ -287,7 +289,9 @@ const lesson = [
     takeaway: '3.5의 반복 프로그램을 직접 기계어로 옮겨 보세요. 해 보기에 나온 어셈블리를 스위치로 만들면 어셈블러가 하는 일을 손으로 한 셈입니다.',
     description: '스위치 줄과 해석기, 연산 코드 표가 있습니다. 해 보기마다 3.5 반복 프로그램의 한 줄이 나옵니다.',
     table: true,
+    asm: true,
     initial: 22,
+    staticInitial: 37,
     demo: { values: [22, 55, 128, 197, 162, 0], interval: 2200 },
     tasks: [
       { target: 128, text: '어셈블리 "SUB A, B"를 기계어로 만들어 보세요.' },
@@ -304,6 +308,8 @@ const lesson = [
     description: '스위치 줄과 해석기가 있고, 해석기 위에 같은 바이트를 명령, 수, 문자 세 가지로 읽은 결과가 함께 뜹니다.',
     views: true,
     initial: 37,
+    // The example reads 0100 0001 as the letter A and the number 65.
+    staticInitial: 65,
     demo: { values: [65, 72, 255, 37], interval: 2600 },
     tasks: [
       { target: 65, text: '문자 "A"(65)를 만들어 보세요. 명령으로는 무엇일까요?' },
@@ -520,6 +526,16 @@ function createSum() {
   addPlate(node, 'tag', cx, cy + 16, '해석기');
   const total = addPlate(node, 'total', 0, -H - 14 * h - 20, '0', { pad: 1.1, round: false });
   const views = addPlate(node, 'tag views', 0, -H - 14 * h - 48, '', { pad: 1.2, round: false });
+  // The plate is wider than the display, so its right end is kept at the display's right edge and it grows left.
+  // The page translation changes the text after this, so it is placed again whenever the text changes.
+  const place = () => {
+    views.x = 0;
+    sizePlate(views);
+    views.x = 14 * 2 * h - Number(views.rect.getAttribute('width')) / 2;
+    sizePlate(views);
+  };
+  views.place = place;
+  new MutationObserver(() => requestAnimationFrame(place)).observe(views.label, { childList: true, characterData: true, subtree: true });
   return { node, total, views };
 }
 
@@ -572,9 +588,17 @@ function retarget(animate, ms = transitionMs) {
   sum.total.label.textContent = decoded.text;
   sum.total.group.classList.toggle('max', decoded.op === 7);
   sizePlate(sum.total);
-  sum.views.label.textContent = `수 ${state.value} · 문자 ${charOf(state.value)}`;
-  sum.views.group.style.display = lesson[state.index].views ? '' : 'none';
-  sizePlate(sum.views);
+  // The small plate above the result says what this step is about, so the still pictures of steps 1–3 differ:
+  // the code table lookup (2), assembly text turned into bits (3), the same byte read as a number and a letter (4).
+  const step = lesson[state.index];
+  const bits = state.value.toString(2).padStart(8, '0');
+  const opBits = bits.slice(0, 3), regBit = bits[3], addrBits = bits.slice(4);
+  sum.views.label.textContent = step.views ? `${bits.slice(0, 4)} ${bits.slice(4)} → 수 ${state.value} · 문자 ${charOf(state.value)}`
+    : step.table && step.asm ? `${decoded.text} → ${opBits} · ${regBit} · ${addrBits}`
+    : step.table ? `연산 코드 ${opBits} → 명령표 ${parseInt(opBits, 2)}번 = ${opcodes[parseInt(opBits, 2)] ?? '없음'}`
+    : '';
+  sum.views.group.style.display = sum.views.label.textContent ? '' : 'none';
+  sum.views.place();
   syncGroups(targets);
   // A small pulse on the total when it changes at a watchable pace.
   sum.total.group.classList.remove('bump');

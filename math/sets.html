@@ -54,7 +54,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
 .item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
-.choices{display:flex;gap:6px}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
 .choice{min-width:68px}
 .choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
 .choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
@@ -188,7 +188,7 @@ const lesson = [
     example: ["set([1, 1, 2])", "중복 제거 뒤 len 계산", "길이 2"],
     title: '파이썬도 집합과 함수를 그대로 쓴다',
     body: '파이썬의 set은 수학의 집합처럼 중복을 없애고, | 는 합집합, & 는 교집합, - 는 차집합을 계산합니다. in은 원소인지(∈) 확인합니다. 딕셔너리는 키에서 값으로 가는 함수입니다.',
-    link: '1.4에서 리스트의 index는 칸을 하나씩 훑었습니다. set과 딕셔너리의 in은 4.5 해시 테이블 덕분에 거의 한 번에 답합니다.',
+    link: '1.4에서 리스트의 index는 칸을 하나씩 훑었습니다. set과 딕셔너리의 in은 해시 테이블(4.5에서 다룹니다) 덕분에 거의 한 번에 답합니다.',
     case: '다음 파이썬 식의 결과가 참인지 고르세요.',
     choices: TF,
     items: [

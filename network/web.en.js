@@ -73,4 +73,9 @@ window.lessonText = {
   '이미 맺은 연결을 다시 쓰므로 준비 왕복 없이 바로 요청합니다.': 'The connection already made is reused, so the request goes straight out without setup round trips.',
   '다음 방문 때 페이지가 더 빨리 뜨게 하는 방법은?': 'How can the page appear faster on the next visit?', '자주 바뀌지 않는 CSS와 그림을 브라우저 캐시에 둔다': 'Keep CSS and images that rarely change in the browser cache', '요청을 더 많이 나눈다': 'Split into more requests',
   '캐시에 있으면 요청 자체를 건너뜁니다. DNS 캐시와 같은 생각입니다.': 'If it is in the cache, the request is skipped entirely. The same idea as the DNS cache.',
+  // Example note on the still picture.
+  '리졸버 답: 203.0.113.10': 'resolver: 203.0.113.10', '443번 포트에 SYN · SYN-ACK · ACK': 'port 443: SYN · SYN-ACK · ACK', '연결됨 (내용은 아직 없음)': 'connected (no content yet)',
+  '데이터베이스': 'Database', 'TCP 연결 위에서': 'on the TCP connection', '이제부터 내용은 암호화됨': 'content is encrypted from now on',
+  '웹 서버가 DB에서 상품 3개를 꺼냄': 'web server gets 3 products from the DB', 'HTML을 만들어 200 OK': 'builds HTML, 200 OK',
+  '같은 연결로 GET style.css · GET pencil.jpg': 'same link: GET style.css · GET pencil.jpg', '둘 다 200': 'both 200', 'HTML + CSS + 그림으로 화면 그리기': 'draw page from HTML + CSS + image', '파일 2개 보냄': 'Sent 2 files',
 };

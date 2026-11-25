@@ -9,7 +9,7 @@ window.lessonText = {
     'Are there problems a computer cannot solve even in principle? Learn through questions about code that may never end, the halting problem, and problems that take far too long.',
   '현실적': 'Realistic', '비현실적': 'Unrealistic',
   // Step 1
-  '끝날까?': 'Will it end?', '반복마다 n을 1씩 줄임': 'Each round lowers n by 1', '0에 도달해 종료': 'Reaches 0 and ends',
+  '끝날까?': 'Will it end?', 'n = 3 · i = 0': 'n = 3 · i = 0', '반복마다 i를 1씩 늘림': 'Each round raises i by 1', 'i = 3에서 i < n이 거짓 → 종료': 'At i = 3, i < n is false → ends',
   '프로그램이 끝나는지 보는 것도 쉽지 않다': 'Even seeing whether a program ends is not easy',
   '1.2에서 끝나지 않는 반복을 만들어 봤습니다. 짧은 코드는 읽어 보면 끝나는지 알 수 있지만, 조금만 복잡해져도 사람도 컴퓨터도 판단하기 어렵습니다. 아래 코드들이 언젠가 멈추는지(입력 n은 1 이상의 정수) 따져 보세요. 마지막 것은 수학자들도 아직 모릅니다.':
     'In 1.2 you made a loop that never ends. With short code you can tell by reading whether it ends, but with a little more complexity it gets hard for people and computers alike. Work out whether each piece of code below eventually stops (the input n is a whole number of 1 or more). Even mathematicians do not yet know about the last one.',
@@ -41,8 +41,8 @@ window.lessonText = {
   // Step 3
   '풀 수 있지만 오래 걸리는': 'Solvable but slow', '방문 순서를 하나 제안': 'Propose one visiting order', '그 순서의 거리를 합산': 'Add up that order\'s distance', '모든 후보를 찾는 일보다 검증이 쉬움': 'Checking is easier than finding every candidate',
   '답 확인은 쉬운데 찾기는 너무 오래 걸리는 문제들': 'Problems whose answers are easy to check but take far too long to find',
-  '풀 수는 있지만 너무 오래 걸리는 문제도 있습니다. 도시 n개를 한 번씩 들러 돌아오는 가장 짧은 길(외판원 문제)은 경우가 (n − 1)! ÷ 2가지라, 도시 20개면 6경 가지가 넘습니다. 그런데 "이 길이 1000km 이하인가?"를 확인하는 일은 쉽습니다. 답 확인은 빠른데 찾기는 빠른 방법이 알려지지 않은 문제를 NP 완전 문제라 합니다.':
-    'Some problems can be solved but take far too long. The shortest route that visits n cities once each and returns (the travelling salesman problem) has (n − 1)! ÷ 2 cases, so 20 cities give over 60 quadrillion. Yet checking "is this route 1,000 km or less?" is easy. Problems whose answers are quick to check but for which no fast way to find them is known are called NP-complete.',
+  '풀 수는 있지만 너무 오래 걸리는 문제도 있습니다. 도시 n개를 한 번씩 들러 돌아오는 가장 짧은 길(외판원 문제)은 경우가 (n − 1)! ÷ 2가지라, 도시 20개면 6경 가지가 넘습니다. 그런데 "이 길이 1000km 이하인가?"를 확인하는 일은 쉽습니다. 답 확인은 빠른데 찾기는 빠른 방법이 알려지지 않은 문제가 많고, 그중 가장 어려운 무리를 NP 완전 문제라 합니다.':
+    'Some problems can be solved but take far too long. The shortest route that visits n cities once each and returns (the travelling salesman problem) has (n − 1)! ÷ 2 cases, so 20 cities give over 60 quadrillion. Yet checking "is this route 1,000 km or less?" is easy. Many problems have answers that are quick to check but no known fast way to find them, and the hardest group among them is called NP-complete.',
   '2.4의 경우의 수와 4.1의 증가 모양을 떠올려 보세요. n!은 O(2ⁿ)보다도 빠르게 늘어납니다. 4.8의 최단 경로는 빠른 방법이 있는 문제였습니다.': 'Recall the counting of 2.4 and the growth shapes of 4.1. n! grows even faster than O(2ⁿ). The shortest paths of 4.8 were a problem with a fast method.',
   '도시 5개의 외판원 문제는 경로가 12가지라 모두 따져 볼 수 있다.': 'A travelling salesman problem with 5 cities has 12 routes, so all of them can be checked.', '(5 − 1)! ÷ 2 = 12입니다. 작을 때는 전부 따지면 됩니다.': '(5 − 1)! ÷ 2 = 12. When small, just check them all.',
   '스도쿠는 다 채운 판이 맞는지 확인하기가 빈칸을 채우기보다 쉽다.': 'In sudoku, checking that a filled board is right is easier than filling the blanks.', '줄, 칸, 상자마다 겹치는 숫자가 없는지만 보면 됩니다. 채우는 일은 경우를 따져야 합니다.': 'You only check that no row, column or box repeats a number. Filling means weighing up cases.',
@@ -55,7 +55,7 @@ window.lessonText = {
   '완벽 대신 충분히 좋은 답을 찾는다': 'Find a good-enough answer instead of a perfect one',
   '정확한 답이 불가능하거나 너무 오래 걸리면, 현실에서는 질문을 바꿉니다. 시간 제한을 두고 그때까지의 답을 쓰거나, 빠른 어림 방법(휴리스틱)으로 꽤 좋은 답을 찾거나, 문제의 크기나 종류를 좁힙니다. 택배 경로, 시간표 짜기, 반도체 배치가 이렇게 풀립니다.':
     'When an exact answer is impossible or takes too long, in practice the question changes. Set a time limit and use the best answer so far, find a fairly good answer with a quick rough method (a heuristic), or narrow the size or kind of problem. Delivery routes, timetables and chip layouts are solved this way.',
-  '1.2의 "강제로 멈춤"은 시간 제한, 4.4에서 입력 모양을 본 것은 문제 좁히기, 4.8의 A*는 어림을 쓰는 방법이었습니다.': 'The "Stopped" in 1.2 was a time limit, looking at the input\'s shape in 4.4 was narrowing the problem, and A* in 4.8 was a method using estimates.',
+  '1.2의 "강제로 멈춤"은 시간 제한, 4.4에서 입력 모양을 본 것은 문제 좁히기, 4.8의 A*는 어림값으로 볼 곳을 줄이는 방법이었습니다.': 'The "Stopped" in 1.2 was a time limit, looking at the input\'s shape in 4.4 was narrowing the problem, and A* in 4.8 used estimates to cut down where to look.',
   '다음 대처가 현실적인지 고르세요.': 'Choose whether each approach is realistic.',
   '택배 기사 경로를 "가장 가까운 다음 집부터" 고르는 방법으로 짠다.': 'Plan a courier\'s route by always picking "the nearest next house".', '최적은 아니어도 금방 꽤 좋은 경로가 나옵니다. 휴리스틱입니다.': 'It is not optimal, but it quickly gives a fairly good route. It is a heuristic.',
   '도시 10만 개의 외판원 문제를 모든 경로를 따져 정확히 푼다.': 'Solve a 100,000-city travelling salesman problem exactly by checking every route.', '경우가 우주의 원자 수보다 훨씬 많아 끝나지 않습니다.': 'There are far more cases than atoms in the universe, so it never finishes.',

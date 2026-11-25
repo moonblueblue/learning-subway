@@ -64,7 +64,7 @@ return {
   '빈 것으로 표시만 했을 뿐 내용은 그대로라, 덮어쓰기 전에는 복구할 수 있습니다.': 'They were only marked free and the contents are unchanged, so it can be recovered before being overwritten.',
   // Step 4
   '이름 두 개': 'Two names', '같은 파일에 이름 추가': 'Add a name to the same file', '두 이름 → 한 아이노드': 'Two names → one inode', '데이터 블록은 한 벌': 'One set of data blocks',
-  '기존 이름': 'Existing name', '추가한 이름': 'Added name', '참조 0개': '0 references',
+  '기존 이름': 'Existing name', '추가한 이름': 'Added name', '참조 0개': '0 references', '아이노드 3 · 참조 1개': 'Inode 3 · 1 reference', '아이노드 3 · 참조 2개': 'Inode 3 · 2 references', '블록 2·7 (복사 안 함)': 'Blocks 2·7 (not copied)',
   '한 파일에 이름이 여러 개일 수 있다': 'One file can have several names',
   '이름과 내용이 따로 있으므로, 디렉터리에 같은 아이노드를 가리키는 이름을 하나 더 만들 수 있습니다(하드 링크). 두 이름은 같은 파일이라 한쪽으로 고치면 다른 쪽에도 보입니다. 아이노드는 자기를 가리키는 이름 수를 세다가, 0이 될 때 비로소 블록을 놓아줍니다.':
     'Since names and contents are kept apart, the directory can have another name pointing to the same inode (a hard link). The two names are the same file, so a change through one shows through the other. An inode counts the names pointing to it, and only lets go of its blocks when that count reaches 0.',

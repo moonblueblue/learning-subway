@@ -9,7 +9,6 @@ window.lessonText = {
     'How does the record carry on unbroken even when the leader dies? Look at the consensus of 7.9 one log entry at a time, and check with questions the rules an implementation must keep.',
   // Step 1
   '어디까지 확정': 'What is committed',
-  '현 임기 로그를 리더와 팔로워가 저장': 'Leader and followers store the current term\'s log', '3대 중 2대가 같은 항목 보유': '2 of 3 servers hold the same entry', '리더가 커밋 가능': 'The leader can commit',
   '과반의 로그에 들어간 칸까지 확정이다': 'An entry is committed once it is in a majority\'s logs',
   '7.9의 Raft를 직접 구현한다고 해 봅시다. 서버마다 로그(칸의 목록)를 가지고, 칸마다 "임기:명령"을 적습니다. 리더는 자기 로그를 팔로워에 복사하고, 어떤 칸이 서버 과반(3대 중 2대)의 로그에 들어가면 그 칸까지 확정(커밋)하고 실행합니다. 아래는 리더 A와 팔로워 B, C의 로그입니다.':
     'Say you implement the Raft of 7.9 yourself. Each server keeps a log (a list of entries), and each entry holds "term:command". The leader copies its log to the followers, and once an entry is in the logs of a majority of servers (2 of 3), it commits up to that entry and runs it. Below are the logs of leader A and followers B and C.',
@@ -29,7 +28,6 @@ window.lessonText = {
     'It was not committed, so it can vanish, because it is not in the new leader B\'s log. The client never got a "done" reply for x=4, so no promise is broken.',
   // Step 2
   '누구에게 투표': 'Whom to vote for',
-  '후보의 마지막 로그 임기가 더 낮음': 'Candidate\'s last log term is lower', '유권자가 자신의 로그와 비교': 'The voter compares with its own log', '투표 거절': 'Vote refused',
   '로그가 나보다 뒤처진 후보에게는 투표하지 않는다': 'Do not vote for a candidate whose log is behind yours',
   '확정된 칸을 잃지 않으려면, 확정된 칸을 모두 가진 서버만 리더가 되어야 합니다. 그래서 투표 규칙이 하나 더 있습니다. 후보의 로그가 내 로그보다 뒤처지면 표를 주지 않습니다. "뒤처짐"은 마지막 칸의 임기를 먼저 비교하고, 같으면 로그 길이를 비교합니다.':
     'To never lose a committed entry, only a server holding every committed entry may become leader. So there is one more voting rule: if the candidate\'s log is behind yours, you do not give it your vote. "Behind" compares the term of the last entry first, and if those are equal, the log length.',
@@ -51,7 +49,6 @@ window.lessonText = {
     'Yes. Once B is leader, it fills in C\'s missing entries, and C becomes one of the votes in B\'s majority. Its log was only behind; it is not broken.',
   // Step 3
   '로그 맞추기': 'Repairing logs',
-  '팔로워의 뒷부분이 리더와 다름': 'The follower\'s tail differs from the leader\'s', '공통 접두부 다음부터 복제': 'Copy from after the common prefix', '충돌한 미확정 항목 교체': 'Conflicting uncommitted entries replaced',
   '앞 칸이 맞는지 확인하며 어긋난 칸을 덮어쓴다': 'Check that the previous entry matches, and overwrite entries that differ',
   '리더는 칸을 보낼 때 "바로 앞 칸의 번호와 임기"를 함께 보냅니다. 팔로워는 자기 로그의 그 자리가 같을 때만 받아들이고, 다르면 거절합니다. 거절당한 리더는 한 칸씩 앞으로 물러나며 다시 보내다가, 맞는 곳을 찾으면 그 뒤를 자기 로그로 덮어씁니다. 그러면 팔로워의 로그는 리더와 같아집니다.':
     'When the leader sends an entry, it also sends "the index and term of the entry just before". The follower accepts only if that spot in its own log matches, and refuses otherwise. A refused leader steps back one entry at a time and sends again until it finds a match, then overwrites everything after it with its own log. The follower\'s log then equals the leader\'s.',
@@ -73,7 +70,6 @@ window.lessonText = {
     'It steps back one entry per refusal until it finds a match, then sends the entries after it in order. Real implementations often have the follower say "my last entry is number so-and-so" so the leader can step back many at once.',
   // Step 4
   '구현의 함정': 'Implementation pitfalls',
-  '여러 서버가 함께 선거를 시작': 'Several servers start an election together', '각자 다른 시간만큼 대기': 'Each waits a different time', '다음 선거에서 표 분산 가능성 감소': 'Split votes less likely next election',
   '시간 초과, 디스크, 넘겨주기를 제대로 해야 한다': 'Get timeouts, disk and redirection right',
   '규칙을 알아도 구현에서 자주 틀리는 곳이 있습니다. 선거 시간 초과가 모두 같으면 여러 서버가 동시에 후보가 되어 표가 갈립니다. 임기와 투표 기록을 디스크에 쓰지 않으면, 다시 켠 서버가 같은 임기에 또 투표할 수 있습니다. 하트비트가 너무 드물면 멀쩡한 리더가 죽은 줄 알고 선거가 계속 열립니다.':
     'Even knowing the rules, implementations often go wrong in a few places. If every election timeout is the same, several servers become candidates at once and the votes split. If the term and vote are not written to disk, a restarted server can vote again in the same term. If heartbeats are too rare, a healthy leader is taken for dead and elections keep starting.',
@@ -92,4 +88,6 @@ window.lessonText = {
   '합의 구현을 테스트할 때 꼭 넣어야 할 상황 세 가지를 꼽아 보세요.': 'Name three situations a test of a consensus implementation must include.',
   '리더를 갑자기 끄기, 네트워크를 갈라 소수 쪽에 옛 리더 남기기(7.9의 4단계), 메시지를 늦게·중복으로·순서 바꿔 보내기입니다. 매번 "확정된 값이 바뀌지 않았는가"를 확인합니다.':
     'Killing the leader suddenly, splitting the network to leave the old leader on the minority side (step 4 of 7.9), and delivering messages late, twice or out of order. Each time, check that "no committed value changed".',
+  // Reading examples
+  '3번 칸 [2:x=3]이 A, B에 있음': 'slot 3 [2:x=3] is on A and B', '3대 중 2대로 과반': '2 of 3: a majority', '3번 칸까지 확정': 'committed up to slot 3', 'B가 요청하면 C는 표를 줌 (B가 앞섬)': 'B asks: C votes yes (B is ahead)', 'C가 요청하면 B가 로그를 비교': 'C asks: B compares logs', '임기 1 < 2라 B는 거절': 'term 1 < 2, so B refuses', '팔로워 A의 4번 칸 [2:x=4]': 'follower A\'s slot 4 [2:x=4]', 'B가 "앞 칸은 3번, 임기 2"로 확인': 'B checks "previous: slot 3, term 2"', '4번 칸을 [3:x=5]로 덮어씀': 'slot 4 overwritten with [3:x=5]', '모두 같은 시간 초과면 동시에 선거': 'same timeout: elections at once', '150–300ms에서 무작위로 기다림': 'wait a random 150–300ms', '한 서버가 먼저 표를 모음': 'one server gathers votes first',
 };

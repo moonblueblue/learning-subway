@@ -1,5 +1,6 @@
 // English for 3.8 From code to running. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  'b = 0 → 멈춤': 'b = 0 → stops',
   // Page
   '코드에서 실행까지 · 레슨 3.8': 'From code to running · Lesson 3.8',
   '코드 한 줄이 컴파일러와 어셈블러, 운영체제 로더, 파이썬 인터프리터를 거쳐 CPU에서 실행되기까지를 한 정거장씩 따라가 보세요.':

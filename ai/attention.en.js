@@ -98,4 +98,7 @@ window.lessonText = {
   '각자 비율을 구해 값을 섞음': 'each finds its ratios and mixes values', '머리마다 다른 관계를 봅니다.': 'Each head looks at a different relation.',
   '층 12개': '12 layers', '층 쌓기': 'Stacking layers', '섞은 결과를 다음 층의 입력으로': 'the mix becomes the next layer\'s input', '층마다 더 깊은 뜻을 담음': 'each layer holds deeper meaning',
   '이 과정을 층마다 되풀이합니다.': 'Repeat this in every layer.', '12층 지남': 'Past 12 layers',
+  // Reading diagram labels (links between vectors, keys and values)
+  '질문과 열쇠는 단어 벡터에 서로 다른 행렬을 곱해 만든다': 'Query and key come from the word vector times different matrices', '질문 [1, 0]과 각 열쇠의 내적이 점수': 'The score is query [1, 0] dotted with each key',
+  '값도 단어 벡터에 또 다른 행렬을 곱해 만든다': 'The value comes from the word vector times another matrix', '비율은 점수 3, 1, 0의 소프트맥스 (반올림)': 'Shares are the softmax of scores 3, 1, 0 (rounded)',
 };

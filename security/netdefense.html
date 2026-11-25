@@ -376,6 +376,7 @@ const lesson = [
   {
     label: '방화벽',
     readingStage: 3,
+    note: ['인터넷 → 웹 :443은 규칙 1로 허용', ' · ', '인터넷 → DB :5432는 규칙 3으로 막음'],
     title: '정해 둔 규칙에 맞는 연결만 들여보낸다',
     body: '방화벽은 네트워크 입구에서 들어오는 패킷(5.8)을 규칙과 비교해 통과시키거나 버립니다. 규칙은 "어디서, 어디로, 몇 번 포트(5.9)"로 적습니다. 가장 중요한 규칙은 마지막 줄의 "나머지는 모두 막기"입니다. 열어 둔 것만 지나가므로, 실수로 켜 둔 서비스가 있어도 밖에서는 닿지 않습니다.',
     takeaway: '443번(HTTPS)으로 웹 서버에 오는 연결은 통과하고, 인터넷에서 DB의 5432번으로 바로 오는 연결은 버려졌습니다. "필요한 것만 열고 나머지는 막기"가 방화벽의 기본입니다.',
@@ -384,15 +385,16 @@ const lesson = [
     links: NET_LINKS,
     start: { title: '방화벽 규칙 (위에서부터)', lines: ['1. 인터넷 → 웹 서버 :443 허용', '2. 사무실 IP 203.0.113.7 → 관리 서버 :22 허용', '3. 나머지 모두 막기'], holds: { fw: '규칙 3줄' } },
     stages: [
-      { from: 'net', to: 'fw', label: '→ 웹 :443', title: '웹 접속', lines: ['규칙 1에 맞음 → 통과'], text: '웹 서버 443번 연결이 옵니다.', holds: { fw: '규칙 1 ✓' } },
+      { from: 'net', to: 'fw', label: '→ 웹 :443', title: '웹 접속', lines: ['규칙 1에 맞음 → 통과'], text: '웹 서버 443번 연결이 옵니다.', holds: { fw: '규칙 1 허용' } },
       { from: 'fw', to: 'web', label: ':443', title: '웹 서버 도착', lines: ['HTTPS 연결 시작 (8C.2)'], text: '웹 서버로 통과합니다.', holds: { web: '접속 받음' } },
-      { from: 'net', to: 'fw', label: '→ DB :5432', title: 'DB로 바로', lines: ['규칙 1, 2에 안 맞음 → 규칙 3: 막기', '패킷 버림'], error: 'fw', text: '인터넷에서 DB로 바로 오는 연결은 막힙니다.', holds: { fw: '규칙 3 ✗' },
+      { from: 'net', to: 'fw', label: '→ DB :5432', title: 'DB로 바로', lines: ['규칙 1, 2에 안 맞음 → 규칙 3: 막기', '패킷 버림'], error: 'fw', text: '인터넷에서 DB로 바로 오는 연결은 막힙니다.', holds: { fw: '규칙 3 막음' },
         ask: { q: '인터넷의 아무 IP에서 관리 서버 22번(원격 접속)으로 오면?', choices: ['막힌다 (사무실 IP만 허용)', '통과한다'], answer: '막힌다 (사무실 IP만 허용)', why: '규칙 2는 사무실 IP에서 온 것만 허용합니다. 나머지는 규칙 3에 걸립니다.' } },
     ],
   },
   {
     label: '망 나누기',
     readingStage: 2,
+    note: ['웹 서버가 뚫려도', ' → ', '관리 서버로는 칸 규칙에 막힘', ' · ', 'DB에는 닿지만 users 표는 권한 없음'],
     title: '뚫려도 번지지 않게 네트워크를 칸으로 나눈다',
     body: '밖에서 닿아야 하는 웹 서버는 DMZ라는 따로 떨어진 칸에 두고, DB와 관리 서버는 안쪽 칸에 둡니다. 칸 사이에도 규칙을 둬서, 웹 서버는 DB의 5432번에만 말할 수 있고 관리 서버에는 아예 닿지 못하게 합니다. 웹 서버가 8C.4 같은 공격으로 뚫려도, 공격자가 갈 수 있는 곳이 좁아집니다.',
     takeaway: '뚫린 웹 서버에서 관리 서버로 가려는 연결은 칸 사이 규칙에 막혔습니다. DB에는 닿지만 웹 서버용 계정의 권한만큼만 할 수 있습니다. 한 곳이 뚫려도 전부 뚫리지 않게 하는 것이 망 나누기입니다.',
@@ -409,6 +411,7 @@ const lesson = [
   {
     label: '침입 탐지',
     readingStage: 2,
+    note: ['같은 IP에서 1분에 로그인 실패 500번', ' → ', '기준 100을 넘어 경보', ' → ', '그 IP를 1시간 차단'],
     title: '수상한 패턴을 찾아 알린다',
     body: '규칙으로 막는 것만으로는 모자랍니다. 침입 탐지 시스템은 로그와 트래픽을 지켜보다 수상한 패턴을 찾으면 알립니다. 한 IP가 1분에 로그인을 500번 실패하거나, 짧은 시간에 포트 1,000개를 차례로 두드리면(포트 스캔) 공격 신호입니다. 다만 8B.2처럼 드문 공격을 찾을수록 잘못된 경보가 많아지므로, 경보의 기준을 잘 맞춰야 합니다.',
     takeaway: '한 IP의 로그인 실패 500번이 경보를 울렸고, 방화벽이 그 IP를 1시간 막았습니다. 탐지와 차단이 이어지면 사람이 보기 전에도 막을 수 있습니다. 기준이 너무 낮으면 비밀번호를 몇 번 틀린 사용자까지 막게 됩니다.',
@@ -425,7 +428,8 @@ const lesson = [
   },
   {
     label: '여러 겹',
-    readingStage: 3,
+    readingStage: 4,
+    note: ['3달 묵은 취약점으로 웹 서버가 뚫림', ' → ', '다음 겹: DB가 users 표를 거절', ' · ', '수상한 바깥 연결에 경보'],
     title: '한 겹이 뚫려도 다음 겹이 막는다',
     body: '완벽한 방어 한 겹은 없습니다. 그래서 방화벽, 망 나누기, 최소 권한, 탐지, 암호화(8C.2), 안전한 코드(8C.3, 8C.4), 빠른 보안 업데이트를 겹겹이 둡니다. 공격자는 모든 겹을 뚫어야 하고, 방어자는 그중 한 겹에서만 막으면 됩니다. 마지막 겹은 백업과 복구 계획입니다.',
     takeaway: '이번 공격은 웹 서버의 알려진 취약점으로 들어왔지만, 망 나누기와 DB 권한에 막혀 고객 정보에 닿지 못했고, 탐지가 이상한 연결을 알렸습니다. 업데이트를 미루지 않았다면 첫 겹에서 막혔을 것입니다.',
@@ -514,8 +518,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -562,6 +567,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what was allowed, blocked and noticed, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

@@ -83,4 +83,9 @@ window.lessonText = {
   '매개변수 질의가 인젝션을 막는 까닭은?': 'Why does a parameterised query block injection?', '문장 구조를 먼저 정하고 입력은 값으로만 넣어서': 'The statement structure is set first and input goes in only as a value', '따옴표를 모두 지워서': 'It deletes all the quotes',
   '입력이 아무리 SQL처럼 생겨도 이미 정해진 구조의 빈칸을 채우는 값일 뿐입니다.': 'However much the input looks like SQL, it is only a value filling a blank in a structure already set.',
   '안전한 응답': 'Safe response', '200 OK · 검색 결과 없음': '200 OK · no results', '공격이 아무 정보도 꺼내지 못했습니다.': 'The attack got no data out.',
+  // Example note on the still picture.
+  '비밀번호 입력': 'password typed', '서버가 같은 계산으로 해시': 'server hashes it the same way', 'DB에 저장된 해시와 같음': 'matches the hash in the DB', '서버 · 200 로그인됨': 'Server · 200 logged in',
+  '세션 번호를 쿠키로 받음': 'session id comes as a cookie', '다음 요청에 쿠키': 'cookie sent next time', '세션 번호로 사용자 7을 찾음': 'session id finds user 7', '서버 · 주문 목록': 'Server · order list',
+  '사용자 7이 GET /orders/503': 'user 7: GET /orders/503', '주문 503의 주인은 사용자 9': 'order 503 belongs to user 9', '403 거절': '403 refused', '7 ≠ 9': '7 ≠ 9',
+  "입력 ' OR '1'='1": "input ' OR '1'='1", '이어 붙이면 모든 행이 나옴': 'glued in: every row comes out', '값으로 전달하면 0행': 'passed as a value: 0 rows',
 };

@@ -84,6 +84,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .total.max text{fill:#a24c14}
 .total{transform-box:fill-box;transform-origin:center}
 .total.bump{animation:bump .32s ease-out}
+.total.long text{font-size:14px}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
 .note{animation:note 1.6s ease-out forwards}
 .note path{fill:none;stroke:#43574f;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
@@ -93,7 +94,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
-@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
+@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.total.long text{font-size:18px}.packet-label{font-size:13px}.note text{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:none}.note,.total.bump{animation:none}}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -319,6 +320,7 @@ const lesson = [
   {
     label: '리스트 만들기',
     readingMemory: [["점수[0]", 70], ["점수[1]", 85], ["점수[2]", 90], ["둘째", 85]],
+    readingCpu: '둘째 = 점수[1] → 101번지 85 읽음',
     example: ["점수 = [70, 85, 90]", "인덱스 1 읽기", "두 번째 값 85"],
     title: '리스트는 값을 이웃한 칸에 차례로 담는다',
     body: '리스트는 값 여러 개를 순서대로 담는 상자입니다. 점수 = [70, 85, 90]이라고 쓰면 이웃한 칸 세 개에 값이 차례로 들어가고, 각 칸은 0번부터 번호(인덱스)로 부릅니다. 첫 칸이 1번이 아니라 0번인 것이 처음엔 헷갈리는 부분입니다.',
@@ -333,6 +335,7 @@ const lesson = [
   {
     label: '덧붙이기',
     readingMemory: [["점수[0]", 70], ["점수[1]", 85], ["점수[2]", 90], ["점수[3]", 60], ["개수", 4]],
+    readingCpu: 'append(60) → 103번지 · len = 4',
     example: ["점수 3개", "끝에 60 추가", "점수[3] = 60 · 길이 4"],
     title: '리스트는 끝에 새 칸을 이어 붙인다',
     body: 'append는 리스트 맨 끝 다음 칸에 값을 붙입니다. 리스트의 길이(len)는 칸 수이고, 마지막 칸의 인덱스는 길이보다 1 작습니다. 칸이 이웃해 있어서 "몇 번째"로 바로 찾아갈 수 있다는 것이 리스트의 장점입니다.',
@@ -349,6 +352,7 @@ const lesson = [
   {
     label: '딕셔너리',
     readingMemory: [["나이[\"민수\"]", 15], ["나이[\"지아\"]", 14], ["답", 14]],
+    readingCpu: '나이["지아"] → 키로 101번지 14',
     example: ["나이 표에 지아: 14", "키 ‘지아’ 조회", "답 14"],
     title: '딕셔너리는 이름(키)으로 값을 찾는다',
     body: '딕셔너리는 값마다 번호 대신 이름표(키)를 붙여 담습니다. 나이 = {"민수": 15, "지아": 14}이면 "지아"라는 키로 14를 바로 꺼낼 수 있습니다. 순서보다 "무엇에 대한 값인지"가 중요할 때 씁니다.',
@@ -365,6 +369,7 @@ const lesson = [
   {
     label: '찾는 방법 비교',
     readingMemory: [["명단[0]", "민수"], ["명단[1]", "하늘"], ["명단[2]", "지아"], ["번호[\"민수\"]", 1], ["번호[\"하늘\"]", 2], ["번호[\"지아\"]", 3], ["위치", 2], ["바로", 3]],
+    readingCpu: 'index: 3칸 훑음 · 키: 1칸 읽음',
     example: ["마지막 이름 ‘지아’", "리스트 3칸 훑기", "키 조회는 해당 칸으로"],
     title: '값으로 찾으면 훑고, 키로 찾으면 바로 간다',
     body: '리스트에서 "지아가 몇 번째에 있는지" 모르면 0.6의 순차 탐색처럼 앞에서부터 칸을 하나씩 읽어야 합니다. 딕셔너리는 키에서 칸의 위치를 바로 계산해 한 칸만 읽습니다. 그래서 이름으로 자주 찾는 데이터는 딕셔너리에 담습니다. 위치를 계산하는 방법은 4.5 해시 테이블에서 다룹니다.',
@@ -466,6 +471,7 @@ function buildScene() {
   addPlate(node, 'tag', cx, cy + 16, 'CPU');
   const work = addPlate(node, 'total', 0, -H - 14 * h - 18, '대기', { pad: 1.1, round: false });
   cpu = { node, work };
+  new MutationObserver(() => requestAnimationFrame(placeReadingCpu)).observe(work.label, { childList: true, characterData: true, subtree: true });
 }
 
 // ---------- Packets: reads travel cell → CPU, writes travel CPU → cell ----------
@@ -548,6 +554,17 @@ function setPlate(plate, text) {
 }
 
 // ---------- Drawing ----------
+// Anchor the long CPU plate's right end at the chip. The page translation swaps the text (and resizes the plate)
+// after paint, so the plate is placed again whenever its text changes.
+function placeReadingCpu() {
+  if (!cpu.work.group.classList.contains('long')) return;
+  cpu.work.x = 0;
+  sizePlate(cpu.work);
+  cpu.work.x = 30 - Number(cpu.work.rect.getAttribute('width')) / 2;
+  cpu.work.y = cpu.work.home - 46;
+  sizePlate(cpu.work);
+}
+
 function paint(changed = -1) {
   const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? step().readingMemory : null;
   cells.forEach((cell, k) => {
@@ -558,6 +575,15 @@ function paint(changed = -1) {
     cell.name.group.style.opacity = name ? 1 : 0;
     cell.wire.classList.toggle('active', Boolean(name));
   });
+  // The reading preview shows the step's operation on the CPU, so the still picture says how memory got so
+  // (rules in references/visual-language.md, 1장 "정지 화면의 CPU 판"). Longer than a running value: smaller, growing left.
+  cpu.work.group.classList.toggle('long', Boolean(preview && step().readingCpu));
+  // It also sits 46px higher, above the two staggered rows of name tags.
+  cpu.work.home ??= cpu.work.y;
+  cpu.work.x = 0;
+  cpu.work.y = cpu.work.home;
+  if (preview) setPlate(cpu.work, step().readingCpu ?? '대기');
+  placeReadingCpu();
   if (changed >= 0) {
     const node = cells[changed].node;
     node.classList.remove('changed');

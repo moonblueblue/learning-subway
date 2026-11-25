@@ -54,7 +54,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
 .item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
-.choices{display:flex;gap:6px}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
 .choice{min-width:68px}
 .choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
 .choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
@@ -151,7 +151,7 @@ const lesson = [
   },
   {
     label: '도미노',
-    example: ["첫 도미노가 넘어짐", "각 도미노가 다음 칸을 넘어뜨림", "끝 칸까지 차례로 넘어짐"],
+    example: ["첫 도미노가 넘어짐", "각 도미노가 다음 칸을 넘어뜨림", "모든 칸이 차례로 넘어짐"],
     title: '첫 칸과 다음 칸이면 모든 칸이 넘어간다',
     body: '도미노를 끝없이 세워 두었다고 해 봅시다. 첫 번째가 넘어지고, "어떤 도미노가 넘어지면 바로 다음 것도 넘어진다"가 참이면, 모든 도미노가 넘어집니다. 이것이 수학적 귀납법입니다. ① n = 1일 때 참임을 보이고(시작), ② n = k일 때 참이면 n = k + 1일 때도 참임을 보이면(이어 감), 모든 자연수 n에서 참입니다.',
     link: '0.1에서 1씩 더하면 다음 수가 되었습니다. 귀납법은 이 "1씩 늘려 가기"를 무한히 이어 가는 논리입니다.',
@@ -185,7 +185,7 @@ const lesson = [
   },
   {
     label: '코드의 정확성',
-    example: ["반복 전 합계 0", "한 바퀴마다 지금까지의 합 유지", "반복 종료 시 전체 합"],
+    example: ["반복 전 합계 0", "매 바퀴 합계 = 1 + … + (i − 1) 유지", "반복 종료 시 전체 합"],
     title: '귀납법으로 프로그램이 맞다는 것을 보인다',
     body: '반복문이 맞다는 것은 "반복 불변식"으로 보입니다. 1.2의 합계 반복에서 "매 바퀴를 시작할 때 합계 = 1 + … + (i − 1)"이 처음에도 참이고, 한 바퀴가 지나도 계속 참이면, 반복이 끝났을 때 합계는 1 + … + n입니다. 재귀 함수도 같은 방식으로 보입니다.',
     link: '1.5의 팩(n)은 팩(1)이 맞고, 팩(n − 1)이 맞으면 n × 팩(n − 1)도 맞습니다. 바로 귀납법의 두 단계입니다.',

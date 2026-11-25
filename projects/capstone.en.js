@@ -77,4 +77,10 @@ window.lessonText = {
   '큐의 30,000개를 모두 저장하는 데 걸리는 시간은?': 'How long does saving all 30,000 in the queue take?', '150초': '150 s', '10초': '10 s', '1,500초': '1,500 s',
   '30,000 ÷ 200 = 150초입니다. 그동안 주문 상태는 "접수됨"이고, 저장되면 "확정"으로 바뀝니다.': '30,000 ÷ 200 = 150 s. Meanwhile the order status is "received", turning to "confirmed" once saved.',
   '상품 보기': 'View products', '읽기는 그대로 캐시로': 'Reads still go to the cache', '세일 중에도 상품 보기는 캐시에서 빠르게': 'Even during the sale, product views are fast from the cache', '읽기는 여전히 캐시가 받아 줍니다.': 'The cache still takes the reads.', 'HIT 90%': 'HIT 90%',
+  // Example note on the still picture.
+  '앱 서버 500/초 · DB 1,000 질의/초까지': 'app 500/s · DB 1,000 q/s max', '400/초면 둘 다 80%': '400/s: both 80%', '800/초면 앱 서버가 160%로 먼저 넘침': '800/s: the app hits 160% first',
+  '앱 서버 2대가 400/초씩 (80%)': '2 app servers at 400/s each (80%)', '페이지마다 질의 2번: 1,600 질의/초': '2 queries a page: 1,600 queries/s', 'DB 1,000/초를 넘어 160%': 'over the DB\'s 1,000/s: 160%',
+  '질의 1,600/초 중 90%인 1,440이 캐시에서 끝남': '1,440 of 1,600 queries/s (90%) end in the cache', 'DB에는 160/초만 (16%)': 'only 160/s reach the DB (16%)',
+  '세일 10초: 주문 3,000/초 = 30,000개': '10 s sale: 3,000/s = 30,000', '큐에 쌓고 일꾼이 200/초씩': 'queued, workers take 200/s', 'DB는 넘치지 않음 · 150초에 걸쳐 처리': 'DB never overflows · 150 s',
+  '200/초 · 안전': '200/s · safe', 'HIT 1,440/초': 'HIT 1,440/s',
 };

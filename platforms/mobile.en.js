@@ -78,4 +78,10 @@ window.lessonText = {
   '알림 표시': 'Notify', '화면에 알림 표시': 'Notification shown on screen', '사용자가 알림을 누르면 앱이 깨어나': 'When the user taps it, the app wakes', 'GET /api/messages?after=… 로 새 메시지만 받아 옴': 'and fetches only new messages with GET /api/messages?after=…', '알림을 누르면 앱이 깨어나 새 메시지를 받아 옵니다.': 'Tapping the notification wakes the app to fetch the new messages.',
   '앱 30개가 각자 1분마다 폴링하는 것과 비교해 푸시의 좋은 점은?': 'Compared with 30 apps each polling every minute, what is good about push?', '휴대폰이 소식이 없을 때는 쉴 수 있다': 'The phone can rest when there is no news', '메시지가 더 길어진다': 'Messages get longer',
   '폴링은 소식이 없어도 매번 깨어나 통신합니다. 푸시는 연결 하나로 소식이 있을 때만 일합니다.': 'Polling wakes and talks to the network every time, news or not. Push works over one connection, only when there is news.',
+  // Example note on the still picture.
+  '센서 0.9V': 'sensor 0.9V', 'ADC가 숫자 279로': 'ADC makes it 279', '279 < 300이라 펌프 3초 켜기': '279 < 300, so pump on for 3 s',
+  '잠 (0.01mA)': 'asleep (0.01mA)', '타이머로 깨어남': 'timer wakes it', '센서를 잠깐 켜 습도 650': 'sensor on briefly: 650', '할 일 없어 다시 잠': 'nothing to do, back to sleep',
+  '지하철: "우유 사기"를 기기에 먼저 저장': 'subway: "Buy milk" saved on the device first', '보내기 실패': 'send fails', '연결이 돌아오자 동기화: 서버 메모 3개 + 1 = 4개': 'back online, sync: server 3 notes + 1 = 4',
+  '앱은 잠': 'app asleep', '서버 → 푸시 서비스 → OS가 알림 표시': 'server → push service → OS shows it', '누르면 앱이 깨어나 새 메시지 1개': 'tap: app wakes, 1 new message',
+  '보낼 것 0': '0 to send',
 };

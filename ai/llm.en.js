@@ -44,7 +44,7 @@ window.lessonText = {
   '다음 토큰을 계산할 때 모델이 보는 글은?': 'What text does the model look at when computing the next token?',
   '방금 붙인 "좋"까지 포함한 글 전체': 'The whole text, including the "nice" just appended', '처음 질문만': 'Only the first question',
   '자기가 쓴 토큰까지 글에 들어가 다음 계산의 입력이 됩니다.': 'Even the tokens it wrote itself go into the text and become input to the next calculation.',
-  '다시': 'Again', '되풀이': 'Repeat', '… → "다" 92% → "." 88% → 끝': '… → "today" 92% → "." 88% → end', '끝 표시가 나올 때까지 되풀이합니다.': 'Repeat until the end marker comes.', '3번 더': '3 more',
+  '다시': 'Again', '되풀이': 'Repeat', '… → "다" 92% → "." 88% → 끝': '… → "today" 92% → "." 88% → end', '끝 표시가 나올 때까지 되풀이합니다.': 'Repeat until the end marker comes.',
   // Step 3
   '온도': 'Temperature', '온도로 얼마나 모험할지 정한다': 'Temperature sets how adventurous to be',
   '늘 가장 높은 확률만 고르면 답이 매번 똑같고 단조로워집니다. 그래서 확률대로 무작위로 뽑는데, 이때 온도라는 숫자로 확률표를 조절합니다. 온도가 낮으면 높은 확률이 더 커져 거의 늘 1등을 고르고, 높으면 확률이 고르게 퍼져 낮은 후보도 자주 뽑힙니다. 사실을 답할 때는 낮게, 이야기를 지을 때는 높게 씁니다.':
@@ -52,7 +52,7 @@ window.lessonText = {
   '온도 0.2에서는 "좋"이 약 88%로 커지고, 온도 1.5에서는 "좋" 38%, "덥" 29%, "춥" 18%, 그 밖 14%로 퍼졌습니다. 같은 질문에 답이 매번 조금씩 다른 까닭이 이 무작위 뽑기입니다.':
     'At temperature 0.2, "nice" grows to about 88%; at 1.5 it spreads out to "nice" 38%, "hot" 29%, "cold" 18% and others 14%. This random draw is why the same question gets slightly different answers each time.',
   '같은 장면입니다. 온도를 바꿔 확률표를 조절합니다.': 'The same scene. Change the temperature to adjust the probability table.',
-  '확률표 (온도 1)': 'Probability table (temperature 1)', '좋 45% · 덥 30% · 춥 15% · 그 밖 10%': 'nice 45% · hot 30% · cold 15% · others 10%', '온도 1': 'Temp 1',
+  '확률표 (온도 1)': 'Probability table (temperature 1)', '좋 45% · 덥 30% · 춥 15% · 그 밖 10%': 'nice 45% · hot 30% · cold 15% · others 10%',
   '온도 0.2': 'Temp 0.2', '온도 1.5': 'Temp 1.5', '낮은 온도': 'Low temperature', '높은 온도': 'High temperature',
   '좋 ≈ 88% · 덥 ≈ 12% · 춥 ≈ 0.4%': 'nice ≈ 88% · hot ≈ 12% · cold ≈ 0.4%', '대부분 "좋"': 'Mostly "nice"', '온도를 낮추면 1등이 거의 다 가져갑니다.': 'Lower the temperature and the top one takes almost everything.',
   '좋 ≈ 38% · 덥 ≈ 29% · 춥 ≈ 18% · 그 밖 ≈ 14%': 'nice ≈ 38% · hot ≈ 29% · cold ≈ 18% · others ≈ 14%', '낮은 후보도 자주 뽑힘': 'low candidates get picked often',
@@ -81,4 +81,10 @@ window.lessonText = {
   '언어 모델이 없는 논문 제목을 자신 있게 말하는 까닭은?': 'Why does a language model confidently name a paper that does not exist?',
   '그럴듯한 다음 토큰을 이어 쓸 뿐 사실을 확인하지 않아서': 'It only writes likely next tokens and does not check facts', '거짓말을 하도록 배워서': 'It was trained to lie',
   '논문 제목처럼 보이는 토큰이 확률이 높으면 이어 씁니다. 그래서 검색 결과를 넣어 주거나 출처를 확인합니다.': 'If tokens that look like a paper title have high probability, it writes them. So give it search results or check the sources.',
+  // Example note on the still picture.
+  '"오늘 날씨가 정말"': '"Today the weather is really"', '다음 토큰: 좋 45% · 덥 30% · 춥 15% · 그 밖 10%': 'next token: nice 45% · hot 30% · cold 15% · other 10%',
+  '"좋"을 골라 글 끝에 붙임 (토큰 5개)': 'pick "nice", append it (5 tokens)', '다시 물어 "다", "."도 붙임': 'ask again: append "-day", "." too', '"오늘 날씨가 정말 좋다."': '"Today the weather is really nice."',
+  '좋 45% · 덥 30% · 춥 15%': 'nice 45% · hot 30% · cold 15%', '온도 0.2면 대부분 "좋"': 'temperature 0.2: mostly "nice"', '1.5면 골고루 뽑혀 다른 이어 쓰기': '1.5: spread out, other endings',
+  '"1바이트는 몇 비트야?"를 대화 글로': '"How many bits in a byte?" as chat text', '조수 차례를 이어 씀': 'continue the assistant turn', '"8"을 고르고 끝 토큰에서 멈춤': 'pick "8", stop at the end token',
+  '다시 계산': 'Again', '같은 확률표': 'Same table', '끝 토큰': 'End token', '토큰 20': '20 tokens', '고르기 · 뽑은 토큰': 'Choose · drawn token', '지금까지의 글 · 다시': 'Text so far · again', '계산 중': 'Computing',
 };

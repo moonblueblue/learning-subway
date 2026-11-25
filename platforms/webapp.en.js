@@ -8,7 +8,6 @@ window.lessonText = {
     'How do the browser, the server and the API share the work? In a small stationery-shop web app, follow listing products, the cart, a tampered order and payment as they travel between the three parts.',
   '브라우저 프론트엔드, API 서버, 데이터베이스, 결제 회사 API 사이로 요청과 응답이 오가는 장면': 'Requests and responses travelling between the browser front end, the API server, the database and the payment company\'s API',
   '웹 앱의 세 부분': 'The three parts of a web app',
-  
   'API 서버': 'API server', '데이터베이스': 'Database', '결제 회사': 'Payment company',
   '프론트엔드': 'Front end', '백엔드': 'Back end', '데이터와 외부 서비스': 'Data and outside services',
   'API 서버 · 201 Created': 'API server · 201 Created', 'API 서버 · 201 · 2,400원': 'API server · 201 · ₩2,400', 'API 서버 · JSON': 'API server · JSON', 'API 서버 · 주문 저장': 'API server · Save order',
@@ -63,7 +62,7 @@ window.lessonText = {
   '조작된 요청 도착': 'Tampered request arrives', '가격이 10원으로 조작된 주문이 옵니다.': 'An order with the price tampered to ₩10 arrives.', '주문 요청': 'Order request',
   '서버는 주문 금액을 무엇으로 계산해야 할까요?': 'What should the server use to work out the order total?', '데이터베이스의 가격': 'The price in the database', '요청에 들어 있는 price': 'The price in the request',
   '요청 안의 값은 누구나 바꿀 수 있습니다. 가격은 서버가 가진 데이터로 계산합니다.': 'Anyone can change the values in a request. The price is worked out from the data the server holds.',
-  '가격·재고 조회': 'Look up price, stock', '서버가 다시 확인': 'The server checks again', '→ 1200원, 재고 40': '→ ₩1200, stock 40', '서버가 데이터베이스에서 진짜 가격과 재고를 확인합니다.': 'The server checks the real price and stock in the database.', '1200원, 재고 40': '₩1200, stock 40',
+  '가격·재고 조회': 'Look up price, stock', '서버가 다시 확인': 'The server checks again', '→ 1200원, 재고 40': '→ ₩1200, stock 40', '서버가 데이터베이스에서 진짜 가격과 재고를 확인합니다.': 'The server checks the real price and stock in the database.',
   '201 · 2,400원': '201 · ₩2,400', '진짜 가격으로 주문': 'Order at the real price', '요청의 price: 10은 무시함': 'price: 10 in the request ignored', '서버가 1,200원 × 2 = 2,400원으로 주문을 만듭니다.': 'The server makes the order at ₩1,200 × 2 = ₩2,400.', '2,400원 주문': '₩2,400 order',
   '공책 1개': '1 notebook', '품절 상품 주문': 'Ordering a sold-out item', '(화면의 품절 표시를 우회해서 보냄)': '(sent around the "sold out" mark on screen)', '품절인 공책을 주문하는 요청이 옵니다.': 'A request to order the sold-out notebook arrives.', '재고 확인': 'Check stock',
   '거절': 'Rejected', '{"error": "공책은 품절입니다"}': '{"error": "The notebook is sold out"}', '서버가 재고 0을 확인하고 거절합니다.': 'The server sees stock 0 and rejects it.', '품절 안내': 'Sold-out notice',
@@ -85,6 +84,12 @@ window.lessonText = {
   '누구나 브라우저에서 코드를 열어 키를 볼 수 있다': 'Anyone can open the code in the browser and see the key', '아무 일 없다': 'Nothing happens',
   '브라우저로 보낸 코드는 모두 사용자에게 공개됩니다. 키를 훔치면 우리 이름으로 결제를 부를 수 있습니다.': 'All code sent to the browser is visible to users. Whoever steals the key can make charges in our name.',
   '승인': 'Approved', '결제 승인': 'Payment approved', '결제 회사가 승인을 돌려줍니다.': 'The payment company returns an approval.',
-  '주문 저장': 'Save order', '주문 확정': 'Order confirmed', '주문 502 저장 · COMMIT': 'Save order 502 · COMMIT', '주문을 저장하고 트랜잭션을 확정합니다.': 'Save the order and commit the transaction.', '주문 502': 'Order 502',
+  '주문 저장': 'Save order', '주문 확정': 'Order confirmed', '주문 502 저장 · COMMIT': 'Save order 502 · COMMIT', '주문을 저장하고 트랜잭션을 확정합니다.': 'Save the order and commit the transaction.',
   '주문 완료': 'Order complete', '브라우저가 "주문 완료" 화면을 그립니다.': 'The browser draws the "Order complete" screen.',
+  // Example note on the still picture.
+  'DB에서 상품 3행': '3 product rows from the DB', 'JSON으로 보냄': 'sent as JSON', '브라우저가 목록을 그림': 'the browser draws the list',
+  'DB에 항목 저장': 'item saved in the DB', '201 Created (항목 번호 15)': '201 Created (item id 15)',
+  '조작한 요청 "price": 10': 'tampered request "price": 10', 'DB의 진짜 가격 1,200원': 'real price in the DB: 1,200 won', '1,200원 × 2 = 2,400원으로 주문': 'order at 1,200 × 2 = 2,400 won',
+  '결제 회사에 2,400원 결제 · 승인': 'pay company charges 2,400 · approved', 'DB에 주문 #502 저장': 'DB saves order #502',
+  'price 무시': 'price ignored', '1,200원 · 재고 40': '1,200 won · 40 in stock', '주문 #502': 'Order #502',
 };

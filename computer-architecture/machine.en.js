@@ -17,7 +17,8 @@ window.lessonText = {
   '{0} 비트 {#1} 켜짐. 합계 {#2}': '{0} bit {1} on. Sum {2}', '{0} 비트 {#1} 꺼짐. 합계 {#2}': '{0} bit {1} off. Sum {2}',
   '({#0}) → 연산 {1} = {2} · 레지스터 {3} = {4} · 주소 {5} = {#6} →': '({0}) → opcode {1} = {2} · register {3} = {4} · address {5} = {6} →',
   '기계어 {0} ({#1}) → 연산 {2} = {3} · 레지스터 {4} = {5} · 주소 {6} = {#7} → {8}': 'Machine code {0} ({1}) → opcode {2} = {3} · register {4} = {5} · address {6} = {7} → {8}',
-  '수 {#0} · 문자 {1}': 'number {0} · character {1}', '제어 문자': 'control character', '알 수 없는 명령': 'Unknown instruction',
+  '수 {#0} · 문자 {1}': 'number {0} · character {1}', '{0} {1} → 수 {#2} · 문자 {3}': '{0} {1} → number {2} · character {3}',
+  '연산 코드 {0} → 명령표 {#1}번 = {2}': 'Opcode {0} → table entry {1} = {2}', '{0} → {1} · {2} · {3}': '{0} → {1} · {2} · {3}', '제어 문자': 'control character', '알 수 없는 명령': 'Unknown instruction',
   '멈춤': 'Halt', '메모리 → 레지스터': 'Memory → register', '레지스터 → 메모리': 'Register → memory', 'PC ← 주소': 'PC ← address', 'Z면 PC ← 주소': 'if Z, PC ← address', '없는 명령': 'No such instruction',
   // Step 1
   '명령도 비트': 'Instructions are bits too', '001 = LOAD · 0 = A': '001 = LOAD · 0 = A', '5번지를 A로 읽기': 'Read address 5 into A',

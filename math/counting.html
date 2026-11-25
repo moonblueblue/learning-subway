@@ -54,7 +54,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
 .item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
-.choices{display:flex;gap:6px}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
 .choice{min-width:68px}
 .choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
 .choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
@@ -185,14 +185,14 @@ const lesson = [
   },
   {
     label: '컴퓨터 속 확률',
-    example: ["비트 한 자리 추가", "각 기존 값 뒤에 0 또는 1", "가능한 값 두 배"],
+    example: ["소문자 12자리 비밀번호", "자리마다 26가지를 곱함", "26¹² ≈ 9.5경 가지"],
     title: '보안과 해시는 경우의 수와 확률 위에 서 있다',
     body: '비밀번호가 안전한 이유는 경우의 수가 너무 커서 하나씩 다 시도할 수 없기 때문입니다. 반대로 경우의 수가 넉넉해 보여도 겹칠 확률은 생각보다 빨리 커집니다. 23명만 모여도 생일이 같은 두 사람이 있을 확률이 50%를 넘습니다(생일 문제). 이 생각이 4.5 해시 테이블과 6.11 암호화에서 다시 나옵니다.',
     link: '0.6에서 1부터 100 사이의 수를 반씩 줄여 맞히면 7번이면 충분했습니다. 2⁷ = 128 ≥ 100이기 때문입니다.',
     case: '다음 문장이 참인지 고르세요.',
     choices: TF,
     items: [
-      { text: '소문자 26개로 만든 12자리 비밀번호는 26¹² ≈ 95조 가지다.', answer: 'true', why: '26을 12번 곱하면 약 9.5 × 10¹⁶입니다. 조 단위를 훌쩍 넘습니다.' },
+      { text: '소문자 26개로 만든 12자리 비밀번호는 26¹² ≈ 9.5경 가지다.', answer: 'true', why: '26을 12번 곱하면 약 9.5 × 10¹⁶, 곧 9.5경입니다. 조 단위를 훌쩍 넘습니다.' },
       { text: '23명이 모이면 생일이 같은 두 사람이 있을 확률이 50%를 넘는다.', answer: 'true', why: '두 사람 짝이 253쌍이나 되어, 모두 다를 확률이 50% 아래로 떨어집니다.' },
       { text: '1–100 중 하나를 "크다/작다" 힌트로 맞히려면 최대 7번이면 된다.', answer: 'true', why: '반씩 줄이면 100 → 50 → 25 → 13 → 7 → 4 → 2 → 1, 7번입니다.' },
       { text: '프로그래밍 언어의 random 함수는 진짜로 예측할 수 없는 값을 만든다.', answer: 'false', why: '대부분은 정해진 계산으로 무작위처럼 보이는 수를 만듭니다(의사 난수). 시작값을 알면 다음 수를 알 수 있어, 보안에는 따로 만든 난수를 씁니다.' },

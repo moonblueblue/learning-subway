@@ -15,7 +15,7 @@ window.lessonText = {
   '메시지 하나': 'One message', '메시지 → 패킷 3개': 'Message → 3 packets', '작은 패킷 3개로 분할': 'Split into 3 small packets',
   '해외 서버 주소': 'Overseas server address', '주소 203.0.113.7': 'Address 203.0.113.7', '공유기로 차례로 전송': 'Sent to the home router in turn',
   '공유기에서 통신사로': 'From the home router to the provider', '집 밖의 목적지': 'A destination outside the home',
-  '라우터가 다음 홉 선택': 'Each router picks the next hop', '다음 칸 → 케이블': 'Next hop → cable', '해저 케이블 거쳐 서버 도착': 'Reaches the server through the undersea cable',
+  '라우터가 다음 홉 선택': 'Each router picks the next hop', '다음 칸 고름': 'Picks next hop', '해저 케이블 거쳐 서버 도착': 'Reaches the server through the undersea cable',
   '도착 · 3개 모두': 'Arrived · all 3', '다음 네트워크에 도착': 'Reached the next network',
   '서버가 답장': 'The server replies', '답장 보냄': 'Reply sent', '돌아가는 길': 'The way back', '라우터 → 통신사 → 공유기': 'Routers → provider → home router',
   '답장 받음': 'Reply received', '노트북에 응답 도착': 'The reply reaches the laptop',

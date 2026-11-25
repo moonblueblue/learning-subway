@@ -90,4 +90,6 @@ window.lessonText = {
   '파일을 처음부터 끝까지 한 번 읽기 때문입니다. 그래서 옛 줄을 치우는 합치기가 켜는 시간도 줄여 줍니다.': 'Because the file is read once from start to end. That is why compaction, which clears old lines, also shortens startup.',
   'GET 민지': 'GET Minji', 'GET 민지 → 70000 ✓': 'GET Minji → 70000 ✓', '전원이 꺼져도 확정된 값은 남고, 반쪽 트랜잭션은 사라짐': 'Settled values survive power loss; half-done transactions vanish',
   '확정된 값이 그대로 돌아옵니다.': 'The settled value comes back as is.',
+  // Reading diagram labels
+  '줄 0 · 연필 1200 (옛 값)': 'Line 0 · pencil 1200 (old)', '#8 · 민지 40000 한 줄만 기록': '#8 · only one line, Minji 40000', '복구한 최신 값': 'Recovered latest',
 };

@@ -366,6 +366,7 @@ const lesson = [
   {
     label: '세 가지 변환',
     readingStage: 4,
+    note: ['점 (1, 0)', ' → ', '크기 ×2: (2, 0)', ' → ', '반시계 90°: (0, 2)', ' → ', '이동 (+3, +1): (3, 3)'],
     title: '늘리고, 돌리고, 옮긴다',
     body: '물체를 움직이는 일은 세 가지 변환의 조합입니다. 크기 바꾸기는 좌표에 수를 곱하고, 회전은 8B.1의 회전 행렬을 곱하고(90°면 (x, y) → (−y, x)), 이동은 수를 더합니다. 점 (1, 0)에 차례로 적용해 봅니다. 3D에서도 축이 하나 늘 뿐 같습니다.',
     takeaway: '(1, 0)이 크기 ×2로 (2, 0), 90° 회전으로 (0, 2), (+3, +1) 이동으로 (3, 3)이 됐습니다. 게임 캐릭터가 걷고, 돌고, 커지는 것이 모두 이 계산입니다.',
@@ -383,6 +384,7 @@ const lesson = [
   {
     label: '순서',
     readingStage: 4,
+    note: ['A: 회전 → 이동 = (3, 2)', ' · ', 'B: 이동 → 회전 = (−1, 4)', ' → ', '순서만 바꿔도 다름'],
     title: '같은 변환도 순서가 바뀌면 결과가 다르다',
     body: '"돌린 다음 옮기기"와 "옮긴 다음 돌리기"는 다릅니다. 회전은 원점을 중심으로 돌기 때문에, 먼저 옮겨 두면 멀리서 원점을 중심으로 크게 돕니다. 그래서 물체는 보통 "제자리에서 크기 → 제자리에서 회전 → 마지막에 이동" 순서로 변환합니다.',
     takeaway: '(1, 0)을 돌린 다음 옮기면 (3, 2), 옮긴 다음 돌리면 (−1, 4)입니다. 제자리에서 돌던 팽이가, 순서를 바꾸면 원점 둘레를 크게 도는 것과 같습니다.',
@@ -390,9 +392,9 @@ const lesson = [
     stations: ST,
     start: { title: '점 (1, 0)', lines: ['A: 회전 90° → 이동 (+3, +1)', 'B: 이동 (+3, +1) → 회전 90°'], holds: { p: '(1, 0)' } },
     stages: [
-      { from: 'p', to: 'r', label: 'A: 회전 먼저', title: 'A: 회전', lines: ['(1, 0) → (0, 1)'], text: 'A는 먼저 돌립니다.', holds: { r: '(0, 1)' } },
+      { from: 'p', to: 'r', label: 'A: 회전 먼저', title: 'A: 회전', lines: ['(1, 0) → (0, 1)'], text: 'A는 먼저 돌립니다.', holds: { r: 'A (0,1)' } },
       { from: 'r', to: 't', label: '(0, 1)', title: 'A: 이동', lines: ['(0 + 3, 1 + 1) = (3, 2)'], text: '그다음 옮깁니다. A의 결과는 (3, 2)입니다.', holds: { t: 'A = (3, 2)' } },
-      { from: 'p', to: 't', label: 'B: 이동 먼저', title: 'B: 이동', lines: ['(1 + 3, 0 + 1) = (4, 1)'], text: 'B는 먼저 옮깁니다.', holds: { t: '(4, 1)' },
+      { from: 'p', to: 't', label: 'B: 이동 먼저', title: 'B: 이동', lines: ['(1 + 3, 0 + 1) = (4, 1)'], text: 'B는 먼저 옮깁니다.', holds: { t: 'B (4,1)' },
         ask: { q: 'B에서 (4, 1)을 90° 돌리면?', choices: ['(−1, 4)', '(3, 2)', '(1, −4)'], answer: '(−1, 4)', why: '(x, y) → (−y, x)에서 (4, 1) → (−1, 4)입니다. A의 (3, 2)와 다릅니다.' } },
       { from: 't', to: 'out', label: 'B 결과', title: '비교', lines: ['A (돌리고 옮기기) = (3, 2)', 'B (옮기고 돌리기) = (−1, 4)'], text: '순서만 바꿨는데 결과가 다릅니다.', holds: { out: 'A ≠ B' } },
     ],
@@ -400,6 +402,7 @@ const lesson = [
   {
     label: '한 행렬로',
     readingStage: 2,
+    note: ['M = T × R × S로 미리 묶음', ' → ', '(1, 0, 1)에 한 번 곱함', ' → ', '세 번 계산한 것과 같은 (3, 3)'],
     title: '변환 여러 개를 행렬 하나로 묶어 둔다',
     body: '꼭짓점이 백만 개인데 변환 세 개를 하나씩 적용하면 계산이 세 배입니다. 그런데 크기와 회전은 행렬 곱이고, 좌표에 1을 하나 더 붙여 (x, y, 1)로 쓰면 이동도 3×3 행렬 곱이 됩니다(동차 좌표). 그러면 세 행렬을 미리 곱해 행렬 하나로 만들고, 꼭짓점마다 한 번만 곱하면 됩니다.',
     takeaway: '이동 · 회전 · 크기를 미리 곱한 행렬 하나로 (1, 0, 1)을 곱했더니 한 번에 (3, 3, 1)이 나왔습니다. 1단계의 세 번 계산과 같은 결과를 꼭짓점마다 한 번의 곱으로 얻습니다. GPU(6.7)는 이 곱을 동시에 합니다.',
@@ -414,7 +417,8 @@ const lesson = [
   },
   {
     label: '카메라',
-    readingStage: 2,
+    readingStage: 3,
+    note: ['카메라가 x로 +2', ' → ', '세상을 반대로 (−2, 0) 옮김', ' → ', '점 (3, 3)이 카메라 기준 (1, 3)'],
     title: '카메라를 움직이는 것은 세상을 반대로 움직이는 것이다',
     body: '8D.1에서 카메라 기준 좌표를 만들 때 장면 전체를 옮겼습니다. 카메라를 오른쪽으로 2만큼 옮기는 것은, 카메라는 그대로 두고 세상 전체를 왼쪽으로 2만큼 옮기는 것과 화면에서 똑같이 보입니다. 그래서 카메라의 변환을 거꾸로 한 행렬(뷰 행렬)을 모든 물체에 곱합니다. 카메라를 돌리는 것도 세상을 반대로 돌리는 것입니다.',
     takeaway: '카메라를 x로 +2 옮기자, 카메라 기준으로 물체 (3, 3)은 (1, 3)이 되었습니다. 게임에서 캐릭터를 따라가는 카메라는 매 프레임 이 뷰 행렬만 바꾸고, 물체들의 행렬은 그대로 둡니다.',
@@ -532,6 +536,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names each transform and its result, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

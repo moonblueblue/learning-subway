@@ -336,7 +336,7 @@ const fewestRoads = ['A', 'B', 'D', 'G', 'I'];
 const lesson = [
   {
     label: '길마다 시간',
-    readingSearch: {"moves": 9, "jam": false, "path": true},
+    readingSearch: {"moves": 9, "jam": false, "path": true, "note": "sum"},
     example: ["A에서 I까지", "A–B–E–H–I 비용을 합산", "4 + 1 + 2 + 5 = 12분"],
     title: '길 수가 적다고 가장 빠른 것은 아니다',
     body: '4.7의 그래프에 길마다 걸리는 시간(분)을 적었습니다. 이렇게 선에 값이 붙은 그래프를 가중 그래프라고 합니다. 너비 우선 탐색이 찾은 A–B–D–G–I는 길 4개로 가장 적지만 4 + 5 + 2 + 3 = 14분입니다. 길 수가 같아도 더 빠른 길이 있을 수 있습니다.',
@@ -350,7 +350,7 @@ const lesson = [
   },
   {
     label: '다익스트라',
-    readingSearch: {"moves": 2, "jam": false, "path": false},
+    readingSearch: {"moves": 2, "jam": false, "path": false, "note": "settle"},
     example: ["A에서 거리 0", "가장 가까운 미확정 정점 선택", "C를 2분으로 확정"],
     title: '가장 가까운 곳부터 하나씩 확정한다',
     body: '다익스트라 알고리즘은 "지금까지 알아낸 시간"이 가장 작은 곳을 하나 골라 확정하고, 그곳에서 나가는 길로 이웃의 시간을 줄일 수 있는지 봅니다(줄일 수 있으면 표를 고칩니다). 이것을 모든 곳이 확정될 때까지 되풀이합니다. 확정된 곳의 시간은 다시 바뀌지 않습니다.',
@@ -364,7 +364,7 @@ const lesson = [
   },
   {
     label: '정체가 생기면',
-    readingSearch: {"moves": 9, "jam": true, "path": true},
+    readingSearch: {"moves": 9, "jam": true, "path": true, "note": "sum"},
     example: ["H–I에 정체", "A–B–D–G–I로 우회", "새 최단 시간 14분"],
     title: '길의 시간이 바뀌면 답도 바뀐다',
     body: '지도 앱은 실시간 교통 정보로 길의 시간을 계속 고칩니다. H–I 길이 막혀 5분에서 12분이 되었다고 해 봅시다. 같은 다익스트라를 다시 돌리면 다른 길이 가장 빨라집니다. 알고리즘은 그대로이고, 바뀐 것은 그래프의 가중치뿐입니다.',
@@ -378,7 +378,7 @@ const lesson = [
   },
   {
     label: '지도 앱',
-    readingSearch: {"moves": 3, "jam": false, "path": false},
+    readingSearch: {"moves": 3, "jam": false, "path": false, "note": "pick"},
     example: ["미확정 후보가 많음", "우선순위 큐에서 최소 비용 선택", "다음 정점을 빠르게 찾음"],
     title: '수백만 개의 길에서도 빠르게',
     body: '실제 도로망은 곳이 수백만 개입니다. 다익스트라는 "가장 작은 시간"을 빨리 꺼내기 위해 우선순위 큐(힙)를 쓰고, 지도 앱은 목적지 방향을 어림해 먼저 살피는 A* 같은 변형과, 미리 계산해 둔 지름길 정보를 함께 씁니다. 그래도 바탕은 "가까운 곳부터 확정"이라는 이 레슨의 생각입니다.',
@@ -466,6 +466,19 @@ function paint() {
   const path = preview ? (preview.path ? pathTo('I', last.prev) : null) : state.highlight ?? (state.pos >= state.moves.length && state.moves.length && running ? pathTo('I', last.prev) : null);
   if (path) for (let i = 1; i < path.length; i++) roadViews[roadOf(path[i - 1], path[i])].line.classList.add('path');
   syncTable(dist, done, last);
+  // The still picture states the step's point in a note at the top: the route's sum, the place just settled,
+  // or the smallest of the waiting candidates.
+  byId('example-note')?.remove();
+  if (preview?.note === 'sum' && path) {
+    const legs = path.slice(1).map((n, i) => w[roadOf(path[i], n)]);
+    exampleNote(`${jam ? 'H–I 정체 5 → 12분 · ' : ''}A → I: ${path.join('–')} = ${legs.join(' + ')} = ${legs.reduce((a, b) => a + b, 0)}분`);
+  } else if (preview?.note === 'settle' && last) {
+    exampleNote(`미확정 중 가장 가까운 ${last.place}를 ${dist[last.place]}분으로 확정`);
+  } else if (preview?.note === 'pick' && last) {
+    const before = moves.at(-2);
+    const waiting = names.filter((n) => !before.done.includes(n) && before.dist[n] !== Infinity);
+    exampleNote(`후보 ${waiting.map((n) => `${n} ${before.dist[n]}분`).join(' · ')} → 가장 작은 ${last.place}를 꺼냄`);
+  }
   byId('step-tick').disabled = state.pos >= state.moves.length;
   byId('step-all').disabled = state.pos >= state.moves.length;
 }
@@ -491,6 +504,7 @@ function syncTable(dist, done, last) {
     table.append(tr);
   }
 }
+
 
 // ---------- Running ----------
 function startRun() {

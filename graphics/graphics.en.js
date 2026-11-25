@@ -69,4 +69,10 @@ window.lessonText = {
   'B를 먼저, A를 나중에 그렸다면 겹친 칸은?': 'If B were drawn first and A after, what would the overlapping cells be?', '그래도 B': 'Still B', 'A로 덮인다': 'Covered by A',
   'A의 깊이 9가 이미 적힌 3보다 멀어 비교에서 집니다. 순서와 상관없이 가까운 것이 남습니다.': 'A\'s depth 9 is farther than the 3 already written, so it loses the test. Whatever the order, the nearer one stays.',
   'A 그리기': 'Draw A', 'B 그리기': 'Draw B', 'A (깊이 9)': 'A (depth 9)', 'B (깊이 3)': 'B (depth 3)', 'B가 덮는 칸 중 A와 겹치는 칸이 있음': 'Some of B\'s cells overlap A',
+  // Example note on the still picture.
+  '점 (3, 2), 빨강': 'point (3, 2), red', '프레임 버퍼의 (3, 2) 칸에 빨강 (255, 0, 0)': 'red (255, 0, 0) into cell (3, 2) of the frame buffer',
+  '선에 가장 가까운 칸을 열마다 하나씩': 'the cell nearest the line in each column', '계단 모양 8칸': '8 cells like stairs',
+  '삼각형 A, B, C': 'triangle A, B, C', '꼭짓점 자리 3번 계산': '3 vertex positions computed', '안쪽 칸 20개': '20 cells inside', '칸마다 따로 색칠 (10 × 7 중 20칸)': 'each cell colored on its own (20 of 10 × 7)',
+  'A (깊이 9) 먼저 칠함': 'A (depth 9) drawn first', '깊이는 작을수록 가까움: 3 < 9라 B가 덮어씀': 'smaller depth is nearer: 3 < 9, so B overwrites',
+  '프레임 버퍼 · 읽기': 'Frame buffer · read', '픽셀 색칠 · 색 20개': 'Pixel shading · 20 colors', '3번 계산': '3 computed', '깊이 3': 'Depth 3',
 };

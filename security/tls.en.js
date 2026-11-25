@@ -87,4 +87,10 @@ window.lessonText = {
   '자물쇠는 이름과 비밀 대화만 보장합니다. 그 이름의 주인이 사기꾼이면 사기꾼과 안전하게 대화하는 셈입니다.': 'The padlock promises only the name and a private conversation. If the owner of that name is a scammer, you are talking safely with a scammer.',
   '이름 확인': 'Check name', '주소창 확인': 'Checking the address bar', 'shop.example.com ≠ shop-example-login.test': 'shop.example.com ≠ shop-example-login.test',
   '→ 비밀번호를 넣지 않고 닫음': '→ close it without entering the password', '주소창의 이름을 확인하고 닫습니다.': 'Check the name in the address bar and close the page.', '피싱 피함': 'Avoided phishing',
+  // Example note on the still picture.
+  '서버가 인증서 2장 (자기 것 + 중간 기관)을 보냄': 'server sends 2 certs (own + intermediate)', '브라우저가 서명을 따라 올라감': 'browser follows signatures up', '아는 루트에 닿아 믿음': 'known root: trusted',
+  '서버: 공개 수 + 인증서 + 서명': 'server: number + cert + signature', '양쪽이 같은 AES 키': 'same AES key on both', 'GET /cart도 잠겨서 감': 'GET /cart locked',
+  '가짜 서버는 스스로 서명한 인증서': 'the fake server signed its own certificate', '사슬이 루트에 닿지 않음': 'the chain never reaches a root', '브라우저가 경고': 'the browser warns',
+  '사기꾼 이름 shop-example-login.test에도 진짜 인증서': 'scam site shop-example-login.test: real cert', '자물쇠는 뜸': 'lock shows', '주소창 이름을 보고 사람이 피함': 'reading the name, you leave',
+  '루트에 닿음': 'Reached root', '이름 보고 닫음': 'Read the name, closed', 'AES 키': 'AES key', '경고': 'Warning', '자물쇠': 'Lock', '자물쇠 + 가짜 화면': 'Lock + fake page',
 };

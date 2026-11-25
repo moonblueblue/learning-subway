@@ -54,7 +54,7 @@ window.lessonText = {
   '학생이 듣는 과목을 students 표에 함께 적으면, 과목이 여럿인 학생의 이름이 여러 번 반복됩니다. 그래서 과목은 enrollments 표에 따로 두고 student_id로 학생을 가리킵니다. 함께 볼 때는 JOIN으로 students.id와 enrollments.student_id가 같은 행끼리 이어 붙입니다. 이것이 "관계형"이라는 이름의 뜻입니다.':
     'If the subjects students take were written in the students table too, a student taking several subjects would have their name repeated many times. So subjects go in a separate enrollments table that points to the student with student_id. To see them together, JOIN attaches rows where students.id equals enrollments.student_id. That is what "relational" means.',
   '수학을 듣는 학생 id(1, 3, 5)를 enrollments에서 찾고, 그 id로 students에서 이름을 찾아 이어 붙였습니다. 이름은 students 한곳에만 있으니, 이름을 바꿀 때도 한 행만 고치면 됩니다(6.1의 "한 곳만 고치기").': 'It found the ids of students taking math (1, 3, 5) in enrollments, then looked up their names in students by those ids and joined them. The names live only in students, so renaming someone means fixing just one row (the "fix in one place" of 6.1).',
-  '왼쪽부터 SQL 질의, DB 엔진, students 표, enrollments 표, 결과가 놓여 있습니다. 엔진이 두 표를 오가며 같은 id끼리 잇습니다.': 'From the left stand the SQL query, the DB engine, the students table, the enrollments table and the result. The engine goes between the two tables joining rows with the same id.',
+  '왼쪽부터 SQL 질의, DB 엔진, enrollments 표, students 표, 결과가 놓여 있습니다. 엔진이 두 표를 오가며 같은 id끼리 잇습니다.': 'From the left stand the SQL query, the DB engine, the enrollments table, the students table and the result. The engine goes between the two tables joining rows with the same id.',
   '엔진이 두 표를 어떤 칸으로 이을지 읽습니다.': 'The engine reads which columns join the two tables.', '엔진이 enrollments에서 수학을 듣는 student_id를 찾습니다.': 'The engine finds the student_ids taking math in enrollments.', '찾은 id로 students 표에서 이름을 찾습니다.': 'It looks up names in the students table by the ids found.', '이어 붙인 세 행이 돌아옵니다.': 'The three joined rows come back.',
   '두 표를 잇는 데 쓰는 칸은?': 'Which columns join the two tables?', 'students.id와 enrollments.student_id': 'students.id and enrollments.student_id', 'students.name과 enrollments.subject': 'students.name and enrollments.subject',
   'student_id는 students 표의 id를 가리키는 값입니다. 같은 값끼리 행을 이어 붙입니다.': 'student_id is a value pointing to an id in the students table. Rows with equal values are joined.',
@@ -73,4 +73,8 @@ window.lessonText = {
   '수학 묶음에는 몇 행이 들어갈까요?': 'How many rows go into the math group?',
   '"학년마다 학생 수"를 구하는 질의는?': 'Which query gives "the number of students in each year"?',
   'grade가 같은 행끼리 묶고 묶음마다 셉니다. 결과는 1학년 2, 2학년 3, 3학년 1입니다.': 'It groups rows with the same grade and counts each group. The result is year 1: 2, year 2: 3, year 3: 1.',
+  // Example note on the still picture.
+  '6행을 모두 읽음': 'read all 6 rows', '결과 6행 × 3열 (id, name, grade)': 'result 6 rows × 3 cols (id, name, grade)', '6행을 하나씩 확인': 'check 6 rows one by one', '민지 · 하윤 · 지우 (name 열만)': 'Minji · Hayun · Jiwoo (name only)',
+  "enrollments에서 '수학' → id 1, 3, 5": "math in enrollments → id 1, 3, 5", 'students에서 이름 찾기': 'look up names in students', '민지 · 하윤 · 지우 | 수학': 'Minji · Hayun · Jiwoo | math',
+  '과목별 묶음 3개': '3 groups by subject', '수학 3 · 과학 2 · 음악 1 (subject, COUNT)': 'math 3 · science 2 · music 1 (subject, COUNT)', 'subject별': 'By subject', '수학 3행': '3 math rows',
 };

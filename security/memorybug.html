@@ -366,7 +366,8 @@ const ST = [['in', '입력', 'file'], ['copy', '복사 코드', 'tool'], ['buf',
 const lesson = [
   {
     label: '칸 넘어 쓰기',
-    example: ["입력이 버퍼 크기를 넘음", "경계 검사 없이 쓰기", "이웃 데이터의 무결성 손상"],
+    example: ["\"AAAAAAAAX\" 9글자를 name[8]에", "길이 확인 없이 복사", "옆 is_admin이 0에서 88로"],
+    readingStage: 4,
     title: '길이를 확인하지 않고 복사하면 이웃 칸을 덮어쓴다',
     body: '1.3의 호출 스택에서 함수의 변수들은 메모리에 나란히 놓입니다. C 같은 언어는 배열 칸 수를 넘어 써도 막지 않습니다. 로그인 코드가 이름을 8칸짜리 name에 복사하는데 길이를 확인하지 않으면, 9번째 글자부터는 바로 뒤에 있는 is_admin 칸에 써집니다. is_admin이 0이 아니면 관리자로 봅니다.',
     takeaway: '"minji"(5글자)는 name 안에 들어가 문제가 없었습니다. "AAAAAAAAX"(9글자)는 X가 is_admin을 덮어 88이 되었고, 비밀번호 없이 관리자가 되었습니다. 메모리에는 칸의 경계 표시가 없습니다.',
@@ -378,12 +379,13 @@ const lesson = [
       { from: 'copy', to: 'buf', label: 'm i n j i', title: '칸 안에 들어감', lines: ['name: m i n j i \\0 _ _', 'is_admin: 0 그대로'], text: '8칸 안에 들어가 문제가 없습니다.', holds: { buf: 'minji', next: '0' } },
       { from: 'in', to: 'copy', label: '"AAAAAAAAX"', title: '긴 입력', lines: ['9글자 + 끝 표시 = 10칸'], text: '이번에는 9글자를 넣습니다.', holds: { copy: '10칸 복사' },
         ask: { q: '9번째 글자 X는 어디에 써질까요?', choices: ['바로 뒤의 is_admin 칸', '복사가 멈춰 안 써진다'], answer: '바로 뒤의 is_admin 칸', why: '복사 코드는 칸 수를 확인하지 않습니다. 8칸을 채운 뒤 다음 메모리 칸에 계속 씁니다.' } },
-      { from: 'buf', to: 'next', label: 'X', title: '이웃 칸 덮어쓰기', lines: ['name: A A A A A A A A', 'is_admin: X (= 88, 0이 아님) → 관리자!'], error: 'next', text: '넘친 글자가 is_admin을 덮어 관리자가 되었습니다.', holds: { buf: 'A×8', next: '88' } },
+      { from: 'buf', to: 'next', label: 'X', title: '이웃 칸 덮어쓰기', lines: ['name: A A A A A A A A', 'is_admin: X (= 88, 0이 아님) → 관리자!'], error: 'next', text: '넘친 글자가 is_admin을 덮어 관리자가 되었습니다.', holds: { buf: 'A×8', next: '88 (X)' } },
     ],
   },
   {
     label: '돌아갈 주소',
-    example: ["제어 정보 옆의 메모리가 손상됨", "원래 실행 경로를 신뢰할 수 없음", "안전한 실행 중단 필요"],
+    example: ["긴 입력이 돌아갈 주소까지 덮음", "0x4010이 0x7FF0으로", "return이 공격자 주소로 뜀"],
+    readingStage: 3,
     title: '돌아갈 주소를 덮으면 공격자의 코드로 뛴다',
     body: '1.3에서 함수를 부를 때 스택에는 "끝나면 돌아갈 주소"도 쌓였습니다. 이 주소는 변수들 바로 뒤에 있습니다. 더 길게 넘치게 쓰면 돌아갈 주소까지 덮을 수 있고, 함수가 끝나는 순간 CPU(3.5)는 그 주소로 뜁니다. 공격자가 그 자리에 자기가 넣어 둔 코드의 주소를 쓰면, 프로그램이 공격자의 코드를 실행합니다.',
     takeaway: '넘친 입력이 돌아갈 주소 0x4010을 0x7FF0으로 바꿨고, 함수가 끝나자 CPU가 공격자가 고른 곳으로 뛰었습니다. 1988년 모리스 웜부터 많은 공격이 이 방법을 썼습니다.',
@@ -399,7 +401,8 @@ const lesson = [
   },
   {
     label: '막는 방법',
-    example: ["함수의 보호 값이 바뀜", "반환 전 카나리아 확인", "손상 탐지 후 실행 중단"],
+    example: ["카나리아 5A3C 뒤에 돌아갈 주소", "넘친 입력에 4141로 바뀜", "돌아가기 전 확인해 멈춤"],
+    readingStage: 3,
     title: '길이 확인, 카나리아, 실행 금지, 주소 섞기',
     body: '가장 근본적인 방어는 복사하기 전에 길이를 확인하는 것입니다. 그래도 실수에 대비해 여러 겹으로 막습니다. 컴파일러(8A.1)는 버퍼와 돌아갈 주소 사이에 무작위 값(카나리아)을 넣고 함수가 끝날 때 바뀌었는지 확인합니다. 운영체제(8A.2)는 데이터 영역의 코드 실행을 금지하고, 프로그램을 올릴 때마다 주소를 무작위로 섞어 공격자가 뛸 곳을 맞히기 어렵게 합니다.',
     takeaway: '넘친 입력이 카나리아를 먼저 덮어 함수가 끝날 때 들켰고, 프로그램은 돌아가는 대신 멈췄습니다. 멈추는 것도 피해지만, 공격자에게 흐름을 넘기는 것보다 훨씬 낫습니다.',
@@ -408,15 +411,16 @@ const lesson = [
     start: { title: '스택의 모습', lines: ['name[8]', '카나리아: 0x5A3C (실행할 때마다 무작위)', '돌아갈 주소: 0x4010'], holds: { next: '카나리아 5A3C' } },
     stages: [
       { from: 'in', to: 'copy', label: '긴 입력', title: '같은 공격', lines: ['A × 8 + … + 주소'], text: '같은 긴 입력이 들어옵니다.', holds: { copy: '복사' } },
-      { from: 'buf', to: 'next', label: 'AAAA…', title: '카나리아가 먼저 덮임', lines: ['카나리아: 0x5A3C → 0x4141 (A A)'], error: 'next', text: '돌아갈 주소에 닿기 전에 카나리아가 덮입니다.', holds: { next: '4141 (바뀜)' } },
-      { from: 'next', to: 'cpu', label: '확인', title: '함수 끝에서 확인', lines: ['카나리아가 바뀜 → 스택 망가짐 감지 → 즉시 종료', '돌아갈 주소로 뛰지 않음'], text: '바뀐 카나리아를 보고 프로그램을 멈춥니다.', holds: { cpu: '안전하게 멈춤' },
+      { from: 'buf', to: 'next', label: 'AAAA…', title: '카나리아가 먼저 덮임', lines: ['카나리아: 0x5A3C → 0x4141 (A A)'], error: 'next', text: '돌아갈 주소에 닿기 전에 카나리아가 덮입니다.', holds: { next: '4141' } },
+      { from: 'next', to: 'cpu', label: '확인', title: '함수 끝에서 확인', lines: ['카나리아가 바뀜 → 스택 망가짐 감지 → 즉시 종료', '돌아갈 주소로 뛰지 않음'], text: '바뀐 카나리아를 보고 프로그램을 멈춥니다.', holds: { cpu: '멈춤' },
         ask: { q: '카나리아 값을 실행할 때마다 무작위로 바꾸는 까닭은?', choices: ['공격자가 미리 알고 같은 값으로 덮어쓰지 못하게', '메모리를 아끼려고'], answer: '공격자가 미리 알고 같은 값으로 덮어쓰지 못하게', why: '값을 알면 그 자리에 같은 값을 써서 확인을 통과할 수 있습니다. 무작위라 맞히기 어렵습니다.' } },
       { from: 'copy', to: 'buf', label: '길이 확인', title: '근본 해결', lines: ['if (길이 > 7) 거절', 'strncpy(name, 입력, 7)'], reset: 'next', text: '복사하기 전에 길이를 확인하면 아예 넘치지 않습니다.', holds: { buf: '최대 7글자', next: '카나리아 그대로' } },
     ],
   },
   {
     label: '안전한 언어',
-    example: ["지정된 칸보다 긴 입력", "쓰기 전에 길이 확인", "이웃 칸이 그대로 유지"],
+    example: ["파이썬으로 9번째 글자를 씀", "언어가 칸 수를 확인", "IndexError · is_admin은 0 그대로"],
+    readingStage: 3,
     title: '칸 수를 언어가 확인하면 넘쳐 쓰기가 오류가 된다',
     body: '파이썬, 자바, 러스트 같은 언어는 배열 칸 수를 넘으면 실행 중에 오류를 냅니다. 메모리를 조용히 망가뜨리는 대신 그 자리에서 멈춥니다. 다 쓴 메모리를 다시 쓰는 실수(해제 후 사용)도 언어가 막아 줍니다. 그래서 운영체제, 브라우저처럼 오래된 C/C++ 코드가 많은 곳도 새 부분은 메모리 안전한 언어로 바꿔 가고 있습니다.',
     takeaway: '같은 9글자를 넣자 파이썬은 IndexError를 내고 멈췄고 is_admin은 0 그대로였습니다. 메모리 안전한 언어는 큰 종류의 보안 버그를 처음부터 없앱니다. 대신 칸을 확인하는 데 아주 조금 시간이 듭니다.',
@@ -424,10 +428,10 @@ const lesson = [
     stations: ST,
     start: { title: '파이썬으로 같은 코드', lines: ['name = [None] * 8', 'for i, c in enumerate(입력): name[i] = c'], holds: { buf: '8칸', next: '0' } },
     stages: [
-      { from: 'in', to: 'copy', label: '"AAAAAAAAX"', title: '같은 긴 입력', lines: ['9글자'], text: '같은 9글자를 넣습니다.', holds: { copy: '복사 시작' } },
+      { from: 'in', to: 'copy', label: '"AAAAAAAAX"', title: '같은 긴 입력', lines: ['9글자'], text: '같은 9글자를 넣습니다.', holds: { copy: '복사' } },
       { from: 'copy', to: 'buf', label: '9번째 글자', title: '칸 수 확인', lines: ['name[8] = "X" → IndexError: list index out of range', '복사가 그 자리에서 멈춤'], error: 'buf', text: '9번째 칸에 쓰려는 순간 언어가 막습니다.', holds: { buf: 'IndexError' },
         ask: { q: '이때 is_admin 칸은?', choices: ['0 그대로', '88로 바뀜'], answer: '0 그대로', why: '언어가 칸 밖에 쓰기 전에 오류를 내므로 이웃 칸은 건드리지 않습니다.' } },
-      { from: 'buf', to: 'next', label: '안 넘침', title: '이웃 칸은 안전', lines: ['is_admin = 0 · 관리자 아님'], reset: 'buf', text: '이웃 칸은 그대로입니다.', holds: { next: '0' } },
+      { from: 'buf', to: 'next', label: '안 넘침', title: '이웃 칸은 안전', lines: ['is_admin = 0 · 관리자 아님'], reset: 'buf', text: '이웃 칸은 그대로입니다.', holds: { next: '0 그대로' } },
     ],
   },
 ];
@@ -524,8 +528,11 @@ function movePackets(now) {
 // ---------- State after s stages ----------
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  // The still picture shows the end of the step's example, as the reading strip describes it.
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));

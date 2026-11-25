@@ -22,7 +22,7 @@ window.lessonText = {
   '클라이언트가 캐시에 요청하고 캐시가 바로 응답합니다. 캐시에 HIT가 표시되고, DB를 향하는 연결은 없습니다.': 'The client asks the cache and the cache responds directly. The cache shows HIT, and there is no connection towards the DB.',
   '캐시 위에 HIT가 표시되고, 패킷은 클라이언트와 캐시 사이에서만 움직입니다.': 'HIT shows above the cache, and packets move only between the client and the cache.',
   '캐시에 값이 있으므로 여기서 응답한다': 'The value is in the cache, so it responds here', '캐시에 값 있음': 'Value in cache', 'DB 조회 0회': '0 DB reads',
-  'Cache: 값 있음       Client에 반환       DB 조회 0회': 'Cache: has value       return to Client       0 DB reads',
+  'Cache: 값 있음  →  Client에 반환  ·  DB 조회 0회': 'Cache: has value  →  return to Client  ·  0 DB reads',
   '요청이 캐시에서 값을 찾아 바로 돌아갑니다. DB에는 요청이 가지 않습니다.': 'The request finds the value in the cache and goes straight back. No request goes to the DB.',
   // Step 3
   '캐시 미스': 'Cache miss',
@@ -31,6 +31,6 @@ window.lessonText = {
   '클라이언트가 캐시에 요청합니다. 캐시 미스가 발생해 DB를 조회하고, DB의 응답을 캐시에 저장한 뒤 클라이언트로 보냅니다.': 'The client asks the cache. A cache miss happens, so the DB is queried, and the DB\'s response is stored in the cache and sent to the client.',
   '캐시 위에 MISS → 저장이 표시되고, 요청과 응답이 캐시를 거쳐 DB까지 왕복합니다. 응답이 캐시에 돌아오는 구간에서 값이 저장됩니다.': 'MISS → store shows above the cache, and the request and response make a round trip to the DB through the cache. The value is stored on the leg where the response comes back to the cache.',
   '캐시에 값이 없어서 DB에서 읽어 채운다': 'The value is not in the cache, so it is read from the DB and filled in', '캐시에 값 없음': 'No value in cache', 'DB에서 읽고 캐시에 저장': 'Read from DB, store in cache', 'MISS → 저장': 'MISS → store', '다음 요청은 캐시 적중': 'The next request is a cache hit',
-  'Cache: 비어 있음  →  DB에서 읽기  →  Cache에 저장': 'Cache: empty  →  read from DB  →  store in Cache',
+  'Cache: 비어 있음  →  DB에서 읽기  →  Cache에 저장하고 Client에 반환': 'Cache: empty  →  read from DB  →  store in Cache, return to Client',
   '첫 요청은 캐시가 비어 DB에서 읽고, 읽은 값을 캐시에 저장합니다. 같은 값의 다음 요청은 DB에 가지 않습니다.': 'The first request finds the cache empty, reads from the DB, and stores the value in the cache. The next request for the same value does not go to the DB.',
 };

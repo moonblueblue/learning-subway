@@ -377,6 +377,8 @@ const lesson = [
   {
     label: '바로 부르기',
     readingStage: 3,
+    note: ['주문 저장 0.05초', ' → ', '메일 3초를 기다림', ' → ', '사용자도 3초 뒤에 답 받음'],
+    noteTone: 'bad',
     title: '느린 일을 바로 부르면 사용자가 함께 기다린다',
     body: '주문이 들어오면 확인 메일을 보내야 합니다. 주문 API가 메일 서비스를 바로 부르면(동기 호출), 메일을 보내는 3초 동안 사용자도 "주문 중…" 화면을 보며 기다립니다. 메일 서비스가 고장 나면 메일 때문에 주문까지 실패합니다. 주문과 메일이 단단히 묶여 있습니다.',
     takeaway: '주문 저장은 0.05초인데 사용자는 3초를 기다렸고, 메일 서비스가 죽자 주문도 500 오류가 됐습니다. 메일은 조금 늦어도 되는 일인데 말입니다.',
@@ -393,7 +395,8 @@ const lesson = [
   },
   {
     label: '큐에 넣기',
-    readingStage: 3,
+    readingStage: 5,
+    note: ['주문 저장', ' → ', '큐에 쪽지 "메일 501"을 넣고 바로 답 (0.06초)', ' → ', '일꾼 1이 나중에 꺼내 보냄'],
     title: '할 일을 큐에 넣고 바로 답한다',
     body: '메시지 큐는 "할 일 쪽지"를 차례로 쌓아 두는 곳입니다(4.3의 큐). 주문 API는 주문을 저장하고 "주문 501 확인 메일"이라는 쪽지를 큐에 넣은 뒤 바로 사용자에게 답합니다. 뒤에서 일꾼이 큐에서 쪽지를 꺼내 메일을 보냅니다. 주문 API와 메일 서비스는 서로를 직접 모릅니다.',
     takeaway: '사용자는 0.06초 만에 주문 완료를 봤고, 메일은 몇 초 뒤 도착합니다. 메일 서비스가 잠시 죽어 있어도 쪽지는 큐에 남아 있다가 살아나면 처리됩니다.',
@@ -413,6 +416,7 @@ const lesson = [
   {
     label: '몰려도 버티기',
     readingStage: 4,
+    note: ['세일 10초 동안 쪽지 1만 개가 큐에 쌓임', ' → ', '일꾼 2를 더해 200/초', ' → ', '세일이 끝나면 큐가 줄어듦'],
     title: '큐가 몰린 요청을 담아 두고 일꾼은 제 속도로 처리한다',
     body: '반짝 세일로 1초에 주문이 1,000개 들어옵니다. 일꾼 하나는 1초에 메일 100개를 보낼 수 있습니다. 바로 부르는 방식이라면 메일 서비스가 넘쳐 주문까지 실패했겠지만, 큐는 넘치는 쪽지를 담아 두고 일꾼은 제 속도로 꺼내 갑니다. 큐 길이를 보고 일꾼을 늘리면 더 빨리 비웁니다.',
     takeaway: '10초 세일 동안 쪽지 10,000개가 쌓였고, 일꾼 하나라면 100초, 둘이면 50초 만에 모두 보냅니다. 주문은 세일 내내 빠르게 성공했습니다. 큐가 갑작스러운 몰림을 흡수하는 완충기 역할을 합니다.',
@@ -432,6 +436,7 @@ const lesson = [
   {
     label: '실패와 다시 하기',
     readingStage: 4,
+    note: ['일꾼 1이 501을 보낸 뒤 확인 전에 죽음', ' → ', '큐가 501을 일꾼 2에게 다시 줌', ' → ', '보낸 기록을 보고 건너뜀'],
     title: '처리 확인 전에 일꾼이 죽으면 쪽지를 다시 준다',
     body: '일꾼이 쪽지를 꺼내 처리하다 죽으면 그 일은 어떻게 될까요? 큐는 일꾼이 "다 했다"(확인, ack)고 알려 주기 전까지 쪽지를 지우지 않고, 일정 시간 확인이 없으면 다른 일꾼에게 다시 줍니다. 그래서 일은 최소 한 번은 처리됩니다. 대신 메일을 보낸 직후, 확인 전에 죽으면 같은 메일이 두 번 갈 수 있습니다.',
     takeaway: '쪽지 501은 일꾼 2가 다시 받아 처리했습니다. 같은 쪽지가 두 번 처리되어도 결과가 한 번과 같도록(멱등성), "주문 501 메일은 이미 보냄" 기록을 남기고 처리 전에 확인합니다.',
@@ -441,10 +446,10 @@ const lesson = [
     start: { title: '큐', lines: ['쪽지 501: 대기'], holds: { q: '쪽지 501' } },
     stages: [
       { from: 'q', to: 'w1', label: '쪽지 501', title: '일꾼 1이 꺼냄', lines: ['큐: 501은 "처리 중"으로 표시, 아직 지우지 않음'], text: '일꾼 1이 쪽지를 받습니다. 큐는 아직 지우지 않습니다.', holds: { w1: '501 처리 중', q: '501 처리 중' } },
-      { from: 'w1', to: 'mail', label: '메일 501', title: '메일은 보냈는데', lines: ['메일 발송 성공', '확인(ack)을 보내기 직전 일꾼 1이 죽음'], error: 'w1', text: '메일을 보낸 직후, 확인을 보내기 전에 일꾼 1이 죽었습니다.', holds: { mail: '501 보냄', w1: '죽음' } },
+      { from: 'w1', to: 'mail', label: '메일 501', title: '메일은 보냈는데', lines: ['메일 발송 성공', '확인(ack)을 보내기 직전 일꾼 1이 죽음'], error: 'w1', text: '메일을 보낸 직후, 확인을 보내기 전에 일꾼 1이 죽었습니다.', holds: { mail: '501 한 번 보냄', w1: '죽음' } },
       { from: 'q', to: 'w2', label: '쪽지 501 다시', title: '다시 주기', lines: ['30초 동안 확인 없음 → 일꾼 2에게 다시 줌'], text: '확인이 없자 큐가 일꾼 2에게 다시 줍니다.', holds: { w2: '501 다시 받음', q: '501 다시 줌' },
         ask: { q: '일꾼 2가 그냥 메일을 보내면 어떻게 될까요?', choices: ['같은 확인 메일이 두 번 간다', '메일이 한 번만 간다'], answer: '같은 확인 메일이 두 번 간다', why: '일꾼 1이 이미 보냈지만 확인을 못 했을 뿐입니다. 큐는 그 사실을 모릅니다.' } },
-      { from: 'w2', to: 'w2', label: '이미 보냈나?', title: '멱등하게 처리', lines: ['"주문 501 메일 보냄" 기록 확인 → 이미 있음', '보내지 않고 확인(ack)만 보냄'], text: '보낸 기록을 확인하고 다시 보내지 않습니다.', holds: { w2: '이미 보냄 → 건너뜀' },
+      { from: 'w2', to: 'w2', label: '이미 보냈나?', title: '멱등하게 처리', lines: ['"주문 501 메일 보냄" 기록 확인 → 이미 있음', '보내지 않고 확인(ack)만 보냄'], text: '보낸 기록을 확인하고 다시 보내지 않습니다.', holds: { w2: '이미 보냄: 건너뜀' },
         ask: { q: '같은 쪽지가 두 번 와도 안전하게 하려면?', choices: ['처리 전에 이미 했는지 기록을 확인한다(멱등성)', '큐를 하나 더 둔다'], answer: '처리 전에 이미 했는지 기록을 확인한다(멱등성)', why: '"최소 한 번" 전달에서는 중복이 생길 수 있으므로, 받는 쪽이 같은 일을 두 번 해도 결과가 같게 만듭니다.' } },
       { from: 'w2', to: 'q', label: 'ack 501', title: '확인', lines: ['큐: 쪽지 501 지움'], reset: 'w1', text: '확인을 받은 큐가 쪽지를 지웁니다.', holds: { q: '비어 있음' } },
     ],
@@ -522,8 +527,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -570,6 +576,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what was queued and handled, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

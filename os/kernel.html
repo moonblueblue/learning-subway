@@ -364,6 +364,7 @@ const lesson = [
   {
     label: '전원 켜기',
     readingStage: 4,
+    note: ['전원', ' → ', '펌웨어가 하드웨어 검사', ' → ', '펌웨어가 SSD에서 부트로더를 찾아 실행'],
     title: 'CPU는 정해진 주소의 펌웨어부터 실행한다',
     body: '전원을 켠 순간 RAM은 비어 있고 운영체제도 아직 디스크에 잠들어 있습니다. CPU는 PC(3.5)를 제조사가 정한 주소로 맞춘 채 깨어나는데, 그 주소에는 전원이 꺼져도 지워지지 않는 칩(ROM)에 담긴 펌웨어(UEFI)가 있습니다. 펌웨어는 메모리와 장치가 살아 있는지 검사하고, 설정된 순서대로 부팅할 디스크를 찾습니다.',
     takeaway: '첫 명령은 디스크가 아니라 메인보드의 펌웨어 칩에서 나옵니다. 펌웨어가 장치를 검사하고 SSD의 부트로더를 찾아 RAM에 올린 뒤 그쪽으로 넘어갑니다.',
@@ -380,7 +381,8 @@ const lesson = [
   },
   {
     label: '커널 올리기',
-    readingStage: 2,
+    readingStage: 3,
+    note: ['부트로더가 SSD의 커널 파일 12MB를 읽음', ' → ', 'RAM에 올림', ' → ', '커널로 넘김'],
     title: '부트로더가 커널을 RAM에 올리고 넘겨준다',
     body: '부트로더는 작은 프로그램으로, 할 일은 하나입니다. SSD에서 운영체제의 핵심인 커널 파일을 찾아 RAM에 올리고, 커널에게 필요한 정보(RAM 크기, 시작 설정)를 건넨 뒤 커널의 첫 명령으로 점프합니다. 그 뒤로는 커널이 컴퓨터를 넘겨받습니다. 3.8의 로더가 프로그램을 RAM에 올린 것과 비슷하지만, 이번에 올리는 것은 운영체제 자신입니다.',
     takeaway: '커널 파일(약 12MB)이 RAM에 올라가고 CPU의 PC가 커널 첫 명령을 가리킵니다. 이 순간부터 컴퓨터의 주인은 커널입니다.',
@@ -397,6 +399,7 @@ const lesson = [
   {
     label: '커널의 준비',
     readingStage: 3,
+    note: ['커널이 하나씩 준비', ': ', 'RAM에 페이지 표', ' · ', '장치 드라이버', ' · ', '타이머 10ms마다'],
     title: '커널이 메모리, 인터럽트, 장치, 스케줄러를 차린다',
     body: '커널은 프로그램을 돌릴 판을 차립니다. 가상 메모리(5.4)를 위한 페이지 표를 만들고, 키보드·타이머·디스크가 신호를 보내면(인터럽트) 어느 코드를 실행할지 적은 표를 만듭니다. 장치마다 드라이버를 깨우고, 파일 시스템(5.5)을 붙이고, 타이머를 켜 스케줄러(5.2)가 CPU를 나눠 줄 수 있게 합니다.',
     takeaway: '이제 커널은 메모리를 나누고, 장치의 신호를 받고, 파일을 읽고, 시간을 나눌 수 있습니다. 5장에서 본 운영체제의 일들이 모두 이때 준비됩니다.',
@@ -412,7 +415,8 @@ const lesson = [
   },
   {
     label: '첫 프로세스',
-    readingStage: 1,
+    readingStage: 4,
+    note: ['커널이 첫 프로세스 PID 1을 띄움', ' → ', '서비스 12개', ' → ', '로그인 대기 · 커널은 시스템 콜로 부를 때만'],
     title: '커널은 첫 사용자 프로세스를 띄우고 뒤로 물러난다',
     body: '판이 차려지면 커널은 첫 사용자 프로세스(PID 1, 보통 init 또는 systemd)를 만들어 사용자 영역(5.3)에서 실행합니다. PID 1은 네트워크, 로그인 화면 같은 서비스 프로세스를 차례로 띄우고, 그 프로세스들이 다시 다른 프로세스를 띄웁니다. 커널은 이제 시스템 콜이나 인터럽트가 올 때만 끼어듭니다.',
     takeaway: '전원 → 펌웨어 → 부트로더 → 커널 → PID 1 → 서비스 → 로그인 화면 순서로 컴퓨터가 깨어났습니다. 모든 프로세스는 PID 1의 자손입니다. 커널은 항상 메모리에 있지만, 평소에는 부름을 받을 때만 일합니다.',
@@ -420,7 +424,7 @@ const lesson = [
     stations: [['k', '커널', 'cpu'], ['init', 'PID 1 (systemd)', 'tool'], ['svc', '서비스들', 'ram'], ['login', '로그인 화면', 'file']],
     start: { title: '판이 차려짐', lines: ['메모리, 인터럽트, 장치, 타이머 준비 완료'], holds: { k: '준비 완료' } },
     stages: [
-      { from: 'k', to: 'init', label: 'PID 1', title: '첫 프로세스', lines: ['/sbin/init 실행 → PID 1', '사용자 영역에서 실행 (커널 권한 없음)'], text: '커널이 첫 사용자 프로세스를 띄웁니다.', holds: { init: 'PID 1' },
+      { from: 'k', to: 'init', label: 'PID 1', title: '첫 프로세스', lines: ['/sbin/init 실행 → PID 1', '사용자 영역에서 실행 (커널 권한 없음)'], text: '커널이 첫 사용자 프로세스를 띄웁니다.', holds: { init: '첫 프로세스' },
         ask: { q: 'PID 1은 커널 영역과 사용자 영역 중 어디서 실행될까요?', choices: ['사용자 영역', '커널 영역'], answer: '사용자 영역', why: 'PID 1도 보통 프로그램이라 장치를 직접 만지지 못하고, 필요하면 시스템 콜(5.3)로 커널에 부탁합니다.' } },
       { from: 'init', to: 'svc', label: '띄우기', title: '서비스 띄우기', lines: ['네트워크, 시간 맞추기, 로그 기록 서비스', '각각 PID 1의 자식 프로세스'], text: 'PID 1이 서비스들을 차례로 띄웁니다.', holds: { svc: '서비스 12개' } },
       { from: 'svc', to: 'login', label: '로그인', title: '로그인 화면', lines: ['화면 서비스가 로그인 화면을 그림', '부팅 끝 · 약 8초'], text: '로그인 화면이 뜨면 부팅이 끝납니다.', holds: { login: '대기' } },
@@ -532,6 +536,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what started what, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

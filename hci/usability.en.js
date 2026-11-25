@@ -7,7 +7,7 @@ window.lessonText = {
   '좋은 인터페이스인지 사람을 통해 어떻게 확인할까요? 문구점 주문 화면을 사용자 5명에게 시켜 본 결과로 평가하고 고치는 과정을 문제로 확인해 보세요.':
     'How do you check with people whether an interface is good? Work through evaluating and fixing the stationery shop\'s order screen from what 5 users did with it.',
   // Step 1
-  '시켜 보기': 'Have them try', '‘주문 버튼이 쉽나요?’': '‘Is the order button easy?’', '사용자에게 실제 주문 과제 제시': 'Give users a real order task', '멈추는 지점과 실수를 관찰': 'Watch where they stop and slip',
+  '시켜 보기': 'Have them try',
   '물어보지 말고 직접 해 보게 하고 지켜본다': 'Don\'t ask; have them do it and watch',
   '6.8에서 헷갈리지 않는 화면의 원칙을 배웠지만, 실제로 헷갈리는지는 사람이 써 봐야 압니다. 사용성 평가는 실제 사용자에게 "장바구니에 공책 두 권을 담고 주문해 보세요" 같은 과제를 주고, 하는 모습을 지켜보는 것입니다. 사람들은 "좋아요"라고 말해도 실제로는 막히는 경우가 많아서, 말보다 행동을 봅니다.':
     '6.8 taught the principles of screens that do not confuse, but only people using it can show whether it really confuses. A usability evaluation gives real users a task such as "Put two notebooks in the cart and order them" and watches them do it. People often say "it\'s good" and yet get stuck, so watch what they do, not what they say.',
@@ -26,7 +26,7 @@ window.lessonText = {
   '예를 들어 "설정에서 알림 끄기"를 시키면, 메뉴 이름을 몰라 여러 곳을 열어 보는 모습을 볼 수 있습니다. 그 메뉴 이름과 위치가 고칠 후보입니다.':
     'Ask them to "turn off notifications in Settings", for example, and you may see them open several places because they do not know the menu name. That menu name and position are candidates to fix.',
   // Step 2
-  '숫자로 재기': 'Measure in numbers', '참가자 5명 중 4명 완료': '4 of 5 participants finished', '성공 수 ÷ 시도 수': 'Successes ÷ attempts', '과제 성공률 80%': 'Task success rate 80%',
+  '숫자로 재기': 'Measure in numbers',
   '해냈는지, 얼마나 걸렸는지, 몇 번 틀렸는지 센다': 'Count whether they did it, how long it took, how often they slipped',
   '관찰과 함께 숫자도 남깁니다. 과제를 끝까지 해낸 비율(성공률), 걸린 시간, 잘못 누른 횟수입니다. 숫자가 있으면 고친 뒤 정말 나아졌는지 비교할 수 있습니다. 걸린 시간은 8B.2처럼 한두 사람이 크게 튀기 쉬우니 평균과 중앙값을 함께 봅니다.':
     'Keep numbers alongside what you observe: the share who finished the task (success rate), the time taken and the number of wrong presses. With numbers you can compare whether a fix really helped. As in 8B.2, one or two people easily skew the time, so look at the mean and the median together.',
@@ -42,7 +42,7 @@ window.lessonText = {
   '성공률은 그대로인데 잘못 누른 횟수만 6번에서 1번으로 줄었다면 무엇이 나아진 걸까요?': 'If the success rate stays the same but wrong presses drop from 6 to 1, what improved?',
   '헷갈리는 정도가 줄었습니다. 끝까지 해내는 사람 수는 같아도, 덜 헤매고 덜 답답했다는 뜻입니다.': 'Confusion dropped. The same number of people finish, but they wander and get frustrated less.',
   // Step 3
-  '문제 고르기': 'Pick problems', '결제 버튼을 못 찾음': 'Can\'t find the pay button', '과제 전체가 중단됨': 'The whole task stops', '작은 글자 오타보다 먼저 수정': 'Fix before a small typo',
+  '문제 고르기': 'Pick problems',
   '관찰한 문제를 심각도로 나눠 먼저 고칠 것을 정한다': 'Sort observed problems by severity to choose what to fix first',
   '평가가 끝나면 관찰한 문제를 적고 심각도를 매깁니다. 과제를 아예 못 하게 막는 문제, 해내긴 하지만 헤매게 하는 문제, 거슬리기만 하는 문제로 나눕니다. 많은 사람이 겪고, 피할 방법이 없고, 자주 쓰는 곳일수록 심각합니다. 8C.6의 "가능성 × 피해"와 같은 생각입니다.':
     'After the evaluation, write down the problems you saw and rate their severity: problems that block the task entirely, problems that let people finish but make them wander, and problems that only annoy. The more people hit it, the less it can be avoided and the more used the place, the more severe. It is the same idea as "likelihood × impact" in 8C.6.',
@@ -60,7 +60,7 @@ window.lessonText = {
   '심각도가 같은 두 문제가 있다면 무엇을 먼저 고치겠어요?': 'If two problems are equally severe, which would you fix first?',
   '더 많은 사람이 더 자주 지나가는 화면의 문제를 먼저 고칩니다. 고치기 쉬운 것이 같은 효과라면 먼저 해서 빨리 다시 시험합니다.': 'Fix the one on the screen more people pass through more often. If the easier fix has the same effect, do it first and test again quickly.',
   // Step 4
-  '고친 뒤 확인': 'Check after fixing', '버튼 위치 수정': 'Move the button', '같은 과제로 다시 측정': 'Measure again, same task', '성공률과 시간 변화를 비교': 'Compare success rate and time',
+  '고친 뒤 확인': 'Check after fixing',
   '고쳤으면 다시 재고, 큰 결정은 실험으로 확인한다': 'After a fix, measure again; check big decisions with experiments',
   '고친 화면이 정말 나은지는 다시 사람에게 시켜 보거나, 실제 사용자를 무작위로 나눠 옛 화면과 새 화면을 비교(A/B 테스트, 8B.2)해서 확인합니다. 디자이너나 개발자 자신은 이미 화면을 다 알아서 헷갈림을 느끼기 어렵습니다. "우리는 잘 쓰는데"는 근거가 되지 않습니다.':
     'Check whether the fixed screen is really better by having people try it again, or by splitting real users at random and comparing the old and new screens (an A/B test, 8B.2). Designers and developers already know the screen inside out, so they hardly feel any confusion. "We use it fine" is not evidence.',
@@ -78,4 +78,6 @@ window.lessonText = {
   'A/B 테스트에서 새 화면의 주문 완료율이 0.1%p 높았다면 바로 새 화면으로 바꿔도 될까요?': 'If an A/B test shows the new screen\'s order completion rate 0.1 percentage points higher, should you switch right away?',
   '차이가 우연인지 먼저 봐야 합니다. 사용자가 적으면 0.1%p는 우연일 수 있으니, 충분한 사람 수로 오래 비교하거나 차이가 의미 있는지 통계로 확인합니다.':
     'First see whether the difference is chance. With few users, 0.1 points may be luck, so compare for longer with enough people or check statistically whether the difference is meaningful.',
+  // Reading examples
+  '"마음에 드세요?"만 묻지 않음': 'don\'t just ask "Do you like it?"', '주문 과제를 주고 생각을 소리 내어 말하게': 'give an order task, have them think aloud', '멈추는 곳과 실수를 봄': 'watch where they stop and slip', '5명 중 4명 성공 · 시간 40–300초': '4 of 5 succeed · times 40–300 s', '4 ÷ 5 · 시간은 중앙값': '4 ÷ 5 · median time', '성공률 80% · 중앙값 50초': 'success 80% · median 50 s', '5명 중 3명이 주문하기 버튼을 못 찾음': '3 of 5 can\'t find the Order button', '과제를 포기함': 'they give up', '과제를 막는 문제라 가장 먼저': 'blocks the task: fix first', '숨은 주문하기 버튼을 위로 옮김': 'move the hidden Order button up', '처음 보는 5명에게 같은 과제': 'same task, 5 new people', '성공률과 시간을 비교 · 큰 결정은 A/B': 'compare success and time · big calls: A/B',
 };

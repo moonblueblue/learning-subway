@@ -24,8 +24,6 @@ window.lessonText = {
   '이미 함수지만 이름이 하는 일을 말해 주지 않습니다. add_tax(price)처럼 이름을 고쳐야 추상화가 제 역할을 합니다.': 'It is already a function, but its name does not say what it does. Renaming it to something like add_tax(price) lets the abstraction do its job.',
   '할인 기준이 50,000원에서 30,000원으로 바뀌었습니다. 첫 번째 코드를 함수로 묶기 전과 후에 각각 몇 곳을 고쳐야 할까요?': 'The discount threshold changed from 50,000 won to 30,000 won. How many places must you fix in the first code, before and after wrapping it in a function?',
   '묶기 전에는 복사된 곳마다(여기서는 두 곳, 실제로는 더 많을 수 있음) 고쳐야 하고, 하나라도 빠뜨리면 가격이 달라집니다. 묶은 뒤에는 함수 안 한 곳만 고치면 됩니다.': 'Before, every copy must be fixed (two here, possibly more in real code), and missing even one makes prices differ. After, you fix just one place inside the function.',
-  // Diagram (step 1)
-  '같은 계산이 세 곳에 반복': 'The same calculation in three places', '함수 하나로 묶어 호출': 'Wrapped in one function and called', '계산식 수정은 한 곳': 'One place to change the formula',
   // Step 2
   '감추기': 'Hiding',
   '밖에서 쓰는 약속(인터페이스)과 안의 방법을 나눈다': 'Separate the promise used outside (the interface) from the method inside',
@@ -44,8 +42,6 @@ window.lessonText = {
   '밖에 약속한 것이 적을수록 안에서 자유롭게 바꿀 수 있는 부분이 넓어집니다.': 'The less promised outside, the more can be changed freely inside.',
   '자동차 운전자에게 인터페이스는 무엇이고, 감춰진 구현은 무엇일까요?': 'For a car\'s driver, what is the interface and what is the hidden implementation?',
   '운전대, 페달, 기어가 인터페이스입니다. 엔진이 휘발유든 전기든 운전자는 같은 방식으로 운전합니다. 엔진 내부가 감춰진 구현입니다.': 'The steering wheel, pedals and gear lever are the interface. Whether the engine runs on petrol or electricity, the driver drives the same way. The inside of the engine is the hidden implementation.',
-  // Diagram (step 2)
-  'find_user(7) 호출': 'Call find_user(7)', '저장 방식을 목록에서 DB로 변경': 'Storage changed from a list to a DB', '같은 규약으로 사용자 반환': 'Returns the user by the same contract',
   // Step 3
   '모듈 나누기': 'Splitting modules',
   '함께 바뀌는 것끼리 한 모듈에 모은다': 'Put what changes together in one module',
@@ -61,8 +57,6 @@ window.lessonText = {
   '환불은 결제 수단과 결제 기록을 다루므로 결제 모듈과 함께 바뀝니다.': 'A refund deals with payment methods and payment records, so it changes along with the payment module.',
   '디자이너가 상품 목록의 글씨 색을 바꿔 달라고 합니다. 모듈을 잘 나눴다면 어느 모듈만 열어 보면 될까요?': 'A designer asks to change the text colour of the product list. If the modules are well split, which module alone do you need to open?',
   '화면 모듈만 열면 됩니다. 결제나 주문 코드는 건드리지 않으므로 그쪽에 버그가 생길 걱정도 없습니다.': 'Only the display module. Payment and order code are not touched, so there is no worry of bugs appearing there.',
-  // Diagram (step 3)
-  '재고 갱신과 재고 조회': 'Stock update and stock lookup', '재고 모듈에 함께 배치': 'Placed together in a stock module', '재고 규칙을 한 곳에서 수정': 'Stock rules changed in one place',
   // Step 4
   '느슨하게 잇기': 'Loose coupling',
   '모듈 사이의 연결은 적고 한 방향으로': 'Few connections between modules, in one direction',
@@ -80,6 +74,6 @@ window.lessonText = {
   '함께 바뀌지 않는 것들이 한곳에 섞여, 어디를 고치면 무엇이 흔들릴지 알기 어렵습니다.': 'Things that do not change together are mixed in one place, so it is hard to know what a change will shake.',
   '결제사를 다른 회사로 바꾸게 됐습니다. 두 번째 설계에서는 어디를 고쳐야 할까요?': 'You are switching to another payment company. Where must you make changes in the second design?',
   '결제 모듈 안쪽만 고치면 됩니다. pay(amount)라는 인터페이스를 그대로 지키면 주문 모듈과 화면 모듈은 바뀐 줄도 모릅니다.': 'Only inside the payment module. Keep the pay(amount) interface as it is and the order and display modules never even notice.',
-  // Diagram (step 4)
-  '주문이 결제 규약만 호출': 'Order calls only the payment contract', '결제 구현 교체': 'Payment implementation swapped', '주문 코드는 그대로 사용': 'Order code used unchanged',
+  // Reading examples (steps 1–4)
+  '같은 계산이 total_a, total_b에 복사': 'Same math copied into total_a and total_b', 'final_price(price) 하나로 묶어 두 곳에서 호출': 'Wrapped in final_price(price), called from both', '할인 기준이 바뀌면 함수 안 한 곳만 수정': 'A new discount rule changes one place in the function', 'find_user(7) 호출': 'Call find_user(7)', '안의 방법을 목록 훑기에서 해시 테이블로 변경': 'Inside: list scan replaced by a hash table', '받는 값·돌려주는 값이 같아 부르는 코드는 그대로': 'Same input and output, so callers stay unchanged', 'add_to_cart와 order_total은 주문 규칙과 함께 바뀜': 'add_to_cart and order_total change with order rules', '둘 다 주문 모듈에 둠': 'Both go in the order module', '할인 규칙이 바뀌면 주문 모듈만 수정': 'A new discount rule changes only the order module', '화면은 주문을, 주문은 결제의 pay(amount)만 부름': 'Screen calls order; order calls only payment\'s pay(amount)', '결제사를 다른 회사로 교체': 'Switch to another payment company', '결제 모듈 안만 수정 · 주문과 화면은 그대로': 'Only the payment module changes · order and screen stay',
 };

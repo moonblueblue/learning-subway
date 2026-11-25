@@ -374,7 +374,8 @@ const S = [['b', '브라우저', 'app'], ['r', '리졸버', 'layer'], ['root', '
 const lesson = [
   {
     label: '차례로 묻기',
-    readingStage: 7,
+    readingStage: 8,
+    note: ['shop.example.com?', ' → ', '루트: .com은 저기', ' → ', '.com: example.com은 저기', ' → ', '권한 서버: 203.0.113.10 (TTL 300초)'],
     title: '이름의 오른쪽부터 차례로 물어 주소를 찾는다',
     body: '사람은 shop.example.com 같은 이름을 기억하지만, 패킷(5.8)은 IP 주소로만 갑니다. 이름을 주소로 바꾸는 시스템이 DNS입니다. 브라우저는 리졸버(보통 통신사나 공용 서비스가 운영)에게 묻고, 리졸버는 이름을 오른쪽부터 읽으며 루트 서버, .com 서버, example.com의 권한 서버에 차례로 묻습니다.',
     takeaway: '루트 서버와 .com 서버는 주소를 모르지만 "다음에 누구에게 물을지"를 알려 줍니다. 마지막 권한 서버만 진짜 답(203.0.113.10)을 압니다. 리졸버는 이 길을 대신 걸어 준 뒤 답을 브라우저에 돌려줍니다.',
@@ -397,6 +398,7 @@ const lesson = [
   {
     label: '캐시',
     readingStage: 2,
+    note: ['shop.example.com? (TTL 240초 남음)', ' → ', '리졸버 캐시에서 바로 203.0.113.10', ' · ', '다른 서버에 묻지 않음'],
     title: '한 번 찾은 답은 TTL 동안 기억한다',
     body: '매번 루트부터 물으면 느리고 위쪽 서버에 질문이 몰립니다. 그래서 리졸버는 받은 답을 TTL(유효 시간) 동안 캐시에 둡니다(3.7의 캐시와 같은 생각). 브라우저와 운영체제도 자기 캐시를 가집니다. 같은 이름을 다시 물으면 바로 답이 나옵니다.',
     takeaway: '두 번째 질문은 리졸버에서 바로 답이 돌아옵니다. TTL이 끝난 뒤에는 다시 물어야 하지만, .com 서버와 권한 서버 주소는 아직 캐시에 있어 루트를 건너뛰고 권한 서버에 바로 갑니다.',
@@ -416,7 +418,8 @@ const lesson = [
   },
   {
     label: '주소가 바뀌면',
-    readingStage: 5,
+    readingStage: 6,
+    note: ['브라우저: 캐시의 옛 주소 203.0.113.10 → 연결 실패', ' · ', 'TTL이 끝난 뒤 권한 서버에 바로 다시 물음', ' → ', '새 주소 203.0.113.20'],
     title: 'TTL이 끝날 때까지는 옛 주소로 간다',
     body: '서비스가 서버를 옮겨 shop.example.com의 주소를 203.0.113.20으로 바꿨다고 해 봅시다. 권한 서버에는 곧바로 새 주소가 적히지만, 리졸버 캐시에 남은 옛 답은 TTL이 끝날 때까지 그대로 쓰입니다. 그래서 주소를 바꾸기 전에 TTL을 미리 짧게 줄여 두는 것이 관례입니다.',
     takeaway: '캐시가 살아 있는 동안 브라우저는 옛 주소(203.0.113.10)로 가서 실패합니다. TTL이 끝난 뒤에야 새 주소를 받습니다. 캐시는 빠르지만 바뀐 정보를 늦게 반영합니다.',
@@ -436,7 +439,9 @@ const lesson = [
   },
   {
     label: '없는 이름',
-    readingStage: 3,
+    readingStage: 4,
+    note: ['shpo.example.com? (오타)', ' → ', '권한 서버: NXDOMAIN (없는 이름)', ' → ', '사이트를 찾을 수 없음'],
+    noteTone: 'bad',
     title: '없는 이름에는 "없다"는 답이 온다',
     body: '주소창에 shpo.example.com처럼 오타를 내면 어떻게 될까요? 리졸버는 평소처럼 권한 서버에 묻고, 권한 서버는 "그런 이름은 없다(NXDOMAIN)"고 답합니다. 브라우저는 서버에 연결해 보지도 못하고 "사이트를 찾을 수 없음" 화면을 보여 줍니다. DNS 질문은 대개 UDP(5.9) 53번 포트로 오갑니다. 작은 질문 하나라 연결 인사 없이 보내고, 답이 없으면 다시 묻습니다.',
     takeaway: '권한 서버가 "없음"이라고 답하면 브라우저에 오류가 뜹니다. "없다"는 답도 잠시 캐시해 같은 오타를 매번 묻지 않습니다.',
@@ -446,7 +451,7 @@ const lesson = [
     stages: [
       { from: 'b', to: 'r', label: 'shpo.example.com?', title: '오타 난 이름', lines: ['"shpo.example.com의 IP 주소는?"'], text: '오타 난 이름을 묻습니다.', holds: { r: '찾는 중' } },
       { from: 'r', to: 'auth', label: '질문', title: '권한 서버에 묻기', lines: ['example.com 권한 서버 주소는 캐시에 있음'], text: 'example.com을 맡은 권한 서버에 바로 묻습니다.', holds: { auth: '질문 받음' } },
-      { from: 'auth', to: 'r', label: 'NXDOMAIN', title: '없는 이름', lines: ['권한 서버: "shpo.example.com은 없다"', '캐시: shpo.example.com → 없음 (잠시)'], text: '권한 서버가 그런 이름은 없다고 답합니다.', holds: { auth: '없음', r: '"없음" 캐시' },
+      { from: 'auth', to: 'r', label: 'NXDOMAIN', title: '없는 이름', error: 'auth', lines: ['권한 서버: "shpo.example.com은 없다"', '캐시: shpo.example.com → 없음 (잠시)'], text: '권한 서버가 그런 이름은 없다고 답합니다.', holds: { auth: '없음', r: '"없음" 캐시' },
         ask: { q: '"없다"는 답을 줄 수 있는 곳은?', choices: ['example.com의 권한 서버', '아무 라우터'], answer: 'example.com의 권한 서버', why: 'example.com 아래 이름 목록은 권한 서버만 알므로, 없다는 것도 권한 서버가 확인해 줍니다.' } },
       { from: 'r', to: 'b', label: '없음', title: '사이트를 찾을 수 없음', lines: ['브라우저: 연결을 시작하지도 못함', '"사이트를 찾을 수 없음"'], error: 'b', text: '브라우저가 오류 화면을 보여 줍니다.', holds: { b: '찾을 수 없음' },
         ask: { q: 'DNS 질문이 대개 TCP가 아니라 UDP로 오가는 까닭은?', choices: ['작은 질문 하나에 세 번 인사까지 하면 너무 느려서', 'UDP가 더 믿을 만해서'], answer: '작은 질문 하나에 세 번 인사까지 하면 너무 느려서', why: '질문과 답이 패킷 하나씩이라 연결 없이 보내고, 답이 없으면 다시 물으면 됩니다.' } },
@@ -556,6 +561,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what was asked and answered, so the badges read as the result of that exchange.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

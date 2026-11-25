@@ -367,7 +367,7 @@ const lesson = [
   },
   {
     label: '어디에 쓰나',
-    readingSearch: {"kind": "bfs", "moves": 2},
+    readingSearch: {"kind": "bfs", "moves": 2, "note": "A → B 다음: 큐면 C (가까운 점부터, 너비 우선) · 스택이면 D (한 갈래 끝까지, 깊이 우선)"},
     example: ["가까운 점부터 찾기", "큐로 다음 이웃 선택", "한 갈래를 끝까지 볼 때는 스택"],
     title: '물을 질문에 따라 탐색 방법을 고른다',
     body: '두 탐색 모두 모든 노드와 길을 한 번씩 보므로 일의 양은 O(노드 수 + 길 수)로 같습니다. 차이는 순서입니다. "가장 가까운 것", "몇 단계 만에"를 묻는다면 너비 우선, "갈 수 있나", "모든 경우를 끝까지"를 묻는다면 깊이 우선이 편합니다. 웹 크롤러, SNS의 친구 추천, 미로 풀기, 4.10의 문제들에서 다시 만납니다.',
@@ -456,9 +456,19 @@ function paint() {
   box.replaceChildren(...list.map((p, i) => Object.assign(document.createElement('span'), { className: 'chip' + (i === 0 ? ' next' : ''), textContent: p })));
   if (!list.length) box.append(Object.assign(document.createElement('span'), { className: 'chip empty', textContent: '비어 있음' }));
   byId('visit-order').textContent = moves.map((m) => m.place).join(' → ') || '–';
+  // The still picture says which search it is, the order so far and what waits next, in a note at the top.
+  byId('example-note')?.remove();
+  if (preview) {
+    const name = preview.kind === 'bfs' ? '너비 우선 · 큐' : '깊이 우선 · 스택';
+    const waiting = preview.kind === 'bfs' ? shownFor(frontier, visited) : [...shownFor(frontier, visited)].reverse();
+    const route = goal && visited.has(goal) ? ` · A → ${goal} 경로 선 ${pathTo(goal, last.parent).length - 1}개` : '';
+    exampleNote(preview.note ?? `${name}: 방문 ${moves.map((m) => m.place).join(' → ')}${waiting.length ? ` · 다음 ${waiting[0]}` : ''}${route}`);
+  }
   byId('step-tick').disabled = state.pos >= state.moves.length && state.moves.length > 0;
   byId('step-all').disabled = state.pos >= state.moves.length && state.moves.length > 0;
 }
+
+const shownFor = (frontier, visited) => [...new Set(frontier.filter((p) => !visited.has(p)))];
 
 // ---------- Running ----------
 function startSearch(kind) {

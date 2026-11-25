@@ -75,4 +75,10 @@ window.lessonText = {
   '왼쪽': 'Left', '오른쪽': 'Right',
   '카메라 기준 좌표는 카메라 이동의 반대만큼 바뀝니다. 기차가 앞으로 가면 창밖 풍경이 뒤로 가는 것과 같습니다.': 'Camera coordinates change by the opposite of the camera\'s move. It is like scenery outside a train window going backward as the train goes forward.',
   '(1, 3) → 8D.1의 원근 나누기로': '(1, 3) → to the perspective divide of 8D.1', '카메라 기준 좌표가 원근 단계로 넘어갑니다.': 'The camera coordinates go on to the perspective stage.',
+  // Example note on the still picture.
+  '크기 ×2: (2, 0)': 'scale ×2: (2, 0)', '반시계 90°: (0, 2)': '90° counterclockwise: (0, 2)', '이동 (+3, +1): (3, 3)': 'move (+3, +1): (3, 3)',
+  'A: 회전 → 이동 = (3, 2)': 'A: rotate → move = (3, 2)', 'B: 이동 → 회전 = (−1, 4)': 'B: move → rotate = (−1, 4)', '순서만 바꿔도 다름': 'only the order changed, yet different',
+  'M = T × R × S로 미리 묶음': 'bundle M = T × R × S first', '(1, 0, 1)에 한 번 곱함': 'multiply (1, 0, 1) once', '세 번 계산한 것과 같은 (3, 3)': 'same (3, 3) as three steps',
+  '카메라가 x로 +2': 'the camera moves +2 in x', '세상을 반대로 (−2, 0) 옮김': 'move the world the other way (−2, 0)', '점 (3, 3)이 카메라 기준 (1, 3)': 'point (3, 3) is (1, 3) for the camera',
+  '뷰 행렬 (반대로) · (1, 3)': 'View⁻¹ · (1, 3)',
 };

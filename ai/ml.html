@@ -376,6 +376,7 @@ const lesson = [
   {
     label: '규칙 대신 예시',
     readingStage: 2,
+    note: ['예시 20°C → 40개 · 25°C → 50개 · 30°C → 60개', ' → ', '판매량 = w × 기온에서 w = 2를 배움', ' → ', '28°C → 56개'],
     title: '사람이 규칙을 쓰는 대신 예시에서 규칙을 찾게 한다',
     body: '지금까지는 사람이 규칙을 코드로 썼습니다("300보다 작으면 물 주기", 6.10). 그런데 "기온으로 아이스크림 판매량 예측하기"처럼 규칙을 정확히 모를 때가 많습니다. 머신러닝은 기온과 실제 판매량의 예시를 보여 주고, 컴퓨터가 둘 사이의 규칙을 찾게 합니다. 여기서는 "판매량 = w × 기온"이라는 모양만 정해 두고, 숫자 w를 예시로부터 배웁니다.',
     takeaway: '예시 세 개를 보면 판매량이 기온의 두 배쯤입니다. 사람은 눈으로 찾았지만, 컴퓨터는 w를 조금씩 고치는 방법으로 찾습니다(다음 단계). 이렇게 정답이 붙은 예시로 배우는 것을 지도 학습이라 합니다.',
@@ -385,12 +386,13 @@ const lesson = [
     stages: [
       { from: 'data', to: 'model', label: '예시 3개', title: '모델의 모양', lines: ['판매량 = w × 기온', 'w는 아직 모름 → 예시에서 찾아야 함'], text: '모델의 모양만 정하고 숫자 w는 비워 둡니다.', holds: { model: 'w = ?' },
         ask: { q: '예시를 보면 w는 얼마쯤일까요?', choices: ['약 2', '약 20', '약 0.5'], answer: '약 2', why: '20 → 40, 25 → 50, 30 → 60이므로 판매량은 기온의 두 배입니다.' } },
-      { from: 'model', to: 'pred', label: '28°C?', title: '배운 뒤에는', lines: ['w = 2라면 28°C → 56개'], text: '규칙을 배우면 처음 보는 기온도 예측할 수 있습니다.', holds: { pred: '56개' } },
+      { from: 'model', to: 'pred', label: '28°C?', title: '배운 뒤에는', lines: ['w = 2라면 28°C → 56개'], text: '규칙을 배우면 처음 보는 기온도 예측할 수 있습니다.', holds: { pred: '56개', model: 'w = 2' } },
     ],
   },
   {
     label: '틀린 만큼 고치기',
-    readingStage: 5,
+    readingStage: 6,
+    note: ['w = 1로 예측 20, 25, 30', ' → ', '정답 40, 50, 60과 비교해 오차 642', ' → ', 'w를 1.64로 키우니 오차 82'],
     title: '예측하고, 틀린 정도를 재고, w를 조금 고친다',
     body: '컴퓨터는 w = 1처럼 아무 값에서 시작합니다. 예시마다 예측하고 정답과 비교해 오차를 잽니다. 오차가 줄어드는 방향으로 w를 조금 옮기고 다시 예측합니다. 이것을 되풀이하는 것이 학습이고, 오차가 줄어드는 쪽으로 내려가는 방법을 경사 하강법이라 합니다. 한 번에 얼마나 옮길지(학습률)는 사람이 정합니다.',
     takeaway: 'w가 1 → 1.64 → 1.87로 2에 다가갑니다. 2와의 차이는 매번 3분의 1쯤으로, 오차(차이 제곱의 평균)는 8분의 1쯤으로 줄어듭니다. 컴퓨터는 "두 배"라는 규칙을 몰랐지만, 틀린 만큼 고치기를 되풀이해 찾아냈습니다.',
@@ -413,6 +415,7 @@ const lesson = [
   {
     label: '처음 보는 데이터',
     readingStage: 3,
+    note: ['처음 보는 22°C, 33°C', ' → ', 'w ≈ 2.0으로 예측 44, 66', ' → ', '실제 45, 65와 차이 ±1'],
     title: '배운 데이터가 아니라 처음 보는 데이터로 평가한다',
     body: '모델이 쓸모 있는지는 배울 때 본 예시가 아니라 처음 보는 데이터에서 잘 맞히는지로 판단합니다. 그래서 예시를 미리 나눠, 일부는 학습에 쓰고 일부(시험 데이터)는 숨겨 두었다가 평가에만 씁니다. 6.2의 테스트처럼, 시험 문제를 미리 보여 주면 실력을 잴 수 없습니다.',
     takeaway: '숨겨 둔 22°C와 33°C에서 예측 44.0과 66.0이 실제 45개, 65개와 가깝습니다. 처음 보는 데이터에서도 잘 맞으니 규칙을 제대로 배운 것입니다(일반화).',
@@ -430,6 +433,8 @@ const lesson = [
   {
     label: '외우기와 치우침',
     readingStage: 4,
+    note: ['여름(20–33°C) 예시로만 배운 w = 2', ' → ', '−5°C에 그대로 쓰면 −10개', ' → ', '본 적 없는 겨울에서는 엉뚱함'],
+    noteTone: 'bad',
     title: '너무 외우거나 치우친 예시로 배우면 틀린다',
     body: '모델을 아주 복잡하게 만들면, 예시의 작은 우연(그날 비가 와서 덜 팔림)까지 외워 학습 예시는 완벽히 맞히지만 처음 보는 데이터는 틀립니다. 이것을 과적합이라 합니다. 또 예시가 여름 데이터뿐이라면 모델은 겨울을 본 적이 없어 영하의 기온에 음수 판매량을 예측합니다. 모델은 보여 준 예시만큼만 압니다.',
     takeaway: '과적합은 시험 데이터 점수로 알아채고, 모델을 단순하게 하거나 예시를 늘려 막습니다. 데이터의 치우침은 모델에 그대로 옮겨지므로, 어떤 예시로 배웠는지가 결과만큼 중요합니다(0.8 컴퓨팅의 영향).',
@@ -519,8 +524,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -567,6 +573,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names the examples, the rule learned and the result, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

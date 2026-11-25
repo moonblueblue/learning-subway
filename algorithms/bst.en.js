@@ -3,6 +3,11 @@ window.lessonText = (() => {
 const sides = (text) => text.replace(/왼쪽/g, 'left').replace(/오른쪽/g, 'right');
 const plural = (n, word) => `${n} ${word}${n === '1' ? '' : 's'}`;
 return {
+  // Notes on the still pictures
+  '뿌리 40 · 넣을 값 20 → 20 < 40 → 왼쪽 자식에 20': 'Root 40 · new value 20 → 20 < 40 → 20 becomes the left child',
+  '65 > 50 → 오른쪽 (왼쪽 7개는 버림) → 70 → 60 → 65 찾음 · 비교 4번': '65 > 50 → right (the 7 on the left are dropped) → 70 → 60 → 65 found · 4 comparisons',
+  '10, 20, …, 70을 차례로 넣음 → 늘 오른쪽 → 70까지 비교 7번': '10, 20, …, 70 inserted in order → always right → 7 comparisons to reach 70',
+  '왼쪽 → 자신 → 오른쪽: {0} (작은 값부터)': 'Left → self → right: {0} (smallest first)',
   // Page
   '트리와 이진 탐색 트리 · 레슨 4.6': 'Trees and binary search trees · Lesson 4.6',
   '작으면 왼쪽, 크면 오른쪽 규칙으로 이진 탐색 트리에 값을 넣고 찾으며, 고른 트리와 기울어진 트리, 중위 순회를 비교해 보세요.':

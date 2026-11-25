@@ -73,4 +73,10 @@ window.lessonText = {
   '로그에 남아 있으면 표 반영은 나중에 해도 됩니다. 메모리에만 있으면 꺼질 때 사라집니다.': 'If it is in the log, applying to the tables can wait. If it is only in memory, it vanishes when power fails.',
   '재시작한 엔진이 #43을 되돌리지 않고 다시 실행하는 까닭은?': 'Why does the restarted engine redo #43 instead of undoing it?', '로그에 COMMIT이 있어 확정된 일이므로': 'The log has its COMMIT, so it is final', '서준이 요청해서': 'Seojun asked for it',
   '"완료"라고 답한 일은 꺼져도 남아야 합니다. 지속성입니다.': 'Work reported as "done" must survive power loss. That is durability.',
+  // Example note on the still picture.
+  '각 100,000에서 민지 −30,000 디스크에 씀': 'from 100,000 each: Minji −30,000 on disk', '서준 +30,000 전에 전원 꺼짐': 'off before Seojun +30,000', '다시 켜도 70,000 · 100,000 (3만 원 사라짐)': 'restart: 70,000 · 100,000 (30,000 lost)',
+  'BEGIN #41': 'BEGIN #41', '민지 −30,000 · 서준 +30,000 (임시)': '−30,000 · +30,000 (pending)', 'COMMIT 기록': 'COMMIT logged', '70,000 · 130,000 함께 확정': 'both final: 70,000 · 130,000',
+  '새 이체 #42 (각 100,000): 로그에 먼저': '#42 (100,000 each): log first', '민지 −30,000': 'Minji −30,000', 'COMMIT 전에 꺼짐': 'off before COMMIT', '로그 보고 되돌림: 100,000 · 100,000': 'log undoes: 100,000 · 100,000',
+  '새 이체 #43 (각 100,000): COMMIT · 완료 알림': '#43 (100,000 each): COMMIT, done sent', '서준에 쓰기 전에 꺼짐': 'off before writing Seojun', '로그대로 서준 반영: 70,000 · 130,000': 'log redoes Seojun: 70,000 · 130,000',
+  '#41': '#41', '#42': '#42', '#43': '#43', '#43 반영': '#43 redone',
 };

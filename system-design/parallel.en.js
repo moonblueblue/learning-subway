@@ -77,4 +77,8 @@ window.lessonText = {
   '기다림을 줄이려면 어떻게 나누면 좋을까요?': 'How should the work be split to cut the waiting?', '작은 조각으로 줄 세워 끝난 일꾼이 다음 조각을 가져가게': 'Queue small pieces and let a worker that finishes take the next one', '처음부터 더 큰 묶음으로 나누기': 'Split into bigger batches from the start',
   '빠른 일꾼이 더 많은 조각을 가져가 느린 일꾼의 몫이 줄어듭니다. 4.3의 큐가 쓰입니다.': 'Fast workers take more pieces, so the slow worker\'s share shrinks. The queue from 4.3 is used.',
   '9장을 1장씩 줄 서게 하고 끝난 일꾼이 다음 장을 가져가면 → 약 4초': 'Queue the 9 photos one by one and let a worker that finishes take the next → about 4 s',
+  // Example note on the still picture.
+  '사진 한 장에 1초': '1 s per photo', '일꾼 1이 9장을 차례로': 'worker 1 does 9 in turn', '9장을 3장씩 나눔': '9 photos split 3 each', '일꾼 셋이 동시에 3초': '3 workers at once: 3 s', '모아서 3초': 'gathered: 3 s',
+  '압축 풀기는 혼자 3초': 'unzipping alone: 3 s', '사진 9장을 셋이 나눠 3초': '9 photos split 3 ways: 3 s', '3 + 3 = 6초 (혼자면 12초)': '3 + 3 = 6 s (12 s alone)',
+  '일꾼 3만 한 장에 2초': 'only worker 3 takes 2 s a photo', '일꾼 1·2는 3초에 끝나고 기다림': 'workers 1·2 finish at 3 s and wait', '전체는 가장 느린 6초': 'total is the slowest: 6 s',
 };

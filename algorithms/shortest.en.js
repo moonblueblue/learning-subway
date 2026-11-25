@@ -2,6 +2,11 @@
 window.lessonText = (() => {
 const minutes = (text) => text.replace(/(\d+)분은 더 느려 그대로/g, '$1 min is slower, unchanged').replace(/(\d+)분/g, '$1 min').replace('새로 볼 길 없음', 'no new roads to check');
 return {
+  // Notes on the still pictures
+  'A → I: {0} = {1} = {#2}분': 'A → I: {0} = {1} = {2} min',
+  'H–I 정체 5 → 12분 · A → I: {0} = {1} = {#2}분': 'Jam on H–I, 5 → 12 min · A → I: {0} = {1} = {2} min',
+  '미확정 중 가장 가까운 {0}를 {#1}분으로 확정': 'The nearest unsettled place, {0}, is settled at {1} min',
+  '후보 {0} → 가장 작은 {1}를 꺼냄': (list, place) => `Candidates ${list.replace(/(\d+)분/g, '$1 min')} → the smallest, ${place}, is taken`,
   // Page
   '최단 경로 · 레슨 4.8': 'Shortest paths · Lesson 4.8',
   '길마다 걸리는 시간이 적힌 그래프에서 다익스트라 알고리즘을 한 걸음씩 돌려 가장 빠른 길을 찾고, 정체가 생기면 답이 어떻게 바뀌는지 확인해 보세요.':

@@ -1,6 +1,10 @@
 // English for 1.6 Debugging. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // Names in the code: 합계 total, 평균 average (the same as 1.2 and 1.3).
 window.lessonText = {
+  // CPU plate in the still picture: the computation and the expected value
+  '평균 = 12 / 2 = 6.0 · 기대 4.0': 'average = 12 / 2 = 6.0 · expected 4.0', '중간 확인: 합계 12 = 기대 12 → 나눗셈 의심': 'midway check: total 12 = expected 12 → suspect the division',
+  '평균 = 12 / 3 = 4.0 = 기대 4.0': 'average = 12 / 3 = 4.0 = expected 4.0', '3 < 3 → 거짓 → 6 빠짐 · 6 / 3 = 2.0 ≠ 기대 4.0': '3 < 3 → false → 6 left out · 6 / 3 = 2.0 ≠ expected 4.0',
+  '{#0}번지': 'addr {0}',
   // Page
   '디버깅 · 레슨 1.6': 'Debugging · Lesson 1.6',
   '평균을 잘못 구하는 프로그램을 한 줄씩 실행하며, 기대와 실제를 비교하고 버그가 있는 줄을 좁혀 찾는 연습을 해 보세요.':

@@ -7,7 +7,7 @@ window.lessonText = {
   '문구점 웹 앱을 대상으로 지킬 자산을 정하고, STRIDE로 위협을 분류하고, 가능성과 피해로 순서를 매기고, 위협마다 알맞은 대응을 짝짓는 위협 모델링을 문제로 익혀 보세요.':
     'Learn threat modeling through exercises on the stationery shop web app: decide the assets to protect, classify threats with STRIDE, rank them by likelihood and harm, and pair each threat with the right defense.',
   // Step 1
-  '무엇을 지킬까': 'What to protect', '계좌 번호가 같은 주문 두 건': 'Two orders, same account number', '금액이 바뀌면 피해 발생': 'A changed amount does harm', '금액의 무결성을 보호 대상으로 지정': 'Mark the amount\'s integrity as an asset',
+  '무엇을 지킬까': 'What to protect',
   '먼저 잃으면 안 되는 것(자산)을 정한다': 'First decide what must not be lost (the assets)',
   '위협 모델링은 "무엇을, 누구로부터, 어떻게 지킬지"를 만들기 전에 따져 보는 일입니다. 첫 질문은 "잃거나 새면 큰일 나는 것이 무엇인가"입니다. 모든 것을 똑같이 지킬 수는 없으니, 새거나 바뀌면 피해가 큰 것을 골라 집중합니다. 이 실험에서는 지금까지 만든 문구점 웹 앱(6.9–6.12, 9.3)을 대상으로 합니다.':
     'Threat modeling means working out "what to protect, from whom, and how" before you build. The first question is "what would be a disaster to lose or leak?" You cannot protect everything equally, so pick what does great harm if leaked or changed and focus on it. This lab uses the stationery shop web app built so far (6.9–6.12, 9.3).',
@@ -23,7 +23,7 @@ window.lessonText = {
   '예를 들어 메신저라면 대화 내용, 로그인 정보, 연락처 목록입니다. 이것들이 어디에 저장되고 어디로 오가는지부터 그려 봅니다.':
     'For a messenger, say: the conversations, the login details and the contact list. Start by drawing where these are stored and where they travel.',
   // Step 2
-  '위협 분류': 'Classify threats', '다른 사람인 척 로그인': 'Logging in as someone else', '신원을 검증할 수단 확인': 'Check how identity is verified', '신원 위조 위협으로 분류': 'Class it as identity spoofing',
+  '위협 분류': 'Classify threats',
   'STRIDE로 빠뜨린 위협이 없는지 훑는다': 'Sweep with STRIDE so no threat is missed',
   '위협을 빠짐없이 떠올리려고 STRIDE라는 목록을 씁니다. 위장(남인 척), 변조(내용 바꾸기), 부인(했는데 안 했다고 하기), 정보 유출, 서비스 거부(못 쓰게 만들기), 권한 상승(할 수 없는 일 하기)입니다. 시스템의 부품과 데이터 흐름마다 이 여섯 가지를 차례로 물어봅니다.':
     'To think of every threat, use the list called STRIDE: Spoofing (pretending to be someone else), Tampering (changing content), Repudiation (denying what you did), Information disclosure, Denial of service (making it unusable) and Elevation of privilege (doing what you are not allowed to). Ask these six in turn for every part of the system and every data flow.',
@@ -38,7 +38,7 @@ window.lessonText = {
   '레이트 리미터(7.7)와 서킷 브레이커(7.8)는 STRIDE의 어떤 위협을 줄일까요?': 'Which STRIDE threat do the rate limiter (7.7) and circuit breaker (7.8) reduce?',
   '서비스 거부입니다. 한 사용자나 한 고장 때문에 모두가 서비스를 못 쓰게 되는 것을 막습니다.': 'Denial of service. They stop one user or one failure from making the service unusable for everyone.',
   // Step 3
-  '먼저 막을 것': 'What to block first', '가능성 4 · 피해 5': 'Likelihood 4 · impact 5', '위험 점수 4 × 5': 'Risk score 4 × 5', '점수 20을 먼저 검토': 'Review score 20 first',
+  '먼저 막을 것': 'What to block first',
   '일어날 가능성과 피해 크기로 순서를 정한다': 'Order by likelihood and size of harm',
   '찾은 위협을 한꺼번에 다 막을 수는 없습니다. 각 위협이 일어날 가능성(쉽게 시도할 수 있나, 이미 흔한가)과 일어났을 때 피해 크기를 매기고, 둘을 곱해 큰 것부터 막습니다. 가능성은 낮아도 피해가 아주 큰 것(결제 키 유출)은 일찍 막습니다.':
     'You cannot block every threat you found at once. Rate each threat\'s likelihood (is it easy to try, is it already common?) and the size of the harm if it happens, multiply the two, and block the biggest first. Something with low likelihood but huge harm (a leaked payment key) gets blocked early.',
@@ -52,7 +52,7 @@ window.lessonText = {
   '가능성은 1이지만 피해가 5인 위협(데이터센터 화재로 DB 전부 소실)은 어떻게 다뤄야 할까요?': 'How should you handle a threat of likelihood 1 but impact 5 (a data center fire wiping out the whole DB)?',
   '자주 일어나지 않아도 한 번이면 회사가 끝날 수 있습니다. 다른 지역에 백업과 복제본(7.4)을 두고, 복구 연습을 정기적으로 합니다.': 'It rarely happens, but once could end the company. Keep backups and replicas (7.4) in another region and practice recovery regularly.',
   // Step 4
-  '대응 고르기': 'Choose defenses', '주문 정보를 권한 없이 읽을 위험': 'Risk of reading orders without rights', '소유자와 접근 권한 확인': 'Check owner and access rights', '허용된 사용자만 조회': 'Only allowed users can read',
+  '대응 고르기': 'Choose defenses',
   '위협마다 알맞은 대응을 짝짓는다': 'Pair each threat with the right defense',
   '마지막으로 위협마다 대응을 정하고, 정말 막히는지 테스트(6.2)로 확인합니다. 대응은 앞 레슨들에서 이미 배웠습니다. 중요한 것은 위협과 대응을 표로 남겨, 서비스가 바뀔 때마다 다시 훑어보는 것입니다. 위협 모델은 한 번 쓰고 끝내는 문서가 아니라 함께 자라는 지도입니다.':
     'Finally, choose a defense for each threat and check with tests (6.2) that it really blocks it. You have already learned the defenses in earlier lessons. What matters is keeping threats and defenses in a table and sweeping it again whenever the service changes. A threat model is not a document you write once; it is a map that grows with the service.',
@@ -66,4 +66,6 @@ window.lessonText = {
   '새 기능 "친구에게 선물 보내기"를 만든다면, 어떤 위협을 먼저 떠올리겠어요?': 'If you built a new "send a gift to a friend" feature, which threats would you think of first?',
   '받는 사람을 바꿔치기(변조), 남의 계정으로 선물 보내기(위장), 선물을 끝없이 보내 포인트 빼돌리기(권한·남용), 선물 기록을 부인하기(부인)입니다. 각각 서버 검사, 인증, 레이트 리미터, 기록 남기기로 대응합니다.':
     'Swapping the recipient (tampering), sending gifts from someone else\'s account (spoofing), sending gifts endlessly to drain points (privilege and abuse), and denying a gift record (repudiation). Defend with server checks, authentication, a rate limiter and logging, in that order.',
+  // Reading examples
+  '결제 회사 비밀 키가 샘': 'the payment company\'s secret key leaks', '남의 이름으로 돈이 나감': 'money goes out in your name', '먼저 지킬 자산': 'an asset to guard first', '훔친 세션 쿠키로 남의 계정에 들어감': 'a stolen session cookie gets into someone\'s account', '남인 척하기': 'pretending to be someone else', 'STRIDE의 S: 위장': 'STRIDE S: spoofing', '비밀번호 대입: 5 × 4 = 20': 'password guessing: 5 × 4 = 20', '결제 키 노출: 3 × 5 = 15': 'payment key exposed: 3 × 5 = 15', '점수 큰 20부터, 15도 곧': 'the 20 first, the 15 soon after', '로그인 칸에 \' OR \'1\'=\'1': '\' OR \'1\'=\'1 in the login box', '입력을 값으로 넘기는 매개변수 질의': 'a parameterized query passes it as a value', '사용자 목록이 새지 않음': 'the user list does not leak',
 };

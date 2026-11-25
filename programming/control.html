@@ -84,6 +84,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .total.max text{fill:#a24c14}
 .total{transform-box:fill-box;transform-origin:center}
 .total.bump{animation:bump .32s ease-out}
+.total.long text{font-size:14px}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
 .note{animation:note 1.6s ease-out forwards}
 .note path{fill:none;stroke:#43574f;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
@@ -93,7 +94,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
-@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
+@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.total.long text{font-size:18px}.packet-label{font-size:13px}.note text{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:none}.note,.total.bump{animation:none}}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -328,6 +329,7 @@ const lesson = [
   {
     label: '갈림길 if',
     readingMemory: [["점수", 75], ["결과", "합격"]],
+    readingCpu: '75 >= 60 → 참 → "합격"',
     example: ["점수 75", "75 ≥ 60은 참", "결과 ‘합격’"],
     title: '조건이 참이면 그 아래 줄을 실행한다',
     body: 'if 뒤의 조건은 참(True) 아니면 거짓(False) 둘 중 하나입니다. 참이면 들여 쓴 줄을 실행하고, 거짓이면 그 줄들을 건너뛰어 else 아래로 갑니다. 프로그램은 이렇게 한 갈래만 골라 갑니다.',
@@ -348,6 +350,7 @@ const lesson = [
   {
     label: 'else 쪽',
     readingMemory: [["점수", 45], ["결과", "다시"]],
+    readingCpu: '45 >= 60 → 거짓 → else "다시"',
     example: ["점수 45", "45 ≥ 60은 거짓", "else에서 ‘다시’"],
     title: '거짓이면 else 아래로 건너뛴다',
     body: '같은 코드라도 값이 바뀌면 다른 길로 갑니다. 점수가 45라면 조건이 거짓이 되어, if 아래 줄을 건너뛰고 else 아래 줄을 실행합니다. 프로그램을 짤 때는 두 갈래 모두 맞게 동작하는지 따져 봐야 합니다.',
@@ -367,6 +370,7 @@ const lesson = [
   {
     label: '반복 while',
     readingMemory: [["합계", 6], ["i", 4]],
+    readingCpu: '4 <= 3 → 거짓 → 3바퀴 뒤 끝',
     example: ["i = 1 · 합계 0", "1 + 2 + 3 누적", "i = 4에서 종료 · 합계 6"],
     title: '조건이 참인 동안 같은 줄을 되풀이한다',
     body: 'while은 조건이 참인 동안 들여 쓴 줄들을 반복합니다. 반복 안의 마지막 줄을 실행하면 다시 while로 올라가 조건을 확인합니다. 아래 프로그램은 i를 1, 2, 3으로 바꿔 가며 합계에 더하고, i가 4가 되면 조건이 거짓이 되어 멈춥니다.',
@@ -387,6 +391,7 @@ const lesson = [
   {
     label: '끝나지 않는 반복',
     readingMemory: [["합계", 6], ["i", 1]],
+    readingCpu: '1 <= 3 → 참 → 6바퀴째, i 그대로',
     example: ["i = 1", "반복 중 i가 그대로", "종료 조건에 도달하지 못함"],
     title: '조건이 바뀌지 않으면 영원히 반복한다',
     body: '앞 단계에서 i = i + 1 줄을 빠뜨리면 어떻게 될까요? i는 계속 1이라서 i <= 3은 언제나 참입니다. 반복이 끝나지 않고 합계만 끝없이 커집니다. 이런 무한 반복은 초보자가 가장 자주 만드는 실수 중 하나입니다. 이 실험은 반복을 여섯 번 돈 뒤 강제로 멈춥니다.',
@@ -489,6 +494,7 @@ function buildScene() {
   addPlate(node, 'tag', cx, cy + 16, 'CPU');
   const work = addPlate(node, 'total', 0, -H - 14 * h - 18, '대기', { pad: 1.1, round: false });
   cpu = { node, work };
+  new MutationObserver(() => requestAnimationFrame(placeReadingCpu)).observe(work.label, { childList: true, characterData: true, subtree: true });
 }
 
 // ---------- Packets: reads travel cell → CPU, writes travel CPU → cell ----------
@@ -585,6 +591,17 @@ function setPlate(plate, text) {
 }
 
 // ---------- Drawing ----------
+// Anchor the long CPU plate's right end at the chip. The page translation swaps the text (and resizes the plate)
+// after paint, so the plate is placed again whenever its text changes.
+function placeReadingCpu() {
+  if (!cpu.work.group.classList.contains('long')) return;
+  cpu.work.x = 0;
+  sizePlate(cpu.work);
+  cpu.work.x = 30 - Number(cpu.work.rect.getAttribute('width')) / 2;
+  cpu.work.y = cpu.work.home - 46;
+  sizePlate(cpu.work);
+}
+
 function paint(changed = -1) {
   const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? step().readingMemory : null;
   cells.forEach((cell, k) => {
@@ -595,6 +612,16 @@ function paint(changed = -1) {
     cell.name.group.style.opacity = name ? 1 : 0;
     cell.wire.classList.toggle('active', Boolean(name));
   });
+  // The reading preview shows the step's deciding test on the CPU, so the still picture says why memory ended up so
+  // (rules in references/visual-language.md, 1장 "정지 화면의 CPU 판").
+  // It is longer than a running value, so it is set smaller and grows leftwards over the memory row from the chip.
+  cpu.work.group.classList.toggle('long', Boolean(preview && step().readingCpu));
+  // It also sits 46px higher, above the two staggered rows of name tags.
+  cpu.work.home ??= cpu.work.y;
+  cpu.work.x = 0;
+  cpu.work.y = cpu.work.home;
+  if (preview) setPlate(cpu.work, step().readingCpu ?? '대기');
+  placeReadingCpu();
   if (changed >= 0) {
     const node = cells[changed].node;
     node.classList.remove('changed');

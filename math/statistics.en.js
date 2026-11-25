@@ -7,7 +7,7 @@ window.lessonText = {
   '불확실한 것을 어떻게 수로 다룰까요? 용돈, 병 검사, 동전, A/B 테스트 예로 데이터를 요약하고 확률로 판단하는 방법을 문제로 확인해 보세요.':
     'How do we handle uncertainty with numbers? Through questions about pocket money, disease tests, coins and A/B tests, see how to summarize data and judge with probability.',
   // Step 1
-  '대푯값': 'Averages', '용돈 3, 3, 4, 5, 35': 'Pocket money 3, 3, 4, 5, 35', '총 50을 5로 나눔': 'Total 50 divided by 5', '평균 10 · 중앙값 4': 'Mean 10 · median 4',
+  '대푯값': 'Averages', '용돈 3, 3, 4, 5, 35': 'Pocket money 3, 3, 4, 5, 35',
   '평균은 튀는 값 하나에 크게 흔들린다': 'One outlier pulls the mean a long way',
   '데이터를 한 숫자로 요약할 때 평균(모두 더해 개수로 나눔)과 중앙값(크기순으로 줄 세운 가운데 값)을 씁니다. 대부분은 비슷하고 한 값만 크게 튀면, 평균은 그 값 쪽으로 끌려가지만 중앙값은 거의 그대로입니다. 그래서 소득이나 응답 시간처럼 튀는 값이 있는 데이터는 중앙값이나 상위 몇 %를 함께 봅니다.':
     'To sum data up in one number we use the mean (add everything and divide by the count) and the median (the middle value once lined up by size). When most values are similar and just one is far off, the mean is pulled toward it but the median barely moves. So for data with outliers, like income or response time, we also look at the median or the top few percent.',
@@ -23,7 +23,7 @@ window.lessonText = {
   '100명 중 1명이 10초씩 기다리는 일을 놓칩니다. 그래서 응답 시간은 중앙값과 함께 "상위 1%가 겪는 시간(p99)"을 같이 봅니다.':
     'It misses 1 in 100 people waiting 10 seconds. So response time is read with the median and "the time the slowest 1% see (p99)".',
   // Step 2
-  '조건부 확률': 'Conditional probability', '1,000명 중 실제 환자 10명': '10 real patients in 1,000 people', '진짜 양성과 거짓 양성이 각각 약 10명': 'About 10 true positives and 10 false positives', '양성 중 환자는 약 절반': 'About half the positives are ill',
+  '조건부 확률': 'Conditional probability',
   '양성이 나와도 병일 확률은 생각보다 낮을 수 있다': 'A positive result may mean a lower chance of illness than you think',
   '"A가 일어났을 때 B일 확률"을 조건부 확률이라 합니다. 1,000명 중 10명(1%)만 걸리는 병이 있고, 검사는 병이 있으면 99% 양성, 병이 없어도 1%는 잘못 양성이 나온다고 합시다. 양성이 나온 사람만 모으면, 진짜 환자 약 10명과 잘못 양성인 약 10명(990명의 1%)이 섞여 있습니다.':
     '"The probability of B given that A happened" is called conditional probability. Say a disease affects only 10 in 1,000 people (1%), and the test is positive 99% of the time for the ill but also wrongly positive for 1% of the healthy. Gather just the people who tested positive and you find about 10 real patients mixed with about 10 false positives (1% of 990).',
@@ -42,7 +42,7 @@ window.lessonText = {
   '공격 1만 건 중 9,900건, 정상 9,999만 건 중 약 100만 건이 경보를 냅니다. 경보 대부분(99% 가까이)이 잘못된 경보라 사람이 다 볼 수 없습니다. 드문 일을 찾을 때는 잘못 경보율이 아주 낮아야 합니다.':
     '9,900 of the 10,000 attacks raise alarms, and so do about 1 million of the 99.99 million normal logins. Nearly 99% of alarms are false, too many for people to check. When looking for rare events, the false-alarm rate has to be very low.',
   // Step 3
-  '표본과 오차': 'Samples and error', '운동장에서만 조사': 'Survey only at the sports field', '운동을 자주 하는 사람이 많이 뽑힘': 'Many people who exercise often get picked', '표본을 키워도 편향이 남음': 'A bigger sample still keeps the bias',
+  '표본과 오차': 'Samples and error',
   '적게 보면 우연에 속고, 치우치게 보면 크게 봐도 틀린다': 'Look at too few and chance fools you; look at a biased few and even many are wrong',
   '전체를 다 볼 수 없으니 일부(표본)를 보고 추측합니다. 표본이 작으면 우연 때문에 크게 틀릴 수 있고, 표본이 클수록 비율이 참값에 가까워집니다(큰 수의 법칙). 하지만 표본을 한쪽에서만 뽑으면 아무리 많아도 틀립니다. 7.10에서 여름 데이터만으로 배운 모델이 겨울을 틀린 것과 같습니다.':
     'We cannot see the whole, so we guess from a part (a sample). A small sample can be far off by chance, and the bigger the sample, the closer the proportion gets to the true value (the law of large numbers). But a sample drawn from one side only is wrong however large it is, just as the model in 7.10 that learned only from summer data got winter wrong.',
@@ -78,4 +78,6 @@ window.lessonText = {
     'A report says "users who turned on our app\'s notifications come back twice as often", and someone proposes "turn notifications on for every user". What is wrong with that?',
   '알림을 스스로 켠 사람은 원래 앱을 좋아하는 사람일 수 있습니다. 무작위로 고른 일부에게만 알림을 켜는 실험으로 효과를 먼저 확인해야 합니다.':
     'People who turned notifications on themselves may simply like the app already. The effect should first be checked with an experiment that turns notifications on for a randomly chosen part of users.',
+  // Reading examples
+  '평균 10 · 중앙값 4': 'mean 10 · median 4', '35 하나가 평균만 끌어올림': 'one 35 pulls up only the mean', '1,000명 중 환자 10명': '10 sick among 1,000', '진짜 양성 ≈ 10 · 거짓 양성 ≈ 10': 'true positives ≈ 10 · false ≈ 10', '양성 20명 중 환자는 약 절반': 'about half of the 20 positives are sick', '앱 사용자 10만 명에게만 물음': 'ask only 100,000 app users', '앱을 안 쓰는 사람은 빠짐': 'non-users are left out', '크게 물어도 전 국민과 다름': 'big, but still not the whole country',
 };

@@ -185,7 +185,7 @@ const lesson = [
     takeaway: '패킷이 통신사에서 라우터 A, 해저 케이블 끝을 거쳐 해외 서버에 닿습니다. 모두 여섯 번 건넙니다.',
     description: '통신사 뒤에 라우터 네 대가 네모 모양으로 이어져 있습니다. 패킷이 라우터 A와 해저 케이블 끝을 거쳐 해외 서버에 도착합니다.',
     nodes: all,
-    badges: { r1: { text: '다음 칸 → 케이블', tone: 'ok' }, server: { text: '도착 · 3개 모두', tone: 'ok' } },
+    badges: { r1: { text: '다음 칸 고름', tone: 'ok' }, server: { text: '도착 · 3개 모두', tone: 'ok' } },
     links: there,
   },
   {
@@ -207,7 +207,7 @@ const lesson = [
     takeaway: '라우터 A 위에 "고장"이 뜨고, 패킷은 통신사에서 라우터 B를 거쳐 돌아갑니다.',
     description: '라우터 A가 고장 났습니다. 패킷이 통신사에서 라우터 B, 해저 케이블 끝을 거쳐 해외 서버로 갑니다.',
     nodes: all,
-    badges: { r1: { text: '고장', tone: 'warn' }, r2: { text: '돌아가는 길', tone: 'ok' } },
+    badges: { r1: { text: '고장', tone: 'warn' }, r2: { text: '돌아가는 길', tone: 'ok' }, server: { text: '도착 · 3개 모두', tone: 'ok' } },
     links: [['laptop', 'home', 'request'], ['home', 'isp', 'request'], ['isp', 'r2', 'request'], ['r2', 'r3', 'request'], ['r3', 'server', 'request']],
   },
 ];

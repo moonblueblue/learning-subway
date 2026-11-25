@@ -376,6 +376,7 @@ const lesson = [
   {
     label: '기울기 보기',
     readingStage: 4,
+    note: ['w = 0에서 L = (w − 3)² = 9', ' → ', '기울기 2 × (0 − 3) = −6', ' → ', '학습률 0.1로 반대쪽 +0.6', ' → ', 'w = 0.6'],
     title: '손실이 줄어드는 방향은 기울기의 반대쪽이다',
     body: '7.10에서 w를 "오차가 줄어드는 쪽"으로 옮겼습니다. 그 방향을 어떻게 알까요? 손실 L(w) = (w − 3)²을 그래프로 그리면 w = 3에서 바닥인 그릇 모양입니다. 지금 위치의 기울기(미분)를 구하면, 기울기가 음수일 때는 오른쪽이 내리막, 양수일 때는 왼쪽이 내리막입니다. 그래서 언제나 기울기의 반대쪽으로 갑니다.',
     takeaway: 'w = 0에서 기울기는 2 × (0 − 3) = −6입니다. 음수이므로 w를 키우는 쪽(오른쪽)이 내리막입니다. "w ← w − 학습률 × 기울기" 한 줄이 경사 하강법의 전부입니다.',
@@ -394,6 +395,8 @@ const lesson = [
   {
     label: '학습률',
     readingStage: 3,
+    note: ['w = 0에서 세 걸음씩', ' → ', '학습률 0.1은 1.46…로 천천히', ' · ', '0.5는 3에 멈춤', ' · ', '1.1은 8.18로 바닥을 건너뜀'],
+    noteTone: 'bad',
     title: '걸음이 너무 작으면 느리고, 너무 크면 튕겨 나간다',
     body: '학습률은 한 걸음의 크기입니다. 0.1이면 매번 바닥까지 남은 거리의 20%씩 다가가 0 → 0.6 → 1.08 → 1.46…으로 천천히 다가갑니다. 이 그릇에서는 0.5가 딱 맞아 한 걸음에 3에 닿습니다. 1.1처럼 너무 크면 바닥을 건너뛰어 반대편으로, 매번 더 멀리 튕겨 나갑니다(발산).',
     takeaway: '학습률 1.1에서 w는 0 → 6.6 → −1.32 → 8.18로 바닥에서 점점 멀어졌습니다. 실제 모델은 바닥의 모양을 모르므로, 작은 학습률로 시작하거나 손실이 튀면 학습률을 줄입니다.',
@@ -404,7 +407,7 @@ const lesson = [
     stages: [
       { from: 'grad', to: 'upd', label: '학습률 0.1', title: '0.1: 천천히', lines: ['0 → 0.6 → 1.08 → 1.46 → …', '남은 거리가 매번 0.8배'], text: '작은 학습률은 천천히 다가갑니다.', holds: { upd: '0.1', w: '1.46…' } },
       { from: 'grad', to: 'upd', label: '학습률 0.5', title: '0.5: 한 번에', lines: ['0 − 0.5 × (−6) = 3', '한 걸음에 바닥'], text: '이 그릇에서는 0.5가 딱 맞습니다.', holds: { upd: '0.5', w: 'w = 3' } },
-      { from: 'grad', to: 'upd', label: '학습률 1.1', title: '1.1: 튕겨 나감', lines: ['0 − 1.1 × (−6) = 6.6 (바닥 3을 건너뜀)', '6.6 − 1.1 × 7.2 = −1.32', '−1.32 − 1.1 × (−8.64) = 8.18'], error: 'upd', text: '너무 큰 걸음은 바닥을 건너뛰며 점점 멀어집니다.', holds: { upd: '1.1', w: '8.18 ???' },
+      { from: 'grad', to: 'upd', label: '학습률 1.1', title: '1.1: 튕겨 나감', lines: ['0 − 1.1 × (−6) = 6.6 (바닥 3을 건너뜀)', '6.6 − 1.1 × 7.2 = −1.32', '−1.32 − 1.1 × (−8.64) = 8.18'], error: 'upd', text: '너무 큰 걸음은 바닥을 건너뛰며 점점 멀어집니다.', holds: { upd: '1.1', w: '8.18 (튕김)' },
         ask: { q: '손실이 매 걸음 커지며 튄다면 무엇을 바꿔야 할까요?', choices: ['학습률을 줄인다', '학습률을 키운다'], answer: '학습률을 줄인다', why: '걸음이 너무 커서 바닥을 건너뛰는 것입니다. 걸음을 줄이면 다시 내려갑니다.' } },
       { from: 'upd', to: 'w', label: '0.05로 다시', title: '다시 시작', lines: ['학습률 0.05 → 남은 거리가 매번 0.9배', '느리지만 안정적으로 3에 다가감'], reset: 'upd', text: '학습률을 줄여 다시 시작합니다.', holds: { w: '안정' } },
     ],
@@ -412,6 +415,7 @@ const lesson = [
   {
     label: '가중치 여러 개',
     readingStage: 4,
+    note: ['(0, 0)에서 L = 10', ' → ', '가중치마다 기울기 (−6, 2)', ' → ', '학습률 0.1로 (+0.6, −0.2)', ' → ', '(0.6, −0.2)'],
     title: '가중치마다 자기 기울기를 따라 동시에 움직인다',
     body: '실제 모델은 가중치가 수백만 개입니다. 손실이 가중치 여러 개에 달려 있으면, 가중치마다 "나만 조금 바꾸면 손실이 얼마나 변하나"(편미분)를 구합니다. 그 기울기들을 모은 것이 기울기 벡터(8B.1)이고, 모든 가중치를 동시에 각자 기울기 반대로 옮깁니다. 7.11의 역전파는 이 기울기들을 층마다 거꾸로 효율적으로 구하는 방법입니다.',
     takeaway: '(w1, w2) = (0, 0)에서 기울기 벡터는 (−6, 2)이고, 한 걸음 뒤 (0.6, −0.2)가 됐습니다. w1은 오른쪽, w2는 왼쪽으로, 각자 자기 바닥(3과 −1)을 향해 갑니다.',
@@ -429,7 +433,8 @@ const lesson = [
   },
   {
     label: '조금씩 나눠 보기',
-    readingStage: 3,
+    readingStage: 4,
+    note: ['예시 100만 개 중 32개만 평균', ' → ', '어림한 기울기로 한 걸음', ' → ', '다음 32개로 또 한 걸음'],
     title: '예시 일부만 보고 자주 걷는다',
     body: '손실은 원래 예시 전체의 평균 오차입니다. 예시가 백만 개면 기울기를 한 번 구하는 데 백만 번 계산해야 합니다. 그래서 무작위로 고른 32개(미니배치)만으로 기울기를 어림해 한 걸음 걷고, 다음 32개로 또 걷습니다. 기울기가 조금 흔들리지만 훨씬 자주 걸을 수 있어 전체적으로 빨리 내려갑니다. 흔들림은 평평한 곳이나 얕은 웅덩이에서 빠져나오는 데 도움이 되기도 합니다.',
     takeaway: '같은 계산량으로 전체 데이터 기울기는 1걸음, 미니배치는 31,250걸음을 걸었습니다. 8B.2의 표본처럼 32개로도 방향을 꽤 정확히 어림할 수 있기 때문입니다.',
@@ -519,8 +524,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -567,6 +573,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names the numbers of one step, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

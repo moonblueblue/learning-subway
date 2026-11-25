@@ -84,4 +84,10 @@ window.lessonText = {
   'W = 1, R = 1로 바꾸면 어떻게 될까요?': 'What happens if you change to W = 1, R = 1?',
   '빨라지지만 옛 값을 읽을 수 있다 (1 + 1 ≤ 3)': 'Faster, but reads can see old values (1 + 1 ≤ 3)', '여전히 언제나 최신을 읽는다': 'Reads still always see the latest',
   '쓴 한 곳과 읽는 한 곳이 다를 수 있어 겹침이 보장되지 않습니다. 1단계의 최종 일관성으로 돌아갑니다.': 'The one replica written and the one read can differ, so overlap is not guaranteed. It goes back to the eventual consistency of step 1.',
+  // Example note on the still picture.
+  '사진 B로 바꿈 (복제본 1에 v2)': 'photo B written (v2 on replica 1)', '복제본 2까지 전달': 'passed on to replica 2', '아직 못 받은 복제본 3에서 읽으면 옛 v1': 'replica 3 has not heard yet: old v1',
+  '내가 쓴 버전 v2를 기억': 'remember my own write, v2', '복제본 3은 v1이라 복제본 2로 넘김': 'replica 3 has v1: hand off to replica 2', '사진 B (v2)를 봄': 'see photo B (v2)',
+  '읽기 1은 복제본 2에서 댓글 5개 (v5)': 'read 1 from replica 2: 5 comments (v5)', '읽기 2가 늦은 복제본 3으로 가면 4개': 'read 2 on lagging replica 3: 4', '본 것보다 옛 값': 'older than what I saw',
+  'N = 3 · W = 2 · R = 2': 'N = 3 · W = 2 · R = 2', 'v3을 복제본 1, 2에 씀': 'v3 written to replicas 1, 2', '복제본 3 (v2)과 2 (v3)를 읽어 더 새 v3': 'read replicas 3 (v2) and 2 (v3): newer v3',
+  '댓글 4개 (v4)': '4 comments (v4)', '복제본 2 · v2 (사진 B)': 'Replica 2 · v2 (photo B)', '댓글 5개 (v5)': '5 comments (v5)',
 };

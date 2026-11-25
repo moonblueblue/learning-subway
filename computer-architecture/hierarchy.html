@@ -416,7 +416,7 @@ setCamera(0, 0, 1);
 // `ns` is a typical time to read once, `cycles` the same in clock ticks of a 3 GHz CPU, `human` that
 // time if one tick were stretched to one second, and `ms` how long the packet takes on screen each way.
 const levels = [
-  { id: 'reg', name: '레지스터', u: 4.6, h: .55, H: 8, size: '수백 바이트', ns: '0.3 ns', cycles: '1번', human: '1초', ms: 220, volatile: true },
+  { id: 'reg', name: '레지스터', u: 5.6, h: .55, H: 8, size: '수백 B', ns: '0.3 ns', cycles: '1번', human: '1초', ms: 220, volatile: true },
   { id: 'cache', name: 'L1 캐시', u: 10, h: .85, H: 10, size: '64 KB', ns: '1 ns', cycles: '4번', human: '4초', ms: 380, volatile: true },
   { id: 'ram', name: 'RAM', u: 17.5, h: 1.45, H: 12, size: '16 GB', ns: '100 ns', cycles: '300번', human: '5분', ms: 900, volatile: true },
   { id: 'ssd', name: 'SSD', u: 27, h: 2, H: 15, size: '1 TB', ns: '100 µs', cycles: '30만 번', human: '3일 반', ms: 2200, volatile: false },
@@ -537,9 +537,12 @@ function buildScene() {
     drawShadow(node, level.h);
     drawBox(node, level.h, level.H);
     const name = addPlate(node, 'tag level-tag', 0, 14 * level.h + 16, level.name, { round: true });
+    // The first step says both sides of the trade-off on each level: how fast and how big.
     const info = addPlate(node, 'tag info', 0, -level.H - 14 * level.h - 10, level.ns, { pad: 1.1 });
     const badge = addPlate(node, 'tag badge', 0, -level.H - 14 * level.h - 32, '', { pad: 1.2 });
-    badge.group.classList.add('empty');
+    // The first step says both sides of the trade-off on each level: how fast (info) and how big (badge).
+    if (lesson[state.index].mode === 'levels') setPlate(badge, level.size);
+    else badge.group.classList.add('empty');
     views[level.id] = { node, name, info, badge, level };
   }
   const left = -40, right = 14 * far + 14 * list.at(-1).h * 2 + 60;
@@ -645,6 +648,7 @@ function readAddress(address, user, done, speed = 1) {
   }
   function finish() {
     state.busy = false;
+    state.lastOutcome = `${address}번 ${outcome.hit ? '적중' : '실패'}`;
     paintCache();
     report(outcome.hit ? `${address}번 칸: 캐시 적중 · 1 ns` : `${address}번 칸: 캐시 실패 → RAM까지 · 약 101 ns${outcome.evicted ? ' · 오래된 값이 밀려남' : ''}`);
     if (user) afterUser({ hit: state.hits, miss: state.misses, evicted: outcome.evicted || state.evictedOnce ? 1 : 0 });
@@ -740,7 +744,9 @@ function paintCache() {
   }));
   const rate = state.hits + state.misses ? Math.round(100 * state.hits / (state.hits + state.misses)) : 0;
   byId('cache-stats').textContent = `적중 ${state.hits} · 실패 ${state.misses} · 적중률 ${rate}% · 걸린 시간 약 ${state.ns} ns`;
-  if (views.cache) setPlate(views.cache.badge, lineMode ? `라인 ${state.cache.length}/${step.slots}` : `${state.cache.length}/${step.slots}칸`);
+  // The cache's badge carries the last read's outcome next to how full it is.
+  const last = state.lastOutcome ? `${state.lastOutcome} · ` : '';
+  if (views.cache) setPlate(views.cache.badge, last + (lineMode ? `라인 ${state.cache.length}/${step.slots}` : `${state.cache.length}/${step.slots}칸`));
 }
 function report(text) {
   byId('readout').textContent = text;
@@ -752,6 +758,7 @@ function resetCache() {
   state.misses = 0;
   state.ns = 0;
   state.evictedOnce = false;
+  state.lastOutcome = '';
   paintCache();
 }
 
@@ -857,6 +864,31 @@ function startStep() {
   paintContents();
   byId('readout').textContent = lesson[state.index].mode === 'power' ? '각 층 위에 지금 담긴 내용이 적혀 있습니다.' : '버튼을 눌러 값을 읽어 보세요.';
   state.wait = 900;
+  if (motion.matches) showExampleEnd();
+}
+// Nothing plays with reduced motion, so the still picture shows the end of the step's example:
+// the same address read twice (miss, then hit), 16 addresses read in order, the power switched off and on.
+function showExampleEnd() {
+  const mode = lesson[state.index].mode;
+  if (mode === 'cache') {
+    readAddress(5, false); readAddress(5, false); flash('ram', '');
+    coreNote('5번 첫 읽기 실패 → RAM · 다시 읽기 적중', 'ok');
+  } else if (mode === 'locality') {
+    runPattern('seq', false);
+    flash('ram', '');
+    coreNote(`차례로 16칸 → 실패 ${state.misses} · 적중 ${state.hits}`, 'ok');
+  } else if (mode === 'power') {
+    powerOff(false);
+    coreNote('전원 껐다 켬', 'warn');
+  }
+}
+// The note sits under the CPU's name tag (a note on the chip, not engine.js exampleNote at the top), left-aligned on the chip, clear of the badges above the levels.
+// It is placed again after the page translation changes its text.
+function coreNote(text, tone) {
+  const note = addPlate(views.core.node, `tag badge ${tone}`, 0, 62, text, { pad: 1.2 });
+  const place = () => { note.x = 0; sizePlate(note); note.x = Number(note.rect.getAttribute('width')) / 2 - 34; sizePlate(note); };
+  place();
+  new MutationObserver(() => requestAnimationFrame(place)).observe(note.label, { childList: true, characterData: true, subtree: true });
 }
 function showStep(index, announce = true) {
   state.index = index;

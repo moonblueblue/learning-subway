@@ -547,6 +547,18 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture lists the packets so far in order, so the badges read as the result of that exchange.
+  byId('example-note')?.remove();
+  if (preview && shown) {
+    // Pieces, so the page translation finds each label (and the stage title) in the dictionary.
+    const parts = ['내 컴퓨터 · 서버:'];
+    step.stages.slice(0, shown).forEach((st, k) => {
+      parts.push(`${k ? ' · ' : ' '}${st.from === 'c' ? '→' : '←'} `, st.label);
+      if (st.to === 'net') parts.push(' ', '(인터넷에서 버려짐)');
+    });
+    parts.push(' → ', last.title);
+    exampleNote(parts);
+  }
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));
@@ -560,6 +572,7 @@ function paint() {
     li.classList.toggle('current', k === state.s);
   });
 }
+
 
 function runStage(done) {
   const step = lesson[state.index];

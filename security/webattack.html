@@ -375,7 +375,10 @@ const XSS_LINKS = [['atk', 'srv'], ['vic', 'srv'], ['srv', 'db'], ['vic', 'evil'
 const lesson = [
   {
     label: '저장형 XSS',
-    example: ["외부에서 입력한 후기", "브라우저가 내용과 코드를 혼동", "세션 정보 노출 위험"],
+    example: ["후기에 <script>가 섞여 저장됨", "브라우저가 코드로 실행", "쿠키가 evil.test로"],
+    readingStage: 4,
+    note: ['공격자 후기의 <script>를 그대로 저장', ' → ', '지우의 브라우저가 상품 페이지에서 실행', ' → ', '세션 정보가 evil.test로'],
+    noteTone: 'bad',
     title: '남이 넣은 스크립트가 내 브라우저에서 실행된다',
     body: '상품 후기 칸에 글 대신 <script>…<\/script>를 넣으면 어떻게 될까요? 서버가 받은 후기를 그대로 저장하고, 다른 사람이 상품 페이지를 열 때 그대로 HTML에 끼워 보내면, 지우의 브라우저는 그것을 문구점이 보낸 코드로 믿고 실행합니다. 스크립트는 지우의 화면을 바꾸거나, 지우인 척 요청을 보내거나, 쿠키를 빼낼 수 있습니다. 이것을 교차 사이트 스크립팅(XSS)이라 합니다.',
     takeaway: '공격자의 후기가 DB에 저장됐다가 지우의 화면에서 실행되어 evil.test로 정보를 보냈습니다. 6.12처럼 세션 쿠키에 HttpOnly를 붙였다면 스크립트가 쿠키를 읽지는 못하지만, 화면 안에서 지우인 척 요청을 보내는 것은 여전히 가능합니다.',
@@ -393,7 +396,9 @@ const lesson = [
   },
   {
     label: '글은 글로',
-    example: ["같은 후기를 출력에 맞게 이스케이프", "브라우저가 일반 글자로 해석", "후기 내용만 표시"],
+    example: ["출력할 때 < >를 &lt; &gt;로", "브라우저가 글자로 봄", "후기 내용만 보임"],
+    readingStage: 3,
+    note: ['같은 후기를 출력할 때 이스케이프', ' → ', '<script>가 글자로만 보임', ' → ', '실행되지 않아 안전'],
     title: '출력할 때 특수 문자를 바꿔 글은 글로만 보이게 한다',
     body: 'XSS를 막는 핵심은 사용자가 쓴 내용을 HTML에 넣을 때 특수 문자를 바꾸는 것(이스케이프)입니다. < 는 &lt;, > 는 &gt;로 바꾸면 브라우저는 그것을 태그가 아니라 글자로 보여 줍니다. 6.12의 SQL 인젝션 방어(입력은 값으로만)와 같은 생각입니다. 여기에 "이 사이트의 스크립트만 실행하라"는 규칙(콘텐츠 보안 정책)을 더하면 이중으로 막습니다.',
     takeaway: '같은 후기가 이번에는 "<script>…"라는 글자 그대로 화면에 보였고 실행되지 않았습니다. 요즘 화면 프레임워크는 기본으로 이스케이프하지만, 직접 HTML을 끼워 넣는 기능(innerHTML 등)을 쓰면 다시 위험해집니다.',
@@ -410,7 +415,9 @@ const lesson = [
   },
   {
     label: '사이트 간 요청 위조',
-    example: ["사용자 의사와 다른 결제 요청", "서버가 요청 토큰 검증", "검증 실패 시 결제 거절"],
+    example: ["evil.test가 쿠키 붙은 결제 POST", "서버가 토큰을 확인", "토큰 없어 거절"],
+    readingStage: 3,
+    note: ['evil.test의 숨은 양식이 쿠키 붙은 POST', ' → ', '막지 않으면 1만 점이 나감', ' · ', 'SameSite와 토큰이 있으면 거절'],
     title: '다른 사이트가 내 쿠키를 붙인 요청을 대신 보내게 한다',
     body: '지우가 문구점에 로그인한 채로, 문자로 온 링크의 evil.test 페이지를 열었습니다. 그 페이지에는 문구점의 "포인트 보내기" 주소로 자동 제출되는 숨은 양식이 있습니다. 브라우저는 문구점으로 가는 요청에 문구점 쿠키를 자동으로 붙이므로, 서버는 지우가 직접 보낸 요청으로 압니다. 이것이 사이트 간 요청 위조(CSRF)입니다.',
     takeaway: '지우는 아무것도 누르지 않았는데 포인트 1만 점이 공격자에게 갔습니다. 쿠키에 SameSite를 붙여 다른 사이트에서 시작된 요청에는 쿠키를 보내지 않게 하거나, 페이지마다 숨은 확인 값(CSRF 토큰)을 넣어 막습니다.',
@@ -427,7 +434,9 @@ const lesson = [
   },
   {
     label: '경로 조작',
-    example: ["문서 폴더 밖의 파일 요청", "허용된 파일과 경로 범위 확인", "응답 거절"],
+    example: ["name=../config/secrets.env", "풀린 경로가 /srv/manuals 밖", "폴더 밖이라 거절"],
+    readingStage: 4,
+    note: ['name=../config/secrets.env', ' → ', '경로를 풀면 /srv/manuals 밖', ' → ', '확인 없으면 유출 · 확인하면 거절'],
     title: '파일 이름에 ../를 넣어 허락되지 않은 파일을 읽는다',
     body: '문구점은 상품 설명서를 /files?name=pencil.pdf처럼 내려받게 합니다. 서버가 "설명서 폴더 + 이름"으로 파일을 열면, 이름에 ../(한 단계 위 폴더, 5.5)를 넣어 폴더 밖으로 나갈 수 있습니다. ../../config/secrets.env를 요청하면 서버의 비밀 설정 파일이 내려받아집니다.',
     takeaway: '폴더를 벗어난 요청으로 비밀 설정이 새어 나갔습니다. 이름을 실제 경로로 풀어 설명서 폴더 안인지 확인하고, 가능하면 허락된 이름 목록에서만 고르게 합니다. 사용자 입력은 언제나 값으로만, 범위를 확인하고 쓰는 것이 웹 보안의 공통 원칙입니다.',
@@ -440,7 +449,7 @@ const lesson = [
       { from: 'atk', to: 'srv', label: 'name=../config/secrets.env', title: '조작된 이름', lines: ['/srv/manuals/../config/secrets.env', '= /srv/config/secrets.env'], text: '이름에 ../를 넣어 폴더 밖을 가리킵니다.', holds: { srv: '경로 풀기' },
         ask: { q: '"/srv/manuals/../config/secrets.env"가 실제로 가리키는 곳은?', choices: ['/srv/config/secrets.env', '/srv/manuals/config/secrets.env'], answer: '/srv/config/secrets.env', why: '..는 한 단계 위 폴더입니다. manuals에서 한 단계 올라가 config로 들어갑니다.' } },
       { from: 'srv', to: 'secret', label: '파일 열기', title: '비밀 파일 유출', lines: ['DB 비밀번호, 결제 키가 든 파일을 내려보냄'], error: 'secret', text: '비밀 설정 파일이 새어 나갑니다.', holds: { secret: '유출됨' } },
-      { from: 'srv', to: 'docs', label: '경로 확인', title: '막는 방법', lines: ['실제 경로로 푼 뒤 /srv/manuals/ 안인지 확인 → 아니면 400', '또는 허락된 이름 목록에서만 고르기'], reset: 'secret', text: '실제 경로가 설명서 폴더 안인지 확인합니다.', holds: { srv: '폴더 밖 거절' } },
+      { from: 'srv', to: 'docs', label: '경로 확인', title: '막는 방법', lines: ['실제 경로로 푼 뒤 /srv/manuals/ 안인지 확인 → 아니면 400', '또는 허락된 이름 목록에서만 고르기'], reset: 'secret', text: '실제 경로가 설명서 폴더 안인지 확인합니다.', reset: 'secret', holds: { srv: '폴더 밖 거절', secret: '안 열림' } },
     ],
   },
 ];
@@ -516,8 +525,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -554,14 +564,19 @@ function movePackets(now) {
 // ---------- State after s stages ----------
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  // The still picture shows the end of the step's example.
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

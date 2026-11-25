@@ -25,7 +25,7 @@ window.lessonText = {
   '"모든 홀수는 소수다"가 거짓임을 보이려면 무엇이 필요할까요?': 'What is needed to show that "every odd number is prime" is false?',
   '반례 하나면 됩니다. 9는 홀수지만 3 × 3이라 소수가 아닙니다.': 'One counterexample is enough. 9 is odd but is 3 × 3, so it is not prime.',
   // Step 2
-  '도미노': 'Dominoes', '첫 도미노가 넘어짐': 'The first domino falls', '각 도미노가 다음 칸을 넘어뜨림': 'Each domino knocks over the next', '끝 칸까지 차례로 넘어짐': 'They fall in turn to the very end',
+  '도미노': 'Dominoes', '첫 도미노가 넘어짐': 'The first domino falls', '각 도미노가 다음 칸을 넘어뜨림': 'Each domino knocks over the next', '모든 칸이 차례로 넘어짐': 'Every domino falls in turn',
   '첫 칸과 다음 칸이면 모든 칸이 넘어간다': 'The first one and the next one mean every one falls',
   '도미노를 끝없이 세워 두었다고 해 봅시다. 첫 번째가 넘어지고, "어떤 도미노가 넘어지면 바로 다음 것도 넘어진다"가 참이면, 모든 도미노가 넘어집니다. 이것이 수학적 귀납법입니다. ① n = 1일 때 참임을 보이고(시작), ② n = k일 때 참이면 n = k + 1일 때도 참임을 보이면(이어 감), 모든 자연수 n에서 참입니다.':
     'Imagine dominoes standing in an endless row. If the first falls, and "whenever a domino falls, the very next one falls too" is true, then every domino falls. This is mathematical induction. ① Show it is true for n = 1 (the start), and ② show that if it is true for n = k then it is true for n = k + 1 (the step), and it is true for every natural number n.',
@@ -60,7 +60,7 @@ window.lessonText = {
   '1부터 100까지의 합은 얼마일까요?': 'What is the sum from 1 to 100?',
   '100 × 101 / 2 = 5050입니다. 반복으로 100번 더하지 않아도 공식 한 번이면 됩니다.': '100 × 101 / 2 = 5050. One use of the formula does it, without adding 100 times in a loop.',
   // Step 4
-  '코드의 정확성': 'Correctness of code', '반복 전 합계 0': 'total is 0 before the loop', '한 바퀴마다 지금까지의 합 유지': 'Each round keeps the sum so far', '반복 종료 시 전체 합': 'The whole sum when the loop ends',
+  '코드의 정확성': 'Correctness of code', '반복 전 합계 0': 'total is 0 before the loop', '매 바퀴 합계 = 1 + … + (i − 1) 유지': 'Each round keeps total = 1 + … + (i − 1)', '반복 종료 시 전체 합': 'The whole sum when the loop ends',
   '귀납법으로 프로그램이 맞다는 것을 보인다': 'Induction shows that a program is correct',
   '반복문이 맞다는 것은 "반복 불변식"으로 보입니다. 1.2의 합계 반복에서 "매 바퀴를 시작할 때 합계 = 1 + … + (i − 1)"이 처음에도 참이고, 한 바퀴가 지나도 계속 참이면, 반복이 끝났을 때 합계는 1 + … + n입니다. 재귀 함수도 같은 방식으로 보입니다.':
     'A loop is shown to be correct with a "loop invariant". In the total loop from 1.2, if "at the start of each round, total = 1 + … + (i − 1)" is true at first and stays true after each round, then when the loop ends total is 1 + … + n. Recursive functions are shown the same way.',

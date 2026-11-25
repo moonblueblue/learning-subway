@@ -672,6 +672,20 @@ function showStep(index, announce = true) {
   syncTask();
   state.wait = 800;
   syncPlayback();
+  // Nothing plays with reduced motion, so the still picture runs the step's example once:
+  // one name put in, a stored name found, two names that land in the same bucket, the tenth name that resizes.
+  // The calculation goes in a note at the top of the scene.
+  byId('example-note')?.remove();
+  if (motion.matches) {
+    const calc = (name, size = 13) => `${name} → ${fmt(codeSum(name))} mod ${size} = ${codeSum(name) % size}`;
+    if (s.mode === 'find') { find('하은', false); exampleNote(`${calc('하은')} → ${bucketOf('하은')}번 칸에서 찾음`); }
+    else if (s.resize) {
+      const tenth = allNames.find((name) => !state.order.includes(name));
+      insert(tenth, false);
+      exampleNote(`13칸에 ${state.order.length}개 → 채움 비율 ${(state.order.length / 13).toFixed(2)} > 0.75 → 29칸으로 다시 나눔`);
+    } else if (s.label === '충돌') { insert('지아', false); insert('도윤', false); exampleNote(`${calc('지아')} · ${calc('도윤')} → 같은 칸에 쌓음`); }
+    else { insert('지아', false); exampleNote(`${calc('지아')} → ${bucketOf('지아')}번 칸에 넣음`); }
+  }
   if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
 }
 function goToStep(index) {

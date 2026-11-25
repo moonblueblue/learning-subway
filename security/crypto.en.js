@@ -82,4 +82,10 @@ window.lessonText = {
   'TLS가 내용 전체를 공개 키로 잠그지 않는 까닭은?': 'Why does TLS not lock all the content with the public key?', '공개 키 계산이 대칭 키보다 훨씬 느려서': 'Public-key calculations are much slower than symmetric-key ones', '공개 키가 덜 안전해서': 'Public keys are less secure',
   '열쇠 건네기는 한 번이라 느려도 되지만, 내용은 계속 오가므로 빠른 대칭 키를 씁니다.': 'Handing over the key happens once, so slow is fine, but content keeps flowing, so the fast symmetric key is used.',
   '서버: "GET /cart" 처리': 'Server: handles "GET /cart"', '서버가 요청을 읽고 처리합니다.': 'The server reads the request and handles it.', '요청 받음': 'Request in', '서버가 읽음': 'Server read it',
+  // Example note on the still picture.
+  '열쇠 3만큼 밀기': 'shift by key 3', '엿보는 이는 KHOOR만 봄': 'spy sees only KHOOR', '서준이 3칸 되돌려 HELLO': 'Seojun shifts back 3: HELLO',
+  '"내일 3시에 만나"': '"Meet at 3 tomorrow"', '128비트 열쇠로 AES': 'AES, 128-bit key', '엿보는 이는 9c 2e f1 …만 봄': 'spy sees 9c 2e f1 …', '서준이 같은 열쇠로 되돌림': 'same key undoes it',
+  '서준의 공개 키 (33, 3)로 4를 잠가 31': 'Seojun\'s public key (33, 3) locks 4 into 31', '엿보는 이는 31만 봄': 'spy sees only 31', '서준만 아는 개인 키 7로 열어 4': 'only Seojun\'s private key 7 opens it: 4',
+  '공개 키로 대칭 키를 잠가 건넴': 'public key locks the AES key', '이제 GET /cart는 AES로 잠금': 'GET /cart locked with AES', '엿보는 이는 바이트만 봄': 'spy sees bytes', '서준(웹 서버)이 요청 받음': 'Seojun (server) gets it',
+  '(33, 3)': '(33, 3)', '복호화 · 4': 'Decrypt · 4', '복호화 · GET /cart': 'Decrypt · GET /cart', '복호화 · HELLO': 'Decrypt · HELLO', '복호화 · 평문': 'Decrypt · plaintext',
 };

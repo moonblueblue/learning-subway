@@ -62,7 +62,7 @@ window.lessonText = {
   '사용자가 더 늘어 샤드를 3개에서 4개로 늘립니다. 규칙이 "mod 3"에서 "mod 4"로 바뀌면, 많은 사용자의 샤드 번호가 바뀌어 데이터를 옮겨야 합니다. 사용자 1–12로 따져 보면 샤드가 그대로인 사용자는 1, 2, 12 셋뿐이고 아홉 명(75%)이 이사합니다. 그동안 DB는 엄청난 복사 작업을 해야 합니다.':
     'Users grow further and the shards go from 3 to 4. When the rule changes from "mod 3" to "mod 4", many users\' shard numbers change and their data must move. Checking users 1–12, only three, 1, 2 and 12, keep their shard, and nine (75%) move. Meanwhile the DBs have a huge copying job.',
   '샤드 수로 나머지를 구하는 규칙은 샤드 수가 바뀌면 거의 모두 흔들립니다. 실제 시스템은 처음부터 샤드를 잘게(예: 가상 샤드 1,024개) 만들어 서버에 나눠 주거나, 일관된 해싱으로 옮길 양을 1/n 정도로 줄입니다.': 'A rule that takes the remainder by the number of shards shakes almost everything when that number changes. Real systems make shards fine-grained from the start (e.g. 1,024 virtual shards) and hand them out to servers, or use consistent hashing to cut the amount moved to about 1/n.',
-  '같은 장면입니다. 사용자 7의 샤드 번호가 규칙이 바뀌며 달라집니다.': 'The same scene. User 7\'s shard number changes as the rule changes.',
+  '같은 장면에 새 샤드 3이 더해졌습니다. 사용자 7의 샤드 번호가 규칙이 바뀌며 1에서 3으로 달라집니다.': 'The same scene with a new shard 3. User 7\'s shard number changes from 1 to 3 as the rule changes.',
   '샤드를 늘릴 때 데이터를 옮겨야 한다': 'Adding shards means moving data', '전: 샤드 = 번호 mod 3': 'Before: shard = number mod 3', '후: 샤드 = 번호 mod 4 (샤드 3 추가)': 'After: shard = number mod 4 (shard 3 added)',
   '규칙 바꾸기': 'Change the rule', '새 규칙으로 계산': 'Work out with the new rule', '전: 7 mod 3 = 1': 'Before: 7 mod 3 = 1', '후: 7 mod 4 = 3 → 샤드 3 (새 샤드)': 'After: 7 mod 4 = 3 → shard 3 (new shard)', '같은 사용자 7인데 샤드 번호가 바뀝니다.': 'The same user 7, but the shard number changes.',
   '옮기기': 'Move', '샤드 1에서 사용자 7의 데이터를 꺼내 새 샤드 3으로 복사': 'Take user 7\'s data out of shard 1 and copy it to the new shard 3', '모든 샤드에서 75%가 이렇게 움직임': '75% moves like this on every shard', '데이터를 꺼내 옮깁니다. 이사하는 동안 DB가 바쁩니다.': 'The data is taken out and moved. The DBs are busy while it moves.', '75% 이사 중': '75% moving',
@@ -72,4 +72,11 @@ window.lessonText = {
   '서버를 늘리면 가상 샤드 일부만 새 서버로 옮김 → 약 1/4만 이사': 'Adding a server moves only some virtual shards to it → only about 1/4 moves', '처음부터 잘게 나눠 두면 일부만 옮기면 됩니다.': 'Split finely from the start and only part needs to move.',
   '샤딩의 대가로 알맞지 않은 것은?': 'Which is not a cost of sharding?', '키 하나로 찾는 질의가 느려진다': 'Queries by a single key get slower', '키가 아닌 질의는 모든 샤드에 물어야 한다': 'Queries not by key must ask every shard',
   '키로 찾는 질의는 샤드 하나만 보면 되므로 오히려 빠릅니다. 대가는 키가 아닌 질의와 재배치입니다.': 'Queries by key look at only one shard, so they are actually fast. The costs are queries not by key and rebalancing.',
+  '7 저장': '7 stored', '11 저장': '11 stored',
+  '샤드 3 (새로)': 'Shard 3 (new)', '이사 나감': 'Moving out', '7 들어옴': '7 moves in',
+  // Example note on the still picture.
+  '데이터 6TB · 쓰기 3만/초': 'data 6TB · writes 30k/s', 'DB 한 대는 2TB · 1만/초까지': 'one DB: up to 2TB · 10k/s',
+  '샤드 = 사용자 번호 mod 3': 'shard = user id mod 3', '7 mod 3 = 1 → 샤드 1': '7 mod 3 = 1 → shard 1', '11 mod 3 = 2 → 샤드 2': '11 mod 3 = 2 → shard 2',
+  '이메일로 찾기 (샤드 키 아님)': 'find by email (not the shard key)', '세 샤드 모두에 물음': 'ask all three shards', '샤드 1의 사용자 7을 모아서 답함': 'gather: user 7 from shard 1',
+  'mod 3을 mod 4로 바꾸면': 'switch mod 3 to mod 4', '사용자 7은 샤드 1 → 3': 'user 7: shard 1 → 3', '전체 데이터의 약 75%가 이사': 'about 75% of all data moves', '7: 샤드 1 → 3': '7: shard 1 → 3',
 };

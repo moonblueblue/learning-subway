@@ -375,6 +375,8 @@ const lesson = [
   {
     label: 'DB 하나',
     readingStage: 1,
+    note: ['읽기 900 + 쓰기 100 = 1,000/초', ' → ', 'DB 한 대는 600/초까지', ' → ', '과부하'],
+    noteTone: 'bad',
     title: '읽기와 쓰기가 모두 DB 한 대에 몰린다',
     body: '7.3에서 앱 서버는 여러 대로 늘렸지만, 데이터베이스는 아직 한 대입니다. 쇼핑몰 요청은 대부분 읽기(상품 보기)이고 쓰기(주문)는 적습니다. 예를 들어 1초에 읽기 900개, 쓰기 100개가 모두 DB 한 대로 갑니다. DB 한 대가 1초에 600개를 처리할 수 있다면 버티지 못합니다.',
     takeaway: '앱 서버를 아무리 늘려도 모두 같은 DB 한 대를 부르면, 그 DB가 병목이 됩니다. 읽기가 대부분이라는 점을 이용해 읽기를 나눌 수 있습니다.',
@@ -389,6 +391,7 @@ const lesson = [
   {
     label: '읽기 나누기',
     readingStage: 4,
+    note: ['주문(쓰기)은 주 DB로: 재고 38', ' → ', '로그로 복제본 1, 2에 복사', ' → ', '상품 보기(읽기)는 복제본 1에서 38'],
     title: '쓰기는 주 DB로, 읽기는 복제본으로',
     body: '복제는 같은 데이터를 가진 DB를 여러 대 두는 것입니다. 쓰기는 주 DB 한 곳에서만 받고, 주 DB는 바뀐 내용(6.6의 로그)을 복제본들에 보내 똑같이 따라 하게 합니다. 읽기는 복제본들이 나눠 받습니다. 복제본은 고장에 대비한 예비 DB 역할도 합니다.',
     takeaway: '쓰기 100개는 주 DB가, 읽기 900개는 복제본 두 대가 450개씩 받습니다. 주 DB의 바뀐 내용이 로그로 복제본에 흘러가 세 DB가 같은 데이터를 갖습니다.',
@@ -407,6 +410,8 @@ const lesson = [
   {
     label: '복제 지연',
     readingStage: 2,
+    note: ['닉네임을 지우개왕으로 (주 DB)', ' → ', '곧바로 복제본 2에서 읽음', ' → ', '복사 전이라 옛 값 연필왕'],
+    noteTone: 'bad',
     title: '복사가 도착하기 전에 읽으면 옛 값이 보인다',
     body: '주 DB는 보통 쓰기를 마치자마자 "완료"라고 답하고, 복제본으로의 복사는 뒤이어 따로 보냅니다(비동기 복제). 그 사이 아주 짧은 순간, 복제본은 아직 옛 값을 갖고 있습니다. 바로 그때 복제본에서 읽으면 방금 바꾼 것이 안 보입니다. 이것을 복제 지연이라 합니다.',
     takeaway: '닉네임을 바꾸고 새로 고쳤더니 옛 닉네임이 보였습니다. 잠시 뒤에는 맞게 보입니다(결국 일관성). 자기가 방금 쓴 데이터는 주 DB에서 읽게 하면 이 혼란을 막을 수 있습니다.',
@@ -416,7 +421,7 @@ const lesson = [
     start: { title: '지금 데이터', lines: ['사용자 7의 닉네임: 연필왕', '세 DB 모두 같음'], holds: { p: '연필왕', r1: '연필왕', r2: '연필왕' } },
     stages: [
       { from: 'app', to: 'p', label: '닉네임 → 지우개왕', title: '쓰기', lines: ['UPDATE users SET nickname = \'지우개왕\' WHERE id = 7;', '주 DB: 완료 (복사는 뒤이어 보냄)'], text: '닉네임을 바꿉니다. 주 DB는 바로 완료라고 답합니다.', holds: { p: '지우개왕' } },
-      { from: 'app', to: 'r2', label: '내 정보 보기', title: '곧바로 읽기', lines: ['0.05초 뒤 새로 고침 → 복제본 2에서 읽음', '복제본 2: 아직 복사가 안 옴'], error: 'r2', text: '복사가 도착하기 전의 복제본 2에서 읽습니다.', holds: { r2: '연필왕 (옛 값)' },
+      { from: 'app', to: 'r2', label: '내 정보 보기', title: '곧바로 읽기', lines: ['0.05초 뒤 새로 고침 → 복제본 2에서 읽음', '복제본 2: 아직 복사가 안 옴'], error: 'r2', text: '복사가 도착하기 전의 복제본 2에서 읽습니다.', holds: { r2: '연필왕 (옛 값)', r1: '아직 연필왕' },
         ask: { q: '사용자 화면에 보이는 닉네임은?', choices: ['연필왕 (옛 값)', '지우개왕 (새 값)'], answer: '연필왕 (옛 값)', why: '복제본 2에는 아직 바뀐 내용이 도착하지 않았습니다.' } },
       { from: 'p', to: 'r2', label: '로그: 지우개왕', title: '복사 도착', lines: ['0.2초 뒤 복제본 2도 지우개왕'], reset: 'r2', text: '조금 늦게 복사가 도착합니다.', holds: { r2: '지우개왕' } },
       { from: 'p', to: 'r1', label: '로그: 지우개왕', title: '모두 같아짐', lines: ['세 DB 모두 지우개왕', '→ 결국 같아짐 (결국 일관성)'], text: '잠시 뒤 모든 복제본이 같아집니다.', holds: { r1: '지우개왕' },
@@ -425,7 +430,9 @@ const lesson = [
   },
   {
     label: '주 DB가 죽으면',
-    readingStage: 2,
+    readingStage: 4,
+    note: ['주 DB 고장 (주문 101은 복사 전)', ' → ', '복제본 1을 새 주 DB로', ' → ', '주문 102는 새 주 DB로 · 101은 잃음'],
+    noteTone: 'bad',
     title: '복제본 하나를 새 주 DB로 올린다',
     body: '주 DB가 고장 나면 쓰기를 받을 곳이 없어집니다. 그래서 가장 최신인 복제본 하나를 새 주 DB로 올리고(장애 조치), 앱 서버가 그쪽으로 쓰기를 보내게 합니다. 다른 복제본은 새 주 DB를 따라 합니다. 다만 비동기 복제라면, 고장 직전 주 DB가 받고 아직 복사하지 못한 쓰기는 잃을 수 있습니다.',
     takeaway: '주 DB가 죽어도 몇 초 안에 복제본 1이 주 DB가 되어 서비스가 이어집니다. 복사되지 못한 마지막 주문 하나는 잃었습니다. 잃으면 안 되는 데이터라면 복제본이 받았다고 확인한 뒤에 완료라고 답하는 동기 복제를 씁니다. 대신 쓰기가 느려집니다.',
@@ -438,7 +445,7 @@ const lesson = [
         ask: { q: '주 DB가 고장 나면 당장 할 수 없는 일은?', choices: ['쓰기 (주문)', '읽기 (상품 보기)'], answer: '쓰기 (주문)', why: '읽기는 복제본이 계속 받을 수 있지만, 쓰기는 주 DB만 받았습니다.' } },
       { from: 'r1', to: 'r1', label: '승격', title: '복제본 1을 주 DB로', lines: ['가장 최신인 복제본 1을 새 주 DB로 올림', '주문 101은 복사되기 전이라 잃음'], text: '복제본 1이 새 주 DB가 됩니다.', holds: { r1: '새 주 DB' } },
       { from: 'r1', to: 'r2', label: '이제 나를 따라 해', title: '복제본 2가 새 주 DB를 따름', lines: ['복제본 2: 복제본 1의 로그를 따라 함'], text: '남은 복제본은 새 주 DB를 따라 합니다.', holds: { r2: '새 주 DB 따름' } },
-      { from: 'app', to: 'r1', label: '주문 102', title: '쓰기 다시 받음', lines: ['앱 서버: 쓰기를 복제본 1(새 주 DB)로', '주문 102 저장'], text: '서비스가 다시 쓰기를 받습니다.', holds: { r1: '주문 1–100, 102' },
+      { from: 'app', to: 'r1', label: '주문 102', title: '쓰기 다시 받음', lines: ['앱 서버: 쓰기를 복제본 1(새 주 DB)로', '주문 102 저장'], text: '서비스가 다시 쓰기를 받습니다.', holds: { r1: '새 주 DB: 1–100, 102' },
         ask: { q: '주문 101을 잃지 않으려면 주 DB는 언제 "완료"라고 답해야 했을까요?', choices: ['복제본이 받았다고 확인한 뒤 (동기 복제)', '자기만 쓰고 바로 (비동기 복제)'], answer: '복제본이 받았다고 확인한 뒤 (동기 복제)', why: '복제본에도 있으면 주 DB가 죽어도 남습니다. 대신 확인을 기다리는 만큼 쓰기가 느려집니다.' } },
     ],
   },
@@ -515,8 +522,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -563,6 +571,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what was written, copied and read, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

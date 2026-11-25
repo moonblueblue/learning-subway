@@ -15,7 +15,7 @@ window.lessonText = {
   '나이': 'age', '키': 'height', '가격': 'price', '개수': 'count', '합계': 'total', '임시': 'temp',
   '나이 = 15': 'age = 15', '나이 = 16': 'age = 16', '키 = 160': 'height = 160', '나이 = 나이 + 1': 'age = age + 1',
   '가격 = 3000': 'price = 3000', '개수 = 2': 'count = 2', '합계 = 가격 × 개수': 'total = price × count', '가격 × 개수': 'price × count',
-  '임시 = a': 'temp = a', '임시 = 5': 'temp = 5', 'b = 임시': 'b = temp', '임시 ← a': 'temp ← a', 'b ← 임시': 'b ← temp',
+  '임시 = a': 'temp = a', '임시 = 5': 'temp = 5', 'b = 임시': 'b = temp', '임시 ← a': 'temp ← a', 'b ← 임시': 'b ← temp', '1. 임시 ← a': '1. temp ← a', '3. b ← 임시': '3. b ← temp',
   '나이: {0}': 'age: {0}', '키: {0}': 'height: {0}', '가격: {0}': 'price: {0}', '개수: {0}': 'count: {0}', '합계: {0}': 'total: {0}', '임시: {0}': 'temp: {0}',
   '나이 {#0}': 'age {0}', '합계 칸 {#0}': 'total cell {0}', '가격 3000 · 개수 2': 'price 3000 · count 2',
   // Readouts and announcements

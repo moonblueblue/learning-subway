@@ -72,4 +72,10 @@ window.lessonText = {
   '작은 걸음이라 벽을 뛰어넘지 않습니다.': 'Small steps never jump over the wall.', '촘촘히': 'Fine-grained',
   '벽 검사': 'Wall check', '터널링 없음': 'No tunneling', '얇은 벽에도 부딪힘이 잡힘': 'Collisions are caught even with thin walls', '얇은 벽과의 부딪힘도 놓치지 않습니다.': 'Not even a collision with a thin wall is missed.', '벽에 부딪힘': 'Hits the wall',
   '그리기': 'Draw', '같은 결과': 'Same result', '느린 컴퓨터든 빠른 컴퓨터든 같은 움직임': 'The same motion on slow and fast computers', '어느 컴퓨터에서나 같은 움직임이 나옵니다.': 'Every computer gets the same motion.',
+  // Example note on the still picture.
+  '0초 x 0, 1초 x 100': 'x 0 at 0 s, x 100 at 1 s', '0.25초에 직선이면 25': 'straight line at 0.25 s: 25', '이징 곡선이면 15.6 (천천히 출발)': 'ease curve: 15.6 (slow start)',
+  '처음 y 20, v 0': 'start y 20, v 0', '0.5초마다 v에 −5, y에 v × 0.5': 'every 0.5 s: v −5, y + v × 0.5', 'y 17.5 · 12.5 · 5': 'y 17.5 · 12.5 · 5', '1.5초에 y 5, v −15': 'at 1.5 s: y 5, v −15',
+  'v −20으로 y −5 (바닥 아래)': 'v −20 makes y −5 (below the floor)', 'y를 0으로 되돌리고 v × −0.8 = +16': 'put y back to 0, v × −0.8 = +16',
+  '이번 프레임 33ms': 'this frame took 33ms', '8.3ms씩 4걸음으로 나눠 계산': 'computed as 4 steps of 8.3ms', '얇은 벽도 놓치지 않음': 'even a thin wall is not missed',
+  'v −15': 'v −15', 'y 5': 'y 5', '보간 · x = 15.6': 'Interpolate · x = 15.6', '부딪힘 검사 · 그리기': 'Collision · draw', '지금 상태 · y 5': 'State · y 5',
 };

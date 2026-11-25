@@ -2,6 +2,9 @@
 // Names in the code: 점수 scores, 나이 ages, 명단 names, 번호 ids, 개수 count, 둘째 second, 답 answer, 위치 pos, 바로 direct.
 // People in the data: 민수 Minsu, 하늘 Haneul, 지아 Jia.
 window.lessonText = {
+  // CPU plate in the still picture: the step's operation
+  '둘째 = 점수[1] → 101번지 85 읽음': 'second = scores[1] → read 85 at addr 101', 'append(60) → 103번지 · len = 4': 'append(60) → addr 103 · len = 4',
+  '나이["지아"] → 키로 101번지 14': 'ages["Jia"] → key leads to addr 101: 14', 'index: 3칸 훑음 · 키: 1칸 읽음': 'index: scans 3 cells · key: reads 1 cell',
   // Page
   '리스트와 딕셔너리 · 레슨 1.4': 'Lists and dictionaries · Lesson 1.4',
   '리스트와 딕셔너리가 메모리 칸에 값을 어떻게 담고, 어떻게 찾아 읽는지 코드를 한 줄씩 실행하며 비교해 보세요.':

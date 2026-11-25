@@ -13,8 +13,8 @@ window.lessonText = {
   '"다음 단계"를 눌러 메시지를 한 계층씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the message one layer at a time. Prediction questions come up along the way.',
   // Stations and badges
   '내 프로그램': 'My program', '시스템 콜': 'System call', '커널': 'Kernel', '장치 드라이버': 'Device driver', '화면 드라이버': 'Screen driver', 
-  'read 부탁': 'Asks read', 'write 부탁': 'Asks write', '직접 쓰기?': 'Write directly?', 'data 받음': 'Got data', '버퍼 100바이트': '100-byte buffer',
-  'READ 명령': 'READ command', '그리기': 'Draw', '{#0}번': '{0}×', '1번 처리': 'Handled once', '권한 OK': 'Permission OK', '터미널 창': 'Terminal window', '거부': 'Refused', '씀': 'Written', '읽음': 'Read',
+  'read 부탁': 'Asks read', 'write 부탁': 'Asks write', '장치 명령?': 'Device command?', 'data 받음': 'Got data', '버퍼 100바이트': '100-byte buffer',
+  'READ 명령': 'READ command', '그리기': 'Draw', '{#0}번': '{0}×', '1번 처리': 'Handled once', '권한 OK': 'Permission OK', '터미널 창': 'Terminal window', 'CPU가 막음': 'CPU blocks', '경계 1번만': 'Crosses once', '씀': 'Written', '읽음': 'Read',
   '블록 {#0}': 'block {0}', '{#0}바이트': '{0} bytes', '픽셀': 'pixels', '장치 명령': 'device command', '"안녕"': '"hello"', '안녕': 'hello',
   // Step 1
   '파일 읽기': 'Reading a file',

@@ -1,6 +1,19 @@
 // English for 1.5 Recursion. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // Names in the code: 팩 fact, 작은 smaller, 결과 result; fib, a, b and n stay as they are.
 window.lessonText = {
+  // Reading diagrams
+  '팩(1)까지 내려간 뒤 곱하며 돌아온다': 'Go down to fact(1), then multiply on the way back',
+  '팩(4)가 팩(3), 팩(2), 팩(1)을 차례로 부릅니다. 팩(1)은 n이 1이라 1을 돌려주고, 팩(2)는 2 × 1 = 2, 팩(3)은 3 × 2 = 6, 팩(4)는 4 × 6 = 24를 돌려줍니다.':
+    'fact(4) calls fact(3), fact(2) and fact(1) in turn. fact(1) returns 1 because n is 1, then fact(2) returns 2 × 1 = 2, fact(3) returns 3 × 2 = 6 and fact(4) returns 4 × 6 = 24.',
+  'n == 1 → 멈춤': 'n == 1 → stop', '바로 반환': 'returns at once', '호출 →': 'Calls →', '← 반환': '← Returns',
+  '멈추는 조건이 없으면 팩(1)에서도 멈추지 않는다': 'Without a stop condition, even fact(1) does not stop',
+  '멈추는 조건이 있으면 팩(2)가 팩(1)을 부르고 팩(1)이 1을 돌려주며 끝납니다. 조건이 없으면 팩(1)이 팩(0), 팩(0)이 팩(−1)을 부르며 층이 끝없이 쌓이다 스택이 넘칩니다.':
+    'With a stop condition, fact(2) calls fact(1), fact(1) returns 1, and it ends. Without one, fact(1) calls fact(0), fact(0) calls fact(−1), and the layers pile up until the stack overflows.',
+  '조건 있음': 'With the condition', '조건 없음': 'Without it', '스택 넘침': 'Stack overflow',
+  'fib(3)은 fib(1)을 두 번 계산한다': 'fib(3) computes fib(1) twice',
+  'fib(3)은 fib(2)와 fib(1)을 부르고, fib(2)는 다시 fib(1)과 fib(0)을 부릅니다. fib(1)이 두 번 계산되어 호출은 5번이고 결과는 1 + 1 = 2입니다.':
+    'fib(3) calls fib(2) and fib(1), and fib(2) calls fib(1) and fib(0). fib(1) is computed twice, so there are 5 calls and the result is 1 + 1 = 2.',
+  '다시 계산': 'computed again', '결과 2': 'result 2', '1 반환': 'returns 1',
   // Page
   '재귀 · 레슨 1.5': 'Recursion · Lesson 1.5',
   '자기 자신을 부르는 함수가 호출 스택에서 어떻게 내려가고 다시 올라오는지, 팩토리얼과 피보나치로 살펴보세요.':

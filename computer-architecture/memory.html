@@ -319,6 +319,8 @@ const lesson = [
     ],
     log: ['S'],
     demo: [[1], [0]],
+    staticPath: [[1], [0]],
+    staticNote: 'S를 1로 켰다가 0으로 끔 → Q는 1 그대로',
     expr: (v) => [`S = ${v.S} → Q = `, String(v.Q), v.S === 0 && v.Q === 1 ? ' (S는 꺼졌지만 기억 중)' : ''],
     tasks: [
       { text: '출력 램프를 켜 보세요.', test: (v) => v.Q === 1, ok: 'S의 1이 OR를 지나 Q가 되고, 되먹임 선으로 돌아갑니다.' },
@@ -342,6 +344,8 @@ const lesson = [
     ],
     log: ['S', 'R'],
     demo: [[1, 0], [0, 0], [0, 1], [0, 0]],
+    staticPath: [[1, 0], [0, 0], [0, 1]],
+    staticNote: 'S로 Q = 1을 만든 뒤 R을 켬 → Q = 0',
     expr: (v) => [`S = ${v.S}, R = ${v.R} → Q = `, String(v.Q), v.S === 0 && v.R === 0 ? ' (기억 중)' : v.S ? ' (켜기)' : ' (끄기)'],
     tasks: [
       { text: 'S를 켰다가 다시 꺼서, 램프가 켜진 채로 남게 해 보세요.', test: (v) => v.S === 0 && v.R === 0 && v.Q === 1, ok: 'Set: S를 꺼도 Q = 1을 기억합니다.' },
@@ -366,6 +370,8 @@ const lesson = [
     ],
     log: ['D', 'E'],
     demo: [[1, 0], [1, 1], [1, 0], [0, 0], [0, 1], [0, 0]],
+    staticPath: [[1, 0], [1, 1], [1, 0]],
+    staticNote: 'D = 1에서 E를 켰다가 끔 → 1이 남음',
     expr: (v) => [`D = ${v.D}, E = ${v.E} → Q = `, String(v.Q), v.E ? ' (쓰는 중: Q가 D를 따라감)' : ' (쓰기 꺼짐: 그대로 유지)'],
     tasks: [
       { text: '1을 저장해 보세요. D를 1로, E를 켰다가 끄면 됩니다.', test: (v) => v.E === 0 && v.Q === 1, ok: 'Q = 1이 저장됐습니다.' },
@@ -389,6 +395,8 @@ const lesson = [
     ],
     log: ['D', 'E'],
     demo: [[5, 0], [5, 1], [5, 0], [2, 0], [2, 1], [2, 0]],
+    staticPath: [[5, 0], [5, 1], [5, 0]],
+    staticNote: 'D = 101에서 E를 켰다가 끔 → 101이 남음',
     expr: (v) => [`D = ${v.D}, E = ${v.E} → 저장된 값 `, String(v.R), v.E ? ' (쓰는 중)' : ' (유지)'],
     tasks: [
       { text: '5를 저장해 보세요. D를 5로 맞추고 E를 켰다 끄세요.', test: (v) => v.E === 0 && v.R === 5, ok: '101이 레지스터에 들어갔습니다.' },
@@ -706,8 +714,10 @@ function fitWorld(nodes) {
   const ys = nodes.flatMap((n) => [7 * n.v, ...(n.loops ?? []).filter((v) => v != null).map((v) => 7 * v)]);
   const left = Math.min(...xs) - 70, right = Math.max(...xs) + 90;
   const top = Math.min(...ys) - 58, bottom = Math.max(...ys) + 24;
-  const scale = Math.min(1.9, 580 / (right - left), 262 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 142 - scale * (top + bottom) / 2;
+  // A still picture keeps a strip at the bottom for the note on how it got here (`staticNote`).
+  const strip = motion.matches && lesson[state.index].staticNote ? 30 : 0;
+  const scale = Math.min(1.9, 580 / (right - left), (262 - strip) / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 142 - strip / 2 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -1033,6 +1043,23 @@ function startStep() {
   Object.assign(state.values, comboInputs(first));
   for (const spec of step.nodes) if (!isInput(spec)) schedule(spec.id, 0);
   settle();
+  // A still picture (reduced motion) walks the example's inputs in order (`staticPath`), so it shows what the
+  // circuit kept afterwards: S switched off with Q still 1, R switching Q off, E closed with the value kept.
+  if (motion.matches) {
+    for (const combo of step.staticPath ?? []) {
+      for (const [id, value] of Object.entries(comboInputs(combo))) {
+        if (state.values[id] === value) continue;
+        state.values[id] = value;
+        for (const dep of dependents(id)) schedule(dep.id, 0);
+      }
+      settle();
+    }
+  }
+  byId('static-note')?.remove();
+  if (motion.matches && step.staticNote) {
+    const note = svg('g', { id: 'static-note', 'aria-hidden': 'true' }, byId('scene'));
+    addPlate(note, 'tag note-plate', 310, 262, step.staticNote, { pad: 1.6, round: false });
+  }
   for (const spec of step.nodes) showNode(spec.id, false);
   syncControls();
   state.wait = 900;

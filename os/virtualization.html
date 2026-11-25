@@ -377,7 +377,8 @@ const CT_LINKS = [['c1', 'hk'], ['c2', 'hk'], ['hk', 'hw']];
 const lesson = [
   {
     label: '가상 머신',
-    readingStage: 3,
+    readingStage: 4,
+    note: ['VM 1 앱이 파일 읽기', ' → ', 'VM 1 커널은 가상 디스크를 읽음', ' → ', '하이퍼바이저가 실제 vm1.img 읽기로 바꿈'],
     title: '하이퍼바이저가 컴퓨터 한 대를 여러 대처럼 나눈다',
     body: '서버 한 대(CPU 32코어, RAM 128GB)를 서비스 하나가 다 쓰지 못하면 낭비입니다. 하이퍼바이저는 실제 하드웨어 위에서 가상 머신(VM) 여러 대를 만들고, 각 VM에 가짜 CPU, RAM, 디스크를 나눠 줍니다. VM 안에는 자기만의 운영체제 커널(8A.2)이 돌고, 그 커널은 자기가 진짜 컴퓨터 위에 있다고 믿습니다.',
     takeaway: 'VM 1의 앱이 파일을 읽으면, VM 1의 커널이 받아 가상 디스크에 요청하고, 하이퍼바이저가 그것을 실제 디스크 읽기로 바꿉니다. 커널이 둘 있고, 하이퍼바이저가 그 아래에서 진짜 하드웨어를 나눠 줍니다.',
@@ -395,7 +396,8 @@ const lesson = [
   },
   {
     label: '서로 막기',
-    readingStage: 2,
+    readingStage: 3,
+    note: ['VM 1 커널이 잘못된 요청에 멈춤', ' → ', 'VM 2는 주문을 계속 처리', ' · ', 'VM 1만 다시 켬'],
     title: '한 VM이 망가져도 다른 VM은 멀쩡하다',
     body: '하이퍼바이저는 VM마다 실제 RAM의 다른 구역을 주고, 한 VM이 다른 VM의 메모리나 디스크에 손대지 못하게 막습니다. 5.4에서 운영체제가 프로세스끼리 메모리를 나눈 것을 한 층 아래에서 다시 하는 셈입니다. 그래서 VM 1의 커널이 멈춰도 VM 2는 계속 돕니다. 클라우드 회사가 여러 고객을 한 서버에 태울 수 있는 까닭입니다.',
     takeaway: 'VM 1의 커널이 멈췄지만 하이퍼바이저와 VM 2는 영향을 받지 않았습니다. 대신 VM마다 커널 전체를 따로 돌리므로 메모리를 더 쓰고, 켜는 데 커널 부팅(수십 초)이 걸립니다.',
@@ -413,6 +415,7 @@ const lesson = [
   {
     label: '컨테이너',
     readingStage: 3,
+    note: ['두 컨테이너가 호스트 커널 하나를 함께 씀', ' → ', '각자 자기 프로세스와 파일만 보임', ' → ', '실제 장치는 커널 하나가 처리'],
     title: '컨테이너는 커널 하나를 함께 쓰는 갇힌 프로세스다',
     body: '컨테이너는 VM처럼 커널을 따로 두지 않습니다. 호스트의 커널 하나 위에서 도는 평범한 프로세스(5.1)인데, 커널이 그 프로세스에게 자기만의 파일 시스템, 프로세스 목록, 네트워크만 보이게 가려 줍니다(네임스페이스). 커널 부팅이 없으니 1초도 안 걸려 뜨고, 메모리도 앱만큼만 씁니다. 앱과 필요한 파일을 묶은 이미지만 있으면 어디서나 같은 모습으로 뜹니다.',
     takeaway: '웹 컨테이너와 DB 컨테이너가 같은 커널을 쓰지만 서로의 파일과 프로세스를 보지 못합니다. VM보다 가볍고 빠른 대신, 커널을 공유하므로 격리는 VM보다 약합니다(커널 버그 하나가 모두에게 영향).',
@@ -421,8 +424,8 @@ const lesson = [
     links: CT_LINKS,
     start: { title: '컨테이너 둘', lines: ['컨테이너 1: 웹 서버 이미지 · 컨테이너 2: DB 이미지', '커널은 호스트의 것 하나뿐'], holds: { hk: '커널 1개', hw: '32코어 128GB' } },
     stages: [
-      { from: 'c1', to: 'hk', label: '프로세스 목록?', title: '웹 컨테이너가 본 세상', lines: ['컨테이너 1 안에서 ps → 웹 서버 프로세스 하나만 보임 (PID 1)', '실제로는 호스트의 PID 4321'], text: '커널이 컨테이너 1에게 자기 프로세스만 보여 줍니다.', holds: { c1: '내 프로세스만' } },
-      { from: 'c2', to: 'hk', label: '파일 읽기', title: 'DB 컨테이너가 본 세상', lines: ['컨테이너 2의 / 는 DB 이미지의 파일들', '컨테이너 1의 파일은 보이지 않음'], text: '컨테이너 2도 자기 파일 시스템만 봅니다.', holds: { c2: '내 파일만' },
+      { from: 'c1', to: 'hk', label: '프로세스 목록?', title: '웹 컨테이너가 본 세상', lines: ['컨테이너 1 안에서 ps → 웹 서버 프로세스 하나만 보임 (PID 1)', '실제로는 호스트의 PID 4321'], text: '커널이 컨테이너 1에게 자기 프로세스만 보여 줍니다.', holds: { c1: '내 것만 보임' } },
+      { from: 'c2', to: 'hk', label: '파일 읽기', title: 'DB 컨테이너가 본 세상', lines: ['컨테이너 2의 / 는 DB 이미지의 파일들', '컨테이너 1의 파일은 보이지 않음'], text: '컨테이너 2도 자기 파일 시스템만 봅니다.', holds: { c2: '내 것만 보임' },
         ask: { q: '컨테이너가 VM보다 훨씬 빨리 뜨는 까닭은?', choices: ['커널을 새로 부팅하지 않고 이미 도는 호스트 커널에서 프로세스만 띄워서', '이미지가 작아서만'], answer: '커널을 새로 부팅하지 않고 이미 도는 호스트 커널에서 프로세스만 띄워서', why: 'VM은 커널 부팅(8A.2)부터 해야 하지만, 컨테이너는 프로세스 하나를 가린 채 띄우면 됩니다.' } },
       { from: 'hk', to: 'hw', label: '실제 장치', title: '커널 하나가 모두 처리', lines: ['두 컨테이너의 시스템 콜을 호스트 커널이 처리'], text: '두 컨테이너의 요청을 같은 커널이 처리합니다.', holds: { hw: '실제 읽기' },
         ask: { q: '컨테이너의 격리가 VM보다 약한 까닭은?', choices: ['모든 컨테이너가 같은 커널을 함께 써서', '컨테이너는 메모리를 안 나눠서'], answer: '모든 컨테이너가 같은 커널을 함께 써서', why: '커널에 구멍이 있으면 컨테이너 밖으로 나갈 수 있습니다. 그래서 보안이 중요한 곳은 VM 안에서 컨테이너를 돌리기도 합니다.' } },
@@ -430,7 +433,8 @@ const lesson = [
   },
   {
     label: '자원 제한',
-    readingStage: 3,
+    readingStage: 4,
+    note: ['웹이 한도 2GB를 넘음 (2.1GB)', ' → ', '커널이 웹 컨테이너만 강제 종료', ' → ', 'DB는 멀쩡 · 웹은 다시 실행'],
     title: '컨테이너마다 쓸 수 있는 CPU와 메모리를 제한한다',
     body: '커널을 함께 쓰므로 한 컨테이너가 메모리를 다 써 버리면 다른 컨테이너까지 굶습니다. 그래서 커널은 컨테이너마다 쓸 수 있는 CPU 몫과 메모리 한도를 정해 둡니다(cgroups). 한도를 넘으면 그 컨테이너의 프로세스만 강제로 끝내고(메모리 부족 종료), 다른 컨테이너는 영향을 받지 않습니다. 끝난 컨테이너는 관리 도구가 다시 띄웁니다.',
     takeaway: '웹 컨테이너가 메모리 한도 2GB를 넘자 그것만 종료되고 DB는 멀쩡했습니다. 이런 한도와 재시작을 수많은 서버에서 자동으로 해 주는 것이 컨테이너 오케스트레이션(예: 쿠버네티스)입니다.',
@@ -519,8 +523,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -567,6 +572,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what each layer did, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

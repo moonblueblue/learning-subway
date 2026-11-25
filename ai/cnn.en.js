@@ -69,7 +69,13 @@ window.lessonText = {
   '9개 (그림 크기와 상관없음)': '9 (whatever the picture size)', '784개': '784', '676개': '676',
   '같은 9개를 모든 자리에 함께 씁니다(가중치 공유). 그림이 커져도 늘지 않습니다.': 'The same 9 are shared across every position (weight sharing). They do not grow with the picture.',
   '지도 16장': '16 maps', '특징 지도 16장': '16 feature maps', '지도마다 "여기에 이 특징이 있다"': 'each map says "this feature is here"', '특징 지도 16장이 생깁니다.': '16 feature maps appear.', '16장': '16 maps',
-  '다음 층': 'Next layer', '지도 16장 위에서 다시 필터 → 모서리, 고리 모양': 'filters again over the 16 maps → corners, loops',
+  '다음 층': 'Next layer', '그림 28×28 → 필터 16개': 'Picture 28×28 → 16 filters', '다음 층 · 0–9 점수': 'Next layer · scores 0–9', '다음 층 → 판단': 'Next layer → decision', '특징 지도 16장 → 다음 층': '16 feature maps → next layer', '필터 16개 → 특징 지도 16장': '16 filters → 16 feature maps', '지도 16장 위에서 다시 필터 → 모서리, 고리 모양': 'filters again over the 16 maps → corners, loops',
   '그다음 층 → 숫자 0의 동그라미, 7의 꺾임': 'the layer after → the ring of a 0, the bend of a 7', '작은 특징을 모아 더 큰 모양을 찾습니다.': 'Small features combine to find bigger shapes.', '큰 모양': 'Big shapes',
   '0–9 점수': 'Scores 0–9', '마지막에 7.11처럼 출력 뉴런 10개 → "7"': 'finally 10 output neurons as in 7.11 → "7"', '숫자를 알아봅니다.': 'It recognizes the digit.',
+  // Example note on the still picture.
+  '열 번호는 0부터: 필터 −1 +2 −1을 0–2열에 대면 −3': 'cols from 0: −1 +2 −1 on 0–2 = −3', '세로선이 가운데인 1–3열에 대면 6': 'on 1–3 (line centered) = 6', '특징 지도에 −3, 6, …': 'feature map gets −3, 6, …',
+  '필터를 9곳에 대 봄 (5×5 → 3×3)': 'filter at 9 spots (5×5 → 3×3)', 'ReLU 뒤 가운데 열만 6': 'after ReLU only the middle column is 6', '세로선이 가운데 2열에 있음': 'the line is in the middle, column 2',
+  '세로선이 3열로 옮겨 감': 'the line moves to column 3', '6도 오른쪽 열로 옮겨 감': 'the 6 moves to the right column too', '가장 큰 값은 그대로 6 · 세로선 있음': 'the largest is still 6 · line found',
+  '28×28 손글씨에 3×3 필터 16개': '16 filters (3×3) on a 28×28 digit', '특징 지도 16장': '16 feature maps', '다음 층이 큰 모양을 찾음': 'the next layer finds bigger shapes',
+  '3열 선': 'Line in col 3', '그림 28×28': 'Picture 28×28', '필터 16개': '16 filters', '특징 지도 16장': '16 feature maps', '다음 층': 'Next layer', '그림 28×28 → 필터 16개': 'Picture 28×28 → 16 filters', '다음 층 · 0–9 점수': 'Next layer · scores 0–9', '다음 층 → 판단': 'Next layer → decision', '특징 지도 16장 → 다음 층': '16 feature maps → next layer', '필터 16개 → 특징 지도 16장': '16 filters → 16 feature maps', '가장 큰 값 · 0–9 점수': 'Max value · scores 0–9', '가장 큰 값 · 6': 'Max value · 6', '특징 지도 · ReLU': 'Feature map · ReLU', '오른쪽 6': 'Right 6', '9곳': '9 spots',
 };

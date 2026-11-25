@@ -375,6 +375,7 @@ const lesson = [
   {
     label: '혼자서',
     readingStage: 3,
+    note: ['사진 한 장에 1초', ' → ', '일꾼 1이 9장을 차례로', ' → ', '9초'],
     title: '일꾼 하나는 사진을 하나씩 차례로 처리한다',
     body: '사진 9장의 크기를 줄이는 일이 있습니다. 한 장에 1초가 걸립니다. 일꾼(CPU 코어, 스레드, 서버 무엇이든)이 하나면 1번부터 9번까지 차례로 처리해 9초가 걸립니다. 5.1의 스레드 하나, 3.5의 CPU 하나가 이렇게 일합니다.',
     takeaway: '9장 × 1초 = 9초입니다. 사진이 900장이면 900초입니다. 일꾼을 늘리면 얼마나 빨라질까요?',
@@ -391,6 +392,7 @@ const lesson = [
   {
     label: '셋이 나눠서',
     readingStage: 8,
+    note: ['9장을 3장씩 나눔', ' → ', '일꾼 셋이 동시에 3초', ' → ', '모아서 3초'],
     title: '서로 상관없는 일은 나눠서 동시에 한다',
     body: '사진 한 장을 줄이는 일은 다른 사진과 상관이 없습니다. 그러니 일꾼 셋에게 세 장씩 나눠 주면 동시에 처리할 수 있습니다. 6.7에서 GPU가 칸마다 색을 동시에 칠한 것도, 7.3에서 서버 여러 대가 요청을 나눠 받는 것도 같은 생각입니다.',
     takeaway: '세 일꾼이 동시에 3초씩 일해 전체가 3초에 끝납니다. 일꾼이 3배면 3배 빨라졌습니다. 언제나 그럴까요?',
@@ -413,6 +415,7 @@ const lesson = [
   {
     label: '나눌 수 없는 부분',
     readingStage: 6,
+    note: ['압축 풀기는 혼자 3초', ' → ', '사진 9장을 셋이 나눠 3초', ' → ', '3 + 3 = 6초 (혼자면 12초)'],
     title: '혼자 해야 하는 부분이 빨라지는 한계를 정한다',
     body: '이번에는 사진이 압축 파일 하나에 들어 있어서, 먼저 3초 동안 압축을 풀어야 합니다. 압축 풀기는 나눌 수 없어 한 명이 해야 합니다. 일꾼 하나면 3 + 9 = 12초, 셋이면 3 + 3 = 6초입니다. 일꾼을 3배로 늘렸는데 2배만 빨라졌습니다. 이것을 암달의 법칙이라 합니다.',
     takeaway: '일꾼을 아무리 늘려도 압축 풀기 3초는 그대로라, 12초는 3초보다 짧아질 수 없습니다. 최대 4배입니다. 프로그램에서 나눌 수 없는 부분이 클수록 일꾼을 늘린 효과가 빨리 멈춥니다.',
@@ -422,9 +425,9 @@ const lesson = [
     start: { title: '할 일', lines: ['압축 풀기 3초 (나눌 수 없음)', '사진 9장 × 1초 (나눌 수 있음)', '일꾼 혼자면 12초'], holds: { job: '압축 파일' } },
     stages: [
       { from: 'job', to: 'split', label: '압축 파일', title: '압축 풀기', lines: ['혼자서 3초 · 이동안 일꾼 셋은 기다림'], text: '압축 풀기는 나눌 수 없어 혼자 3초가 걸립니다.', holds: { split: '혼자 3초' } },
-      { from: 'split', to: 'w1', label: '1–3', title: '나눠 주기', lines: ['3초 뒤에야 나눠 줄 수 있음'], text: '압축을 다 푼 뒤에 나눠 줍니다.', holds: { w1: '3장' } },
-      { from: 'split', to: 'w2', label: '4–6', title: '나눠 주기', lines: ['사진 4–6'], text: '일꾼 2에게도 나눠 줍니다.', holds: { w2: '3장' } },
-      { from: 'split', to: 'w3', label: '7–9', title: '동시에 3초', lines: ['세 일꾼이 동시에 3초'], text: '세 일꾼이 동시에 3초 일합니다.', holds: { w3: '3장' } },
+      { from: 'split', to: 'w1', label: '1–3', title: '나눠 주기', lines: ['3초 뒤에야 나눠 줄 수 있음'], text: '압축을 다 푼 뒤에 나눠 줍니다.', holds: { w1: '3초' } },
+      { from: 'split', to: 'w2', label: '4–6', title: '나눠 주기', lines: ['사진 4–6'], text: '일꾼 2에게도 나눠 줍니다.', holds: { w2: '3초' } },
+      { from: 'split', to: 'w3', label: '7–9', title: '동시에 3초', lines: ['세 일꾼이 동시에 3초'], text: '세 일꾼이 동시에 3초 일합니다.', holds: { w3: '3초' } },
       { from: 'w2', to: 'merge', label: '9장', title: '모으기', lines: ['압축 풀기 3초 + 사진 3초 = 6초'], text: '모두 모았습니다.', holds: { merge: '9장' },
         ask: { q: '일꾼 하나일 때(12초)와 비교해 셋일 때(6초)는 몇 배 빨라졌을까요?', choices: ['2배', '3배'], answer: '2배', why: '12 ÷ 6 = 2입니다. 나눌 수 없는 3초가 그대로 남아 일꾼 수만큼 빨라지지 않습니다.' } },
       { from: 'merge', to: 'done', label: '6초', title: '끝', lines: ['걸린 시간: 6초 (혼자일 때 12초)', '일꾼 9명이면 3 + 1 = 4초, 무한히 많으면 3초'], text: '6초 만에 끝났습니다.', holds: { done: '6초' },
@@ -434,6 +437,8 @@ const lesson = [
   {
     label: '가장 느린 일꾼',
     readingStage: 5,
+    note: ['일꾼 3만 한 장에 2초', ' → ', '일꾼 1·2는 3초에 끝나고 기다림', ' → ', '전체는 가장 느린 6초'],
+    noteTone: 'bad',
     title: '모두 끝나야 끝난다, 가장 느린 일꾼이 시간을 정한다',
     body: '나눠서 동시에 하는 일은 모든 일꾼이 끝나야 모을 수 있습니다. 일꾼 3이 다른 일을 함께 하느라 두 배 느려지면, 일꾼 1과 2가 3초에 끝내도 모으기는 일꾼 3을 기다려야 합니다. 서버 여러 대에 나눠 맡길 때도 가장 느린 한 대가 응답 시간을 정합니다.',
     takeaway: '일꾼 1, 2는 3초에 끝나고 놀지만, 일꾼 3이 6초가 걸려 전체도 6초입니다. 일을 더 잘게 나눠 먼저 끝난 일꾼이 남은 조각을 가져가게 하면(일 훔치기) 기다림이 줄어듭니다.',
@@ -447,7 +452,7 @@ const lesson = [
       { from: 'split', to: 'w2', label: '4–6', title: '일꾼 2', lines: ['3초 뒤 끝'], text: '일꾼 2도 3초면 끝납니다.', holds: { w2: '3초 · 끝' } },
       { from: 'split', to: 'w3', label: '7–9', title: '일꾼 3', lines: ['한 장에 2초 → 6초'], error: 'w3', text: '일꾼 3은 두 배 느립니다.', holds: { w3: '6초 걸림' },
         ask: { q: '전체 일은 언제 끝날까요?', choices: ['6초 (가장 느린 일꾼)', '3초 (빠른 일꾼)', '4초 (평균)'], answer: '6초 (가장 느린 일꾼)', why: '모든 사진이 모여야 끝나므로 가장 늦게 끝나는 일꾼을 기다립니다.' } },
-      { from: 'w1', to: 'merge', label: '3장', title: '기다림', lines: ['일꾼 1, 2는 3초에 끝나고 3초 동안 놂', '모으기는 일꾼 3을 기다림'], text: '빠른 일꾼들은 끝나고 기다립니다.', holds: { merge: '6장 · 기다림' } },
+      { from: 'w1', to: 'merge', label: '3장', title: '기다림', lines: ['일꾼 1, 2는 3초에 끝나고 3초 동안 놂', '모으기는 일꾼 3을 기다림'], text: '빠른 일꾼들은 끝나고 기다립니다.', holds: { merge: '기다림' } },
       { from: 'w3', to: 'merge', label: '3장', title: '모으기', lines: ['6초에 일꾼 3도 끝'], reset: 'w3', text: '일꾼 3이 끝나야 모두 모입니다.', holds: { merge: '9장' } },
       { from: 'merge', to: 'done', label: '6초', title: '끝', lines: ['걸린 시간: 6초', '9장을 1장씩 줄 서게 하고 끝난 일꾼이 다음 장을 가져가면 → 약 4초'], text: '가장 느린 일꾼이 전체 시간을 정했습니다.', holds: { done: '6초' },
         ask: { q: '기다림을 줄이려면 어떻게 나누면 좋을까요?', choices: ['작은 조각으로 줄 세워 끝난 일꾼이 다음 조각을 가져가게', '처음부터 더 큰 묶음으로 나누기'], answer: '작은 조각으로 줄 세워 끝난 일꾼이 다음 조각을 가져가게', why: '빠른 일꾼이 더 많은 조각을 가져가 느린 일꾼의 몫이 줄어듭니다. 4.3의 큐가 쓰입니다.' } },
@@ -526,8 +531,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -574,6 +580,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names how the work was split and timed, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

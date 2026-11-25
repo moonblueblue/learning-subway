@@ -102,4 +102,14 @@ window.lessonText = {
   '로그인 시도에 IP 주소 기준으로만 제한을 두면 생길 수 있는 문제는?': 'What can go wrong if login attempts are limited by IP address alone?',
   '같은 와이파이를 쓰는 여러 사람이 함께 막힐 수 있다': 'Many people on the same Wi-Fi can be blocked together', '아무 문제 없다': 'Nothing at all',
   '학교나 회사는 많은 사람이 한 IP를 씁니다. 그래서 계정, API 키 같은 기준을 함께 씁니다.': 'At a school or office many people share one IP. So account, API key and similar are used alongside it.',
+  // Example note on the still picture.
+  '봇 10,000/초 + 지우 1/초': 'bot 10,000/s + Jiwoo 1/s', 'API 서버는 1,000/초까지': 'API server: up to 1,000/s', '과부하 · 지우도 시간 초과': 'overloaded · Jiwoo times out too',
+  '사용자마다 토큰 5개': '5 tokens per user', '봇 7개 중 5개 통과 · 2개는 429': 'bot: 5 of 7 pass · 2 get 429', '지우는 제 토큰으로 통과': 'Jiwoo passes on her own tokens',
+  '1초에 1개씩 채워 3초 뒤 봇 토큰 3개': 'refill 1 a second: bot has 3 after 3 s', '봇 5개 중 3개 통과 · 2개는 429': 'bot: 3 of 5 pass · 2 get 429',
+  '리미터가 여러 대여도 공유 저장소에서 함께 셈': 'however many limiters, one shared count', '봇 10개 중 5개만 통과 · 5개는 429': 'bot: only 5 of 10 pass · 5 get 429',
+  '6개 처리': '6 handled', '공유 토큰: 봇 0': 'Shared tokens: bot 0', '레이트 리미터 · 429 × 5': 'Rate limiter · 429 × 5', '레이트 리미터 · 통과': 'Rate limiter · pass',
+  '토큰 봇 5 · 지우 5': 'Tokens Bot 5 · Jiwoo 5',
+  '토큰 봇 0 · 지우 5': 'Tokens Bot 0 · Jiwoo 5',
+  '토큰 봇 0 · 지우 4': 'Tokens Bot 0 · Jiwoo 4',
+  '토큰 봇 3 · 지우 5': 'Tokens Bot 3 · Jiwoo 5',
 };

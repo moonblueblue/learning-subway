@@ -7,7 +7,7 @@ window.lessonText = {
   '8장에서 고른 트랙의 주제로 스스로 문제를 정해 해결하려면 어떻게 시작할까요? 프로젝트를 고르고, 기준을 정하고, 나누고, 마무리하는 방법을 문제로 확인해 보세요.':
     'How do you start setting and solving your own problem on the topic of the track you chose in chapter 8? Work through choosing a project, setting criteria, splitting it up and wrapping it up.',
   // Step 1
-  '문제 고르기': 'Choose a problem', '몇 주 안에 완성할 주제': 'A topic done in a few weeks', '대상과 한 가지 기능을 한정': 'Limit to one user and one feature', '끝까지 시연할 범위 확보': 'A scope you can demo end to end',
+  '문제 고르기': 'Choose a problem',
   '고른 트랙 안에서, 몇 주 안에 끝낼 수 있는 크기로 정한다': 'Within your track, pick a size you can finish in a few weeks',
   '트랙 프로젝트는 8장에서 고른 트랙의 주제로 스스로 문제를 정해 끝까지 해결하는 일입니다. 가장 흔한 실패는 문제를 너무 크게 잡는 것입니다. 좋은 문제는 트랙의 레슨 몇 개를 실제로 써야 하고, 혼자 몇 주 안에 끝낼 수 있으며, 다 됐는지 확인할 방법이 있습니다.':
     'A track project means setting your own problem on the topic of the track you chose in chapter 8 and solving it to the end. The most common failure is making the problem too big. A good problem actually uses a few of the track\'s lessons, can be finished alone in a few weeks, and has a way to check that it is done.',
@@ -25,7 +25,7 @@ window.lessonText = {
   '고른 트랙에서 해 보고 싶은 문제를 한 문장으로 적어 보세요. "무엇을, 어디까지"가 들어 있나요?': 'Write the problem you want to try in your track in one sentence. Does it say "what, and how far"?',
   '예: "8D: 키보드만으로 끝까지 할 수 있는 작은 퍼즐 게임을 만들고, 사용자 5명 중 4명이 도움 없이 첫 판을 끝내게 하기."': 'For example: "8D: Build a small puzzle game playable to the end with the keyboard alone, and have 4 of 5 users finish the first round without help."',
   // Step 2
-  '완료 기준': 'Completion criteria', '‘빠르게’라는 목표': 'A goal of ‘fast’', '100건 처리 시간을 측정': 'Measure time for 100 items', '완료 여부를 재현해 판정': 'Judge done-ness repeatably',
+  '완료 기준': 'Completion criteria',
   '다 됐는지 숫자나 테스트로 확인할 수 있게 적는다': 'Write it so numbers or tests can confirm it is done',
   '"잘 동작한다"는 끝을 정해 주지 않습니다. 완료 기준은 누가 봐도 됐는지 아닌지 판단할 수 있게 적습니다. 정확도, 응답 시간, 통과해야 할 테스트, 사용자 과제 성공률처럼 잴 수 있는 것으로 적고, 시작할 때 미리 정해 둡니다.':
     '"It works well" does not define an end. Write completion criteria so anyone can judge whether it is done. Write them as measurable things such as accuracy, response time, tests to pass or user task success rate, and set them before you start.',
@@ -40,7 +40,7 @@ window.lessonText = {
   '앞에서 적은 문제의 완료 기준을 숫자나 테스트로 두 가지 적어 보세요.': 'Write two completion criteria, as numbers or tests, for the problem you wrote earlier.',
   '예: "사용자 5명 중 4명이 도움 없이 첫 판 완료", "Tab과 Enter만으로 모든 버튼에 닿는 자동 테스트 통과".': 'For example: "4 of 5 users finish the first round without help", "pass an automated test that reaches every button with Tab and Enter alone".',
   // Step 3
-  '작게 나누기': 'Split it small', '입력·계산·출력을 한 번 연결': 'Connect input, compute, output once', '작은 데이터로 끝까지 실행': 'Run end to end on small data', '어디가 끊기는지 일찍 확인': 'Find breaks early',
+  '작게 나누기': 'Split it small',
   '처음부터 끝까지 도는 가장 작은 판을 먼저 만든다': 'First build the smallest version that runs end to end',
   '큰 계획을 한 번에 다 만들면 마지막에야 문제가 드러납니다. 그래서 가장 작지만 처음부터 끝까지 도는 판(예: 숫자 두 개만 구별하는 신경망)을 먼저 만들고, 확인한 뒤 조금씩 키웁니다. 9.3에서 병목을 하나씩 넓혔듯, 한 번에 한 가지만 바꾸고 재면 무엇이 효과가 있었는지 압니다.':
     'Build a big plan all at once and problems show up only at the end. So first build the smallest version that still runs end to end (say, a neural network that tells just two digits apart), check it, then grow it bit by bit. As 9.3 widened one bottleneck at a time, changing one thing at a time and measuring tells you what worked.',
@@ -55,7 +55,7 @@ window.lessonText = {
   '여러분의 문제에서 "처음부터 끝까지 도는 가장 작은 판"은 무엇일까요?': 'In your problem, what is "the smallest version that runs end to end"?',
   '예: 퍼즐 게임이라면 칸 2개짜리 판 하나를 키보드로 끝까지 풀 수 있는 버전입니다. 화면 꾸미기와 레벨 추가는 그다음입니다.': 'For example, for a puzzle game it is a version where one 2-cell board can be solved to the end by keyboard. Decorating the screen and adding levels come after.',
   // Step 4
-  '확인과 공유': 'Check and share', '처음 정한 기준으로 재측정': 'Remeasure against the first criteria', '예상과 실제 결과 비교': 'Compare expected and actual', '남은 한계와 다음 개선 기록': 'Record limits and next steps',
+  '확인과 공유': 'Check and share',
   '완료 기준으로 확인하고, 배운 것을 남긴다': 'Check against the criteria and record what you learned',
   '끝났다고 느껴질 때 처음에 적은 완료 기준으로 다시 확인합니다. 그리고 무엇을 만들었고, 어떻게 확인했고, 무엇이 어려웠고, 다음엔 무엇을 하겠는지 짧게 적어 남깁니다. 다른 사람이 따라 해 볼 수 있게 실행 방법과 시험 결과를 함께 둡니다. 이 저장소의 실험 가이드(docs)가 그런 기록입니다.':
     'When it feels finished, check again against the completion criteria you wrote at the start. Then write down briefly what you built, how you checked it, what was hard and what you would do next. Include how to run it and the test results so others can follow. This repository\'s lab guides (docs) are such records.',
@@ -71,4 +71,6 @@ window.lessonText = {
   '무엇이 안 됐는지가 가장 값진 배움입니다. 다음 사람이 같은 길을 피할 수 있습니다.': 'What did not work is the most valuable lesson. The next person can avoid the same path.',
   '프로젝트를 마치고 남길 한 페이지 기록의 목차를 적어 보세요.': 'Write the table of contents for the one-page record you will leave after the project.',
   '예: ① 문제와 완료 기준 ② 만든 것과 실행 방법 ③ 확인 결과(숫자, 테스트) ④ 어려웠던 점과 실패한 시도 ⑤ 다음에 해 볼 것.': 'For example: ① the problem and completion criteria ② what was built and how to run it ③ check results (numbers, tests) ④ what was hard and failed attempts ⑤ what to try next.',
+  // Reading examples
+  '"사람처럼 대화하는 인공지능"은 너무 큼': '"an AI that talks like a person" is too big', '손글씨 숫자 0–9 하나로 좁힘': 'narrow it to handwritten digits 0–9', '시험 정확도 90%까지 몇 주 안에': 'test accuracy 90% within a few weeks', '"코드가 깔끔하다"는 잴 수 없음': '"clean code" can\'t be measured', '시험 1,000장 중 900장 이상': '900+ of 1,000 test images', '누가 다시 재도 같은 판정': 'anyone re-measuring gets the same verdict', '0과 1만 구별하는 작은 신경망': 'a tiny network telling 0 from 1', '학습·시험 나누기까지 한 번 돌림': 'run once through the train/test split', '색과 글꼴은 나중에': 'colors and fonts later', '완료 기준 두 가지를 다시 잼': 're-measure both done criteria', '통과했는지 숫자로 적음': 'write down pass or fail with numbers', '실패한 시도까지 한 페이지로 남김': 'keep one page, failed tries included',
 };

@@ -80,4 +80,10 @@ window.lessonText = {
   '미니배치 기울기의 흔들림이 도움이 되는 경우는?': 'When does the wobble of a mini-batch gradient help?',
   '평평한 곳이나 얕은 웅덩이에 갇혔을 때 빠져나오기': 'Escaping when stuck in a flat place or shallow dip', '바닥을 정확히 찾을 때': 'Finding the bottom exactly',
   '조금씩 흔들리는 걸음이 작은 웅덩이를 넘어가게 해 줍니다. 대신 바닥 근처에서는 학습률을 줄여 흔들림을 가라앉힙니다.': 'Slightly wobbly steps can carry you over small dips. Near the bottom, though, the learning rate is lowered to calm the wobble.',
+  // Example note on the still picture.
+  'w = 0에서 L = (w − 3)² = 9': 'at w = 0, L = (w − 3)² = 9', '기울기 2 × (0 − 3) = −6': 'slope 2 × (0 − 3) = −6', '학습률 0.1로 반대쪽 +0.6': 'rate 0.1: +0.6 the other way',
+  'w = 0에서 세 걸음씩': 'three steps from w = 0', '학습률 0.1은 1.46…로 천천히': 'rate 0.1: slowly to 1.46…', '0.5는 3에 멈춤': '0.5: stops at 3', '1.1은 8.18로 바닥을 건너뜀': '1.1: past the bottom to 8.18',
+  '(0, 0)에서 L = 10': 'at (0, 0), L = 10', '가중치마다 기울기 (−6, 2)': 'a slope per weight (−6, 2)', '학습률 0.1로 (+0.6, −0.2)': 'rate 0.1: (+0.6, −0.2)',
+  '예시 100만 개 중 32개만 평균': 'average just 32 of 1M examples', '어림한 기울기로 한 걸음': 'one step on a rough slope', '다음 32개로 또 한 걸음': 'another step on the next 32',
+  '8.18 (튕김)': '8.18 (bounced)', '고치기 · 다음 32개': 'Update · next 32',
 };

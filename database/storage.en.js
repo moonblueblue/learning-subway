@@ -90,4 +90,10 @@ window.lessonText = {
   '합친 새 파일 하나만 남깁니다.': 'Only the one merged file is left.',
   '쓰기가 아주 많고 읽기는 적은 서비스(센서 기록)에 알맞은 엔진은?': 'Which engine suits a service with very many writes and few reads (sensor logs)?', 'LSM 트리': 'LSM tree', 'B-트리': 'B-tree',
   'LSM은 쓰기를 메모리와 순차 쓰기로 처리해 빠릅니다. 읽기가 많고 쓰기가 적으면 B-트리가 유리합니다.': 'LSM handles writes in memory and with sequential writes, so it is fast. With many reads and few writes, a B-tree is better.',
+  // Example note on the still picture.
+  'UPDATE id 1 → 38': 'UPDATE id 1 → 38', '로그에 1줄': '1 log line', '페이지 317 (4KB)을 읽어 숫자 하나 고침': 'read page 317 (4KB), change one number', '4KB를 제자리에 다시 씀': 'write the 4KB back in place',
+  'id 1 → 38을 로그 끝에 붙이고 메모리 표에': 'id 1 → 38 to log and memtable', '64MB가 차서': 'it hits 64MB', '정렬 파일 2로 한 번에 내려씀 · 메모리 표 비움': 'flushed as sorted file 2 · memtable empty',
+  '메모리 표에 없음': 'not in the memtable', '새 파일 2부터 봐서 38을 찾고 끝': 'newest file 2 first: 38, done',
+  '파일 1, 2를 합침': 'merge files 1 and 2', 'id 1은 새 값 38을 남김 · 지운 id 7은 버림': 'id 1 keeps only 38 · deleted id 7 dropped', '키 1, 3만 담은 파일 3 하나': 'one file 3 with keys 1 and 3',
+  '317번': 'No. 317', '정렬 파일들 · 38': 'Sorted files · 38', '317 읽음': '317 read', '317 고침': '317 fixed',
 };

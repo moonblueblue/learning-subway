@@ -365,6 +365,7 @@ const lesson = [
   {
     label: '표',
     readingStage: 3,
+    note: ['SELECT * FROM students', ' → ', '6행을 모두 읽음', ' → ', '결과 6행 × 3열 (id, name, grade)'],
     title: '데이터는 이름 붙은 칸을 가진 표에 줄로 담긴다',
     body: '관계형 데이터베이스는 데이터를 표(테이블)에 담습니다. 열(칼럼)은 id, name, grade처럼 이름과 종류가 정해진 칸이고, 행(로우)은 학생 한 명 같은 기록 하나입니다. 원하는 것은 SQL이라는 언어로 "무엇을" 달라고만 말하고, "어떻게" 찾을지는 데이터베이스 엔진이 정합니다.',
     takeaway: 'SELECT * FROM students는 students 표의 모든 열, 모든 행을 달라는 뜻입니다. 결과도 표 모양으로 돌아옵니다.',
@@ -375,12 +376,13 @@ const lesson = [
       { from: 'q', to: 'db', label: 'SELECT *', title: '엔진 · 질의 읽기', lines: ['SELECT *        → 모든 열', 'FROM students   → students 표에서'], text: '엔진이 질의를 읽고(6.3의 파서처럼) 무엇을 원하는지 알아냅니다.', holds: { db: '질의 해석' } },
       { from: 'db', to: 't', label: '읽기', title: 'students 표', lines: STUDENTS, text: '엔진이 students 표를 읽습니다. 한 줄이 학생 한 명입니다.', holds: { t: '6행 읽음' },
         ask: { q: '이 표에서 "3 | 하윤 | 2" 한 줄을 무엇이라 부를까요?', choices: ['행(기록 하나)', '열(칸 이름)'], answer: '행(기록 하나)', why: '행은 기록 하나, 열은 id나 grade처럼 모든 행이 함께 가지는 칸입니다.' } },
-      { from: 't', to: 'res', label: '6행', title: '결과', lines: STUDENTS, text: '모든 행이 결과로 돌아옵니다.', holds: { res: '6행' } },
+      { from: 't', to: 'res', label: '6행', title: '결과', lines: STUDENTS, text: '모든 행이 결과로 돌아옵니다.', holds: { res: '6행 × 3열' } },
     ],
   },
   {
     label: '거르기',
     readingStage: 3,
+    note: ['SELECT name … WHERE grade = 2', ' → ', '6행을 하나씩 확인', ' → ', '민지 · 하윤 · 지우 (name 열만)'],
     title: 'WHERE로 조건에 맞는 행만 고른다',
     body: 'WHERE 뒤에 조건을 쓰면 맞는 행만 남깁니다. SELECT name을 쓰면 열도 name 하나만 고릅니다. 엔진은 표의 행을 하나씩 꺼내 조건을 확인합니다. 지금처럼 다른 도움 없이 모든 행을 훑는 것을 전체 스캔이라 합니다.',
     takeaway: '2학년 3명을 찾으려고 6행을 모두 확인했습니다. 행이 백만 개면 백만 번 확인해야 합니다. 6.5의 인덱스가 이 문제를 풉니다.',
@@ -388,7 +390,7 @@ const lesson = [
     stations: [['q', 'SQL 질의', 'file'], ['db', 'DB 엔진', 'tool'], ['t', 'students 표', 'ram'], ['res', '결과', 'file']],
     start: { title: '질의', lines: ['SELECT name FROM students', 'WHERE grade = 2;'], holds: { t: '6행 × 3열' } },
     stages: [
-      { from: 'q', to: 'db', label: 'WHERE grade = 2', title: '엔진 · 질의 읽기', lines: ['FROM students   → students 표에서', 'WHERE grade = 2 → 2학년인 행만', 'SELECT name     → name 열만'], text: '엔진이 어떤 행과 어떤 열을 원하는지 알아냅니다.', holds: { db: '조건 grade = 2' } },
+      { from: 'q', to: 'db', label: 'WHERE grade = 2', title: '엔진 · 질의 읽기', lines: ['FROM students   → students 표에서', 'WHERE grade = 2 → 2학년인 행만', 'SELECT name     → name 열만'], text: '엔진이 어떤 행과 어떤 열을 원하는지 알아냅니다.', holds: { db: 'grade = 2' } },
       { from: 'db', to: 't', label: '한 행씩', title: '전체 스캔', lines: ['1 민지 2 → ✓', '2 서준 1 → ✗', '3 하윤 2 → ✓', '4 도윤 3 → ✗', '5 지우 2 → ✓', '6 예준 1 → ✗'], text: '엔진이 행을 하나씩 꺼내 grade가 2인지 확인합니다.', holds: { t: '6행 확인' },
         ask: { q: '2학년 3명을 찾으려고 엔진은 몇 행을 확인할까요?', choices: ['3행', '6행 모두'], answer: '6행 모두', why: '표가 grade 순으로 정리돼 있지 않아, 어디에 2학년이 있는지 모르면 모든 행을 봐야 합니다.' } },
       { from: 't', to: 'res', label: '3행', title: '결과', lines: ['name', '민지', '하윤', '지우'], text: '조건에 맞는 세 행의 name만 돌아옵니다.', holds: { res: '3행 × 1열' },
@@ -398,15 +400,16 @@ const lesson = [
   {
     label: '잇기',
     readingStage: 4,
+    note: ['JOIN', ' · ', "enrollments에서 '수학' → id 1, 3, 5", ' → ', 'students에서 이름 찾기', ' → ', '민지 · 하윤 · 지우 | 수학'],
     title: 'JOIN으로 두 표를 같은 값으로 잇는다',
     body: '학생이 듣는 과목을 students 표에 함께 적으면, 과목이 여럿인 학생의 이름이 여러 번 반복됩니다. 그래서 과목은 enrollments 표에 따로 두고 student_id로 학생을 가리킵니다. 함께 볼 때는 JOIN으로 students.id와 enrollments.student_id가 같은 행끼리 이어 붙입니다. 이것이 "관계형"이라는 이름의 뜻입니다.',
     takeaway: '수학을 듣는 학생 id(1, 3, 5)를 enrollments에서 찾고, 그 id로 students에서 이름을 찾아 이어 붙였습니다. 이름은 students 한곳에만 있으니, 이름을 바꿀 때도 한 행만 고치면 됩니다(6.1의 "한 곳만 고치기").',
-    description: '왼쪽부터 SQL 질의, DB 엔진, students 표, enrollments 표, 결과가 놓여 있습니다. 엔진이 두 표를 오가며 같은 id끼리 잇습니다.',
-    stations: [['q', 'SQL 질의', 'file'], ['db', 'DB 엔진', 'tool'], ['t', 'students', 'ram'], ['e', 'enrollments', 'ram'], ['res', '결과', 'file']],
+    description: '왼쪽부터 SQL 질의, DB 엔진, enrollments 표, students 표, 결과가 놓여 있습니다. 엔진이 두 표를 오가며 같은 id끼리 잇습니다.',
+    stations: [['q', 'SQL 질의', 'file'], ['db', 'DB 엔진', 'tool'], ['e', 'enrollments', 'ram'], ['t', 'students', 'ram'], ['res', '결과', 'file']],
     start: { title: '질의', lines: ['SELECT students.name, enrollments.subject', 'FROM students JOIN enrollments', '  ON students.id = enrollments.student_id', "WHERE enrollments.subject = '수학';"], holds: { t: '6행', e: '6행' } },
     stages: [
       { from: 'q', to: 'db', label: 'JOIN', title: '엔진 · 질의 읽기', lines: ['두 표를 id = student_id로 잇고', "subject가 '수학'인 것만"], text: '엔진이 두 표를 어떤 칸으로 이을지 읽습니다.', holds: { db: 'id로 잇기' } },
-      { from: 'db', to: 'e', label: "subject = '수학'", title: 'enrollments 표', lines: ['student_id | subject', '1 | 수학  ✓', '1 | 과학', '3 | 수학  ✓', '4 | 음악', '5 | 수학  ✓', '6 | 과학'], text: '엔진이 enrollments에서 수학을 듣는 student_id를 찾습니다.', holds: { e: 'id 1, 3, 5' } },
+      { from: 'db', to: 'e', label: "subject = '수학'", title: 'enrollments 표', lines: ['student_id | subject', '1 | 수학  ✓', '1 | 과학', '3 | 수학  ✓', '4 | 음악', '5 | 수학  ✓', '6 | 과학'], text: '엔진이 enrollments에서 수학을 듣는 student_id를 찾습니다.', holds: { e: '수학 3행' } },
       { from: 'e', to: 't', label: 'id 1, 3, 5', title: 'students에서 이름 찾기', lines: ['id 1 → 민지', 'id 3 → 하윤', 'id 5 → 지우'], text: '찾은 id로 students 표에서 이름을 찾습니다.', holds: { t: '이름 3개' },
         ask: { q: '두 표를 잇는 데 쓰는 칸은?', choices: ['students.id와 enrollments.student_id', 'students.name과 enrollments.subject'], answer: 'students.id와 enrollments.student_id', why: 'student_id는 students 표의 id를 가리키는 값입니다. 같은 값끼리 행을 이어 붙입니다.' } },
       { from: 't', to: 'res', label: '3행', title: '결과', lines: ['name | subject', '민지 | 수학', '하윤 | 수학', '지우 | 수학'], text: '이어 붙인 세 행이 돌아옵니다.', holds: { res: '3행 × 2열' },
@@ -416,6 +419,7 @@ const lesson = [
   {
     label: '묶어 세기',
     readingStage: 3,
+    note: ['GROUP BY subject', ' → ', '과목별 묶음 3개', ' → ', '수학 3 · 과학 2 · 음악 1 (subject, COUNT)'],
     title: 'GROUP BY로 같은 값끼리 묶어 센다',
     body: '"과목마다 몇 명이 듣나?"처럼 묶어서 세거나 더하는 질문도 SQL 한 줄로 합니다. GROUP BY subject는 subject가 같은 행끼리 한 묶음으로 모으고, COUNT(*)는 묶음마다 행 수를 셉니다. SUM, AVG, MAX도 같은 방식으로 씁니다.',
     takeaway: 'enrollments 6행이 수학 3, 과학 2, 음악 1로 묶였습니다. 반복문을 직접 쓰지 않고 "무엇을" 원하는지만 말하면, 엔진이 4.5의 해시 테이블 같은 방법으로 묶어 줍니다.',
@@ -423,7 +427,7 @@ const lesson = [
     stations: [['q', 'SQL 질의', 'file'], ['db', 'DB 엔진', 'tool'], ['e', 'enrollments', 'ram'], ['res', '결과', 'file']],
     start: { title: '질의', lines: ['SELECT subject, COUNT(*) FROM enrollments', 'GROUP BY subject;'], holds: { e: '6행' } },
     stages: [
-      { from: 'q', to: 'db', label: 'GROUP BY', title: '엔진 · 질의 읽기', lines: ['subject가 같은 행끼리 묶고', '묶음마다 행 수를 셈'], text: '엔진이 무엇으로 묶을지 읽습니다.', holds: { db: 'subject로 묶기' } },
+      { from: 'q', to: 'db', label: 'GROUP BY', title: '엔진 · 질의 읽기', lines: ['subject가 같은 행끼리 묶고', '묶음마다 행 수를 셈'], text: '엔진이 무엇으로 묶을지 읽습니다.', holds: { db: 'subject별' } },
       { from: 'db', to: 'e', label: '한 행씩', title: '묶음에 넣기', lines: ['수학 ← 1, 3, 5', '과학 ← 1, 6', '음악 ← 4'], text: '엔진이 행을 하나씩 꺼내 과목 묶음에 넣습니다.', holds: { e: '묶음 3개' },
         ask: { q: '수학 묶음에는 몇 행이 들어갈까요?', choices: ['2행', '3행'], answer: '3행', why: 'student_id 1, 3, 5가 수학을 듣습니다.' } },
       { from: 'e', to: 'res', label: '3행', title: '결과', lines: ['subject | COUNT(*)', '수학 | 3', '과학 | 2', '음악 | 1'], text: '묶음마다 센 값이 한 행씩 돌아옵니다.', holds: { res: '3행 × 2열' },
@@ -534,6 +538,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names the query and its result, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

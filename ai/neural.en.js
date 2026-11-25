@@ -92,4 +92,10 @@ window.lessonText = {
   '틀린 만큼 각 가중치를 조금씩 고친다': 'Fixes each weight a little by how wrong it was', '그 그림을 지운다': 'Deletes that picture',
   '784칸 그림을 숨은 뉴런 100개에 모두 잇는다면 그 층의 가중치는 몇 개일까요?': 'If a 784-cell picture connects to all 100 hidden neurons, how many weights does that layer have?',
   '입력 784개 × 뉴런 100개 = 78,400개의 곱하기가 있습니다. 그래서 동시에 계산하는 GPU가 필요합니다.': '784 inputs × 100 neurons = 78,400 multiplications. That is why a GPU computing them at once is needed.',
+  // Example note on the still picture.
+  '세로선 칸 × 가중치를 모두 더해 합 2': 'cells × weights sum to 2', 'ReLU: 음수면 0, 양수는 그대로': 'ReLU: below 0 becomes 0', '2 (세로선을 찾음)': '2 (found a vertical line)',
+  '뉴런 1은 0 · 뉴런 2는 2': 'neuron 1: 0 · neuron 2: 2', '출력(ReLU 없음) = 뉴런 1 − 뉴런 2 = −2': 'output (no ReLU) = n1 − n2 = −2', '음수라 가로선': 'negative, so horizontal',
+  '구석에 점이 하나 더 있어도': 'even with an extra dot in a corner', '뉴런 1은 2 · 뉴런 2는 0': 'neuron 1: 2 · neuron 2: 0', '2 − 0 = 2라 여전히 세로선': '2 − 0 = 2, still vertical',
+  '무작위 가중치로는 −0.5 · 틀림': 'random weights give −0.5 · wrong', '정답과 비교해 가중치를 바꿈': 'weights changed against the answer', '다시 계산하니 2 → 세로선': 'recomputed: 2 → vertical',
+  '가중치 바꿈': 'Weights changed',
 };

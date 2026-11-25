@@ -55,7 +55,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
 .item-text.code{font:600 .9375rem/1.5 var(--mono);white-space:pre;overflow-x:auto;background:#1f2d29;color:#e8f2ec;padding:8px 12px;border-radius:8px;max-width:100%}
-.choices{display:flex;gap:6px}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
 .choice{min-width:68px}
 .choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
 .choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
@@ -135,7 +135,7 @@ const TF = [['true', '참'], ['false', '거짓']];
 const lesson = [
   {
     label: '이름 붙이기',
-    example: ["같은 계산이 세 곳에 반복", "함수 하나로 묶어 호출", "계산식 수정은 한 곳"],
+    example: ["같은 계산이 total_a, total_b에 복사", "final_price(price) 하나로 묶어 두 곳에서 호출", "할인 기준이 바뀌면 함수 안 한 곳만 수정"],
     title: '되풀이되는 일에 이름을 붙여 함수로 묶는다',
     body: '추상화는 "어떻게"를 감추고 "무엇"만 남기는 일입니다. 같은 계산이 여러 곳에 복사되어 있으면, 하나를 고칠 때 나머지를 빠뜨리기 쉽습니다. 이 일을 함수로 묶고 하는 일을 말해 주는 이름을 붙이면, 읽는 사람은 이름만 보고 넘어갈 수 있고 고칠 곳은 한 군데가 됩니다.',
     link: '1.3에서 함수를 부르고 돌아오는 모습을 봤습니다. 3.6의 기계어 위에 3.8의 언어가 올라선 것도 같은 추상화입니다. 아래 단계의 복잡함을 위에서는 몰라도 됩니다.',
@@ -152,7 +152,7 @@ const lesson = [
   },
   {
     label: '감추기',
-    example: ["find_user(7) 호출", "저장 방식을 목록에서 DB로 변경", "같은 규약으로 사용자 반환"],
+    example: ["find_user(7) 호출", "안의 방법을 목록 훑기에서 해시 테이블로 변경", "받는 값·돌려주는 값이 같아 부르는 코드는 그대로"],
     title: '밖에서 쓰는 약속(인터페이스)과 안의 방법을 나눈다',
     body: '함수나 모듈을 쓰는 쪽은 이름, 받는 값, 돌려주는 값만 알면 됩니다. 이것을 인터페이스라 합니다. 안에서 어떻게 계산하는지(구현)는 감춰 두면, 약속을 지키는 한 구현을 마음대로 바꿔도 쓰는 쪽은 고칠 필요가 없습니다.',
     link: '4.5의 해시 테이블을 떠올려 보세요. 쓰는 쪽은 넣기와 찾기만 알고, 칸 수를 늘리는 재배치는 안에서 몰래 일어났습니다. 5.3의 시스템 콜도 운영체제가 정한 인터페이스입니다.',
@@ -169,7 +169,7 @@ const lesson = [
   },
   {
     label: '모듈 나누기',
-    example: ["재고 갱신과 재고 조회", "재고 모듈에 함께 배치", "재고 규칙을 한 곳에서 수정"],
+    example: ["add_to_cart와 order_total은 주문 규칙과 함께 바뀜", "둘 다 주문 모듈에 둠", "할인 규칙이 바뀌면 주문 모듈만 수정"],
     title: '함께 바뀌는 것끼리 한 모듈에 모은다',
     body: '프로그램이 커지면 관련된 함수와 데이터를 파일이나 패키지 단위의 모듈로 묶습니다. 좋은 기준은 "같은 이유로 함께 바뀌는 것끼리 모으기"입니다. 한 모듈 안은 서로 긴밀하고(응집도가 높고), 모듈 사이는 느슨하게 이어지면(결합도가 낮으면) 한 곳을 고칠 때 다른 곳이 덜 흔들립니다.',
     link: '4.3의 스택은 넣기와 꺼내기만 밖에 보여 주는 작은 모듈이었습니다. 5.7의 네트워크 계층도 각 계층이 자기 일만 맡도록 나눈 모듈 설계입니다.',
@@ -187,7 +187,7 @@ const lesson = [
   },
   {
     label: '느슨하게 잇기',
-    example: ["주문이 결제 규약만 호출", "결제 구현 교체", "주문 코드는 그대로 사용"],
+    example: ["화면은 주문을, 주문은 결제의 pay(amount)만 부름", "결제사를 다른 회사로 교체", "결제 모듈 안만 수정 · 주문과 화면은 그대로"],
     title: '모듈 사이의 연결은 적고 한 방향으로',
     body: '모듈끼리 서로의 안쪽을 마구 부르면, 하나를 고칠 때 줄줄이 깨집니다. 모듈은 상대의 공개된 인터페이스만 부르고, 서로를 부르는 고리(A가 B를, B가 다시 A를)를 만들지 않는 것이 좋습니다. 화면 → 주문 → 결제처럼 한 방향으로 흐르면 아래 모듈은 위를 몰라도 되어 따로 테스트하고 바꾸기 쉽습니다.',
     link: '5.6의 교착 상태도 서로를 기다리는 고리에서 생겼습니다. 의존의 고리도 비슷하게 엉킵니다. 6.2에서는 이렇게 나눈 모듈을 하나씩 테스트합니다.',

@@ -703,12 +703,33 @@ function showStep(index, announce = true) {
   try { localStorage.setItem(storageKey, String(index)); } catch {}
   buildControls();
   resetAll();
+  byId('example-note')?.remove();
   if (s.mode === 'brackets') startCheck(0);
   report(s.mode === 'brackets' ? '검사할 괄호를 고르고 "다음 글자"를 눌러 보세요.' : '버튼을 눌러 넣고 꺼내 보세요.');
   syncTask();
   state.wait = 800;
   syncPlayback();
+  if (motion.matches) showExample();
   if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
+}
+// Nothing plays with reduced motion, so the still picture shows the step's example: the values put in, and
+// in a note at the top, the order they come out (or where the bracket check failed).
+function showExample() {
+  const s = lesson[state.index];
+  if (s.mode === 'brackets') {
+    // "( [ ) ]": the two opening brackets are on the stack and ")" is next, facing "[" on top.
+    startCheck(1);
+    checkNext(false);
+    checkNext(false);
+    exampleNote('( 다음 [ 를 쌓음 → 닫는 ) 와 맨 위 [ 가 다름 → 짝 불일치', 'bad');
+    return;
+  }
+  for (const label of s.mode === 'both' ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C']) {
+    if (show('stack')) push(label);
+    if (show('queue')) enqueue(label);
+  }
+  exampleNote(s.mode === 'both' ? '먼저 처리: 큐는 앞의 A · 스택은 맨 위의 D'
+    : show('stack') ? 'A, B, C를 쌓음 → 꺼내면 C → B → A' : 'A, B, C가 줄 섬 → 꺼내면 A → B → C', 'ok');
 }
 function goToStep(index) {
   if (index < 0 || index >= lesson.length || index === state.index) return;

@@ -270,6 +270,7 @@ const lesson = [
     ],
     outs: [['C', '올림 C'], ['S', '합 S']],
     demo: [[0, 1], [1, 1], [1, 0], [0, 0]],
+    staticInitial: [1, 1],
     expr: (v) => [`A + B = ${v.A} + ${v.B} = `, `${v.C}${v.S}`, ` (이진수) · 올림 ${v.C}, 합 ${v.S}`],
     tasks: [
       { text: '1 + 1을 만들어 보세요. 어느 램프가 켜질까요?', test: (v) => v.A && v.B, ok: '1 + 1 = 10입니다. 합은 0, 올림은 1입니다.' },
@@ -298,6 +299,7 @@ const lesson = [
     ],
     outs: [['C', '올림 C'], ['S', '합 S']],
     demo: [[1, 0, 1], [1, 1, 1], [0, 1, 0], [0, 0, 0]],
+    staticInitial: [1, 1, 1],
     expr: (v) => [`A + B + Cin = ${v.A} + ${v.B} + ${v.Ci} = `, `${v.C}${v.S}`, ` (이진수) = ${v.A + v.B + v.Ci}`],
     tasks: [
       { text: '세 스위치를 모두 켜 보세요. 1 + 1 + 1은 얼마일까요?', test: (v) => v.A && v.B && v.Ci, ok: '1 + 1 + 1 = 11, 곧 3입니다. 두 램프가 모두 켜집니다.' },
@@ -943,7 +945,8 @@ function startStep() {
   buildButtons();
   buildTable();
   // Start from the demo's last combination so the first tick visibly changes something.
-  const first = motion.matches ? step.demo[0] : step.demo[step.demo.length - 1];
+  // A still picture (reduced motion) shows `staticInitial` when the step's example needs other inputs than the demo's first.
+  const first = motion.matches ? step.staticInitial ?? step.demo[0] : step.demo[step.demo.length - 1];
   setInputs(comboInputs(first), { send: true });
   state.wait = 900;
 }

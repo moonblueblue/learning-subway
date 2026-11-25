@@ -52,7 +52,7 @@ window.lessonText = {
   '같은 수의 키를 담을 때 칸이 많을수록 같은 칸에 몰릴 확률이 줄어 충돌이 줄어듭니다. 대신 빈 칸이 늘어 메모리를 더 씁니다.':
     'For the same number of keys, more slots make crowding into one slot less likely, so there are fewer collisions. In exchange there are more empty slots, using more memory.',
   // Step 4
-  '암호 맛보기': 'A taste of encryption', '나머지가 2': 'Remainder 2', '12와 22 모두 10으로 나누면 2': '12 and 22 both give 2 when divided by 10', '나머지만으로 원래 수 특정 불가': 'The remainder alone cannot pin down the original number',
+  '암호 맛보기': 'A taste of encryption', '3⁴ % 7': '3⁴ % 7', '81을 7로 나눈 나머지 4 (쉬움)': '81 divided by 7 leaves 4 (easy)', '4에서 지수 4를 거꾸로 찾기는 하나씩 시도': 'Finding the exponent 4 back from 4 means trying one by one',
   '나머지 연산은 거꾸로 풀기 어렵게 만든다': 'Modular arithmetic makes things hard to undo',
   '3⁴ % 7 = 81 % 7 = 4처럼 거듭제곱의 나머지는 계산하기 쉽습니다. 그런데 "3을 몇 번 곱해야 7로 나눈 나머지가 4가 될까?"를 거꾸로 찾기는 수가 커질수록 엄청나게 어려워집니다. 인터넷의 자물쇠(6.11, 8C.1)는 이런 "한쪽은 쉽고 거꾸로는 어려운" 나머지 계산 위에 만들어졌습니다.':
     'The remainder of a power is easy to work out, as in 3⁴ % 7 = 81 % 7 = 4. But working backwards, "how many times must 3 be multiplied to leave 4 when divided by 7?", gets enormously hard as the numbers grow. The internet\'s locks (6.11, 8C.1) are built on remainder calculations like this, "easy one way, hard backwards".',

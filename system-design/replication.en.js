@@ -76,4 +76,10 @@ window.lessonText = {
   '주문 101을 잃지 않으려면 주 DB는 언제 "완료"라고 답해야 했을까요?': 'To avoid losing order 101, when should the primary have answered "done"?',
   '복제본이 받았다고 확인한 뒤 (동기 복제)': 'After a replica confirmed it got it (synchronous replication)', '자기만 쓰고 바로 (비동기 복제)': 'Right after writing it itself (asynchronous replication)',
   '복제본에도 있으면 주 DB가 죽어도 남습니다. 대신 확인을 기다리는 만큼 쓰기가 느려집니다.': 'If a replica has it too, it survives the primary dying. But writes slow down by the time spent waiting for the confirmation.',
+  // Example note on the still picture.
+  '읽기 900 + 쓰기 100 = 1,000/초': 'reads 900 + writes 100 = 1,000/s', 'DB 한 대는 600/초까지': 'one DB handles up to 600/s',
+  '주문(쓰기)은 주 DB로: 재고 38': 'write to primary: stock 38', '로그로 복제본 1, 2에 복사': 'copied by log to replicas 1, 2', '상품 보기(읽기)는 복제본 1에서 38': 'read from replica 1: 38',
+  '닉네임을 지우개왕으로 (주 DB)': 'nickname set to EraserKing (primary)', '곧바로 복제본 2에서 읽음': 'read right away from replica 2', '복사 전이라 옛 값 연필왕': 'not copied yet: old PencilKing',
+  '주 DB 고장 (주문 101은 복사 전)': 'primary fails (101 not copied)', '복제본 1을 새 주 DB로': 'replica 1 becomes the primary', '주문 102는 새 주 DB로 · 101은 잃음': '102 to new primary · 101 lost',
+  '아직 연필왕': 'Still PencilKing', '새 주 DB: 1–100, 102': 'New primary: 1–100, 102', '앱 서버 · 주문 102': 'App server · order 102',
 };

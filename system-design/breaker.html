@@ -375,6 +375,8 @@ const lesson = [
   {
     label: '계속 부르면',
     readingStage: 4,
+    note: ['추천 서비스 고장', ' → ', '요청마다 10초씩 기다려 여유 20칸이 다 참', ' → ', '상품 페이지도 안 뜸'],
+    noteTone: 'bad',
     title: '고장 난 서비스를 기다리다 나까지 멈춘다',
     body: '상품 페이지 서비스는 페이지를 만들 때마다 추천 서비스에 "이 상품과 비슷한 것"을 묻습니다. 추천 서비스가 고장 나 응답을 안 하면, 상품 페이지 서비스는 요청마다 시간 초과(10초)까지 기다립니다. 동시에 처리할 수 있는 요청은 20개뿐이라(5.1의 스레드), 20개가 모두 기다리는 데 묶이면 상품 페이지 자체가 멈춥니다. 고장이 번지는 것입니다.',
     takeaway: '추천이라는 곁가지 기능 하나 때문에 상품 페이지 전체가 멈췄습니다. 고장 난 곳을 계속 부르면 기다림이 쌓여 나까지 쓰러집니다.',
@@ -386,12 +388,13 @@ const lesson = [
       { from: 'order', to: 'rec', label: '추천 줘', title: '추천 서비스를 기다림', lines: ['응답 없음 → 10초 동안 기다림', '그동안 이 요청은 일꾼 하나를 붙잡고 있음'], error: 'rec', text: '요청마다 10초씩 일꾼을 붙잡고 기다립니다.', holds: { order: '기다리는 중 10' } },
       { from: 'order', to: 'rec', label: '추천 줘', title: '2초 뒤', lines: ['1초에 10개 × 10초 → 기다리는 요청이 금방 20개', '여유 0 → 새 요청을 받을 수 없음'], error: 'order', text: '기다리는 요청이 20개를 채웠습니다.', holds: { order: '여유 0' },
         ask: { q: '상품 페이지 서비스가 멈춘 진짜 까닭은?', choices: ['고장 난 추천 서비스를 기다리느라 일꾼이 모두 묶여서', '상품 페이지 코드에 버그가 있어서'], answer: '고장 난 추천 서비스를 기다리느라 일꾼이 모두 묶여서', why: '자기 일은 멀쩡해도, 남을 기다리는 데 자원을 다 써 버렸습니다. 고장이 번진 것입니다.' } },
-      { from: 'order', to: 'user', label: '응답 없음', title: '페이지 전체가 멈춤', lines: ['사용자: 상품 페이지가 뜨지 않음'], text: '추천 때문에 상품 페이지 전체가 멈췄습니다.', holds: { user: '페이지 안 뜸' } },
+      { from: 'order', to: 'user', label: '응답 없음', title: '페이지 전체가 멈춤', lines: ['사용자: 상품 페이지가 뜨지 않음'], text: '추천 때문에 상품 페이지 전체가 멈췄습니다.', error: 'user', holds: { user: '페이지 안 뜸' } },
     ],
   },
   {
     label: '차단기 열림',
-    readingStage: 4,
+    readingStage: 5,
+    note: ['5번째 실패에 차단기 열림', ' → ', '추천은 부르지 않고 바로 실패', ' → ', '페이지는 인기 상품으로 뜸'],
     title: '실패가 이어지면 차단기를 열고 바로 포기한다',
     body: '서킷 브레이커는 전기 차단기처럼 부르는 쪽 앞에 섭니다. 평소(닫힘)에는 요청을 그대로 보내면서 실패를 셉니다. 실패가 연속 5번이면 차단기가 열리고, 그 뒤로는 추천 서비스를 부르지 않고 즉시 실패를 돌려줍니다. 상품 페이지는 추천 칸만 "인기 상품"으로 대신 채우고(대체 응답) 나머지를 정상으로 보여 줍니다.',
     takeaway: '열린 뒤의 요청은 10초가 아니라 0.001초 만에 실패를 받았습니다. 일꾼이 묶이지 않아 상품 페이지는 살아 있고, 고장 난 추천 서비스도 요청 폭탄에서 벗어나 회복할 틈을 얻습니다.',
@@ -400,7 +403,7 @@ const lesson = [
     start: { title: '차단기 규칙', lines: ['닫힘: 그대로 부르고 실패를 셈', '연속 실패 5번 → 열림: 부르지 않고 즉시 실패', '시간 초과: 1초'], holds: { cb: '닫힘 · 실패 4', rec: '고장' } },
     stages: [
       { from: 'order', to: 'cb', label: '추천 줘', title: '차단기를 지나 부름', lines: ['차단기: 닫힘 → 그대로 보냄'], text: '차단기가 닫혀 있어 그대로 보냅니다.', holds: { cb: '닫힘' } },
-      { from: 'cb', to: 'rec', label: '추천 줘', title: '다섯 번째 실패', lines: ['1초 시간 초과 → 연속 실패 5번', '차단기: 열림'], error: 'rec', text: '다섯 번째 실패로 차단기가 열립니다.', holds: { cb: '열림' } },
+      { from: 'cb', to: 'rec', label: '추천 줘', title: '다섯 번째 실패', lines: ['1초 시간 초과 → 연속 실패 5번', '차단기: 열림'], error: 'rec', text: '다섯 번째 실패로 차단기가 열립니다.', holds: { cb: '열림: 막음' } },
       { from: 'order', to: 'cb', label: '추천 줘', title: '다음 요청', lines: ['차단기: 열림 → 추천 서비스를 부르지 않음'], text: '다음 요청이 차단기에 옵니다.', holds: { order: '추천 요청' },
         ask: { q: '차단기가 열린 뒤 다음 요청은 어떻게 될까요?', choices: ['추천 서비스를 부르지 않고 즉시 실패를 돌려받는다', '그래도 10초를 기다린다'], answer: '추천 서비스를 부르지 않고 즉시 실패를 돌려받는다', why: '열린 차단기는 고장 난 곳으로 요청을 보내지 않고 바로 실패를 알려 줍니다.' } },
       { from: 'cb', to: 'order', label: '즉시 실패', title: '0.001초 만에 실패', lines: ['일꾼이 묶이지 않음'], text: '기다리지 않고 바로 실패를 돌려받습니다.', holds: { order: '여유 20' } },
@@ -411,6 +414,7 @@ const lesson = [
   {
     label: '살짝 열어 보기',
     readingStage: 3,
+    note: ['30초 뒤 반쯤 열어 한 번만 시험', ' → ', '추천 5개가 옴', ' → ', '차단기 닫힘'],
     title: '시간이 지나면 한 번만 시험해 보고 닫는다',
     body: '차단기가 영원히 열려 있으면 추천 서비스가 고쳐져도 쓰지 못합니다. 그래서 열린 지 30초가 지나면 "반쯤 열림" 상태가 되어 요청 하나만 시험 삼아 보냅니다. 성공하면 다시 닫고 평소처럼 부르고, 실패하면 다시 열고 30초를 더 기다립니다.',
     takeaway: '시험 요청이 성공해 차단기가 닫혔고 추천이 다시 보입니다. 고장 난 동안에는 요청을 막아 서로를 보호하고, 회복되면 스스로 돌아옵니다.',
@@ -427,7 +431,8 @@ const lesson = [
   },
   {
     label: '다시 시도의 함정',
-    readingStage: 2,
+    readingStage: 3,
+    note: ['추천이 잠깐 느려질 때', ' · ', '실패하자마자 3번씩 다시 보내면 400/초 몰림', ' → ', '1초, 2초, 4초…로 늘리고 흩뜨림', ' → ', '추천 서비스 회복'],
     title: '실패하자마자 다시 보내면 고장을 키운다',
     body: '실패하면 다시 시도하는 것은 자연스럽지만, 모든 클라이언트가 실패하자마자 세 번씩 다시 보내면 고장 난 서비스에 요청이 네 배로 몰립니다. 그래서 다시 시도할 때는 1초, 2초, 4초…처럼 기다리는 시간을 늘리고(지수 백오프), 다들 같은 순간에 몰리지 않게 조금씩 무작위로 흩뜨립니다(지터). 다시 시도 횟수에도 한도를 둡니다.',
     takeaway: '즉시 3번 다시 보내면 1초에 100개가 400개가 되어 회복 중인 서비스를 다시 쓰러뜨립니다. 백오프와 지터, 서킷 브레이커를 함께 쓰면 고장 난 곳에 숨 쉴 틈을 줍니다.',
@@ -563,6 +568,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what failed and what the breaker did, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

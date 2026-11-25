@@ -77,4 +77,10 @@ window.lessonText = {
   '보내지 않고 확인(ack)만 보냄': 'Sends only the ack, not the email', '큐: 쪽지 501 지움': 'Queue: message 501 deleted', '확인을 받은 큐가 쪽지를 지웁니다.': 'Having got the ack, the queue deletes the message.',
   '같은 쪽지가 두 번 와도 안전하게 하려면?': 'How do you stay safe if the same message comes twice?', '처리 전에 이미 했는지 기록을 확인한다(멱등성)': 'Check a record before handling to see if it was already done (idempotency)', '큐를 하나 더 둔다': 'Add another queue',
   '"최소 한 번" 전달에서는 중복이 생길 수 있으므로, 받는 쪽이 같은 일을 두 번 해도 결과가 같게 만듭니다.': 'With "at least once" delivery duplicates can happen, so the receiving side is made to give the same result even if it does the same job twice.',
+  // Example note on the still picture.
+  '주문 저장 0.05초': 'order saved: 0.05 s', '메일 3초를 기다림': 'waits 3 s for the mail', '사용자도 3초 뒤에 답 받음': 'the user also waits 3 s for a reply',
+  '주문 저장': 'order saved', '큐에 쪽지 "메일 501"을 넣고 바로 답 (0.06초)': 'note "mail 501" queued, reply at once (0.06 s)', '일꾼 1이 나중에 꺼내 보냄': 'worker 1 takes it later and sends',
+  '세일 10초 동안 쪽지 1만 개가 큐에 쌓임': '10,000 notes pile up in the 10 s sale', '일꾼 2를 더해 200/초': 'add worker 2: 200/s', '세일이 끝나면 큐가 줄어듦': 'after the sale the queue shrinks',
+  '일꾼 1이 501을 보낸 뒤 확인 전에 죽음': 'worker 1 sends 501, dies before ack', '큐가 501을 일꾼 2에게 다시 줌': 'the queue gives 501 to worker 2', '보낸 기록을 보고 건너뜀': 'sees it was sent, skips',
+  '이미 보냄: 건너뜀': 'Already sent: skip', '501 한 번 보냄': '501 sent once', '메일 보냄': 'Mail sent', '일꾼 1 · 메일 501': 'Worker 1 · mail 501',
 };

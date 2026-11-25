@@ -15,7 +15,7 @@ window.lessonText = {
   '지우의 브라우저 → evil.test': 'Jiwoo\'s browser → evil.test', '지우의 브라우저 → 문구점 서버': 'Jiwoo\'s browser → shop server', '지우의 브라우저 → 지우의 브라우저': 'Jiwoo\'s browser → itself',
   '문구점 서버 → /srv/config': 'Shop server → /srv/config', '문구점 서버 → /srv/manuals': 'Shop server → /srv/manuals',
   // Step 1
-  '저장형 XSS': 'Stored XSS', '외부에서 입력한 후기': 'A review entered from outside', '브라우저가 내용과 코드를 혼동': 'The browser mixes up content and code', '세션 정보 노출 위험': 'Session data at risk',
+  '저장형 XSS': 'Stored XSS',
   '남이 넣은 스크립트가 내 브라우저에서 실행된다': 'A script someone else put in runs in your browser',
   '상품 후기 칸에 글 대신 <script>…</script>를 넣으면 어떻게 될까요? 서버가 받은 후기를 그대로 저장하고, 다른 사람이 상품 페이지를 열 때 그대로 HTML에 끼워 보내면, 지우의 브라우저는 그것을 문구점이 보낸 코드로 믿고 실행합니다. 스크립트는 지우의 화면을 바꾸거나, 지우인 척 요청을 보내거나, 쿠키를 빼낼 수 있습니다. 이것을 교차 사이트 스크립팅(XSS)이라 합니다.':
     'What happens if you put <script>…</script> in a product review box instead of text? If the server stores the review as it is and slots it straight into the HTML when someone else opens the product page, Jiwoo\'s browser trusts it as code from the shop and runs it. The script can change Jiwoo\'s screen, send requests pretending to be Jiwoo, or take cookies. This is called cross-site scripting (XSS).',
@@ -34,7 +34,7 @@ window.lessonText = {
   '정보 전송': 'Sending data', '정보가 새어 나감': 'Information leaks out', '지우의 화면 정보가 evil.test로 감': 'information from Jiwoo\'s screen goes to evil.test', '(HttpOnly 쿠키는 읽히지 않음 · 6.12)': '(HttpOnly cookies cannot be read · 6.12)',
   '스크립트가 정보를 공격자 사이트로 보냅니다.': 'The script sends information to the attacker\'s site.', '정보 받음': 'Got data',
   // Step 2
-  '글은 글로': 'Text stays text', '같은 후기를 출력에 맞게 이스케이프': 'The same review is escaped for output', '브라우저가 일반 글자로 해석': 'The browser reads it as plain characters', '후기 내용만 표시': 'Only the review text is shown',
+  '글은 글로': 'Text stays text',
   '출력할 때 특수 문자를 바꿔 글은 글로만 보이게 한다': 'Replace special characters on output so text only ever shows as text',
   'XSS를 막는 핵심은 사용자가 쓴 내용을 HTML에 넣을 때 특수 문자를 바꾸는 것(이스케이프)입니다. < 는 &lt;, > 는 &gt;로 바꾸면 브라우저는 그것을 태그가 아니라 글자로 보여 줍니다. 6.12의 SQL 인젝션 방어(입력은 값으로만)와 같은 생각입니다. 여기에 "이 사이트의 스크립트만 실행하라"는 규칙(콘텐츠 보안 정책)을 더하면 이중으로 막습니다.':
     'The key to stopping XSS is replacing special characters when putting user-written content into HTML (escaping). Turn < into &lt; and > into &gt;, and the browser shows them as characters, not tags. It is the same idea as the SQL injection defense in 6.12 (input only as values). Add a rule that says "run only this site\'s scripts" (a content security policy) for a second layer.',
@@ -50,7 +50,7 @@ window.lessonText = {
   '보안 정책': 'Security policy', '이중 안전장치': 'A second safeguard', '→ 혹시 끼어든 다른 출처 스크립트도 실행 안 함': '→ even a script from another origin that slips in will not run',
   '콘텐츠 보안 정책으로 한 번 더 막습니다.': 'A content security policy blocks it once more.', '안전': 'Safe',
   // Step 3
-  '사이트 간 요청 위조': 'Cross-site request forgery', '사용자 의사와 다른 결제 요청': 'A payment request the user never meant', '서버가 요청 토큰 검증': 'The server checks a request token', '검증 실패 시 결제 거절': 'Payment refused if the check fails',
+  '사이트 간 요청 위조': 'Cross-site request forgery',
   '다른 사이트가 내 쿠키를 붙인 요청을 대신 보내게 한다': 'Another site gets your browser to send a request with your cookie',
   '지우가 문구점에 로그인한 채로, 문자로 온 링크의 evil.test 페이지를 열었습니다. 그 페이지에는 문구점의 "포인트 보내기" 주소로 자동 제출되는 숨은 양식이 있습니다. 브라우저는 문구점으로 가는 요청에 문구점 쿠키를 자동으로 붙이므로, 서버는 지우가 직접 보낸 요청으로 압니다. 이것이 사이트 간 요청 위조(CSRF)입니다.':
     'While logged in to the shop, Jiwoo opened an evil.test page from a link in a text message. That page has a hidden form that submits itself to the shop\'s "send points" address. The browser automatically attaches the shop\'s cookie to requests going to the shop, so the server takes it as a request Jiwoo sent. This is cross-site request forgery (CSRF).',
@@ -70,7 +70,7 @@ window.lessonText = {
   '양식마다 숨은 CSRF 토큰 → evil.test는 그 값을 모름': 'a hidden CSRF token in every form → evil.test does not know it', '→ 401 또는 403 (6.12)': '→ 401 or 403 (6.12)',
   'SameSite 쿠키와 CSRF 토큰으로 막습니다.': 'SameSite cookies and CSRF tokens stop it.', '거절': 'Refused',
   // Step 4
-  '경로 조작': 'Path traversal', '문서 폴더 밖의 파일 요청': 'A request for a file outside the docs folder', '허용된 파일과 경로 범위 확인': 'Check allowed files and path range', '응답 거절': 'Response refused',
+  '경로 조작': 'Path traversal',
   '파일 이름에 ../를 넣어 허락되지 않은 파일을 읽는다': 'Putting ../ in a file name reads a file that was not allowed',
   '문구점은 상품 설명서를 /files?name=pencil.pdf처럼 내려받게 합니다. 서버가 "설명서 폴더 + 이름"으로 파일을 열면, 이름에 ../(한 단계 위 폴더, 5.5)를 넣어 폴더 밖으로 나갈 수 있습니다. ../../config/secrets.env를 요청하면 서버의 비밀 설정 파일이 내려받아집니다.':
     'The shop lets you download product manuals like /files?name=pencil.pdf. If the server opens the file as "manuals folder + name", putting ../ (the folder one level up, 5.5) in the name gets outside the folder. Request ../../config/secrets.env and the server\'s secret settings file is downloaded.',
@@ -86,4 +86,8 @@ window.lessonText = {
   '비밀 설정 파일이 새어 나갑니다.': 'The secret settings file leaks out.', '유출됨': 'Leaked',
   '경로 확인': 'Check path', '실제 경로로 푼 뒤 /srv/manuals/ 안인지 확인 → 아니면 400': 'resolve to the real path and check it is inside /srv/manuals/ → otherwise 400',
   '또는 허락된 이름 목록에서만 고르기': 'or pick only from a list of allowed names', '실제 경로가 설명서 폴더 안인지 확인합니다.': 'Check the real path is inside the manuals folder.', '폴더 밖 거절': 'Outside refused',
+  // Reading examples and example note
+  '안 열림': 'Not opened',
+  '문구점 서버 · 경로 확인': 'Shop server · check path', '지우의 브라우저 · SameSite + 토큰': 'Jiwoo\'s browser · SameSite + token', '지우의 브라우저 · 보안 정책': 'Jiwoo\'s browser · security policy', '지우의 브라우저 · 정보 전송': 'Jiwoo\'s browser · sending data',
+  '후기에 <script>가 섞여 저장됨': 'a review with <script> is stored', '브라우저가 코드로 실행': 'the browser runs it as code', '쿠키가 evil.test로': 'the cookie goes to evil.test', '출력할 때 < >를 &lt; &gt;로': 'on output < > become &lt; &gt;', '브라우저가 글자로 봄': 'the browser sees plain text', '후기 내용만 보임': 'only the review text shows', 'evil.test가 쿠키 붙은 결제 POST': 'evil.test sends a payment POST with the cookie', '서버가 토큰을 확인': 'the server checks the token', '토큰 없어 거절': 'no token: refused', 'name=../config/secrets.env': 'name=../config/secrets.env', '풀린 경로가 /srv/manuals 밖': 'the resolved path is outside /srv/manuals', '폴더 밖이라 거절': 'outside the folder: refused', '공격자 후기의 <script>를 그대로 저장': 'attacker\'s <script> stored as is', '지우의 브라우저가 상품 페이지에서 실행': 'Jiwoo\'s browser runs it', '세션 정보가 evil.test로': 'session data to evil.test', '같은 후기를 출력할 때 이스케이프': 'escape the same review on output', '<script>가 글자로만 보임': '<script> shows as text only', '실행되지 않아 안전': 'not run: safe', 'evil.test의 숨은 양식이 쿠키 붙은 POST': 'evil.test POSTs with the cookie', '막지 않으면 1만 점이 나감': 'unguarded: 10,000 points lost', 'SameSite와 토큰이 있으면 거절': 'SameSite + token: refused', '경로를 풀면 /srv/manuals 밖': 'resolved, it leaves /srv/manuals', '확인 없으면 유출 · 확인하면 거절': 'no check: leaked · checked: refused',
 };

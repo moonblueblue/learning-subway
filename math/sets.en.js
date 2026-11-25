@@ -58,8 +58,8 @@ window.lessonText = {
   '파이썬도 집합과 함수를 그대로 쓴다': 'Python uses sets and functions as they are',
   '파이썬의 set은 수학의 집합처럼 중복을 없애고, | 는 합집합, & 는 교집합, - 는 차집합을 계산합니다. in은 원소인지(∈) 확인합니다. 딕셔너리는 키에서 값으로 가는 함수입니다.':
     'Python\'s set removes repeats like a maths set, and | works out the union, & the intersection and - the difference. in checks membership (∈). A dictionary is a function from keys to values.',
-  '1.4에서 리스트의 index는 칸을 하나씩 훑었습니다. set과 딕셔너리의 in은 4.5 해시 테이블 덕분에 거의 한 번에 답합니다.':
-    'In 1.4, a list\'s index scanned the cells one by one. in on a set or dictionary answers almost at once, thanks to the hash tables in 4.5.',
+  '1.4에서 리스트의 index는 칸을 하나씩 훑었습니다. set과 딕셔너리의 in은 해시 테이블(4.5에서 다룹니다) 덕분에 거의 한 번에 답합니다.':
+    'In 1.4, a list\'s index scanned the cells one by one. in on a set or dictionary answers almost at once, thanks to hash tables (covered in 4.5).',
   '다음 파이썬 식의 결과가 참인지 고르세요.': 'Choose whether each Python expression comes out true.',
   '{"민수": 15, "민수": 16}["민수"] == 15': '{"Minsu": 15, "Minsu": 16}["Minsu"] == 15',
   'set은 중복을 없애 {1, 2, 3}이 되므로 길이는 3입니다.': 'set removes the repeat to give {1, 2, 3}, so the length is 3.',

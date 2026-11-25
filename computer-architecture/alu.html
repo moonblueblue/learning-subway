@@ -309,6 +309,7 @@ const lesson = [
     ],
     outs: [['L', '출력']],
     demo: [[1, 0, 0], [1, 0, 1], [0, 1, 1], [0, 1, 0]],
+    staticInitial: [0, 1, 1],
     expr: (v) => [`S = ${v.S} → D${v.S}을 고름 · 출력 = D${v.S} = `, String(v.L), ''],
     tasks: [
       { text: 'S를 0으로 두고 출력 램프를 켜 보세요.', test: (v) => v.S === 0 && v.L === 1, ok: 'S = 0이면 D0이 그대로 나갑니다.' },
@@ -337,6 +338,7 @@ const lesson = [
     outs: [['and', 'AND'], ['or', 'OR'], ['xor', 'XOR'], ['L', '출력']],
     picked: (inputs) => ['and', 'or', 'xor'][inputs.op],
     demo: [[1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 2], [1, 1, 0]],
+    staticInitial: [1, 1, 2],
     expr: (v, i) => [`A ${['AND', 'OR', 'XOR'][i.op]} B = ${v.A} ${['AND', 'OR', 'XOR'][i.op]} ${v.B} = `, String(v.L), ''],
     tasks: [
       { text: 'A = 1, B = 1로 두고 연산만 바꿔서 출력 램프를 꺼 보세요.', test: (v, i) => v.A && v.B && v.L === 0, ok: 'XOR는 두 입력이 같으면 0입니다.' },
@@ -360,6 +362,7 @@ const lesson = [
       { id: 'R', type: 'OUT', in: ['alu.r'], u: 20, v: 0, label: '결과' },
     ],
     demo: [[5, 2, 0], [5, 2, 1], [5, 2, 2], [5, 2, 3], [6, 3, 0]],
+    staticInitial: [3, 2, 0],
     expr: (v, i) => {
       const symbol = ['+', '−', 'AND', 'OR'][i.op];
       return [`A ${symbol} B = ${i.A} ${symbol} ${i.B} = `, String(v.R), ` · 이진수 ${binary(i.A)} ${symbol} ${binary(i.B)} = ${binary(v.R)}`];
@@ -390,6 +393,7 @@ const lesson = [
       { id: 'C', type: 'LAMP', in: ['alu.c'], u: 20, v: 10, label: 'C 올림·빌림', mids: [16.5] },
     ],
     demo: [[5, 3, 1], [3, 3, 1], [2, 5, 1], [7, 1, 0]],
+    staticInitial: [3, 3, 1],
     expr: (v, i) => {
       const symbol = ['+', '−', 'AND', 'OR'][i.op];
       return [`A ${symbol} B = ${i.A} ${symbol} ${i.B} → 결과 `, String(v.R), ` · Z = ${v.Z}, C = ${v.C}`];
@@ -1081,7 +1085,8 @@ function startStep() {
   buildButtons();
   buildTable();
   // Start from the demo's last combination so the first tick visibly changes something.
-  const first = motion.matches ? step.demo[0] : step.demo[step.demo.length - 1];
+  // A still picture (reduced motion) shows `staticInitial` when the step's example needs other inputs than the demo's first.
+  const first = motion.matches ? step.staticInitial ?? step.demo[0] : step.demo[step.demo.length - 1];
   setInputs(comboInputs(first), { send: true });
   state.wait = 900;
 }

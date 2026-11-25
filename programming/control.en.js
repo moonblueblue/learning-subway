@@ -1,6 +1,11 @@
 // English for 1.2 Conditions and loops. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // Names in the code: 점수 score, 결과 result, 합계 total; strings "합격" "pass", "다시" "retry".
 window.lessonText = {
+  // Address under each memory cell: the shared 'address {0}' is wider than a cell and runs into its neighbours.
+  '{#0}번지': 'addr {0}',
+  // CPU plate in the still picture: the step's deciding test
+  '75 >= 60 → 참 → "합격"': '75 >= 60 → true → "pass"', '45 >= 60 → 거짓 → else "다시"': '45 >= 60 → false → else "retry"',
+  '4 <= 3 → 거짓 → 3바퀴 뒤 끝': '4 <= 3 → false → ends after 3 rounds', '1 <= 3 → 참 → 6바퀴째, i 그대로': '1 <= 3 → true → round 6, i unchanged',
   // Page
   '조건과 반복 · 레슨 1.2': 'Conditions and loops · Lesson 1.2',
   'if와 while이 있는 파이썬 코드를 한 줄씩 실행하며, 프로그램이 갈림길을 고르고 같은 줄을 되풀이하는 모습을 살펴보세요.':

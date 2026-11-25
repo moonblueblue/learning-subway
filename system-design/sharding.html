@@ -369,12 +369,17 @@ const kinds = { app: '응용', layer: '계층', wire: '전선', router: '라우�
 // A message travels down the sender's layers, across the wire, and up the receiver's layers.
 // Each layer adds (or removes) its own header; the work panel shows the nested envelopes.
 // An app server, a shard router and three database shards. Stations may sit off the row: [id, name, kind, [u, v]].
-const SH = [['app', '앱 서버', 'app', [0, 0]], ['rt', '샤드 고르기', 'tool', [9, 0]], ['s0', '샤드 0', 'ssd', [18, -14]], ['s1', '샤드 1', 'ssd', [18, 0]], ['s2', '샤드 2', 'ssd', [18, 14]]];
+const SH = [['app', '앱 서버', 'app', [0, 0]], ['rt', '샤드 고르기', 'tool', [9, 0]], ['s0', '샤드 0', 'ssd', [15, -14]], ['s1', '샤드 1', 'ssd', [20, 0]], ['s2', '샤드 2', 'ssd', [25, 14]]];
 const SH_LINKS = [['app', 'rt'], ['rt', 's0'], ['rt', 's1'], ['rt', 's2']];
+// Step 4 adds the new shard the mod 4 rule needs.
+const SH4 = [...SH, ['s3', '샤드 3 (새로)', 'ssd', [34, 7]]];
+const SH4_LINKS = [...SH_LINKS, ['rt', 's3']];
 const lesson = [
   {
     label: '한 대에 안 들어가면',
     readingStage: 1,
+    note: ['데이터 6TB · 쓰기 3만/초', ' → ', 'DB 한 대는 2TB · 1만/초까지', ' → ', '넘침'],
+    noteTone: 'bad',
     title: '데이터와 쓰기가 DB 한 대를 넘친다',
     body: '7.4의 복제는 읽기를 나눠 주지만, 모든 복제본이 전체 데이터를 가지고 쓰기는 여전히 주 DB 한 대가 받습니다. 사용자가 3천만 명이 되어 데이터가 6TB, 쓰기가 1초에 3만 개가 되면 DB 한 대의 디스크(2TB)와 쓰기 처리량(1만/초)을 넘습니다.',
     takeaway: '복제본을 늘려도 각자 6TB를 다 가져야 하고 쓰기는 줄지 않습니다. 데이터 자체를 여러 DB에 나눠 담아야 합니다. 이것이 샤딩(나눠 담기)입니다.',
@@ -389,6 +394,7 @@ const lesson = [
   {
     label: '키로 나누기',
     readingStage: 4,
+    note: ['샤드 = 사용자 번호 mod 3', ' → ', '7 mod 3 = 1 → 샤드 1', ' · ', '11 mod 3 = 2 → 샤드 2'],
     title: '사용자 번호로 어느 샤드에 담을지 정한다',
     body: '샤딩은 데이터를 키(여기서는 사용자 번호) 기준으로 나눠 여러 DB(샤드)에 담습니다. 가장 간단한 규칙은 "사용자 번호 mod 3"(2.6)입니다. 나머지가 0이면 샤드 0, 1이면 샤드 1, 2면 샤드 2입니다. 샤드마다 데이터 2TB, 쓰기 1만/초씩 맡게 됩니다. 앱 서버는 같은 규칙으로 어느 샤드에 물을지 계산합니다.',
     takeaway: '사용자 7은 7 mod 3 = 1이라 언제나 샤드 1에 있습니다. 한 사용자의 데이터는 한 샤드에 모여 있으니, 그 사용자에 대한 질의는 샤드 하나만 보면 됩니다.',
@@ -398,10 +404,10 @@ const lesson = [
     start: { title: '나누는 규칙', lines: ['샤드 번호 = 사용자 번호 mod 3', '샤드마다 약 2TB, 쓰기 1만/초'], holds: { s0: '3, 6, 9 …', s1: '1, 4, 7 …', s2: '2, 5, 8 …' } },
     stages: [
       { from: 'app', to: 'rt', label: '사용자 7', title: '사용자 7의 주문', lines: ['7 mod 3 = 1'], text: '사용자 7의 주문을 저장하려 합니다.', holds: { rt: '7 → 샤드 1' } },
-      { from: 'rt', to: 's1', label: '사용자 7', title: '샤드 1에 저장', lines: ['샤드 1에만 씀 · 다른 샤드는 모름'], text: '샤드 1에만 저장합니다.', holds: { s1: '사용자 7 저장' } },
+      { from: 'rt', to: 's1', label: '사용자 7', title: '샤드 1에 저장', lines: ['샤드 1에만 씀 · 다른 샤드는 모름'], text: '샤드 1에만 저장합니다.', holds: { s1: '7 저장' } },
       { from: 'app', to: 'rt', label: '사용자 11', title: '사용자 11의 주문', lines: ['11 mod 3 = ?'], text: '이번에는 사용자 11입니다.', holds: { rt: '11 → ?' },
         ask: { q: '사용자 11의 데이터는 어느 샤드에 있을까요?', choices: ['샤드 0', '샤드 1', '샤드 2'], answer: '샤드 2', why: '11 = 3 × 3 + 2이므로 나머지는 2입니다.' } },
-      { from: 'rt', to: 's2', label: '사용자 11', title: '샤드 2에 저장', lines: ['11 mod 3 = 2 → 샤드 2'], text: '샤드 2에 저장합니다.', holds: { s2: '사용자 11 저장', rt: '11 → 샤드 2' } },
+      { from: 'rt', to: 's2', label: '사용자 11', title: '샤드 2에 저장', lines: ['11 mod 3 = 2 → 샤드 2'], text: '샤드 2에 저장합니다.', holds: { s2: '11 저장', rt: '11 → 샤드 2' } },
       { from: 'rt', to: 's1', label: '사용자 7 주문 보기', title: '읽기도 한 샤드만', lines: ['사용자 7의 주문 목록 → 샤드 1만 조회'], text: '사용자 7의 주문을 볼 때도 샤드 1만 묻습니다.', holds: { s1: '사용자 7 조회' },
         ask: { q: '"사용자 7의 주문 목록" 질의는 샤드 몇 개를 거칠까요?', choices: ['1개', '3개 모두'], answer: '1개', why: '사용자 7의 데이터는 모두 샤드 1에 있습니다. 키로 찾는 질의는 빠릅니다.' } },
     ],
@@ -409,6 +415,7 @@ const lesson = [
   {
     label: '키가 아닌 질의',
     readingStage: 5,
+    note: ['이메일로 찾기 (샤드 키 아님)', ' → ', '세 샤드 모두에 물음', ' → ', '샤드 1의 사용자 7을 모아서 답함'],
     title: '샤드 키로 찾지 않으면 모든 샤드에 물어야 한다',
     body: '샤드는 사용자 번호로 나눴습니다. 그런데 "이메일이 jiu@example.com인 사용자"처럼 다른 칸으로 찾으면, 어느 샤드에 있는지 알 수 없어 모든 샤드에 물어보고 답을 모아야 합니다. "오늘 전체 주문 수"처럼 모두를 합하는 질의도 마찬가지입니다. 샤드가 많을수록 이런 질의는 느리고 비쌉니다.',
     takeaway: '이메일 질의는 세 샤드를 모두 거쳤고, 가장 느린 샤드(7.1)를 기다려야 합니다. 그래서 가장 자주 찾는 기준으로 샤드 키를 정하고, 이메일 → 사용자 번호 같은 작은 찾아보기 표를 따로 두기도 합니다.',
@@ -428,17 +435,19 @@ const lesson = [
   {
     label: '샤드 늘리기',
     readingStage: 2,
+    note: ['mod 3을 mod 4로 바꾸면', ' → ', '사용자 7은 샤드 1 → 3', ' · ', '전체 데이터의 약 75%가 이사'],
+    noteTone: 'bad',
     title: 'mod 규칙에서 샤드를 늘리면 데이터 대부분이 이사한다',
     body: '사용자가 더 늘어 샤드를 3개에서 4개로 늘립니다. 규칙이 "mod 3"에서 "mod 4"로 바뀌면, 많은 사용자의 샤드 번호가 바뀌어 데이터를 옮겨야 합니다. 사용자 1–12로 따져 보면 샤드가 그대로인 사용자는 1, 2, 12 셋뿐이고 아홉 명(75%)이 이사합니다. 그동안 DB는 엄청난 복사 작업을 해야 합니다.',
     takeaway: '샤드 수로 나머지를 구하는 규칙은 샤드 수가 바뀌면 거의 모두 흔들립니다. 실제 시스템은 처음부터 샤드를 잘게(예: 가상 샤드 1,024개) 만들어 서버에 나눠 주거나, 일관된 해싱으로 옮길 양을 1/n 정도로 줄입니다.',
-    description: '같은 장면입니다. 사용자 7의 샤드 번호가 규칙이 바뀌며 달라집니다.',
-    stations: SH,
-    links: SH_LINKS,
+    description: '같은 장면에 새 샤드 3이 더해졌습니다. 사용자 7의 샤드 번호가 규칙이 바뀌며 1에서 3으로 달라집니다.',
+    stations: SH4,
+    links: SH4_LINKS,
     start: { title: '규칙 바꾸기', lines: ['전: 샤드 = 번호 mod 3', '후: 샤드 = 번호 mod 4 (샤드 3 추가)'], holds: { s1: '사용자 7' } },
     stages: [
-      { from: 'app', to: 'rt', label: '사용자 7', title: '새 규칙으로 계산', lines: ['전: 7 mod 3 = 1', '후: 7 mod 4 = 3 → 샤드 3 (새 샤드)'], text: '같은 사용자 7인데 샤드 번호가 바뀝니다.', holds: { rt: '1 → 3' },
+      { from: 'app', to: 'rt', label: '사용자 7', title: '새 규칙으로 계산', lines: ['전: 7 mod 3 = 1', '후: 7 mod 4 = 3 → 샤드 3 (새 샤드)'], text: '같은 사용자 7인데 샤드 번호가 바뀝니다.', holds: { rt: '7: 샤드 1 → 3' },
         ask: { q: '사용자 1–12 중 mod 3과 mod 4의 샤드 번호가 같은 사람은 몇 명일까요?', choices: ['3명 (1, 2, 12)', '9명', '12명 모두'], answer: '3명 (1, 2, 12)', why: '번호를 12로 나눈 나머지가 0, 1, 2일 때만 같습니다. 나머지 9명(75%)은 이사해야 합니다.' } },
-      { from: 'rt', to: 's1', label: '옮기기', title: '이사', lines: ['샤드 1에서 사용자 7의 데이터를 꺼내 새 샤드 3으로 복사', '모든 샤드에서 75%가 이렇게 움직임'], error: 's1', text: '데이터를 꺼내 옮깁니다. 이사하는 동안 DB가 바쁩니다.', holds: { s1: '75% 이사 중' } },
+      { from: 'rt', to: 's1', label: '옮기기', title: '이사', lines: ['샤드 1에서 사용자 7의 데이터를 꺼내 새 샤드 3으로 복사', '모든 샤드에서 75%가 이렇게 움직임'], error: 's1', text: '데이터를 꺼내 옮깁니다. 이사하는 동안 DB가 바쁩니다.', holds: { s1: '이사 나감', s3: '7 들어옴' } },
       { from: 'rt', to: 'rt', label: '더 나은 규칙', title: '가상 샤드', lines: ['처음부터 가상 샤드 1,024개로 나누고 서버 3대에 나눠 둠', '서버를 늘리면 가상 샤드 일부만 새 서버로 옮김 → 약 1/4만 이사'], reset: 's1', text: '처음부터 잘게 나눠 두면 일부만 옮기면 됩니다.', holds: { rt: '가상 샤드 1,024' },
         ask: { q: '샤딩의 대가로 알맞지 않은 것은?', choices: ['키 하나로 찾는 질의가 느려진다', '키가 아닌 질의는 모든 샤드에 물어야 한다', '샤드를 늘릴 때 데이터를 옮겨야 한다'], answer: '키 하나로 찾는 질의가 느려진다', why: '키로 찾는 질의는 샤드 하나만 보면 되므로 오히려 빠릅니다. 대가는 키가 아닌 질의와 재배치입니다.' } },
     ],
@@ -516,8 +525,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -564,6 +574,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names the rule and its result, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

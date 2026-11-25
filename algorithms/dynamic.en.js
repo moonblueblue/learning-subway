@@ -10,8 +10,8 @@ window.lessonText = {
   // Step 1
   '같은 계산의 반복': 'The same work repeated', 'fib(4)의 두 갈래': 'Two branches of fib(4)', '양쪽에서 fib(2) 호출': 'fib(2) called on both sides', '같은 덧셈 반복': 'The same addition repeated',
   '재귀는 같은 계산을 몇 번이고 다시 한다': 'Recursion redoes the same work again and again',
-  '피보나치 수는 fib(n) = fib(n − 1) + fib(n − 2), fib(1) = fib(2) = 1입니다. 1.5의 재귀로 그대로 옮기면 fib(5)를 구하는 동안 fib(3)을 두 번, fib(2)를 세 번 다시 계산합니다. n이 커지면 같은 계산이 폭발적으로 늘어 fib(40)만 해도 호출이 3억 번을 넘습니다.':
-    'Fibonacci numbers are fib(n) = fib(n − 1) + fib(n − 2), with fib(1) = fib(2) = 1. Written directly as recursion from 1.5, computing fib(5) works out fib(3) twice and fib(2) three times. As n grows the repeated work explodes: fib(40) alone takes over 300 million calls.',
+  '피보나치 수는 fib(n) = fib(n − 1) + fib(n − 2), fib(1) = fib(2) = 1입니다. 1.5의 재귀로 그대로 옮기면 fib(5)를 구하는 동안 fib(3)을 두 번, fib(2)를 세 번 다시 계산합니다. n이 커지면 같은 계산이 폭발적으로 늘어 fib(40)만 해도 호출이 2억 번을 넘습니다.':
+    'Fibonacci numbers are fib(n) = fib(n − 1) + fib(n − 2), with fib(1) = fib(2) = 1. Written directly as recursion from 1.5, computing fib(5) works out fib(3) twice and fib(2) three times. As n grows the repeated work explodes: fib(40) alone takes over 200 million calls.',
   '1.5에서 본 호출 스택이 fib(5) 한 번에 함수 9번 호출로 쌓였다 줄었다 합니다. 4.1의 말로는 O(2ⁿ)쯤으로, O(n²)보다도 훨씬 빠르게 늘어납니다.':
     'The call stack from 1.5 grows and shrinks through 9 function calls for a single fib(5). In the words of 4.1 it is about O(2ⁿ), growing far faster even than O(n²).',
   '재귀로 fib를 계산할 때 다음 문장이 참인지 고르세요.': 'When fib is computed by recursion, choose whether each sentence is true.',

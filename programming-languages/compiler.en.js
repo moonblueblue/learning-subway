@@ -90,4 +90,10 @@ window.lessonText = {
   '3.5 CPU의 명령 네 개가 나왔습니다.': 'Out come four instructions for the CPU of 3.5.', '어셈블러가 3.6의 표로 비트를 만듭니다.': 'The assembler makes the bits with the table of 3.6.',
   '같은 IR을 다른 종류의 CPU용으로 컴파일하면?': 'What if the same IR is compiled for another kind of CPU?',
   '뒷단만 바꾸면 그 CPU의 다른 명령이 나온다': 'Swap only the back end and that CPU\'s different instructions come out', '앞단부터 모두 다시 만들어야 한다': 'Everything from the front end must be rebuilt',
+  // Example note on the still picture.
+  '토큰·트리 (노드 6개)': 'tokens, tree (6 nodes)', '의미 분석 통과': 'check passes', 'int z = "hi" + 1은 타입 오류': 'int z = "hi" + 1: type error, stop',
+  'x = 2 * 3 + y의 트리': 'the tree of x = 2 * 3 + y', 'IR 3줄: t1 = 2 * 3 · t2 = t1 + y · x = t2': '3 IR lines: t1 = 2 * 3 · t2 = t1 + y · x = t2',
+  'IR 4줄 (안 쓰이는 z = x * 0 포함)': '4 IR lines (with unused z = x * 0)', '6으로 접고 t1·t2를 합치고 z 줄을 지움': 'fold to 6, merge t1·t2, drop z', 'x = 6 + y 1줄': '1 line: x = 6 + y',
+  '레지스터 A, B로 명령 4개': '4 instructions with registers A, B', '명령마다 1바이트, 기계어 4바이트': '1 byte each: 4 bytes of machine code',
+  '펼침': 'Flattened', '3줄 줄임': '3 lines fewer', '레지스터 A, B': 'Registers A, B',
 };

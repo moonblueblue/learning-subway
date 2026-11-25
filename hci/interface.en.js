@@ -7,7 +7,7 @@ window.lessonText = {
   '사람이 헷갈리지 않는 화면은 무엇이 다를까요? 보이는 단서, 반응, 실수 다루기, 접근성을 실제 화면 설계 예로 판단해 보세요.':
     'What makes a screen people do not get confused by? Judge visible cues, feedback, handling mistakes and accessibility on real screen-design examples.',
   // Step 1
-  '보이는 단서': 'Visible cues', '클릭 가능한 글자가 본문과 같음': 'Clickable text looks like body text', '링크 모양과 포커스 표시 추가': 'Add link styling and a focus mark', '누를 수 있는 곳을 식별': 'You can tell what is pressable',
+  '보이는 단서': 'Visible cues',
   '눌러도 되는 것은 눌러도 되게 보여야 한다': 'What you can press should look pressable',
   '사람은 설명서를 읽지 않고 화면의 모양을 보고 짐작합니다. 버튼은 버튼처럼, 글을 쓰는 칸은 칸처럼 보여야 합니다. 같은 일은 같은 모양과 같은 자리로, 다른 일은 다르게 보여야 헷갈리지 않습니다. 이런 단서가 맞으면 사용자는 생각하지 않고도 바르게 행동합니다.':
     'People do not read the manual; they guess from how the screen looks. A button should look like a button and a text box like a box. The same action should have the same look and place, and different actions should look different, or people get confused. When these cues are right, users act correctly without thinking.',
@@ -26,7 +26,7 @@ window.lessonText = {
   '무엇을 어떤 모양으로 써야 하는지 칸 안에서 바로 알려 줍니다.': 'It tells you right in the box what to write and in what form.',
   '자주 쓰는 앱 하나에서, 설명 없이도 무엇을 해야 할지 알 수 있었던 단서를 하나 찾아보세요.': 'In an app you use often, find one cue that told you what to do without any explanation.',
   // Step 2
-  '반응 보이기': 'Show feedback', '저장을 누른 뒤 표시 없음': 'No sign after pressing Save', '완료 상태를 즉시 표시': 'Show the finished state at once', '중복 클릭 감소': 'Fewer double clicks',
+  '반응 보이기': 'Show feedback',
   '누른 뒤에는 무슨 일이 일어났는지 곧바로 보여 준다': 'After a press, show right away what happened',
   '사용자가 무언가를 했으면 프로그램은 곧바로 반응을 보여야 합니다. 버튼이 눌린 모양, 불러오는 중 표시, "저장했습니다" 알림이 그것입니다. 반응이 없으면 사람은 "안 눌렸나?" 하고 다시 누르고, 결제가 두 번 되는 것 같은 일이 생깁니다. 오래 걸리는 일은 얼마나 남았는지도 알려 줍니다.':
     'When the user does something, the program should respond right away: a pressed-in button, a loading sign, a "Saved" notice. Without a response, people think "Did it not register?" and press again, and things like paying twice happen. For long jobs, also say how much is left.',
@@ -42,7 +42,7 @@ window.lessonText = {
   '"전송" 버튼을 누른 뒤 서버 응답을 기다리는 2초 동안 화면에 무엇을 보여 주면 좋을까요?': 'After the "Send" button is pressed, what should the screen show during the 2 seconds spent waiting for the server?',
   '버튼을 "보내는 중…"으로 바꾸고 다시 누를 수 없게 하고, 끝나면 "보냈습니다"를 잠깐 보여 줍니다. 실패하면 이유와 "다시 보내기"를 보여 줍니다.': 'Change the button to "Sending…" and stop it being pressed again; when done, show "Sent" briefly. If it fails, show why and a "Send again" button.',
   // Step 3
-  '실수 다루기': 'Handling mistakes', '파일을 실수로 삭제': 'A file deleted by mistake', '휴지통에서 복원': 'Restore from the bin', '작업 전 상태 회복': 'Back to how it was',
+  '실수 다루기': 'Handling mistakes',
   '사람은 실수한다, 막고 되돌릴 수 있게 한다': 'People make mistakes, so prevent them and make them undoable',
   '사람의 실수는 피할 수 없으니, 화면이 실수를 막거나 되돌릴 수 있게 해야 합니다. 애초에 틀린 입력을 할 수 없게 막는 방법, 되돌리기를 주는 방법, 되돌릴 수 없는 일 앞에서 한 번 더 확인하는 방법이 있습니다. 확인 창을 너무 자주 띄우면 사람들이 읽지 않고 누르게 되므로, 되돌리기를 줄 수 있으면 그쪽이 낫습니다.':
     'Human mistakes cannot be avoided, so the screen should prevent them or make them undoable. You can make wrong input impossible in the first place, offer undo, or confirm once more before something that cannot be undone. Confirmation boxes shown too often get clicked without reading, so if you can offer undo, that is better.',
@@ -59,7 +59,7 @@ window.lessonText = {
   '앱이 "정말 삭제할까요?"를 하루에도 수십 번 묻는다면 어떤 일이 생길까요?': 'What happens if an app asks "Really delete?" dozens of times a day?',
   '사람들이 읽지 않고 습관처럼 "예"를 누르게 됩니다. 그러면 정말 중요한 확인도 무시됩니다. 자주 하는 일은 되돌리기로 바꾸고 확인은 정말 큰일에만 남깁니다.': 'People press "Yes" out of habit without reading. Then even the truly important confirmations get ignored. Turn common actions into undo and keep confirmation for the really big ones.',
   // Step 4
-  '모두를 위한 화면': 'Screens for everyone', '작은 버튼만 제공': 'Only small buttons', '누를 영역을 넓힘': 'Make the tap area larger', '손가락으로도 정확히 선택': 'Accurate even with a finger', '누군가는 쓰기 어렵다': 'Hard for some to use',
+  '모두를 위한 화면': 'Screens for everyone', '누군가는 쓰기 어렵다': 'Hard for some to use',
   '눈, 손, 상황이 달라도 쓸 수 있게 만든다': 'Make it usable whatever the eyes, hands or situation',
   '화면을 쓰는 사람은 다양합니다. 색을 잘 구별하지 못하는 사람, 화면 읽기 프로그램으로 듣는 사람, 마우스 대신 키보드만 쓰는 사람, 햇빛 아래에서 휴대폰을 보는 사람도 있습니다. 색만으로 뜻을 전하지 않고, 글자와 배경의 대비를 충분히 하고, 그림에는 설명을 붙이고, 키보드로도 모든 기능을 쓸 수 있게 하는 것을 접근성이라 합니다.':
     'All sorts of people use screens: people who cannot tell colours apart well, people who listen through a screen reader, people who use only a keyboard instead of a mouse, people looking at a phone in sunlight. Not carrying meaning by colour alone, giving text enough contrast with its background, describing images, and making every feature usable from the keyboard is called accessibility.',
@@ -75,4 +75,6 @@ window.lessonText = {
   '마우스를 쓰기 어려운 사람, 키보드가 빠른 사람 모두에게 도움이 됩니다.': 'It helps both people who find a mouse hard to use and people who are fast on the keyboard.',
   '지금 쓰는 휴대폰에서 화면 읽기 기능(VoiceOver 또는 TalkBack)을 켜고 앱 하나를 써 보면 무엇이 불편할까요?': 'If you turn on the screen reader (VoiceOver or TalkBack) on your phone and use an app, what is awkward?',
   '이름 없는 아이콘 버튼이 "버튼"이라고만 읽히거나, 그림 속 글자가 읽히지 않는 경우가 많습니다. 만드는 사람이 직접 써 봐야 알게 되는 문제입니다.': 'Often an unnamed icon button is read out only as "button", or text inside images is not read at all. These are problems makers only find by trying it themselves.',
+  // Reading examples
+  '파란 밑줄인데 눌러도 그대로': 'Blue underline, but nothing happens', '누를 수 있는 것만 링크 모양': 'Only clickable things look like links', '보이는 모양대로 동작': 'It works the way it looks', '결제를 누르고 3초간 변화 없음': 'Pay pressed, no change for 3 s', '누르자마자 "결제 중…" 표시': 'Show "Paying…" at once', '다시 누르는 일이 없음': 'No second press', '메일 하나를 실수로 지움': 'A mail deleted by mistake', '"삭제했습니다 · 되돌리기"': '"Deleted · Undo"', '한 번 눌러 되살림': 'One tap brings it back', '오류를 빨간 테두리로만 알림': 'Error shown only by a red border', '오류 글과 표시를 함께': 'Error text and a mark together', '색을 구별 못 해도 알아챔': 'Noticed even without seeing colors',
 };

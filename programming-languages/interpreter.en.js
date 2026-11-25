@@ -70,4 +70,9 @@ window.lessonText = {
   '실행기가 곱하기를 계산하려 합니다.': 'The evaluator tries to calculate the multiply.', '변수 표에 prise가 없어 실행 중에 오류가 납니다.': 'There is no prise in the variable table, so an error happens while running.',
   '②의 오류가 실행할 때에야 드러나는 까닭은?': 'Why does ②\'s error show only when running?', '문법은 맞고, 이름이 있는지는 변수 표를 찾아봐야 알아서': 'The grammar is valid, and whether the name exists is known only by looking in the variable table', '파서가 오타를 무시해서': 'The parser ignores typos',
   '"이름 * 숫자"는 올바른 문법입니다. 그 이름이 실제로 있는지는 실행기가 표를 찾을 때 확인됩니다.': '"name * number" is valid grammar. Whether that name really exists is checked when the evaluator looks in the table.',
+  // Example note on the still picture.
+  '② 통과': '② passes', '변수 표의 price = 1200': 'table: price = 1200',
+  '(토큰 7개)': '(7 tokens)', '대입 total 아래 더하기, 그 아래 곱하기(price * 3)': 'assign total, under it add, under that multiply (price * 3)', '곱하기를 먼저 계산': 'multiply is computed first',
+  '곱하기 1200 * 3 = 3600': 'multiply: 1200 * 3 = 3600', '더하기 3600 + 500 = 4100': 'add: 3600 + 500 = 4100', '변수 표에 total = 4100': 'table: total = 4100', '실행기 · total = 4100': 'Evaluator · total = 4100',
+  '파서에서 SyntaxError (실행 전)': 'parser: SyntaxError (before run)', '파서 통과 · 실행 중 NameError': 'parser OK · NameError while running',
 };

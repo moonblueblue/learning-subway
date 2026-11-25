@@ -1,5 +1,14 @@
 // English for 4.2 Arrays and linked lists. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Reading diagrams: the array as touching cells, the list as a chain
+  '배열 맨 앞에 넣으면 여섯 칸이 모두 한 칸씩 뒤로 간다': 'Inserting at the front of an array moves all six cells back by one',
+  '붙어 있는 칸 0–5번에 A–F가 있습니다. 맨 앞에 새 값을 넣으려고 F부터 A까지 여섯 값을 한 칸씩 뒤로 옮기고, 비워진 0번 칸에 새 값을 씁니다.':
+    'A–F sit in touching cells 0–5. To put a new value at the front, the six values from F back to A each move one cell back, and the new value goes into the freed cell 0.',
+  '삽입 전 · 붙어 있는 칸': 'Before inserting · touching cells', '한 칸씩 뒤로 옮긴 뒤 0번 칸에 새 값': 'After moving each back one cell, the new value goes into cell 0',
+  '위치 4: 배열은 바로, 리스트는 다섯 노드를 거쳐': 'Position 4: the array goes straight there, the list through five nodes',
+  '배열은 시작 주소에 4를 더해 4번 칸의 E로 바로 갑니다. 연결 리스트는 head에서 A, B, C, D를 거쳐 E에 닿습니다.':
+    'The array adds 4 to its start address and goes straight to E in cell 4. The linked list starts at head and passes A, B, C and D to reach E.',
+  '배열: 계산 한 번': 'Array: one calculation', '연결 리스트: 링크 다섯 번': 'Linked list: five links', '시작 주소': 'Start',
   // Page
   '배열과 연결 리스트 · 레슨 4.2': 'Arrays and linked lists · Lesson 4.2',
   '같은 값을 배열과 연결 리스트에 담고, k번째 읽기와 중간에 끼워 넣기의 걸음 수를 비교해 보세요.':

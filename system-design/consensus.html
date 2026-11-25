@@ -375,6 +375,8 @@ const lesson = [
   {
     label: '서로 다른 값',
     readingStage: 4,
+    note: ['A에 x = 5 · B에 x = 7이 따로 들어옴', ' → ', 'A와 B가 각각 C에 알림', ' → ', 'C는 어느 쪽이 맞는지 모름'],
+    noteTone: 'bad',
     title: '아무나 쓰기를 받으면 서버마다 값이 달라진다',
     body: '중요한 설정값(예: "지금 주 DB는 누구인가")을 서버 세 대가 함께 보관한다고 해 봅시다. 한 대만 두면 그 서버가 죽을 때 함께 사라지니까요. 그런데 클라이언트 둘이 서로 다른 서버에 동시에 다른 값을 쓰면, 서버마다 값이 달라집니다. 어느 것이 진짜인지 아무도 모릅니다.',
     takeaway: 'A는 x = 5, B는 x = 7이라고 믿습니다. 서버 여러 대가 하나의 값에 동의하려면 "누가 순서를 정하는가"와 "몇 대가 받아야 확정인가"라는 규칙이 필요합니다. 이것이 합의 알고리즘(Raft, Paxos)이 하는 일입니다.',
@@ -393,6 +395,7 @@ const lesson = [
   {
     label: '리더와 과반',
     readingStage: 3,
+    note: ['리더 A가 x = 5를 로그에 적음', ' → ', 'B도 기록 (3대 중 2대)', ' → ', '과반이라 확정'],
     title: '리더가 순서를 정하고, 과반이 받으면 확정한다',
     body: 'Raft에서는 서버 중 하나가 리더가 됩니다. 쓰기는 모두 리더가 받아 순서대로 기록하고(6.6의 로그), 다른 서버(팔로워)에 복사합니다. 리더를 포함해 과반(3대 중 2대)이 기록했다고 확인되면 그 값을 확정하고 클라이언트에 답합니다. 한 대가 느리거나 죽어도 과반만 있으면 진행됩니다.',
     takeaway: 'A(리더)와 B가 기록한 순간 x = 5가 확정됐습니다. C가 늦게 받아도 결과는 같습니다. 과반은 서로 겹치므로, 확정된 값은 이후 어느 과반에도 반드시 한 대 이상 남아 있습니다.',
@@ -404,7 +407,7 @@ const lesson = [
       { from: 'client', to: 'a', label: 'x = 5', title: '리더가 받음', lines: ['A 로그: [x = 5] (아직 확정 아님)'], text: '쓰기는 리더 A가 받습니다.', holds: { a: '로그에 x = 5' } },
       { from: 'a', to: 'b', label: '로그 복사', title: 'B에 복사', lines: ['B 로그: [x = 5] → "기록함"'], text: 'A가 B에게 로그를 복사합니다.', holds: { b: '기록함' },
         ask: { q: '서버 3대에서 리더 A가 값을 확정하려면 최소 몇 대의 기록이 필요할까요?', choices: ['2대 (A 자신 + 1대)', '3대 모두'], answer: '2대 (A 자신 + 1대)', why: '3대의 과반은 2대입니다. A와 B가 기록했으니 C를 기다리지 않아도 됩니다.' } },
-      { from: 'b', to: 'a', label: '기록함', title: '과반 확인', lines: ['A + B = 2대 → x = 5 확정'], text: '과반이 기록해 x = 5가 확정됩니다.', holds: { a: 'x = 5 확정' } },
+      { from: 'b', to: 'a', label: '기록함', title: '과반 확인', lines: ['A + B = 2대 → x = 5 확정'], text: '과반이 기록해 x = 5가 확정됩니다.', holds: { a: '리더 · x = 5 확정' } },
       { from: 'a', to: 'client', label: '완료', title: '클라이언트에 답함', lines: ['C는 아직 못 받았지만 확정은 이미 끝남'], text: '확정되자마자 클라이언트에 답합니다.', holds: { client: 'x = 5 완료' } },
       { from: 'a', to: 'c', label: '로그 복사', title: 'C도 따라잡음', lines: ['C 로그: [x = 5]', '세 서버 모두 x = 5'], text: '느린 C도 곧 따라잡습니다.', holds: { c: 'x = 5' } },
     ],
@@ -412,6 +415,7 @@ const lesson = [
   {
     label: '리더가 죽으면',
     readingStage: 3,
+    note: ['리더 A가 죽어 하트비트가 끊김', ' → ', 'B가 임기 2로 표를 청하고 C가 찬성', ' → ', 'B가 새 리더'],
     title: '남은 서버들이 투표로 새 리더를 뽑는다',
     body: '리더는 평소 짧은 간격으로 "나 살아 있어" 신호(하트비트)를 보냅니다. 신호가 일정 시간 끊기면 팔로워는 리더가 죽었다고 보고, 임기 번호를 하나 올려 후보가 되어 다른 서버에 표를 달라고 합니다. 과반의 표를 얻으면 새 리더가 됩니다. 한 임기에 한 서버는 한 표만 줄 수 있어 리더가 둘이 되지 않습니다.',
     takeaway: 'B가 임기 2의 후보가 되어 C의 표를 얻고, 자기 표와 합쳐 2표(과반)로 리더가 됐습니다. 그 뒤 쓰기는 B가 받습니다. 리더가 바뀌는 몇 초 동안은 쓰기가 잠깐 멈춥니다.',
@@ -431,6 +435,7 @@ const lesson = [
   {
     label: '네트워크가 갈라지면',
     readingStage: 3,
+    note: ['네트워크가 갈라져 A만 따로 남음', ' → ', 'A의 x = 9는 과반이 없어 확정 못 함', ' · ', 'B, C는 새 리더 B로 x = 8 확정'],
     title: '과반이 없는 쪽은 확정하지 못하고 기다린다',
     body: '서버는 살아 있는데 네트워크가 끊겨 A 혼자와 B, C 둘로 갈라질 수 있습니다. A는 아직 자기가 리더라고 믿고 쓰기를 받지만, 과반(2대)에게 복사할 수 없어 확정하지 못합니다. 반대편 B, C는 새 리더를 뽑아 계속 확정합니다. 네트워크가 다시 이어지면 A는 더 높은 임기를 보고 팔로워로 내려와 B의 로그를 따릅니다.',
     takeaway: 'A 쪽에서 받은 x = 9는 확정되지 않았다가 버려지고, B 쪽의 x = 8이 남았습니다. 합의 알고리즘은 갈라졌을 때 과반 쪽만 진행하게 해서, 서로 다른 값이 둘 다 확정되는 일을 막습니다. 대신 소수 쪽은 그동안 쓰기를 못 합니다(가용성을 조금 내주고 일관성을 지킴).',
@@ -520,8 +525,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -568,6 +574,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names who wrote, voted and confirmed, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

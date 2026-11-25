@@ -1,5 +1,10 @@
 // English for 3.4 Circuits that remember. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Note under the still picture: the inputs it went through
+  'S를 1로 켰다가 0으로 끔 → Q는 1 그대로': 'S switched to 1, then back to 0 → Q stays 1',
+  'S로 Q = 1을 만든 뒤 R을 켬 → Q = 0': 'Q set to 1 with S, then R switched on → Q = 0',
+  'D = 1에서 E를 켰다가 끔 → 1이 남음': 'With D = 1, E switched on then off → 1 is kept',
+  'D = 101에서 E를 켰다가 끔 → 101이 남음': 'With D = 101, E switched on then off → 101 is kept',
   // Page
   '기억하는 회로 · 레슨 3.4': 'Circuits that remember · Lesson 3.4',
   '출력을 입력으로 되돌리는 되먹임에서 SR 래치, D 래치, 레지스터까지 만들며 회로가 값을 기억하는 방법을 살펴보세요.':

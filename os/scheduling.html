@@ -443,8 +443,23 @@ function paint() {
   }
   text(byId('casings'), ...flat(-1.4, 4).map((n, i) => n - (i ? 0 : 30)), '시간', 'zone-label');
   const right = 14 * 22 + 20, leftX = -60, top = -96, bottom = 7 * 4 + 34;
-  const scale = Math.min(1.7, 590 / (right - leftX), 268 / (bottom - top));
-  byId('world').setAttribute('transform', `translate(${(310 - scale * (leftX + right) / 2).toFixed(1)} ${(140 - scale * (top + bottom) / 2).toFixed(1)}) scale(${scale.toFixed(3)})`);
+  // A still picture keeps a strip at the top for a note on what the order achieved.
+  const strip = preview ? 30 : 0;
+  const scale = Math.min(1.7, 590 / (right - leftX), (268 - strip) / (bottom - top));
+  byId('world').setAttribute('transform', `translate(${(310 - scale * (leftX + right) / 2).toFixed(1)} ${(140 + strip / 2 - scale * (top + bottom) / 2).toFixed(1)}) scale(${scale.toFixed(3)})`);
+  byId('example-note')?.remove();
+  if (preview) {
+    const finish = (id) => timeline.lastIndexOf(id) + 1;
+    const first = (id) => timeline.indexOf(id);
+    const switches = timeline.filter((id, k) => k && id !== timeline[k - 1]).length;
+    if (preview.policy === 'rr') {
+      exampleNote(`시간 조각 ${preview.slice} → 첫 실행 ${jobs.map((j) => `${j.id} ${first(j.id)}`).join(' · ')} · 교대 ${switches}번`);
+    } else {
+      const waits = jobs.map((j) => finish(j.id) - j.burst);
+      const order = [...new Set(timeline)].map((id) => jobOf(id).burst).join(' → ');
+      exampleNote(`${preview.policy === 'sjf' ? '짧은 일 먼저' : '도착 순서대로'} (${order}) → 대기 ${jobs.map((j, k) => `${j.id} ${waits[k]}`).join(' · ')} → 평균 ${(waits.reduce((a, b) => a + b, 0) / waits.length).toFixed(1)}`);
+    }
+  }
   syncStats(timeline, current);
 }
 // A job is a short block whose height shows the work left.

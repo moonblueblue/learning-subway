@@ -82,4 +82,10 @@ window.lessonText = {
   '이 공격을 막으려면 무엇이 필요할까요?': 'What is needed to stop this attack?',
   '받은 수에 상대의 전자 서명이 있고, 그 공개 키가 진짜인지 확인하기': 'The number received carries the other side\'s digital signature, and its public key is checked to be real', '비밀 수를 더 크게 고르기': 'Choosing bigger secret numbers',
   '수가 커져도 상대가 누군지 모르면 속습니다. 서명과 인증서로 "정말 서준이 보낸 수"인지 확인해야 합니다.': 'Bigger numbers still get fooled if you do not know who the other side is. Signatures and certificates must confirm it is "really the number Seojun sent".',
+  // Example note on the still picture.
+  '민지 비밀 6 · 서준 비밀 15': 'Minji secret 6 · Seojun secret 15', '공개된 8과 19만 주고받음': 'only public 8, 19 sent', '둘 다 같은 비밀 수 2 (2는 보내지 않음)': 'both get secret 2 (never sent)',
+  '서준이 해시 4를 개인 키 7로 서명 16': 'Seojun signs hash 4 with key 7: 16', '민지가 공개 키로 풀면 4': 'public key opens it: 4', '해시와 같아 서명 맞음': 'matches: signature OK',
+  '중간에서 "내일 5시"로 바꿈': 'changed to "5 tomorrow"', '서명 16을 풀면 4, 새 해시는 5': 'signature 16 opens to 4, new hash is 5', '맞지 않아 위조 발견': 'mismatch: forgery found',
+  '공격자가 8을 가로채고 둘에게 가짜 10을 보냄': 'attacker grabs 8, sends fake 10', '민지·공격자가 함께 가진 수 6 · 서준·공격자는 5': 'Minji+attacker share 6 · Seojun+attacker 5', '공격자는 둘 다 앎': 'it knows both',
+  '서명 맞음': 'Signature OK', '위조 발견': 'Forgery found',
 };

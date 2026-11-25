@@ -366,7 +366,8 @@ const PHY = [['state', '지금 상태', 'file'], ['vel', '속도 고치기', 'to
 const lesson = [
   {
     label: '사이 채우기',
-    readingStage: 2,
+    readingStage: 3,
+    note: ['0초 x 0, 1초 x 100', ' · ', '0.25초에 직선이면 25', ' → ', '이징 곡선이면 15.6 (천천히 출발)'],
     title: '키프레임 사이를 계산으로 채운다',
     body: '애니메이터는 "0초에 x = 0, 1초에 x = 100"처럼 중요한 순간(키프레임)만 정하고, 그 사이 60프레임(8D.1)은 컴퓨터가 채웁니다. 가장 단순한 방법은 시간 비율만큼 나누는 직선 보간입니다. 그런데 실제 물체는 서서히 출발해 서서히 멈추므로, 시간 비율 t를 3t² − 2t³처럼 굽힌 곡선(이징)에 넣어 쓰면 훨씬 자연스럽습니다.',
     takeaway: '0.25초에 직선 보간은 x = 25, 이징은 x ≈ 15.6입니다. 처음에는 덜 가고 가운데에서 빨라졌다가 끝에서 느려집니다. 버튼이 열리고 닫히는 화면 애니메이션(6.8)도 이렇게 만듭니다.',
@@ -382,7 +383,8 @@ const lesson = [
   },
   {
     label: '물리 한 걸음',
-    readingStage: 3,
+    readingStage: 4,
+    note: ['처음 y 20, v 0', ' · ', '0.5초마다 v에 −5, y에 v × 0.5', ' → ', 'y 17.5 · 12.5 · 5', ' → ', '1.5초에 y 5, v −15'],
     title: '힘으로 속도를, 속도로 위치를 조금씩 고친다',
     body: '공을 떨어뜨리는 장면은 키프레임 대신 물리로 계산합니다. 중력은 속도를 1초에 10m/s씩 바꾸고, 속도는 위치를 바꿉니다. 컴퓨터는 이것을 작은 시간 간격 dt마다 "속도 += 중력 × dt, 위치 += 속도 × dt"로 되풀이합니다(오일러 방법). 여기서는 눈에 보이도록 dt = 0.5초로 크게 잡습니다.',
     takeaway: '높이 20m에서 놓은 공이 0.5초마다 17.5 → 12.5 → 5m로 점점 빨리 떨어졌습니다. 속도도 −5 → −10 → −15m/s로 커집니다. 매 걸음 같은 두 줄 계산을 되풀이할 뿐입니다.',
@@ -394,12 +396,13 @@ const lesson = [
       { from: 'vel', to: 'pos', label: 'v −5', title: '0.5초: 위치', lines: ['y = 20 + (−5) × 0.5 = 17.5'], text: '새 속도로 위치를 옮깁니다.', holds: { pos: 'y 17.5' } },
       { from: 'pos', to: 'state', label: '다음 걸음', title: '1.0초', lines: ['v = −5 − 5 = −10', 'y = 17.5 − 10 × 0.5 = 12.5'], text: '같은 계산을 되풀이합니다.', holds: { state: 'y 12.5, v −10' },
         ask: { q: '1.5초에는 y가 얼마일까요? (v = −15)', choices: ['5', '10', '0'], answer: '5', why: 'v = −10 − 5 = −15, y = 12.5 + (−15) × 0.5 = 5입니다.' } },
-      { from: 'state', to: 'frame', label: 'y 5', title: '1.5초', lines: ['y = 5 · v = −15'], text: '1.5초의 위치를 그립니다.', holds: { frame: 'y 5', state: 'y 5, v −15' } },
+      { from: 'state', to: 'frame', label: 'y 5', title: '1.5초', lines: ['y = 5 · v = −15'], text: '1.5초의 위치를 그립니다.', holds: { frame: 'y 5', state: 'y 5, v −15', vel: 'v −15', pos: 'y 5' } },
     ],
   },
   {
     label: '부딪힘',
     readingStage: 4,
+    note: ['v −20으로 y −5 (바닥 아래)', ' → ', 'y를 0으로 되돌리고 v × −0.8 = +16', ' → ', '튀어 오름'],
     title: '바닥을 뚫으면 되돌리고 튕겨 낸다',
     body: '다음 걸음(2.0초)을 계산하면 y = 5 − 20 × 0.5 = −5로 바닥(0) 아래가 됩니다. 매 걸음마다 부딪힘을 검사해, 바닥 아래로 갔으면 위치를 바닥으로 되돌리고 속도를 위로 뒤집습니다. 진짜 공은 튈 때 힘을 조금 잃으므로 0.8을 곱합니다. 정확한 답(y = 20 − 5t²)은 정확히 2초에 바닥에 닿지만, 큰 간격 때문에 계산은 바닥을 5m나 지나쳤습니다.',
     takeaway: '공이 바닥에서 위로 16m/s로 튀어 올랐고, 튈 때마다 속도가 0.8배가 되어 튀는 높이는 0.64배(0.8²)씩 낮아집니다. 간격이 클수록 지나치는 오차가 커서, 실제 게임은 훨씬 작은 간격(예: 1/120초)을 씁니다.',
@@ -416,7 +419,8 @@ const lesson = [
   },
   {
     label: '고정 간격',
-    readingStage: 3,
+    readingStage: 4,
+    note: ['이번 프레임 33ms', ' → ', '8.3ms씩 4걸음으로 나눠 계산', ' → ', '얇은 벽도 놓치지 않음'],
     title: '화면은 들쭉날쭉해도 물리는 같은 간격으로 계산한다',
     body: '프레임 시간은 장면에 따라 16.7ms였다가 33ms가 되기도 합니다. 물리를 프레임 시간으로 바로 계산하면 느린 컴퓨터에서 결과가 달라지고, 간격이 커질 때 빠른 공이 얇은 벽을 통과해 버립니다(터널링). 그래서 물리는 1/120초 같은 고정 간격으로 계산하고, 한 프레임 동안 흐른 시간만큼 여러 번 돌립니다.',
     takeaway: '33ms 프레임에서는 1/120초(약 8.3ms) 걸음을 네 번, 16.7ms 프레임에서는 두 번 돌렸습니다. 어느 컴퓨터에서나 같은 결과가 나오고, 작은 간격이라 공이 벽을 지나치지 않습니다.',
@@ -535,6 +539,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names the numbers of each step, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

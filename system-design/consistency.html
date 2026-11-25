@@ -369,12 +369,14 @@ const kinds = { app: '응용', layer: '계층', wire: '전선', router: '라우�
 // A message travels down the sender's layers, across the wire, and up the receiver's layers.
 // Each layer adds (or removes) its own header; the work panel shows the nested envelopes.
 // One client and three replicas of the same value. Stations may sit off the row: [id, name, kind, [u, v]].
-const RS = [['cl', '클라이언트', 'wire', [0, 0]], ['r1', '복제본 1', 'ram', [13, -14]], ['r2', '복제본 2', 'ram', [13, 0]], ['r3', '복제본 3', 'ram', [13, 14]]];
+const RS = [['cl', '클라이언트', 'wire', [0, 0]], ['r1', '복제본 1', 'ram', [10, -14]], ['r2', '복제본 2', 'ram', [15, 0]], ['r3', '복제본 3', 'ram', [20, 14]]];
 const RS_LINKS = [['cl', 'r1'], ['cl', 'r2'], ['cl', 'r3'], ['r1', 'r2'], ['r2', 'r3']];
 const lesson = [
   {
     label: '결국 같아짐',
     readingStage: 3,
+    note: ['사진 B로 바꿈 (복제본 1에 v2)', ' → ', '복제본 2까지 전달', ' → ', '아직 못 받은 복제본 3에서 읽으면 옛 v1'],
+    noteTone: 'bad',
     title: '최종 일관성: 언젠가는 같아지지만 그 사이에는 다를 수 있다',
     body: '7.4에서 복제본은 바뀐 내용을 조금 늦게 받았습니다. 아무 복제본에서나 읽고 쓰게 하면, 새 쓰기가 퍼지는 동안 복제본마다 다른 값을 돌려줄 수 있습니다. "더 이상 쓰기가 없으면 결국 모두 같아진다"만 약속하는 것을 최종 일관성이라 합니다. 가장 약하지만 가장 빠르고, 복제본 일부가 끊겨도 계속 동작합니다.',
     takeaway: '복제본 1에는 새 값(v2: 프로필 사진 B)이 있지만, 아직 퍼지지 않은 복제본 3에서 읽으면 옛 값(v1: 사진 A)이 보입니다. 잠시 뒤에는 모두 v2가 됩니다. "같다"고 말할 수 있는 조건(일관성 모델)을 정해야 이런 결과를 받아들일지 판단할 수 있습니다.',
@@ -392,7 +394,8 @@ const lesson = [
   },
   {
     label: '내가 쓴 건 보이게',
-    readingStage: 2,
+    readingStage: 3,
+    note: ['내가 쓴 버전 v2를 기억', ' → ', '복제본 3은 v1이라 복제본 2로 넘김', ' → ', '사진 B (v2)를 봄'],
     title: '자기가 쓴 값은 다음 읽기에서 반드시 보이게 한다',
     body: '사진을 바꾸고 새로 고쳤는데 옛 사진이 보이면 사용자는 저장이 안 된 줄 압니다. "내가 쓴 것은 내가 읽을 때 보인다"(자기 쓰기 읽기)는 최종 일관성보다 조금 강한 약속입니다. 클라이언트가 마지막으로 쓴 버전 번호(v2)를 기억했다가 읽을 때 함께 보내고, 그보다 옛 버전만 가진 복제본은 따라잡을 때까지 기다리거나 다른 복제본으로 넘깁니다.',
     takeaway: '버전 v2를 들고 간 읽기는 v1뿐인 복제본 3에서 바로 답을 받지 않고, v2를 가진 복제본으로 넘겨졌습니다. 다른 사용자는 잠시 옛 사진을 볼 수 있어도, 바꾼 본인은 언제나 새 사진을 봅니다.',
@@ -410,6 +413,8 @@ const lesson = [
   {
     label: '시간이 거꾸로',
     readingStage: 2,
+    note: ['읽기 1은 복제본 2에서 댓글 5개 (v5)', ' → ', '읽기 2가 늦은 복제본 3으로 가면 4개', ' → ', '본 것보다 옛 값'],
+    noteTone: 'bad',
     title: '한 번 본 것보다 옛 값을 다시 보지 않게 한다',
     body: '댓글 목록을 새로 고칠 때마다 다른 복제본에서 읽으면 이상한 일이 생깁니다. 처음엔 새 복제본에서 댓글 5개를 봤는데, 다음엔 아직 늦은 복제본에서 4개를 봅니다. 댓글이 사라졌다가 다시 나타나는 것처럼 보입니다. "한 번 본 것보다 옛 상태로 돌아가지 않는다"(단조 읽기)를 지키려면 같은 복제본에서 계속 읽거나, 본 버전 이상만 받습니다.',
     takeaway: '복제본 2(v5)에서 읽은 뒤 복제본 3(v4)에서 읽자 댓글이 하나 사라져 보였습니다. 사용자를 한 복제본에 붙여 두거나, 마지막으로 본 버전을 들고 다니면 막을 수 있습니다.',
@@ -418,15 +423,16 @@ const lesson = [
     links: RS_LINKS,
     start: { title: '댓글 목록', lines: ['복제본 1, 2: v5 (댓글 5개)', '복제본 3: v4 (댓글 4개, 늦음)'], holds: { r1: 'v5', r2: 'v5', r3: 'v4' } },
     stages: [
-      { from: 'cl', to: 'r2', label: '읽기 1', title: '첫 읽기', lines: ['복제본 2: 댓글 5개 (v5)'], text: '첫 읽기는 복제본 2로 갔습니다.', holds: { cl: '5개 봄' } },
-      { from: 'cl', to: 'r3', label: '읽기 2', title: '새로 고침', lines: ['복제본 3: 댓글 4개 (v4)', '댓글 하나가 사라진 것처럼 보임'], error: 'r3', text: '두 번째 읽기는 늦은 복제본 3으로 갔습니다.', holds: { cl: '4개 봄 ??' },
+      { from: 'cl', to: 'r2', label: '읽기 1', title: '첫 읽기', lines: ['복제본 2: 댓글 5개 (v5)'], text: '첫 읽기는 복제본 2로 갔습니다.', holds: { cl: '댓글 5개 (v5)' } },
+      { from: 'cl', to: 'r3', label: '읽기 2', title: '새로 고침', lines: ['복제본 3: 댓글 4개 (v4)', '댓글 하나가 사라진 것처럼 보임'], error: 'r3', text: '두 번째 읽기는 늦은 복제본 3으로 갔습니다.', holds: { cl: '댓글 4개 (v4)' },
         ask: { q: '이 이상한 일을 막는 간단한 방법은?', choices: ['같은 사용자는 같은 복제본에서 계속 읽게 한다', '복제본을 더 늘린다'], answer: '같은 사용자는 같은 복제본에서 계속 읽게 한다', why: '한 복제본의 버전은 거꾸로 가지 않습니다. 그 복제본이 죽으면 본 버전 이상을 가진 곳으로 옮깁니다.' } },
-      { from: 'cl', to: 'r2', label: '읽기 2 (붙여 두기)', title: '같은 복제본에서', lines: ['다시 복제본 2에서 읽음: 댓글 5개 이상'], reset: 'r3', text: '같은 복제본에 붙여 두면 시간이 거꾸로 가지 않습니다.', holds: { cl: '5개 봄' } },
+      { from: 'cl', to: 'r2', label: '읽기 2 (붙여 두기)', title: '같은 복제본에서', lines: ['다시 복제본 2에서 읽음: 댓글 5개 이상'], reset: 'r3', text: '같은 복제본에 붙여 두면 시간이 거꾸로 가지 않습니다.', holds: { cl: '댓글 5개 (v5)' } },
     ],
   },
   {
     label: '정족수',
     readingStage: 4,
+    note: ['N = 3 · W = 2 · R = 2', ' → ', 'v3을 복제본 1, 2에 씀', ' → ', '복제본 3 (v2)과 2 (v3)를 읽어 더 새 v3'],
     title: '쓰기와 읽기를 과반에 맞추면 언제나 최신을 본다',
     body: '모든 사람이 언제나 최신 값을 보게 하려면 더 많이 기다려야 합니다. 복제본 N = 3에서 쓰기는 W = 2곳이 확인해야 성공, 읽기는 R = 2곳에 물어 더 새 버전을 고르게 합니다. R + W > N이면 읽는 곳과 쓴 곳이 반드시 한 곳 이상 겹치므로, 읽기가 최신 값을 놓치지 않습니다. 7.9의 과반과 같은 원리입니다.',
     takeaway: 'v3를 복제본 1, 2에 쓰고 복제본 2, 3에서 읽었더니, 겹치는 복제본 2가 v3를 가지고 있어 최신을 골랐습니다. 대신 쓰기와 읽기마다 두 곳을 기다리므로 느려지고, 복제본 두 곳이 죽으면 멈춥니다. 강한 일관성과 빠르기, 버티기 사이에서 고릅니다.',
@@ -515,8 +521,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -563,6 +570,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what was written and read where, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

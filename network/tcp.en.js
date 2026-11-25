@@ -1,6 +1,8 @@
 // English for 5.9 TCP. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // Data in the message: "안녕" / "하세" / "요!" → "Hello" / " the" / "re!" (three segments of "Hello there!").
 window.lessonText = {
+  // Note on the still pictures: the packets so far
+  '내 컴퓨터 · 서버:': 'My computer · server:', '(인터넷에서 버려짐)': '(dropped in the internet)',
   // Page
   'TCP · 레슨 5.9': 'TCP · Lesson 5.9',
   'TCP의 세 번 인사, 순서 번호와 확인(ACK), 잃어버린 조각의 재전송, 늦게 온 조각의 순서 맞추기를 한 단계씩 따라가 보세요.':

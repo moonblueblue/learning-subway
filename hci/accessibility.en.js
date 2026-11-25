@@ -7,7 +7,7 @@ window.lessonText = {
   '보기 어렵거나 손이 불편한 사람도 쓸 수 있게 하려면 어떻게 할까요? 대비 숫자, HTML의 뜻, 키보드 조작, 여러 선택지를 실제 예로 판단해 보세요.':
     'How do you make something usable for people who see poorly or have trouble using their hands? Judge contrast numbers, HTML meaning, keyboard use and choices on real examples.',
   // Step 1
-  '대비 비율': 'Contrast ratio', '흰 바탕 위 회색 글자': 'Gray text on white', '밝기 대비 3:1': 'Contrast 3:1', '보통 크기 본문 기준 4.5:1 미달': 'Below 4.5:1 for body text',
+  '대비 비율': 'Contrast ratio',
   '글자와 배경의 밝기 차이를 숫자로 잰다': 'Measure the brightness gap between text and background as a number',
   '6.8에서 "대비가 충분해야 한다"고 했습니다. 접근성 기준(WCAG)은 이것을 숫자로 정합니다. 두 색의 밝기 비율(대비 비율)이 1:1(같은 색)에서 21:1(검정과 흰색)까지인데, 보통 글자는 4.5:1 이상, 큰 글자(약 24px 이상)는 3:1 이상이어야 합니다. 눈으로 괜찮아 보여도 계산하면 기준에 못 미치는 경우가 많습니다.':
     '6.8 said "contrast must be high enough". The accessibility standard (WCAG) puts a number on it. The brightness ratio of two colors (the contrast ratio) runs from 1:1 (the same color) to 21:1 (black and white); normal text needs 4.5:1 or more and large text (about 24px and up) 3:1 or more. Colors that look fine to the eye often fall short when you calculate.',
@@ -21,7 +21,7 @@ window.lessonText = {
   '이 실험실의 초록 강조색(#12634b)은 흰 배경에서 대비가 약 7.2:1입니다. 어떤 글자에 써도 될까요?': 'This lab\'s green accent (#12634b) has a contrast of about 7.2:1 on white. What text can it be used for?',
   '보통 글자 기준(4.5:1)과 더 엄격한 기준(7:1)도 넘으므로 본문 글자에도 쓸 수 있습니다.': 'It clears both the normal-text standard (4.5:1) and the stricter one (7:1), so it works even for body text.',
   // Step 2
-  '화면 읽기': 'Screen readers', '그림만 있는 검색 버튼': 'Icon-only search button', '접근 가능한 이름 ‘검색’ 부여': 'Give it the accessible name ‘Search’', '낭독기가 동작을 알려 줌': 'The reader announces the action',
+  '화면 읽기': 'Screen readers',
   '화면 읽기 프로그램이 알아듣게 뜻을 표시한다': 'Mark meaning so screen readers understand',
   '앞이 보이지 않는 사용자는 화면 읽기 프로그램이 읽어 주는 소리로 웹을 씁니다. 프로그램은 생김새가 아니라 HTML의 뜻(버튼인지, 제목인지, 무슨 칸인지)을 읽습니다. 그래서 버튼은 진짜 <button>으로, 그림에는 대체 글을, 입력 칸에는 이름표(label)를, 제목은 제목 태그로 표시해야 합니다.':
     'Blind users use the web through the voice of a screen reader. The reader goes by the HTML\'s meaning (is it a button, a heading, what kind of field), not by looks. So buttons must be real <button>s, images need alt text, input fields need a label, and headings need heading tags.',
@@ -36,7 +36,7 @@ window.lessonText = {
   '아이콘만 있는 버튼(휴지통 그림)은 어떻게 해야 화면 읽기 프로그램이 알아들을까요?': 'How do you make an icon-only button (a trash can picture) understandable to a screen reader?',
   '버튼에 aria-label="삭제" 같은 이름을 붙이거나 화면에는 숨긴 글자로 "삭제"를 넣습니다. 그러면 "삭제, 버튼"이라고 읽힙니다.': 'Give the button a name like aria-label="Delete", or add "Delete" as visually hidden text. Then it reads as "Delete, button".',
   // Step 3
-  '키보드만으로': 'Keyboard only', 'Tab으로 저장에 포커스': 'Tab focuses Save', 'Enter로 활성화': 'Enter activates it', '마우스 없이 저장 완료': 'Saved without a mouse',
+  '키보드만으로': 'Keyboard only',
   '마우스 없이 Tab과 Enter로 모든 기능을 쓸 수 있어야 한다': 'Every feature must work with Tab and Enter, no mouse',
   '손을 쓰기 어려운 사람, 화면 읽기 프로그램 사용자, 빠른 작업을 좋아하는 사람은 키보드만 씁니다. Tab으로 누를 수 있는 것들을 화면 순서대로 옮겨 다니고, 지금 어디에 있는지(포커스)가 눈에 보여야 하고, Enter나 Space로 누를 수 있어야 합니다. 들어갔다가 빠져나올 수 없는 곳(키보드 함정)이 있으면 안 됩니다.':
     'People who have trouble using their hands, screen reader users and people who like to work fast use only the keyboard. Tab must move through pressable things in screen order, where you are now (the focus) must be visible, and Enter or Space must press it. There must be no place you can enter but not leave (a keyboard trap).',
@@ -54,7 +54,7 @@ window.lessonText = {
   '지금 쓰는 웹사이트에서 마우스를 치우고 Tab만으로 로그인해 보세요. 어디서 막혔나요?': 'Put the mouse away and log in to a website you use with Tab only. Where did you get stuck?',
   '포커스가 안 보여 어디 있는지 모르거나, 로그인 버튼이 div라 Tab으로 가지 않거나, 팝업에서 빠져나오지 못하는 경우가 흔합니다.': 'Common cases: the focus is invisible so you do not know where you are, the login button is a div that Tab skips, or you cannot get out of a popup.',
   // Step 4
-  '여러 선택지': 'Many options', '오류를 빨강으로 표시': 'Errors shown in red', '오류 설명과 기호도 추가': 'Add an error message and a symbol', '색을 구분하기 어려워도 인식': 'Clear even without telling colors apart',
+  '여러 선택지': 'Many options',
   '사람마다 다른 방법으로 같은 정보를 얻게 한다': 'Let different people get the same information in different ways',
   '접근성은 특정 장애만을 위한 것이 아닙니다. 움직임에 어지러움을 느끼는 사람을 위해 애니메이션을 줄이는 설정(prefers-reduced-motion)을 따르고, 소리를 못 듣거나 조용한 곳에 있는 사람을 위해 영상에 자막을 넣고, 글자를 200%로 키워도 내용이 잘리지 않게 합니다. 이런 배려는 대부분의 사람에게도 편합니다.':
     'Accessibility is not only for particular disabilities. Follow the setting that reduces animation (prefers-reduced-motion) for people whom motion makes dizzy, add captions to videos for people who cannot hear or are somewhere quiet, and keep content from being cut off when text is enlarged to 200%. Such care is convenient for most people too.',
@@ -72,4 +72,6 @@ window.lessonText = {
   '접근성을 지키면 장애가 없는 사용자에게는 어떤 점이 좋을까요?': 'How does accessibility help users without disabilities?',
   '햇빛 아래에서는 대비가, 한 손으로 아기를 안고 있을 때는 큰 버튼과 키보드 조작이, 시끄러운 곳에서는 자막이 도움이 됩니다. 누구나 언젠가 잠시 불편한 상황에 놓입니다.':
     'Contrast helps in sunlight, big buttons and keyboard control help when holding a baby in one arm, and captions help somewhere noisy. Everyone ends up in a briefly difficult situation sometime.',
+  // Reading examples
+  '흰 바탕에 #777777 글자': '#777777 text on white', '대비 4.48:1': 'contrast 4.48:1', '4.5:1 미달 · #767676은 4.54:1로 통과': 'under 4.5:1 · #767676 passes at 4.54:1', '<div onclick>구매</div>': '<div onclick>Buy</div>', '버튼인지 몰라 "구매"만 읽음': 'not known as a button: reads just "Buy"', '<button>이면 "구매, 버튼"으로 읽음': 'as <button> it reads "Buy, button"', '포커스 테두리를 모두 없앰': 'focus outlines removed everywhere', 'Tab으로 어디 있는지 안 보임': 'Tab position can\'t be seen', '키보드 사용자가 길을 잃음': 'keyboard users get lost', '움직임 줄이기가 켜져 있음': 'Reduce Motion is on', '화면 전환 애니메이션을 끔': 'turn off screen transitions', '어지럼을 느끼는 사람도 씀': 'people prone to dizziness can use it',
 };

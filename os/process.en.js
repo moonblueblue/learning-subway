@@ -1,5 +1,10 @@
 // English for 5.1 Processes and threads. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Notes on the still pictures
+  '메모장.exe 실행 → 운영체제가 RAM에 자리를 만들어 프로세스 PID 101': 'notepad.exe runs → the OS makes room in RAM for process PID 101',
+  '함수 호출 → 스택에 층이 하나 쌓임 (2층) · 함수가 끝나면 그 층이 사라짐': 'A function call adds a layer to the stack (2 layers) · it goes away when the function ends',
+  '스레드 2개: 코드·데이터·힙은 함께 쓰고 · 스택과 PC는 각자': 'Two threads: they share code, data and heap · each has its own stack and PC',
+  'A의 스레드가 데이터를 덮어씀 → A의 다른 스레드도 망가진 값 · B는 메모리가 따로라 그대로': 'A thread in A overwrites data → A’s other thread sees the broken value · B has its own memory and is untouched',
   // Page
   '프로세스와 스레드 · 레슨 5.1': 'Processes and threads · Lesson 5.1',
   '프로그램을 실행해 프로세스를 띄우고, 코드·데이터·힙·스택 구역과 스레드, 프로세스 사이의 격리를 직접 살펴보세요.':

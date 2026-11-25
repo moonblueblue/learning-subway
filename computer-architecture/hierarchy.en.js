@@ -1,6 +1,9 @@
 // English for 3.7 The memory hierarchy. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // "N번" is a RAM cell number here ("cell N"), except in the tick column of the table, where it is a count.
 window.lessonText = {
+  // Still-picture notes: the end of each example
+  '{#0}번 적중': 'Address {0} hit', '{#0}번 실패': 'Address {0} miss', '{0} · {1}': '{0} · {1}',
+  '차례로 16칸 → 실패 {#0} · 적중 {#1}': '16 in order → {0} {0|miss|misses} · {1} {1|hit|hits}', '전원 껐다 켬': 'Power off and on', '5번 첫 읽기 실패 → RAM · 다시 읽기 적중': 'First read of 5 misses → RAM · reading it again hits',
   // Page
   '메모리 계층 · 레슨 3.7': 'The memory hierarchy · Lesson 3.7',
   '레지스터, 캐시, RAM, SSD에서 값을 읽어 보며 층마다 속도와 크기가 다른 이유, 캐시 적중과 지역성, 휘발성을 살펴보세요.':
@@ -14,7 +17,7 @@ window.lessonText = {
   // Layers and the timing table
   'CPU 코어': 'CPU core', '레지스터': 'Registers', 'L1 캐시': 'L1 cache', '여기서 가져옴': 'Fetched from here',
   '층마다 한 번 읽는 데 걸리는 시간': 'Time for one read at each layer', '시간': 'Time', '클럭': 'Ticks', '1클럭이 1초라면': 'If 1 tick were 1 second', '크기': 'Size',
-  '수백 바이트': 'A few hundred bytes', '{#0}번': '{0}', '30만 번': '300,000', '1초': '1 second', '4초': '4 seconds', '5분': '5 minutes', '3일 반': '3½ days',
+  '수백 B': 'Hundreds of B', '{#0}번': '{0}', '30만 번': '300,000', '1초': '1 second', '4초': '4 seconds', '5분': '5 minutes', '3일 반': '3½ days',
   '{0}에서 읽기': 'Read from {0}', '{0}에서 읽기: {1} · 클럭 {2} · 1클럭이 1초라면 {3}': 'Read from {0}: {1} · ticks {2} · if 1 tick were 1 second, {3}',
   // Cache cells and readouts
   '캐시 칸': 'Cache slots', '빈칸': 'empty', '적중 ✓': 'Hit ✓', '실패 ✗': 'Miss ✗', '적중·담김': 'Hit · held', '실패·비어 있음': 'Miss · empty',

@@ -81,4 +81,10 @@ window.lessonText = {
   '최소 권한이 고객 정보를 지킵니다.': 'Least privilege protects the customer data.', '거절': 'Refused',
   '수상한 바깥 연결': 'Odd outbound link', '넷째 겹: 탐지': 'Layer 4: detection', '웹 서버가 낯선 곳으로 연결 → 경보 → 사람이 확인 · 서버 격리': 'the web server connects somewhere strange → alert → a person checks · server isolated',
   '탐지가 이상한 연결을 알립니다.': 'Detection reports the strange connection.',
+  // Example note on the still picture.
+  '인터넷 → 웹 :443은 규칙 1로 허용': 'internet → web :443 allowed by rule 1', '인터넷 → DB :5432는 규칙 3으로 막음': 'internet → DB :5432 blocked by rule 3',
+  '웹 서버가 뚫려도': 'web server broken into', '관리 서버로는 칸 규칙에 막힘': 'admin server: blocked by zone', 'DB에는 닿지만 users 표는 권한 없음': 'DB reached, users not allowed',
+  '같은 IP에서 1분에 로그인 실패 500번': '500 failed logins in 1 minute from one IP', '기준 100을 넘어 경보': 'over the limit of 100: alert', '그 IP를 1시간 차단': 'that IP blocked for 1 hour',
+  '3달 묵은 취약점으로 웹 서버가 뚫림': 'a 3-month-old hole: web server broken', '다음 겹: DB가 users 표를 거절': 'next layer: DB refuses users', '수상한 바깥 연결에 경보': 'alert on odd outbound link',
+  '규칙 1 허용': 'Rule 1 allows', '웹 서버 (DMZ) · 수상한 바깥 연결': 'Web server (DMZ) · suspicious outbound link', '규칙 3 막음': 'Rule 3 blocks',
 };

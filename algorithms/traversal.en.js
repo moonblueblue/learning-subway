@@ -1,5 +1,10 @@
 // English for 4.7 Graph search. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Notes on the still pictures
+  '너비 우선 · 큐: 방문 {0} · 다음 {1}': 'Breadth first · queue: visited {0} · next {1}',
+  '깊이 우선 · 스택: 방문 {0} · 다음 {1}': 'Depth first · stack: visited {0} · next {1}',
+  '너비 우선 · 큐: 방문 {0} · A → {1} 경로 선 {#2}개': 'Breadth first · queue: visited {0} · path A → {1} uses {2} {2|edge|edges}',
+  'A → B 다음: 큐면 C (가까운 점부터, 너비 우선) · 스택이면 D (한 갈래 끝까지, 깊이 우선)': 'After A → B: a queue takes C (nearest first, breadth first) · a stack takes D (one branch to the end, depth first)',
   // Page
   '그래프 탐색 · 레슨 4.7': 'Graph search · Lesson 4.7',
   '같은 그래프를 너비 우선(큐)과 깊이 우선(스택)으로 한 걸음씩 탐색하며 방문 순서와 찾은 길을 비교해 보세요.':

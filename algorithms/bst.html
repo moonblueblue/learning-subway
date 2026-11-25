@@ -651,6 +651,14 @@ function showStep(index, announce = true) {
   syncTask();
   state.wait = 800;
   syncPlayback();
+  // Nothing plays with reduced motion, so the still picture runs the step's example once and notes it at the top.
+  byId('example-note')?.remove();
+  if (motion.matches) {
+    if (s.mode === 'insert') { doInsert(40, false); doInsert(20, false); exampleNote('뿌리 40 · 넣을 값 20 → 20 < 40 → 왼쪽 자식에 20'); }
+    else if (s.mode === 'find') { doFind(65, false); exampleNote('65 > 50 → 오른쪽 (왼쪽 7개는 버림) → 70 → 60 → 65 찾음 · 비교 4번'); }
+    else if (s.mode === 'skew') { insertMany(s.values, false); doFind(70, false); exampleNote('10, 20, …, 70을 차례로 넣음 → 늘 오른쪽 → 70까지 비교 7번'); }
+    else { walk(false); exampleNote(`왼쪽 → 자신 → 오른쪽: ${inorder(state.root).map((n) => n.value).join(' ')} (작은 값부터)`); }
+  }
   if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
 }
 function goToStep(index) {

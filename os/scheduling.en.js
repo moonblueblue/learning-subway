@@ -1,5 +1,9 @@
 // English for 5.2 CPU scheduling. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Notes on the still pictures
+  '도착 순서대로 ({0}) → 대기 {1} → 평균 {2}': 'In arrival order ({0}) → waits {1} → average {2}',
+  '짧은 일 먼저 ({0}) → 대기 {1} → 평균 {2}': 'Shortest first ({0}) → waits {1} → average {2}',
+  '시간 조각 {#0} → 첫 실행 {1} · 교대 {#2}번': 'Time slice {0} → first run {1} · {2} {2|switch|switches}',
   // Page
   'CPU 스케줄링 · 레슨 5.2': 'CPU scheduling · Lesson 5.2',
   '같은 세 일을 먼저 온 순서, 짧은 것 먼저, 라운드 로빈으로 CPU에 줄 세워 기다린 시간과 문맥 교환 횟수를 비교해 보세요.':

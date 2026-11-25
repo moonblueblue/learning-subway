@@ -71,7 +71,13 @@ window.lessonText = {
   '이제 "8: JZ 10"은?': 'Now what does "8: JZ 10" do?', '10번지(HALT)로 건너뛴다': 'Jumps to address 10 (HALT)', '건너뛰지 않는다': 'Does not jump',
   'SUB 결과가 0이라 Z가 켜졌습니다. 반복이 끝납니다.': 'SUB\'s result is 0, so Z turned on. The loop ends.',
   '합 = 6': 'sum = 6', 'JZ 10 → PC = 10 → HALT': 'JZ 10 → PC = 10 → HALT', 'RAM 14번지: 6': 'RAM address 14: 6', 'HALT에서 멈춥니다. 답은 14번지의 6입니다.': 'It stops at HALT. The answer is the 6 at address 14.', '합 6': 'sum 6',
-  '결과 6': 'Result 6', '확인': 'Check', '실행한 명령: 10 + 10 + 9 + 1 = 30개': 'Instructions run: 10 + 10 + 9 + 1 = 30', '직접 쓴 프로그램이 맞는 답을 냈습니다.': 'The program you wrote gave the right answer.',
+  '결과 6': 'Result 6', 'ALU (게이트) · STORE n = 2': 'ALU (gates) · STORE n = 2', '확인': 'Check', '실행한 명령: 10 + 10 + 9 + 1 = 30개': 'Instructions run: 10 + 10 + 9 + 1 = 30', '직접 쓴 프로그램이 맞는 답을 냈습니다.': 'The program you wrote gave the right answer.',
   'n = 4로 시작하면 실행되는 명령은 몇 개일까요?': 'Starting with n = 4, how many instructions run?', '40개 (10 × 3 + 9 + 1)': '40 (10 × 3 + 9 + 1)', '30개': '30', '44개': '44',
   '마지막 바퀴를 뺀 세 바퀴는 10개씩, 마지막 바퀴는 JUMP 없이 9개, HALT 1개입니다.': 'The three rounds before the last take 10 each, the last round 9 without JUMP, plus 1 HALT.',
+  // Example note on the still picture.
+  'n = 3, 합 = 0 · n이 0일 때까지 합 += n, n −= 1': 'n = 3, sum = 0 · until n is 0: sum += n, n −= 1', '반복은 JZ (0이면 HALT로)와 JUMP (처음으로)': 'loop = JZ (to HALT if 0) + JUMP (to the start)',
+  '한 줄을 1바이트로 (연산 3 · 레지스터 1 · 주소 4비트)': 'one byte a line (op 3 · register 1 · address 4 bits)', '0–10번지에 프로그램, 12–14번지에 데이터': 'program at 0–10, data at 12–14',
+  '합 0 + n 3 = 3을 저장': 'store sum 0 + n 3 = 3', 'n 3 − 1 = 2 (0 아님, Z 0)': 'n 3 − 1 = 2 (not 0, Z 0)', 'JUMP로 처음으로': 'JUMP back to the start',
+  '둘째 바퀴 합 5, n 1': 'second loop: sum 5, n 1', '셋째 바퀴 합 6, n 0 (Z 1)': 'third loop: sum 6, n 0 (Z 1)', 'JZ가 HALT로: 결과 6': 'JZ jumps to HALT: result 6',
+  'n 0 (Z 1)': 'n 0 (Z 1)', '합 6, n 0': 'Sum 6, n 0', '결과 6': 'Result 6', '0–14번지': 'Addresses 0–14',
 };

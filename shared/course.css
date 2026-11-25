@@ -599,7 +599,8 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   line-height: 1.4;
 }
 .course-example[hidden], .workspace:not(.course-reading) .course-canvas .course-example { display: none; }
-.course-example-part { min-width: 0; flex: 1; text-align: center; overflow-wrap: anywhere; }
+/* Keep words (and code names like greeting(hour)) whole; break inside a word only if it cannot fit. */
+.course-example-part { min-width: 0; flex: 1; text-align: center; word-break: keep-all; overflow-wrap: break-word; }
 .course-example-part:last-child { color: #10573e; font-weight: 700; }
 .course-example-arrow { color: #426958; }
 .explanation .course-example { border: 1px solid var(--course-border); border-radius: var(--course-item-radius); }
@@ -724,4 +725,25 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 @media (max-height: 549px) {
   .course-step-long { display: none; }
   .course-step-short { display: inline; }
+}
+
+/* Example note on still pictures (engine.js exampleNote): one line at the top centre of the scene. */
+.example-note rect { fill: #f1f7f2; stroke: #7fa891; stroke-width: .8; }
+.example-note text { fill: #2f6b4f; font: 700 12px system-ui, sans-serif; text-anchor: middle; dominant-baseline: central; }
+.example-note.bad rect { fill: #fff6ef; stroke: #a24c14; }
+.example-note.bad text { fill: #a24c14; }
+@media (max-width: 600px) { .example-note text { font-size: 15px; } }
+
+/* Phone portrait: the page scrolls instead of squeezing the scene. The lesson panel keeps a fixed share of the
+   screen so the picture stays readable, the explanation shows in full below it, and the timeline (step and lesson
+   buttons) stays pinned to the bottom of the screen. On a 375 × 667 phone the scene went from 63px to about 250px. */
+@media screen and (max-width: 640px) and (min-height: 550px) {
+  html:has(> body.course-shell) { overflow: auto; }
+  body.course-shell { height: auto; min-height: 100dvh; overflow: visible; }
+  .course-shell > main.shell { flex: 1 0 auto; }
+  .course-shell > main .workspace { flex: 1 0 auto; }
+  .course-shell > main .workspace.course-summary-open { grid-template-rows: auto auto; }
+  .course-shell .course-reading .course-lesson-panel { height: max(380px, 60dvh); }
+  .course-summary-open .explanation { max-height: none; }
+  .course-shell .timeline { position: sticky; bottom: 0; z-index: 5; }
 }

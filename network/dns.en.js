@@ -83,4 +83,10 @@ window.lessonText = {
   'DNS 질문이 대개 TCP가 아니라 UDP로 오가는 까닭은?': 'Why do DNS questions usually travel over UDP rather than TCP?', 'UDP가 더 믿을 만해서': 'UDP is more reliable', '작은 질문 하나에 세 번 인사까지 하면 너무 느려서': 'A three-way handshake for one small question would be too slow',
   '질문과 답이 패킷 하나씩이라 연결 없이 보내고, 답이 없으면 다시 물으면 됩니다.': 'A question and an answer are one packet each, so they go without a connection, and with no answer you just ask again.',
   '이름을 주소로': 'Names to addresses',
+  // Example note on the still picture.
+  '루트: .com은 저기': 'root: .com is over there', '.com: example.com은 저기': '.com: example.com is over there', '권한 서버: 203.0.113.10 (TTL 300초)': 'auth. server: 203.0.113.10 (TTL 300 s)',
+  'shop.example.com? (TTL 240초 남음)': 'shop.example.com? (TTL 240 s left)', '리졸버 캐시에서 바로 203.0.113.10': '203.0.113.10 straight from the resolver cache', '다른 서버에 묻지 않음': 'no other server asked',
+  '브라우저: 캐시의 옛 주소 203.0.113.10 → 연결 실패': 'browser: old cached address 203.0.113.10 → connect failed', 'TTL이 끝난 뒤 권한 서버에 바로 다시 물음': 'after the TTL ends, ask the auth. server directly', '새 주소 203.0.113.20': 'new address 203.0.113.20',
+  '리졸버 · 203.0.113.20': 'Resolver · 203.0.113.20', '리졸버 · 없음': 'Resolver · none',
+  'shpo.example.com? (오타)': 'shpo.example.com? (typo)', '권한 서버: NXDOMAIN (없는 이름)': 'auth. server: NXDOMAIN (no such name)',
 };

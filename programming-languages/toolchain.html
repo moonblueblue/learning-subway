@@ -445,7 +445,7 @@ const lesson = [
       { from: 'cc', to: 'bin', label: '기계어', title: '실행 파일 · div', lines: ['LOAD A, [5]', 'LOAD B, [6]', 'DIV A, B', 'STORE A, [7]'],
         text: '실행 파일이 무사히 만들어졌습니다. b에 0이 들어 있다는 것은 아직 아무도 모릅니다.', holds: { bin: 'div 파일' } },
       { from: 'bin', to: 'cpu', label: '실행', title: '실행 시간 오류', lines: ['DIV A, B 실행 중', 'B = 0: 0으로 나눌 수 없음', '프로그램 중단'], error: 'cpu',
-        text: 'CPU가 DIV를 실행하다가 B가 0인 것을 보고 멈춥니다. 운영체제가 프로그램을 끝내고 오류를 알립니다.', holds: { cpu: '0으로 나누기' },
+        text: 'CPU가 DIV를 실행하다가 B가 0인 것을 보고 멈춥니다. 운영체제가 프로그램을 끝내고 오류를 알립니다.', holds: { cpu: 'b = 0 → 멈춤' },
         ask: { q: '"c = a / b"(b = 0)의 오류는 언제 발견될까요?', choices: ['번역할 때', '실행할 때'], answer: '실행할 때', why: 'b의 값은 실행해야 알 수 있습니다. 그래서 테스트(1.6)로 여러 값을 넣어 봐야 합니다.' } },
     ],
   },

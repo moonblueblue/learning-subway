@@ -176,6 +176,29 @@ function kick() {
   if (frame === null) frame = requestAnimationFrame(tick);
 }
 
+// Example note: one line at the top centre of the scene that says what the still picture (reduced motion) shows,
+// e.g. "지아 → 102,148 mod 13 = 7 → 7번 칸에 넣음". `content` is a string or a list of pieces (each piece is its own
+// tspan, so the page translation finds every piece in the dictionary). `tone` 'ok' (green) or 'bad' (warning).
+// The box is sized to the text, again after translation, and a long line (English) is set smaller to fit 596px.
+function exampleNote(content, tone = 'ok') {
+  document.getElementById('example-note')?.remove();
+  const g = svg('g', { id: 'example-note', class: 'example-note ' + tone }, document.getElementById('scene'));
+  const rect = svg('rect', { rx: 6 }, g);
+  const label = svg('text', { x: 310, y: 16 }, g);
+  for (const part of [].concat(content)) svg('tspan', {}, label).textContent = part;
+  const size = () => {
+    label.style.fontSize = '';
+    // Text width does not scale exactly with font size (hinting, mixed scripts), so shrink until it fits.
+    for (let k = 0, length; k < 4 && (length = label.getComputedTextLength()) > 596; k++)
+      label.style.fontSize = `${parseFloat(getComputedStyle(label).fontSize) * 590 / length}px`;
+    const w = label.getComputedTextLength() + 20, h = parseFloat(getComputedStyle(label).fontSize) + 10;
+    Object.entries({ x: 310 - w / 2, y: 16 - h / 2, width: w, height: h }).forEach(([k, v]) => rect.setAttribute(k, v));
+  };
+  size();
+  new MutationObserver(() => requestAnimationFrame(size)).observe(label, { childList: true, characterData: true, subtree: true });
+  document.fonts?.ready.then(() => label.isConnected && size());
+}
+
 function later(ms, fn) {
   if (motion.matches) { fn(); return; }
   timers.push(setTimeout(fn, ms));

@@ -3,6 +3,11 @@
 // so they stay in Hangul on the English page too, and lessonKeep lets the check skip them.
 window.lessonKeep = ['민수|지아|하준|서연|도윤|하은|시우|주원|수아|건우|예린|지호|하늘'];
 window.lessonText = {
+  // Notes on the still pictures
+  '{0} → {1} mod {#2} = {#3} → {#4}번 칸에 넣음': '{0} → {1} mod {2} = {3} → put in bucket {4}',
+  '{0} → {1} mod {#2} = {#3} → {#4}번 칸에서 찾음': '{0} → {1} mod {2} = {3} → found in bucket {4}',
+  '{0} → {1} mod {#2} = {#3} · {4} → {5} mod {#6} = {#7} → 같은 칸에 쌓음': '{0} → {1} mod {2} = {3} · {4} → {5} mod {6} = {7} → stacked in the same bucket',
+  '13칸에 {#0}개 → 채움 비율 {1} > 0.75 → 29칸으로 다시 나눔': '{0} names in 13 buckets → load {1} > 0.75 → redistributed over 29 buckets',
   // Page
   '해시 테이블 · 레슨 4.5': 'Hash tables · Lesson 4.5',
   '이름을 글자 코드의 합으로 계산해 칸 번호를 정하는 해시 테이블에 넣고 찾으며, 충돌과 칸 늘리기까지 살펴보세요.':

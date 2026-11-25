@@ -376,6 +376,8 @@ const lesson = [
   {
     label: '막지 않으면',
     readingStage: 2,
+    note: ['봇 10,000/초 + 지우 1/초', ' → ', 'API 서버는 1,000/초까지', ' → ', '과부하 · 지우도 시간 초과'],
+    noteTone: 'bad',
     title: '누군가 너무 많이 보내면 모두가 느려진다',
     body: '공개된 API에는 사람만 오지 않습니다. 잘못 짠 프로그램이 같은 요청을 끝없이 되풀이하거나, 봇이 1초에 만 번씩 로그인을 시도하기도 합니다. 서버가 1초에 1,000개를 처리할 수 있다면, 한 봇이 그 몫을 다 차지해 보통 사용자의 요청까지 줄을 서다 실패합니다(7.3의 과부하).',
     takeaway: '봇 하나 때문에 지우의 요청도 시간 초과가 났습니다. 누가 얼마나 보내는지 세어서, 정해진 양을 넘으면 서버에 닿기 전에 거절해야 합니다.',
@@ -391,45 +393,48 @@ const lesson = [
   },
   {
     label: '토큰 양동이',
-    readingStage: 3,
+    readingStage: 5,
+    note: ['사용자마다 토큰 5개', ' → ', '봇 7개 중 5개 통과 · 2개는 429', ' → ', '지우는 제 토큰으로 통과'],
     title: '사용자마다 양동이의 토큰만큼만 통과시킨다',
     body: '레이트 리미터는 서버 앞에서 요청을 셉니다. 흔한 방법인 토큰 양동이는 사용자마다 토큰을 최대 5개 담는 양동이를 두고, 1초에 1개씩 채웁니다. 요청 하나가 토큰 하나를 쓰고, 토큰이 없으면 서버로 보내지 않고 "429 Too Many Requests"로 바로 거절합니다. 잠깐 몰아서 5개까지는 허용하고, 길게 보면 1초에 1개로 제한됩니다.',
     takeaway: '봇의 요청 7개 중 5개만 통과하고 2개는 429로 거절됐습니다. 거절은 서버에 닿기 전에 일어나므로 서버는 일을 하지 않습니다.',
     description: '봇과 지우의 요청이 이제 레이트 리미터를 지나 API 서버로 갑니다.',
     stations: RL,
     links: RL_LINKS,
-    start: { title: '규칙', lines: ['사용자마다 양동이: 최대 토큰 5개, 1초에 1개씩 채움', '요청 1개 = 토큰 1개, 토큰 없으면 429'], holds: { lim: '봇 5 · 지우 5' } },
+    start: { title: '규칙', lines: ['사용자마다 양동이: 최대 토큰 5개, 1초에 1개씩 채움', '요청 1개 = 토큰 1개, 토큰 없으면 429'], holds: { lim: '토큰 봇 5 · 지우 5' } },
     stages: [
       { from: 'bot', to: 'lim', label: '요청 7개', title: '봇이 한꺼번에 7개', lines: ['봇 양동이: 토큰 5개'], text: '봇이 한순간에 요청 7개를 보냅니다.', holds: { bot: '7개 보냄' },
         ask: { q: '봇의 요청 7개 중 몇 개가 서버로 갈까요?', choices: ['5개', '7개', '1개'], answer: '5개', why: '양동이에 토큰이 5개뿐이라 5개만 통과하고 나머지 2개는 거절됩니다.' } },
-      { from: 'lim', to: 'api', label: '5개 통과', title: '5개 통과', lines: ['봇 양동이: 토큰 0개'], text: '토큰 5개를 써서 5개가 통과합니다.', holds: { lim: '봇 0 · 지우 5', api: '5개 처리' } },
+      { from: 'lim', to: 'api', label: '5개 통과', title: '5개 통과', lines: ['봇 양동이: 토큰 0개'], text: '토큰 5개를 써서 5개가 통과합니다.', holds: { lim: '토큰 봇 0 · 지우 5', api: '5개 처리' } },
       { from: 'lim', to: 'bot', label: '429 × 2', title: '2개 거절', lines: ['429 Too Many Requests', 'Retry-After: 1'], error: 'bot', text: '토큰이 없는 2개는 서버에 닿기 전에 거절됩니다.', holds: { bot: '2개 거절됨' } },
-      { from: 'user', to: 'lim', label: '내 주문 보기', title: '지우의 요청', lines: ['지우 양동이: 토큰 5개 → 4개'], text: '지우는 자기 양동이의 토큰을 씁니다.', holds: { lim: '봇 0 · 지우 4' } },
-      { from: 'lim', to: 'api', label: '통과', title: '지우는 영향 없음', lines: ['봇이 막혀도 지우는 통과'], reset: 'bot', text: '사용자마다 양동이가 따로라 지우는 영향을 받지 않습니다.', holds: { user: '정상 응답' },
+      { from: 'user', to: 'lim', label: '내 주문 보기', title: '지우의 요청', lines: ['지우 양동이: 토큰 5개 → 4개'], text: '지우는 자기 양동이의 토큰을 씁니다.', holds: { lim: '토큰 봇 0 · 지우 4' } },
+      { from: 'lim', to: 'api', label: '통과', title: '지우는 영향 없음', lines: ['봇이 막혀도 지우는 통과'], reset: 'bot', text: '사용자마다 양동이가 따로라 지우는 영향을 받지 않습니다.', holds: { user: '정상 응답', api: '6개 처리' },
         ask: { q: '봇이 막혀도 지우가 통과한 까닭은?', choices: ['사용자마다 양동이가 따로 있어서', '지우의 요청이 더 중요해서'], answer: '사용자마다 양동이가 따로 있어서', why: '봇의 토큰이 다 떨어져도 지우의 양동이는 그대로입니다. 누구 기준으로 셀지가 중요합니다.' } },
     ],
   },
   {
     label: '다시 채워짐',
     readingStage: 3,
+    note: ['1초에 1개씩 채워 3초 뒤 봇 토큰 3개', ' → ', '봇 5개 중 3개 통과 · 2개는 429'],
     title: '시간이 지나면 토큰이 다시 찬다',
     body: '토큰은 1초에 1개씩 다시 찹니다. 봇이 3초를 기다렸다가 다시 보내면 토큰 3개만큼은 통과합니다. 그래서 길게 보면 봇은 1초에 1개, 1분에 약 60개까지만 서버에 닿습니다. 양동이 크기는 잠깐 몰아서 보내는 것을 얼마나 봐줄지, 채우는 속도는 평균 허용량을 정합니다.',
     takeaway: '양동이 크기(5)와 채우는 속도(1/초) 두 숫자로 "잠깐 몰림은 허용, 계속 몰아치기는 차단"을 표현했습니다. 로그인처럼 민감한 곳은 더 작게, 상품 보기처럼 가벼운 곳은 더 넉넉하게 정합니다.',
     description: '같은 장면입니다. 3초 뒤 봇이 다시 요청을 보냅니다.',
     stations: RL,
     links: RL_LINKS,
-    start: { title: '3초가 지남', lines: ['봇 양동이: 0개 + 3초 × 1개 = 3개'], holds: { lim: '봇 3 · 지우 5' } },
+    start: { title: '3초가 지남', lines: ['봇 양동이: 0개 + 3초 × 1개 = 3개'], holds: { lim: '토큰 봇 3 · 지우 5' } },
     stages: [
       { from: 'bot', to: 'lim', label: '요청 5개', title: '다시 5개', lines: ['봇 양동이: 토큰 3개'], text: '봇이 다시 5개를 보냅니다.', holds: { bot: '5개 보냄' },
         ask: { q: '3초 뒤 보낸 5개 중 몇 개가 통과할까요?', choices: ['3개', '5개', '0개'], answer: '3개', why: '3초 동안 토큰이 3개 찼습니다. 3개는 통과, 2개는 거절입니다.' } },
-      { from: 'lim', to: 'api', label: '3개 통과', title: '3개 통과', lines: ['봇 양동이: 0개'], text: '세 개가 통과합니다.', holds: { lim: '봇 0 · 지우 5', api: '3개 처리' } },
+      { from: 'lim', to: 'api', label: '3개 통과', title: '3개 통과', lines: ['봇 양동이: 0개'], text: '세 개가 통과합니다.', holds: { lim: '토큰 봇 0 · 지우 5', api: '3개 처리' } },
       { from: 'lim', to: 'bot', label: '429 × 2', title: '2개 거절', lines: ['길게 보면 봇은 1초에 1개까지만'], error: 'bot', text: '나머지는 거절됩니다.', holds: { bot: '2개 거절됨' },
         ask: { q: '봇이 1분 내내 쉬지 않고 보내면 서버에 닿는 요청은 대략 몇 개일까요?', choices: ['약 65개 (처음 5 + 1초에 1개씩 60)', '60만 개'], answer: '약 65개 (처음 5 + 1초에 1개씩 60)', why: '처음 양동이 5개를 쓰고 나면 1초에 채워지는 1개씩만 통과합니다.' } },
     ],
   },
   {
     label: '어디서 셀까',
-    readingStage: 2,
+    readingStage: 4,
+    note: ['리미터가 여러 대여도 공유 저장소에서 함께 셈', ' → ', '봇 10개 중 5개만 통과 · 5개는 429'],
     title: '누구 기준으로, 어디서 함께 셀지 정한다',
     body: '레이트 리미터는 보통 서버 앞의 게이트웨이나 로드밸런서(7.3)에 둡니다. 셀 기준은 로그인한 사용자, API 키, IP 주소 등입니다. 리미터도 여러 대라면, 각자 따로 세면 봇이 리미터마다 5개씩 써 버립니다. 그래서 토큰 수를 모든 리미터가 함께 보는 빠른 저장소(7.2의 캐시 같은 것)에 둡니다.',
     takeaway: '리미터가 두 대여도 토큰을 함께 세면 봇은 합쳐서 5개만 씁니다. 거절할 때는 언제 다시 시도할지(Retry-After)를 알려 주어, 잘 만든 프로그램은 기다렸다 다시 보냅니다.',
@@ -440,7 +445,7 @@ const lesson = [
     stages: [
       { from: 'bot', to: 'lim', label: '요청 10개', title: '두 리미터로 나뉘어 도착', lines: ['5개는 리미터 A로, 5개는 리미터 B로'], text: '봇의 요청이 두 리미터로 나뉘어 들어옵니다.', holds: { bot: '10개 보냄' },
         ask: { q: '리미터 A, B가 토큰을 각자 따로 세면 봇은 몇 개를 통과시킬까요?', choices: ['10개 (리미터마다 5개)', '5개'], answer: '10개 (리미터마다 5개)', why: '각자 양동이를 가지면 봇은 리미터 수만큼 더 보낼 수 있습니다.' } },
-      { from: 'lim', to: 'lim', label: '공유 저장소 확인', title: '함께 세기', lines: ['A와 B 모두 같은 저장소의 "봇 토큰"을 깎음', '합쳐서 5개만 통과'], text: '공유 저장소에서 함께 세면 합쳐서 5개만 통과합니다.', holds: { lim: '봇 0 (공유)' } },
+      { from: 'lim', to: 'lim', label: '공유 저장소 확인', title: '함께 세기', lines: ['A와 B 모두 같은 저장소의 "봇 토큰"을 깎음', '합쳐서 5개만 통과'], text: '공유 저장소에서 함께 세면 합쳐서 5개만 통과합니다.', holds: { lim: '공유 토큰: 봇 0' } },
       { from: 'lim', to: 'api', label: '5개 통과', title: '서버 보호', lines: ['서버에 닿은 것: 5개'], text: '서버는 정해진 양만 받습니다.', holds: { api: '5개 처리' } },
       { from: 'lim', to: 'bot', label: '429 × 5', title: '거절과 안내', lines: ['429 Too Many Requests', 'Retry-After: 1 → 1초 뒤 다시 시도하라는 안내'], text: '나머지는 거절하며 언제 다시 보낼지 알려 줍니다.', holds: { bot: '5개 거절됨' },
         ask: { q: '로그인 시도에 IP 주소 기준으로만 제한을 두면 생길 수 있는 문제는?', choices: ['같은 와이파이를 쓰는 여러 사람이 함께 막힐 수 있다', '아무 문제 없다'], answer: '같은 와이파이를 쓰는 여러 사람이 함께 막힐 수 있다', why: '학교나 회사는 많은 사람이 한 IP를 씁니다. 그래서 계정, API 키 같은 기준을 함께 씁니다.' } },
@@ -519,8 +524,9 @@ function buildScene() {
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
   const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // The top 32 units stay free for the example note on the still picture.
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
@@ -567,6 +573,9 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // The still picture names what was sent, passed and refused, so the badges read as the result of that run.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

@@ -75,4 +75,9 @@ window.lessonText = {
   '로드밸런서를 한 대만 두면 어떤 위험이 있을까요?': 'What is the risk of having only one load balancer?',
   '로드밸런서가 고장 나면 서버가 살아 있어도 아무도 접속하지 못한다': 'If the load balancer breaks, nobody can connect even though the servers are alive', '아무 위험 없다': 'No risk at all',
   '모든 요청이 지나는 곳이 하나면 그곳이 단일 고장 지점입니다. 그래서 로드밸런서도 두 대 이상 둡니다.': 'If every request passes through one place, that place is a single point of failure. So load balancers come in twos or more as well.',
+  // Example note on the still picture.
+  '1초에 300개': '300 a second', '서버 A는 100개만 처리': 'server A handles only 100', '2초 뒤 줄 400 · 시간 초과로 오류': 'queue 400 after 2 s · errors from timeouts', 'C로': 'To C',
+  'A, B, C, A 차례로': 'A, B, C, A in turn', '다음은 B': 'next is B',
+  '처리 중 A 2 · B 1 · C 0': 'busy A 2 · B 1 · C 0', '새 목록 요청은 가장 한가한 C로': 'the new list request goes to idle C', 'C 처리 중 1': 'C busy 1',
+  'GET /health에 B 응답 없음': 'B does not answer GET /health', 'B를 빼고 서버 2대': 'B removed: 2 servers', 'A, C가 150/초씩 · 정상 응답': 'A, C take 150/s each · normal replies',
 };

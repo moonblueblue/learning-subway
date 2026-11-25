@@ -114,4 +114,10 @@ window.lessonText = {
   '모두가 같은 순간에 다시 보내 몰리는 것을 막으려고': 'To stop everyone retrying at the same moment',
   '요청을 더 빨리 보내려고': 'To send requests faster',
   '같은 백오프를 쓰면 모두 정확히 1초, 2초 뒤에 함께 몰립니다. 조금씩 흩뜨리면 고르게 퍼집니다.': 'With the same backoff, everyone arrives together exactly 1 s and 2 s later. A little spread makes them even out.',
+  // Example note on the still picture.
+  '추천 서비스 고장': 'recommendation service down', '요청마다 10초씩 기다려 여유 20칸이 다 참': 'each call waits 10 s: all 20 slots fill', '상품 페이지도 안 뜸': 'the product page fails too',
+  '5번째 실패에 차단기 열림': 'breaker opens at the 5th failure', '추천은 부르지 않고 바로 실패': 'no call: fails at once', '페이지는 인기 상품으로 뜸': 'page shows popular items instead',
+  '30초 뒤 반쯤 열어 한 번만 시험': 'after 30 s half-open: one trial', '추천 5개가 옴': '5 recommendations come back', '차단기 닫힘': 'breaker closes',
+  '실패하자마자 3번씩 다시 보내면 400/초 몰림': 'instant 3× retries: 400/s', '1초, 2초, 4초…로 늘리고 흩뜨림': 'back off 1, 2, 4 s… with jitter', '추천 서비스 회복': 'it recovers',
+  '열림: 막음': 'Open: blocking', '추천이 잠깐 느려질 때': 'brief slowdown', '상품 페이지 서비스 · 페이지 (인기 상품)': 'Product page · page (popular items)', '서킷 브레이커 · 흩어진 요청': 'Circuit breaker · spread-out requests',
 };

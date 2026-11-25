@@ -396,8 +396,10 @@ function buildScene() {
   state.procs.forEach((proc, k) => drawProcess(proc, spots[k], mode));
   const left = mode === 'launch' ? 14 * -5 - 30 : 14 * -2 - 30, right = 14 * (ramRight + 1) + 10;
   const top = -towerH - 60, bottom = 7 * 6.5 + 34;
-  const scale = Math.min(1.6, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  // A still picture keeps a strip at the top for the example note.
+  const strip = motion.matches ? 30 : 0;
+  const scale = Math.min(1.6, 590 / (right - left), (268 - strip) / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 + strip / 2 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 function drawProcess(proc, u, mode) {
@@ -499,7 +501,8 @@ function resetStep() {
   state.crashed = false;
   state.corrupted = false;
   state.fresh = null;
-  state.procs = mode === 'launch' ? [] : mode === 'isolation' ? [newProc('A', 2), newProc('B', 2)] : [newProc('프로그램')];
+  // The same notepad as step 1 carries on into steps 2 and 3, so the label names the process, not "a program".
+  state.procs = mode === 'launch' ? [] : mode === 'isolation' ? [newProc('A', 2), newProc('B', 2)] : [newProc('메모장')];
   if (mode === 'memory') state.procs[0].pc = 12;
 }
 function buildControls() {
@@ -621,6 +624,18 @@ function showStep(index, announce = true) {
   syncTask();
   state.wait = 900;
   syncPlayback();
+  // Nothing plays with reduced motion, so the still picture runs the step's example once and notes it at the top.
+  byId('example-note')?.remove();
+  if (motion.matches) {
+    const example = {
+      launch: ['launch', '메모장.exe 실행 → 운영체제가 RAM에 자리를 만들어 프로세스 PID 101'],
+      memory: ['call', '함수 호출 → 스택에 층이 하나 쌓임 (2층) · 함수가 끝나면 그 층이 사라짐'],
+      threads: ['thread', '스레드 2개: 코드·데이터·힙은 함께 쓰고 · 스택과 PC는 각자'],
+      isolation: ['corrupt', 'A의 스레드가 데이터를 덮어씀 → A의 다른 스레드도 망가진 값 · B는 메모리가 따로라 그대로'],
+    }[s.mode];
+    act(example[0], false);
+    exampleNote(example[1]);
+  }
   if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
 }
 function goToStep(index) {

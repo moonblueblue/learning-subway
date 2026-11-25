@@ -25,6 +25,7 @@
     '재생': 'Play', '다시 보기': 'Replay', '자동 실행': 'Auto run', '자동 실행 중': 'Running', '직접 실행': 'Manual run',
     // Circuit lessons (chapter 3): switches, lines and lamps.
     '스위치 {0}': 'Switch {0}', '스위치 {0}, 켜짐 1': 'Switch {0}, on 1', '스위치 {0}, 꺼짐 0': 'Switch {0}, off 0', '스위치 {0} 켜짐. {1}': 'Switch {0} on. {1}', '스위치 {0} 꺼짐. {1}': 'Switch {0} off. {1}', '{0}의 {#1} 자리, {#2}': '{0} {1}s place, {2}', '1이 흐르는 선': 'Line carrying 1', '0인 선': 'Line at 0', '여러 비트를 나르는 버스': 'Bus carrying several bits', '연산 신호': 'Operation signal', '입력 스위치 켜고 끄기': 'Turn the input switches on and off', '진리표 · 직접 만든 줄에 ✓': 'Truth table · ✓ on rows you made', '이 단계의 문제를 모두 풀었습니다. 스위치를 자유롭게 눌러 보세요.': 'You solved every problem in this step. Press the switches as you like.', '램프': 'Lamp', '램프 켜짐': 'Lamp on', '스위치': 'Switches',
+    '첫 화면으로': 'Home', '이전 레슨': 'Previous lesson', '다음 레슨': 'Next lesson', '‹ 이전 레슨': '‹ Previous lesson', '다음 레슨 ›': 'Next lesson ›', '이전 레슨: {0}': 'Previous lesson: {0}', '다음 레슨: {0}': 'Next lesson: {0}',
     '처음 상태로': 'Reset', '처음 상태로 되돌렸습니다.': 'Reset to the starting state.', '직접 조작': 'Hands-on', '버튼을 눌러 보세요.': 'Press a button.',
     '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.': 'You solved every problem in this step. Try anything you like.',
     // Station lessons (3.8, 5.3 …): code or a message carried from station to station.
@@ -255,12 +256,13 @@
     holder.setAttribute('role', 'group');
     holder.setAttribute('aria-label', '언어');
     holder.setAttribute('data-no-i18n', '');
-    for (const [code, label, short] of [['ko', '한국어', '한'], ['en', 'English', 'EN']]) {
+    for (const [code, name, label] of [['ko', '한국어', 'KO'], ['en', 'English', 'EN']]) {
       const button = document.createElement('button');
       button.type = 'button';
       button.lang = code;
       button.dataset.langChoice = code;
-      button.innerHTML = `<span class="lang-long">${label}</span><span class="lang-short" aria-hidden="true">${short}</span>`;
+      button.textContent = label;
+      button.setAttribute('aria-label', name);
       button.setAttribute('aria-pressed', String(code === lang));
       button.addEventListener('click', () => setLang(code));
       holder.append(button);

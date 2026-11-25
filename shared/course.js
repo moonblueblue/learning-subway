@@ -117,6 +117,27 @@
     timeline.style.setProperty('--step-count', timeline.querySelector('.steps').children.length);
   }
 
+  // Previous and next lesson in course order. They take the place of the timeline's ‹ and 다음 buttons when those
+  // are disabled (first and last step), so moving between lessons costs no extra space in a fitted layout.
+  const ordered = chapters.flatMap((chapter) => [...chapter.lessons, ...chapter.tracks.flatMap((track) => track.lessons)]);
+  const at = ordered.findIndex((lesson) => lesson.ref === pageRef);
+  const navigation = timeline?.querySelector('.navigation');
+  if (navigation && at >= 0) {
+    for (const [lesson, button, label, caption] of [
+      [ordered[at - 1], navigation.querySelector('#prev'), '이전 레슨', ['‹ 이전 레슨', '‹']],
+      [ordered[at + 1], navigation.querySelector('#next'), '다음 레슨', ['다음 레슨 ›', '다음 ›']]]) {
+      if (!lesson || !button) continue;
+      // A low landscape screen has room only for the short caption; the full name stays in the title and label.
+      const link = element('a', 'action course-lesson-link');
+      link.append(element('span', 'course-lesson-link-long', caption[0]), element('span', 'course-lesson-link-short', caption[1]));
+      link.href = lesson.page;
+      link.title = `${label}: ${lesson.id} ${lesson.title}`;
+      link.setAttribute('aria-label', link.title);
+      if (button.id === 'next') link.classList.add('primary');
+      button.after(link);
+    }
+  }
+
   function element(tag, className, text) {
     const node = document.createElement(tag);
     if (className) node.className = className;
@@ -267,6 +288,10 @@
   close.type = 'button';
   drawerTop.append(drawerTitle, close);
   drawer.append(drawerTop);
+  // On a phone the brand is hidden in the bar, so the drawer starts with the way back to the home page.
+  const home = element('a', 'course-home', '첫 화면으로');
+  home.href = '../index.html';
+  drawer.append(home);
 
   const nav = element('nav', 'course-nav');
   nav.setAttribute('aria-label', '코스 목차');

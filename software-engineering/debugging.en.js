@@ -8,8 +8,6 @@ window.lessonText = {
   '버그가 있는 곳을 어떻게 좁혀 갈까요? 2, 4, 6의 평균을 구하려다 틀리는 프로그램을 한 줄씩 실행하며 찾아보세요.':
     'How do you narrow down where a bug is? Run a program that tries to average 2, 4 and 6 and gets it wrong, one line at a time, and find out.',
   '버그가 있는 프로그램이 실행되며 메모리 칸이 바뀌는 장면': 'Memory cells changing as a program with a bug runs',
-  '"한 줄 실행"을 눌러 다음 줄을 실행해 보세요. 예측 문제가 나오면 먼저 답을 고릅니다.':
-    'Press "Run one line" to run the next line. When a prediction question appears, choose your answer first.',
   // Code and cells
   '합계': 'total', '평균': 'average',
   '합계 = 0': 'total = 0', '합계 = 합계 + i * 2': 'total = total + i * 2', '평균 = 합계 / 2': 'average = total / 2', '평균 = 합계 / 3': 'average = total / 3',

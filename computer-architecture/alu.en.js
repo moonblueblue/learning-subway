@@ -10,7 +10,7 @@ window.lessonText = {
   '입력, 계산 회로, 출력': 'Inputs, computing circuit, output', '연산 고르기': 'Choose the operation', '장면의 스위치와 연산 다이얼을 눌러도 됩니다 · 확대 후 드래그로 이동': 'You can also press the switches and the operation dial in the scene · zoom in, then drag to move',
   '장면의 스위치와 연산 다이얼을 눌러도 됩니다 · 두 손가락으로 확대': 'You can also press the switches and the operation dial in the scene · pinch to zoom',
   // Nodes, readouts and announcements
-  '선택 S': 'Select S', '출력': 'Output', '결과': 'Result', '연산': 'Operation', '플래그': 'Flags', 'Z 결과가 0': 'Z result is 0', 'C 올림·빌림': 'C carry or borrow',
+  '선택 S': 'Select S', '출력': 'Output', '연산': 'Operation', '플래그': 'Flags', 'Z 결과가 0': 'Z result is 0', 'C 올림·빌림': 'C carry or borrow',
   '연산 {0}': 'Operation {0}', '연산 {0}.': 'Operation {0}.', '연산 {0}. {1}': 'Operation {0}. {1}',
   '결과 {#0}': 'Result {0}', '결과 = {0} ({#1})': 'result = {0} ({1})',
         'S = {#0} → D{#1}을 고름 · 출력 = D{#2} =': 'S = {0} → picks D{1} · output = D{2} =',

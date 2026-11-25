@@ -2,7 +2,6 @@
 window.lessonText = {
   // Page
   '일관성 모델 · 레슨 8A.4': 'Consistency models · Lesson 8A.4',
-  '8장 심화 트랙 · 8A 시스템·인프라 · 레슨 8A.4': 'Chapter 8 advanced track · 8A Systems and infrastructure · Lesson 8A.4',
   '복제본 세 곳에서 최종 일관성으로 옛 값이 보이는 순간, 자기가 쓴 값은 보이게 하는 방법, 시간이 거꾸로 가지 않게 하는 단조 읽기, R + W > N 정족수로 언제나 최신을 읽는 방법을 따라가 보세요.':
     'With three replicas, follow the moment eventual consistency shows an old value, how to make sure you see your own writes, monotonic reads that keep time from running backwards, and how an R + W > N quorum always reads the latest.',
   '복제된 데이터는 언제 "같다"고 말할 수 있을까요? 같은 값을 가진 복제본 셋에 쓰고 읽으며, 어떤 약속을 지키려면 무엇을 기다려야 하는지 보세요.':
@@ -10,14 +9,13 @@ window.lessonText = {
   '클라이언트가 복제본 셋에 쓰고 읽으며 버전이 퍼지는 장면': 'A client writing to and reading from three replicas as versions spread',
   '클라이언트와 복제본 셋': 'A client and three replicas',
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the packets move.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
   // Stations
-  '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router', '복제본': 'Replica',
+  '계층': 'Layer', '복제본': 'Replica',
   '클라이언트': 'Client', '복제본 {#0}': 'Replica {0}',
   '클라이언트 → 복제본 {#0}': 'Client → Replica {0}', '복제본 {#0} → 복제본 {#1}': 'Replica {0} → Replica {1}', '복제본 2 → 클라이언트': 'Replica 2 → Client',
   '클라이언트 · 읽기': 'Client · read', '클라이언트 · 읽기 2': 'Client · read 2', '복제본 3 · 넘기기': 'Replica 3 · pass on',
   // Labels and holds
-  '쓰기': 'Write', '읽기': 'Read', '읽기 {#0}': 'Read {0}', '쓰기 1': 'Write 1', '쓰기 2 → 성공': 'Write 2 → success', '읽기 2 → 더 새것': 'Read 2 → newer',
+  '읽기': 'Read', '읽기 {#0}': 'Read {0}', '쓰기 1': 'Write 1', '쓰기 2 → 성공': 'Write 2 → success', '읽기 2 → 더 새것': 'Read 2 → newer',
   '읽기 2 (붙여 두기)': 'Read 2 (pinned)', '읽기 (v2 이상)': 'Read (v2 or later)', 'v2 (사진 B)': 'v2 (photo B)', 'v2 전달': 'Pass on v2', 'v3 쓰기': 'Write v3',
   '결국 같아짐': 'Same in the end', '내가 쓴 건 보이게': 'See your own writes', '넘기기': 'Pass on', '사진 B로 바꾸기': 'Change to photo B', '시간이 거꾸로': 'Time runs backwards', '정족수': 'Quorum',
   '{#0}개 봄': 'Saw {0}', '{#0}개 봄 ??': 'Saw {0} ??', 'v3 (최신)': 'v3 (latest)', '내 버전 v2': 'My version v2', '사진 B': 'Photo B', 'v1 (옛 값)': 'v1 (old value)', 'v2 응답': 'v2 reply',

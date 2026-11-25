@@ -10,9 +10,7 @@ window.lessonText = {
     'Which bits do "A" and "가" become? Make a number with the switches and see which character it is.',
   '번호와 글자': 'Numbers and characters',
   '스위치로 만든 번호가 글자표에서 글자가 되는 장면': 'A number made with switches becoming a character in the character table',
-  '장면의 스위치를 눌러도 됩니다 · 확대 후 드래그로 이동': 'You can also press the switches in the scene · zoom in, then drag to move',
-  '장면의 스위치를 눌러도 됩니다 · 두 손가락으로 확대': 'You can also press the switches in the scene · pinch to zoom',
-  '값이 흐르는 선': 'Line a value flows along', '켜짐 = 1': 'On = 1', '꺼짐 = 0': 'Off = 0',
+  
   '스위치 켜고 끄기': 'Turn switches on and off', '모두 끄기': 'All off', '1 더하기': 'Add 1', '이진수': 'Binary',
   // Scene
   '글자표': 'Character table', '제어 문자': 'control character', 'UTF-8로 부호화': 'Encoded in UTF-8',

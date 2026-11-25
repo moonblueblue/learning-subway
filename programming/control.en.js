@@ -8,8 +8,6 @@ window.lessonText = {
   '프로그램은 어떻게 갈림길을 고르고 같은 일을 되풀이할까요? 다음에 실행될 줄을 예측하며 한 줄씩 실행해 보세요.':
     'How does a program choose a branch and repeat the same work? Run it line by line, predicting the next line to run.',
   '조건을 확인하고 반복하며 메모리 칸이 바뀌는 장면': 'Memory cells changing as conditions are checked and lines repeat',
-  '"한 줄 실행"을 눌러 다음 줄을 실행해 보세요. 예측 문제가 나오면 먼저 답을 고릅니다.':
-    'Press "Run one line" to run the next line. When a prediction question appears, choose your answer first.',
   // Code and cells
   '점수': 'score', '합계': 'total', '합격': 'pass', '다시': 'retry',
   '점수 = 75': 'score = 75', '점수 = 45': 'score = 45', 'if 점수 >= 60:': 'if score >= 60:',

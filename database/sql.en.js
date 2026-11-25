@@ -9,8 +9,8 @@ window.lessonText = {
   '표로 저장한 데이터는 질의 하나로 어떻게 찾아질까요? SQL 한 줄이 데이터베이스 엔진을 지나 표를 읽고 결과로 돌아오기까지를 따라가 보세요.':
     'How is data stored in tables found with a single query? Follow one line of SQL through the database engine as it reads the tables and comes back as a result.',
   'SQL 질의가 데이터베이스 엔진을 거쳐 표를 읽고 결과로 돌아오는 장면': 'An SQL query going through the database engine, reading tables and coming back as a result',
-  '질의가 지나가는 정거장': 'Stations the query passes through', '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the code moves to the right.', '"다음 단계"를 눌러 질의를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the query one station at a time. Prediction questions come up along the way.',
-  '질의와 결과': 'Query and result', '데이터베이스 엔진': 'Database engine', '파일': 'File', '도구': 'Tool', '오류': 'Error', '질의': 'Query', 'SQL 질의': 'SQL query', 'DB 엔진': 'DB engine', 'students 표': 'students table', 'enrollments 표': 'enrollments table',
+  '질의가 지나가는 정거장': 'Stations the query passes through', '"다음 단계"를 누르면 질의가 오른쪽으로 움직입니다.': 'Press "Next step" and the code moves to the right.', '"다음 단계"를 눌러 질의를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the query one station at a time. Prediction questions come up along the way.',
+  '질의와 결과': 'Query and result', '데이터베이스 엔진': 'Database engine', 'SQL 질의': 'SQL query', 'DB 엔진': 'DB engine', 'students 표': 'students table', 'enrollments 표': 'enrollments table',
   // Legs and badges
   'SQL 질의 → DB 엔진': 'SQL query → DB engine', 'DB 엔진 → students 표': 'DB engine → students table', 'DB 엔진 → enrollments': 'DB engine → enrollments', 'students 표 → 결과': 'students table → result', 'students → 결과': 'students → result', 'enrollments → 결과': 'enrollments → result',
   '읽기': 'Read', '한 행씩': 'Row by row', 'id로 잇기': 'Join by id', '묶음에 넣기': 'Into groups', '질의 해석': 'Query parsed', '엔진 · 질의 읽기': 'Engine · reading query',

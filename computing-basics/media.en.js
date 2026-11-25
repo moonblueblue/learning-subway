@@ -5,17 +5,14 @@ window.lessonText = {
   '픽셀과 색, 소리 샘플이 어떻게 숫자가 되는지 직접 칠하고 바꿔 보며 살펴보세요.': 'Paint and change pixels, colours and sound samples to see how they become numbers.',
   '사진과 소리는 어떻게 숫자가 될까요? 픽셀을 칠하고, 색을 섞고, 소리를 잘게 나눠 보세요.': 'How do photos and sound become numbers? Paint pixels, mix colours and cut sound into small pieces.',
   '화면과 숫자': 'Screen and numbers', '그림과 소리가 숫자로 바뀌는 장면': 'Pictures and sound turning into numbers',
-  '장면의 픽셀을 눌러도 됩니다 · 확대 후 드래그로 이동': 'You can also press the pixels in the scene · zoom in, then drag to move',
-  '장면의 픽셀을 눌러도 됩니다 · 두 손가락으로 확대': 'You can also press the pixels in the scene · pinch to zoom',
-  '켜진 칸': 'Pixel on', '꺼진 칸': 'Pixel off', '비트': 'Bits', '밝기': 'Brightness', '화면': 'Screen',
+  
+  '켜진 칸': 'Pixel on', '꺼진 칸': 'Pixel off', '비트': 'Bits', '밝기': 'Brightness', 
   '빨강': 'Red', '초록': 'Green', '파랑': 'Blue', '색': 'Colour', '소리': 'Sound', '샘플': 'Sample',
   '샘플 수': 'Samples', '샘플 크기': 'Sample size', '샘플 높이': 'Sample height', '원래 소리': 'Original sound',
-  '소리 파형': 'Sound wave', '픽셀': 'Pixels', '모두 지우기': 'Clear all', '반전': 'Invert',
+  '소리 파형': 'Sound wave', '픽셀': 'Pixels', 
   // Readouts and announcements
-  '{#0}행 {#1}열, 켜짐': 'Row {0}, column {1}, on', '{#0}행 {#1}열, 꺼짐': 'Row {0}, column {1}, off',
-  '{#0}행 {#1}열, 밝기 {2}': 'Row {0}, column {1}, brightness {2}',
-  '{#0}행 {#1}열 켬.': 'Turned on row {0}, column {1}.', '{#0}행 {#1}열 끔.': 'Turned off row {0}, column {1}.',
-  '{#0}행 {#1}열 밝기 바꿈.': 'Changed the brightness of row {0}, column {1}.',
+  
+  
   '{#0}개': '{0}',
   '8 × 8 = 64칸 ×': '8 × 8 = 64 pixels ×', '64비트가 모두 0': 'All 64 bits are 0', '그림 한 장 64비트': 'One picture, 64 bits',
   '빨강 {0}.': 'Red {0}.', '초록 {0}.': 'Green {0}.', '파랑 {0}.': 'Blue {0}.',
@@ -23,15 +20,13 @@ window.lessonText = {
   'RGB ({0}) → {1} = {#2}바이트': 'RGB ({0}) → {1} = {2} {2|byte|bytes}',
   '샘플 {#0}개 × {#1}비트 = {#2}비트': '{0} samples × {1} bits = {2} bits',
   // Size panel in the scene
-  '8 × 8칸 ×': '8 × 8 pixels ×', '{#0}비트': '{0} {0|bit|bits}', '샘플 {#0}개': '{0} samples',
+  '8 × 8칸 ×': '8 × 8 pixels ×', '샘플 {#0}개': '{0} samples',
   '= {#0}비트 ({#1}바이트)': '= {0} bits ({1} bytes)', '= {#0}비트 · 밝기 4단계 (': '= {0} bits · 4 brightness levels (',
   '칸 하나의 색 =': 'One pixel’s color =', '→ 8비트 × 3 = 3바이트': '→ 8 bits × 3 = 3 bytes',
   '(높이 0~{#0}) = {#1}비트': '(height 0–{0}) = {1} bits',
-  '그림을 모두 지웠습니다.': 'Cleared the whole picture.', '밝기를 반전했습니다.': 'Inverted the brightness.',
-  '이 단계의 문제를 모두 풀었습니다. 자유롭게 바꿔 보세요.': 'You solved every problem in this step. Change anything you like.',
+  
   '자유롭게 바꿔 보세요.': 'Change anything you like.',
   // Step 1
-  '픽셀 칠하기': 'Painting pixels',
   '그림은 작은 칸으로 나뉜다': 'A picture is split into small squares',
   '화면의 그림은 픽셀이라는 아주 작은 칸이 모여 만들어집니다. 칸마다 켜짐과 꺼짐만 정한다면 칸 하나가 비트 하나입니다. 8 × 8 그림은 64비트, 곧 8바이트이고, 한 줄 8칸은 0.1에서 본 바이트 하나와 같습니다.':
     'A picture on screen is made of tiny squares called pixels. If each square is only on or off, one square is one bit. An 8 × 8 picture is 64 bits, which is 8 bytes, and a row of 8 squares is one byte, as in 0.1.',

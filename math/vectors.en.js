@@ -2,15 +2,14 @@
 window.lessonText = {
   // Page
   '벡터와 행렬 · 레슨 8B.1': 'Vectors and matrices · Lesson 8B.1',
-  '8장 심화 트랙 · 8B 인공지능 · 레슨 8B.1': 'Chapter 8: Advanced tracks · 8B AI · Lesson 8B.1',
   '취향과 그림을 숫자 묶음(벡터)으로 적고, 더하기와 곱하기, 내적으로 닮은 정도 재기, 행렬로 점을 늘이고 돌리기, 신경망의 한 층을 행렬 곱 한 번으로 계산하기를 따라가 보세요.':
     'Write tastes and pictures as bundles of numbers (vectors), then follow adding and multiplying, measuring likeness with the dot product, stretching and turning a point with a matrix, and computing a whole neural-network layer as one matrix product.',
   '데이터를 숫자 묶음으로 담고 바꾸는 방법은 무엇일까요? 영화 취향, 평면의 점, 7.11의 그림을 벡터로 적고 내적과 행렬 곱으로 계산해 보세요.':
     'How is data held and changed as bundles of numbers? Write movie tastes, points on a plane and the picture from 7.11 as vectors, and compute with dot products and matrix products.',
   '입력 벡터가 계산을 거쳐 결과 벡터가 되는 장면': 'An input vector going through a calculation and becoming a result vector',
-  '벡터 계산 정거장': 'Vector calculation stations', '파일': 'Data', '도구': 'Operation', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the vector moves to the right.',
-  '"다음 단계"를 눌러 벡터를를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the vector one station at a time. Prediction questions come up along the way.',
+  '벡터 계산 정거장': 'Vector calculation stations', '파일': 'Data', '도구': 'Operation', 
+  '"다음 단계"를 누르면 벡터가 오른쪽으로 움직입니다.': 'Press "Next step" and the vector moves to the right.',
+  '"다음 단계"를 눌러 벡터를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the vector one station at a time. Prediction questions come up along the way.',
   // Step 1
   '숫자 묶음': 'Bundles of numbers', '벡터는 순서 있는 숫자 묶음이다': 'A vector is an ordered bundle of numbers',
   '인공지능은 모든 것을 숫자 묶음으로 다룹니다. 순서가 정해진 숫자 묶음을 벡터라 합니다. 영화 취향을 [액션 점수, 로맨스 점수]로 적으면 지우는 [5, 1]입니다. 7.11의 3×3 그림은 칸 9개를 한 줄로 늘어놓은 [0, 1, 0, 0, 1, 0, 0, 1, 0]이고, 0.3의 소리도 표본들의 벡터입니다. 같은 자리끼리 더하고, 숫자 하나를 곱해 늘리거나 줄일 수 있습니다.':

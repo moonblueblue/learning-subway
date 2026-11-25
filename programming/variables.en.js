@@ -8,11 +8,9 @@ window.lessonText = {
     'Run code one line at a time to see that a variable is a name on a memory cell, and how values are read and written.',
   '변수에 값을 넣으면 컴퓨터 안에서는 무슨 일이 생길까요? 코드를 한 줄씩 실행하며 메모리 칸을 지켜보세요.':
     'What happens inside the computer when you put a value in a variable? Run the code line by line and watch the memory cells.',
-  '메모리와 CPU': 'Memory and CPU', '코드 한 줄이 메모리 칸을 읽고 쓰는 장면': 'One line of code reading and writing memory cells',
-  '읽기 · 칸 → CPU': 'Read · cell → CPU', '쓰기 · CPU → 칸': 'Write · CPU → cell', '빈 칸': 'Empty cell',
-  '확대 후 드래그로 이동': 'Zoom in, then drag to move', '두 손가락으로 확대': 'Pinch to zoom',
-  '프로그램': 'Program', '한 줄 실행': 'Run one line', '처음부터': 'From the start', '메모리': 'Memory', '결과': 'Result',
-  '대기': 'Waiting', '읽는 중': 'Reading', '예측 고르기': 'Make a prediction',
+  '코드 한 줄이 메모리 칸을 읽고 쓰는 장면': 'One line of code reading and writing memory cells',
+  
+  
   // Variables and code
   '나이': 'age', '키': 'height', '가격': 'price', '개수': 'count', '합계': 'total', '임시': 'temp',
   '나이 = 15': 'age = 15', '나이 = 16': 'age = 16', '키 = 160': 'height = 160', '나이 = 나이 + 1': 'age = age + 1',
@@ -21,15 +19,11 @@ window.lessonText = {
   '나이: {0}': 'age: {0}', '키: {0}': 'height: {0}', '가격: {0}': 'price: {0}', '개수: {0}': 'count: {0}', '합계: {0}': 'total: {0}', '임시: {0}': 'temp: {0}',
   '나이 {#0}': 'age {0}', '합계 칸 {#0}': 'total cell {0}', '가격 3000 · 개수 2': 'price 3000 · count 2',
   // Readouts and announcements
-  '{#0}번지': 'address {0}', '{0} 적기': 'Write {0}', '읽은 값 {0}': 'Value read {0}',
-  '{#0}번째 줄 실행: {1}': 'Ran line {0}: {1}', '{#0}번째 줄 "{1}" · {2}': 'Line {0} "{1}" · {2}',
-  '✗ {0}이(가) 아닙니다. 다시 골라 보세요.': '✗ Not {0}. Choose again.',
-  '메모리가 비어 있습니다.': 'Memory is empty.', '끝까지 실행했습니다': 'Ran to the end',
-  '처음부터 다시 시작합니다.': 'Starting again from the beginning.', '처음부터 자동 실행': 'Auto run from the start',
-  '처음부터를 눌러 다시 해 보세요.': 'Press From the start to try again.',
+  
+  
+  
   '"한 줄 실행"을 눌러 다음 줄을 실행해 보세요. 예측 문제가 있는 줄에서는 먼저 답을 고릅니다.':
     'Press "Run one line" to run the next line. On a line with a prediction question, choose your answer first.',
-  '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 실행해 볼 수도 있습니다.': 'You got every prediction in this step right. You can also run it again from the start.',
   '100번지 나이: 15 → CPU 15 + 1 = 16 → 100번지 나이: 16': 'address 100 age: 15 → CPU 15 + 1 = 16 → address 100 age: 16',
   '나이 = 15 → 100번지 빈 칸에 쓰기 → 100번지 나이: 15': 'age = 15 → write to the empty cell at address 100 → address 100 age: 15',
   // Step 1

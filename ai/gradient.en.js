@@ -2,13 +2,12 @@
 window.lessonText = {
   // Page
   '경사하강법 · 레슨 8B.3': 'Gradient descent · Lesson 8B.3',
-  '8장 심화 트랙 · 8B 인공지능 · 레슨 8B.3': 'Chapter 8: Advanced tracks · 8B AI · Lesson 8B.3',
   '손실 (w − 3)²의 기울기를 보고 반대로 걷기, 학습률이 작을 때·딱 맞을 때·너무 클 때, 가중치 여러 개를 기울기 벡터로 함께 옮기기, 미니배치로 자주 걷기를 따라가 보세요.':
     'Follow walking against the gradient of the loss (w − 3)², a learning rate that is too small, just right and too big, moving many weights together with a gradient vector, and taking frequent steps with mini-batches.',
   '오차를 줄이는 방향은 어떻게 찾을까요? 가중치, 손실, 기울기, 고치기의 고리를 돌며 그릇 모양 손실의 바닥을 찾아가 보세요.':
     'How do you find the direction that shrinks the error? Go round the loop of weight, loss, gradient and update to find the bottom of a bowl-shaped loss.',
   '가중치에서 손실과 기울기를 구해 가중치를 고치는 고리 장면': 'A loop that takes a weight, finds the loss and gradient, and updates the weight',
-  '내려가는 고리': 'The descent loop', '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router',
+  '내려가는 고리': 'The descent loop', '계층': 'Layer', 
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the values move round the loop.',
   '"다음 단계"를 눌러 가중치를 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the weight round one leg at a time. Prediction questions come up along the way.',
   '가중치 w': 'Weight w', '손실 계산': 'Loss', '기울기': 'Gradient', '고치기': 'Update',
@@ -67,7 +66,7 @@ window.lessonText = {
   '같은 계산량으로 전체 데이터 기울기는 1걸음, 미니배치는 31,250걸음을 걸었습니다. 8B.2의 표본처럼 32개로도 방향을 꽤 정확히 어림할 수 있기 때문입니다.':
     'For the same amount of computing, the full-data gradient took 1 step and mini-batches took 31,250. As with the samples in 8B.2, 32 examples estimate the direction fairly well.',
   '같은 고리입니다. 손실 계산이 예시 전체 대신 무작위 32개만 봅니다.': 'The same loop. The loss now looks at 32 random examples instead of all of them.',
-  '데이터': 'Data', '학습 예시 1,000,000개': '1,000,000 training examples', '미니배치 크기 32': 'mini-batch size 32', '학습 중': 'Training',
+  '학습 예시 1,000,000개': '1,000,000 training examples', '미니배치 크기 32': 'mini-batch size 32', '학습 중': 'Training',
   '32개': '32', '무작위 32개': '32 at random', '예시 1,000,000개 중 무작위 32개로 손실 계산': 'loss from 32 random examples out of 1,000,000',
   '무작위로 고른 32개만 봅니다.': 'Look at only 32 picked at random.', '32개 평균': 'Mean of 32',
   '백만 개를 다 보는 계산 한 번이면, 32개짜리 미니배치로는 몇 걸음을 걸을 수 있을까요?': 'For the cost of one pass over all million, how many steps can 32-example mini-batches take?',

@@ -1,13 +1,13 @@
 // English for 8C.2 TLS. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
   // Page
-  'TLS · 레슨 8C.2': 'TLS · Lesson 8C.2', '8장 심화 트랙 · 8C 보안 · 레슨 8C.2': 'Chapter 8: Advanced tracks · 8C Security · Lesson 8C.2',
+  'TLS · 레슨 8C.2': 'TLS · Lesson 8C.2', 
   '인증 기관의 서명 사슬로 서버의 공개 키를 믿고, TLS 1.3 악수로 왕복 한 번에 키를 나누며 상대를 확인하고, 가짜 서버가 경고에 걸리는 모습과, 자물쇠가 보장하지 않는 것(피싱)을 따라가 보세요.':
     'Trust a server\'s public key through a chain of certificate-authority signatures, share a key and check the other side in one round trip with the TLS 1.3 handshake, watch a fake server trip a warning, and see what the padlock does not promise (phishing).',
   '브라우저의 자물쇠 표시는 무엇을 보장할까요? 브라우저, 인증 기관, 서버 사이의 인증서와 악수를 따라가며 자물쇠의 뜻을 정확히 알아보세요.':
     'What does the padlock in the browser promise? Follow the certificates and handshake between the browser, the certificate authority and the server, and learn exactly what the padlock means.',
   '브라우저와 서버, 인증 기관': 'Browser, server and certificate authority', '브라우저가 서버의 인증서 사슬을 인증 기관의 공개 키로 확인하고 키를 나누는 장면': 'A browser checking a server\'s certificate chain with certificate-authority public keys and sharing a key',
-  '브라우저': 'Browser', '인증 기관': 'CA', '진짜 서버': 'Real server', '가짜·피싱 서버': 'Fake or phishing server', '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
+  '인증 기관': 'CA', '진짜 서버': 'Real server', '가짜·피싱 서버': 'Fake or phishing server', 
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the messages go back and forth.',
   '"다음 단계"를 눌러 메시지를 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the messages one at a time. Prediction questions come up along the way.',
   '가짜 shop.example.com': 'Fake shop.example.com',

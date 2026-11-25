@@ -2,16 +2,14 @@
 window.lessonText = {
   // Page
   '가상화와 컨테이너 · 레슨 8A.6': 'Virtualization and containers · Lesson 8A.6',
-  '8장 심화 트랙 · 8A 시스템·인프라 · 레슨 8A.6': 'Chapter 8: Advanced tracks · 8A Systems and infrastructure · Lesson 8A.6',
   '하이퍼바이저가 컴퓨터 한 대를 자기 커널을 가진 가상 머신 여러 대로 나누고 서로를 막는 방법과, 컨테이너가 커널 하나를 함께 쓰며 가려진 프로세스로 빠르게 뜨고 자원 한도로 서로를 지키는 방법을 비교해 보세요.':
     'Compare how a hypervisor splits one computer into several virtual machines, each with its own kernel, and walls them off from each other, with how containers share one kernel, start fast as hidden-away processes and protect each other with resource limits.',
   '컴퓨터 한 대를 여러 대처럼 나눠 쓰려면 어떻게 할까요? 가상 머신과 컨테이너에서 앱의 요청이 하드웨어까지 가는 길과 고장이 갇히는 모습을 따라가 보세요.':
     'How do you share one computer as if it were many? Follow the path an app\'s request takes to the hardware in virtual machines and in containers, and see how a failure stays contained.',
   '가상 머신의 앱과 커널, 하이퍼바이저, 또는 컨테이너와 호스트 커널을 지나 실제 하드웨어로 요청이 가는 장면': 'A request going to the real hardware through a virtual machine\'s app and kernel and the hypervisor, or through a container and the host kernel',
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the packets move.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
   // Stations
-  '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router',
+  '계층': 'Layer', 
   '앱 (VM 1)': 'App (VM 1)', '앱 (VM 2)': 'App (VM 2)', '커널 (VM 1)': 'Kernel (VM 1)', '커널 (VM 2)': 'Kernel (VM 2)', '하이퍼바이저': 'Hypervisor', '실제 하드웨어': 'Real hardware',
   '컨테이너 1 (웹)': 'Container 1 (web)', '컨테이너 2 (DB)': 'Container 2 (DB)', '호스트 커널 하나': 'One host kernel',
   '앱 (VM 1) → 커널 (VM 1)': 'App (VM 1) → Kernel (VM 1)', '앱 (VM 2) → 커널 (VM 2)': 'App (VM 2) → Kernel (VM 2)',
@@ -24,8 +22,8 @@ window.lessonText = {
   // Labels and holds
   '나누기': 'Split', '앱·컨테이너': 'Apps · containers', '가상 장치': 'Virtual devices', '실제 장치': 'Real devices', '가상 머신': 'Virtual machine', '컨테이너': 'Container',
   '32코어 128GB': '32 cores 128 GB', '커널 1': 'Kernel 1', '커널 2': 'Kernel 2', '커널 1개': '1 kernel',
-  '파일 읽기': 'Read file', '가상 디스크 읽기': 'Read virtual disk', 'vm1.img 읽기': 'Read vm1.img', '실제 읽기': 'Real read', '데이터': 'Data', '데이터 받음': 'Data received',
-  '돌려주기': 'Return', '실제 하드웨어로': 'To real hardware', '주문': 'Order', '질의': 'Query', '정상': 'Normal', '멈춤': 'Halted', '멈춤·종료': 'Halt · kill',
+  '파일 읽기': 'Read file', '가상 디스크 읽기': 'Read virtual disk', 'vm1.img 읽기': 'Read vm1.img', '실제 읽기': 'Real read', '데이터 받음': 'Data received',
+  '돌려주기': 'Return', '실제 하드웨어로': 'To real hardware', '주문': 'Order', '정상': 'Normal', '멈춤': 'Halted', '멈춤·종료': 'Halt · kill',
   '잘못된 요청': 'Bad request', 'VM 1 요청': 'VM 1 request', 'VM 2 처리': 'VM 2 served', '다시 켜는 중': 'Restarting', '다시 실행': 'Run again', '다시 띄우기': 'Start again',
   '내 파일만': 'Only my files', '내 프로세스만': 'Only my processes', '프로세스 목록?': 'Process list?', '디스크 쓰기': 'Disk write',
   '메모리 더 줘': 'More memory', '메모리 부족 종료': 'Out-of-memory kill', '강제 종료': 'Killed', '종료됨': 'Killed', '자동 재시작': 'Auto restart', '한도': 'Limit',

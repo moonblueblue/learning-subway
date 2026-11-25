@@ -2,15 +2,14 @@
 window.lessonText = {
   // Page
   '렌더링 파이프라인 · 레슨 8D.1': 'The rendering pipeline · Lesson 8D.1',
-  '8장 심화 트랙 · 8D 그래픽·인터랙션 · 레슨 8D.1': 'Chapter 8 Advanced tracks · 8D Graphics and interaction · Lesson 8D.1',
   '상자의 꼭짓점 하나가 모델, 월드, 카메라 좌표를 지나 거리로 나누는 원근 투영으로 화면 픽셀이 되고, 보이지 않는 삼각형을 버리고, 한 프레임 16.7ms 예산 안에 그리기까지를 따라가 보세요.':
     'Follow one corner of a box through model, world and camera coordinates, into a screen pixel by perspective projection that divides by distance, past the culling of hidden triangles, until it is drawn within a 16.7ms frame budget.',
   '3D 장면은 어떤 단계를 거쳐 화면이 될까요? 6.7의 그리기 파이프라인을 열어, 꼭짓점이 여러 좌표계를 지나 픽셀이 되는 길을 계산해 보세요.':
     'What steps turn a 3D scene into a screen? Open up the drawing pipeline of 6.7 and work out the path a vertex takes through several coordinate systems to become a pixel.',
   '모델의 꼭짓점이 월드, 카메라 기준, 원근 나누기를 지나 화면 좌표가 되는 장면': 'A model\'s vertex passing through world, camera space and the perspective divide to become screen coordinates',
-  '꼭짓점과 화면': 'Vertices and the screen', '꼭짓점의 여행': 'A vertex\'s trip', '변환 단계': 'Transform stage', '오류': 'Error', '파일': 'File', '도구': 'Tool',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next stage" and the vertex moves to the right.',
-  '"다음 단계"를 눌러 꼭짓점을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the vertex one station at a time. Prediction questions come up along the way.',
+  '꼭짓점과 화면': 'Vertices and the screen', '꼭짓점의 여행': 'A vertex\'s trip', '변환 단계': 'Transform stage', 
+  '"다음 단계"를 누르면 꼭짓점이 오른쪽으로 움직입니다.': 'Press "Next step" and the vertex moves to the right.',
+  '"다음 단계"를 눌러 꼭짓점을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the vertex one station at a time. Prediction questions come up along the way.',
   // Stations
   '모델': 'Model', '월드': 'World', '카메라': 'Camera', '원근': 'Perspective',
   // Step 1

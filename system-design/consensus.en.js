@@ -7,14 +7,13 @@ window.lessonText = {
   '서버 세 대의 합의': 'Consensus among three servers',
   '클라이언트와 서버 A, B, C 사이로 쓰기, 로그 복사, 투표가 오가는 장면': 'Writes, log copies and votes passing between a client and servers A, B and C',
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the packets move.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
   '"다음 단계"를 눌러 메시지를 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the messages one at a time. Prediction questions come up along the way.',
   '서버 여러 대는 어떻게 하나의 값에 동의할까요? 서버 세 대가 리더, 로그 복사, 과반, 투표로 같은 값을 지키는 과정을 보세요.':
     'How do several servers agree on one value? Watch three servers keep the same value with a leader, log copies, majorities and votes.',
   '죽음·고립·충돌': 'Dead · cut off · conflict',
   // Stations
-  '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router',
-  '클라이언트': 'Client', '클라이언트 1': 'Client 1', '클라이언트 2': 'Client 2', '서버': 'Server', '서버 A': 'Server A', '서버 B': 'Server B', '서버 C': 'Server C',
+  '계층': 'Layer', 
+  '클라이언트': 'Client', '클라이언트 1': 'Client 1', '클라이언트 2': 'Client 2', '서버 A': 'Server A', '서버 B': 'Server B', '서버 C': 'Server C',
   '서버 {0} → 서버 {1}': 'Server {0} → Server {1}', '서버 {0} → 클라이언트': 'Server {0} → Client',
   '클라이언트 → 서버 {0}': 'Client → Server {0}', '클라이언트 {#0} → 서버 {1}': 'Client {0} → Server {1}',
   '서버 {0} · {1}': 'Server {0} · {1}',

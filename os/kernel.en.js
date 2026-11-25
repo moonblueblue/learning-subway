@@ -2,17 +2,15 @@
 window.lessonText = {
   // Page
   '운영체제 커널 · 레슨 8A.2': 'The operating system kernel · Lesson 8A.2',
-  '8장 심화 트랙 · 8A 시스템·인프라 · 레슨 8A.2': 'Chapter 8 Advanced tracks · 8A Systems and infrastructure · Lesson 8A.2',
   '전원을 켠 뒤 펌웨어가 장치를 검사하고, 부트로더가 커널을 RAM에 올리고, 커널이 메모리·인터럽트·장치·타이머를 차리고, 첫 사용자 프로세스가 서비스와 로그인 화면을 띄우기까지를 따라가 보세요.':
     'Follow the power coming on: the firmware checks the devices, the bootloader loads the kernel into RAM, the kernel sets up memory, interrupts, devices and the timer, and the first user process starts services and the login screen.',
   '전원을 켜면 운영체제는 어떻게 일을 시작할까요? 비어 있는 RAM에서 로그인 화면까지, 컴퓨터가 깨어나는 순서를 한 정거장씩 따라가 보세요.':
     'When the power comes on, how does the operating system get to work? Follow the computer waking up, station by station, from empty RAM to the login screen.',
   '펌웨어, 부트로더, 커널, 첫 프로세스가 차례로 실행되는 장면': 'The firmware, bootloader, kernel and first process running in turn',
   '컴퓨터가 깨어나는 순서': 'How a computer wakes up', '펌웨어·부트로더·타이머': 'Firmware, bootloader, timer', '파일과 화면': 'Files and screen',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the code moves to the right.',
-  '"다음 단계"를 눌러 부팅을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the boot along one station at a time. Prediction questions come up along the way.',
+  '"다음 단계"를 누르면 부팅이 오른쪽으로 움직입니다.': 'Press "Next step" and the code moves to the right.',
+  '"다음 단계"를 눌러 부팅을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the boot along one station at a time. Prediction questions come up along the way.',
   // Stations
-  '파일': 'File', '도구': 'Tool', '저장장치': 'Storage', '메모리': 'Memory',
   '전원 버튼': 'Power', '펌웨어 (ROM)': 'Firmware', '부트로더': 'Bootloader', '커널': 'Kernel', '장치 (키보드·SSD)': 'Devices', '타이머': 'Timer',
   '서비스들': 'Services', '로그인 화면': 'Login screen',
   '전원 버튼 → 펌웨어 (ROM)': 'Power → Firmware', '펌웨어 (ROM) → 펌웨어 (ROM)': 'Firmware → Firmware', '펌웨어 (ROM) → SSD': 'Firmware → SSD',
@@ -23,9 +21,8 @@ window.lessonText = {
   // Labels and holds
   '전원': 'Power', '검사': 'Check', '부트로더 찾기': 'Find bootloader', '커널 파일 읽기': 'Read kernel file', '점프': 'Jump', '페이지 표': 'Page table', '드라이버': 'Drivers', '켜기': 'Switch on',
   '띄우기': 'Start', '로그인': 'Log in', '시스템 콜': 'System call',
-  '실행 중': 'Running', '검사 통과': 'Passed', '부트로더 찾음': 'Found', '커널 파일': 'Kernel file', '읽는 중': 'Reading', '커널 12MB': 'Kernel 12MB',
-  '실행 시작': 'Started', '준비 시작': 'Setting up', '드라이버 준비': 'Drivers ready', '10ms마다': 'Every 10ms', '준비 완료': 'Ready', '서비스 12개': '12 services', '대기': 'Waiting', '부를 때만': 'Only when called',
-  '오류': 'Error',
+  '실행 중': 'Running', '검사 통과': 'Passed', '부트로더 찾음': 'Found', '커널 파일': 'Kernel file', '커널 12MB': 'Kernel 12MB',
+  '실행 시작': 'Started', '준비 시작': 'Setting up', '드라이버 준비': 'Drivers ready', '10ms마다': 'Every 10ms', '준비 완료': 'Ready', '서비스 12개': '12 services', '부를 때만': 'Only when called',
   // Work panel
   '전원을 켜기 직전': 'Just before power on', 'RAM: 비어 있음 · 운영체제: SSD 안에': 'RAM: empty · operating system: on the SSD',
   'CPU가 깨어남': 'The CPU wakes up', 'PC = 정해진 시작 주소 → 펌웨어 칩의 첫 명령': 'PC = fixed start address → first instruction on the firmware chip',

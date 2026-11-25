@@ -10,13 +10,12 @@ window.lessonText = {
   '보내는 데이터': 'Data sent', '돌려받는 데이터': 'Data read back',
   // Parts
   '키보드 · 입력': 'Keyboard · input', 'CPU · 처리': 'CPU · processing', '화면 · 출력': 'Screen · output',
-  '메모리': 'Memory', '저장장치': 'Storage',
   // Badges
   '키보드에서 A 입력': 'A typed on the keyboard', 'CPU가 65를 전달': 'CPU passes on 65', '화면에 A 표시': 'A shown on screen',
   'A 표시': 'Shows A', '숫자 2와 3 입력': 'Numbers 2 and 3 typed', '메모리에서 읽고 더함': 'Reads from memory and adds',
   '화면에 5': '5 on screen', '5 표시': 'Shows 5', '2, 3 입력': '2, 3 typed', '2 + 3 = 5': '2 + 3 = 5', '결과 5': 'Result 5', '메모리에만 있는 값': 'Values only in memory',
   '저장 명령': 'Save command', '파일에 5 저장': '5 saved to file', '저장장치에 파일 생성': 'File created in storage',
-  '비어 있음': 'Empty', '파일 5 그대로': 'File 5 still there', '전원 꺼짐': 'Power off', '메모리 내용 사라짐': 'Memory contents gone', '저장한 파일은 남음': 'The saved file remains',
+  '파일 5 그대로': 'File 5 still there', '전원 꺼짐': 'Power off', '메모리 내용 사라짐': 'Memory contents gone', '저장한 파일은 남음': 'The saved file remains',
   '파일 열기': 'Open file', '파일 5': 'File 5', '5 불러옴': '5 loaded', '5 다시 표시': '5 shown again', '화면에 내용 표시': 'Contents shown on screen',
   '저장장치 → 메모리 → CPU': 'Storage → memory → CPU',
   // Step 1

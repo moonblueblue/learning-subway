@@ -2,15 +2,14 @@
 window.lessonText = {
   // Page
   '합성곱 신경망 · 레슨 8B.4': 'Convolutional neural networks · Lesson 8B.4', '합성곱 신경망': 'Convolutional neural networks',
-  '8장 심화 트랙 · 8B 인공지능 · 레슨 8B.4': 'Chapter 8: Advanced tracks · 8B AI · Lesson 8B.4',
   '5×5 그림 위에서 3×3 세로선 필터를 밀며 곱해서 더해 특징 지도를 만들고, 가장 큰 값을 골라 선이 옮겨 가도 알아보며, 필터를 쌓아 큰 모양을 찾는 과정을 따라가 보세요.':
     'Slide a 3×3 vertical-line filter over a 5×5 picture, multiplying and adding to make a feature map, pick the biggest value to recognize the line even when it moves, and stack filters to find bigger shapes.',
   '이미지에서 모양을 어떻게 찾아낼까요? 작은 필터 하나를 그림 위에서 밀어 보며, 같은 가중치를 모든 자리에 쓰는 합성곱을 직접 계산해 보세요.':
     'How are shapes found in an image? Slide one small filter over a picture and work out a convolution, which uses the same weights in every position.',
   '그림이 필터를 지나 특징 지도가 되고, 가장 큰 값을 골라 판단하는 장면': 'A picture passing through a filter to become a feature map, with the biggest value picked to decide',
-  '필터를 미는 정거장': 'Stations for sliding a filter', '그림과 지도': 'Pictures and maps', '필터와 풀링': 'Filters and pooling', '파일': 'Data', '도구': 'Operation', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the picture moves to the right.',
-  '"다음 단계"를 눌러 그림을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the picture one station at a time. Prediction questions come up along the way.',
+  '필터를 미는 정거장': 'Stations for sliding a filter', '그림과 지도': 'Pictures and maps', '필터와 풀링': 'Filters and pooling', '파일': 'Data', '도구': 'Operation', 
+  '"다음 단계"를 누르면 그림이 오른쪽으로 움직입니다.': 'Press "Next step" and the picture moves to the right.',
+  '"다음 단계"를 눌러 그림을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the picture one station at a time. Prediction questions come up along the way.',
   '그림 5×5': 'Picture 5×5', '필터 3×3': 'Filter 3×3', '특징 지도': 'Feature map', '가장 큰 값': 'Max value', '판단': 'Decision',
   '그림 5×5 → 필터 3×3': 'Picture 5×5 → filter 3×3', '필터 3×3 → 특징 지도': 'Filter 3×3 → feature map', '특징 지도 → 가장 큰 값': 'Feature map → max value', '가장 큰 값 → 판단': 'Max value → decision', '특징 지도 → 특징 지도': 'Feature map → feature map',
   '필터 3×3 · 3×3': 'Filter 3×3 · 3×3', '필터 3×3 · −3, 6': 'Filter 3×3 · −3, 6', '특징 지도 · 가장 큰 값': 'Feature map · max value', '특징 지도 · 다음 층': 'Feature map · next layer',

@@ -8,10 +8,8 @@ window.lessonText = {
     'How do the browser, the server and the API share the work? In a small stationery-shop web app, follow listing products, the cart, a tampered order and payment as they travel between the three parts.',
   '브라우저 프론트엔드, API 서버, 데이터베이스, 결제 회사 API 사이로 요청과 응답이 오가는 장면': 'Requests and responses travelling between the browser front end, the API server, the database and the payment company\'s API',
   '웹 앱의 세 부분': 'The three parts of a web app',
-  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets travel.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
-  '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
-  '브라우저': 'Browser', 'API 서버': 'API server', '데이터베이스': 'Database', '결제 회사': 'Payment company',
+  
+  'API 서버': 'API server', '데이터베이스': 'Database', '결제 회사': 'Payment company',
   '프론트엔드': 'Front end', '백엔드': 'Back end', '데이터와 외부 서비스': 'Data and outside services',
   'API 서버 · 201 Created': 'API server · 201 Created', 'API 서버 · 201 · 2,400원': 'API server · 201 · ₩2,400', 'API 서버 · JSON': 'API server · JSON', 'API 서버 · 주문 저장': 'API server · Save order',
   'API 서버 → 결제 회사': 'API server → Payment company', 'API 서버 → 데이터베이스': 'API server → Database', 'API 서버 → 브라우저': 'API server → Browser',

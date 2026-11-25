@@ -9,9 +9,8 @@ window.lessonText = {
   '부르는 쪽 앞의 차단기': 'A breaker in front of the caller',
   '상품 페이지 서비스가 서킷 브레이커를 지나 추천 서비스를 부르는 장면': 'The product page service calling the recommendation service through a circuit breaker',
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the packets move.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
   // Stations
-  '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router',
+  '계층': 'Layer', 
   '사용자': 'User', '상품 페이지 서비스': 'Product page', '서킷 브레이커': 'Circuit breaker', '추천 서비스': 'Recommender',
   '사용자 → 상품 페이지 서비스': 'User → Product page',
   '상품 페이지 서비스 → 사용자': 'Product page → User', '상품 페이지 서비스 → 서킷 브레이커': 'Product page → Circuit breaker',

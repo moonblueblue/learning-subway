@@ -8,7 +8,7 @@ window.lessonText = {
   '잃어버린 패킷은 어떻게 다시 보내고 순서를 맞출까요? 내 컴퓨터와 서버 사이에 오가는 연결 인사, 조각, 확인을 하나씩 따라가 보세요.':
     'How is a lost packet resent and put back in order? Follow the handshake, segments and acknowledgements between my computer and a server one at a time.',
   '내 컴퓨터와 서버 사이 인터넷으로 TCP 조각과 확인이 오가는 장면': 'TCP segments and acknowledgements travelling across the internet between my computer and a server',
-  '내 컴퓨터와 서버 사이': 'Between my computer and the server', '내 컴퓨터': 'My computer', '서버': 'Server', '인터넷': 'Internet', '계층': 'Layers', '응용': 'Application', '응용 프로그램': 'Application', '라우터': 'Router', '전선': 'Wire', 'IP 주소': 'IP address',
+  '내 컴퓨터와 서버 사이': 'Between my computer and the server', '내 컴퓨터': 'My computer', '인터넷': 'Internet', '응용 프로그램': 'Application', 'IP 주소': 'IP address',
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets go back and forth.', '"다음 단계"를 눌러 패킷을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the packets one at a time. Prediction questions come up along the way.',
   // States and badges
   '연결 전': 'Not connected', '닫힘': 'Closed', '내 컴퓨터: 닫힘': 'My computer: closed', '서버: 기다리는 중(443번 포트)': 'Server: listening (port 443)', '연결됨': 'Connected', '양쪽: 연결됨': 'Both: connected', '기다림': 'Waiting',

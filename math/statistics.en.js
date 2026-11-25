@@ -2,7 +2,6 @@
 window.lessonText = {
   // Page
   '확률과 통계 · 레슨 8B.2': 'Probability and statistics · Lesson 8B.2', '확률과 통계': 'Probability and statistics',
-  '8장 심화 트랙 · 8B 인공지능 · 레슨 8B.2 · 실습': 'Chapter 8: Advanced tracks · 8B AI · Lesson 8B.2 · Practice',
   '평균과 중앙값, 드문 병 검사로 보는 조건부 확률, 표본의 크기와 치우침, 상관과 인과의 차이를 문제로 익혀 보세요.':
     'Learn through questions the mean and the median, conditional probability seen through a test for a rare disease, sample size and bias, and the difference between correlation and causation.',
   '불확실한 것을 어떻게 수로 다룰까요? 용돈, 병 검사, 동전, A/B 테스트 예로 데이터를 요약하고 확률로 판단하는 방법을 문제로 확인해 보세요.':

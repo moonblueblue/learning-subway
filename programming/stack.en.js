@@ -8,9 +8,7 @@ window.lessonText = {
   '함수를 부르고 돌아올 때 무엇이 쌓이고 사라질까요? 코드를 한 줄씩 실행하며 호출 스택을 지켜보세요.':
     'What piles up and disappears as a function is called and returns? Run the code line by line and watch the call stack.',
   '호출 스택': 'Call stack', '함수를 부를 때마다 층이 쌓이고 돌아올 때 사라지는 호출 스택': 'A call stack that gains a level with each call and loses it on return',
-  '"한 줄 실행"을 눌러 다음 줄을 실행해 보세요. 예측 문제가 나오면 먼저 답을 고릅니다.':
-    'Press "Run one line" to run the next line. When a prediction question appears, choose your answer first.',
-  '지금 실행 중인 층': 'Level running now', '돌려주는 값': 'Returned value', '호출': 'Call', '반환': 'Return', '스택': 'Stack',
+  '지금 실행 중인 층': 'Level running now', '돌려주는 값': 'Returned value', '호출': 'Call', '반환': 'Return', 
   '{#0}층': 'level {0}', '· 맨 위': '· top', '{0} 전달': '{0} passed down', '{0} 돌려주기': 'Return {0}', '{0} 부르기': 'Call {0}',
   '스택 넘침': 'Stack overflow', '스택 넘침 · RecursionError': 'Stack overflow · RecursionError', '스택이 넘쳤습니다': 'The stack overflowed',
   '스택이 넘쳐 멈췄습니다. 처음부터 다시 볼 수 있습니다.': 'The stack overflowed and stopped. You can watch it again from the start.',

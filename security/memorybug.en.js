@@ -1,15 +1,15 @@
 // English for 8C.3 Memory vulnerabilities. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
   // Page
-  '메모리 취약점 · 레슨 8C.3': 'Memory vulnerabilities · Lesson 8C.3', '8장 심화 트랙 · 8C 보안 · 레슨 8C.3': 'Chapter 8: Advanced tracks · 8C Security · Lesson 8C.3',
+  '메모리 취약점 · 레슨 8C.3': 'Memory vulnerabilities · Lesson 8C.3', 
   '길이를 확인하지 않은 복사가 8칸 버퍼를 넘어 is_admin과 돌아갈 주소를 덮어쓰는 과정, 카나리아와 길이 확인으로 막는 방법, 칸 수를 확인하는 언어에서 같은 입력이 오류로 끝나는 모습을 따라가 보세요.':
     'Follow a copy without a length check running past an 8-cell buffer and overwriting is_admin and the return address, how canaries and length checks stop it, and how the same input ends in an error in a language that checks cell counts.',
   '정해진 칸을 넘겨 쓰면 왜 위험할까요? 이름 9글자가 8칸 버퍼를 넘쳐 관리자 권한과 실행 흐름을 빼앗는 과정을 스택 위에서 따라가 보세요.':
     'Why is writing past the cells you were given dangerous? Follow on the stack how a 9-character name overflows an 8-cell buffer and takes over admin rights and the flow of execution.',
   '스택 위의 칸들': 'Cells on the stack', '입력이 복사 코드를 지나 버퍼와 그 뒤의 칸까지 쓰이고 CPU가 실행하는 장면': 'Input passing through copy code into a buffer and the cells after it, with the CPU running',
-  '입력': 'Input', '복사 코드': 'Copy code', '파일': 'Data', '도구': 'Operation', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the input moves to the right.',
-  '"다음 단계"를 눌러 입력을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the input one station at a time. Prediction questions come up along the way.',
+  '입력': 'Input', '복사 코드': 'Copy code', '파일': 'Data', '도구': 'Operation', 
+  '"다음 단계"를 누르면 입력이 오른쪽으로 움직입니다.': 'Press "Next step" and the input moves to the right.',
+  '"다음 단계"를 눌러 입력을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the input one station at a time. Prediction questions come up along the way.',
   '입력 → 복사 코드': 'Input → copy code', '복사 코드 → name[8]': 'Copy code → name[8]', 'name[8] → 돌아갈 주소': 'name[8] → return address', 'name[8] → 카나리아': 'name[8] → canary',
   '돌아갈 주소 → CPU': 'Return address → CPU', '카나리아 → CPU': 'Canary → CPU',
   '스택의 모습': 'The stack',

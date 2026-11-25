@@ -8,11 +8,9 @@ window.lessonText = {
   '자기 자신을 부르는 함수는 어떻게 끝날까요? 호출 스택이 내려갔다 다시 올라오는 모습을 따라가 보세요.':
     'How does a function that calls itself ever finish? Follow the call stack as it goes down and comes back up.',
   '재귀 호출로 같은 함수의 층이 쌓였다 사라지는 호출 스택': 'A call stack where levels of the same function pile up and disappear through recursive calls',
-  '"한 줄 실행"을 눌러 다음 줄을 실행해 보세요. 예측 문제가 나오면 먼저 답을 고릅니다.':
-    'Press "Run one line" to run the next line. When a prediction question appears, choose your answer first.',
   // Stack and readouts
   '호출 스택': 'Call stack', '지금 실행 중인 층': 'Level running now', '층 = 함수 하나의 작업 공간': 'Level = the workspace of one function call',
-  '돌려주는 값': 'Returned value', '호출': 'Call', '반환': 'Return', '스택': 'Stack', '없음': 'none', '· 맨 위': '· top', '맨 바깥': 'outermost',
+  '돌려주는 값': 'Returned value', '호출': 'Call', '반환': 'Return', '없음': 'none', '· 맨 위': '· top', '맨 바깥': 'outermost',
   '{#0}층': 'level {0}', '{#0}번': '{0}', '{0} {#1}번': '{0} {1} times', '· 부른 횟수': '· calls made', '· 맨 위 ': '· top ',
   '{0} 부르기': 'Call {0}', '{0} 돌려주기': 'Return {0}', '{#0} 반환': 'returns {0}', '{0} 호출': '{0} called',
   '스택 넘침 · RecursionError': 'Stack overflow · RecursionError', '스택이 넘쳤습니다': 'The stack overflowed',

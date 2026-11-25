@@ -11,7 +11,7 @@ window.lessonText = {
   '장면의 상자를 눌러도 됩니다 · 두 손가락으로 확대': 'You can also press the boxes in the scene · pinch to zoom',
   '닫힌 상자': 'Closed box', '열어 본 상자': 'Opened box', '찾은 상자': 'Found box', '버린 범위': 'Discarded range',
   '찾는 수': 'Target', '찾는 수 {0}': 'Target {0}', '상자 열기': 'Open a box', '새 문제': 'New problem',
-  '데이터': 'Data', '데이터 수': 'Data size', '하나씩 찾기': 'One by one', '반씩 줄이기': 'Halving',
+  '데이터 수': 'Data size', '하나씩 찾기': 'One by one', '반씩 줄이기': 'Halving',
   // Readouts and announcements
   '{#0}번 상자, 닫힘': 'Box {0}, closed', '{#0}번 상자, 제외됨, {1}': 'Box {0}, ruled out, {1}', '{#0}번 상자, {1}': 'Box {0}, {1}',
   '{0}, 아닙니다': '{0}, not it', '{#0}번 만에 찾았습니다': 'Found in {0} {0|try|tries}', '{#0}번 상자에서 찾았습니다': 'Found in box {0}',

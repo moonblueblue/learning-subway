@@ -1,13 +1,13 @@
 // English for 8C.5 Network defense. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
   // Page
-  '네트워크 방어 · 레슨 8C.5': 'Network defense · Lesson 8C.5', '8장 심화 트랙 · 8C 보안 · 레슨 8C.5': 'Chapter 8: Advanced tracks · 8C Security · Lesson 8C.5',
+  '네트워크 방어 · 레슨 8C.5': 'Network defense · Lesson 8C.5', 
   '방화벽 규칙으로 필요한 연결만 들여보내고, 웹 서버를 DMZ에 두어 뚫려도 번지지 않게 나누고, 비밀번호 대입과 포트 스캔을 탐지해 막고, 여러 겹의 방어가 한 공격을 어디서 멈추는지 따라가 보세요.':
     'Let in only the connections you need with firewall rules, put the web server in a DMZ so a breach does not spread, detect and block password guessing and port scans, and follow where layered defenses stop an attack.',
   '방화벽과 침입 탐지는 무엇을 어디서 막을까요? 문구점의 네트워크에서 인터넷, 방화벽, DMZ의 웹 서버, 안쪽의 DB와 관리 서버 사이를 오가는 연결을 보세요.':
     'What do firewalls and intrusion detection stop, and where? Watch the connections in the stationery shop\'s network between the internet, the firewall, the web server in the DMZ, and the DB and admin server inside.',
   '문구점의 네트워크': 'The shop\'s network', '인터넷에서 방화벽을 지나 DMZ의 웹 서버와 안쪽의 DB, 관리 서버로 연결이 오가는 장면': 'Connections passing from the internet through a firewall to a web server in the DMZ and to the DB and admin server inside',
-  '인터넷': 'Internet', '방화벽·탐지': 'Firewall and detection', '웹 서버 (DMZ)': 'Web (DMZ)', '내부': 'Internal', '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
+  '인터넷': 'Internet', '방화벽·탐지': 'Firewall and detection', '웹 서버 (DMZ)': 'Web (DMZ)', '내부': 'Internal', 
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the packets go back and forth.',
   '"다음 단계"를 눌러 연결을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the connections one at a time. Prediction questions come up along the way.',
   '방화벽': 'Firewall', '관리 서버 (내부)': 'Admin (internal)', 'DB (내부)': 'DB (internal)',

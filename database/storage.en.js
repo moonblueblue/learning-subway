@@ -2,18 +2,16 @@
 window.lessonText = {
   // Page
   '저장 엔진 · 레슨 8A.3': 'Storage engines · Lesson 8A.3',
-  '8장 심화 트랙 · 8A 시스템·인프라 · 레슨 8A.3': 'Chapter 8 advanced track · 8A Systems and infrastructure · Lesson 8A.3',
   'B-트리 엔진이 4KB 페이지를 제자리에서 고치는 방법과, LSM 트리 엔진이 쓰기를 메모리 표에 모았다가 정렬 파일로 한 번에 내려 쓰고, 새것부터 찾아 읽고, 뒤에서 파일을 합치는 방법을 비교해 보세요.':
     'Compare how a B-tree engine changes a 4KB page in place with how an LSM tree engine gathers writes in a memory table, writes them out at once as a sorted file, reads newest first, and merges files in the background.',
   '데이터베이스는 디스크에 데이터를 어떻게 적고 다시 찾을까요? 같은 쓰기와 읽기를 B-트리 엔진과 LSM 트리 엔진이 처리하는 길을 따라가 보세요.':
     'How does a database write data to disk and find it again? Follow the same write and read as a B-tree engine and an LSM tree engine handle them.',
   '요청이 저장 엔진을 거쳐 로그, 메모리 표, 디스크의 페이지나 정렬 파일로 가는 장면': 'A request passing through the storage engine to the log, the memory table, and a page or sorted files on disk',
   '저장 엔진 안의 정거장': 'Stations inside the storage engine',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the work moves to the right.',
-  '"다음 단계"를 눌러 요청을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the request one station at a time. Prediction questions come up along the way.',
+  '"다음 단계"를 누르면 요청이 오른쪽으로 움직입니다.': 'Press "Next step" and the work moves to the right.',
+  '"다음 단계"를 눌러 요청을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the request one station at a time. Prediction questions come up along the way.',
   // Stations and kinds
-  '파일': 'File', '도구': 'Tool', '저장장치': 'Storage', '메모리': 'Memory', '오류': 'Error',
-  '요청': 'Request', '저장 엔진': 'Storage engine', '로그': 'Log', '메모리 표': 'Memory table', '정렬 파일들': 'Sorted files', 'B-트리 페이지': 'B-tree page',
+  '저장 엔진': 'Storage engine', '로그': 'Log', '메모리 표': 'Memory table', '정렬 파일들': 'Sorted files', 'B-트리 페이지': 'B-tree page',
   '요청 → 저장 엔진': 'Request → Storage engine', '저장 엔진 → 로그': 'Storage engine → Log', '저장 엔진 → 메모리 표': 'Storage engine → Memory table',
   '저장 엔진 → 저장 엔진': 'Storage engine → Storage engine', '저장 엔진 → 정렬 파일들': 'Storage engine → Sorted files',
   'B-트리 페이지 → 메모리': 'B-tree page → Memory', '메모리 → B-트리 페이지': 'Memory → B-tree page',
@@ -22,8 +20,8 @@ window.lessonText = {
   '메모리 · 4KB 쓰기': 'Memory · write 4KB', '메모리 표 · 64MB 한 번에': 'Memory table · 64MB at once',
   // Labels and holds
   '4KB 읽기': 'Read 4KB', '4KB 쓰기': 'Write 4KB', '64MB 한 번에': '64MB at once', '64MB 가득': '64MB full', '64MB 가득 참': '64MB full',
-  '끝에 붙이기': 'Append', '끝에 1줄': '1 line at end', '1줄 추가': '1 line added', '거의 참': 'Nearly full', '비어 있음': 'Empty', '없음': 'Not here',
-  '쓰기': 'Write', '병합 중': 'Merging', '3키 → 2키': '3 keys → 2', '합치기': 'Merge', '파일 {#0}': 'File {0}', '파일 1, 2': 'Files 1, 2', '파일 2에서 38': '38 in file 2',
+  '끝에 붙이기': 'Append', '끝에 1줄': '1 line at end', '1줄 추가': '1 line added', '거의 참': 'Nearly full', '없음': 'Not here',
+  '병합 중': 'Merging', '3키 → 2키': '3 keys → 2', '합치기': 'Merge', '파일 {#0}': 'File {0}', '파일 1, 2': 'Files 1, 2', '파일 2에서 38': '38 in file 2',
   '페이지 {#0}': 'Page {0}', '페이지 317: id 1–40': 'Page 317: id 1–40', '페이지 317 고침': 'Page 317 changed', 'id 1 읽기': 'Read id 1', 'id 1 찾기': 'Find id 1', 'id 1 재고 38': 'id 1 stock 38', '재고 38': 'Stock 38',
   // Step 1
   '페이지 고치기': 'Changing pages', 'B-트리는 디스크의 페이지를 제자리에서 고친다': 'A B-tree changes pages on disk in place',

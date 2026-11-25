@@ -30,6 +30,13 @@
     '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.': 'You solved every problem in this step. Try anything you like.',
     // Station lessons (3.8, 5.3 …): code or a message carried from station to station.
     '정거장': 'Stations', '지금 코드의 모습': 'What the code looks like now', '끝까지 왔습니다': 'Reached the end', '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.': 'You got every prediction in this step right. You can also watch it again from the start.', '저장장치': 'Storage',
+    '파일': 'File', '도구': 'Tool', '오류': 'Error', '데이터': 'Data', '비어 있음': 'Empty', '스택': 'Stack', '큐': 'Queue', '쓰기': 'Write',
+    // Network station lessons (5.7 …, 7.x, 9.3): requests and packets between machines.
+    '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router', '브라우저': 'Browser', '서버': 'Server',
+    '요청': 'Request', '질의': 'Query', '부하': 'Load',
+    '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets travel.',
+    '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
+    '"한 줄 실행"을 눌러 다음 줄을 실행해 보세요. 예측 문제가 나오면 먼저 답을 고릅니다.': 'Press "Run one line" to run the next line. When a prediction question appears, choose your answer first.',
     '모션 감소 · 정적 경로': 'Reduced motion · still paths', '확대 후 드래그로 이동': 'Zoom in, then drag to move', '두 손가락으로 확대 · 확대 후 드래그': 'Pinch to zoom · drag after zooming',
     '모션 감소 · 직접 실행': 'Reduced motion · manual run', '모션 감소 · 직접 조작': 'Reduced motion · hands-on',
     '타임라인': 'Timeline', '타임라인 {0}': 'Timeline: {0}', '{#0}장': 'Ch. {0}', '{#0}개 레슨': '{0} {0|lesson|lessons}',
@@ -37,6 +44,8 @@
     '언어': 'Language', '한국어': '한국어',
     // Lesson page parts every lesson shares
     '{#0}장 {1} · 레슨 {#2}': 'Chapter {0}: {1} · Lesson {2}', '{0} · 레슨 {#1}': '{0} · Lesson {1}',
+    // Track lessons (chapter 8): "8장 심화 트랙 · 8B 인공지능 · 레슨 8B.1".
+    '{#0}장 {1} · {2} · 레슨 {3}': 'Chapter {0}: {1} · {2} · Lesson {3}', '{#0}장 {1} · {2} · 레슨 {3} · 실습': 'Chapter {0}: {1} · {2} · Lesson {3} · Practice',
     '{#0}단계. {1}': 'Step {0}. {1}', '이전 단계': 'Previous step', '다음 단계': 'Next step',
     '이전 및 다음 단계': 'Previous and next step', '장면 보기': 'Scene', '장면 확대': 'Zoom in on the scene',
     '장면 축소': 'Zoom out of the scene', '현재 배율': 'Current zoom', '범례': 'Legend', '다음 문제': 'Next problem',

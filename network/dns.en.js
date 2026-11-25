@@ -8,7 +8,7 @@ window.lessonText = {
     'How does the name in the address bar become an IP address? Follow the browser\'s question through the resolver and around several name servers until it comes back as an answer.',
   '브라우저, 리졸버, 루트 서버, .com 서버, 권한 서버 사이로 DNS 질문과 답이 오가는 장면': 'DNS questions and answers travelling between the browser, the resolver, the root server, the .com server and the authoritative server',
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets go back and forth.', '"다음 단계"를 눌러 패킷을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the packets one at a time. Prediction questions come up along the way.',
-  '브라우저': 'Browser', '리졸버': 'Resolver', '루트 서버': 'Root server', '.com 서버': '.com server', '권한 서버': 'Auth. server', '이름 서버': 'Name servers', '계층': 'Layers', '응용': 'Application', '라우터': 'Router', '전선': 'Wire',
+  '리졸버': 'Resolver', '루트 서버': 'Root server', '.com 서버': '.com server', '권한 서버': 'Auth. server', '이름 서버': 'Name servers', 
   '리졸버 캐시': 'Resolver cache', '리졸버가 아는 것': 'What the resolver knows', '지금 상황': 'Now', '진짜 답': 'The real answer', '질문': 'Question', '같은 질문': 'Same question', '새 주소': 'New address', '없음': 'None', '없는 이름': 'A name that does not exist',
   // Badges
   '기다리는 중': 'Waiting', '찾는 중': 'Looking up', '질문 받음': 'Question in', '주소 모름': 'Address unknown', '주소 답함': 'Answered address', '새 주소 답함': 'Answered new address', '답 캐시함': 'Answer cached', '새 답 캐시': 'New answer cached', '옛 답 캐시': 'Old answer cached', '답 만료됨': 'Answer expired',

@@ -589,7 +589,7 @@ function syncTask() {
     byId('try-result').textContent = '';
     byId('try-text').textContent = state.s >= lesson[state.index].stages.length
       ? (progress[state.index] >= asksCount() ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
-      : '"다음 단계"를 눌러 코드를를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.';
+      : '"다음 단계"를 눌러 코드를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.';
   }
 }
 function answer(choice) {

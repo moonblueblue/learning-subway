@@ -8,10 +8,8 @@ window.lessonText = {
     'How does a server trust who sent a request? Follow the stationery-shop web app\'s login, sessions, permission checks and one common attack between the browser, the server and the database.',
   '브라우저, 서버, 데이터베이스 사이로 로그인과 세션 쿠키, 권한 확인, 공격 입력이 오가는 장면': 'Login, session cookies, permission checks and attack input travelling between the browser, the server and the database',
   '로그인과 요청 확인': 'Login and request checks',
-  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets travel.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
-  '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
-  '브라우저': 'Browser', '서버': 'Server', '데이터베이스': 'Database',
+  
+  '데이터베이스': 'Database',
   '브라우저 → 서버': 'Browser → Server', '서버 → 브라우저': 'Server → Browser', '서버 → 데이터베이스': 'Server → Database', '데이터베이스 → 서버': 'Database → Server', '서버 → 서버': 'Server → Server',
   '서버 · 403': 'Server · 403', '서버 · 값으로 전달': 'Server · Pass as value', '서버 · 세션 찾기': 'Server · Find session', '데이터베이스 · $2b$12$Qx9…': 'Database · $2b$12$Qx9…',
   // Step 1

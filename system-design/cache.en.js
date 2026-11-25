@@ -4,7 +4,7 @@ window.lessonText = {
   '캐시 흐름 실험실': 'Cache flow lab',
   '브라우저에서 캐시 적중과 미스에 따른 요청 경로를 살펴보세요.': 'See in the browser how the request path changes with cache hits and misses.',
   '같은 읽기 요청이 캐시 유무와 적중 여부에 따라 어디로 가는지 살펴보세요.': 'See where the same read request goes depending on whether there is a cache and whether it hits.',
-  '캐싱 요청 경로': 'Caching request path', '요청 경로': 'Request path', '요청': 'Request', '응답 · 저장': 'Response · store',
+  '캐싱 요청 경로': 'Caching request path', '요청 경로': 'Request path', '응답 · 저장': 'Response · store',
   '클라이언트 → DB': 'Client → DB', '클라이언트 → 캐시': 'Client → Cache',
   '실선 요청이 DB까지 이동하고 점선 응답이 클라이언트로 돌아옵니다.': 'The solid request travels to the DB and the dotted response returns to the client.',
   // Step 1

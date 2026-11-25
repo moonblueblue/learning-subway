@@ -7,8 +7,8 @@ window.lessonText = {
   '실행 중인 프로그램은 무엇을 가지고 있을까요? 프로그램을 실행해 프로세스를 띄우고, 메모리 구역과 스레드를 살펴보세요.':
     'What does a running program hold? Run a program to start a process, and look at its memory areas and threads.',
   'RAM 위에 프로세스마다 코드, 데이터, 힙, 스택으로 나뉜 메모리 탑이 서 있는 장면': 'Memory towers standing on RAM, one per process, split into code, data, heap and stack',
-  'RAM 위의 프로세스': 'Processes on RAM', '코드': 'Code', '데이터': 'Data', '데이터 ✗': 'Data ✗', '힙': 'Heap', '스택': 'Stack', '빈 공간': 'Free space', '스레드': 'Threads', '함께 쓰는 메모리': 'Shared memory', '종료됨': 'Ended',
-  '조작': 'Controls', '메모장': 'Notepad', '메모장.exe': 'notepad.exe', '프로그램': 'Program', '{0} · PID {#1}': '{0} · PID {1}', '스레드 {#0}': 'Thread {0}',
+  'RAM 위의 프로세스': 'Processes on RAM', '코드': 'Code', '데이터 ✗': 'Data ✗', '힙': 'Heap', '빈 공간': 'Free space', '스레드': 'Threads', '함께 쓰는 메모리': 'Shared memory', '종료됨': 'Ended',
+  '조작': 'Controls', '메모장': 'Notepad', '메모장.exe': 'notepad.exe', '{0} · PID {#1}': '{0} · PID {1}', '스레드 {#0}': 'Thread {0}',
   // Buttons and readouts
   '메모장 실행': 'Run Notepad', '함수 호출': 'Call a function', '함수 반환': 'Return from a function', '새 값 만들기': 'Make a new value', '스레드 추가': 'Add a thread',
   'B에서 오류 내기': 'Cause an error in B', 'A의 스레드가 데이터 망가뜨리기': 'Have A\'s thread corrupt data',

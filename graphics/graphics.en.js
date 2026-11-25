@@ -7,8 +7,8 @@ window.lessonText = {
   '점, 선, 삼각형은 어떻게 화면의 픽셀이 될까요? 좌표가 GPU의 그리기 파이프라인을 지나 프레임 버퍼의 칸으로 바뀌는 과정을 한 정거장씩 옮겨 보세요.':
     'How do points, lines and triangles become pixels on screen? Move coordinates one station at a time through the GPU\'s drawing pipeline until they become cells in the frame buffer.',
   '좌표와 삼각형이 래스터화와 픽셀 색칠을 거쳐 프레임 버퍼와 화면에 켜지는 장면': 'Coordinates and triangles going through rasterization and pixel shading to light up in the frame buffer and on screen',
-  '그리기 파이프라인': 'Drawing pipeline', '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the shape moves to the right.', '"다음 단계"를 눌러 도형를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the shape one station at a time. Prediction questions come up along the way.',
-  '그릴 것': 'What to draw', '그리기 단계': 'Drawing stages', '그릴 것과 버퍼': 'What to draw and buffers', '파일': 'File', '도구': 'Tool', '오류': 'Error', '읽기': 'Read',
+  '그리기 파이프라인': 'Drawing pipeline', '"다음 단계"를 누르면 도형이 오른쪽으로 움직입니다.': 'Press "Next step" and the shape moves to the right.', '"다음 단계"를 눌러 도형을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the shape one station at a time. Prediction questions come up along the way.',
+  '그릴 것': 'What to draw', '그리기 단계': 'Drawing stages', '그릴 것과 버퍼': 'What to draw and buffers', '읽기': 'Read',
   '좌표': 'Coordinates', '래스터화': 'Rasterize', '프레임 버퍼': 'Frame buffer', '깊이 버퍼': 'Depth buffer', '꼭짓점 처리': 'Vertex stage', '픽셀 색칠': 'Pixel shading', '선': 'Line', '삼각형': 'Triangle',
   // Legs and badges
   '좌표 → 래스터화': 'Coordinates → rasterize', '래스터화 → 프레임 버퍼': 'Rasterize → frame buffer', '프레임 버퍼 → 화면': 'Frame buffer → screen', '꼭짓점 3개 → 꼭짓점 처리': '3 vertices → vertex stage', '꼭짓점 처리 → 래스터화': 'Vertex stage → rasterize', '래스터화 → 픽셀 색칠': 'Rasterize → pixel shading', '픽셀 색칠 → 프레임 버퍼': 'Pixel shading → frame buffer', '삼각형 2개 → 래스터화': '2 triangles → rasterize', '래스터화 → 깊이 버퍼': 'Rasterize → depth buffer', '깊이 버퍼 → 프레임 버퍼': 'Depth buffer → frame buffer',

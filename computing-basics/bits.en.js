@@ -6,9 +6,7 @@ window.lessonText = {
   '스위치 8개로 0부터 255까지 어떻게 셀까요? 스위치를 직접 켜고 끄며 살펴보세요.': 'How do eight switches count from 0 to 255? Turn them on and off to find out.',
   '스위치와 합계': 'Switches and sum',
   '스위치에서 합계로 값이 모이는 장면': 'Values flowing from the switches to the sum',
-  '장면의 스위치를 눌러도 됩니다 · 확대 후 드래그로 이동': 'You can also press the switches in the scene · zoom in, then drag to move',
-  '장면의 스위치를 눌러도 됩니다 · 두 손가락으로 확대': 'You can also press the switches in the scene · pinch to zoom',
-  '값이 흐르는 선': 'Line a value flows along', '켜짐 = 1': 'On = 1', '꺼짐 = 0': 'Off = 0',
+  
   '스위치 켜고 끄기': 'Turn switches on and off', '모두 끄기': 'All off', '1 더하기': 'Add 1', '이진수': 'Binary',
   // Scene
   '합계': 'Sum', '합계 · 최댓값': 'Sum · maximum', '자릿값': 'Place value',

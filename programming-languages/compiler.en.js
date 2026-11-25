@@ -2,7 +2,6 @@
 window.lessonText = {
   // Page
   '컴파일러 · 레슨 8A.1': 'Compilers · Lesson 8A.1',
-  '8장 심화 트랙 · 8A 시스템·인프라 · 레슨 8A.1': 'Chapter 8 Advanced tracks · 8A Systems and infrastructure · Lesson 8A.1',
   '소스 코드가 앞단에서 토큰, 구문 트리, 의미 분석을 거치고, 중간 표현(3주소 코드)으로 펼쳐지고, 상수 접기와 죽은 코드 제거로 짧아지고, 뒷단에서 레지스터를 골라 기계어가 되기까지를 따라가 보세요.':
     'Follow source code as the front end turns it into tokens, a syntax tree and a meaning check, it is spread out into an intermediate representation (three-address code), constant folding and dead code elimination shorten it, and the back end picks registers to make machine code.',
   '소스 코드는 어떤 단계를 거쳐 기계어가 될까요? 3.8에서 한 덩어리로 본 컴파일러를 열어, 앞단, 중간 표현, 최적화, 뒷단을 한 정거장씩 지나가 보세요.':
@@ -10,9 +9,8 @@ window.lessonText = {
   '소스 코드가 앞단, 중간 표현, 최적화, 뒷단을 거쳐 기계어가 되는 장면': 'Source code becoming machine code through the front end, intermediate representation, optimisation and back end',
   '컴파일러 안의 정거장': 'Stations inside the compiler', '컴파일러의 단계': 'Stages of the compiler', '코드와 중간 결과': 'Code and intermediate results',
   '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the code moves to the right.',
-  '"다음 단계"를 눌러 코드를를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the code one station at a time. Prediction questions come up along the way.',
+  '"다음 단계"를 눌러 코드를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the code one station at a time. Prediction questions come up along the way.',
   // Stations
-  '파일': 'File', '도구': 'Tool', '저장장치': 'Storage', '메모리': 'Memory',
   '소스 코드': 'Source code', '앞단 (렉서·파서)': 'Front end', '앞단': 'Front end', '구문 트리': 'Syntax tree', '의미 분석': 'Semantics',
   'IR 만들기': 'Make IR', '중간 표현 (IR)': 'IR', '중간 표현': 'Intermediate rep.', '최적화': 'Optimiser', '최적화된 IR': 'Optimised IR',
   '뒷단': 'Back end', '어셈블리': 'Assembly', '기계어': 'Machine code',
@@ -24,10 +22,10 @@ window.lessonText = {
   '뒷단 → 어셈블리': 'Back end → Assembly', '어셈블리 → 기계어': 'Assembly → Machine code',
   'IR 만들기 · 3주소 코드': 'Make IR · three-address code', '최적화 · 1줄': 'Optimiser · 1 line', '어셈블리 · 비트': 'Assembly · bits', '소스 코드 · int z = "hi" + 1': 'Source code · int z = "hi" + 1',
   // Labels, holds and work panel
-  '{#0}줄': '{0} {0|line|lines}', '4줄 → 1줄': '4 lines → 1', '2줄 지움': '2 lines removed', '노드 6개': '6 nodes', '명령 4개': '4 instructions', '{#0}바이트': '{0} {0|byte|bytes}',
+  '{#0}줄': '{0} {0|line|lines}', '4줄 → 1줄': '4 lines → 1', '2줄 지움': '2 lines removed', '노드 6개': '6 nodes', '명령 4개': '4 instructions', 
   '글자들': 'Characters', '트리': 'Tree', '검사': 'Check', '통과': 'Passed', '타입 오류': 'Type error', '트리 만듦': 'Tree built', '3주소 코드': 'Three-address code',
   '줄 줄이기': 'Fewer lines', '상수 접기': 'Constant folding', '복사 전파 · 죽은 코드 제거': 'Copy propagation · dead code elimination', '비트': 'Bits', 'A, B 사용': 'Uses A, B',
-  '오류': 'Error', '실행 중': 'Running', '레지스터 정하기': 'Choosing registers', '아래부터 펼치기': 'Spreading out from the bottom', '토큰과 트리': 'Tokens and tree',
+  '실행 중': 'Running', '레지스터 정하기': 'Choosing registers', '아래부터 펼치기': 'Spreading out from the bottom', '토큰과 트리': 'Tokens and tree',
   '소스 코드 (C 비슷한 언어)': 'Source code (a C-like language)', 'IR (쓰이지 않는 z가 하나 더 있음)': 'IR (with one more, unused z)', 'IR과 메모리 배치': 'IR and memory layout',
   '토큰: int x = 2 * 3 + y ;': 'Tokens: int x = 2 * 3 + y ;',
   '트리: 대입 x ← (더하기 (곱하기 2 3) y)': 'Tree: assign x ← (add (multiply 2 3) y)', '대입 x ← (더하기 (곱하기 2 3) y)': 'assign x ← (add (multiply 2 3) y)',

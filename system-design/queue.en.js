@@ -10,14 +10,12 @@ window.lessonText = {
   '주문 API가 메시지 큐에 쪽지를 넣고 일꾼이 꺼내 메일 서비스로 보내는 장면': 'The order API putting a message on a message queue, and a worker taking it off and sending it to the mail service',
   '사용자, 주문 API, 메시지 큐 뒤에 일꾼 둘이 위아래로 놓이고, 둘 다 메일 서비스로 이어집니다.': 'The user, the order API and the message queue, followed by two workers stacked top to bottom, both linked to the mail service.',
   '주문과 메일 사이': 'Between orders and mail',
-  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets travel.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
+  
   '사용자': 'User', 'API와 일꾼': 'API and workers', '메일 서비스': 'Mail service', '주문 API': 'Order API', '일꾼 1': 'Worker 1', '일꾼 2': 'Worker 2', '고장': 'Failure', '죽음': 'Dead',
-  '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
   '사용자 → 주문 API': 'User → Order API', '주문 API → 사용자': 'Order API → User', '주문 API → 메일 서비스': 'Order API → Mail service', '메일 서비스 → 주문 API': 'Mail service → Order API', '주문 API → 메시지 큐': 'Order API → Message queue',
   '메시지 큐 → 일꾼 1': 'Message queue → Worker 1', '메시지 큐 → 일꾼 2': 'Message queue → Worker 2', '일꾼 1 → 메일 서비스': 'Worker 1 → Mail service', '일꾼 2 → 메일 서비스': 'Worker 2 → Mail service', '일꾼 2 → 메시지 큐': 'Worker 2 → Message queue', '일꾼 2 → 일꾼 2': 'Worker 2 → Worker 2',
   '주문 API · 주문 완료': 'Order API · Order complete', '메시지 큐 · 100/초': 'Message queue · 100/s', '메일 서비스 · 보냄': 'Mail service · Sent', '일꾼 2 · 이미 보냈나?': 'Worker 2 · Already sent?',
-  '주문': 'Order', '메일': 'Mail', '큐': 'Queue', '확인': 'Ack', '보냄': 'Sent', '비어 있음': 'Empty', '저장함': 'Saved', '기다리는 중': 'Waiting', '걸리는 시간': 'Time taken',
+  '주문': 'Order', '메일': 'Mail', '확인': 'Ack', '보냄': 'Sent', '저장함': 'Saved', '기다리는 중': 'Waiting', '걸리는 시간': 'Time taken',
   '0.01초': '0.01 s', '0.05초': '0.05 s', '10초': '10 s', '100초': '100 s', '1,000초': '1,000 s', '1,000/초': '1,000/s', '100/초': '100/s', '200/초': '200/s', '약 3초': 'About 3 s',
   // Step 1
   '바로 부르기': 'Calling directly',

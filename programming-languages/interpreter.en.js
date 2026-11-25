@@ -9,7 +9,7 @@ window.lessonText = {
     'How is a line of code read and run? Inside an interpreter like Python\'s, move one line a station at a time through tokens, a syntax tree and calculation until it lands in the variable table.',
   '코드 한 줄이 렉서, 파서, 실행기를 거쳐 변수 표에 쓰이기까지의 장면': 'A line of code passing the lexer, parser and evaluator until it is written to the variable table',
   '인터프리터 안의 정거장': 'Stations inside the interpreter', '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the code moves to the right.', '"다음 단계"를 눌러 코드를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the code one station at a time. Prediction questions come up along the way.',
-  '코드': 'Code', '코드 한 줄': 'A line of code', '코드와 중간 결과': 'Code and in-between results', '인터프리터의 부품': 'Parts of the interpreter', '파일': 'File', '도구': 'Tool', '오류': 'Error', '통과': 'Passed',
+  '코드': 'Code', '코드 한 줄': 'A line of code', '코드와 중간 결과': 'Code and in-between results', '인터프리터의 부품': 'Parts of the interpreter', '통과': 'Passed',
   '렉서': 'Lexer', '파서': 'Parser', '실행기': 'Evaluator', '토큰': 'Tokens', '토큰 목록': 'Token list', '구문 트리': 'Syntax tree', '변수 표': 'Variable table', '나무': 'Tree', '글자들': 'Characters',
   // Legs and badges
   '코드 한 줄 → 렉서': 'Line of code → lexer', '렉서 → 토큰': 'Lexer → tokens', '토큰 → 파서': 'Tokens → parser', '파서 → 구문 트리': 'Parser → syntax tree', '구문 트리 → 실행기': 'Syntax tree → evaluator', '실행기 → 변수 표': 'Evaluator → variable table', '변수 표 → 실행기': 'Variable table → evaluator', '실행기 → 실행기': 'Evaluator → evaluator', '구문 트리 → 파서': 'Syntax tree → parser', '코드 → 파서': 'Code → parser',

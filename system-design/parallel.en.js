@@ -11,7 +11,6 @@ window.lessonText = {
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the work moves.',
   '"다음 단계"를 눌러 일을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the work one piece at a time. Prediction questions come up along the way.',
   '일꾼': 'Worker', '할 일과 결과': 'Work and result', '나누기와 모으기': 'Split and gather', '느린 일꾼': 'Slow worker',
-  '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
   '할 일': 'Work', '사진 9장': '9 photos', '나누기': 'Split', '모으기': 'Gather', '일꾼 1': 'Worker 1', '일꾼 2': 'Worker 2', '일꾼 3': 'Worker 3',
   '사진 9장 → 일꾼 1': '9 photos → Worker 1', '사진 9장 → 나누기': '9 photos → Split', '일꾼 1 → 결과': 'Worker 1 → Result', '일꾼 1 → 일꾼 1': 'Worker 1 → Worker 1',
   '나누기 → 일꾼 1': 'Split → Worker 1', '나누기 → 일꾼 2': 'Split → Worker 2', '나누기 → 일꾼 3': 'Split → Worker 3',

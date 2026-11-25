@@ -3,13 +3,12 @@
 window.lessonText = {
   // Page
   '공개키 암호 · 레슨 8C.1': 'Public-key cryptography · Lesson 8C.1', '공개키 암호': 'Public-key cryptography',
-  '8장 심화 트랙 · 8C 보안 · 레슨 8C.1': 'Chapter 8: Advanced tracks · 8C Security · Lesson 8C.1',
   '디피–헬만으로 공개된 수만 주고받아 같은 비밀 수 2를 만들고, 개인 키로 서명하고 공개 키로 확인하고, 바뀐 글의 서명이 맞지 않는 것을 보고, 중간자 공격이 서명 없는 키 교환을 어떻게 속이는지 따라가 보세요.':
     'Make the same secret number, 2, with Diffie–Hellman while exchanging only public numbers; sign with a private key and verify with a public key; see a changed message fail its signature; and follow how a man-in-the-middle attack fools a key exchange without signatures.',
   '처음 만난 상대와 어떻게 비밀을 나눌까요? 민지와 서준이 엿보는 이가 있는 인터넷에서 비밀 수를 만들고, 서명으로 서로를 확인하는 과정을 계산해 보세요.':
     'How do you share a secret with someone you have just met? Work out how Minji and Seojun make a secret number over an internet with an eavesdropper, and check each other with signatures.',
   '엿보는 이가 있는 길': 'A path with an eavesdropper', '민지와 서준 사이 인터넷으로 공개된 수, 서명, 가짜 수가 오가는 장면': 'Public numbers, signatures and fake numbers passing over the internet between Minji and Seojun',
-  '민지·서준': 'Minji and Seojun', '인터넷·공격자': 'Internet and attacker', '바꿔치기': 'Tampering', '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
+  '민지·서준': 'Minji and Seojun', '인터넷·공격자': 'Internet and attacker', '바꿔치기': 'Tampering', 
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the messages go back and forth.',
   '"다음 단계"를 눌러 메시지를 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the messages one at a time. Prediction questions come up along the way.',
   '민지': 'Minji', '서준': 'Seojun', '인터넷 (엿보는 이)': 'Internet (spy)', '중간의 공격자': 'Attacker',

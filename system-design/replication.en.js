@@ -8,15 +8,13 @@ window.lessonText = {
     'What do you gain and lose by sending reads to replicas? Watch writes, reads and the replication log travel between an app server, a primary DB and two replicas.',
   '앱 서버의 쓰기가 주 DB로, 읽기가 복제본으로 가고 주 DB가 복제본에 로그를 보내는 장면': 'The app server\'s writes going to the primary DB and reads to the replicas, with the primary sending its log to the replicas',
   '주 DB와 복제본': 'Primary DB and replicas',
-  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets travel.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
+  
   '앱 서버': 'App server', '주 DB': 'Primary DB', '복제본': 'Replica', '고장·옛 값': 'Failure, old value', '고장': 'Failure', '과부하': 'Overload',
-  '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
   '복제본 1': 'Replica 1', '복제본 2': 'Replica 2', '새 주 DB': 'New primary DB',
   '앱 서버 → 주 DB': 'App server → Primary DB', '앱 서버 → 복제본 1': 'App server → Replica 1', '앱 서버 → 복제본 2': 'App server → Replica 2',
   '주 DB → 복제본 1': 'Primary DB → Replica 1', '주 DB → 복제본 2': 'Primary DB → Replica 2', '복제본 1 → 복제본 1': 'Replica 1 → Replica 1', '복제본 1 → 복제본 2': 'Replica 1 → Replica 2',
   '앱 서버 · 읽기 900 + 쓰기 100': 'App server · 900 reads + 100 writes', '앱 서버 · 상품 보기 (읽기)': 'App server · View products (read)', '앱 서버 · 내 정보 보기': 'App server · View my profile', '복제본 1 · 승격': 'Replica 1 · Promote',
-  '1,000/초': '1,000/s', '처리 600/초': 'Handles 600/s', '부하': 'Load', '쓰기': 'Write', '연필왕': 'PencilKing', '지우개왕': 'EraserKing', '연필왕 (옛 값)': 'PencilKing (old value)', '승격': 'Promote',
+  '1,000/초': '1,000/s', '처리 600/초': 'Handles 600/s', '연필왕': 'PencilKing', '지우개왕': 'EraserKing', '연필왕 (옛 값)': 'PencilKing (old value)', '승격': 'Promote',
   // Step 1
   'DB 하나': 'One DB',
   '읽기와 쓰기가 모두 DB 한 대에 몰린다': 'Reads and writes all pile onto one DB',

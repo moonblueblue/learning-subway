@@ -2,7 +2,6 @@
 window.lessonText = {
   // Page
   '접근성 · 레슨 8D.6': 'Accessibility · Lesson 8D.6',
-  '8장 심화 트랙 · 8D 그래픽·인터랙션 · 레슨 8D.6 · 실습': 'Chapter 8 Advanced tracks · 8D Graphics and interaction · Lesson 8D.6 · Practice',
   '글자와 배경의 대비 비율을 기준(4.5:1)과 비교하고, 화면 읽기 프로그램이 알아듣는 HTML, 키보드만으로 쓸 수 있는 화면, 움직임·자막·글자 크기 같은 여러 선택지를 문제로 익혀 보세요.':
     'Learn through exercises how to compare text-to-background contrast with the standard (4.5:1), HTML that screen readers understand, screens usable with the keyboard alone, and options such as motion, captions and text size.',
   '보기 어렵거나 손이 불편한 사람도 쓸 수 있게 하려면 어떻게 할까요? 대비 숫자, HTML의 뜻, 키보드 조작, 여러 선택지를 실제 예로 판단해 보세요.':

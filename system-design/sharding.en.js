@@ -8,15 +8,13 @@ window.lessonText = {
     'When data is split across several DBs, where do requests go? Watch requests follow the rule that picks a shard by user number, going to one shard or sometimes to every shard.',
   '앱 서버의 요청이 사용자 번호에 따라 세 샤드 중 하나로, 또는 모두로 가는 장면': 'The app server\'s requests going to one of three shards by user number, or to all of them',
   '샤드 고르기': 'Pick shard',
-  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets travel.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
+  
   '앱 서버': 'App server', '샤드(DB)': 'Shard (DB)', '넘침·이사': 'Overflow, moving', '넘침': 'Overflow', '이사': 'Moving',
-  '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
   'DB 한 대': 'One DB', '샤드 0': 'Shard 0', '샤드 1': 'Shard 1', '샤드 2': 'Shard 2',
   '앱 서버 → DB 한 대': 'App server → One DB', '앱 서버 → 샤드 고르기': 'App server → Pick shard', '샤드 고르기 → 앱 서버': 'Pick shard → App server', '샤드 고르기 → 샤드 고르기': 'Pick shard → Pick shard',
   '샤드 고르기 → 샤드 0': 'Pick shard → Shard 0', '샤드 고르기 → 샤드 1': 'Pick shard → Shard 1', '샤드 고르기 → 샤드 2': 'Pick shard → Shard 2',
   '샤드 고르기 · 사용자 7': 'Pick shard · user 7', '샤드 고르기 · 사용자 11': 'Pick shard · user 11', '샤드 고르기 · 옮기기': 'Pick shard · move', '앱 서버 · 6TB, 3만/초': 'App server · 6 TB, 30k/s',
-  '사용자 7': 'User 7', '사용자 11': 'User 11', '규모': 'Scale', '질의': 'Query', '찾기': 'Find', '없음': 'None', '모두에게': 'To all', '어느 샤드?': 'Which shard?', '1개': '1', '3개 모두': 'All 3', '12명 모두': 'All 12', '3명 (1, 2, 12)': '3 (1, 2, 12)', '9명': '9', '1천만 명': '10 million users', '2TB 디스크': '2 TB disk', '쓰기 3만/초': '30k writes/s',
+  '사용자 7': 'User 7', '사용자 11': 'User 11', '규모': 'Scale', '찾기': 'Find', '없음': 'None', '모두에게': 'To all', '어느 샤드?': 'Which shard?', '1개': '1', '3개 모두': 'All 3', '12명 모두': 'All 12', '3명 (1, 2, 12)': '3 (1, 2, 12)', '9명': '9', '1천만 명': '10 million users', '2TB 디스크': '2 TB disk', '쓰기 3만/초': '30k writes/s',
   // Step 1
   '한 대에 안 들어가면': 'When it does not fit in one',
   '데이터와 쓰기가 DB 한 대를 넘친다': 'Data and writes overflow one DB',

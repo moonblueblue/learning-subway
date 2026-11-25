@@ -2,15 +2,14 @@
 window.lessonText = {
   // Page
   '빛과 그림자 · 레슨 8D.3': 'Light and shadow · Lesson 8D.3',
-  '8장 심화 트랙 · 8D 그래픽·인터랙션 · 레슨 8D.3': 'Chapter 8 Advanced tracks · 8D Graphics and interaction · Lesson 8D.3',
   '법선과 빛 방향의 내적으로 확산광을, 거울 방향과의 각도를 거듭제곱해 반짝임을 구하고, 바탕색과 주변광으로 픽셀의 최종 색을 합치고, 빛에서 본 깊이와 비교해 그림자를 정하는 과정을 계산해 보세요.':
     'Work out diffuse light from the dot product of the normal and the light direction, the highlight from a power of the angle to the mirror direction, the pixel\'s final color from the base color and ambient light, and the shadow by comparing with the depth seen from the light.',
   '표면의 밝기는 어떻게 계산할까요? 빨간 공의 한 점과 바닥의 한 점이 빛을 받아 최종 색이 되는 과정을 직접 계산해 보세요.':
     'How is a surface\'s brightness calculated? Work out yourself how a point on a red ball and a point on the floor take in light and become a final color.',
   '표면의 점이 법선과 빛 방향을 거쳐 확산광, 반짝임, 최종 색으로 계산되는 장면': 'A point on a surface worked out through the normal and light direction into diffuse light, highlight and final color',
-  '한 점의 색 계산': 'Coloring one point', '점과 색': 'Point and color', '빛 계산': 'Lighting', '파일': 'File', '도구': 'Tool', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next stage" and the values move to the right.',
-  '"다음 단계"를 눌러 빛을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the light one station at a time. Prediction questions come up along the way.',
+  '한 점의 색 계산': 'Coloring one point', '점과 색': 'Point and color', '빛 계산': 'Lighting', 
+  '"다음 단계"를 누르면 빛이 오른쪽으로 움직입니다.': 'Press "Next step" and the values move to the right.',
+  '"다음 단계"를 눌러 빛을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the light one station at a time. Prediction questions come up along the way.',
   // Stations
   '표면의 점': 'Surface point', '법선과 빛': 'Normal, light', '확산광': 'Diffuse', '반짝임': 'Highlight', '최종 색': 'Final color',
   '빛의 자리': 'Light\'s view', '그림자 지도': 'Shadow map', '바닥의 점': 'Floor point', '거리 비교': 'Compare',

@@ -4,15 +4,14 @@
 window.lessonText = {
   // Page
   '대규모 언어 모델 · 레슨 8B.6': 'Large language models · Lesson 8B.6',
-  '8장 심화 트랙 · 8B 인공지능 · 레슨 8B.6': 'Chapter 8: Advanced tracks · 8B AI · Lesson 8B.6',
   '글을 토큰으로 나눠 트랜스포머를 지나 다음 토큰의 확률을 구하고, 고른 토큰을 붙여 되풀이하며 문장을 만들고, 온도로 뽑기를 조절하고, 사전 학습과 지시 학습으로 대화하는 조수가 되기까지와 환각을 따라가 보세요.':
     'Split text into tokens, pass them through a transformer to get next-token probabilities, build a sentence by appending the chosen token and repeating, tune the draw with temperature, and follow how pre-training and instruction tuning make a chat assistant, and where hallucination comes from.',
   '다음 단어 맞히기가 어떻게 대화가 될까요? "오늘 날씨가 정말" 다음 토큰을 고르는 데서 시작해, 한 토큰씩 이어 쓰는 언어 모델의 고리를 따라가 보세요.':
     'How does guessing the next word become a conversation? Start by choosing the token after "The weather is really" and follow the loop of a language model writing one token at a time.',
   '다음 토큰 정거장': 'Next-token stations', '글이 토큰으로 나뉘어 트랜스포머를 지나 다음 토큰 확률이 되고, 고른 토큰이 다시 글에 붙는 장면': 'Text split into tokens passing through a transformer into next-token probabilities, with the chosen token joining the text again',
-  '글과 확률': 'Text and probabilities', '토큰 나누기와 고르기': 'Tokenizing and choosing', '파일': 'Data', '도구': 'Operation', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the text moves to the right.',
-  '"다음 단계"를 눌러 글을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the text one station at a time. Prediction questions come up along the way.',
+  '글과 확률': 'Text and probabilities', '토큰 나누기와 고르기': 'Tokenizing and choosing', '파일': 'Data', '도구': 'Operation', 
+  '"다음 단계"를 누르면 글이 오른쪽으로 움직입니다.': 'Press "Next step" and the text moves to the right.',
+  '"다음 단계"를 눌러 글을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the text one station at a time. Prediction questions come up along the way.',
   '지금까지의 글': 'Text so far', '토큰 나누기': 'Tokenize', '트랜스포머': 'Transformer', '다음 토큰 확률': 'Next token', '고르기': 'Choose',
   '지금까지의 글 → 토큰 나누기': 'Text so far → tokenize', '토큰 나누기 → 트랜스포머': 'Tokenize → transformer', '트랜스포머 → 다음 토큰 확률': 'Transformer → next token',
   '다음 토큰 확률 → 고르기': 'Next token → choose', '고르기 → 지금까지의 글': 'Choose → text so far', '지금까지의 글 → 트랜스포머': 'Text so far → transformer',

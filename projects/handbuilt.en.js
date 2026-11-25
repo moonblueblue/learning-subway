@@ -7,9 +7,9 @@ window.lessonText = {
   '직접 쓴 프로그램을 게이트로 만든 CPU 위에서 돌려 볼까요? 반복문 하나가 명령, 비트, RAM, CPU, ALU를 지나 답이 되는 과정을 처음부터 끝까지 계산해 보세요.':
     'Shall we run a program you wrote on a CPU built from gates? Work out from start to finish how one loop passes through instructions, bits, RAM, the CPU and the ALU to become an answer.',
   '내 프로그램이 어셈블러를 지나 RAM에 올라가고 CPU와 ALU가 실행하는 장면': 'My program passing through the assembler, loaded into RAM and run by the CPU and ALU',
-  '내 프로그램이 도는 길': 'The path my program runs', '프로그램과 결과': 'Program and result', '어셈블러와 ALU': 'Assembler and ALU', '파일': 'File', '도구': 'Tool', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next stage" and the code moves to the right.',
-  '"다음 단계"를 눌러 프로그램을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the program one station at a time. Prediction questions come up along the way.',
+  '내 프로그램이 도는 길': 'The path my program runs', '프로그램과 결과': 'Program and result', '어셈블러와 ALU': 'Assembler and ALU', 
+  '"다음 단계"를 누르면 프로그램이 오른쪽으로 움직입니다.': 'Press "Next step" and the code moves to the right.',
+  '"다음 단계"를 눌러 프로그램을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the program one station at a time. Prediction questions come up along the way.',
   // Stations
   '내 프로그램': 'My program', '어셈블러': 'Assembler', 'RAM 16칸': 'RAM, 16 cells', 'ALU (게이트)': 'ALU (gates)',
   '내 프로그램 → 내 프로그램': 'My program → my program', '내 프로그램 → 어셈블러': 'My program → assembler', '내 프로그램 · 반복': 'My program · loop', '어셈블러 → RAM 16칸': 'Assembler → RAM', '어셈블러 · 올리기': 'Assembler · load',

@@ -8,7 +8,7 @@ window.lessonText = {
     'Does what went in first come out first, or what went in last? Put values in and take them out to compare the order of the two structures.',
   '값이 스택 탑에 쌓이고 큐 줄에 서는 장면': 'Values piling on a stack tower and standing in a queue line',
   '쌓는 탑과 서는 줄': 'A tower that piles and a line that queues', '넣기와 꺼내기': 'Put in and take out', '비우기': 'Empty', '모두 비웠습니다.': 'Everything emptied.',
-  '버튼을 눌러 넣고 꺼내 보세요.': 'Press the buttons to put in and take out.',   '스택': 'Stack', '큐': 'Queue', '스택에 든 값': 'Values in the stack', '큐에 든 값': 'Values in the queue', '스택에서 꺼낸 순서': 'Order out of the stack', '큐에서 꺼낸 순서': 'Order out of the queue',
+  '버튼을 눌러 넣고 꺼내 보세요.': 'Press the buttons to put in and take out.',   '스택에 든 값': 'Values in the stack', '큐에 든 값': 'Values in the queue', '스택에서 꺼낸 순서': 'Order out of the stack', '큐에서 꺼낸 순서': 'Order out of the queue',
   '↓ 넣기 · ↑ 꺼내기 (맨 위만)': '↓ put in · ↑ take out (top only)', '앞 · 나감': 'Front · out', '뒤 · 들어옴': 'Back · in',
   '넣기 (push)': 'Push', '꺼내기 (pop)': 'Pop', '넣기 (enqueue)': 'Enqueue', '꺼내기 (dequeue)': 'Dequeue', '도착 (둘 다 넣기)': 'Arrive (put in both)', '처리 (둘 다 꺼내기)': 'Handle (take from both)',
   // Readouts

@@ -4,15 +4,14 @@
 window.lessonText = {
   // Page
   '어텐션과 트랜스포머 · 레슨 8B.5': 'Attention and transformers · Lesson 8B.5',
-  '8장 심화 트랙 · 8B 인공지능 · 레슨 8B.5': 'Chapter 8: Advanced tracks · 8B AI · Lesson 8B.5',
   '문장에서 어떤 단어에 주목할지 어떻게 정할까요? "그것"이 무엇을 가리키는지 어텐션으로 직접 계산해 보세요.':
     'How does a model decide which words in a sentence to pay attention to? Work out with attention what "it" refers to.',
   '"고양이가 생선을 먹었다. 그것은 배가 불렀다"에서 "그것"이 고양이를 가리킨다는 것을, 단어 벡터, 질문과 열쇠의 내적 점수, 소프트맥스 비율, 값 섞기로 계산하고, 트랜스포머가 이를 모든 단어에 동시에 하는 방법을 따라가 보세요.':
     'In "The cat ate the fish. It was full", work out that "it" refers to the cat with word vectors, dot-product scores of queries and keys, softmax ratios and mixing values, and follow how a transformer does this for every word at once.',
   '문장의 단어들이 벡터가 되어 점수와 비율을 거쳐 섞인 결과가 되는 장면': 'The words of a sentence becoming vectors and going through scores and ratios into a mixed result',
-  '어텐션 정거장': 'Attention stations', '단어와 결과': 'Words and results', '변환과 비율': 'Transforms and ratios', '파일': 'Data', '도구': 'Operation', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the words move to the right.',
-  '"다음 단계"를 눌러 단어를를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the words one station at a time. Prediction questions come up along the way.',
+  '어텐션 정거장': 'Attention stations', '단어와 결과': 'Words and results', '변환과 비율': 'Transforms and ratios', '파일': 'Data', '도구': 'Operation', 
+  '"다음 단계"를 누르면 단어가 오른쪽으로 움직입니다.': 'Press "Next step" and the words move to the right.',
+  '"다음 단계"를 눌러 단어를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the words one station at a time. Prediction questions come up along the way.',
   '단어들': 'Words', '벡터화': 'Embed', '점수': 'Scores', '비율': 'Ratios', '섞은 결과': 'Mix',
   '단어들 → 벡터화': 'Words → embed', '벡터화 → 점수': 'Embed → scores', '점수 → 비율': 'Scores → ratios', '비율 → 섞은 결과': 'Ratios → mix', '섞은 결과 → 단어들': 'Mix → words',
   '벡터화 · q · 열쇠': 'Embed · q · key', '벡터화 · 그것': 'Embed · it', '비율 · 값 섞기': 'Ratios · mix values', '점수 · 머리 4개': 'Scores · 4 heads',

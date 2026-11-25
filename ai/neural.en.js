@@ -11,7 +11,7 @@ window.lessonText = {
   '"다음 단계"를 눌러 그림을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the picture one stage at a time. Prediction questions come up along the way.',
   '입력 그림': 'Input picture', '숨은 뉴런': 'Hidden neuron', '틀린 답': 'Wrong answer',
   // Stations
-  '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router',
+  '계층': 'Layer', 
   '3×3 그림': '3×3 picture', '뉴런 1 (세로 찾기)': 'Neuron 1 (finds vertical)', '뉴런 2 (가로 찾기)': 'Neuron 2 (finds horizontal)', '출력': 'Output',
   '3×3 그림 → 뉴런 1 (세로 찾기)': '3×3 picture → Neuron 1 (finds vertical)', '3×3 그림 → 뉴런 2 (가로 찾기)': '3×3 picture → Neuron 2 (finds horizontal)',
   '뉴런 1 (세로 찾기) → 뉴런 1 (세로 찾기)': 'Neuron 1 (finds vertical) → Neuron 1 (finds vertical)', '뉴런 1 (세로 찾기) → 출력': 'Neuron 1 (finds vertical) → Output',

@@ -8,8 +8,8 @@ window.lessonText = {
   '계좌 이체 도중 전원이 꺼지면 돈은 어떻게 될까요? 같은 3만 원 이체를 트랜잭션 없이, 트랜잭션으로, 그리고 정전이 끼어든 상황에서 따라가 보세요.':
     'What happens to the money if power fails in the middle of a bank transfer? Follow the same 30,000 won transfer without a transaction, with one, and with a power cut in between.',
   '이체 요청이 데이터베이스 엔진에서 로그와 두 계좌로 가는 장면': 'A transfer request going from the database engine to the log and two accounts',
-  '이체가 지나가는 정거장': 'Stations the transfer passes through', '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the code moves to the right.', '"다음 단계"를 눌러 이체를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the transfer one station at a time. Prediction questions come up along the way.',
-  '데이터베이스 엔진': 'Database engine', '요청과 로그': 'Request and log', '파일': 'File', '도구': 'Tool', '오류': 'Error', '요청': 'Request', '이체 요청': 'Transfer request', 'DB 엔진': 'DB engine', '로그 (디스크)': 'Log (disk)', '민지 계좌': 'Minji acct', '서준 계좌': 'Seojun acct', '비어 있음': 'Empty',
+  '이체가 지나가는 정거장': 'Stations the transfer passes through', '"다음 단계"를 누르면 이체가 오른쪽으로 움직입니다.': 'Press "Next step" and the code moves to the right.', '"다음 단계"를 눌러 이체를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the transfer one station at a time. Prediction questions come up along the way.',
+  '데이터베이스 엔진': 'Database engine', '요청과 로그': 'Request and log', '이체 요청': 'Transfer request', 'DB 엔진': 'DB engine', '로그 (디스크)': 'Log (disk)', '민지 계좌': 'Minji acct', '서준 계좌': 'Seojun acct', 
   // Legs and badges
   '이체 요청 → DB 엔진': 'Transfer request → DB engine', 'DB 엔진 → 민지 계좌': 'DB engine → Minji\'s account', 'DB 엔진 → 서준 계좌': 'DB engine → Seojun\'s account', 'DB 엔진 → DB 엔진': 'DB engine → DB engine', 'DB 엔진 → 로그 (디스크)': 'DB engine → log (disk)', '로그 (디스크) → 민지 계좌': 'Log (disk) → Minji\'s account', '로그 (디스크) → 서준 계좌': 'Log (disk) → Seojun\'s account', 'DB 엔진 → 이체 요청': 'DB engine → transfer request',
   'DB 엔진 · COMMIT': 'DB engine · COMMIT', 'DB 엔진 · 재시작': 'DB engine · restart', '로그 (디스크) · 되돌리기': 'Log (disk) · undo', '로그 (디스크) · 다시 실행': 'Log (disk) · redo', '재시작 · 되돌리기': 'Restart · undo', '재시작 · 다시 실행': 'Restart · redo',

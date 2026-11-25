@@ -2,17 +2,16 @@
 window.lessonText = {
   // Page
   '변환과 카메라 · 레슨 8D.2': 'Transforms and cameras · Lesson 8D.2',
-  '8장 심화 트랙 · 8D 그래픽·인터랙션 · 레슨 8D.2': 'Chapter 8 Advanced tracks · 8D Graphics and interaction · Lesson 8D.2',
   '점 (1, 0)을 늘리고 돌리고 옮겨 보고, 순서가 바뀌면 결과가 달라지는 까닭, 동차 좌표로 변환 여러 개를 행렬 하나로 묶는 방법, 카메라 이동이 세상을 반대로 옮기는 뷰 행렬이라는 것을 따라가 보세요.':
     'Scale, rotate and move the point (1, 0), then follow why changing the order changes the result, how homogeneous coordinates bundle several transforms into one matrix, and how moving the camera is a view matrix that moves the world the opposite way.',
   '물체를 움직이고 바라보는 일을 어떻게 수로 나타낼까요? 점 하나에 크기, 회전, 이동 변환을 걸고 카메라를 움직여 보며 직접 계산해 보세요.':
     'How do you write moving and looking at objects as numbers? Apply scale, rotation and translation to one point, move the camera, and do the math yourself.',
   '점이 크기, 회전, 이동 변환을 차례로 지나 결과가 되는 장면': 'A point passing through scale, rotation and translation in turn to become the result',
-  '점과 결과': 'Point and result', '변환 정거장': 'Transform stations', '파일': 'File', '도구': 'Tool', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next stage" and the point moves to the right.',
-  '"다음 단계"를 눌러 점을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the point one station at a time. Prediction questions come up along the way.',
+  '점과 결과': 'Point and result', '변환 정거장': 'Transform stations', 
+  '"다음 단계"를 누르면 점이 오른쪽으로 움직입니다.': 'Press "Next step" and the point moves to the right.',
+  '"다음 단계"를 눌러 점을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the point one station at a time. Prediction questions come up along the way.',
   // Stations
-  '점': 'Point', '크기': 'Scale', '회전': 'Rotate', '이동': 'Move', '결과': 'Result',
+  '점': 'Point', '크기': 'Scale', '회전': 'Rotate', '이동': 'Move', 
   '변환': 'Transform', '카메라': 'Camera',
   '점 → 크기': 'Point → scale', '크기 → 회전': 'Scale → rotate', '회전 → 이동': 'Rotate → move', '이동 → 결과': 'Move → result', '점 → 회전': 'Point → rotate', '점 → 이동': 'Point → move',
   '이동 · (3, 3)': 'Move · (3, 3)', '이동 · B 결과': 'Move · B result', '점 (x, y, 1) → 합친 행렬 M': '(x, y, 1) → matrix M', '합친 행렬 M → 결과': 'Matrix M → result', '합친 행렬 M · (3, 3, 1)': 'Matrix M · (3, 3, 1)',

@@ -2,7 +2,6 @@
 window.lessonText = {
   // Page
   '사용성 평가 · 레슨 8D.5': 'Usability evaluation · Lesson 8D.5',
-  '8장 심화 트랙 · 8D 그래픽·인터랙션 · 레슨 8D.5 · 실습': 'Chapter 8 Advanced tracks · 8D Graphics and interaction · Lesson 8D.5 · Practice',
   '사용자에게 과제를 시키고 지켜보는 방법, 성공률·시간·실수를 세는 방법, 관찰한 문제를 심각도로 고르는 방법, 고친 뒤 다시 재고 A/B 테스트로 확인하는 방법을 문제로 익혀 보세요.':
     'Learn through exercises how to give users a task and watch, how to count success rate, time and mistakes, how to sort observed problems by severity, and how to measure again after a fix and check with an A/B test.',
   '좋은 인터페이스인지 사람을 통해 어떻게 확인할까요? 문구점 주문 화면을 사용자 5명에게 시켜 본 결과로 평가하고 고치는 과정을 문제로 확인해 보세요.':

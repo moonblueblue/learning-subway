@@ -2,15 +2,14 @@
 window.lessonText = {
   // Page
   '애니메이션과 물리 · 레슨 8D.4': 'Animation and physics · Lesson 8D.4',
-  '8장 심화 트랙 · 8D 그래픽·인터랙션 · 레슨 8D.4': 'Chapter 8 Advanced tracks · 8D Graphics and interaction · Lesson 8D.4',
   '키프레임 사이를 직선과 이징 곡선으로 채우고, 떨어지는 공을 속도와 위치를 조금씩 고치는 오일러 방법으로 계산하고, 바닥에 부딪혀 튀기며 생기는 간격 오차를 보고, 고정된 물리 간격으로 어디서나 같은 결과를 얻는 방법을 따라가 보세요.':
     'Fill the gap between keyframes with a straight line and an easing curve, work out a falling ball with Euler\'s method of nudging velocity and position, see the step error when it bounces off the floor, and follow how a fixed physics step gives the same result everywhere.',
   '움직임을 자연스럽게 보이게 하려면 무엇을 계산할까요? 키프레임 보간과 떨어지는 공의 물리를 한 걸음씩 계산해 보세요.':
     'What do you calculate to make motion look natural? Work out keyframe interpolation and the physics of a falling ball one step at a time.',
   '상태가 속도와 위치 고치기, 부딪힘 검사를 거쳐 화면에 그려지는 장면': 'The state passing through velocity and position updates and a collision check to be drawn on screen',
-  '한 프레임의 움직임 계산': 'One frame of motion', '상태와 키프레임': 'State and keyframes', '계산 단계': 'Calculation stage', '파일': 'File', '도구': 'Tool', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next stage" and the values move to the right.',
-  '"다음 단계"를 눌러 움직임을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the motion one station at a time. Prediction questions come up along the way.',
+  '한 프레임의 움직임 계산': 'One frame of motion', '상태와 키프레임': 'State and keyframes', '계산 단계': 'Calculation stage', 
+  '"다음 단계"를 누르면 움직임이 오른쪽으로 움직입니다.': 'Press "Next step" and the values move to the right.',
+  '"다음 단계"를 눌러 움직임을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the motion one station at a time. Prediction questions come up along the way.',
   // Stations
   '키프레임': 'Keyframes', '보간': 'Interpolate', '지금 상태': 'State', '속도 고치기': 'Velocity', '위치 고치기': 'Position', '부딪힘 검사': 'Collision',
   '키프레임 → 보간': 'Keyframes → interpolate', '보간 → 화면': 'Interpolate → screen', '키프레임 · 이징': 'Keyframes · easing',

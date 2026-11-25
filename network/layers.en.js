@@ -8,11 +8,11 @@ window.lessonText = {
   '데이터는 왜 여러 겹의 봉투에 싸여 이동할까요? 메시지가 계층을 내려가며 봉투를 쓰고, 받는 쪽에서 벗겨지는 과정을 따라가 보세요.':
     'Why does data travel wrapped in several layers of envelopes? Follow a message as it puts on envelopes going down the layers and has them removed at the receiving end.',
   '메시지가 응용, 전송, 네트워크, 링크, 물리 계층을 지나며 봉투가 한 겹씩 씌워지거나 벗겨지는 장면': 'A message passing the application, transport, network, link and physical layers, gaining or losing one envelope at each',
-  '계층과 봉투': 'Layers and envelopes', '받는 프로그램': 'Receiving program', '계층': 'Layers', '응용 프로그램': 'Application', '라우터': 'Router', '전선': 'Wire',
-  '"다음 단계"를 누르면 메시지가 오른쪽으로 움직입니다.': 'Press "Next stage" and the message moves to the right.',
-  '"다음 단계"를 눌러 메시지를 한 계층씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the message one layer at a time. Prediction questions come up along the way.',
+  '계층과 봉투': 'Layers and envelopes', '받는 프로그램': 'Receiving program', '응용 프로그램': 'Application', 
+  '"다음 단계"를 누르면 메시지가 오른쪽으로 움직입니다.': 'Press "Next step" and the message moves to the right.',
+  '"다음 단계"를 눌러 메시지를 한 계층씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the message one layer at a time. Prediction questions come up along the way.',
   // Layers, stations and badges
-  '응용': 'Application', '전송': 'Transport', '물리 계층': 'Physical layer',
+  '전송': 'Transport', '물리 계층': 'Physical layer',
   '응용 · HTTP': 'App · HTTP', '전송 · TCP': 'Transport · TCP', '네트워크 · IP': 'Network · IP', '링크 · 와이파이': 'Link · Wi-Fi', '링크 · 5G': 'Link · 5G', '링크 · 이더넷': 'Link · Ethernet',
   '물리 · 전파': 'Phys · radio', '물리 · 광케이블': 'Phys · fibre', '응용 · 웹 서버': 'App · server',
   '내 기기 링크': 'My device\'s link', '라우터 링크': 'Router link', '라우터 IP': 'Router IP', '라우터 링크(새로)': 'Router link (new)', '서버 링크': 'Server link',

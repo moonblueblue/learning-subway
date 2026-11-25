@@ -12,7 +12,7 @@ window.lessonText = {
   '스레드를 한 걸음씩 진행해 보세요.': 'Move the threads one step at a time.', '실행 기록 · 걸음 순서대로': 'Run log · in step order', '스레드를 한 걸음씩 진행하면 여기에 쌓입니다': 'Steps pile up here as you move the threads',
   // Steps and readouts
   '읽기: 레지스터 ← count': 'Read: register ← count', '더하기: 레지스터 + 1': 'Add: register + 1', '쓰기: count ← 레지스터': 'Write: count ← register',
-  '읽기': 'Read', '더하기': 'Add', '쓰기': 'Write', '잠금 얻기': 'Get lock', '잠금 풀기': 'Release lock', '잠금 얻음': 'Got the lock', '잠금 풂': 'Released the lock', '끝': 'Done', '다음: {0}': 'Next: {0}',
+  '읽기': 'Read', '더하기': 'Add', '잠금 얻기': 'Get lock', '잠금 풀기': 'Release lock', '잠금 얻음': 'Got the lock', '잠금 풂': 'Released the lock', '끝': 'Done', '다음: {0}': 'Next: {0}',
   '스레드 {#0}': 'Thread {0}', '🔒 스레드 {#0}': '🔒 Thread {0}', '🔓 잠금 열림': '🔓 Lock open', '레지스터 {0}': 'Register {0}', 'count = {#0}': 'count = {0}',
   '결과 count = {#0} ✓ 바름': 'Result count = {0} ✓ right', '결과 count = {#0} ✗ 더한 값 하나를 잃음': 'Result count = {0} ✗ one addition lost',
   '잠금 기다림 (스레드 {#0}가 가짐)': 'Waiting for the lock (thread {0} has it)',

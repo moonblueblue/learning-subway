@@ -9,10 +9,10 @@ window.lessonText = {
     'Where does the operating system step in when a program reads a file? Follow the request station by station from user space through the kernel to the device.',
   '프로그램의 부탁이 시스템 콜 창구를 지나 커널과 장치 드라이버를 거쳐 SSD나 화면까지 가는 장면': 'A program\'s request passing the system-call gate, through the kernel and a device driver, to the SSD or the screen',
   '사용자 영역과 커널 영역': 'User space and kernel space', '사용자 영역': 'User space', '커널 영역': 'Kernel space', '커널 영역 · 하드웨어': 'Kernel space · hardware', '창구': 'Gate',
-  '"다음 단계"를 누르면 메시지가 오른쪽으로 움직입니다.': 'Press "Next stage" and the message moves to the right.',
-  '"다음 단계"를 눌러 메시지를 한 계층씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the message one layer at a time. Prediction questions come up along the way.',
+  '"다음 단계"를 누르면 메시지가 오른쪽으로 움직입니다.': 'Press "Next step" and the message moves to the right.',
+  '"다음 단계"를 눌러 메시지를 한 계층씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the message one layer at a time. Prediction questions come up along the way.',
   // Stations and badges
-  '내 프로그램': 'My program', '시스템 콜': 'System call', '커널': 'Kernel', '장치 드라이버': 'Device driver', '화면 드라이버': 'Screen driver', '화면': 'Screen',
+  '내 프로그램': 'My program', '시스템 콜': 'System call', '커널': 'Kernel', '장치 드라이버': 'Device driver', '화면 드라이버': 'Screen driver', 
   'read 부탁': 'Asks read', 'write 부탁': 'Asks write', '직접 쓰기?': 'Write directly?', 'data 받음': 'Got data', '버퍼 100바이트': '100-byte buffer',
   'READ 명령': 'READ command', '그리기': 'Draw', '{#0}번': '{0}×', '1번 처리': 'Handled once', '권한 OK': 'Permission OK', '터미널 창': 'Terminal window', '거부': 'Refused', '씀': 'Written', '읽음': 'Read',
   '블록 {#0}': 'block {0}', '{#0}바이트': '{0} bytes', '픽셀': 'pixels', '장치 명령': 'device command', '"안녕"': '"hello"', '안녕': 'hello',

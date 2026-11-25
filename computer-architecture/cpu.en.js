@@ -57,7 +57,7 @@ window.lessonText = {
   '제어 장치가 명령에 맞춰 값의 경로를 연다': 'The control unit opens the path for values to suit the instruction',
   '메모리 5와 6번지에서 A와 B로 값을 읽습니다. ALU에서 3과 4를 더해 A에 쓰고, STORE가 7번지에 7을 기록합니다.': 'Values are read from memory addresses 5 and 6 into A and B. The ALU adds 3 and 4 and writes it to A, and STORE records 7 at address 7.',
   'ADD 결과를 A에 쓰고, STORE가 A의 7을 메모리에 저장': 'ADD\'s result is written to A, and STORE saves A\'s 7 to memory',
-  'ADD를 해석했습니다. 이제 어디로 값이 갈까요?': 'ADD has been decoded. Where do the values go now?', '메모리': 'Memory',
+  'ADD를 해석했습니다. 이제 어디로 값이 갈까요?': 'ADD has been decoded. Where do the values go now?', 
   '계산은 ALU가 합니다. A와 B의 값이 ALU로 갑니다.': 'The ALU does the computing. The values of A and B go to the ALU.',
   '7번지에는 무엇이 적힐까요?': 'What will be written at address 7?', 'A에는 3 + 4 = 7이 들어 있고, STORE A, [7]이 그 값을 7번지에 적습니다.': 'A holds 3 + 4 = 7, and STORE A, [7] writes that value to address 7.',
   // Step 3

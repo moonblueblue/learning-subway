@@ -64,7 +64,7 @@ return {
     'Real road networks have millions of places. Dijkstra uses a priority queue (a heap) to take out "the smallest time" quickly, and map apps also use variants such as A*, which looks first in the rough direction of the destination, along with shortcut information worked out in advance. Still, the foundation is this lesson\'s idea: "settle the nearest first".',
   '해 보기의 질문으로 정리해 보세요. 그래프를 다시 돌려 봐도 됩니다.': 'Sum up with the questions in Try. You can run the graph again too.', '같은 그래프에서 다익스트라를 다시 실행해 볼 수 있습니다.': 'Dijkstra can be run again on the same graph.',
   '다익스트라에서 "시간이 가장 작은 곳 꺼내기"를 빠르게 해 주는 자료구조는?': 'Which data structure makes Dijkstra\'s "take out the place with the smallest time" fast?',
-  '우선순위 큐(힙)': 'Priority queue (heap)', '스택': 'Stack', '연결 리스트': 'Linked list', '가장 작은 값을 꺼내고 넣는 일을 O(log n)에 해 줍니다.': 'It takes out and puts in the smallest value in O(log n).',
+  '우선순위 큐(힙)': 'Priority queue (heap)', '연결 리스트': 'Linked list', '가장 작은 값을 꺼내고 넣는 일을 O(log n)에 해 줍니다.': 'It takes out and puts in the smallest value in O(log n).',
   '너비 우선 탐색만으로 가장 빠른 길을 찾을 수 있는 경우는?': 'When can breadth-first search alone find the fastest way?',
   '모든 길의 시간이 같을 때': 'When every road takes the same time', '길이 많을 때': 'When there are many roads', '언제나': 'Always',
   '그때는 길 수가 적을수록 빠르므로 4.7의 너비 우선이 곧 최단 경로입니다.': 'Then fewer roads means faster, so the breadth-first search of 4.7 gives the shortest path.',

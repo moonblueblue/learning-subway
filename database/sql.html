@@ -537,7 +537,7 @@ function paint() {
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));
-  byId('readout').textContent = last ? last.text : '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.';
+  byId('readout').textContent = last ? last.text : '"다음 단계"를 누르면 질의가 오른쪽으로 움직입니다.';
   const finished = state.s >= step.stages.length;
   const blocked = !state.playing && (finished || state.busy || Boolean(pendingAsk()));
   byId('run-stage').disabled = blocked;

@@ -3,7 +3,6 @@
 window.lessonText = {
   // Page
   '합의 구현 · 레슨 8A.5': 'Implementing consensus · Lesson 8A.5',
-  '8장 심화 트랙 · 8A 시스템·인프라 · 레슨 8A.5 · 실습': 'Chapter 8: Advanced tracks · 8A Systems and infrastructure · Lesson 8A.5 · Practice',
   'Raft를 직접 구현한다고 생각하며, 로그의 어느 칸까지 확정인지, 누구에게 투표하는지, 어긋난 로그를 어떻게 맞추는지, 구현에서 자주 틀리는 곳은 어디인지를 문제로 익혀 보세요.':
     'Imagine implementing Raft yourself, and learn through questions which log entries are committed, whom to vote for, how to repair a log that has drifted, and where implementations often go wrong.',
   '리더가 죽어도 기록은 어떻게 끊기지 않고 이어질까요? 7.9의 합의를 로그의 칸 단위로 들여다보며, 구현할 때 지켜야 할 규칙을 문제로 확인해 보세요.':

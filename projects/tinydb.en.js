@@ -7,11 +7,11 @@ window.lessonText = {
   '파일에 저장하고, 인덱스로 찾고, 트랜잭션을 지키는 저장소는 어떻게 만들까요? 명령 하나가 작은 데이터베이스 안의 인덱스와 데이터 파일을 지나는 길을 직접 따라가 보세요.':
     'How do you build a store that saves to a file, finds with an index and keeps transactions safe? Follow the path one command takes through the index and data file inside a tiny database.',
   '명령이 작은 DB를 지나 해시 인덱스와 데이터 파일에 쓰이고 읽히는 장면': 'A command passing through the tiny DB to be written to and read from the hash index and data file',
-  '작은 DB의 정거장': 'Stations of the tiny DB', '명령과 결과': 'Commands and results', '파일': 'File', '도구': 'Tool', '오류': 'Error',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next stage" and the command moves to the right.',
-  '"다음 단계"를 눌러 명령을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the command one station at a time. Prediction questions come up along the way.',
+  '작은 DB의 정거장': 'Stations of the tiny DB', '명령과 결과': 'Commands and results', 
+  '"다음 단계"를 누르면 명령이 오른쪽으로 움직입니다.': 'Press "Next step" and the command moves to the right.',
+  '"다음 단계"를 눌러 명령을 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the command one station at a time. Prediction questions come up along the way.',
   // Stations
-  '명령': 'Command', '작은 DB': 'Tiny DB', '해시 인덱스': 'Hash index', '데이터 파일': 'Data file', '결과': 'Result',
+  '명령': 'Command', '작은 DB': 'Tiny DB', '해시 인덱스': 'Hash index', '데이터 파일': 'Data file', 
   '명령 → 데이터 파일': 'Command → data file', '명령 → 작은 DB': 'Command → tiny DB', '명령 → 결과': 'Command → result', '명령 · SET 연필 1100': 'Command · SET pencil 1100', '명령 · #8 첫 줄': 'Command · #8 first line',
   '작은 DB → 해시 인덱스': 'Tiny DB → hash index', '작은 DB → 데이터 파일': 'Tiny DB → data file', '작은 DB · 다시 만들기': 'Tiny DB · rebuild',
   '해시 인덱스 → 데이터 파일': 'Hash index → data file', '해시 인덱스 · 줄 2': 'Hash index · line 2', '데이터 파일 → 결과': 'Data file → result', '데이터 파일 → 작은 DB': 'Data file → tiny DB',
@@ -82,7 +82,7 @@ window.lessonText = {
   '파일을 한 번 훑어 인덱스가 민지 → 70000(#7), 서준 → 130000(#7)으로 다시 만들어졌고 #8의 줄은 버려졌습니다. 파일에 붙이기, 해시 인덱스, COMMIT 줄, 다시 읽기, 이 네 가지가 작은 데이터베이스의 전부입니다. 실제 데이터베이스도 이 생각을 크게 키운 것입니다.':
     'One scan of the file rebuilt the index as Minji → 70000 (#7) and Seojun → 130000 (#7), and #8\'s line was discarded. Appending to a file, a hash index, COMMIT lines and rereading: these four are the whole tiny database. Real databases grow this same idea much bigger.',
   '같은 장면입니다. 다시 켠 작은 DB가 데이터 파일을 읽어 인덱스를 되살립니다.': 'The same scene. The restarted tiny DB reads the data file and brings the index back.',
-  '다시 켬': 'Restarted', '해시 인덱스: 비어 있음 (메모리라 사라짐)': 'Hash index: empty (it was in memory, so it is gone)', '데이터 파일: 그대로 (디스크)': 'Data file: intact (on disk)', '비어 있음': 'Empty', '모든 줄 남음': 'All lines kept',
+  '다시 켬': 'Restarted', '해시 인덱스: 비어 있음 (메모리라 사라짐)': 'Hash index: empty (it was in memory, so it is gone)', '데이터 파일: 그대로 (디스크)': 'Data file: intact (on disk)', '모든 줄 남음': 'All lines kept',
   '처음부터 읽기': 'Read from start', '파일 훑기': 'Scan the file', '… 민지=100000, 서준=100000': '… Minji=100000, Seojun=100000', '#7 민지=70000, #7 서준=130000, COMMIT #7 → 반영': '#7 Minji=70000, #7 Seojun=130000, COMMIT #7 → apply',
   '#8 민지=40000, COMMIT 없음 → 버림': '#8 Minji=40000, no COMMIT → discard', '파일을 처음부터 읽으며 확정된 줄만 반영합니다.': 'Read the file from the start, applying only settled lines.', '훑는 중': 'Scanning',
   '다시 만들기': 'Rebuild', '인덱스 복구': 'Recover the index', '민지 → #7 줄 (70000)': 'Minji → #7 line (70000)', '서준 → #7 줄 (130000)': 'Seojun → #7 line (130000)', '인덱스가 다시 만들어졌습니다.': 'The index has been rebuilt.', '민지, 서준 → #7': 'Minji, Seojun → #7',

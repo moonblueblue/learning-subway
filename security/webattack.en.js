@@ -2,15 +2,14 @@
 // 지우 is Jiwoo as in 8B.1; the shop is the course's stationery shop (shop.example.com).
 window.lessonText = {
   // Page
-  '웹 공격 · 레슨 8C.4': 'Web attacks · Lesson 8C.4', '8장 심화 트랙 · 8C 보안 · 레슨 8C.4': 'Chapter 8: Advanced tracks · 8C Security · Lesson 8C.4',
+  '웹 공격 · 레슨 8C.4': 'Web attacks · Lesson 8C.4', 
   '후기 칸의 스크립트가 다른 사람의 브라우저에서 실행되는 저장형 XSS와 이스케이프, 다른 사이트가 쿠키를 붙인 요청을 대신 보내게 하는 CSRF와 SameSite·토큰, 파일 이름의 ../로 폴더 밖을 읽는 경로 조작을 따라가 보세요.':
     'Follow stored XSS, where a script in a review box runs in other people\'s browsers, and escaping; CSRF, where another site gets your browser to send a request with your cookie, and SameSite and tokens; and path traversal, where ../ in a file name reads outside the folder.',
   '입력 한 줄이 어떻게 서버나 다른 사용자를 공격할까요? 문구점의 후기, 포인트 보내기, 설명서 내려받기에서 일어나는 공격과 막는 방법을 따라가 보세요.':
     'How can one line of input attack a server or other users? Follow the attacks on the stationery shop\'s reviews, point transfers and manual downloads, and how to stop them.',
   '문구점을 노리는 요청': 'Requests aimed at the shop', '공격자, 사용자의 브라우저, 문구점 서버, 공격자 사이트 사이로 악성 입력과 요청이 오가는 장면': 'Malicious input and requests passing between an attacker, a user\'s browser, the shop server and the attacker\'s site',
-  '공격자 쪽': 'Attacker side', '사용자 브라우저': 'User\'s browser', '문구점 서버': 'Shop server', '저장소': 'Storage', '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
+  '공격자 쪽': 'Attacker side', '사용자 브라우저': 'User\'s browser', '문구점 서버': 'Shop server', '저장소': 'Storage', 
   '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the requests go back and forth.',
-  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
   '공격자': 'Attacker', '지우의 브라우저': 'Jiwoo\'s browser', '댓글 DB': 'Review DB',
   '공격자 → 문구점 서버': 'Attacker → shop server', '문구점 서버 → 댓글 DB': 'Shop server → review DB', '댓글 DB → 문구점 서버': 'Review DB → shop server', '문구점 서버 → 지우의 브라우저': 'Shop server → Jiwoo\'s browser',
   '지우의 브라우저 → evil.test': 'Jiwoo\'s browser → evil.test', '지우의 브라우저 → 문구점 서버': 'Jiwoo\'s browser → shop server', '지우의 브라우저 → 지우의 브라우저': 'Jiwoo\'s browser → itself',

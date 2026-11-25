@@ -12,12 +12,12 @@ window.lessonText = {
   '자동 실행 중': 'Autoplaying', '이 단계의 문제를 모두 풀었습니다. 자유롭게 눌러 보세요.': 'You solved every problem in this step. Press anything you like.',
   '버튼을 눌러 값을 읽어 보세요.': 'Press a button to read a value.', '각 층 위에 지금 담긴 내용이 적혀 있습니다.': 'What each layer holds now is written above it.',
   // Layers and the timing table
-  'CPU 코어': 'CPU core', '레지스터': 'Registers', 'L1 캐시': 'L1 cache', '읽는 중': 'Reading', '여기서 가져옴': 'Fetched from here',
+  'CPU 코어': 'CPU core', '레지스터': 'Registers', 'L1 캐시': 'L1 cache', '여기서 가져옴': 'Fetched from here',
   '층마다 한 번 읽는 데 걸리는 시간': 'Time for one read at each layer', '시간': 'Time', '클럭': 'Ticks', '1클럭이 1초라면': 'If 1 tick were 1 second', '크기': 'Size',
   '수백 바이트': 'A few hundred bytes', '{#0}번': '{0}', '30만 번': '300,000', '1초': '1 second', '4초': '4 seconds', '5분': '5 minutes', '3일 반': '3½ days',
   '{0}에서 읽기': 'Read from {0}', '{0}에서 읽기: {1} · 클럭 {2} · 1클럭이 1초라면 {3}': 'Read from {0}: {1} · ticks {2} · if 1 tick were 1 second, {3}',
   // Cache cells and readouts
-  '캐시 칸': 'Cache slots', '빈칸': 'empty', '비어 있음': 'Empty', '적중 ✓': 'Hit ✓', '실패 ✗': 'Miss ✗', '적중·담김': 'Hit · held', '실패·비어 있음': 'Miss · empty',
+  '캐시 칸': 'Cache slots', '빈칸': 'empty', '적중 ✓': 'Hit ✓', '실패 ✗': 'Miss ✗', '적중·담김': 'Hit · held', '실패·비어 있음': 'Miss · empty',
   '{#0}번?': 'cell {0}?', '{#0}–{#1}번': 'cells {0}–{1}', '{#0}번 = {1}': 'cell {0} = {1}', '{#0}번 읽기': 'Read cell {0}',
   '{#0}번 칸: 캐시 적중 · 1 ns': 'cell {0}: cache hit · 1 ns', '{#0}번 칸: 캐시 실패 → RAM까지 · 약 101 ns': 'cell {0}: cache miss → all the way to RAM · about 101 ns',
   '{#0}번 칸: 캐시 실패 → RAM까지 · 약 101 ns · 오래된 값이 밀려남': 'cell {0}: cache miss → all the way to RAM · about 101 ns · an old value was pushed out',

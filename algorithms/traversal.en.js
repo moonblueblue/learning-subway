@@ -8,10 +8,10 @@ window.lessonText = {
     'In what order do breadth-first and depth-first search find their way? Search the same graph step by step with a queue and a stack.',
   'A부터 I까지 아홉 곳이 길로 이어져 있고, 탐색 순서대로 번호가 붙는 장면': 'Nine places, A to I, joined by roads and numbered in the order searched',
   '길로 이어진 아홉 곳': 'Nine places joined by roads', '방문함 (짙을수록 먼 겹)': 'Visited (darker = farther ring)', '방문 대기': 'Waiting to be visited', '처음 들어온 길': 'Road first arrived by', '찾은 경로': 'Path found',
-  '탐색 고르기': 'Choose a search', '탐색': 'Search', '한 걸음': 'One step', '끝까지': 'To the end', '방문 순서': 'Visit order', '비어 있음': 'Empty',
+  '탐색 고르기': 'Choose a search', '탐색': 'Search', '한 걸음': 'One step', '끝까지': 'To the end', '방문 순서': 'Visit order', 
   '"한 걸음"으로 하나씩, "끝까지"로 한 번에 탐색해 보세요.': 'Search one at a time with "One step", or all at once with "To the end".',
     '너비 우선': 'Breadth-first', '깊이 우선': 'Depth-first', '너비 우선 (BFS)': 'Breadth-first (BFS)', '깊이 우선 (DFS)': 'Depth-first (DFS)', '둘 다': 'Both',
-  '큐': 'Queue', '스택': 'Stack', '큐 (앞에서 꺼냄)': 'Queue (take from the front)', '스택 (맨 위에서 꺼냄)': 'Stack (take from the top)', '해시 테이블': 'Hash table',
+  '큐 (앞에서 꺼냄)': 'Queue (take from the front)', '스택 (맨 위에서 꺼냄)': 'Stack (take from the top)', '해시 테이블': 'Hash table',
   // Readouts
   '{#0}번째: 큐 앞에서 {1}를 꺼내 방문 · 이웃 {2}를 큐 뒤에 넣음': 'Visit {0}: take {1} from the front of the queue · put neighbours {2} at the back of the queue',
   '{#0}번째: 큐 앞에서 {1}를 꺼내 방문 · 새로 넣을 이웃 없음': 'Visit {0}: take {1} from the front of the queue · no new neighbours to add',

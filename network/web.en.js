@@ -9,7 +9,7 @@ window.lessonText = {
     'What happens between typing an address and the page appearing? Follow how DNS and TCP from chapter 5 and the new TLS and HTTP link up in opening a single page.',
   '리졸버, 브라우저, 웹 서버, 데이터베이스 사이로 웹 요청과 응답이 오가는 장면': 'Web requests and responses travelling between the resolver, the browser, the web server and the database',
   '페이지 하나를 열기까지': 'Opening one page', '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets go back and forth.', '"다음 단계"를 눌러 패킷을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the packets one at a time. Prediction questions come up along the way.',
-  '리졸버': 'Resolver', '브라우저': 'Browser', '웹 서버': 'Web server', '계층': 'Layers', '응용': 'Application', '라우터': 'Router', '전선': 'Wire', '주소창': 'Address bar', '지금 상태': 'Now', '보낼 요청': 'Request to send', '브라우저와 웹 서버': 'Browser and web server',
+  '리졸버': 'Resolver', '웹 서버': 'Web server', '주소창': 'Address bar', '지금 상태': 'Now', '보낼 요청': 'Request to send', '브라우저와 웹 서버': 'Browser and web server',
   // Badges
   '엔터 누름': 'Enter pressed', '찾는 중': 'Looking up', '주소 앎': 'Knows address', '아는 것: 이름뿐': 'Knows: the name only', 'SYN 받음': 'SYN received', 'SYN-ACK 받음': 'SYN-ACK received', '연결됨': 'Connected', '양쪽: 연결됨': 'Both: connected',
   'TLS 시작': 'TLS start', 'TLS 요청 받음': 'TLS request in', '인증서': 'Certificate', '인증서 받음': 'Cert. received', '인증서 확인': 'Cert. checked', '암호 키 정함': 'Key agreed', '키 정하기': 'Agree on a key', '안녕(TLS)': 'Hello (TLS)', '🔒 암호화': '🔒 Encrypted', '🔒 연결 유지': '🔒 Kept open',

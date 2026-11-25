@@ -11,7 +11,7 @@ window.lessonText = {
   '"다음 단계"를 눌러 데이터를 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the data one stage at a time. Prediction questions come up along the way.',
   '데이터와 예측': 'Data and predictions', '틀린 예측': 'Wrong prediction',
   // Stations
-  '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router',
+  '계층': 'Layer', 
   '예시 데이터': 'Example data', '모델': 'Model', '예측': 'Prediction', '오차 계산': 'Error calculation',
   '예시 데이터 → 모델': 'Example data → Model', '모델 → 예측': 'Model → Prediction', '예측 → 오차 계산': 'Prediction → Error calculation', '오차 계산 → 모델': 'Error calculation → Model',
   '모델 · w = 1.64': 'Model · w = 1.64', '모델 · 28°C?': 'Model · 28°C?', '모델 · −5°C?': 'Model · −5°C?',

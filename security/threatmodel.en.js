@@ -2,7 +2,6 @@
 window.lessonText = {
   // Page
   '위협 모델링 · 레슨 8C.6': 'Threat modeling · Lesson 8C.6',
-  '8장 심화 트랙 · 8C 보안 · 레슨 8C.6 · 실습': 'Chapter 8 Advanced tracks · 8C Security · Lesson 8C.6 · Practice',
   '무엇을 누구로부터 지킬지 어떻게 정할까요? 지금까지 만든 문구점 웹 앱을 놓고 자산, 위협, 우선순위, 대응을 차례로 정해 보세요.':
     'How do you decide what to protect, and from whom? Take the stationery shop web app built so far and settle its assets, threats, priorities and defenses in turn.',
   '문구점 웹 앱을 대상으로 지킬 자산을 정하고, STRIDE로 위협을 분류하고, 가능성과 피해로 순서를 매기고, 위협마다 알맞은 대응을 짝짓는 위협 모델링을 문제로 익혀 보세요.':

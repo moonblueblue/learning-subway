@@ -6,90 +6,240 @@
 <meta name="description" content="컴퓨터와 시스템이 실제로 어떻게 돌아가는지, 개념 하나하나를 단계별 도식과 직접 조작하는 데모로 들여다봅니다.">
 <title>How It Runs</title>
 <style>
-:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--active:#d9eee1}
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--rule:#dfe8e1;--paper:#f4f7ef;--panel:#fcfdfb;--scene:#eaf3eb;--accent:#12634b;--accent-press:#0d4f3b;--on-accent:#f4fbf6;--response:#5362a0;--active:#d9eee1;--focus:#a24c14;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}
+html,body{overflow-x:clip}
 body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
-:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 a{color:inherit}
+h1,h2{text-wrap:balance}
 .shell{max-width:1120px;margin:auto;padding:clamp(16px,4vw,48px)}
-header{margin-bottom:clamp(24px,4vw,40px)}
-h1{margin:0;font-size:clamp(2rem,5vw,3.25rem);line-height:1.12;letter-spacing:-.05em}
-.lead{margin:12px 0 0;color:var(--muted);max-width:44rem}
-h2{margin:0 0 4px;font-size:1.25rem}
-.note{margin:0 0 16px;color:var(--muted);font-size:.9375rem}
-section+section{margin-top:clamp(28px,4vw,44px)}
-.roadmaps,.topics{display:grid;gap:12px;margin:0;padding:0;list-style:none}
-.roadmaps{grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))}
-.topics{grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr))}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
-.card h3{margin:0;font-size:1.0625rem}
-.card p{margin:4px 0 0;color:var(--muted);font-size:.9375rem}
-.id{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.8125rem;color:var(--accent)}
-.start{display:inline-block;margin-top:12px;padding:6px 12px;border-radius:8px;background:var(--active);text-decoration:none;font-weight:600}
-details{margin-top:8px}
-summary{cursor:pointer;color:var(--accent);font-size:.9375rem}
-.lessons{margin:8px 0 0;padding-left:1.1rem;font-size:.9375rem}
-.lessons li+li{margin-top:2px}
+.masthead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.masthead h1{margin:0;font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.1;letter-spacing:-.045em}
+.masthead .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-inline-start:auto}
+.masthead p{margin:0;color:var(--muted);font-size:.875rem}
+.lang-switch{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--panel)}
+.lang-switch button{border:0;background:none;padding:4px 12px;min-height:36px;font:600 13px system-ui,sans-serif;color:var(--muted);cursor:pointer}
+.lang-switch button+button{border-inline-start:1px solid var(--border)}
+.lang-switch button:hover{color:var(--ink)}
+.lang-switch button:active{background:var(--rule)}
+.lang-switch button[aria-pressed="true"]{background:var(--active);color:var(--ink)}
+.lang-switch .lang-short{display:none}
+.intro{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px 24px;margin:clamp(20px,3vw,32px) 0 16px}
+.intro h2{margin:0;font-size:clamp(1.25rem,2.6vw,1.6rem);letter-spacing:-.03em}
+.intro p{margin:4px 0 0;color:var(--muted);max-width:42rem}
+.start{display:inline-block;padding:8px 16px;border-radius:8px;background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:600;font-size:.9375rem}
+.start:hover{background:var(--accent-press)}
+.start:active{transform:translateY(1px)}
+.start span{display:block;font-weight:400;font-size:.75rem;opacity:.85}
+.maps{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.map{background:var(--scene);border:1px solid var(--border);border-radius:14px;padding:12px 16px}
+.map svg{display:block;width:100%;height:auto;overflow:visible}
+.line-name{margin:0 0 4px;font-size:.875rem;letter-spacing:-.01em}
+.map a{text-decoration:none}
+.map a:hover .name,.map a:focus-visible .name{text-decoration:underline}
+.map a:active .name{opacity:.7}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0 0;padding:0;list-style:none;color:var(--muted);font-size:.8125rem}
+.legend li{display:flex;align-items:center;gap:8px}
+.topics-head{margin:clamp(28px,4vw,44px) 0 8px;font-size:1.125rem}
+.topics-note{margin:0 0 8px;color:var(--muted);font-size:.875rem}
+.topics{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:0 24px}
+.topics li{border-bottom:1px solid var(--rule)}
+.topics summary{display:flex;align-items:center;gap:12px;padding:8px 0;min-height:44px;cursor:pointer;list-style:none;font-weight:600}
+.topics summary::-webkit-details-marker{display:none}
+.topics summary::before{content:'';width:8px;height:8px;flex:none;border-radius:50%;border:3px solid var(--accent);background:var(--panel)}
+.topics summary:hover{color:var(--accent)}
+.topics summary:active{opacity:.7}
+.topics details[open] summary::before{background:var(--accent)}
+.topics summary span{margin-inline-start:auto;white-space:nowrap;color:var(--muted);font-weight:400;font-size:.875rem}
+.topics ol{margin:0 0 12px;padding-inline-start:36px;font-size:.9375rem}
+.topics ol li{border:0;padding:4px 0}
+.topics ol a{text-decoration:none}
+.topics ol a:hover,.topics ol a:focus-visible{text-decoration:underline}
+.topics ol a:active{opacity:.7}
+@media (max-width:520px){.lang-switch .lang-long{display:none}.lang-switch .lang-short{display:inline}}
 </style>
 <script defer src="./shared/catalog.js"></script>
+<script defer src="./shared/i18n.js"></script>
 </head>
 <body>
 <main class="shell">
-<header>
+<header class="masthead">
 <h1>How It Runs</h1>
-<p class="lead">컴퓨터와 시스템이 실제로 어떻게 돌아가는지, 개념 하나하나를 단계별 도식과 직접 조작하는 데모로 들여다봅니다. 로드맵을 따라가거나, 주제에서 필요한 레슨만 골라 봅니다.</p>
+<div class="meta"><p id="summary"></p><div data-lang-switch></div></div>
 </header>
-<section aria-labelledby="roadmaps-title">
-<h2 id="roadmaps-title">로드맵</h2>
-<p class="note">직군이나 목표에 맞춰 레슨을 순서대로 엮은 길입니다.</p>
-<ul class="roadmaps" id="roadmaps"></ul>
+<section aria-labelledby="maps-title">
+<div class="intro">
+<div>
+<h2 id="maps-title">어디까지 가 볼까요</h2>
+<p>컴퓨터와 시스템이 실제로 어떻게 돌아가는지, 노선을 따라 한 역씩 단계별 그림으로 봅니다. 역을 누르면 그 장의 첫 레슨으로 갑니다.</p>
+</div>
+<a class="start" id="start" href="#"></a>
+</div>
+<ul class="maps" id="roadmaps"></ul>
+<ul class="legend" id="legend"></ul>
 </section>
 <section aria-labelledby="topics-title">
-<h2 id="topics-title">주제</h2>
-<p class="note">레슨은 주제 하나에만 속하고, 여러 로드맵이 같은 레슨을 함께 씁니다.</p>
+<h2 class="topics-head" id="topics-title">주제별 레슨</h2>
+<p class="topics-note">레슨은 주제 하나에만 속하고, 여러 노선이 같은 레슨을 함께 지납니다.</p>
 <ul class="topics" id="topics"></ul>
 </section>
 </main>
 <script>
+// Rules for this page are in DESIGN.md ("허브 노선도", "허브 주제 안내"). Everything is drawn from courseCatalog.
 addEventListener('DOMContentLoaded', () => {
-  const make = (tag, className, text) => {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
+  const SVG = 'http://www.w3.org/2000/svg';
+  const LINE_COLORS = ['#12634b', '#5362a0'];
+  const make = (tag, attrs = {}, text) => {
+    const node = tag.startsWith('svg:') ? document.createElementNS(SVG, tag.slice(4)) : document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
     if (text !== undefined) node.textContent = text;
     return node;
   };
   const titles = new Map(courseCatalog.topics.flatMap((topic) =>
     topic.lessons.map((lesson) => [topic.id + '/' + lesson.id, lesson.title])));
+  const groupsOf = (chapter) => [chapter, ...chapter.tracks];
+  const refsOf = (chapter) => groupsOf(chapter).flatMap((group) => group.lessons.map((lesson) => lesson.ref));
 
-  for (const roadmap of courseCatalog.roadmaps) {
-    const lessons = roadmap.chapters.flatMap((chapter) =>
-      [chapter, ...chapter.tracks].flatMap((group) => group.lessons));
-    const card = make('li', 'card');
-    card.append(make('h3', '', roadmap.title), make('span', 'id', roadmap.id),
-      make('p', '', roadmap.chapters.length + '개 장 · 레슨 ' + lessons.length + '개'));
-    const start = make('a', 'start', titles.get(lessons[0].ref) + '부터 시작');
-    start.href = './' + lessons[0].ref + '.html?roadmap=' + encodeURIComponent(roadmap.id);
-    card.append(start);
-    document.getElementById('roadmaps').append(card);
+  // Which roadmaps pass through each lesson: a chapter is a transfer station when one of its lessons is shared.
+  const lines = new Map();
+  for (const roadmap of courseCatalog.roadmaps)
+    for (const chapter of roadmap.chapters)
+      for (const ref of refsOf(chapter)) lines.set(ref, new Set([...(lines.get(ref) || []), roadmap.id]));
+  const roadmapTitle = new Map(courseCatalog.roadmaps.map((roadmap) => [roadmap.id, roadmap.title]));
+
+  const stationsOf = (roadmap) => roadmap.chapters.map((chapter) => {
+    const refs = refsOf(chapter);
+    const others = new Set(refs.flatMap((ref) => [...lines.get(ref)].filter((id) => id !== roadmap.id)));
+    return {
+      label: chapter.id + ' ' + chapter.title, count: refs.length,
+      href: './' + refs[0] + '.html?roadmap=' + encodeURIComponent(roadmap.id),
+      transfer: [...others].map((id) => roadmapTitle.get(id)),
+    };
+  });
+
+  // Station names are written in the page language here (the translator leaves English alone) so they can be
+  // measured and wrapped to the room between neighbours before they are drawn.
+  const tr = (text) => (window.courseI18n ? window.courseI18n.translate(text) : text);
+  const measure = document.createElement('canvas').getContext('2d');
+  function wrap(text, font, max) {
+    measure.font = font;
+    const lines = [];
+    for (const word of text.split(' ')) {
+      const last = lines.at(-1);
+      if (last && measure.measureText(last + ' ' + word).width <= max) lines[lines.length - 1] = last + ' ' + word;
+      else lines.push(word);
+    }
+    return lines;
+  }
+
+  function station(svg, s, x, y, color, last, label) {
+    const name = tr(s.label), sub = tr(`레슨 ${s.count}개${s.transfer.length ? ' · 환승 ' + s.transfer.join(', ') : ''}`);
+    const link = make('svg:a', { href: s.href, 'aria-label': tr(`${s.label}, 레슨 ${s.count}개${s.transfer.length ? ', 환승 ' + s.transfer.join(', ') : ''}`) });
+    if (s.transfer.length) link.append(make('svg:rect', { x: x - 13, y: y - 9, width: 26, height: 18, rx: 9, fill: '#fcfdfb', stroke: '#142620', 'stroke-width': 2.5 }));
+    else link.append(make('svg:circle', { cx: x, cy: y, r: 7, fill: last ? color : '#fcfdfb', stroke: color, 'stroke-width': 3 }));
+    const names = wrap(name, '700 13px system-ui, sans-serif', label.max);
+    const subs = wrap(sub, '400 12px system-ui, sans-serif', label.max);
+    const rows = [...names.map((line) => [line, { 'font-weight': 700, class: 'name' }]), ...subs.map((line) => [line, { fill: '#43574f', 'font-size': 12 }])];
+    // Labels above the line grow upward, so their first row moves up by the extra rows.
+    const top = label.above ? label.y - (rows.length - 2) * 16 : label.y;
+    const text = make('svg:text', { x: label.x, y: top, 'text-anchor': label.anchor, 'font-size': 13, fill: '#142620' });
+    rows.forEach(([content, extra], index) => text.append(make('svg:tspan', { x: label.x, dy: index ? 16 : 0, ...extra }, content)));
+    link.append(text);
+    svg.append(link);
+  }
+
+  function drawMap(holder, roadmap, color) {
+    const stations = stationsOf(roadmap);
+    const width = holder.clientWidth;
+    const svg = make('svg:svg', { role: 'group', 'aria-label': tr(roadmap.title + ' 노선') });
+    if (width >= 720) {
+      // Horizontal: the line runs on an upper tier, bends 45 degrees once in the middle, and finishes on a
+      // lower tier, as a route map does. Names alternate above and below so neighbours never collide; each
+      // name wraps to the gap between the two stations on its side.
+      const pad = 70, step = (width - pad * 2) / Math.max(1, stations.length - 1);
+      const max = Math.min(2 * step - 16, 220);
+      const rowsOf = (s) => wrap(tr(s.label), '700 13px system-ui, sans-serif', max).length + 1;
+      const above = stations.map((s, i) => (i % 2 === 0 ? rowsOf(s) : 0));
+      const upper = 40 + Math.max(2, ...above) * 16, lower = upper + 58;
+      const below = Math.max(2, ...stations.map((s, i) => (i % 2 ? rowsOf(s) : 0)));
+      const bend = Math.ceil(stations.length / 2);   // first station on the lower tier
+      const at = (i) => [pad + step * i, i < bend ? upper : lower];
+      svg.setAttribute('viewBox', `0 0 ${width} ${lower + 30 + below * 16}`);
+      const [x0, y0] = at(0), [xa] = at(bend - 1), [xb, yb] = at(bend), [xn] = at(stations.length - 1);
+      const d = bend < stations.length
+        ? `M${x0} ${y0}H${xa + (step - (lower - upper)) / 2}L${xb - (step - (lower - upper)) / 2} ${yb}H${xn}`
+        : `M${x0} ${y0}H${xn}`;
+      svg.append(make('svg:path', { d, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none' }));
+      stations.forEach((s, i) => {
+        const [x, y] = at(i), isAbove = i % 2 === 0;
+        station(svg, s, x, y, color, i === stations.length - 1,
+          { x, y: isAbove ? y - 44 : y + 34, anchor: 'middle', above: isAbove, max });
+      });
+    } else {
+      // Vertical: the line runs down the left edge and names sit to its right.
+      const x = 22, top = 16, max = width - x - 32;
+      const heights = stations.map((s) => (wrap(tr(s.label), '700 13px system-ui, sans-serif', max).length + 1) * 16 + 18);
+      const ys = heights.reduce((list, h, i) => [...list, i ? list[i - 1] + heights[i - 1] : top], []);
+      svg.setAttribute('viewBox', `0 0 ${width} ${ys.at(-1) + heights.at(-1)}`);
+      svg.append(make('svg:path', { d: `M${x} ${top}V${ys.at(-1)}`, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round', fill: 'none' }));
+      stations.forEach((s, i) => station(svg, s, x, ys[i], color, i === stations.length - 1, { x: x + 24, y: ys[i] - 3, anchor: 'start', above: false, max }));
+    }
+    const name = make('h3', { class: 'line-name' }, tr(roadmap.title + ' 노선'));
+    name.style.color = color;
+    holder.replaceChildren(name, svg);
+  }
+
+  const total = courseCatalog.topics.reduce((sum, topic) => sum + topic.lessons.length, 0);
+  document.getElementById('summary').textContent =
+    `노선 ${courseCatalog.roadmaps.length}개 · 레슨 ${total}개 · 주제 ${courseCatalog.topics.length}개`;
+
+  const first = courseCatalog.roadmaps[0];
+  const firstRef = refsOf(first.chapters[0])[0];
+  const start = document.getElementById('start');
+  start.href = './' + firstRef + '.html?roadmap=' + encodeURIComponent(first.id);
+  start.append(`${first.chapters[0].lessons[0].id} ${titles.get(firstRef)}부터 타기`, make('span', {}, `${first.title} 노선의 첫 역`));
+
+  const maps = courseCatalog.roadmaps.map((roadmap, index) => {
+    const item = make('li', { class: 'map' });
+    document.getElementById('roadmaps').append(item);
+    return () => drawMap(item, roadmap, LINE_COLORS[index % LINE_COLORS.length]);
+  });
+  maps.forEach((draw) => draw());
+  let lastWidth = 0;
+  new ResizeObserver(() => {
+    const width = document.getElementById('roadmaps').clientWidth;
+    if (width !== lastWidth) { lastWidth = width; maps.forEach((draw) => draw()); }
+  }).observe(document.getElementById('roadmaps'));
+  addEventListener('course:lang', () => maps.forEach((draw) => draw()));
+
+  const legend = document.getElementById('legend');
+  const hasTransfer = [...lines.values()].some((set) => set.size > 1);
+  for (const [shape, text] of [
+    [`<circle cx="9" cy="9" r="6" fill="#fff" stroke="#12634b" stroke-width="3"/>`, '역 = 장. 누르면 첫 레슨으로'],
+    [`<circle cx="9" cy="9" r="7" fill="#12634b"/>`, '종점'],
+    ...(hasTransfer ? [[`<rect x="1" y="3" width="16" height="12" rx="6" fill="#fff" stroke="#142620" stroke-width="2.5"/>`, '환승역 = 다른 노선과 함께 쓰는 레슨이 있는 장']] : []),
+  ]) {
+    const item = make('li');
+    item.innerHTML = `<svg width="18" height="18" aria-hidden="true">${shape}</svg>`;
+    item.append(text);
+    legend.append(item);
   }
 
   for (const topic of courseCatalog.topics) {
-    const card = make('li', 'card');
-    card.append(make('h3', '', topic.title), make('span', 'id', topic.id),
-      make('p', '', '레슨 ' + topic.lessons.length + '개'));
+    const item = make('li');
     const details = make('details');
-    details.append(make('summary', '', '레슨 보기'));
-    const list = make('ol', 'lessons');
+    const summary = make('summary', {}, topic.title);
+    summary.append(make('span', {}, `레슨 ${topic.lessons.length}개`));
+    const list = make('ol');
     for (const lesson of topic.lessons) {
-      const item = make('li');
-      const link = make('a', '', lesson.title);
-      link.href = './' + topic.id + '/' + lesson.id + '.html';
-      item.append(link);
-      list.append(item);
+      const entry = make('li');
+      entry.append(make('a', { href: './' + topic.id + '/' + lesson.id + '.html' }, lesson.title));
+      list.append(entry);
     }
-    details.append(list);
-    card.append(details);
-    document.getElementById('topics').append(card);
+    details.append(summary, list);
+    item.append(details);
+    document.getElementById('topics').append(item);
   }
 });
 </script>

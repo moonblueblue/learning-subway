@@ -4,10 +4,12 @@ const courseCatalog = {
     {
       "id": "computer-science",
       "title": "컴퓨터 공학",
+      "titleEn": "Computer science",
       "chapters": [
         {
           "id": "0",
           "title": "컴퓨팅 둘러보기",
+          "titleEn": "A tour of computing",
           "lessons": [
             {
               "id": "0.1",
@@ -47,6 +49,7 @@ const courseCatalog = {
         {
           "id": "1",
           "title": "프로그래밍 입문",
+          "titleEn": "Introduction to programming",
           "lessons": [
             {
               "id": "1.1",
@@ -82,6 +85,7 @@ const courseCatalog = {
         {
           "id": "2",
           "title": "CS를 위한 수학",
+          "titleEn": "Math for computer science",
           "lessons": [
             {
               "id": "2.1",
@@ -113,6 +117,7 @@ const courseCatalog = {
         {
           "id": "3",
           "title": "컴퓨터를 바닥부터",
+          "titleEn": "Computers from the ground up",
           "lessons": [
             {
               "id": "3.1",
@@ -152,6 +157,7 @@ const courseCatalog = {
         {
           "id": "4",
           "title": "자료구조와 알고리즘",
+          "titleEn": "Data structures and algorithms",
           "lessons": [
             {
               "id": "4.1",
@@ -199,6 +205,7 @@ const courseCatalog = {
         {
           "id": "5",
           "title": "운영체제와 네트워크",
+          "titleEn": "Operating systems and networks",
           "lessons": [
             {
               "id": "5.1",
@@ -250,6 +257,7 @@ const courseCatalog = {
         {
           "id": "6",
           "title": "소프트웨어 만들기",
+          "titleEn": "Building software",
           "lessons": [
             {
               "id": "6.1",
@@ -305,6 +313,7 @@ const courseCatalog = {
         {
           "id": "7",
           "title": "규모와 지능",
+          "titleEn": "Scale and intelligence",
           "lessons": [
             {
               "id": "7.1",
@@ -356,11 +365,13 @@ const courseCatalog = {
         {
           "id": "8",
           "title": "심화 트랙",
+          "titleEn": "Advanced tracks",
           "lessons": [],
           "tracks": [
             {
               "id": "8A",
               "title": "시스템·인프라",
+              "titleEn": "Systems and infrastructure",
               "lessons": [
                 {
                   "id": "8A.1",
@@ -391,6 +402,7 @@ const courseCatalog = {
             {
               "id": "8B",
               "title": "인공지능",
+              "titleEn": "Artificial intelligence",
               "lessons": [
                 {
                   "id": "8B.1",
@@ -421,6 +433,7 @@ const courseCatalog = {
             {
               "id": "8C",
               "title": "보안",
+              "titleEn": "Security",
               "lessons": [
                 {
                   "id": "8C.1",
@@ -451,6 +464,7 @@ const courseCatalog = {
             {
               "id": "8D",
               "title": "그래픽·인터랙션",
+              "titleEn": "Graphics and interaction",
               "lessons": [
                 {
                   "id": "8D.1",
@@ -483,6 +497,7 @@ const courseCatalog = {
         {
           "id": "9",
           "title": "최종 프로젝트",
+          "titleEn": "Final projects",
           "lessons": [
             {
               "id": "9.1",
@@ -510,10 +525,12 @@ const courseCatalog = {
     {
       "id": "computing-basics",
       "title": "컴퓨팅 기초",
+      "titleEn": "Computing basics",
       "lessons": [
         {
           "id": "bits",
           "title": "비트와 이진수",
+          "titleEn": "Bits and binary",
           "question": "스위치 8개로 0부터 255까지 어떻게 셀까?",
           "format": "실험",
           "requires": [],
@@ -522,6 +539,7 @@ const courseCatalog = {
         {
           "id": "text",
           "title": "문자의 표현",
+          "titleEn": "Representing text",
           "question": "\"A\"와 \"가\"는 어떤 비트가 될까?",
           "format": "실험",
           "requires": [],
@@ -530,6 +548,7 @@ const courseCatalog = {
         {
           "id": "media",
           "title": "이미지와 소리",
+          "titleEn": "Images and sound",
           "question": "사진과 소리는 어떻게 숫자가 될까?",
           "format": "실험",
           "requires": [],
@@ -538,6 +557,7 @@ const courseCatalog = {
         {
           "id": "compress",
           "title": "압축",
+          "titleEn": "Compression",
           "question": "같은 정보를 더 적은 비트로 담을 수 있을까?",
           "format": "실험",
           "requires": [],
@@ -546,6 +566,7 @@ const courseCatalog = {
         {
           "id": "computer",
           "title": "컴퓨터의 구성",
+          "titleEn": "Parts of a computer",
           "question": "입력, 처리, 저장, 출력은 어떻게 이어질까?",
           "format": "실험",
           "requires": [],
@@ -554,6 +575,7 @@ const courseCatalog = {
         {
           "id": "search",
           "title": "알고리즘이란",
+          "titleEn": "What is an algorithm",
           "question": "같은 문제를 푸는 방법에 따라 일의 양이 얼마나 달라질까?",
           "format": "실험",
           "requires": [],
@@ -562,6 +584,7 @@ const courseCatalog = {
         {
           "id": "internet",
           "title": "인터넷의 큰 그림",
+          "titleEn": "The internet at a glance",
           "question": "메시지 하나는 어떻게 지구 반대편까지 갈까?",
           "format": "실험",
           "requires": [],
@@ -570,6 +593,7 @@ const courseCatalog = {
         {
           "id": "impact",
           "title": "컴퓨팅의 영향",
+          "titleEn": "The impact of computing",
           "question": "기술이 사람과 사회에 주는 이익과 위험은 무엇일까?",
           "format": "실습",
           "requires": [],
@@ -580,10 +604,12 @@ const courseCatalog = {
     {
       "id": "programming",
       "title": "프로그래밍",
+      "titleEn": "Programming",
       "lessons": [
         {
           "id": "variables",
           "title": "변수와 값",
+          "titleEn": "Variables and values",
           "question": "변수에 값을 넣으면 컴퓨터 안에서는 무슨 일이 생길까?",
           "format": "실험",
           "requires": [],
@@ -592,6 +618,7 @@ const courseCatalog = {
         {
           "id": "control",
           "title": "조건과 반복",
+          "titleEn": "Conditions and loops",
           "question": "프로그램은 어떻게 갈림길을 고르고 같은 일을 되풀이할까?",
           "format": "실습",
           "requires": [],
@@ -600,6 +627,7 @@ const courseCatalog = {
         {
           "id": "stack",
           "title": "함수와 호출 스택",
+          "titleEn": "Functions and the call stack",
           "question": "함수를 부르고 돌아올 때 무엇이 쌓이고 사라질까?",
           "format": "실험",
           "requires": [],
@@ -608,6 +636,7 @@ const courseCatalog = {
         {
           "id": "collections",
           "title": "리스트와 딕셔너리",
+          "titleEn": "Lists and dictionaries",
           "question": "값 여러 개를 담는 두 방법은 무엇이 다를까?",
           "format": "실습",
           "requires": [],
@@ -616,6 +645,7 @@ const courseCatalog = {
         {
           "id": "recursion",
           "title": "재귀",
+          "titleEn": "Recursion",
           "question": "자기 자신을 부르는 함수는 어떻게 끝날까?",
           "format": "실험",
           "requires": [],
@@ -626,10 +656,12 @@ const courseCatalog = {
     {
       "id": "software-engineering",
       "title": "개발 실무",
+      "titleEn": "Software engineering practice",
       "lessons": [
         {
           "id": "debugging",
           "title": "디버깅",
+          "titleEn": "Debugging",
           "question": "버그가 있는 곳을 어떻게 좁혀 갈까?",
           "format": "실습",
           "requires": [],
@@ -638,6 +670,7 @@ const courseCatalog = {
         {
           "id": "devtools",
           "title": "개발 도구",
+          "titleEn": "Developer tools",
           "question": "터미널과 git은 무엇을 대신해 줄까?",
           "format": "실습",
           "requires": [],
@@ -646,6 +679,7 @@ const courseCatalog = {
         {
           "id": "modules",
           "title": "추상화와 모듈",
+          "titleEn": "Abstraction and modules",
           "question": "복잡한 프로그램을 어떻게 나눠야 고치기 쉬울까?",
           "format": "실습",
           "requires": [],
@@ -654,6 +688,7 @@ const courseCatalog = {
         {
           "id": "testing",
           "title": "테스트",
+          "titleEn": "Testing",
           "question": "코드가 맞게 동작한다는 것을 어떻게 확인할까?",
           "format": "실습",
           "requires": [],
@@ -664,10 +699,12 @@ const courseCatalog = {
     {
       "id": "math",
       "title": "CS 수학",
+      "titleEn": "Math for CS",
       "lessons": [
         {
           "id": "logic",
           "title": "명제와 논리",
+          "titleEn": "Propositions and logic",
           "question": "참과 거짓을 어떻게 조합하고 따질까?",
           "format": "실습",
           "requires": [],
@@ -676,6 +713,7 @@ const courseCatalog = {
         {
           "id": "sets",
           "title": "집합과 함수",
+          "titleEn": "Sets and functions",
           "question": "모음과 대응을 어떻게 정확하게 말할까?",
           "format": "실습",
           "requires": [],
@@ -684,6 +722,7 @@ const courseCatalog = {
         {
           "id": "proof",
           "title": "증명과 귀납법",
+          "titleEn": "Proof and induction",
           "question": "무한히 많은 경우가 모두 맞다고 어떻게 확신할까?",
           "format": "실습",
           "requires": [],
@@ -692,6 +731,7 @@ const courseCatalog = {
         {
           "id": "counting",
           "title": "경우의 수와 확률",
+          "titleEn": "Counting and probability",
           "question": "가능한 경우는 몇 가지이고, 그중 무엇이 얼마나 자주 일어날까?",
           "format": "실습",
           "requires": [],
@@ -700,6 +740,7 @@ const courseCatalog = {
         {
           "id": "graph",
           "title": "그래프",
+          "titleEn": "Graphs",
           "question": "점과 선으로 연결 관계를 어떻게 나타낼까?",
           "format": "실험",
           "requires": [],
@@ -708,6 +749,7 @@ const courseCatalog = {
         {
           "id": "modular",
           "title": "나머지 연산",
+          "titleEn": "Modular arithmetic",
           "question": "시계처럼 도는 수는 암호와 해시에서 어떻게 쓰일까?",
           "format": "실습",
           "requires": [],
@@ -716,6 +758,7 @@ const courseCatalog = {
         {
           "id": "vectors",
           "title": "벡터와 행렬",
+          "titleEn": "Vectors and matrices",
           "question": "데이터를 숫자 묶음으로 담고 바꾸는 방법은 무엇일까?",
           "format": "실험",
           "requires": [],
@@ -724,6 +767,7 @@ const courseCatalog = {
         {
           "id": "statistics",
           "title": "확률과 통계",
+          "titleEn": "Probability and statistics",
           "question": "불확실한 것을 어떻게 수로 다룰까?",
           "format": "실습",
           "requires": [],
@@ -734,10 +778,12 @@ const courseCatalog = {
     {
       "id": "computer-architecture",
       "title": "컴퓨터 구조",
+      "titleEn": "Computer architecture",
       "lessons": [
         {
           "id": "gates",
           "title": "논리 게이트",
+          "titleEn": "Logic gates",
           "question": "AND, OR, NOT은 신호를 어떻게 바꿀까?",
           "format": "실험",
           "requires": [],
@@ -746,6 +792,7 @@ const courseCatalog = {
         {
           "id": "adder",
           "title": "덧셈기",
+          "titleEn": "Adders",
           "question": "게이트를 엮으면 어떻게 1 + 1을 계산할까?",
           "format": "실험",
           "requires": [],
@@ -754,6 +801,7 @@ const courseCatalog = {
         {
           "id": "alu",
           "title": "ALU",
+          "titleEn": "The ALU",
           "question": "계산기 회로는 어떻게 여러 연산 중 하나를 고를까?",
           "format": "실험",
           "requires": [],
@@ -762,6 +810,7 @@ const courseCatalog = {
         {
           "id": "memory",
           "title": "기억하는 회로",
+          "titleEn": "Circuits that remember",
           "question": "전기가 꺼지지 않는 한 값을 어떻게 기억할까?",
           "format": "실험",
           "requires": [],
@@ -770,6 +819,7 @@ const courseCatalog = {
         {
           "id": "cpu",
           "title": "CPU의 한 사이클",
+          "titleEn": "One CPU cycle",
           "question": "명령 하나를 가져오고, 해석하고, 실행하는 동안 무슨 일이 생길까?",
           "format": "실험",
           "requires": [],
@@ -778,6 +828,7 @@ const courseCatalog = {
         {
           "id": "machine",
           "title": "기계어와 어셈블리",
+          "titleEn": "Machine code and assembly",
           "question": "CPU가 알아듣는 말은 어떻게 생겼을까?",
           "format": "실험",
           "requires": [],
@@ -786,6 +837,7 @@ const courseCatalog = {
         {
           "id": "hierarchy",
           "title": "메모리 계층",
+          "titleEn": "The memory hierarchy",
           "question": "레지스터, 캐시, RAM, 디스크는 왜 속도가 이렇게 다를까?",
           "format": "실험",
           "requires": [],
@@ -796,10 +848,12 @@ const courseCatalog = {
     {
       "id": "programming-languages",
       "title": "언어와 실행",
+      "titleEn": "Languages and execution",
       "lessons": [
         {
           "id": "toolchain",
           "title": "코드에서 실행까지",
+          "titleEn": "From code to execution",
           "question": "작성한 코드는 어떤 과정을 거쳐 CPU에서 돌아갈까?",
           "format": "실험",
           "requires": [],
@@ -808,6 +862,7 @@ const courseCatalog = {
         {
           "id": "interpreter",
           "title": "인터프리터",
+          "titleEn": "Interpreters",
           "question": "코드 한 줄은 어떻게 읽히고 실행될까?",
           "format": "실험",
           "requires": [],
@@ -816,6 +871,7 @@ const courseCatalog = {
         {
           "id": "compiler",
           "title": "컴파일러",
+          "titleEn": "Compilers",
           "question": "소스 코드는 어떤 단계를 거쳐 기계어가 될까?",
           "format": "실험",
           "requires": [],
@@ -826,10 +882,12 @@ const courseCatalog = {
     {
       "id": "algorithms",
       "title": "자료구조와 알고리즘",
+      "titleEn": "Data structures and algorithms",
       "lessons": [
         {
           "id": "complexity",
           "title": "시간 복잡도",
+          "titleEn": "Time complexity",
           "question": "데이터가 10배 늘면 일은 몇 배 늘어날까?",
           "format": "실험",
           "requires": [],
@@ -838,6 +896,7 @@ const courseCatalog = {
         {
           "id": "linked",
           "title": "배열과 연결 리스트",
+          "titleEn": "Arrays and linked lists",
           "question": "중간에 값을 끼워 넣을 때 두 구조는 무엇이 다를까?",
           "format": "실험",
           "requires": [],
@@ -846,6 +905,7 @@ const courseCatalog = {
         {
           "id": "stackqueue",
           "title": "스택과 큐",
+          "titleEn": "Stacks and queues",
           "question": "먼저 넣은 것을 먼저 뺄까, 나중에 넣은 것을 먼저 뺄까?",
           "format": "실험",
           "requires": [],
@@ -854,6 +914,7 @@ const courseCatalog = {
         {
           "id": "sorting",
           "title": "정렬",
+          "titleEn": "Sorting",
           "question": "여러 정렬 방법은 비교와 교환을 얼마나 할까?",
           "format": "실험",
           "requires": [],
@@ -862,6 +923,7 @@ const courseCatalog = {
         {
           "id": "hash",
           "title": "해시 테이블",
+          "titleEn": "Hash tables",
           "question": "이름 하나로 값을 어떻게 한 번에 찾을까?",
           "format": "실험",
           "requires": [],
@@ -870,6 +932,7 @@ const courseCatalog = {
         {
           "id": "bst",
           "title": "트리와 이진 탐색 트리",
+          "titleEn": "Trees and binary search trees",
           "question": "값을 나무 모양으로 두면 찾기가 왜 빨라질까?",
           "format": "실험",
           "requires": [],
@@ -878,6 +941,7 @@ const courseCatalog = {
         {
           "id": "traversal",
           "title": "그래프 탐색",
+          "titleEn": "Graph traversal",
           "question": "너비 우선과 깊이 우선은 어떤 순서로 길을 찾을까?",
           "format": "실험",
           "requires": [],
@@ -886,6 +950,7 @@ const courseCatalog = {
         {
           "id": "shortest",
           "title": "최단 경로",
+          "titleEn": "Shortest paths",
           "question": "지도 앱은 가장 빠른 길을 어떻게 찾을까?",
           "format": "실험",
           "requires": [],
@@ -894,6 +959,7 @@ const courseCatalog = {
         {
           "id": "dynamic",
           "title": "동적 계획법",
+          "titleEn": "Dynamic programming",
           "question": "같은 계산을 반복하지 않으려면 무엇을 기억해 둘까?",
           "format": "실습",
           "requires": [],
@@ -902,6 +968,7 @@ const courseCatalog = {
         {
           "id": "limits",
           "title": "계산할 수 없는 문제",
+          "titleEn": "Problems computers cannot solve",
           "question": "컴퓨터가 원리적으로 풀 수 없는 문제도 있을까?",
           "format": "실습",
           "requires": [],
@@ -912,10 +979,12 @@ const courseCatalog = {
     {
       "id": "os",
       "title": "운영체제",
+      "titleEn": "Operating systems",
       "lessons": [
         {
           "id": "process",
           "title": "프로세스와 스레드",
+          "titleEn": "Processes and threads",
           "question": "실행 중인 프로그램은 무엇을 가지고 있을까?",
           "format": "실험",
           "requires": [],
@@ -924,6 +993,7 @@ const courseCatalog = {
         {
           "id": "scheduling",
           "title": "CPU 스케줄링",
+          "titleEn": "CPU scheduling",
           "question": "CPU 하나가 여러 일을 어떻게 번갈아 할까?",
           "format": "실험",
           "requires": [],
@@ -932,6 +1002,7 @@ const courseCatalog = {
         {
           "id": "syscall",
           "title": "시스템 콜",
+          "titleEn": "System calls",
           "question": "프로그램이 파일을 읽을 때 운영체제는 어디에 끼어들까?",
           "format": "실험",
           "requires": [],
@@ -940,6 +1011,7 @@ const courseCatalog = {
         {
           "id": "virtual",
           "title": "가상 메모리",
+          "titleEn": "Virtual memory",
           "question": "프로그램마다 메모리를 혼자 쓰는 것처럼 보이는 이유는 무엇일까?",
           "format": "실험",
           "requires": [],
@@ -948,6 +1020,7 @@ const courseCatalog = {
         {
           "id": "filesystem",
           "title": "파일 시스템",
+          "titleEn": "File systems",
           "question": "파일 이름은 디스크의 어느 칸으로 이어질까?",
           "format": "실험",
           "requires": [],
@@ -956,6 +1029,7 @@ const courseCatalog = {
         {
           "id": "locks",
           "title": "동시성과 락",
+          "titleEn": "Concurrency and locks",
           "question": "두 스레드가 같은 값을 동시에 고치면 무슨 일이 생길까?",
           "format": "실험",
           "requires": [],
@@ -964,6 +1038,7 @@ const courseCatalog = {
         {
           "id": "kernel",
           "title": "운영체제 커널",
+          "titleEn": "The operating system kernel",
           "question": "전원을 켜면 운영체제는 어떻게 일을 시작할까?",
           "format": "실험",
           "requires": [],
@@ -972,6 +1047,7 @@ const courseCatalog = {
         {
           "id": "virtualization",
           "title": "가상화와 컨테이너",
+          "titleEn": "Virtualization and containers",
           "question": "컴퓨터 한 대를 여러 대처럼 나눠 쓰려면 어떻게 할까?",
           "format": "실험",
           "requires": [],
@@ -982,10 +1058,12 @@ const courseCatalog = {
     {
       "id": "network",
       "title": "네트워크",
+      "titleEn": "Networking",
       "lessons": [
         {
           "id": "layers",
           "title": "네트워크 계층",
+          "titleEn": "Network layers",
           "question": "데이터는 왜 여러 겹의 봉투에 싸여 이동할까?",
           "format": "실험",
           "requires": [],
@@ -994,6 +1072,7 @@ const courseCatalog = {
         {
           "id": "routing",
           "title": "IP와 라우팅",
+          "titleEn": "IP and routing",
           "question": "패킷은 수많은 길 중에서 어떻게 다음 길을 고를까?",
           "format": "실험",
           "requires": [],
@@ -1002,6 +1081,7 @@ const courseCatalog = {
         {
           "id": "tcp",
           "title": "TCP",
+          "titleEn": "TCP",
           "question": "잃어버린 패킷은 어떻게 다시 보내고 순서를 맞출까?",
           "format": "실험",
           "requires": [],
@@ -1010,6 +1090,7 @@ const courseCatalog = {
         {
           "id": "dns",
           "title": "DNS",
+          "titleEn": "DNS",
           "question": "주소창의 이름은 어떻게 IP 주소가 될까?",
           "format": "실험",
           "requires": [],
@@ -1018,6 +1099,7 @@ const courseCatalog = {
         {
           "id": "web",
           "title": "웹 요청의 여정",
+          "titleEn": "The journey of a web request",
           "question": "주소를 입력한 뒤 화면이 뜨기까지 어떤 일이 일어날까?",
           "format": "실험",
           "requires": [],
@@ -1028,10 +1110,12 @@ const courseCatalog = {
     {
       "id": "database",
       "title": "데이터베이스",
+      "titleEn": "Databases",
       "lessons": [
         {
           "id": "sql",
           "title": "관계형 데이터베이스와 SQL",
+          "titleEn": "Relational databases and SQL",
           "question": "표로 저장한 데이터는 질의 하나로 어떻게 찾아질까?",
           "format": "실험",
           "requires": [],
@@ -1040,6 +1124,7 @@ const courseCatalog = {
         {
           "id": "indexing",
           "title": "인덱스",
+          "titleEn": "Indexes",
           "question": "데이터가 백만 개여도 한 줄을 빨리 찾는 방법은 무엇일까?",
           "format": "실험",
           "requires": [],
@@ -1048,6 +1133,7 @@ const courseCatalog = {
         {
           "id": "transactions",
           "title": "트랜잭션",
+          "titleEn": "Transactions",
           "question": "계좌 이체 도중 전원이 꺼지면 돈은 어떻게 될까?",
           "format": "실험",
           "requires": [],
@@ -1056,6 +1142,7 @@ const courseCatalog = {
         {
           "id": "storage",
           "title": "저장 엔진",
+          "titleEn": "Storage engines",
           "question": "데이터베이스는 디스크에 데이터를 어떻게 적고 다시 찾을까?",
           "format": "실험",
           "requires": [],
@@ -1066,10 +1153,12 @@ const courseCatalog = {
     {
       "id": "graphics",
       "title": "그래픽스",
+      "titleEn": "Graphics",
       "lessons": [
         {
           "id": "graphics",
           "title": "화면 그리기",
+          "titleEn": "Drawing on screen",
           "question": "점, 선, 삼각형은 어떻게 화면의 픽셀이 될까?",
           "format": "실험",
           "requires": [],
@@ -1078,6 +1167,7 @@ const courseCatalog = {
         {
           "id": "rendering",
           "title": "렌더링 파이프라인",
+          "titleEn": "The rendering pipeline",
           "question": "3D 장면은 어떤 단계를 거쳐 화면이 될까?",
           "format": "실험",
           "requires": [],
@@ -1086,6 +1176,7 @@ const courseCatalog = {
         {
           "id": "transforms",
           "title": "변환과 카메라",
+          "titleEn": "Transforms and cameras",
           "question": "물체를 움직이고 바라보는 일을 어떻게 수로 나타낼까?",
           "format": "실험",
           "requires": [],
@@ -1094,6 +1185,7 @@ const courseCatalog = {
         {
           "id": "lighting",
           "title": "빛과 그림자",
+          "titleEn": "Light and shadow",
           "question": "표면의 밝기는 어떻게 계산할까?",
           "format": "실험",
           "requires": [],
@@ -1102,6 +1194,7 @@ const courseCatalog = {
         {
           "id": "animation",
           "title": "애니메이션과 물리",
+          "titleEn": "Animation and physics",
           "question": "움직임을 자연스럽게 보이게 하려면 무엇을 계산할까?",
           "format": "실험",
           "requires": [],
@@ -1112,10 +1205,12 @@ const courseCatalog = {
     {
       "id": "hci",
       "title": "사람과 인터페이스",
+      "titleEn": "People and interfaces",
       "lessons": [
         {
           "id": "interface",
           "title": "사람과 인터페이스",
+          "titleEn": "People and interfaces",
           "question": "사람이 헷갈리지 않는 화면은 무엇이 다를까?",
           "format": "실습",
           "requires": [],
@@ -1124,6 +1219,7 @@ const courseCatalog = {
         {
           "id": "usability",
           "title": "사용성 평가",
+          "titleEn": "Usability evaluation",
           "question": "좋은 인터페이스인지 사람을 통해 어떻게 확인할까?",
           "format": "실습",
           "requires": [],
@@ -1132,6 +1228,7 @@ const courseCatalog = {
         {
           "id": "accessibility",
           "title": "접근성",
+          "titleEn": "Accessibility",
           "question": "보기 어렵거나 손이 불편한 사람도 쓸 수 있게 하려면 어떻게 할까?",
           "format": "실습",
           "requires": [],
@@ -1142,10 +1239,12 @@ const courseCatalog = {
     {
       "id": "platforms",
       "title": "웹·모바일 앱",
+      "titleEn": "Web and mobile apps",
       "lessons": [
         {
           "id": "webapp",
           "title": "웹 앱의 구조",
+          "titleEn": "How a web app is built",
           "question": "브라우저, 서버, API는 일을 어떻게 나눠 맡을까?",
           "format": "실험",
           "requires": [],
@@ -1154,6 +1253,7 @@ const courseCatalog = {
         {
           "id": "mobile",
           "title": "모바일과 임베디드",
+          "titleEn": "Mobile and embedded",
           "question": "배터리와 센서가 있는 작은 기기의 앱은 무엇이 다를까?",
           "format": "실험",
           "requires": [],
@@ -1164,10 +1264,12 @@ const courseCatalog = {
     {
       "id": "security",
       "title": "보안",
+      "titleEn": "Security",
       "lessons": [
         {
           "id": "crypto",
           "title": "암호화 기초",
+          "titleEn": "Cryptography basics",
           "question": "남이 엿봐도 내용을 모르게 하려면 어떻게 할까?",
           "format": "실험",
           "requires": [],
@@ -1176,6 +1278,7 @@ const courseCatalog = {
         {
           "id": "auth",
           "title": "인증과 웹 보안",
+          "titleEn": "Authentication and web security",
           "question": "서버는 요청을 보낸 사람이 누구인지 어떻게 믿을까?",
           "format": "실험",
           "requires": [],
@@ -1184,6 +1287,7 @@ const courseCatalog = {
         {
           "id": "publickey",
           "title": "공개키 암호",
+          "titleEn": "Public-key cryptography",
           "question": "처음 만난 상대와 어떻게 비밀을 나눌까?",
           "format": "실험",
           "requires": [],
@@ -1192,6 +1296,7 @@ const courseCatalog = {
         {
           "id": "tls",
           "title": "TLS",
+          "titleEn": "TLS",
           "question": "브라우저의 자물쇠 표시는 무엇을 보장할까?",
           "format": "실험",
           "requires": [],
@@ -1200,6 +1305,7 @@ const courseCatalog = {
         {
           "id": "memorybug",
           "title": "메모리 취약점",
+          "titleEn": "Memory safety bugs",
           "question": "정해진 칸을 넘겨 쓰면 왜 위험할까?",
           "format": "실험",
           "requires": [],
@@ -1208,6 +1314,7 @@ const courseCatalog = {
         {
           "id": "webattack",
           "title": "웹 공격",
+          "titleEn": "Web attacks",
           "question": "입력 한 줄이 어떻게 서버나 다른 사용자를 공격할까?",
           "format": "실험",
           "requires": [],
@@ -1216,6 +1323,7 @@ const courseCatalog = {
         {
           "id": "netdefense",
           "title": "네트워크 방어",
+          "titleEn": "Network defense",
           "question": "방화벽과 침입 탐지는 무엇을 어디서 막을까?",
           "format": "실험",
           "requires": [],
@@ -1224,6 +1332,7 @@ const courseCatalog = {
         {
           "id": "threatmodel",
           "title": "위협 모델링",
+          "titleEn": "Threat modeling",
           "question": "무엇을 누구로부터 지킬지 어떻게 정할까?",
           "format": "실습",
           "requires": [],
@@ -1234,10 +1343,12 @@ const courseCatalog = {
     {
       "id": "system-design",
       "title": "시스템 설계와 분산",
+      "titleEn": "System design and distributed systems",
       "lessons": [
         {
           "id": "parallel",
           "title": "병렬 처리",
+          "titleEn": "Parallel processing",
           "question": "일꾼을 늘리면 일은 늘린 만큼 빨라질까?",
           "format": "실험",
           "requires": [],
@@ -1246,6 +1357,7 @@ const courseCatalog = {
         {
           "id": "cache",
           "title": "캐시",
+          "titleEn": "Caching",
           "question": "같은 읽기 요청은 언제 캐시에서 끝나고 언제 DB까지 갈까?",
           "format": "실험",
           "requires": [],
@@ -1254,6 +1366,7 @@ const courseCatalog = {
         {
           "id": "loadbalancing",
           "title": "로드밸런싱",
+          "titleEn": "Load balancing",
           "question": "요청이 한 서버에 몰리면 어떻게 되고, 나누면 무엇이 달라질까?",
           "format": "실험",
           "requires": [],
@@ -1262,6 +1375,7 @@ const courseCatalog = {
         {
           "id": "replication",
           "title": "DB 복제",
+          "titleEn": "Database replication",
           "question": "읽기를 복제본으로 나누면 무엇을 얻고 무엇을 잃을까?",
           "format": "실험",
           "requires": [],
@@ -1270,6 +1384,7 @@ const courseCatalog = {
         {
           "id": "sharding",
           "title": "샤딩",
+          "titleEn": "Sharding",
           "question": "데이터를 여러 DB에 나누면 요청은 어디로 갈까?",
           "format": "실험",
           "requires": [],
@@ -1278,6 +1393,7 @@ const courseCatalog = {
         {
           "id": "queue",
           "title": "메시지 큐",
+          "titleEn": "Message queues",
           "question": "바로 호출하는 대신 큐에 넣으면 무엇이 달라질까?",
           "format": "실험",
           "requires": [],
@@ -1286,6 +1402,7 @@ const courseCatalog = {
         {
           "id": "ratelimit",
           "title": "레이트 리미터",
+          "titleEn": "Rate limiters",
           "question": "요청이 너무 많을 때 어디서 어떻게 막을까?",
           "format": "실험",
           "requires": [],
@@ -1294,6 +1411,7 @@ const courseCatalog = {
         {
           "id": "breaker",
           "title": "서킷 브레이커",
+          "titleEn": "Circuit breakers",
           "question": "장애가 난 서비스를 계속 부르면 왜 위험할까?",
           "format": "실험",
           "requires": [],
@@ -1302,6 +1420,7 @@ const courseCatalog = {
         {
           "id": "consensus",
           "title": "합의",
+          "titleEn": "Consensus",
           "question": "서버 여러 대는 어떻게 하나의 값에 동의할까?",
           "format": "실험",
           "requires": [],
@@ -1310,6 +1429,7 @@ const courseCatalog = {
         {
           "id": "consistency",
           "title": "일관성 모델",
+          "titleEn": "Consistency models",
           "question": "복제된 데이터는 언제 \"같다\"고 말할 수 있을까?",
           "format": "실험",
           "requires": [],
@@ -1318,6 +1438,7 @@ const courseCatalog = {
         {
           "id": "raft",
           "title": "합의 구현",
+          "titleEn": "Implementing consensus",
           "question": "리더가 죽어도 기록은 어떻게 끊기지 않고 이어질까?",
           "format": "실습",
           "requires": [],
@@ -1328,10 +1449,12 @@ const courseCatalog = {
     {
       "id": "ai",
       "title": "인공지능",
+      "titleEn": "Artificial intelligence",
       "lessons": [
         {
           "id": "ml",
           "title": "머신러닝 기초",
+          "titleEn": "Machine learning basics",
           "question": "컴퓨터는 어떻게 예시만 보고 규칙을 배울까?",
           "format": "실험",
           "requires": [],
@@ -1340,6 +1463,7 @@ const courseCatalog = {
         {
           "id": "neural",
           "title": "신경망",
+          "titleEn": "Neural networks",
           "question": "숫자를 곱하고 더하는 층을 쌓으면 어떻게 그림을 알아볼까?",
           "format": "실험",
           "requires": [],
@@ -1348,6 +1472,7 @@ const courseCatalog = {
         {
           "id": "gradient",
           "title": "경사하강법",
+          "titleEn": "Gradient descent",
           "question": "오차를 줄이는 방향은 어떻게 찾을까?",
           "format": "실험",
           "requires": [],
@@ -1356,6 +1481,7 @@ const courseCatalog = {
         {
           "id": "cnn",
           "title": "합성곱 신경망",
+          "titleEn": "Convolutional neural networks",
           "question": "이미지에서 모양을 어떻게 찾아낼까?",
           "format": "실험",
           "requires": [],
@@ -1364,6 +1490,7 @@ const courseCatalog = {
         {
           "id": "attention",
           "title": "어텐션과 트랜스포머",
+          "titleEn": "Attention and transformers",
           "question": "문장에서 어떤 단어에 주목할지 어떻게 정할까?",
           "format": "실험",
           "requires": [],
@@ -1372,6 +1499,7 @@ const courseCatalog = {
         {
           "id": "llm",
           "title": "대규모 언어 모델",
+          "titleEn": "Large language models",
           "question": "다음 단어 맞히기가 어떻게 대화가 될까?",
           "format": "실험",
           "requires": [],
@@ -1382,10 +1510,12 @@ const courseCatalog = {
     {
       "id": "projects",
       "title": "프로젝트",
+      "titleEn": "Projects",
       "lessons": [
         {
           "id": "handbuilt",
           "title": "손으로 만든 컴퓨터",
+          "titleEn": "A hand-built computer",
           "question": "게이트로 만든 CPU 시뮬레이터 위에서 직접 쓴 프로그램을 돌립니다.",
           "format": "프로젝트",
           "requires": [],
@@ -1394,6 +1524,7 @@ const courseCatalog = {
         {
           "id": "tinydb",
           "title": "작은 데이터베이스",
+          "titleEn": "A tiny database",
           "question": "파일에 저장하고, 인덱스로 찾고, 트랜잭션을 지키는 저장소를 만듭니다.",
           "format": "프로젝트",
           "requires": [],
@@ -1402,6 +1533,7 @@ const courseCatalog = {
         {
           "id": "capstone",
           "title": "버티는 웹 서비스",
+          "titleEn": "A web service that holds up",
           "question": "캐시, 로드밸런서, 큐를 갖춘 서비스를 설계하고 부하를 걸어 한계를 찾습니다.",
           "format": "프로젝트",
           "requires": [],
@@ -1410,6 +1542,7 @@ const courseCatalog = {
         {
           "id": "trackproject",
           "title": "트랙 프로젝트",
+          "titleEn": "Track project",
           "question": "8장에서 고른 트랙의 주제로 스스로 문제를 정해 해결합니다.",
           "format": "프로젝트",
           "requires": [],

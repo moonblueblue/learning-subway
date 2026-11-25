@@ -223,6 +223,10 @@
   const brand = element('a', 'course-brand', 'How It Runs');
   brand.href = '../index.html';
   bar.append(menu, brand);
+  // Language switch (Korean default, English second); CSS keeps it at the right end of the bar.
+  const langSwitch = element('div');
+  window.courseI18n?.buildSwitch(langSwitch);
+  bar.append(langSwitch);
   // A reflection or file tree can use the whole mobile pane without resetting its state.
   const detail = canvas.querySelector('.think, .side');
   const detailAnchor = document.createComment('lesson detail');

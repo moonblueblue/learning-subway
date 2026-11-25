@@ -1,0 +1,92 @@
+// English for 0.8 The impact of computing. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  '컴퓨팅의 영향 · 레슨 0.8': 'The impact of computing · Lesson 0.8',
+  '위치 공유, 채용 프로그램, 접근성, 데이터센터 사례를 보고 기술이 주는 이익과 위험을 직접 나눠 보세요.':
+    'Look at cases on location sharing, a hiring program, accessibility and data centres, and sort the benefits and risks technology brings yourself.',
+  '기술이 사람과 사회에 주는 이익과 위험은 무엇일까요? 실제로 있을 법한 사례를 읽고, 문장마다 이익인지 위험인지 골라 보세요.':
+    'What benefits and risks does technology bring to people and society? Read realistic cases and decide, sentence by sentence, whether each is a benefit or a risk.',
+  '사례': 'Case', '이익일까, 위험일까': 'Benefit or risk?', '이익': 'Benefit', '위험': 'Risk',
+  '✓ 이 사례의 문장을 모두 맞게 나눴습니다. 아래 질문도 생각해 보세요.': '✓ You sorted every sentence in this case correctly. Think about the question below too.',
+  // Step 1
+  '개인정보': 'Privacy',
+  '편리함 뒤에는 쌓이는 기록이 있다': 'Behind convenience, records pile up',
+  '앱이 편리해질수록 우리에 대한 데이터를 더 많이 모읍니다. 데이터는 한 번 보내면 여러 기계를 거쳐 저장되고, 지우기 어렵습니다. 그래서 무엇을 모으는지, 누가 볼 수 있는지, 얼마나 오래 두는지를 따져야 합니다.':
+    'The more convenient apps get, the more data they collect about us. Once sent, data passes through many machines and is stored, and it is hard to delete. So we have to ask what is collected, who can see it and how long it is kept.',
+  '친구 찾기 앱이 내 위치를 1분마다 서버로 보내 친구들에게 보여 준다.': 'A friend-finder app sends my location to a server every minute and shows it to my friends.',
+  '약속 장소에서 서로를 쉽게 찾을 수 있다.': 'Friends can easily find each other at a meeting place.',
+  '실시간 위치는 만남과 안전에 실제로 도움이 됩니다.': 'Live location really helps with meeting up and with safety.',
+  '내가 매일 어디에 가는지 기록이 계속 쌓인다.': 'A record of where I go every day keeps piling up.',
+  '집, 학교, 병원처럼 민감한 장소까지 드러나는 생활 기록이 됩니다.': 'It becomes a record of daily life that reveals even sensitive places, such as home, school and hospital.',
+  '길을 잃은 아이를 보호자가 바로 찾을 수 있다.': 'A parent can find a lost child right away.',
+  '같은 기능이 사람을 보호하는 데 쓰이기도 합니다.': 'The same feature can also be used to protect people.',
+  '서버가 해킹되면 위치 기록이 통째로 새어 나갈 수 있다.': 'If the server is hacked, the whole location history could leak.',
+  '모아 둔 데이터가 많을수록 유출되었을 때 피해도 큽니다.': 'The more data is kept, the greater the harm when it leaks.',
+  '0.7에서 패킷이 여러 라우터와 서버를 거치는 것을 보았습니다. 위치 기록도 그렇게 서버까지 가서 저장됩니다.':
+    'In 0.7 we saw packets pass through many routers and servers. Location records travel to a server that way and are stored there too.',
+  '이 앱을 쓴다면 어떤 설정이 있으면 좋을까요?': 'If you used this app, what settings would you want?',
+  '친구마다 공유 여부를 따로 정하기, 정해진 시간에만 공유하기, 위치 기록을 일정 기간 뒤 자동으로 지우기, 정확한 위치 대신 "근처" 정도만 보여 주기 같은 설정이 있습니다. 필요한 만큼만 모으는 것을 "데이터 최소화"라고 합니다.':
+    'Settings such as choosing per friend whether to share, sharing only at set times, deleting location history automatically after a while, and showing only "nearby" instead of the exact location. Collecting only as much as needed is called "data minimisation".',
+  '위치를 1분마다 전송': 'Location sent every minute', '서버에 시각과 위치가 누적': 'Times and places pile up on the server', '한 사람의 이동 경로 추정 가능': 'One person\'s movements can be worked out',
+  // Step 2
+  '공정성': 'Fairness',
+  '데이터로 배운 규칙은 데이터의 치우침도 배운다': 'Rules learned from data also learn its bias',
+  '프로그램이 과거 데이터에서 규칙을 스스로 배우면, 데이터에 섞인 사람들의 치우침까지 그대로 따라 할 수 있습니다. 게다가 수천 건을 한꺼번에 처리하므로, 사람 한 명의 실수보다 훨씬 넓게 퍼집니다.':
+    'When a program learns rules by itself from past data, it can copy the bias of the people mixed into that data. And because it handles thousands of cases at once, the harm spreads much wider than one person\'s mistake.',
+  '지원서를 자동으로 걸러 주는 프로그램이 지난 10년 동안의 합격자 자료로 규칙을 배웠다.': 'A program that screens job applications automatically learned its rules from ten years of past hires.',
+  '지원서 수천 장을 몇 분 만에 읽는다.': 'It reads thousands of applications in minutes.',
+  '사람이 며칠 걸릴 일을 빠르게 처리합니다.': 'It quickly does work that would take a person days.',
+  '과거 합격자가 한쪽 성별에 치우쳐 있었다면 그 치우침도 배운다.': 'If past hires leaned toward one gender, it learns that bias too.',
+  '실제로 이런 이유로 사용을 멈춘 채용 프로그램 사례가 있습니다.': 'Real hiring programs have been stopped for exactly this reason.',
+  '모든 지원서에 같은 기준을 똑같이 적용한다.': 'It applies the same standard to every application.',
+  '기분이나 피로에 흔들리지 않는 일관성은 장점입니다. 다만 그 기준 자체가 공정한지는 따로 확인해야 합니다.':
+    'Consistency that mood or tiredness cannot shake is a strength. But whether the standard itself is fair has to be checked separately.',
+  '떨어진 사람에게 왜 떨어졌는지 설명하기 어렵다.': 'It is hard to explain to rejected applicants why they were rejected.',
+  '스스로 배운 규칙은 사람이 읽기 어려워 이의를 제기하기도 어렵습니다.': 'Rules a program taught itself are hard for people to read, so they are hard to challenge too.',
+  '0.6에서 알고리즘은 문제를 푸는 정확한 절차라고 했습니다. 절차가 정확해도 그 절차를 만든 데이터가 치우쳐 있으면 결과도 치우칩니다.':
+    'In 0.6 an algorithm was an exact procedure for solving a problem. Even an exact procedure gives biased results if the data it was built from is biased.',
+  '이 프로그램을 공정하게 쓰려면 무엇을 확인해야 할까요?': 'What would you need to check to use this program fairly?',
+  '배운 데이터가 여러 집단을 고르게 담고 있는지, 집단별 합격률에 큰 차이가 없는지 정기적으로 검사하기, 최종 결정은 사람이 하기, 떨어진 사람이 이유를 묻고 다시 검토를 요청할 수 있게 하기 같은 방법이 있습니다.':
+    'Regularly checking that the training data covers groups evenly and that pass rates do not differ greatly between groups, having a person make the final decision, and letting rejected applicants ask why and request another review.',
+  '과거 선택을 학습': 'Learns from past choices', '과거 합격자에 한 집단이 적음': 'One group is rare among past hires', '새 지원자에게 편향이 이어질 수 있음': 'The bias can carry over to new applicants',
+  // Step 3
+  '접근성': 'Accessibility',
+  '설계에 따라 기술은 사람을 잇기도, 막기도 한다': 'Depending on design, technology connects people or shuts them out',
+  '화면 낭독기, 자막, 글자 크기 조절 같은 기술은 장애가 있는 사람도 컴퓨터를 쓸 수 있게 합니다. 하지만 만드는 사람이 이를 고려하지 않으면 같은 기술이 오히려 누군가를 밀어냅니다. 접근성은 처음부터 설계에 넣어야 합니다.':
+    'Technologies such as screen readers, captions and adjustable text size let people with disabilities use computers too. But if makers do not consider them, the same technology pushes someone out instead. Accessibility has to be designed in from the start.',
+  '시각장애가 있는 사람이 화면 낭독기로 쇼핑 앱을 쓰고, 청각장애가 있는 사람이 자동 자막으로 강의를 본다.': 'A blind person shops in an app with a screen reader, and a deaf person watches a lecture with automatic captions.',
+  '앞이 보이지 않아도 글을 소리로 들으며 웹을 쓸 수 있다.': 'Without sight, a person can still use the web by hearing the text read aloud.',
+  '화면 낭독기는 화면의 글을 읽어 주고 키보드로 조작하게 해 줍니다.': 'A screen reader reads the screen\'s text aloud and allows control by keyboard.',
+  '상품 사진에 설명 글이 없으면 낭독기는 "이미지"라고만 읽는다.': 'If a product photo has no description, the reader only says "image".',
+  '0.3에서 이미지는 픽셀 숫자일 뿐이라고 했습니다. 화면 낭독기는 그 숫자를 읽을 수 없어서, 이미지에 글로 된 설명이 따로 있어야 합니다.':
+    'In 0.3 an image was just pixel numbers. A screen reader cannot read those numbers, so an image needs a separate written description.',
+  '소리를 듣지 못해도 자막으로 강의 내용을 따라간다.': 'Without hearing, a person can follow the lecture through captions.',
+  '자막은 시끄러운 곳에 있는 사람, 외국어를 배우는 사람에게도 도움이 됩니다.': 'Captions also help people in noisy places and people learning a language.',
+  '글자 크기를 키울 수 없는 앱은 시력이 약한 사람이 쓰기 어렵다.': 'An app whose text size cannot be increased is hard to use for people with low vision.',
+  '작은 설계 결정 하나가 많은 사람을 막을 수 있습니다.': 'One small design decision can shut out many people.',
+  '만드는 사람이 대체 설명을 빠뜨리면 그 정보는 전달되지 않습니다.': 'If the maker leaves out the text alternative, that information never arrives.',
+  '지금까지 본 레슨 페이지들에서 접근성을 위해 넣은 것을 찾아볼까요?': 'Can you find what the lesson pages so far include for accessibility?',
+  '장면 아래에 같은 조작을 하는 버튼 줄(키보드와 화면 낭독기용), 그림을 글로 설명하는 숨은 설명(desc), 단계가 바뀔 때 읽어 주는 안내, 모션 감소 설정을 켜면 애니메이션을 멈추는 기능, 색만이 아니라 0과 1 글자로도 상태를 보여 주는 것이 있습니다.':
+    'A row of buttons under the scene that does the same things (for keyboards and screen readers), a hidden description (desc) of the picture, announcements read when the step changes, stopping animation when reduced motion is on, and showing state with the characters 0 and 1, not only with colour.',
+  '영상에 음성만 제공': 'A video with audio only', '같은 내용을 자막으로 표시': 'The same content shown as captions', '소리를 듣기 어려워도 이해': 'Understood even when hearing is hard',
+  // Step 4
+  '환경과 일': 'Environment and work',
+  '눈에 보이지 않는 비용도 있다': 'Some costs are invisible',
+  '인터넷 서비스는 데이터센터라는 거대한 건물의 컴퓨터에서 돌아가고, 이 컴퓨터들은 전기와 냉각수를 많이 씁니다. 자동화는 힘든 일을 덜어 주지만 일자리의 모습도 바꿉니다. 기술의 영향은 화면 밖에서도 일어납니다.':
+    'Internet services run on computers in huge buildings called data centres, and these computers use a lot of electricity and cooling water. Automation takes away hard work but also changes what jobs look like. Technology has effects outside the screen too.',
+  '회사가 업무를 클라우드 서비스로 옮기고, 반복되는 서류 작업을 프로그램으로 자동화했다.': 'A company moved its work to a cloud service and automated repetitive paperwork with a program.',
+  '온라인 회의가 늘어 출장과 이동이 줄었다.': 'More online meetings meant less business travel and commuting.',
+  '이동이 줄면 시간과 탄소 배출이 함께 줄어듭니다.': 'Less travel saves both time and carbon emissions.',
+  '데이터센터가 많은 전기와 냉각수를 쓴다.': 'Data centres use a lot of electricity and cooling water.',
+  '전 세계 데이터센터의 전력 사용은 계속 늘고 있습니다.': 'The electricity used by data centres worldwide keeps growing.',
+  '반복 업무를 하던 사람의 일자리가 바뀌거나 줄어든다.': 'Jobs of people who did repetitive work change or disappear.',
+  '새로운 일자리도 생기지만, 바뀌는 사람에게는 배울 기회와 지원이 필요합니다.': 'New jobs appear too, but the people affected need chances to learn and support.',
+  '바꾼 지 몇 년 안 된 기기들이 버려져 전자 폐기물이 쌓인다.': 'Devices only a few years old are thrown away and electronic waste piles up.',
+  '전자 폐기물에는 해로운 물질과 귀한 금속이 함께 들어 있어 재활용이 중요합니다.': 'Electronic waste contains both harmful substances and precious metals, so recycling matters.',
+  '0.5에서 본 CPU, 메모리, 저장장치 수만 대가 모인 곳이 데이터센터입니다. 0.6에서 본 것처럼 좋은 알고리즘은 같은 일을 더 적은 계산으로 해서 전기도 아낍니다.':
+    'A data centre gathers tens of thousands of the CPUs, memory and storage from 0.5. As 0.6 showed, a good algorithm does the same work with less computation and saves electricity too.',
+  '개발자로서 줄일 수 있는 영향은 무엇일까요?': 'As a developer, which effects could you reduce?',
+  '불필요한 계산과 데이터 전송을 줄이는 효율적인 코드 쓰기, 오래된 기기에서도 돌아가게 만들어 기기 교체를 늦추기, 자동화로 바뀌는 일을 하는 사람들과 함께 새 역할을 설계하기 같은 일이 있습니다.':
+    'Writing efficient code that avoids unneeded computation and data transfer, making software run on older devices so they are replaced later, and designing new roles together with the people whose work automation changes.',
+  '클라우드에 계산 요청': 'Computation requested from the cloud', '서버가 전력·냉각 사용': 'Servers use power and cooling', '사용자 화면 밖에서도 비용 발생': 'Costs arise outside the user\'s screen',
+};

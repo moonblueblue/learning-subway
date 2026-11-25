@@ -622,3 +622,33 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 .course-diagram :is(.diagram-edge, .diagram-tip).muted { stroke: #768e82; stroke-dasharray: 4 4; }
 .course-diagram .diagram-edge-label { font-size: 14px; paint-order: stroke; stroke: #e8f0e9; stroke-width: 5; stroke-linejoin: round; }
 .course-diagram-native #scene #packets { visibility: hidden; }
+
+/* Language switch: Korean (default) then English, always at the right end of the course bar. */
+.lang-switch {
+  order: 99;
+  margin-inline-start: auto;
+  display: inline-flex;
+  flex: none;
+  border: 1px solid var(--course-border);
+  border-radius: var(--course-item-radius);
+  overflow: hidden;
+  background: #fff;
+}
+.lang-switch button {
+  border: 0;
+  background: none;
+  padding: 4px 12px;
+  min-height: 32px;
+  font: 600 13px system-ui, sans-serif;
+  color: var(--course-muted);
+  cursor: pointer;
+}
+.lang-switch button + button { border-inline-start: 1px solid var(--course-border); }
+.lang-switch button[aria-pressed="true"] { background: var(--course-active); color: var(--course-ink); }
+.lang-switch .lang-short { display: none; }
+@media (max-width: 959px), (max-height: 549px) {
+  .lang-switch .lang-long { display: none; }
+  .lang-switch .lang-short { display: inline; }
+  .lang-switch button { padding: 4px 8px; min-height: 36px; }
+}
+

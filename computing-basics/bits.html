@@ -132,6 +132,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <link rel="stylesheet" href="../shared/course.css">
 <script src="../shared/engine.js"></script>
 <script defer src="../shared/catalog.js"></script>
+<script defer src="./bits.en.js"></script>
+<script defer src="../shared/i18n.js"></script>
 <script defer src="../shared/course.js"></script>
 </head>
 <body>
@@ -544,7 +546,9 @@ function placeLabels() {
   const plateTop = Number(left.plate.rect.getAttribute('y'));
   labels.caption.setAttribute('x', plateLeft);
   const captionHalf = parseFloat(getComputedStyle(labels.caption).fontSize) / 2;
-  const captionY = left.lift + switchLow - left.height + plateTop - captionHalf - 4;
+  // Above the highest plate in the row, so a longer caption (English) never runs into a raised neighbour.
+  const highest = Math.min(...switches.map((view) => view.lift + switchLow - view.height));
+  const captionY = highest + plateTop - captionHalf - 4;
   labels.caption.setAttribute('y', captionY);
   labels.caption.setAttribute('opacity', left.opacity);
   const middle = switches.reduce((sum, view) => sum + 28 * view.c, 0) / switches.length;

@@ -4,6 +4,8 @@
 //   Dictionaries: SHARED below (course shell and hub), titles from courseCatalog, and the page's own
 //   `<lesson>.en.js`, which sets `window.lessonText = { '한국어': 'English', '레슨 {0}개': '{0} lessons' }`.
 //   A key with {0}, {1} ... matches any text in that place and carries it into the English value.
+//   A pattern's value may be a function of the matched parts, for text a page builds from numbers in Korean units
+//   ('{#0}만': (n) => … turns "50만" into "500,000"). A key without placeholders always takes a string.
 // Rules are in DESIGN.md ("두 언어"). scripts/check-i18n.py reports Korean left on an English page.
 (() => {
   const LANGS = ['ko', 'en'];
@@ -23,6 +25,8 @@
     '재생': 'Play', '다시 보기': 'Replay', '자동 실행': 'Auto run', '자동 실행 중': 'Running', '직접 실행': 'Manual run',
     // Circuit lessons (chapter 3): switches, lines and lamps.
     '스위치 {0}': 'Switch {0}', '스위치 {0}, 켜짐 1': 'Switch {0}, on 1', '스위치 {0}, 꺼짐 0': 'Switch {0}, off 0', '스위치 {0} 켜짐. {1}': 'Switch {0} on. {1}', '스위치 {0} 꺼짐. {1}': 'Switch {0} off. {1}', '{0}의 {#1} 자리, {#2}': '{0} {1}s place, {2}', '1이 흐르는 선': 'Line carrying 1', '0인 선': 'Line at 0', '여러 비트를 나르는 버스': 'Bus carrying several bits', '연산 신호': 'Operation signal', '입력 스위치 켜고 끄기': 'Turn the input switches on and off', '진리표 · 직접 만든 줄에 ✓': 'Truth table · ✓ on rows you made', '이 단계의 문제를 모두 풀었습니다. 스위치를 자유롭게 눌러 보세요.': 'You solved every problem in this step. Press the switches as you like.', '램프': 'Lamp', '램프 켜짐': 'Lamp on', '스위치': 'Switches',
+    '처음 상태로': 'Reset', '처음 상태로 되돌렸습니다.': 'Reset to the starting state.', '직접 조작': 'Hands-on', '버튼을 눌러 보세요.': 'Press a button.',
+    '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.': 'You solved every problem in this step. Try anything you like.',
     '모션 감소 · 정적 경로': 'Reduced motion · still paths', '확대 후 드래그로 이동': 'Zoom in, then drag to move', '두 손가락으로 확대 · 확대 후 드래그': 'Pinch to zoom · drag after zooming',
     '모션 감소 · 직접 실행': 'Reduced motion · manual run', '모션 감소 · 직접 조작': 'Reduced motion · hands-on',
     '타임라인': 'Timeline', '타임라인 {0}': 'Timeline: {0}', '{#0}장': 'Ch. {0}', '{#0}개 레슨': '{0} {0|lesson|lessons}',
@@ -54,7 +58,7 @@
     '✓ 맞았습니다.': '✓ Correct.', '✗ 다시 생각해 보세요.': '✗ Think again.', '맞았습니다.': 'Correct.', '다시 생각해 보세요.': 'Think again.',
     '예시 답 보기': 'Show a sample answer', '예시 답 숨기기': 'Hide the sample answer', '정답 보기': 'Show the answer', '정답 숨기기': 'Hide the answer',
     '자유롭게 적어 보세요. 저장되거나 채점되지 않습니다.': 'Write freely. Nothing is saved or graded.',
-    '{#0} / {#1} 맞힘': '{0} / {1} correct', '문제': 'Question', '참일까, 거짓일까': 'True or false?', '맞다': 'Right', '틀리다': 'Wrong', '다음 문장이 참인지 고르세요.': 'Choose whether each sentence is true.',
+    '{#0} / {#1} 맞힘': '{0} / {1} correct', '문제': 'Question', '문제 풀기': 'Questions', '참일까, 거짓일까': 'True or false?', '맞다': 'Right', '틀리다': 'Wrong', '다음 문장이 참인지 고르세요.': 'Choose whether each sentence is true.',
     '✓ 모두 맞게 골랐습니다. 아래 질문도 생각해 보세요.': '✓ All chosen correctly. Think about the question below too.',
     '✓ 진리표를 모두 채웠습니다. 아래 질문도 생각해 보세요.': '✓ The truth table is complete. Think about the question below too.', '생각해 보기 ·': 'Think about it ·', '앞 레슨과 이어 보기': 'Linking back to earlier lessons',
     // Code-running lessons with memory cells (1.1, 1.2 and others)
@@ -126,6 +130,9 @@
     for (const [pattern, en] of patterns) {
       const match = core.match(pattern);
       // {0} inserts the matched text (translated when known); {0|line|lines} picks a word by whether it is 1.
+      // A function value computes the English from the matched parts, for text the page builds from numbers:
+      // '{#0}만': (n) => … turns "50만" into "500,000".
+      if (match && typeof en === 'function') return lead + en(...Object.keys(match.groups).sort().map((key) => match.groups[key])) + tail;
       if (match) return lead + en.replace(/\{(\d)(?:\|([^|}]*)\|([^}]*))?\}/g, (_, n, one, many) => {
         const value = match.groups['g' + n];
         if (one !== undefined) return value.trim() === '1' ? one : many;

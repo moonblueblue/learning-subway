@@ -21,8 +21,7 @@ window.lessonText = {
   '→ 하나씩 최대': '→ one by one, at most', '{#0}번': '{0} {0|time|times}', '{#0}개': '{0}',
   '데이터 {#0}개.': '{0} data {0|item|items}.', '새 문제. 찾는 수 {#0}': 'New problem. Target {0}',
   '하나씩 {0}번 · 반씩 {1}번': 'One by one {0} · halving {1}',
-  '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.': 'You solved every problem in this step. Try anything you like.',
-  '기둥 높이 = 최악일 때 여는 횟수(로그 눈금)': 'Column height = boxes opened in the worst case (log scale)',
+    '기둥 높이 = 최악일 때 여는 횟수(로그 눈금)': 'Column height = boxes opened in the worst case (log scale)',
   // Step 1
   '순서가 없으면 하나씩 열어 봐야 한다': 'With no order, you must open them one by one',
   '상자 16개에 수가 하나씩 들어 있고, 순서는 뒤섞여 있습니다. 찾는 수가 어디 있는지 알 수 없으니 하나씩 열어 볼 수밖에 없습니다. 이렇게 처음부터 차례로 확인하는 방법을 순차 탐색이라고 합니다. 운이 좋으면 1번, 나쁘면 16번 열어야 합니다.':

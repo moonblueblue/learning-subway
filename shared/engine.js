@@ -13,7 +13,7 @@ function syncRoute() {
 function showStep(index, announce = true) {
   cancelAll();
   state.index = index;
-  if (!state.userPaused) state.playing = !motion.matches;
+  state.playing = !motion.matches;
   const s = lesson[index];
   buildScene();
   byId('stage-list').replaceChildren(...s.stages.map((stage) => {
@@ -163,10 +163,6 @@ function demoTick() {
 function syncPlayback() {
   const reduced = motion.matches;
   if (reduced) state.playing = false;
-  byId('status').textContent = reduced ? '모션 감소 · 직접 실행' : state.playing ? '자동 실행 중' : '직접 실행';
-  byId('pause').textContent = state.playing ? '일시정지' : '자동 실행';
-  byId('pause').disabled = reduced;
-  byId('replay').disabled = reduced;
   if (state.playing) kick();
   paint();
   syncTask();

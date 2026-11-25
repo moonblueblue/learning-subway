@@ -140,7 +140,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
   <div class="workspace">
     <div>
       <section class="panel" aria-labelledby="stage-heading">
-        <div class="stage-top"><h2 id="stage-heading">막대 정렬</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage-top"><h2 id="stage-heading">막대 정렬</h2></div>
         <div class="stage">
           <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
             <title id="scene-title">높이가 다른 막대들이 비교와 교환으로 정렬되는 장면</title><desc id="scene-desc"></desc>
@@ -176,12 +176,10 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
           <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
           <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
-          <button class="action" id="view-reset" type="button">원래 보기</button>
           <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
         </div>
         <div class="controls">
           <div class="legend" aria-label="범례"><span><i class="dot hit"></i>비교 중</span><span><i class="dot shift"></i>교환·옮겨 적기</span><span><i class="dot sorteddot"></i>자리 확정</span><span><i class="dot rangedot"></i>합치는 범위</span></div>
-          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
         </div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
@@ -257,7 +255,6 @@ for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
 
 byId('zoom-in').onclick = () => zoomBy(.25);
 byId('zoom-out').onclick = () => zoomBy(-.25);
-byId('view-reset').onclick = resetView;
 viewport.addEventListener('keydown', (event) => {
   if (event.ctrlKey || event.metaKey || event.altKey) return;
   const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
@@ -480,7 +477,7 @@ const lesson = [
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const storageKey = 'sorting-lab:v1:step';
 const state = { index: 0, input: 'random', algo: 'selection', values: [], trace: [], pos: 0, cmp: 0, moves: 0, running: false,
-  playing: !motion.matches, userPaused: false, wait: 0, log: [], solved: '', wrong: '', demoPosition: 0, user: false, queue: [] };
+  playing: !motion.matches, wait: 0, log: [], solved: '', wrong: '', demoPosition: 0, user: false, queue: [] };
 const progress = lesson.map(() => 0);
 
 const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
@@ -753,10 +750,6 @@ function demoTick() {
 function syncPlayback() {
   const reduced = motion.matches;
   if (reduced) state.playing = false;
-  byId('status').textContent = reduced ? '모션 감소 · 직접 조작' : state.playing ? '자동 실행 중' : '직접 조작';
-  byId('pause').textContent = state.playing ? '일시정지' : '자동 실행';
-  byId('pause').disabled = reduced;
-  byId('replay').disabled = reduced;
   if (state.playing) kick();
   syncControls();
 }
@@ -764,7 +757,7 @@ function syncPlayback() {
 // ---------- Steps and routing ----------
 function showStep(index, announce = true) {
   state.index = index;
-  if (!state.userPaused) state.playing = !motion.matches;
+  state.playing = !motion.matches;
   const s = lesson[index];
   state.solved = '';
   state.wrong = '';
@@ -824,25 +817,10 @@ const stepButtons = lesson.map(({ label }, index) => {
 });
 byId('prev').onclick = () => goToStep(state.index - 1);
 byId('next').onclick = () => goToStep(state.index + 1);
-byId('pause').onclick = () => {
-  state.playing = !state.playing;
-  state.userPaused = !state.playing;
-  if (state.playing) state.wait = 400;
-  syncPlayback();
-  byId('announcement').textContent = byId('status').textContent;
-};
-byId('replay').onclick = () => {
-  state.playing = true;
-  state.userPaused = false;
-  state.demoPosition = 0;
-  state.wait = 300;
-  syncPlayback();
-  byId('announcement').textContent = '처음부터 자동 실행';
-};
 window.addEventListener('hashchange', syncRoute);
 window.addEventListener('popstate', syncRoute);
 motion.addEventListener('change', () => {
-  if (!motion.matches && !state.userPaused) state.playing = true;
+  if (!motion.matches) state.playing = true;
   syncPlayback();
 });
 window.addEventListener('keydown', (event) => {

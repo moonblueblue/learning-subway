@@ -170,7 +170,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
   <div class="workspace">
     <div>
       <section class="panel" id="stage-panel" aria-labelledby="stage-heading">
-        <div class="stage-top"><h2 id="stage-heading">이름, 아이노드, 블록</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage-top"><h2 id="stage-heading">이름, 아이노드, 블록</h2></div>
         <div class="stage">
           <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
             <title id="scene-title">디렉터리의 파일 이름이 아이노드를 거쳐 디스크 블록으로 이어지는 장면</title><desc id="scene-desc"></desc>
@@ -200,12 +200,10 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
           <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
           <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
-          <button class="action" id="view-reset" type="button">원래 보기</button>
           <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
         </div>
         <div class="controls">
           <div class="legend" aria-label="범례"><span><i class="dot freeb"></i>빈 블록</span><span><i class="dot ghostb"></i>지워졌지만 내용 남음</span><span><i class="dot hotb"></i>방금 따라간 길</span></div>
-          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
         </div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
@@ -281,7 +279,6 @@ for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
 
 byId('zoom-in').onclick = () => zoomBy(.25);
 byId('zoom-out').onclick = () => zoomBy(-.25);
-byId('view-reset').onclick = resetView;
 viewport.addEventListener('keydown', (event) => {
   if (event.ctrlKey || event.metaKey || event.altKey) return;
   const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
@@ -370,7 +367,7 @@ function fresh() {
     ghosts: new Set(),
   };
 }
-const state = { index: 0, ...fresh(), opened: new Set(), flash: null, playing: !motion.matches, userPaused: false, wait: 0,
+const state = { index: 0, ...fresh(), opened: new Set(), flash: null, playing: !motion.matches, wait: 0,
   solved: '', wrong: '', demoPosition: 0 };
 const progress = lesson.map(() => 0);
 
@@ -617,17 +614,13 @@ function tick(now) {
 function syncPlayback() {
   const reduced = motion.matches;
   if (reduced) state.playing = false;
-  byId('status').textContent = reduced ? '모션 감소 · 직접 조작' : state.playing ? '자동 실행 중' : '직접 조작';
-  byId('pause').textContent = state.playing ? '일시정지' : '자동 실행';
-  byId('pause').disabled = reduced;
-  byId('replay').disabled = reduced;
   if (state.playing && frame === null) frame = requestAnimationFrame(tick);
 }
 
 // ---------- Steps and routing ----------
 function showStep(index, announce = true) {
   state.index = index;
-  if (!state.userPaused) state.playing = !motion.matches;
+  state.playing = !motion.matches;
   const s = lesson[index];
   state.solved = '';
   state.wrong = '';
@@ -683,26 +676,10 @@ const stepButtons = lesson.map(({ label }, index) => {
 });
 byId('prev').onclick = () => goToStep(state.index - 1);
 byId('next').onclick = () => goToStep(state.index + 1);
-byId('pause').onclick = () => {
-  state.playing = !state.playing;
-  state.userPaused = !state.playing;
-  if (state.playing) { resetAll(); state.demoPosition = 0; state.wait = 400; }
-  syncPlayback();
-  byId('announcement').textContent = byId('status').textContent;
-};
-byId('replay').onclick = () => {
-  state.playing = true;
-  state.userPaused = false;
-  resetAll();
-  state.demoPosition = 0;
-  state.wait = 300;
-  syncPlayback();
-  byId('announcement').textContent = '처음부터 자동 실행';
-};
 window.addEventListener('hashchange', syncRoute);
 window.addEventListener('popstate', syncRoute);
 motion.addEventListener('change', () => {
-  if (!motion.matches && !state.userPaused) state.playing = true;
+  if (!motion.matches) state.playing = true;
   syncPlayback();
 });
 window.addEventListener('keydown', (event) => {

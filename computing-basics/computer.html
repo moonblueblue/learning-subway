@@ -100,7 +100,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
   <div class="workspace">
     <div>
       <section class="panel" aria-labelledby="stage-heading">
-        <div class="stage-top"><h2 id="stage-heading">데이터가 지나는 길</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage-top"><h2 id="stage-heading">데이터가 지나는 길</h2></div>
         <div class="stage">
           <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
             <title id="scene-title">컴퓨터 부품 사이의 데이터 경로</title><desc id="scene-desc"></desc>
@@ -120,12 +120,10 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
           <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
           <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
-          <button class="action" id="view-reset" type="button">원래 보기</button>
           <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대 · 확대 후 드래그</span></span>
         </div>
         <div class="controls">
           <div class="legend" aria-label="범례"><span><i class="sample"></i>보내는 데이터</span><span><i class="sample return"></i>돌려받는 데이터</span></div>
-          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
         </div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
@@ -253,7 +251,6 @@ for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
 
 byId('zoom-in').onclick = () => zoomBy(.25);
 byId('zoom-out').onclick = () => zoomBy(-.25);
-byId('view-reset').onclick = resetView;
 viewport.addEventListener('keydown', (event) => {
   if (event.ctrlKey || event.metaKey || event.altKey) return;
   const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
@@ -589,10 +586,6 @@ function syncPlayback() {
     updateScene(1);
     transition = null;
   }
-  byId('status').textContent = reduced ? '모션 감소 · 정적 경로' : state.playing ? '재생 중' : '일시정지됨';
-  byId('pause').textContent = state.playing ? '일시정지' : '재생';
-  byId('pause').disabled = reduced;
-  byId('replay').disabled = reduced;
   paint();
   if (!reduced && (state.playing || transition !== null)) state.frame = requestAnimationFrame(tick);
 }
@@ -649,17 +642,6 @@ const stepButtons = lesson.map(({ label }, index) => {
 });
 byId('prev').onclick = () => goToStep(state.index - 1);
 byId('next').onclick = () => goToStep(state.index + 1);
-byId('pause').onclick = () => {
-  state.playing = !state.playing;
-  syncPlayback();
-  byId('announcement').textContent = byId('status').textContent;
-};
-byId('replay').onclick = () => {
-  state.elapsed = 0;
-  state.playing = true;
-  syncPlayback();
-  byId('announcement').textContent = '현재 단계 다시 재생';
-};
 window.addEventListener('hashchange', syncRoute);
 window.addEventListener('popstate', syncRoute);
 motion.addEventListener('change', () => {

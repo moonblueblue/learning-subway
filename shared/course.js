@@ -63,14 +63,8 @@
     const stageHeader = panel.querySelector(':scope > .stage-top');
     if (cameraTools && stageHeader) {
       cameraTools.classList.add('course-camera');
-      const reset = cameraTools.querySelector('#view-reset');
-      if (reset) {
-        reset.title = '장면을 처음 배율과 위치로 되돌리기';
-      }
       stageHeader.classList.add('course-stage-header');
       stageHeader.append(cameraTools);
-      const status = stageHeader.querySelector('.status');
-      if (status) panel.querySelector('.controls .actions').prepend(status);
     }
   }
   const explanation = main.querySelector('.explanation');
@@ -365,7 +359,10 @@
   drawingControl.append(drawingButton);
   let worldFrame;
   if (scene && lesson.some(step => step.readingDiagram)) {
-    canvas.querySelector('.controls .actions').append(drawingControl);
+    const controls = canvas.querySelector('.controls');
+    let actions = controls.querySelector(':scope > .actions');
+    if (!actions) controls.append(actions = element('div', 'actions'));
+    actions.append(drawingControl);
     if (lesson.some(step => step.readingDiagram?.keepWorld)) {
       const world = scene.querySelector('#world');
       worldFrame = drawSvg(scene, 'g', {});

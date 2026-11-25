@@ -12,7 +12,7 @@ window.lessonText = {
     'Why do registers, cache, RAM and disk differ so much in speed? Read a value from each layer and see how a cache saves time.',
   'CPU 코어에서 레지스터, 캐시, RAM, SSD까지 값을 가지러 가는 장면': 'Fetching values from the CPU core out to registers, cache, RAM and SSD',
   'CPU에서 가까운 층과 먼 층': 'Layers near and far from the CPU', '층': 'Layer', '읽기 조작': 'Read controls', '가지러 가는 길': 'Going to fetch', '값을 들고 오는 길': 'Bringing the value back', '가지러': 'fetch', '값': 'value', '계산': 'compute',
-  '자동 실행 중': 'Autoplaying', '이 단계의 문제를 모두 풀었습니다. 자유롭게 눌러 보세요.': 'You solved every problem in this step. Press anything you like.',
+  '이 단계의 문제를 모두 풀었습니다. 자유롭게 눌러 보세요.': 'You solved every problem in this step. Press anything you like.',
   '버튼을 눌러 값을 읽어 보세요.': 'Press a button to read a value.', '각 층 위에 지금 담긴 내용이 적혀 있습니다.': 'What each layer holds now is written above it.',
   // Layers and the timing table
   'CPU 코어': 'CPU core', '레지스터': 'Registers', 'L1 캐시': 'L1 cache', '여기서 가져옴': 'Fetched from here',

@@ -263,12 +263,6 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
     border-radius: 5px;
   }
   .course-camera .view-scale { min-width: 4ch; font-size: .8125rem; }
-  .course-shell .course-camera #view-reset {
-    width: auto;
-    padding-inline: 7px;
-    font-size: .8rem;
-    white-space: nowrap;
-  }
   .course-shell .course-camera .view-hint {
     display: block;
     position: absolute;
@@ -668,9 +662,6 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .lang-switch button { padding: 4px 10px; min-height: 36px; }
 }
 
-/* The view-reset and autoplay controls are not shown: zoom stays (− / +), and the demo stops on its own when the learner acts. */
-#view-reset, #pause, #replay, .stage-top > .status, .controls .actions > .status { display: none; }
-.controls .actions:not(:has(> :not(#pause, #replay, .status))) { display: none; }
 
 /* Home link as the drawer's first row. */
 .course-home { display: block; padding: 10px 12px; margin: 10px 10px 0; border: 1px solid var(--course-border); border-radius: var(--course-item-radius); color: var(--course-ink); font-weight: 700; text-decoration: none; background: #fff; }

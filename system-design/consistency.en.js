@@ -1,0 +1,89 @@
+// English for 8A.4 Consistency models. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  '일관성 모델 · 레슨 8A.4': 'Consistency models · Lesson 8A.4',
+  '8장 심화 트랙 · 8A 시스템·인프라 · 레슨 8A.4': 'Chapter 8 advanced track · 8A Systems and infrastructure · Lesson 8A.4',
+  '복제본 세 곳에서 최종 일관성으로 옛 값이 보이는 순간, 자기가 쓴 값은 보이게 하는 방법, 시간이 거꾸로 가지 않게 하는 단조 읽기, R + W > N 정족수로 언제나 최신을 읽는 방법을 따라가 보세요.':
+    'With three replicas, follow the moment eventual consistency shows an old value, how to make sure you see your own writes, monotonic reads that keep time from running backwards, and how an R + W > N quorum always reads the latest.',
+  '복제된 데이터는 언제 "같다"고 말할 수 있을까요? 같은 값을 가진 복제본 셋에 쓰고 읽으며, 어떤 약속을 지키려면 무엇을 기다려야 하는지 보세요.':
+    'When can replicated data be called "the same"? Write to and read from three replicas holding the same value, and see what you must wait for to keep each promise.',
+  '클라이언트가 복제본 셋에 쓰고 읽으며 버전이 퍼지는 장면': 'A client writing to and reading from three replicas as versions spread',
+  '클라이언트와 복제본 셋': 'A client and three replicas',
+  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the packets move.',
+  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
+  // Stations
+  '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router', '복제본': 'Replica',
+  '클라이언트': 'Client', '복제본 {#0}': 'Replica {0}',
+  '클라이언트 → 복제본 {#0}': 'Client → Replica {0}', '복제본 {#0} → 복제본 {#1}': 'Replica {0} → Replica {1}', '복제본 2 → 클라이언트': 'Replica 2 → Client',
+  '클라이언트 · 읽기': 'Client · read', '클라이언트 · 읽기 2': 'Client · read 2', '복제본 3 · 넘기기': 'Replica 3 · pass on',
+  // Labels and holds
+  '쓰기': 'Write', '읽기': 'Read', '읽기 {#0}': 'Read {0}', '쓰기 1': 'Write 1', '쓰기 2 → 성공': 'Write 2 → success', '읽기 2 → 더 새것': 'Read 2 → newer',
+  '읽기 2 (붙여 두기)': 'Read 2 (pinned)', '읽기 (v2 이상)': 'Read (v2 or later)', 'v2 (사진 B)': 'v2 (photo B)', 'v2 전달': 'Pass on v2', 'v3 쓰기': 'Write v3',
+  '결국 같아짐': 'Same in the end', '내가 쓴 건 보이게': 'See your own writes', '넘기기': 'Pass on', '사진 B로 바꾸기': 'Change to photo B', '시간이 거꾸로': 'Time runs backwards', '정족수': 'Quorum',
+  '{#0}개 봄': 'Saw {0}', '{#0}개 봄 ??': 'Saw {0} ??', 'v3 (최신)': 'v3 (latest)', '내 버전 v2': 'My version v2', '사진 B': 'Photo B', 'v1 (옛 값)': 'v1 (old value)', 'v2 응답': 'v2 reply',
+  '옛 값': 'Old value', '내가 쓴 값': 'My write', '퍼지는 중': 'Spreading', '프로필 사진': 'Profile photo', '댓글 목록': 'Comment list', '새로 고침': 'Refresh',
+  '방금 쓴 직후': 'Right after the write', '복제본 3에서 읽기': 'Read from replica 3', '다른 복제본으로': 'To another replica', '버전을 들고 읽기': 'Read with a version',
+  '같은 복제본에서': 'From the same replica', '첫 읽기': 'First read', '정족수 설정': 'Quorum settings', '모두 v2': 'All v2',
+  // Step 1
+  '최종 일관성: 언젠가는 같아지지만 그 사이에는 다를 수 있다': 'Eventual consistency: the same in the end, but different in between',
+  '쓰기가 멈추면 결국 모든 복제본이 같아진다': 'Once writes stop, all replicas end up the same',
+  '7.4에서 복제본은 바뀐 내용을 조금 늦게 받았습니다. 아무 복제본에서나 읽고 쓰게 하면, 새 쓰기가 퍼지는 동안 복제본마다 다른 값을 돌려줄 수 있습니다. "더 이상 쓰기가 없으면 결국 모두 같아진다"만 약속하는 것을 최종 일관성이라 합니다. 가장 약하지만 가장 빠르고, 복제본 일부가 끊겨도 계속 동작합니다.':
+    'In 7.4 replicas received changes a little late. If you can read and write at any replica, replicas can return different values while a new write spreads. Promising only "once there are no more writes, all end up the same" is called eventual consistency. It is the weakest, but the fastest, and it keeps working even when some replicas are cut off.',
+  '복제본 1에는 새 값(v2: 프로필 사진 B)이 있지만, 아직 퍼지지 않은 복제본 3에서 읽으면 옛 값(v1: 사진 A)이 보입니다. 잠시 뒤에는 모두 v2가 됩니다. "같다"고 말할 수 있는 조건(일관성 모델)을 정해야 이런 결과를 받아들일지 판단할 수 있습니다.':
+    'Replica 1 has the new value (v2: profile photo B), but reading from replica 3, which has not received it yet, shows the old value (v1: photo A). A moment later all are v2. Only by setting the conditions for calling them "the same" (a consistency model) can you judge whether to accept a result like this.',
+  '왼쪽에 클라이언트, 오른쪽 위·가운데·아래에 복제본 1, 2, 3이 있습니다. 복제본끼리도 이어져 바뀐 내용을 전합니다.':
+    'On the left is the client; at the top, middle and bottom right are replicas 1, 2 and 3. The replicas are linked to each other too and pass changes along.',
+  '모든 복제본: v1 (사진 A)': 'All replicas: v1 (photo A)', '모든 복제본: v2': 'All replicas: v2',
+  '복제본 1에 새 사진을 씁니다.': 'The new photo is written to replica 1.', '복제본 1: v2 (사진 B)': 'Replica 1: v2 (photo B)',
+  '다른 복제본으로는 천천히 퍼짐': 'Spreads slowly to the other replicas', '복제본 2에는 전해졌고 3은 아직입니다.': 'It reached replica 2; 3 not yet.',
+  '복제본 2: v2': 'Replica 2: v2', '복제본 3: 아직 v1': 'Replica 3: still v1', '복제본 3은 아직 v2': 'Replica 3 still at v2',
+  '복제본 3: v1 (사진 A)을 돌려줌': 'Replica 3: returns v1 (photo A)', '아직 소식을 못 받은 복제본 3은 옛 사진을 보여 줍니다.': 'Replica 3, which has not heard yet, shows the old photo.',
+  '복제본 3: v2': 'Replica 3: v2', '잠시 뒤 모든 복제본이 v2가 됩니다.': 'A moment later every replica is v2.',
+  '최종 일관성이 약속하는 것은?': 'What does eventual consistency promise?', '언제 읽어도 최신 값이 보인다': 'Every read shows the latest value',
+  '그 사이에는 옛 값이 보일 수 있다는 것까지 받아들이는 약한 약속입니다.': 'It is a weak promise that accepts old values may show in between.',
+  // Step 2
+  '자기가 쓴 값은 다음 읽기에서 반드시 보이게 한다': 'Make sure your own write shows in your next read',
+  '사진을 바꾸고 새로 고쳤는데 옛 사진이 보이면 사용자는 저장이 안 된 줄 압니다. "내가 쓴 것은 내가 읽을 때 보인다"(자기 쓰기 읽기)는 최종 일관성보다 조금 강한 약속입니다. 클라이언트가 마지막으로 쓴 버전 번호(v2)를 기억했다가 읽을 때 함께 보내고, 그보다 옛 버전만 가진 복제본은 따라잡을 때까지 기다리거나 다른 복제본으로 넘깁니다.':
+    'If you change your photo, refresh and see the old one, you think it was not saved. "What I wrote shows when I read" (read-your-writes) is a slightly stronger promise than eventual consistency. The client remembers the version number it last wrote (v2) and sends it with each read; a replica holding only older versions waits until it catches up or passes the read to another replica.',
+  '버전 v2를 들고 간 읽기는 v1뿐인 복제본 3에서 바로 답을 받지 않고, v2를 가진 복제본으로 넘겨졌습니다. 다른 사용자는 잠시 옛 사진을 볼 수 있어도, 바꾼 본인은 언제나 새 사진을 봅니다.':
+    'The read carrying version v2 got no answer straight from replica 3, which has only v1; it was passed to a replica with v2. Other users may see the old photo for a while, but the person who changed it always sees the new one.',
+  '같은 장면입니다. 클라이언트가 마지막으로 쓴 버전 번호를 들고 읽습니다.': 'The same scene. The client reads carrying the version number it last wrote.',
+  '클라이언트 기억: 내가 마지막으로 쓴 버전 = v2': 'Client remembers: the version I last wrote = v2', '복제본 1, 2: v2 · 복제본 3: v1': 'Replicas 1, 2: v2 · replica 3: v1',
+  '"v2 이상인 값을 주세요"': '"Give me v2 or later"', '복제본 3: v1뿐 → 줄 수 없음': 'Replica 3: only v1 → cannot answer',
+  '복제본 3은 요구한 버전보다 옛 값만 가졌습니다.': 'Replica 3 has only values older than the version asked for.',
+  '복제본 3은 어떻게 해야 할까요?': 'What should replica 3 do?',
+  'v2를 받을 때까지 기다리거나 다른 복제본으로 넘긴다': 'Wait until it gets v2, or pass the read to another replica', '가진 v1을 그냥 돌려준다': 'Just return the v1 it has',
+  'v1을 주면 "내가 쓴 것이 안 보이는" 일이 생깁니다. 약속을 지키려면 v2 이상만 줄 수 있습니다.': 'Returning v1 would mean "I cannot see what I wrote". To keep the promise it can give only v2 or later.',
+  '복제본 2가 v2를 가짐': 'Replica 2 has v2', '복제본 3이 요청을 복제본 2로 넘깁니다.': 'Replica 3 passes the request to replica 2.',
+  '클라이언트: 사진 B가 보임': 'Client: sees photo B', '바꾼 본인은 새 사진을 봅니다.': 'The person who changed it sees the new photo.',
+  // Step 3
+  '한 번 본 것보다 옛 값을 다시 보지 않게 한다': 'Never see a value older than one already seen',
+  '댓글 목록을 새로 고칠 때마다 다른 복제본에서 읽으면 이상한 일이 생깁니다. 처음엔 새 복제본에서 댓글 5개를 봤는데, 다음엔 아직 늦은 복제본에서 4개를 봅니다. 댓글이 사라졌다가 다시 나타나는 것처럼 보입니다. "한 번 본 것보다 옛 상태로 돌아가지 않는다"(단조 읽기)를 지키려면 같은 복제본에서 계속 읽거나, 본 버전 이상만 받습니다.':
+    'If each refresh of a comment list reads from a different replica, odd things happen. First you see 5 comments on an up-to-date replica, then 4 on one still behind. A comment seems to vanish and come back. To keep "never go back to a state older than one seen" (monotonic reads), keep reading from the same replica, or accept only versions at least as new as the one seen.',
+  '복제본 2(v5)에서 읽은 뒤 복제본 3(v4)에서 읽자 댓글이 하나 사라져 보였습니다. 사용자를 한 복제본에 붙여 두거나, 마지막으로 본 버전을 들고 다니면 막을 수 있습니다.':
+    'Reading from replica 2 (v5) and then replica 3 (v4) made one comment seem to vanish. Pinning the user to one replica, or carrying the last version seen, prevents it.',
+  '같은 장면입니다. 클라이언트가 두 번 읽는데 서로 다른 복제본으로 갑니다.': 'The same scene. The client reads twice, and the reads go to different replicas.',
+  '복제본 1, 2: v5 (댓글 5개)': 'Replicas 1, 2: v5 (5 comments)', '복제본 3: v4 (댓글 4개, 늦음)': 'Replica 3: v4 (4 comments, behind)',
+  '복제본 2: 댓글 5개 (v5)': 'Replica 2: 5 comments (v5)', '첫 읽기는 복제본 2로 갔습니다.': 'The first read went to replica 2.',
+  '복제본 3: 댓글 4개 (v4)': 'Replica 3: 4 comments (v4)', '댓글 하나가 사라진 것처럼 보임': 'One comment seems to have vanished',
+  '두 번째 읽기는 늦은 복제본 3으로 갔습니다.': 'The second read went to replica 3, which is behind.',
+  '이 이상한 일을 막는 간단한 방법은?': 'What is a simple way to prevent this?',
+  '같은 사용자는 같은 복제본에서 계속 읽게 한다': 'Have the same user keep reading from the same replica', '복제본을 더 늘린다': 'Add more replicas',
+  '한 복제본의 버전은 거꾸로 가지 않습니다. 그 복제본이 죽으면 본 버전 이상을 가진 곳으로 옮깁니다.': 'One replica\'s version never goes backwards. If that replica dies, move to one holding at least the version seen.',
+  '다시 복제본 2에서 읽음: 댓글 5개 이상': 'Read again from replica 2: 5 comments or more',
+  '같은 복제본에 붙여 두면 시간이 거꾸로 가지 않습니다.': 'Pinned to the same replica, time never runs backwards.',
+  // Step 4
+  '쓰기와 읽기를 과반에 맞추면 언제나 최신을 본다': 'Writing and reading at a majority always sees the latest',
+  '모든 사람이 언제나 최신 값을 보게 하려면 더 많이 기다려야 합니다. 복제본 N = 3에서 쓰기는 W = 2곳이 확인해야 성공, 읽기는 R = 2곳에 물어 더 새 버전을 고르게 합니다. R + W > N이면 읽는 곳과 쓴 곳이 반드시 한 곳 이상 겹치므로, 읽기가 최신 값을 놓치지 않습니다. 7.9의 과반과 같은 원리입니다.':
+    'For everyone to always see the latest value, you must wait more. With N = 3 replicas, a write succeeds only when W = 2 confirm it, and a read asks R = 2 and picks the newer version. If R + W > N, the replicas read and the replicas written always overlap in at least one, so a read never misses the latest value. It is the same idea as the majority of 7.9.',
+  'v3를 복제본 1, 2에 쓰고 복제본 2, 3에서 읽었더니, 겹치는 복제본 2가 v3를 가지고 있어 최신을 골랐습니다. 대신 쓰기와 읽기마다 두 곳을 기다리므로 느려지고, 복제본 두 곳이 죽으면 멈춥니다. 강한 일관성과 빠르기, 버티기 사이에서 고릅니다.':
+    'v3 was written to replicas 1 and 2 and read from replicas 2 and 3; replica 2, in both, had v3, so the latest was picked. In exchange, every write and read waits for two replicas, so it is slower, and it stops if two replicas die. You choose between strong consistency, speed and staying up.',
+  '같은 장면입니다. 쓰기는 두 복제본에, 읽기도 두 복제본에 합니다.': 'The same scene. Writes go to two replicas, and reads ask two replicas too.',
+  '복제본 1: v3 확인': 'Replica 1: v3 confirmed', '복제본 1에 씁니다.': 'Write to replica 1.',
+  '복제본 2: v3 확인 → W = 2 채움 → 쓰기 성공': 'Replica 2: v3 confirmed → W = 2 reached → write succeeds', '두 곳이 확인해 쓰기가 성공합니다.': 'Two replicas confirm, so the write succeeds.',
+  '읽기는 두 곳에 묻습니다. 먼저 복제본 3입니다.': 'The read asks two replicas. First, replica 3.',
+  '복제본 2: v3': 'Replica 2: v3', 'v2와 v3 중 더 새 v3를 고름': 'Of v2 and v3, pick the newer v3', '두 답 중 더 새 버전을 고릅니다.': 'Of the two answers, pick the newer version.',
+  'W = 1, R = 1로 바꾸면 어떻게 될까요?': 'What happens if you change to W = 1, R = 1?',
+  '빨라지지만 옛 값을 읽을 수 있다 (1 + 1 ≤ 3)': 'Faster, but reads can see old values (1 + 1 ≤ 3)', '여전히 언제나 최신을 읽는다': 'Reads still always see the latest',
+  '쓴 한 곳과 읽는 한 곳이 다를 수 있어 겹침이 보장되지 않습니다. 1단계의 최종 일관성으로 돌아갑니다.': 'The one replica written and the one read can differ, so overlap is not guaranteed. It goes back to the eventual consistency of step 1.',
+};

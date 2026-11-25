@@ -14,10 +14,10 @@ window.lessonText = {
   // Badges
   '키보드에서 A 입력': 'A typed on the keyboard', 'CPU가 65를 전달': 'CPU passes on 65', '화면에 A 표시': 'A shown on screen',
   'A 표시': 'Shows A', '숫자 2와 3 입력': 'Numbers 2 and 3 typed', '메모리에서 읽고 더함': 'Reads from memory and adds',
-  '화면에 5': '5 on screen', '5 표시': 'Shows 5', '계산 기록': 'Calculation record', '메모리에만 있는 값': 'Values only in memory',
-  '저장 명령': 'Save command', '파일 저장': 'File saved', '저장장치에 파일 생성': 'File created in storage',
-  '비어 있음': 'Empty', '파일 그대로': 'File still there', '메모리 내용 사라짐': 'Memory contents gone', '저장한 파일은 남음': 'The saved file remains',
-  '파일 열기': 'Open file', '파일 불러옴': 'File loaded', '다시 표시': 'Shown again', '화면에 내용 표시': 'Contents shown on screen',
+  '화면에 5': '5 on screen', '5 표시': 'Shows 5', '2, 3 입력': '2, 3 typed', '2 + 3 = 5': '2 + 3 = 5', '결과 5': 'Result 5', '메모리에만 있는 값': 'Values only in memory',
+  '저장 명령': 'Save command', '파일에 5 저장': '5 saved to file', '저장장치에 파일 생성': 'File created in storage',
+  '비어 있음': 'Empty', '파일 5 그대로': 'File 5 still there', '전원 꺼짐': 'Power off', '메모리 내용 사라짐': 'Memory contents gone', '저장한 파일은 남음': 'The saved file remains',
+  '파일 열기': 'Open file', '파일 5': 'File 5', '5 불러옴': '5 loaded', '5 다시 표시': '5 shown again', '화면에 내용 표시': 'Contents shown on screen',
   '저장장치 → 메모리 → CPU': 'Storage → memory → CPU',
   // Step 1
   '입력과 출력': 'Input and output',
@@ -40,16 +40,16 @@ window.lessonText = {
   '오래 두려면 저장장치에 적는다': 'To keep data, write it to storage',
   '"저장"을 누르면 메모리에 있던 내용이 저장장치(SSD나 하드디스크)로 옮겨 적힙니다. 저장장치는 메모리보다 느리지만 전원이 꺼져도 내용이 남습니다. 우리가 파일이라고 부르는 것이 저장장치에 적힌 데이터입니다.':
     'Pressing "Save" copies what was in memory to storage (an SSD or hard disk). Storage is slower than memory, but its contents remain when the power goes off. What we call a file is data written in storage.',
-  '메모리에서 저장장치로 실선이 이어지고, 저장장치 위에 "파일 저장"이 뜹니다.':
-    'A solid line runs from memory to storage, and "File saved" appears above the storage.',
+  '메모리에서 저장장치로 실선이 이어지고, 메모리의 "결과 5"가 저장장치 위에 "파일에 5 저장"으로 뜹니다.':
+    'A solid line runs from memory to storage, and the "Result 5" in memory appears above the storage as "5 saved to file".',
   'CPU가 메모리의 내용을 저장장치로 보내 파일로 적습니다.': 'The CPU sends the contents of memory to storage and writes them as a file.',
   // Step 4
   '전원 끄기': 'Power off',
   '전원이 꺼지면 메모리만 비워진다': 'Power off empties only the memory',
   '컴퓨터를 끄면 메모리는 전기가 끊겨 내용이 모두 사라집니다. 저장장치에 적어 둔 파일은 그대로 남습니다. 저장하지 않고 끄면 작업이 날아가는 이유가 이것입니다.':
     'When the computer is turned off, memory loses power and everything in it disappears. Files written in storage remain. This is why work is lost if you turn off without saving.',
-  '선이 모두 사라지고, 메모리 위에는 "비어 있음", 저장장치 위에는 "파일 그대로"가 뜹니다.':
-    'All the lines disappear; "Empty" appears above memory and "File still there" above storage.',
+  '선이 모두 사라지고 저장장치 말고는 모두 회색이 됩니다. CPU 위에 "전원 꺼짐", 메모리 위에 "비어 있음", 저장장치 위에 "파일 5 그대로"가 뜹니다.':
+    'All the lines disappear and everything but the storage turns grey. "Power off" appears above the CPU, "Empty" above memory and "File 5 still there" above storage.',
   '전원이 꺼져 데이터가 흐르지 않습니다. 메모리는 비어 있고 저장장치의 파일은 그대로 남아 있습니다.':
     'The power is off, so no data flows. Memory is empty and the file in storage remains.',
   // Step 5

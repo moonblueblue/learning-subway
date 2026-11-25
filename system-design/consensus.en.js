@@ -1,0 +1,107 @@
+// English for 7.9 Consensus. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  '합의 · 레슨 7.9': 'Consensus · Lesson 7.9',
+  '서버 세 대가 각자 쓰기를 받아 값이 갈리는 문제, 리더가 순서를 정하고 과반이 기록하면 확정하는 방법, 리더가 죽었을 때 투표로 새 리더 뽑기, 네트워크가 갈라졌을 때 과반 쪽만 진행하는 모습을 Raft 방식으로 따라가 보세요.':
+    'Follow, the Raft way, three servers splitting on a value when each takes writes, a leader setting the order and committing once a majority has recorded, voting in a new leader when the leader dies, and only the majority side going on when the network splits.',
+  '서버 세 대의 합의': 'Consensus among three servers',
+  '클라이언트와 서버 A, B, C 사이로 쓰기, 로그 복사, 투표가 오가는 장면': 'Writes, log copies and votes passing between a client and servers A, B and C',
+  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the packets move.',
+  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
+  '"다음 단계"를 눌러 메시지를 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the messages one at a time. Prediction questions come up along the way.',
+  '서버 여러 대는 어떻게 하나의 값에 동의할까요? 서버 세 대가 리더, 로그 복사, 과반, 투표로 같은 값을 지키는 과정을 보세요.':
+    'How do several servers agree on one value? Watch three servers keep the same value with a leader, log copies, majorities and votes.',
+  '죽음·고립·충돌': 'Dead · cut off · conflict',
+  // Stations
+  '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router',
+  '클라이언트': 'Client', '클라이언트 1': 'Client 1', '클라이언트 2': 'Client 2', '서버': 'Server', '서버 A': 'Server A', '서버 B': 'Server B', '서버 C': 'Server C',
+  '서버 {0} → 서버 {1}': 'Server {0} → Server {1}', '서버 {0} → 클라이언트': 'Server {0} → Client',
+  '클라이언트 → 서버 {0}': 'Client → Server {0}', '클라이언트 {#0} → 서버 {1}': 'Client {0} → Server {1}',
+  '서버 {0} · {1}': 'Server {0} · {1}',
+  // Labels and holds
+  '로그 복사': 'Copy log', '기록함': 'Recorded', '완료': 'Done', '하트비트': 'Heartbeat', '임기 2, 표 줄래?': 'Term 2, vote for me?', '찬성': 'Yes', '임기 2 로그': 'Term 2 log',
+  '리더 · 임기 {#0}': 'Leader · term {0}', '팔로워': 'Follower', '죽음': 'Dead', '혼자 고립': 'Cut off alone',
+  '로그에 x = {#0}': 'x = {0} in log', 'x = {#0} 확정': 'x = {0} committed', 'x = {#0} 완료': 'x = {0} done', 'x = {#0} 확정 못 함': 'x = {0} not committed',
+  '후보 · 임기 2 · 1표': 'Candidate · term 2 · 1 vote', '리더 · 임기 2 · x = 8': 'Leader · term 2 · x = 8', '팔로워 · x = 8': 'Follower · x = 8',
+  '모두 같음': 'All the same', '역할': 'Roles', '지금 상태': 'Current state', '갈라지기 직전': 'Just before the split',
+  '클라이언트 1 → A': 'Client 1 → A', '동시에 클라이언트 2 → B': 'Client 2 → B at the same time', 'A가 C에 알림': 'A tells C', 'B도 C에 알림': 'B tells C too',
+  '리더가 받음': 'The leader takes it', 'B에 복사': 'Copy to B', '과반 확인': 'Majority confirmed', '클라이언트에 답함': 'Reply to the client', 'C도 따라잡음': 'C catches up',
+  'A가 죽음': 'A dies', 'B가 후보로': 'B becomes a candidate', 'C가 투표': 'C votes', '새 리더가 쓰기를 받음': 'The new leader takes writes',
+  '네트워크가 끊김': 'The network breaks', 'A가 쓰기를 받음': 'A takes a write', '반대편의 선거': 'An election on the other side', '다시 이어짐': 'Reconnected',
+  'A, B, C: x = 1': 'A, B, C: x = 1', 'A: x = 5': 'A: x = 5', 'B: x = 7': 'B: x = 7', 'C: x = 5': 'C: x = 5',
+  'C: 5인가 7인가?': 'C: 5 or 7?', 'A 5 · B 7 · C ?': 'A 5 · B 7 · C ?',
+  '리더: A (임기 1) · 팔로워: B, C': 'Leader: A (term 1) · followers: B, C', '확정 규칙: 3대 중 2대 이상이 기록': 'Commit rule: at least 2 of 3 have recorded it',
+  'A 로그: [x = 5] (아직 확정 아님)': 'A log: [x = 5] (not committed yet)', 'B 로그: [x = 5] → "기록함"': 'B log: [x = 5] → "recorded"',
+  'A + B = 2대 → x = 5 확정': 'A + B = 2 → x = 5 committed', 'C는 아직 못 받았지만 확정은 이미 끝남': 'C has not got it yet, but it is already committed',
+  'C 로그: [x = 5]': 'C log: [x = 5]', '세 서버 모두 x = 5': 'All three servers: x = 5',
+  '리더 A (임기 1) · 모두 x = 5': 'Leader A (term 1) · all x = 5', '하트비트: 0.1초마다 · 끊긴 지 0.3초면 선거': 'Heartbeat: every 0.1 s · election after 0.3 s without one',
+  'A가 꺼짐 → 하트비트가 끊김': 'A goes down → heartbeats stop',
+  'B: 0.3초 동안 신호 없음 → 임기 2 후보': 'B: no signal for 0.3 s → candidate for term 2', 'B는 자기에게 1표': 'B votes for itself',
+  'C: 임기 2에서 아직 아무에게도 표를 안 줌 → B에게 찬성': 'C: has given no vote in term 2 yet → votes for B', 'B: 2표 → 리더': 'B: 2 votes → leader',
+  'B 로그: [x = 5, x = 8] → C에 복사 → 확정': 'B log: [x = 5, x = 8] → copied to C → committed',
+  'A ↔ B, C 연결이 끊김': 'Link A ↔ B, C breaks', 'A: 혼자 · B, C: 둘': 'A: alone · B, C: two',
+  'A 로그: [x = 5, x = 9]': 'A log: [x = 5, x = 9]', 'B, C에 복사 불가 → 1대뿐, 과반 아님': 'Cannot copy to B, C → just 1, not a majority',
+  'B, C는 A의 하트비트를 못 받음 → B가 임기 2 리더': 'B, C get no heartbeat from A → B is leader for term 2',
+  'B: x = 8 쓰기 → C와 함께 2대 → 확정': 'B: writes x = 8 → 2 with C → committed',
+  'A: 임기 2 > 내 임기 1 → 팔로워로 내려감': 'A: term 2 > my term 1 → steps down to follower',
+  'A의 확정 안 된 x = 9는 버리고 B의 로그를 따름': 'A drops its uncommitted x = 9 and follows B\'s log', '모두 x = 8': 'All x = 8',
+  // Step 1
+  '서로 다른 값': 'Different values', '아무나 쓰기를 받으면 서버마다 값이 달라진다': 'If anyone takes writes, each server ends up with a different value',
+  '중요한 설정값(예: "지금 주 DB는 누구인가")을 서버 세 대가 함께 보관한다고 해 봅시다. 한 대만 두면 그 서버가 죽을 때 함께 사라지니까요. 그런데 클라이언트 둘이 서로 다른 서버에 동시에 다른 값을 쓰면, 서버마다 값이 달라집니다. 어느 것이 진짜인지 아무도 모릅니다.':
+    'Say three servers together keep an important setting (for example, "which DB is primary now"), because with only one it would vanish when that server dies. But if two clients write different values to different servers at the same time, the servers end up with different values. Nobody knows which is real.',
+  'A는 x = 5, B는 x = 7이라고 믿습니다. 서버 여러 대가 하나의 값에 동의하려면 "누가 순서를 정하는가"와 "몇 대가 받아야 확정인가"라는 규칙이 필요합니다. 이것이 합의 알고리즘(Raft, Paxos)이 하는 일입니다.':
+    'A believes x = 5, B believes x = 7. For several servers to agree on one value, they need rules for "who sets the order" and "how many must have it before it is committed". That is what consensus algorithms (Raft, Paxos) do.',
+  '왼쪽 위와 아래에 클라이언트 둘, 오른쪽에 서버 A, B, C가 있습니다.': 'Two clients at the top and bottom left, servers A, B and C on the right.',
+  '클라이언트 1이 A에 x = 5를 씁니다.': 'Client 1 writes x = 5 to A.', '같은 순간 클라이언트 2가 B에 x = 7을 씁니다.': 'At the same moment client 2 writes x = 7 to B.',
+  'A가 C에게 알립니다.': 'A tells C.', 'C는 두 값을 받고 어느 쪽이 맞는지 모릅니다.': 'C gets both values and does not know which is right.',
+  '이 혼란의 원인은?': 'What causes this mess?',
+  '여러 서버가 각자 쓰기를 받아 순서를 정하는 곳이 없어서': 'Several servers each take writes, and nothing sets the order', '서버가 세 대라서': 'There are three servers',
+  '누가 먼저인지 정하는 한 곳(리더)과 확정 규칙이 없으면 서버마다 다르게 믿게 됩니다.': 'Without one place (a leader) that decides who is first, and a commit rule, each server believes something different.',
+  // Step 2
+  '리더와 과반': 'Leader and majority', '리더가 순서를 정하고, 과반이 받으면 확정한다': 'The leader sets the order, and a majority commits',
+  'Raft에서는 서버 중 하나가 리더가 됩니다. 쓰기는 모두 리더가 받아 순서대로 기록하고(6.6의 로그), 다른 서버(팔로워)에 복사합니다. 리더를 포함해 과반(3대 중 2대)이 기록했다고 확인되면 그 값을 확정하고 클라이언트에 답합니다. 한 대가 느리거나 죽어도 과반만 있으면 진행됩니다.':
+    'In Raft one of the servers becomes the leader. The leader takes every write, records them in order (the log of 6.6) and copies them to the other servers (followers). Once a majority including the leader (2 of 3) is confirmed to have recorded it, the value is committed and the client gets an answer. Even if one is slow or dead, things go on as long as there is a majority.',
+  'A(리더)와 B가 기록한 순간 x = 5가 확정됐습니다. C가 늦게 받아도 결과는 같습니다. 과반은 서로 겹치므로, 확정된 값은 이후 어느 과반에도 반드시 한 대 이상 남아 있습니다.':
+    'x = 5 was committed the moment A (the leader) and B recorded it. C getting it late changes nothing. Majorities always overlap, so a committed value stays on at least one server of any later majority.',
+  '왼쪽에 클라이언트, 가운데 리더인 서버 A, 오른쪽 위아래에 서버 B와 C가 있습니다.': 'The client on the left, server A, the leader, in the middle, and servers B and C at the top and bottom right.',
+  '쓰기는 리더 A가 받습니다.': 'Leader A takes the write.', 'A가 B에게 로그를 복사합니다.': 'A copies the log to B.',
+  '과반이 기록해 x = 5가 확정됩니다.': 'A majority has recorded it, so x = 5 is committed.', '확정되자마자 클라이언트에 답합니다.': 'As soon as it is committed, the client gets an answer.',
+  '느린 C도 곧 따라잡습니다.': 'Slow C soon catches up too.',
+  '서버 3대에서 리더 A가 값을 확정하려면 최소 몇 대의 기록이 필요할까요?': 'With 3 servers, at least how many must record a value for leader A to commit it?',
+  '2대 (A 자신 + 1대)': '2 (A itself + 1)', '3대 모두': 'All 3',
+  '3대의 과반은 2대입니다. A와 B가 기록했으니 C를 기다리지 않아도 됩니다.': 'A majority of 3 is 2. A and B have recorded it, so there is no need to wait for C.',
+  // Step 3
+  '리더가 죽으면': 'When the leader dies', '남은 서버들이 투표로 새 리더를 뽑는다': 'The remaining servers vote in a new leader',
+  '리더는 평소 짧은 간격으로 "나 살아 있어" 신호(하트비트)를 보냅니다. 신호가 일정 시간 끊기면 팔로워는 리더가 죽었다고 보고, 임기 번호를 하나 올려 후보가 되어 다른 서버에 표를 달라고 합니다. 과반의 표를 얻으면 새 리더가 됩니다. 한 임기에 한 서버는 한 표만 줄 수 있어 리더가 둘이 되지 않습니다.':
+    'The leader normally sends an "I am alive" signal (a heartbeat) at short intervals. If the signal stops for a set time, a follower takes the leader as dead, raises the term number by one, becomes a candidate and asks the other servers for votes. With a majority of votes it becomes the new leader. A server can give only one vote per term, so there are never two leaders.',
+  'B가 임기 2의 후보가 되어 C의 표를 얻고, 자기 표와 합쳐 2표(과반)로 리더가 됐습니다. 그 뒤 쓰기는 B가 받습니다. 리더가 바뀌는 몇 초 동안은 쓰기가 잠깐 멈춥니다.':
+    'B became a candidate for term 2, got C\'s vote and, with its own, became leader on 2 votes (a majority). From then on B takes the writes. For the few seconds the leader changes, writes pause briefly.',
+  '같은 장면입니다. 리더 A가 죽고, B와 C가 새 리더를 뽑습니다.': 'The same scene. Leader A dies, and B and C choose a new leader.',
+  '리더 A가 죽어 하트비트가 끊깁니다.': 'Leader A dies and its heartbeats stop.',
+  'B가 임기를 올려 후보가 되고 C에게 표를 청합니다.': 'B raises the term, becomes a candidate and asks C for a vote.',
+  'C가 B에게 표를 줍니다. B가 과반을 얻어 리더가 됩니다.': 'C votes for B. B has a majority and becomes leader.',
+  '클라이언트가 새 리더 B에게 씁니다.': 'The client writes to the new leader, B.',
+  'B가 리더가 되려면 표가 몇 개 필요할까요?': 'How many votes does B need to become leader?',
+  '2표 (자기 + C)': '2 votes (its own + C)', '3표 (A의 표까지)': '3 votes (A\'s too)',
+  '서버 3대의 과반은 2입니다. 죽은 A의 표 없이도 리더를 뽑을 수 있습니다.': 'A majority of 3 servers is 2. A leader can be chosen without dead A\'s vote.',
+  '같은 임기에 리더가 둘이 될 수 없는 까닭은?': 'Why can there not be two leaders in the same term?',
+  '한 서버는 한 임기에 한 표만 주고, 과반은 둘이 동시에 가질 수 없어서': 'A server gives one vote per term, and two cannot both hold a majority',
+  '서버들이 사이가 좋아서': 'The servers get along well',
+  '3표 중 2표를 두 후보가 동시에 얻을 수는 없습니다.': 'Two candidates cannot both get 2 of 3 votes.',
+  // Step 4
+  '네트워크가 갈라지면': 'When the network splits', '과반이 없는 쪽은 확정하지 못하고 기다린다': 'The side without a majority cannot commit and waits',
+  '서버는 살아 있는데 네트워크가 끊겨 A 혼자와 B, C 둘로 갈라질 수 있습니다. A는 아직 자기가 리더라고 믿고 쓰기를 받지만, 과반(2대)에게 복사할 수 없어 확정하지 못합니다. 반대편 B, C는 새 리더를 뽑아 계속 확정합니다. 네트워크가 다시 이어지면 A는 더 높은 임기를 보고 팔로워로 내려와 B의 로그를 따릅니다.':
+    'The servers may be alive while the network breaks, splitting them into A alone and B, C together. A still believes it is leader and takes writes, but cannot copy to a majority (2) and so cannot commit. On the other side, B and C choose a new leader and keep committing. When the network reconnects, A sees the higher term, steps down to follower and follows B\'s log.',
+  'A 쪽에서 받은 x = 9는 확정되지 않았다가 버려지고, B 쪽의 x = 8이 남았습니다. 합의 알고리즘은 갈라졌을 때 과반 쪽만 진행하게 해서, 서로 다른 값이 둘 다 확정되는 일을 막습니다. 대신 소수 쪽은 그동안 쓰기를 못 합니다(가용성을 조금 내주고 일관성을 지킴).':
+    'The x = 9 taken on A\'s side was never committed and is dropped; B\'s side\'s x = 8 stays. When split, a consensus algorithm lets only the majority side go on, so two different values are never both committed. In exchange, the minority side cannot write meanwhile (giving up a little availability to keep consistency).',
+  '같은 장면입니다. 서버 A와 B, C 사이의 네트워크가 끊깁니다.': 'The same scene. The network between server A and B, C breaks.',
+  'A와 나머지 사이가 끊겼습니다.': 'A is cut off from the rest.', '고립된 A도 쓰기를 받지만 복사할 곳이 없습니다.': 'Cut-off A takes a write too, but has nowhere to copy it.',
+  '과반인 B, C 쪽은 새 리더를 뽑고 계속 확정합니다.': 'The B, C side, a majority, chooses a new leader and keeps committing.',
+  '네트워크가 이어지자 A는 B를 따라 x = 8로 맞춥니다.': 'Once the network reconnects, A follows B and matches x = 8.',
+  '고립된 A는 x = 9를 확정할 수 있을까요?': 'Can cut-off A commit x = 9?',
+  '없다, 1대는 과반이 아니다': 'No, 1 is not a majority', '있다, 아직 리더니까': 'Yes, it is still the leader',
+  '리더라도 과반의 기록을 얻지 못하면 확정할 수 없습니다. 클라이언트는 답을 받지 못합니다.': 'Even a leader cannot commit without a majority recording it. The client gets no answer.',
+  '서버를 3대가 아니라 2대로 두면 무엇이 문제일까요?': 'What is wrong with 2 servers instead of 3?',
+  '한 대만 죽어도 과반(2대)이 없어 아무것도 확정할 수 없다': 'If just one dies, there is no majority (2) and nothing can be committed', '더 빨라진다': 'It gets faster',
+  '2대의 과반은 2대라 한 대도 잃을 수 없습니다. 그래서 합의 집단은 보통 3대나 5대처럼 홀수로 둡니다.': 'A majority of 2 is 2, so not one can be lost. That is why consensus groups usually have an odd number, like 3 or 5.',
+};

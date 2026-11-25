@@ -1,0 +1,77 @@
+// English for 7.5 Sharding. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  '샤딩 · 레슨 7.5': 'Sharding · Lesson 7.5',
+  'DB 한 대에 들어가지 않는 데이터를 사용자 번호 mod 3으로 세 샤드에 나눠 담고, 키로 찾는 질의와 모든 샤드에 물어야 하는 질의를 비교하고, 샤드를 늘릴 때 데이터 대부분이 옮겨지는 문제를 따라가 보세요.':
+    'Split data too big for one DB across three shards by user number mod 3, compare queries that look up by key with queries that must ask every shard, and follow the problem of most data moving when shards are added.',
+  '데이터를 여러 DB에 나누면 요청은 어디로 갈까요? 사용자 번호로 샤드를 고르는 규칙을 따라 요청이 한 샤드로, 때로는 모든 샤드로 가는 모습을 보세요.':
+    'When data is split across several DBs, where do requests go? Watch requests follow the rule that picks a shard by user number, going to one shard or sometimes to every shard.',
+  '앱 서버의 요청이 사용자 번호에 따라 세 샤드 중 하나로, 또는 모두로 가는 장면': 'The app server\'s requests going to one of three shards by user number, or to all of them',
+  '샤드 고르기': 'Pick shard',
+  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets travel.',
+  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
+  '앱 서버': 'App server', '샤드(DB)': 'Shard (DB)', '넘침·이사': 'Overflow, moving', '넘침': 'Overflow', '이사': 'Moving',
+  '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
+  'DB 한 대': 'One DB', '샤드 0': 'Shard 0', '샤드 1': 'Shard 1', '샤드 2': 'Shard 2',
+  '앱 서버 → DB 한 대': 'App server → One DB', '앱 서버 → 샤드 고르기': 'App server → Pick shard', '샤드 고르기 → 앱 서버': 'Pick shard → App server', '샤드 고르기 → 샤드 고르기': 'Pick shard → Pick shard',
+  '샤드 고르기 → 샤드 0': 'Pick shard → Shard 0', '샤드 고르기 → 샤드 1': 'Pick shard → Shard 1', '샤드 고르기 → 샤드 2': 'Pick shard → Shard 2',
+  '샤드 고르기 · 사용자 7': 'Pick shard · user 7', '샤드 고르기 · 사용자 11': 'Pick shard · user 11', '샤드 고르기 · 옮기기': 'Pick shard · move', '앱 서버 · 6TB, 3만/초': 'App server · 6 TB, 30k/s',
+  '사용자 7': 'User 7', '사용자 11': 'User 11', '규모': 'Scale', '질의': 'Query', '찾기': 'Find', '없음': 'None', '모두에게': 'To all', '어느 샤드?': 'Which shard?', '1개': '1', '3개 모두': 'All 3', '12명 모두': 'All 12', '3명 (1, 2, 12)': '3 (1, 2, 12)', '9명': '9', '1천만 명': '10 million users', '2TB 디스크': '2 TB disk', '쓰기 3만/초': '30k writes/s',
+  // Step 1
+  '한 대에 안 들어가면': 'When it does not fit in one',
+  '데이터와 쓰기가 DB 한 대를 넘친다': 'Data and writes overflow one DB',
+  '7.4의 복제는 읽기를 나눠 주지만, 모든 복제본이 전체 데이터를 가지고 쓰기는 여전히 주 DB 한 대가 받습니다. 사용자가 3천만 명이 되어 데이터가 6TB, 쓰기가 1초에 3만 개가 되면 DB 한 대의 디스크(2TB)와 쓰기 처리량(1만/초)을 넘습니다.':
+    'Replication in 7.4 shares out reads, but every replica holds all the data and a single primary still takes all writes. With 30 million users, the data reaches 6 TB and writes 30,000 a second, beyond one DB\'s disk (2 TB) and write throughput (10,000/s).',
+  '복제본을 늘려도 각자 6TB를 다 가져야 하고 쓰기는 줄지 않습니다. 데이터 자체를 여러 DB에 나눠 담아야 합니다. 이것이 샤딩(나눠 담기)입니다.': 'Adding replicas means each must hold all 6 TB, and writes do not shrink. The data itself must be split across several DBs. This is sharding.',
+  '왼쪽에 앱 서버, 오른쪽에 DB 한 대가 놓여 있습니다.': 'The app server is on the left and one DB on the right.',
+  '데이터 6TB · 쓰기 30,000/초': 'Data 6 TB · writes 30,000/s', 'DB 한 대: 디스크 2TB · 쓰기 10,000/초': 'One DB: disk 2 TB · writes 10,000/s', '6TB, 3만/초': '6 TB, 30k/s',
+  '디스크 6TB > 2TB': 'Disk 6 TB > 2 TB', '쓰기 30,000/초 > 10,000/초': 'Writes 30,000/s > 10,000/s', '데이터도 쓰기도 DB 한 대에 들어가지 않습니다.': 'Neither the data nor the writes fit in one DB.',
+  '복제본을 더 늘리면 이 문제가 풀릴까요?': 'Would more replicas solve this problem?', '아니다, 복제본도 6TB를 다 가져야 하고 쓰기는 주 DB가 다 받는다': 'No, replicas must also hold all 6 TB, and the primary still takes all writes', '그렇다, 복제본이 쓰기도 나눈다': 'Yes, replicas share the writes too',
+  '복제는 같은 데이터의 사본을 늘릴 뿐, 데이터를 나눠 담지 않습니다.': 'Replication only adds copies of the same data; it does not split the data.',
+  // Step 2
+  '키로 나누기': 'Splitting by key',
+  '사용자 번호로 어느 샤드에 담을지 정한다': 'The user number decides which shard holds the data',
+  '샤딩은 데이터를 키(여기서는 사용자 번호) 기준으로 나눠 여러 DB(샤드)에 담습니다. 가장 간단한 규칙은 "사용자 번호 mod 3"(2.6)입니다. 나머지가 0이면 샤드 0, 1이면 샤드 1, 2면 샤드 2입니다. 샤드마다 데이터 2TB, 쓰기 1만/초씩 맡게 됩니다. 앱 서버는 같은 규칙으로 어느 샤드에 물을지 계산합니다.':
+    'Sharding splits data by a key (here, the user number) and stores it in several DBs (shards). The simplest rule is "user number mod 3" (2.6): remainder 0 goes to shard 0, 1 to shard 1, 2 to shard 2. Each shard handles 2 TB of data and 10,000 writes a second. The app server uses the same rule to work out which shard to ask.',
+  '사용자 7은 7 mod 3 = 1이라 언제나 샤드 1에 있습니다. 한 사용자의 데이터는 한 샤드에 모여 있으니, 그 사용자에 대한 질의는 샤드 하나만 보면 됩니다.': 'User 7 is 7 mod 3 = 1, so always on shard 1. One user\'s data is all on one shard, so queries about that user need look at only one shard.',
+  '왼쪽부터 앱 서버, 샤드 고르기, 위아래로 놓인 샤드 0, 1, 2가 있습니다. 사용자 번호에 따라 한 샤드로만 갑니다.': 'From the left are the app server, Pick shard, and shards 0, 1 and 2 stacked top to bottom. Depending on the user number, a request goes to just one shard.',
+  '나누는 규칙': 'Splitting rule', '샤드 번호 = 사용자 번호 mod 3': 'shard number = user number mod 3', '샤드마다 약 2TB, 쓰기 1만/초': 'About 2 TB and 10k writes/s per shard',
+  '사용자 7 저장': 'Save user 7', '사용자 7의 주문': 'User 7\'s order', '사용자 7의 주문을 저장하려 합니다.': 'User 7\'s order is about to be saved.',
+  '7 → 샤드 1': '7 → shard 1', '샤드 1에 저장': 'Save to shard 1', '샤드 1에만 씀 · 다른 샤드는 모름': 'Written only to shard 1 · other shards know nothing', '샤드 1에만 저장합니다.': 'It is saved only on shard 1.',
+  '사용자 11 저장': 'Save user 11', '사용자 11의 주문': 'User 11\'s order', '이번에는 사용자 11입니다.': 'This time it is user 11.',
+  '사용자 11의 데이터는 어느 샤드에 있을까요?': 'Which shard holds user 11\'s data?', '11 = 3 × 3 + 2이므로 나머지는 2입니다.': '11 = 3 × 3 + 2, so the remainder is 2.',
+  '11 → 샤드 2': '11 → shard 2', '11 mod 3 = 2 → 샤드 2': '11 mod 3 = 2 → shard 2', '샤드 2에 저장': 'Save to shard 2', '샤드 2에 저장합니다.': 'It is saved on shard 2.',
+  '사용자 7 조회': 'Look up user 7', '사용자 7 주문 보기': 'View user 7\'s orders', '읽기도 한 샤드만': 'Reads, too, go to one shard', '사용자 7의 주문을 볼 때도 샤드 1만 묻습니다.': 'Viewing user 7\'s orders, too, asks only shard 1.',
+  // Step 3
+  '키가 아닌 질의': 'Queries not by key',
+  '샤드 키로 찾지 않으면 모든 샤드에 물어야 한다': 'Without the shard key, every shard has to be asked',
+  '샤드는 사용자 번호로 나눴습니다. 그런데 "이메일이 jiu@example.com인 사용자"처럼 다른 칸으로 찾으면, 어느 샤드에 있는지 알 수 없어 모든 샤드에 물어보고 답을 모아야 합니다. "오늘 전체 주문 수"처럼 모두를 합하는 질의도 마찬가지입니다. 샤드가 많을수록 이런 질의는 느리고 비쌉니다.':
+    'The shards were split by user number. But a search on another column, like "the user whose email is jiu@example.com", cannot tell which shard to look in, so every shard must be asked and the answers gathered. Queries that total everything, like "all orders today", are the same. The more shards, the slower and costlier these queries.',
+  '이메일 질의는 세 샤드를 모두 거쳤고, 가장 느린 샤드(7.1)를 기다려야 합니다. 그래서 가장 자주 찾는 기준으로 샤드 키를 정하고, 이메일 → 사용자 번호 같은 작은 찾아보기 표를 따로 두기도 합니다.': 'The email query went through all three shards and had to wait for the slowest (7.1). So the shard key is chosen by what is looked up most often, and sometimes a small lookup table such as email → user number is kept separately.',
+  '같은 장면입니다. 이메일로 찾는 질의가 모든 샤드로 퍼졌다가 모입니다.': 'The same scene. A query by email spreads to every shard and gathers again.',
+  '샤드 키(사용자 번호)가 없는 질의': 'A query without the shard key (user number)',
+  '이메일로 찾기': 'Find by email', '이메일로는 샤드를 계산할 수 없음 → 모두에게 물음': 'A shard cannot be worked out from an email → ask everyone', '어느 샤드에 있는지 알 수 없습니다.': 'There is no telling which shard it is on.',
+  '이 질의는 샤드 몇 개에 물어야 할까요?': 'How many shards does this query have to ask?', '이메일은 샤드를 정하는 키가 아니므로 어느 샤드에 있을지 모릅니다.': 'Email is not the key that decides the shard, so it could be on any shard.',
+  '샤드 0에 묻습니다.': 'Shard 0 is asked.', '샤드 1에 있습니다.': 'It is on shard 1.', '찾음: 사용자 7': 'Found: user 7', '사용자 7 찾음': 'Found user 7',
+  '샤드 2에도 묻고 세 답을 모읍니다.': 'Shard 2 is asked too, and the three answers are gathered.', '없음 · 세 답을 모아야 끝': 'None · done only after gathering three answers',
+  '모아서 답함': 'Gather and answer', '질의 3번, 가장 느린 샤드를 기다림': '3 queries, waiting for the slowest shard', '이메일 → 사용자 번호 찾아보기 표가 있으면 1번으로 줄어듦': 'With an email → user number lookup table, it drops to 1', '세 샤드의 답을 모아 돌려줍니다.': 'The three shards\' answers are gathered and returned.',
+  '"사용자 7의 주문 목록" 질의는 샤드 몇 개를 거칠까요?': 'How many shards does the query "user 7\'s order list" go through?',
+  '사용자 7의 주문 목록 → 샤드 1만 조회': 'User 7\'s order list → only shard 1 is queried',
+  '사용자 7의 데이터는 모두 샤드 1에 있습니다. 키로 찾는 질의는 빠릅니다.': 'All of user 7\'s data is on shard 1. Queries by key are fast.',
+  // Step 4
+  '샤드 늘리기': 'Adding shards',
+  'mod 규칙에서 샤드를 늘리면 데이터 대부분이 이사한다': 'Under the mod rule, adding shards moves most of the data',
+  '사용자가 더 늘어 샤드를 3개에서 4개로 늘립니다. 규칙이 "mod 3"에서 "mod 4"로 바뀌면, 많은 사용자의 샤드 번호가 바뀌어 데이터를 옮겨야 합니다. 사용자 1–12로 따져 보면 샤드가 그대로인 사용자는 1, 2, 12 셋뿐이고 아홉 명(75%)이 이사합니다. 그동안 DB는 엄청난 복사 작업을 해야 합니다.':
+    'Users grow further and the shards go from 3 to 4. When the rule changes from "mod 3" to "mod 4", many users\' shard numbers change and their data must move. Checking users 1–12, only three, 1, 2 and 12, keep their shard, and nine (75%) move. Meanwhile the DBs have a huge copying job.',
+  '샤드 수로 나머지를 구하는 규칙은 샤드 수가 바뀌면 거의 모두 흔들립니다. 실제 시스템은 처음부터 샤드를 잘게(예: 가상 샤드 1,024개) 만들어 서버에 나눠 주거나, 일관된 해싱으로 옮길 양을 1/n 정도로 줄입니다.': 'A rule that takes the remainder by the number of shards shakes almost everything when that number changes. Real systems make shards fine-grained from the start (e.g. 1,024 virtual shards) and hand them out to servers, or use consistent hashing to cut the amount moved to about 1/n.',
+  '같은 장면입니다. 사용자 7의 샤드 번호가 규칙이 바뀌며 달라집니다.': 'The same scene. User 7\'s shard number changes as the rule changes.',
+  '샤드를 늘릴 때 데이터를 옮겨야 한다': 'Adding shards means moving data', '전: 샤드 = 번호 mod 3': 'Before: shard = number mod 3', '후: 샤드 = 번호 mod 4 (샤드 3 추가)': 'After: shard = number mod 4 (shard 3 added)',
+  '규칙 바꾸기': 'Change the rule', '새 규칙으로 계산': 'Work out with the new rule', '전: 7 mod 3 = 1': 'Before: 7 mod 3 = 1', '후: 7 mod 4 = 3 → 샤드 3 (새 샤드)': 'After: 7 mod 4 = 3 → shard 3 (new shard)', '같은 사용자 7인데 샤드 번호가 바뀝니다.': 'The same user 7, but the shard number changes.',
+  '옮기기': 'Move', '샤드 1에서 사용자 7의 데이터를 꺼내 새 샤드 3으로 복사': 'Take user 7\'s data out of shard 1 and copy it to the new shard 3', '모든 샤드에서 75%가 이렇게 움직임': '75% moves like this on every shard', '데이터를 꺼내 옮깁니다. 이사하는 동안 DB가 바쁩니다.': 'The data is taken out and moved. The DBs are busy while it moves.', '75% 이사 중': '75% moving',
+  '사용자 1–12 중 mod 3과 mod 4의 샤드 번호가 같은 사람은 몇 명일까요?': 'Of users 1–12, how many have the same shard number under mod 3 and mod 4?',
+  '번호를 12로 나눈 나머지가 0, 1, 2일 때만 같습니다. 나머지 9명(75%)은 이사해야 합니다.': 'Only when the number divided by 12 leaves 0, 1 or 2 are they the same. The other 9 (75%) must move.',
+  '더 나은 규칙': 'A better rule', '가상 샤드': 'Virtual shards', '가상 샤드 1,024': '1,024 virtual shards', '처음부터 가상 샤드 1,024개로 나누고 서버 3대에 나눠 둠': 'Split into 1,024 virtual shards from the start, spread over 3 servers',
+  '서버를 늘리면 가상 샤드 일부만 새 서버로 옮김 → 약 1/4만 이사': 'Adding a server moves only some virtual shards to it → only about 1/4 moves', '처음부터 잘게 나눠 두면 일부만 옮기면 됩니다.': 'Split finely from the start and only part needs to move.',
+  '샤딩의 대가로 알맞지 않은 것은?': 'Which is not a cost of sharding?', '키 하나로 찾는 질의가 느려진다': 'Queries by a single key get slower', '키가 아닌 질의는 모든 샤드에 물어야 한다': 'Queries not by key must ask every shard',
+  '키로 찾는 질의는 샤드 하나만 보면 되므로 오히려 빠릅니다. 대가는 키가 아닌 질의와 재배치입니다.': 'Queries by key look at only one shard, so they are actually fast. The costs are queries not by key and rebalancing.',
+};

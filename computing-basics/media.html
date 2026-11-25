@@ -78,6 +78,9 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
 .tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
 .tag.place text{font:700 11.5px var(--mono)}
+.tag.kinds rect{rx:6}
+.tag.kinds .bits{font-family:var(--mono)}
+.tag.kinds .now{fill:var(--accent);font-weight:800}
 .total rect{fill:#fff;stroke:var(--accent);stroke-width:1.2}
 .total text{font:700 20px var(--mono);fill:var(--accent);text-anchor:middle;dominant-baseline:central}
 .total.max rect{fill:#fff6ef;stroke:#a24c14}
@@ -93,7 +96,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
-@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
+@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.tag.kinds text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:none}.note,.total.bump{animation:none}}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -584,6 +587,44 @@ function drawSamples() {
   } else playheadLine.setAttribute('d', '');
 }
 
+// ---------- Size panel: how many bits the current scene takes ----------
+// Rules in references/visual-language.md, 0장, size panel (0.3). Bold parts are this step's values.
+let summary;
+function buildSummary() {
+  const group = svg('g', { id: 'summary' }, byId('world'));
+  summary = addPlate(group, 'tag kinds', 0, 0, '', { pad: 1.6, round: false });
+}
+function paintSummary() {
+  const s = step();
+  let parts, at;
+  if (s.mode === 'pixels') {
+    const bits = size * size * (s.levels === 2 ? 1 : 2);
+    parts = s.levels === 2
+      ? [['8 × 8칸 × '], ['1비트', 'now'], [` = ${bits}비트 (${bits / 8}바이트)`]]
+      : [['8 × 8칸 × '], ['2비트', 'now'], [` = ${bits}비트 · 밝기 4단계 (`], ['00~11', 'bits now'], [')']];
+  } else if (s.mode === 'color') {
+    parts = [['칸 하나의 색 = '], [state.color.join(' · '), 'bits now'], [' → 8비트 × 3 = 3바이트']];
+  } else {
+    const levels = 2 ** state.depth;
+    parts = [[`샘플 ${state.samples}개`, 'now'], [' × '], [`${state.depth}비트`, 'now'], [` (높이 0~${levels - 1}) = ${state.samples * state.depth}비트`]];
+    const c = soundStart + soundSpan / 2;
+    const [x, y] = project(c, c, waveHeight + 34);
+    at = [x, y];
+  }
+  summary.label.replaceChildren(...parts.map(([text, className]) => {
+    const span = svg('tspan', className ? { class: className } : {}, summary.label);
+    span.textContent = text;
+    return span;
+  }));
+  if (!at) {
+    // Under the screen's name tag, where nothing else is drawn.
+    const [x, y] = project(monitor.h, -monitor.h, 0);
+    at = [x, y + 44];
+  }
+  summary.group.setAttribute('transform', `translate(${at[0]} ${at[1]})`);
+  sizePlate(summary);
+}
+
 // ---------- Drawing the current state ----------
 function paint() {
   const s = step();
@@ -616,6 +657,7 @@ function paint() {
   } else {
     drawSamples();
   }
+  paintSummary();
   syncControls();
 }
 
@@ -742,6 +784,7 @@ function userChange(change, message, quiet = false) {
   state.playing = false;
   state.playhead = -1;
   state.solved = '';
+  state.drawn = true;
   change();
   paint();
   syncPlayback();
@@ -824,16 +867,18 @@ function startStep() {
   state.demoPosition = 0;
   state.playhead = -1;
   state.wait = s.demo.sweep ? 600 : s.demo.interval;
-  // Carry the picture over between the two pixel steps, rescaled to the new number of levels.
 }
+// Carry a picture the learner drew over between the two pixel steps, rescaled to the new number of levels.
+// An untouched picture is not carried: the next step's own picture (the 2-bit gradient) shows its point.
 function showStep(index, announce = true) {
   const previous = lesson[state.index];
-  const keep = previous.mode === 'pixels' && lesson[index].mode === 'pixels' && index !== state.index && announce;
+  const keep = previous.mode === 'pixels' && lesson[index].mode === 'pixels' && index !== state.index && announce && state.drawn;
   const kept = keep ? state.image.map((v) => (v * (lesson[index].levels - 1) / (previous.levels - 1)) | 0) : null;
   state.index = index;
   if (!state.userPaused) state.playing = !motion.matches;
   startStep();
   if (kept && !state.playing) state.image = kept;
+  else state.drawn = false;
   const s = step();
   byId('step-title').textContent = s.title;
   byId('body').textContent = s.body;
@@ -847,7 +892,7 @@ function showStep(index, announce = true) {
     if (i === index) button.setAttribute('aria-current', 'step');
     else button.removeAttribute('aria-current');
   });
-  byId('world').setAttribute('transform', s.mode === 'sound' ? 'translate(330 182) scale(1.02)' : s.mode === 'color' ? 'translate(372 184) scale(.94)' : 'translate(352 188) scale(1.0)');
+  byId('world').setAttribute('transform', s.mode === 'sound' ? 'translate(330 182) scale(1.02)' : s.mode === 'color' ? 'translate(372 166) scale(.9)' : 'translate(352 166) scale(.9)');
   try { localStorage.setItem(storageKey, String(index)); } catch {}
   state.solved = '';
   syncTask();
@@ -919,6 +964,7 @@ window.addEventListener('keydown', (event) => {
 buildMonitor();
 buildTowers();
 buildSound();
+buildSummary();
 buildControls();
 const initial = routeIndex();
 history.replaceState(null, '', `#/media/${initial + 1}`);

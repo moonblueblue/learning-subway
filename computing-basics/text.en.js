@@ -25,6 +25,11 @@ window.lessonText = {
   '1을 더했습니다. 번호 {0}, 글자 {1}': 'Added 1. Number {0}, character {1}',
   '모두 껐습니다. 번호 {0}': 'All off. Number {0}',
   '8비트 범위를 초과': 'Beyond the 8-bit range',
+  // Panels above the switches
+  '→ 32 자리 하나만 다름': '→ only the 32 place differs',
+  '→ 2{0} = {1}가지 (0~{2})': '→ 2{0} = {1} kinds (0–{2})', '· 8비트로는 0~255뿐': '· 8 bits reach only 0–255',
+  '1바이트 0–127 (A)': '1 byte 0–127 (A)', '2바이트 128–2047': '2 bytes 128–2047', '3바이트 2048–65535 (가)': '3 bytes 2048–65535 (가)',
+  '{0} 저장': '{0} stored as',
   // Step 1
   '글자에 번호': 'A number for each character',
   '글자마다 번호가 정해져 있다': 'Every character has a set number',

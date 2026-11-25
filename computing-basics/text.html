@@ -84,6 +84,10 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
 .tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
 .tag.place text{font:700 11.5px var(--mono)}
+.tag.kinds rect{rx:6}
+.tag.kinds .bits{font-family:var(--mono)}
+.tag.kinds .now{fill:var(--accent);font-weight:800}
+.tag.empty{display:none}
 .total rect{fill:#fff;stroke:var(--accent);stroke-width:1.2}
 .total text{font:700 20px var(--mono);fill:var(--accent);text-anchor:middle;dominant-baseline:central}
 .total.max rect{fill:#fff6ef;stroke:#a24c14}
@@ -99,7 +103,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
-@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
+@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.tag.kinds text{font-size:12px}.tag.kinds.long text{font-size:16px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:none}.note,.total.bump{animation:none}}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -242,6 +246,7 @@ const lesson = [
     spacing: 1.8,
     fit: [248, 126, 1.13],
     initial: 97,
+    board: 'case',
     demo: { values: [65, 97, 66, 98], interval: 2400 },
     tasks: [
       { target: 98, text: '소문자 b를 만들어 보세요. 대문자 B(66)보다 32 큽니다.' },
@@ -259,6 +264,7 @@ const lesson = [
     spacing: 1.8,
     fit: [236, 170, .93],
     initial: 44032,
+    board: 'range',
     demo: { values: [44032, 44033, 45208, 54620], interval: 3200 },
     tasks: [
       { target: 44033, text: '"가" 다음 글자인 "각"을 만들어 보세요. +1을 써도 됩니다.' },
@@ -276,7 +282,9 @@ const lesson = [
     spacing: 1.8,
     fit: [236, 170, .93],
     utf8: true,
+    board: 'utf8',
     initial: 65,
+    staticInitial: 44032,
     demo: { values: [65, 233, 44032, 127], interval: 3400 },
     tasks: [
       { target: 127, text: '1바이트에 들어가는 가장 큰 번호(127)를 만들어 보세요.' },
@@ -526,8 +534,95 @@ function updateGeometry(view, sum) {
   view.lane.line.setAttribute('d', d);
   const [p, q] = screen;
   const angle = Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI;
-  const transform = `translate(${mix(p[0], q[0], .56)} ${mix(p[1], q[1], .56)}) rotate(${angle})`;
+  // A back-row wire runs under the front row 2r along and past its plates near r, so its chevron sits just after the switch.
+  const along = r ? Math.min(.56, 2.4 / (sx - c + r)) : .56;
+  const transform = `translate(${mix(p[0], q[0], along)} ${mix(p[1], q[1], along)}) rotate(${angle})`;
   view.lane.chevron.setAttribute('transform', transform);
+}
+
+// Panels above the switch rows (rules in references/visual-language.md, 0장 "판").
+// A step's `board` picks what they show, so the still picture carries the step's point:
+// 'case' = the capital and small letter side by side with the one bit that differs,
+// 'range' = how many numbers the switches can make, 'utf8' = the stored bytes and the UTF-8 length table.
+const boards = {};
+const superscript = (n) => String(n).replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+const spaced = (value, count) => value.toString(2).padStart(count, '0').replace(/(\d{4})(?=\d)/g, '$1 ');
+function fillPlate(plate, parts) {
+  plate.group.classList.toggle('empty', !parts.length);
+  plate.label.replaceChildren(...parts.map(([text, className]) => {
+    const span = svg('tspan', className ? { class: className } : {}, plate.label);
+    span.textContent = text;
+    return span;
+  }));
+  sizePlate(plate);
+}
+function showBoards() {
+  if (!boards.main) {
+    const group = svg('g', { id: 'boards' }, byId('world'));
+    boards.main = addPlate(group, 'tag kinds', 0, 0, '', { pad: 1.6, round: false });
+    boards.extra = addPlate(group, 'tag kinds', 0, 0, '', { pad: 1.6, round: false });
+    // The page translation swaps the text (and resizes the plates) after this runs, so place them again then.
+    new MutationObserver(() => requestAnimationFrame(placeBoards)).observe(group, { subtree: true, characterData: true, childList: true });
+  }
+  const step = lesson[state.index];
+  const value = state.value;
+  const main = [], extra = [];
+  if (step.board === 'case') {
+    // Capital letters are 65–90 and small letters 97–122: they differ only in the 32 switch.
+    const upper = value >= 97 && value <= 122 ? value - 32 : value;
+    if (upper >= 65 && upper <= 90) {
+      for (const code of [upper, upper + 32]) {
+        const bits = spaced(code, 8);
+        if (code !== upper) main.push([' · ']);
+        main.push([String.fromCharCode(code) + ' ', code === value ? 'now' : ''],
+          [bits.slice(0, 2), 'bits'], [bits[2], 'bits now'], [bits.slice(3), 'bits']);
+      }
+      main.push([' → 32 자리 하나만 다름']);
+    } else {
+      main.push([spaced(value, 8), 'bits now']);
+    }
+  } else if (step.board === 'range') {
+    const count = step.switches;
+    main.push([spaced(value, count), 'bits now'], [` → 2${superscript(count)} = ${2 ** count}가지 (0~${2 ** count - 1})`]);
+    main.push([' · 8비트로는 0~255뿐']);
+  } else if (step.board === 'utf8') {
+    const length = utf8Bytes(value).length;
+    [[1, '0–127 (A)'], [2, '128–2047'], [3, '2048–65535 (가)']].forEach(([bytes, range], index) => {
+      if (index) main.push([' · ']);
+      main.push([`${bytes}바이트 ${range}`, bytes === length ? 'now' : '']);
+    });
+    if (length) {
+      extra.push([`${glyph(value)} 저장 `]);
+      utf8Bytes(value).forEach((byte, index) => {
+        if (index) extra.push([' · ']);
+        extra.push([byte.toString(2).padStart(8, '0'), 'bits now']);
+      });
+    }
+  }
+  boards.main.group.classList.toggle('long', step.switches > 2);
+  boards.extra.group.classList.toggle('long', step.switches > 2);
+  fillPlate(boards.main, main);
+  fillPlate(boards.extra, extra);
+}
+// Keep the panels centred over the switch rows, just above the highest place-value plate.
+function placeBoards() {
+  if (!boards.main) return;
+  const switches = [...nodeViews.values()].filter((view) => view.lane && view.to[2] === 1);
+  if (!switches.length) return;
+  const middle = switches.reduce((sum, view) => sum + 28 * view.c, 0) / switches.length;
+  const top = Math.min(...switches.map((view) => view.lift - 14 * view.r + switchLow - view.height
+    + Number(view.plate.rect.getAttribute('y'))));
+  // A long panel (English) slides right rather than running off the scene's left edge.
+  const [worldX, , worldScale] = worldView.now;
+  const left = (8 - worldX) / worldScale;
+  let y = top - 6;
+  for (const plate of [boards.extra, boards.main]) {
+    if (plate.group.classList.contains('empty')) continue;
+    const height = Number(plate.rect.getAttribute('height'));
+    const x = Math.max(middle, left + Number(plate.rect.getAttribute('width')) / 2);
+    plate.group.setAttribute('transform', `translate(${x} ${y - height / 2})`);
+    y -= height + 5;
+  }
 }
 
 const isOn = (bit) => (state.value >> bit & 1) === 1;
@@ -568,6 +663,7 @@ function retarget(animate, ms = transitionMs) {
   const shown = glyph(state.value);
   sum.screenGlyph.textContent = [...shown].length === 1 ? shown : '';
   sizePlate(sum.total);
+  showBoards();
   // A small pulse on the total when it changes at a watchable pace.
   sum.total.group.classList.remove('bump');
   if (animate && ms === transitionMs && sum.shown !== state.value) {
@@ -600,6 +696,7 @@ function updateScene(t) {
     view.height = mix(view.heightFrom, view.heightTo, ease);
     shapeSwitch(view, view.height);
   }
+  placeBoards();
   if (t !== 1) return;
   for (const [id, view] of nodeViews) {
     if (view.to[2] !== 0) continue;

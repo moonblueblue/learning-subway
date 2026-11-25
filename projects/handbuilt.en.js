@@ -1,0 +1,77 @@
+// English for 9.1 A hand-built computer. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  '손으로 만든 컴퓨터 · 프로젝트 9.1': 'A hand-built computer · Project 9.1',
+  '1.2의 반복문을 3.6의 명령으로 직접 옮기고, 비트로 바꿔 RAM에 올리고, 게이트로 만든 ALU가 더하고 빼며 Z 플래그와 점프로 반복해 3 + 2 + 1 = 6을 계산하기까지를 따라가 보세요. 0, 3, 6장을 하나로 엮는 프로젝트입니다.':
+    'Translate the loop of 1.2 into the instructions of 3.6 by hand, turn it into bits and load it into RAM, then follow a gate-built ALU adding and subtracting, looping with the Z flag and jumps, until it computes 3 + 2 + 1 = 6. A project that ties chapters 0, 3 and 6 together.',
+  '직접 쓴 프로그램을 게이트로 만든 CPU 위에서 돌려 볼까요? 반복문 하나가 명령, 비트, RAM, CPU, ALU를 지나 답이 되는 과정을 처음부터 끝까지 계산해 보세요.':
+    'Shall we run a program you wrote on a CPU built from gates? Work out from start to finish how one loop passes through instructions, bits, RAM, the CPU and the ALU to become an answer.',
+  '내 프로그램이 어셈블러를 지나 RAM에 올라가고 CPU와 ALU가 실행하는 장면': 'My program passing through the assembler, loaded into RAM and run by the CPU and ALU',
+  '내 프로그램이 도는 길': 'The path my program runs', '프로그램과 결과': 'Program and result', '어셈블러와 ALU': 'Assembler and ALU', '파일': 'File', '도구': 'Tool', '오류': 'Error',
+  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next stage" and the code moves to the right.',
+  '"다음 단계"를 눌러 프로그램을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the program one station at a time. Prediction questions come up along the way.',
+  // Stations
+  '내 프로그램': 'My program', '어셈블러': 'Assembler', 'RAM 16칸': 'RAM, 16 cells', 'ALU (게이트)': 'ALU (gates)',
+  '내 프로그램 → 내 프로그램': 'My program → my program', '내 프로그램 → 어셈블러': 'My program → assembler', '내 프로그램 · 반복': 'My program · loop', '어셈블러 → RAM 16칸': 'Assembler → RAM', '어셈블러 · 올리기': 'Assembler · load',
+  'RAM 16칸 → CPU': 'RAM → CPU', 'CPU → ALU (게이트)': 'CPU → ALU', 'ALU (게이트) → RAM 16칸': 'ALU → RAM', 'ALU (게이트) · STORE 합 = 3': 'ALU · STORE sum = 3', 'RAM 16칸 → 내 프로그램': 'RAM → my program', 'RAM 16칸 · 결과 6': 'RAM · result 6',
+  // Program
+  '0: LOAD A, [14]   ; A ← 합': '0: LOAD A, [14]   ; A ← sum', '2: ADD A, B       ; 합 + n': '2: ADD A, B       ; sum + n', '3: STORE A, [14]  ; 합 저장': '3: STORE A, [14]  ; save sum',
+  '6: SUB A, B       ; n − 1 (0이면 Z)': '6: SUB A, B       ; n − 1 (Z if 0)', '7: STORE A, [12]  ; n 저장': '7: STORE A, [12]  ; save n',
+  '8: JZ 10          ; n이 0이면 끝으로': '8: JZ 10          ; to the end if n is 0', '9: JUMP 0         ; 아니면 처음으로': '9: JUMP 0         ; else back to start',
+  // Step 1
+  '프로그램 쓰기': 'Write the program', '반복문을 3.5 CPU의 명령으로 직접 옮긴다': 'Translate a loop into 3.5 CPU instructions by hand',
+  '지금까지 만든 것을 하나로 엮습니다. 1.2의 반복문 "n이 0이 될 때까지 합에 n을 더하고 n을 1 줄인다"를, 3.6의 명령 일곱 가지(LOAD, STORE, ADD, SUB, JUMP, JZ, HALT)만으로 직접 씁니다. 8A.1의 뒷단이 해 주던 일을 손으로 하는 셈입니다. 변수는 RAM의 칸에 둡니다: 12번지 n = 3, 13번지 1, 14번지 합 = 0.':
+    'This ties together everything built so far. Write the loop of 1.2, "until n is 0, add n to sum and decrease n by 1", using only the seven instructions of 3.6 (LOAD, STORE, ADD, SUB, JUMP, JZ, HALT). It is doing by hand what the back end of 8A.1 did. Variables live in RAM cells: address 12 n = 3, address 13 1, address 14 sum = 0.',
+  '파이썬 세 줄(while n > 0: 합 += n; n -= 1)이 명령 11줄이 되었습니다. CPU는 메모리끼리 바로 더하지 못해 레지스터로 읽고, 쓰고, 조건은 JZ로, 반복은 JUMP로 만듭니다.':
+    'Three lines of Python (while n > 0: sum += n; n -= 1) became 11 instructions. The CPU cannot add memory to memory directly, so it reads into registers and writes back, builds the condition with JZ and the loop with JUMP.',
+  '왼쪽부터 내 프로그램, 어셈블러, RAM 16칸, CPU, ALU가 한 줄로 놓여 있습니다.': 'From the left, my program, the assembler, 16 cells of RAM, the CPU and the ALU stand in a row.',
+  '만들 프로그램 (1.2의 반복문)': 'Program to build (the loop of 1.2)', 'n = 3, 합 = 0': 'n = 3, sum = 0', '    합 = 합 + n': '    sum = sum + n', '합 = 합 + n': 'sum = sum + n', '파이썬 3줄': '3 lines of Python',
+  '손으로 번역': 'Translate by hand', '어셈블리로 옮기기': 'Into assembly', '반복문을 명령 11줄로 옮겼습니다.': 'The loop became 11 instructions.', '명령 11줄': '11 instructions',
+  '"n이 0이면 반복을 끝낸다"를 맡은 명령은?': 'Which instruction handles "end the loop if n is 0"?',
+  'SUB의 결과가 0이면 Z 플래그(3.3)가 켜지고, JZ가 그때만 10번지(HALT)로 건너뜁니다.': 'If SUB\'s result is 0, the Z flag (3.3) turns on, and only then does JZ jump to address 10 (HALT).',
+  '반복': 'Loop', '반복은 JUMP로': 'Loops come from JUMP', '9: JUMP 0 → n이 0이 아니면 0번지로 돌아가 다시 더함': '9: JUMP 0 → if n is not 0, go back to address 0 and add again',
+  '1.2의 while = JZ(빠져나가기) + JUMP(되돌아가기)': 'The while of 1.2 = JZ (get out) + JUMP (go back)', 'JUMP가 처음으로 되돌아가 반복을 만듭니다.': 'JUMP goes back to the start, making the loop.',
+  // Step 2
+  '기계어로': 'Into machine code', '어셈블러가 비트로 바꾸고 RAM에 올린다': 'The assembler turns it into bits and loads it into RAM',
+  '명령을 3.6의 표로 비트로 바꿉니다. 연산 3비트, 레지스터 1비트, 주소 4비트로 한 줄이 1바이트입니다. 그런 다음 8A.2의 로더처럼 0번지부터 RAM에 올리고, 12–14번지에는 데이터를 둡니다. 16칸짜리 작은 RAM에 프로그램과 데이터가 함께 들어갑니다(3.6의 저장 프로그램).':
+    'The table of 3.6 turns each instruction into bits: 3 bits of operation, 1 bit of register and 4 bits of address make one line 1 byte. Then, like the loader of 8A.2, it goes into RAM from address 0, with data at addresses 12–14. Program and data share a small 16-cell RAM (the stored program of 3.6).',
+  '명령 11개가 0–10번지에, 데이터 3개가 12–14번지에 들어갔습니다. 이제 CPU의 PC를 0으로 맞추면 실행이 시작됩니다.': 'The 11 instructions went into addresses 0–10 and 3 data values into 12–14. Now setting the CPU\'s PC to 0 starts the run.',
+  '같은 장면입니다. 어셈블러가 명령을 비트로 바꿔 RAM에 올립니다.': 'The same scene. The assembler turns instructions into bits and loads them into RAM.',
+  '연산 코드 표 (3.6)': 'Opcode table (3.6)',
+  '비트로 바꾸기': 'Into bits', '명령마다 표를 보고 비트를 만듭니다.': 'Look up each instruction in the table to make its bits.', '11바이트': '11 bytes',
+  '"8: JZ 10"의 기계어는?': 'What is the machine code for "8: JZ 10"?', 'JZ의 연산 코드는 110, 레지스터는 쓰지 않아 0, 주소 10은 1010입니다.': 'JZ\'s opcode is 110, the register is unused so 0, and address 10 is 1010.',
+  '올리기': 'Load', 'RAM에 올리기': 'Load into RAM', '0–10번지: 프로그램': 'Addresses 0–10: program', '12번지: n = 3 · 13번지: 1 · 14번지: 합 = 0': 'Address 12: n = 3 · 13: 1 · 14: sum = 0',
+  '프로그램과 데이터를 RAM에 올립니다.': 'Load the program and data into RAM.', '프로그램 + 데이터': 'Program + data',
+  '시작': 'Start', 'PC ← 0 · 가져오기–해석–실행 시작 (3.5)': 'PC ← 0 · fetch–decode–execute begins (3.5)', 'PC를 0으로 맞추고 실행을 시작합니다.': 'Set PC to 0 and start running.',
+  // Step 3
+  '한 바퀴': 'One round', '게이트로 만든 ALU가 더하고 빼며 한 바퀴를 돈다': 'A gate-built ALU adds and subtracts through one round',
+  '첫 바퀴를 따라가 봅니다. CPU는 3.5처럼 명령을 하나씩 가져와 실행합니다. ADD와 SUB는 3.3의 ALU, 즉 3.1–3.2의 게이트로 만든 덧셈기가 계산합니다. SUB 뒤에 결과가 0인지 Z 플래그에 적고, JZ가 그것을 봅니다.':
+    'Follow the first round. As in 3.5, the CPU fetches and runs instructions one at a time. ADD and SUB are computed by the ALU of 3.3, the adder built from the gates of 3.1–3.2. After SUB, whether the result is 0 goes into the Z flag, and JZ looks at it.',
+  '첫 바퀴에서 합 = 0 + 3 = 3, n = 3 − 1 = 2가 되었고, n이 0이 아니라 JZ는 건너뛰지 않고 JUMP가 0번지로 돌려보냈습니다. 명령 10개가 실행됐습니다.':
+    'In the first round sum = 0 + 3 = 3 and n = 3 − 1 = 2; n was not 0, so JZ did not jump and JUMP sent it back to address 0. 10 instructions ran.',
+  '같은 장면입니다. 첫 바퀴의 명령이 RAM, CPU, ALU 사이를 오갑니다.': 'The same scene. The first round\'s instructions travel between RAM, the CPU and the ALU.',
+  'n = 3 · 1 · 합 = 0': 'n = 3 · 1 · sum = 0', 'n 3, 합 0': 'n 3, sum 0',
+  '0–1번 명령': 'Instructions 0–1', '읽기': 'Read', 'LOAD A, [14] → A = 0': 'LOAD A, [14] → A = 0', '합과 n을 레지스터로 읽습니다.': 'Read sum and n into registers.',
+  '더하기 (게이트)': 'Add (gates)', '3.2의 덧셈기가 비트마다 계산': 'The adder of 3.2 works bit by bit', 'ALU가 게이트로 더합니다.': 'The ALU adds with gates.',
+  'STORE 합 = 3': 'STORE sum = 3', '합 저장': 'Save sum', 'STORE A, [14] → 합 = 3': 'STORE A, [14] → sum = 3', '합을 RAM에 저장합니다.': 'Save sum to RAM.', 'n 3, 합 3': 'n 3, sum 3',
+  '빼기 (게이트)': 'Subtract (gates)', 'ALU: 3 − 1 = 2 → 0이 아님 → Z = 0': 'ALU: 3 − 1 = 2 → not 0 → Z = 0', 'n에서 1을 뺍니다. 결과가 0이 아니라 Z는 꺼집니다.': 'Subtract 1 from n. The result is not 0, so Z is off.',
+  'n = 2일 때 "8: JZ 10"은?': 'With n = 2, what does "8: JZ 10" do?', '건너뛰지 않는다 (Z = 0)': 'Does not jump (Z = 0)', '10번지로 건너뛴다': 'Jumps to address 10',
+  '방금 결과 2가 0이 아니므로 Z 플래그가 꺼져 있습니다. 다음 명령 JUMP 0으로 갑니다.': 'The last result, 2, is not 0, so the Z flag is off. It goes on to the next instruction, JUMP 0.',
+  'STORE n = 2': 'STORE n = 2', '다시 처음으로': 'Back to the start', 'JZ 10 → 안 건너뜀 · JUMP 0 → PC = 0': 'JZ 10 → no jump · JUMP 0 → PC = 0', 'n을 저장하고 처음으로 돌아갑니다.': 'Save n and go back to the start.', 'n 2, 합 3': 'n 2, sum 3',
+  // Step 4
+  '끝까지': 'To the end', '0이 될 때까지 돌고 HALT에서 멈춘다': 'Loop until 0 and stop at HALT',
+  '같은 바퀴를 n이 0이 될 때까지 되풀이합니다. 둘째 바퀴에 합 = 3 + 2 = 5, n = 1, 셋째 바퀴에 합 = 5 + 1 = 6, n = 0이 되고, 이번에는 SUB 결과가 0이라 Z가 켜져 JZ가 10번지 HALT로 건너뜁니다. 0장의 비트, 3장의 게이트와 CPU, 6장의 번역이 한 프로그램 안에서 모두 일했습니다.':
+    'The same round repeats until n is 0. The second round gives sum = 3 + 2 = 5, n = 1; the third gives sum = 5 + 1 = 6, n = 0, and this time SUB\'s result is 0, so Z turns on and JZ jumps to HALT at address 10. The bits of chapter 0, the gates and CPU of chapter 3 and the translation of chapter 6 all worked inside one program.',
+  '14번지에 6이 남았습니다. 명령은 10 + 10 + 9 + 1(HALT) = 30번 실행됐습니다. 이 기계에 곱셈 명령이 없어도, 덧셈과 반복만으로 곱셈이나 다른 계산을 만들 수 있습니다(4.10의 계산 가능성).':
+    'Address 14 holds 6. Instructions ran 10 + 10 + 9 + 1 (HALT) = 30 times. Even without a multiply instruction, this machine can build multiplication and other calculations from addition and loops alone (computability in 4.10).',
+  '같은 장면입니다. 나머지 두 바퀴를 돌고 멈춥니다.': 'The same scene. It runs the two remaining rounds and stops.',
+  'n = 2 · 합 = 3 · PC = 0': 'n = 2 · sum = 3 · PC = 0',
+  '둘째 바퀴': 'Round 2', '합 = 3 + 2 = 5': 'sum = 3 + 2 = 5', 'n = 2 − 1 = 1 → Z = 0 → JUMP 0': 'n = 2 − 1 = 1 → Z = 0 → JUMP 0', '둘째 바퀴입니다.': 'This is round 2.',
+  '셋째 바퀴': 'Round 3', '합 = 5 + 1 = 6': 'sum = 5 + 1 = 6', '셋째 바퀴에서 n이 0이 됩니다.': 'In round 3, n becomes 0.',
+  '이제 "8: JZ 10"은?': 'Now what does "8: JZ 10" do?', '10번지(HALT)로 건너뛴다': 'Jumps to address 10 (HALT)', '건너뛰지 않는다': 'Does not jump',
+  'SUB 결과가 0이라 Z가 켜졌습니다. 반복이 끝납니다.': 'SUB\'s result is 0, so Z turned on. The loop ends.',
+  '합 = 6': 'sum = 6', 'JZ 10 → PC = 10 → HALT': 'JZ 10 → PC = 10 → HALT', 'RAM 14번지: 6': 'RAM address 14: 6', 'HALT에서 멈춥니다. 답은 14번지의 6입니다.': 'It stops at HALT. The answer is the 6 at address 14.', '합 6': 'sum 6',
+  '결과 6': 'Result 6', '확인': 'Check', '실행한 명령: 10 + 10 + 9 + 1 = 30개': 'Instructions run: 10 + 10 + 9 + 1 = 30', '직접 쓴 프로그램이 맞는 답을 냈습니다.': 'The program you wrote gave the right answer.',
+  'n = 4로 시작하면 실행되는 명령은 몇 개일까요?': 'Starting with n = 4, how many instructions run?', '40개 (10 × 3 + 9 + 1)': '40 (10 × 3 + 9 + 1)', '30개': '30', '44개': '44',
+  '마지막 바퀴를 뺀 세 바퀴는 10개씩, 마지막 바퀴는 JUMP 없이 9개, HALT 1개입니다.': 'The three rounds before the last take 10 each, the last round 9 without JUMP, plus 1 HALT.',
+};

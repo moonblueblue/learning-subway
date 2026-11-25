@@ -1,0 +1,82 @@
+// English for 7.6 Message queues. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+// 쪽지 (a slip of paper with a job on it) is "message" throughout.
+window.lessonText = {
+  // Page
+  '메시지 큐 · 레슨 7.6': 'Message queues · Lesson 7.6',
+  '주문 API가 메일 서비스를 바로 부를 때의 기다림과 고장 번짐, 큐에 쪽지를 넣고 바로 답하기, 몰린 요청을 큐가 담아 두는 완충, 일꾼이 죽었을 때 다시 주기와 멱등성을 따라가 보세요.':
+    'Follow the waiting and spreading failures when an order API calls a mail service directly, putting a message on a queue and answering at once, the queue buffering a rush of requests, and redelivery and idempotency when a worker dies.',
+  '바로 호출하는 대신 큐에 넣으면 무엇이 달라질까요? 주문 확인 메일을 보내는 일을 바로 부르기와 메시지 큐로 나눠 비교해 보세요.':
+    'What changes when you put work on a queue instead of calling directly? Compare sending order confirmation emails by a direct call and through a message queue.',
+  '주문 API가 메시지 큐에 쪽지를 넣고 일꾼이 꺼내 메일 서비스로 보내는 장면': 'The order API putting a message on a message queue, and a worker taking it off and sending it to the mail service',
+  '사용자, 주문 API, 메시지 큐 뒤에 일꾼 둘이 위아래로 놓이고, 둘 다 메일 서비스로 이어집니다.': 'The user, the order API and the message queue, followed by two workers stacked top to bottom, both linked to the mail service.',
+  '주문과 메일 사이': 'Between orders and mail',
+  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets travel.',
+  '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
+  '사용자': 'User', 'API와 일꾼': 'API and workers', '메일 서비스': 'Mail service', '주문 API': 'Order API', '일꾼 1': 'Worker 1', '일꾼 2': 'Worker 2', '고장': 'Failure', '죽음': 'Dead',
+  '응용': 'Application', '계층': 'Layers', '전선': 'Wire', '라우터': 'Router',
+  '사용자 → 주문 API': 'User → Order API', '주문 API → 사용자': 'Order API → User', '주문 API → 메일 서비스': 'Order API → Mail service', '메일 서비스 → 주문 API': 'Mail service → Order API', '주문 API → 메시지 큐': 'Order API → Message queue',
+  '메시지 큐 → 일꾼 1': 'Message queue → Worker 1', '메시지 큐 → 일꾼 2': 'Message queue → Worker 2', '일꾼 1 → 메일 서비스': 'Worker 1 → Mail service', '일꾼 2 → 메일 서비스': 'Worker 2 → Mail service', '일꾼 2 → 메시지 큐': 'Worker 2 → Message queue', '일꾼 2 → 일꾼 2': 'Worker 2 → Worker 2',
+  '주문 API · 주문 완료': 'Order API · Order complete', '메시지 큐 · 100/초': 'Message queue · 100/s', '메일 서비스 · 보냄': 'Mail service · Sent', '일꾼 2 · 이미 보냈나?': 'Worker 2 · Already sent?',
+  '주문': 'Order', '메일': 'Mail', '큐': 'Queue', '확인': 'Ack', '보냄': 'Sent', '비어 있음': 'Empty', '저장함': 'Saved', '기다리는 중': 'Waiting', '걸리는 시간': 'Time taken',
+  '0.01초': '0.01 s', '0.05초': '0.05 s', '10초': '10 s', '100초': '100 s', '1,000초': '1,000 s', '1,000/초': '1,000/s', '100/초': '100/s', '200/초': '200/s', '약 3초': 'About 3 s',
+  // Step 1
+  '바로 부르기': 'Calling directly',
+  '느린 일을 바로 부르면 사용자가 함께 기다린다': 'Call slow work directly and the user waits with it',
+  '주문이 들어오면 확인 메일을 보내야 합니다. 주문 API가 메일 서비스를 바로 부르면(동기 호출), 메일을 보내는 3초 동안 사용자도 "주문 중…" 화면을 보며 기다립니다. 메일 서비스가 고장 나면 메일 때문에 주문까지 실패합니다. 주문과 메일이 단단히 묶여 있습니다.':
+    'When an order comes in, a confirmation email must be sent. If the order API calls the mail service directly (a synchronous call), the user waits too, watching an "Ordering…" screen for the 3 seconds it takes to send the email. If the mail service breaks, the order fails because of the email. Orders and mail are tightly tied together.',
+  '주문 저장은 0.05초인데 사용자는 3초를 기다렸고, 메일 서비스가 죽자 주문도 500 오류가 됐습니다. 메일은 조금 늦어도 되는 일인데 말입니다.': 'Saving the order takes 0.05 s, yet the user waited 3 s, and when the mail service died the order became a 500 error too. All for an email that could have been a little late.',
+  '왼쪽부터 사용자, 주문 API, 메일 서비스가 한 줄로 놓여 있습니다.': 'From the left, the user, the order API and the mail service sit in a row.',
+  '주문 저장 0.05초 · 메일 보내기 3초': 'Save order 0.05 s · send email 3 s', '주문 저장 0.05초': 'Save order 0.05 s',
+  '주문 버튼': 'Order button', '주문 받음': 'Order received', '주문 501 저장': 'Save order 501', '주문을 저장합니다.': 'The order is saved.',
+  '메일을 바로 부름': 'Call mail directly', '메일 보내 줘': 'Send the email', '메일 서비스가 끝날 때까지 기다림 (3초)': 'Wait until the mail service finishes (3 s)', '주문 API가 메일 서비스의 답을 기다립니다.': 'The order API waits for the mail service\'s answer.', '보내는 중 3초': 'Sending, 3 s', '3초 기다림': 'Waits 3 s',
+  '사용자가 주문 완료 화면을 보기까지 걸리는 시간은?': 'How long until the user sees the order complete screen?',
+  '주문 API가 메일이 끝나길 기다린 뒤에야 답하므로 3초가 더해집니다.': 'The order API answers only after waiting for the email to finish, so 3 s are added.',
+  '주문 완료': 'Order complete', '총 3.05초': '3.05 s in total', '메일이 끝나서야 답이 옵니다.': 'The answer comes only when the email is done.', '3초 뒤 답': 'Answer after 3 s',
+  '다음 주문': 'Next order', '메일 서비스 고장': 'Mail service fails', '메일 서비스가 응답하지 않음': 'The mail service does not respond', '주문 API: 500 오류 → 주문 실패': 'Order API: 500 error → order fails', '메일 서비스가 죽자 주문까지 실패합니다.': 'With the mail service dead, the order fails too.', '주문 실패': 'Order failed',
+  // Step 2
+  '큐에 넣기': 'Putting it on a queue',
+  '할 일을 큐에 넣고 바로 답한다': 'Put the job on a queue and answer at once',
+  '메시지 큐는 "할 일 쪽지"를 차례로 쌓아 두는 곳입니다(4.3의 큐). 주문 API는 주문을 저장하고 "주문 501 확인 메일"이라는 쪽지를 큐에 넣은 뒤 바로 사용자에게 답합니다. 뒤에서 일꾼이 큐에서 쪽지를 꺼내 메일을 보냅니다. 주문 API와 메일 서비스는 서로를 직접 모릅니다.':
+    'A message queue is where "job messages" pile up in order (the queue of 4.3). The order API saves the order, puts a message saying "confirmation email for order 501" on the queue, and answers the user at once. Behind the scenes a worker takes the message off the queue and sends the email. The order API and the mail service do not know each other directly.',
+  '사용자는 0.06초 만에 주문 완료를 봤고, 메일은 몇 초 뒤 도착합니다. 메일 서비스가 잠시 죽어 있어도 쪽지는 큐에 남아 있다가 살아나면 처리됩니다.': 'The user saw the order complete in 0.06 s, and the email arrives a few seconds later. Even if the mail service is down for a while, the message stays on the queue and is handled when it comes back.',
+  '왼쪽부터 사용자, 주문 API, 메시지 큐, 일꾼, 메일 서비스가 한 줄로 놓여 있습니다.': 'From the left, the user, the order API, the message queue, a worker and the mail service sit in a row.',
+  '주문 저장 0.05초 · 큐에 넣기 0.01초 · 메일 3초': 'Save order 0.05 s · enqueue 0.01 s · email 3 s',
+  '쪽지: 메일 501': 'Message: mail 501', '확인 메일 쪽지를 큐에 넣습니다.': 'The confirmation email message goes on the queue.', '쪽지 1개': '1 message',
+  '바로 답함': 'Answer at once', '총 0.06초 · 메일은 아직 안 보냄': '0.06 s in total · email not sent yet', '메일을 기다리지 않고 바로 답합니다.': 'It answers at once without waiting for the email.', '0.06초 만에 완료': 'Done in 0.06 s',
+  '사용자가 주문 완료를 보는 시점에 메일은?': 'When the user sees the order complete, where is the email?', '아직 큐에 쪽지로 있다': 'Still a message on the queue', '이미 도착했다': 'Already arrived',
+  '주문 API는 쪽지만 넣고 답했습니다. 메일은 일꾼이 곧 처리합니다.': 'The order API only put the message on and answered. A worker will handle the email soon.',
+  '일꾼이 꺼냄': 'A worker takes it', '쪽지 501': 'Message 501', '뒤에서 일꾼이 쪽지를 꺼냅니다.': 'Behind the scenes a worker takes the message off.',
+  '메일 발송': 'Send email', '3초 뒤 메일 도착': 'Email arrives after 3 s', '일꾼이 메일을 보냅니다.': 'The worker sends the email.', '메일 501': 'Mail 501',
+  '이때 메일 서비스가 잠깐 죽어 있었다면 주문은?': 'If the mail service had been down for a moment then, what about the order?',
+  '이미 성공했다. 쪽지는 큐에 남았다가 나중에 처리된다': 'It already succeeded. The message stays on the queue and is handled later', '실패한다': 'It fails',
+  '주문과 메일이 큐로 떨어져 있어, 메일 쪽 고장이 주문에 번지지 않습니다.': 'Orders and mail are separated by the queue, so a failure on the mail side does not spread to orders.',
+  // Step 3
+  '몰려도 버티기': 'Coping with a rush',
+  '큐가 몰린 요청을 담아 두고 일꾼은 제 속도로 처리한다': 'The queue holds the rush and workers handle it at their own pace',
+  '반짝 세일로 1초에 주문이 1,000개 들어옵니다. 일꾼 하나는 1초에 메일 100개를 보낼 수 있습니다. 바로 부르는 방식이라면 메일 서비스가 넘쳐 주문까지 실패했겠지만, 큐는 넘치는 쪽지를 담아 두고 일꾼은 제 속도로 꺼내 갑니다. 큐 길이를 보고 일꾼을 늘리면 더 빨리 비웁니다.':
+    'A flash sale brings in 1,000 orders a second. One worker can send 100 emails a second. With direct calls the mail service would overflow and orders would fail too, but the queue holds the overflow of messages and workers take them off at their own pace. Adding workers based on the queue length empties it faster.',
+  '10초 세일 동안 쪽지 10,000개가 쌓였고, 일꾼 하나라면 100초, 둘이면 50초 만에 모두 보냅니다. 주문은 세일 내내 빠르게 성공했습니다. 큐가 갑작스러운 몰림을 흡수하는 완충기 역할을 합니다.': 'During the 10-second sale 10,000 messages piled up; one worker sends them all in 100 s, two in 50 s. Orders succeeded quickly throughout the sale. The queue acts as a buffer that absorbs sudden rushes.',
+  '같은 장면입니다. 일꾼 1이 메일을 보낸 직후 확인을 보내기 전에 죽습니다.': 'The same scene. Worker 1 dies right after sending the email, before sending its ack.',
+  '반짝 세일 10초': 'Flash sale, 10 s', '주문 1,000/초 · 일꾼 하나 메일 100/초': 'Orders 1,000/s · one worker sends 100 emails/s',
+  '세일 10초': 'Sale, 10 s', '주문 1만 개': '10,000 orders', '10초 동안 주문 10,000개 · 모두 0.06초 만에 성공': '10,000 orders in 10 s · all succeed in 0.06 s', '주문은 빠르게 저장되고 쪽지만 쌓입니다.': 'Orders are saved quickly and only messages pile up.', '1만 개 저장': '10,000 saved',
+  '큐가 담아 둠': 'The queue holds them', '쪽지 1만 개': '10,000 messages', '큐: 쪽지 10,000개': 'Queue: 10,000 messages', '큐에 쪽지 1만 개가 쌓였습니다.': '10,000 messages have piled up on the queue.', '쪽지 10,000': '10,000 messages',
+  '일꾼 하나(100/초)가 쪽지 10,000개를 모두 처리하는 데 걸리는 시간은?': 'How long does one worker (100/s) take to handle all 10,000 messages?', '10,000 ÷ 100 = 100초입니다.': '10,000 ÷ 100 = 100 s.',
+  '쪽지 꺼내기': 'Take messages', '일꾼 1이 1초에 100개씩 꺼냄': 'Worker 1 takes 100 a second', '일꾼 1이 제 속도로 꺼냅니다.': 'Worker 1 takes them at its own pace.',
+  '일꾼 2 추가': 'Add worker 2', '큐가 길어서 일꾼 2를 더 띄움': 'The queue is long, so worker 2 is started too', '둘이 합쳐 200/초 → 50초면 다 비움': 'Together 200/s → empty in 50 s', '큐 길이를 보고 일꾼을 늘립니다.': 'Workers are added based on the queue length.', '줄어드는 중': 'Shrinking',
+  '메일 서비스는 200/초만 받음 → 넘치지 않음': 'The mail service takes only 200/s → no overflow', '메일 서비스는 감당할 수 있는 속도로만 일을 받습니다.': 'The mail service takes work only as fast as it can handle.',
+  // Step 4
+  '실패와 다시 하기': 'Failure and retry',
+  '처리 확인 전에 일꾼이 죽으면 쪽지를 다시 준다': 'If a worker dies before acking, the message is handed out again',
+  '일꾼이 쪽지를 꺼내 처리하다 죽으면 그 일은 어떻게 될까요? 큐는 일꾼이 "다 했다"(확인, ack)고 알려 주기 전까지 쪽지를 지우지 않고, 일정 시간 확인이 없으면 다른 일꾼에게 다시 줍니다. 그래서 일은 최소 한 번은 처리됩니다. 대신 메일을 보낸 직후, 확인 전에 죽으면 같은 메일이 두 번 갈 수 있습니다.':
+    'What happens to a job if a worker dies while handling it? The queue does not delete the message until the worker reports "done" (an acknowledgement, ack), and if no ack comes within a set time it hands the message to another worker. So the job is done at least once. But if a worker dies right after sending the email and before acking, the same email can go twice.',
+  '쪽지 501은 일꾼 2가 다시 받아 처리했습니다. 같은 쪽지가 두 번 처리되어도 결과가 한 번과 같도록(멱등성), "주문 501 메일은 이미 보냄" 기록을 남기고 처리 전에 확인합니다.': 'Worker 2 received message 501 again and handled it. So that handling the same message twice gives the same result as once (idempotency), a record "mail for order 501 already sent" is kept and checked before handling.',
+  '쪽지 501: 대기': 'Message 501: waiting', '일꾼 1이 꺼냄': 'Worker 1 takes it', '일꾼 1이 쪽지 501을 꺼냄': 'Worker 1 takes message 501', '큐: 501은 "처리 중"으로 표시, 아직 지우지 않음': 'Queue: 501 marked "in progress", not deleted yet', '일꾼 1이 쪽지를 받습니다. 큐는 아직 지우지 않습니다.': 'Worker 1 gets the message. The queue does not delete it yet.', '501 처리 중': '501 in progress',
+  '메일은 보냈는데': 'The email went, but', '메일 발송 성공': 'Email sent', '확인(ack)을 보내기 직전 일꾼 1이 죽음': 'Worker 1 dies just before sending its ack', '메일을 보낸 직후, 확인을 보내기 전에 일꾼 1이 죽었습니다.': 'Worker 1 died right after sending the email, before sending its ack.', '501 보냄': '501 sent',
+  '다시 주기': 'Redeliver', '쪽지 501 다시': 'Message 501 again', '30초 동안 확인 없음 → 일꾼 2에게 다시 줌': 'No ack for 30 s → handed to worker 2', '확인이 없자 큐가 일꾼 2에게 다시 줍니다.': 'With no ack, the queue hands it to worker 2.', '501 다시 줌': '501 handed out again', '501 다시 받음': 'Got 501 again',
+  '일꾼 2가 그냥 메일을 보내면 어떻게 될까요?': 'What happens if worker 2 just sends the email?', '같은 확인 메일이 두 번 간다': 'The same confirmation email goes twice', '메일이 한 번만 간다': 'The email goes only once',
+  '일꾼 1이 이미 보냈지만 확인을 못 했을 뿐입니다. 큐는 그 사실을 모릅니다.': 'Worker 1 already sent it; it just never acked. The queue does not know that.',
+  '멱등하게 처리': 'Handle idempotently', '이미 보냈나?': 'Already sent?', '"주문 501 메일 보냄" 기록 확인 → 이미 있음': 'Check the record "mail for order 501 sent" → already there', '이미 보냄 → 건너뜀': 'Already sent → skip', '보낸 기록을 확인하고 다시 보내지 않습니다.': 'It checks the send record and does not send again.',
+  '보내지 않고 확인(ack)만 보냄': 'Sends only the ack, not the email', '큐: 쪽지 501 지움': 'Queue: message 501 deleted', '확인을 받은 큐가 쪽지를 지웁니다.': 'Having got the ack, the queue deletes the message.',
+  '같은 쪽지가 두 번 와도 안전하게 하려면?': 'How do you stay safe if the same message comes twice?', '처리 전에 이미 했는지 기록을 확인한다(멱등성)': 'Check a record before handling to see if it was already done (idempotency)', '큐를 하나 더 둔다': 'Add another queue',
+  '"최소 한 번" 전달에서는 중복이 생길 수 있으므로, 받는 쪽이 같은 일을 두 번 해도 결과가 같게 만듭니다.': 'With "at least once" delivery duplicates can happen, so the receiving side is made to give the same result even if it does the same job twice.',
+};

@@ -1,0 +1,76 @@
+// English for 8D.6 Accessibility. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  '접근성 · 레슨 8D.6': 'Accessibility · Lesson 8D.6',
+  '8장 심화 트랙 · 8D 그래픽·인터랙션 · 레슨 8D.6 · 실습': 'Chapter 8 Advanced tracks · 8D Graphics and interaction · Lesson 8D.6 · Practice',
+  '글자와 배경의 대비 비율을 기준(4.5:1)과 비교하고, 화면 읽기 프로그램이 알아듣는 HTML, 키보드만으로 쓸 수 있는 화면, 움직임·자막·글자 크기 같은 여러 선택지를 문제로 익혀 보세요.':
+    'Learn through exercises how to compare text-to-background contrast with the standard (4.5:1), HTML that screen readers understand, screens usable with the keyboard alone, and options such as motion, captions and text size.',
+  '보기 어렵거나 손이 불편한 사람도 쓸 수 있게 하려면 어떻게 할까요? 대비 숫자, HTML의 뜻, 키보드 조작, 여러 선택지를 실제 예로 판단해 보세요.':
+    'How do you make something usable for people who see poorly or have trouble using their hands? Judge contrast numbers, HTML meaning, keyboard use and choices on real examples.',
+  // Step 1
+  '대비 비율': 'Contrast ratio', '흰 바탕 위 회색 글자': 'Gray text on white', '밝기 대비 3:1': 'Contrast 3:1', '보통 크기 본문 기준 4.5:1 미달': 'Below 4.5:1 for body text',
+  '글자와 배경의 밝기 차이를 숫자로 잰다': 'Measure the brightness gap between text and background as a number',
+  '6.8에서 "대비가 충분해야 한다"고 했습니다. 접근성 기준(WCAG)은 이것을 숫자로 정합니다. 두 색의 밝기 비율(대비 비율)이 1:1(같은 색)에서 21:1(검정과 흰색)까지인데, 보통 글자는 4.5:1 이상, 큰 글자(약 24px 이상)는 3:1 이상이어야 합니다. 눈으로 괜찮아 보여도 계산하면 기준에 못 미치는 경우가 많습니다.':
+    '6.8 said "contrast must be high enough". The accessibility standard (WCAG) puts a number on it. The brightness ratio of two colors (the contrast ratio) runs from 1:1 (the same color) to 21:1 (black and white); normal text needs 4.5:1 or more and large text (about 24px and up) 3:1 or more. Colors that look fine to the eye often fall short when you calculate.',
+  '0.3에서 색을 빨강·초록·파랑 숫자로 적었습니다. 대비 비율은 그 숫자로 밝기를 계산해 비교합니다.': '0.3 wrote colors as red, green and blue numbers. The contrast ratio uses those numbers to compute and compare brightness.',
+  '흰 배경(#ffffff) 위의 글자색입니다. 보통 크기 글자로 기준(4.5:1)을 통과할까요?': 'A text color on a white background (#ffffff). Does it pass the standard (4.5:1) for normal-size text?',
+  '통과': 'Passes', '통과 못 함': 'Fails',
+  '#000000 (검정) — 대비 21:1': '#000000 (black) — contrast 21:1', '가장 큰 대비입니다.': 'The highest contrast there is.',
+  '#767676 (중간 회색) — 대비 4.54:1': '#767676 (mid gray) — contrast 4.54:1', '4.5를 아슬아슬하게 넘습니다. 흰 배경 위 회색 글자의 한계쯤입니다.': 'It just clears 4.5. About the limit for gray text on white.',
+  '#777777 (한 단계 밝은 회색) — 대비 4.48:1': '#777777 (one step lighter) — contrast 4.48:1', '눈으로는 거의 같아 보이지만 4.5에 못 미칩니다. 그래서 눈대중 대신 계산합니다.': 'It looks nearly the same to the eye but falls short of 4.5. That is why you calculate instead of eyeballing.',
+  '#aaaaaa (연한 회색) — 대비 2.32:1': '#aaaaaa (light gray) — contrast 2.32:1', '보통 글자는 물론 큰 글자 기준(3:1)에도 못 미칩니다.': 'It falls short not only for normal text but even for the large-text standard (3:1).',
+  '이 실험실의 초록 강조색(#12634b)은 흰 배경에서 대비가 약 7.2:1입니다. 어떤 글자에 써도 될까요?': 'This lab\'s green accent (#12634b) has a contrast of about 7.2:1 on white. What text can it be used for?',
+  '보통 글자 기준(4.5:1)과 더 엄격한 기준(7:1)도 넘으므로 본문 글자에도 쓸 수 있습니다.': 'It clears both the normal-text standard (4.5:1) and the stricter one (7:1), so it works even for body text.',
+  // Step 2
+  '화면 읽기': 'Screen readers', '그림만 있는 검색 버튼': 'Icon-only search button', '접근 가능한 이름 ‘검색’ 부여': 'Give it the accessible name ‘Search’', '낭독기가 동작을 알려 줌': 'The reader announces the action',
+  '화면 읽기 프로그램이 알아듣게 뜻을 표시한다': 'Mark meaning so screen readers understand',
+  '앞이 보이지 않는 사용자는 화면 읽기 프로그램이 읽어 주는 소리로 웹을 씁니다. 프로그램은 생김새가 아니라 HTML의 뜻(버튼인지, 제목인지, 무슨 칸인지)을 읽습니다. 그래서 버튼은 진짜 <button>으로, 그림에는 대체 글을, 입력 칸에는 이름표(label)를, 제목은 제목 태그로 표시해야 합니다.':
+    'Blind users use the web through the voice of a screen reader. The reader goes by the HTML\'s meaning (is it a button, a heading, what kind of field), not by looks. So buttons must be real <button>s, images need alt text, input fields need a label, and headings need heading tags.',
+  '6.8의 "모두를 위한 화면"을 HTML 수준에서 확인합니다. 정거장 실험실들의 장면 그림(SVG)에도 화면 읽기 프로그램을 위한 제목과 설명을 붙여 두었습니다.':
+    'This checks the "screens for everyone" of 6.8 at the HTML level. The scene pictures (SVG) of the station labs also carry a title and description for screen readers.',
+  '화면 읽기 프로그램이 이것을 제대로 읽어 줄까요?': 'Will a screen reader read this properly?',
+  '제대로 읽는다': 'Reads it properly', '헷갈리게 읽는다': 'Reads it confusingly',
+  '<div onclick="buy()">구매</div>': '<div onclick="buy()">Buy</div>', '그냥 글자로 읽혀 누를 수 있는지 모릅니다. 키보드로 갈 수도 없습니다. <button>을 씁니다.': 'It is read as plain text, so you cannot tell it is pressable. You cannot reach it by keyboard either. Use <button>.',
+  '<img src="pencil.jpg" alt="노란 몸통의 HB 연필">': '<img src="pencil.jpg" alt="HB pencil with a yellow body">', '대체 글을 읽어 주어 그림의 내용을 알 수 있습니다.': 'The alt text is read out, so you know what the picture shows.',
+  '<input type="email"> (이름표 없이 옆에 회색 글씨 "이메일")': '<input type="email"> (no label, just gray "Email" text beside it)', '"입력 칸"이라고만 읽혀 무엇을 쓰는지 모릅니다. <label>로 이름을 이어 줍니다.': 'It is read only as "edit text", so you do not know what to type. Connect a name with <label>.',
+  '<h2>장바구니</h2> 아래에 담은 상품 목록': 'A list of items under <h2>Cart</h2>', '제목을 읽어 주고, 제목끼리 건너뛰며 원하는 곳을 빨리 찾을 수 있습니다.': 'The heading is read out, and you can jump from heading to heading to find what you want quickly.',
+  '아이콘만 있는 버튼(휴지통 그림)은 어떻게 해야 화면 읽기 프로그램이 알아들을까요?': 'How do you make an icon-only button (a trash can picture) understandable to a screen reader?',
+  '버튼에 aria-label="삭제" 같은 이름을 붙이거나 화면에는 숨긴 글자로 "삭제"를 넣습니다. 그러면 "삭제, 버튼"이라고 읽힙니다.': 'Give the button a name like aria-label="Delete", or add "Delete" as visually hidden text. Then it reads as "Delete, button".',
+  // Step 3
+  '키보드만으로': 'Keyboard only', 'Tab으로 저장에 포커스': 'Tab focuses Save', 'Enter로 활성화': 'Enter activates it', '마우스 없이 저장 완료': 'Saved without a mouse',
+  '마우스 없이 Tab과 Enter로 모든 기능을 쓸 수 있어야 한다': 'Every feature must work with Tab and Enter, no mouse',
+  '손을 쓰기 어려운 사람, 화면 읽기 프로그램 사용자, 빠른 작업을 좋아하는 사람은 키보드만 씁니다. Tab으로 누를 수 있는 것들을 화면 순서대로 옮겨 다니고, 지금 어디에 있는지(포커스)가 눈에 보여야 하고, Enter나 Space로 누를 수 있어야 합니다. 들어갔다가 빠져나올 수 없는 곳(키보드 함정)이 있으면 안 됩니다.':
+    'People who have trouble using their hands, screen reader users and people who like to work fast use only the keyboard. Tab must move through pressable things in screen order, where you are now (the focus) must be visible, and Enter or Space must press it. There must be no place you can enter but not leave (a keyboard trap).',
+  '이 실험실의 버튼들도 Tab으로 옮겨 다니며 쓸 수 있고, 포커스된 버튼에 테두리가 보입니다.': 'This lab\'s buttons can be reached with Tab too, and the focused button shows an outline.',
+  '키보드 사용자에게 괜찮은 설계일까요?': 'Is this design fine for keyboard users?',
+  '괜찮다': 'Fine', '막히거나 헷갈린다': 'Blocks or confuses',
+  '디자인이 깔끔해 보이도록 포커스 테두리를 모든 곳에서 없앴다.': 'Focus outlines were removed everywhere to make the design look clean.',
+  '지금 어디에 있는지 보이지 않아 키보드 사용자가 길을 잃습니다.': 'Keyboard users cannot see where they are and get lost.',
+  'Tab 순서가 화면에 보이는 순서(위에서 아래, 왼쪽에서 오른쪽)를 따른다.': 'Tab order follows the visible order on screen (top to bottom, left to right).',
+  '예측할 수 있는 순서라 원하는 곳을 쉽게 찾아갑니다.': 'The order is predictable, so it is easy to get where you want.',
+  '팝업 창이 열리면 Esc로 닫을 수 없고 Tab이 팝업 안에서만 돈다(닫기 버튼 없음).': 'When a popup opens, Esc does not close it and Tab cycles only inside it (no close button).',
+  '빠져나올 수 없는 키보드 함정입니다. Esc로 닫히고 닫기 버튼이 있어야 합니다.': 'It is a keyboard trap you cannot escape. Esc should close it, and there should be a close button.',
+  '페이지 맨 앞에 "본문으로 건너뛰기" 링크가 있다.': 'There is a "Skip to content" link at the very start of the page.',
+  '매번 메뉴 수십 개를 Tab으로 지나가지 않아도 됩니다.': 'You do not have to Tab past dozens of menu items every time.',
+  '지금 쓰는 웹사이트에서 마우스를 치우고 Tab만으로 로그인해 보세요. 어디서 막혔나요?': 'Put the mouse away and log in to a website you use with Tab only. Where did you get stuck?',
+  '포커스가 안 보여 어디 있는지 모르거나, 로그인 버튼이 div라 Tab으로 가지 않거나, 팝업에서 빠져나오지 못하는 경우가 흔합니다.': 'Common cases: the focus is invisible so you do not know where you are, the login button is a div that Tab skips, or you cannot get out of a popup.',
+  // Step 4
+  '여러 선택지': 'Many options', '오류를 빨강으로 표시': 'Errors shown in red', '오류 설명과 기호도 추가': 'Add an error message and a symbol', '색을 구분하기 어려워도 인식': 'Clear even without telling colors apart',
+  '사람마다 다른 방법으로 같은 정보를 얻게 한다': 'Let different people get the same information in different ways',
+  '접근성은 특정 장애만을 위한 것이 아닙니다. 움직임에 어지러움을 느끼는 사람을 위해 애니메이션을 줄이는 설정(prefers-reduced-motion)을 따르고, 소리를 못 듣거나 조용한 곳에 있는 사람을 위해 영상에 자막을 넣고, 글자를 200%로 키워도 내용이 잘리지 않게 합니다. 이런 배려는 대부분의 사람에게도 편합니다.':
+    'Accessibility is not only for particular disabilities. Follow the setting that reduces animation (prefers-reduced-motion) for people whom motion makes dizzy, add captions to videos for people who cannot hear or are somewhere quiet, and keep content from being cut off when text is enlarged to 200%. Such care is convenient for most people too.',
+  '이 실험실들도 움직임 줄이기 설정을 켜면 패킷 애니메이션 없이 단계만 바뀝니다. 8D.5의 사용성 평가에 다양한 사용자를 포함하는 이유이기도 합니다.': 'With reduced motion turned on, these labs too just change steps without packet animations. It is also why the usability evaluation of 8D.5 includes a range of users.',
+  '더 많은 사람이 쓸 수 있게 하는 설계일까요?': 'Does this design let more people use it?',
+  '더 많은 사람이 쓸 수 있다': 'More people can use it', '누군가는 쓰기 어렵다': 'Someone will struggle',
+  '운영체제의 "움직임 줄이기"가 켜져 있으면 화면 전환 애니메이션을 끈다.': 'Screen transition animations turn off when the operating system\'s "Reduce motion" is on.',
+  '움직임에 어지러움을 느끼는 사람을 지킵니다.': 'It protects people whom motion makes dizzy.',
+  '안내 영상에 자막과 글로 된 요약을 함께 둔다.': 'Guide videos come with captions and a written summary.',
+  '듣지 못하는 사람, 지하철에서 소리를 끈 사람 모두 내용을 얻습니다.': 'People who cannot hear and people with the sound off on the subway both get the content.',
+  '글자 크기를 px로 고정하고 확대하면 글이 상자 밖으로 잘린다.': 'Text size is fixed in px, and zooming in cuts text off outside its box.',
+  '글자를 키워 읽는 사람은 내용을 볼 수 없습니다. 늘어나는 단위와 줄바꿈을 씁니다.': 'People who read with enlarged text cannot see the content. Use scalable units and line wrapping.',
+  '"30초 안에 입력하지 않으면 처음부터"로 시간을 정해 두고 늘릴 수 없게 한다.': 'A fixed limit, "Start over if you don\'t finish typing in 30 seconds", that cannot be extended.',
+  '천천히 읽거나 입력하는 사람에게는 끝낼 수 없는 과제입니다. 시간을 늘리거나 없앨 수 있어야 합니다.': 'For people who read or type slowly, the task cannot be finished. It must be possible to extend or remove the limit.',
+  '접근성을 지키면 장애가 없는 사용자에게는 어떤 점이 좋을까요?': 'How does accessibility help users without disabilities?',
+  '햇빛 아래에서는 대비가, 한 손으로 아기를 안고 있을 때는 큰 버튼과 키보드 조작이, 시끄러운 곳에서는 자막이 도움이 됩니다. 누구나 언젠가 잠시 불편한 상황에 놓입니다.':
+    'Contrast helps in sunlight, big buttons and keyboard control help when holding a baby in one arm, and captions help somewhere noisy. Everyone ends up in a briefly difficult situation sometime.',
+};

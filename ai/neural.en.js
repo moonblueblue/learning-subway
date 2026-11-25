@@ -1,0 +1,95 @@
+// English for 7.11 Neural networks. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  '신경망 · 레슨 7.11': 'Neural networks · Lesson 7.11',
+  '3×3 그림이 곱하고 더하고 음수를 자르는 뉴런 두 개를 지나 출력 뉴런에서 세로선과 가로선으로 판단되는 과정, 조금 다른 그림을 알아보는 까닭, 가중치를 역전파로 배우는 모습을 따라가 보세요.':
+    'Follow a 3×3 picture through two neurons that multiply, add and cut off negatives, to an output neuron that decides vertical line or horizontal line; see why it still recognizes a slightly different picture, and how the weights are learned by backpropagation.',
+  '숫자를 곱하고 더하는 층을 쌓으면 어떻게 그림을 알아볼까요? 3×3 그림 하나가 작은 신경망을 지나 세로선인지 가로선인지 판단되는 과정을 계산해 보세요.':
+    'How can stacked layers that multiply and add numbers recognize a picture? Work out how one 3×3 picture passes through a small neural network to be judged a vertical or a horizontal line.',
+  '3×3 그림이 숨은 뉴런 둘로 갈라졌다가 출력 뉴런에서 합쳐지는 장면': 'A 3×3 picture splitting into two hidden neurons and joining again at the output neuron',
+  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and the data moves.',
+  '"다음 단계"를 눌러 그림을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the picture one stage at a time. Prediction questions come up along the way.',
+  '입력 그림': 'Input picture', '숨은 뉴런': 'Hidden neuron', '틀린 답': 'Wrong answer',
+  // Stations
+  '응용': 'Application', '계층': 'Layer', '전선': 'Wire', '라우터': 'Router',
+  '3×3 그림': '3×3 picture', '뉴런 1 (세로 찾기)': 'Neuron 1 (finds vertical)', '뉴런 2 (가로 찾기)': 'Neuron 2 (finds horizontal)', '출력': 'Output',
+  '3×3 그림 → 뉴런 1 (세로 찾기)': '3×3 picture → Neuron 1 (finds vertical)', '3×3 그림 → 뉴런 2 (가로 찾기)': '3×3 picture → Neuron 2 (finds horizontal)',
+  '뉴런 1 (세로 찾기) → 뉴런 1 (세로 찾기)': 'Neuron 1 (finds vertical) → Neuron 1 (finds vertical)', '뉴런 1 (세로 찾기) → 출력': 'Neuron 1 (finds vertical) → Output',
+  '뉴런 2 (가로 찾기) → 출력': 'Neuron 2 (finds horizontal) → Output', '출력 → 뉴런 1 (세로 찾기)': 'Output → Neuron 1 (finds vertical)',
+  '뉴런 1 (세로 찾기) · ReLU': 'Neuron 1 (finds vertical) · ReLU', '뉴런 1 (세로 찾기) · 다시 계산': 'Neuron 1 (finds vertical) · recompute',
+  '뉴런 2 (가로 찾기) · {#0}': 'Neuron 2 (finds horizontal) · {0}',
+  // Labels and holds
+  '뉴런 1': 'Neuron 1', '뉴런 2': 'Neuron 2', '세로선': 'Vertical line', '가로선': 'Horizontal line', '점 있는 세로선': 'Vertical line with a dot',
+  '세로선 · 정답 세로': 'Vertical line · answer vertical', '세로선 → 2': 'Vertical line → 2', '2 → 세로선': '2 → vertical line', '−2 → 가로선': '−2 → horizontal line',
+  '세로선: 2 → 2': 'Vertical: 2 → 2', '가로선: −2 → 0': 'Horizontal: −2 → 0', '−0.5 · 틀림': '−0.5 · wrong',
+  '합 {#0}': 'Sum {0}', '합 = 2': 'Sum = 2', '합 = 1 + 1 = 2 → 2': 'Sum = 1 + 1 = 2 → 2', '합 = −2 → 0': 'Sum = −2 → 0', '합 = −2 → ReLU → 0': 'Sum = −2 → ReLU → 0',
+  '칸 9개': '9 cells', '{#0}개': '{0}', '1 늘린다': 'Raise by 1', '바꾸지 않는다 (가중치 0)': 'No change (weight 0)',
+  '뉴런 1의 가중치:': 'Neuron 1\'s weights:', '가중치: 무작위': 'Weights: random', '가중치 고침': 'Weights fixed', '구석 칸 가중치 0 → 무시': 'Corner cell weight 0 → ignored',
+  '위 가운데 1 × (+1) = 1': 'Top middle 1 × (+1) = 1', '아래 가운데 1 × (+1) = 1': 'Bottom middle 1 × (+1) = 1',
+  '왼쪽 가운데 0 × (−1) = 0': 'Left middle 0 × (−1) = 0', '오른쪽 가운데 0 × (−1) = 0': 'Right middle 0 × (−1) = 0',
+  '왼쪽·오른쪽 가운데 +1 두 번 = 2 → ReLU → 2': 'Left and right middle +1 twice = 2 → ReLU → 2',
+  '0보다 작음 → "가로선"': 'Below 0 → "horizontal line"',
+  '출력 = 0 × (+1) + 2 × (−1) = −2': 'Output = 0 × (+1) + 2 × (−1) = −2', '출력 = 0 × (+1) + …': 'Output = 0 × (+1) + …',
+  '출력 = 2 → "세로선"': 'Output = 2 → "vertical line"', '출력 = 2 → "세로선" (맞음)': 'Output = 2 → "vertical line" (right)',
+  '출력 = 0.3 − 0.8 = −0.5 → "가로선" (틀림)': 'Output = 0.3 − 0.8 = −0.5 → "horizontal line" (wrong)',
+  '뉴런 1: 0.3 · 뉴런 2: 0.8': 'Neuron 1: 0.3 · neuron 2: 0.8',
+  '출력 오차 → 뉴런 1, 2의 책임 계산 → 그림 칸 가중치까지 고침': 'Output error → work out neurons 1 and 2\'s share → fix even the picture-cell weights',
+  '예시 수천 개로 되풀이하면 세로 · 가로 찾는 가중치가 생김': 'Repeating over thousands of examples produces weights that find vertical and horizontal',
+  '예시: 세로선 그림 (정답: 세로선)': 'Example: vertical line picture (answer: vertical line)',
+  '입력 그림 (가로선)': 'Input picture (horizontal line)', '입력 그림 (세로선)': 'Input picture (vertical line)', '입력 그림 (구석에 점이 있는 세로선)': 'Input picture (vertical line with a dot in a corner)',
+  '곱해서 더하기': 'Multiply and add', '음수는 0으로': 'Negatives to 0', '모으기': 'Gather', '모으는 중': 'Gathering', '출력에 모으기': 'Gather at the output',
+  '판단': 'Decision', '다시 계산': 'Recompute', '고치기': 'Fix', '거꾸로 고치기 (역전파)': 'Fixing backward (backpropagation)', '무작위 가중치로 계산': 'Compute with random weights',
+  '학습 시작': 'Start learning', '배운 뒤': 'After learning', '조금 다른 그림': 'A slightly different picture', '뉴런 하나': 'One neuron', '층 쌓기': 'Stacking layers',
+  '작은 신경망': 'A small neural network', '가중치는 배운다': 'Weights are learned',
+  // Step 1
+  '뉴런은 곱해서 더하고, 음수는 0으로 바꾼다': 'A neuron multiplies and adds, and turns negatives into 0',
+  '인공 뉴런은 아주 단순한 계산기입니다. 입력마다 가중치를 곱해 모두 더하고, 그 합이 음수면 0, 아니면 그대로 내보냅니다(ReLU). 7.10의 "w × 기온"을 입력 여러 개로 늘린 것입니다. 3×3 그림의 칸(켜짐 1, 꺼짐 0)을 입력으로 받는 뉴런 1은 가운데 세로줄의 위·아래 칸에 +1, 가운데 가로줄의 왼쪽·오른쪽 칸에 −1을 곱합니다.':
+    'An artificial neuron is a very simple calculator. It multiplies each input by a weight and adds them all; if the sum is negative it sends out 0, otherwise the sum as is (ReLU). It is the "w × temperature" of 7.10 stretched to many inputs. Neuron 1 takes the cells of a 3×3 picture (on 1, off 0) as input and multiplies the top and bottom cells of the middle column by +1 and the left and right cells of the middle row by −1.',
+  '세로선 그림에서 뉴런 1은 1 + 1 − 0 − 0 = 2를 내보냅니다. 가중치가 "어떤 모양을 좋아하는지"를 정합니다. 이 뉴런은 세로선을 좋아하고 가로선을 싫어합니다.':
+    'For a vertical line picture, neuron 1 sends out 1 + 1 − 0 − 0 = 2. The weights decide "which shape it likes". This neuron likes vertical lines and dislikes horizontal ones.',
+  '왼쪽에 3×3 그림, 오른쪽에 뉴런 1이 놓여 있습니다.': 'The 3×3 picture is on the left and neuron 1 on the right.',
+  '켜진 칸과 가중치를 곱해 더합니다.': 'The lit cells are multiplied by their weights and added.',
+  '합이 음수면 0으로 바꿉니다.': 'If the sum is negative, it becomes 0.',
+  '가로선 그림(가운데 줄 # # #)을 넣으면 뉴런 1의 합은?': 'Feed in a horizontal line picture (middle row # # #). What is neuron 1\'s sum?',
+  '위·아래 가운데는 꺼져 0, 왼쪽·오른쪽 가운데가 켜져 1 × (−1) 두 번 = −2입니다.': 'Top and bottom middle are off, so 0; left and right middle are on, so 1 × (−1) twice = −2.',
+  '음수를 0으로 바꾸는 단계가 하는 일은?': 'What does the step that turns negatives into 0 do?',
+  '"이 모양이 아니다"를 0으로 조용히 만든다': 'It quietly turns "not this shape" into 0', '숫자를 더 크게 만든다': 'It makes the numbers bigger',
+  '찾는 모양이 없으면 아예 신호를 내지 않게 합니다. 이 꺾임 덕분에 층을 쌓는 의미가 생깁니다.': 'If the shape it looks for is not there, it sends no signal at all. This bend is what makes stacking layers worthwhile.',
+  // Step 2
+  '뉴런 여러 개의 답을 다음 층이 다시 합친다': 'The next layer combines the answers of several neurons',
+  '뉴런 2는 뉴런 1과 반대 가중치를 가져 가로선을 좋아합니다. 두 뉴런이 한 층(숨은 층)을 이루고, 그 답을 출력 뉴런이 다시 곱해 더합니다. 출력 = 뉴런 1 × (+1) + 뉴런 2 × (−1)이고, 0보다 크면 "세로선", 작으면 "가로선"이라고 답합니다.':
+    'Neuron 2 has the opposite weights to neuron 1, so it likes horizontal lines. The two neurons form one layer (the hidden layer), and the output neuron multiplies and adds their answers again. Output = neuron 1 × (+1) + neuron 2 × (−1); above 0 it answers "vertical line", below 0 "horizontal line".',
+  '세로선은 뉴런 1만 켜져 출력 2(세로선), 가로선은 뉴런 2만 켜져 출력 −2(가로선)입니다. 앞층은 작은 특징을 찾고, 뒷층은 특징들을 합쳐 판단합니다.':
+    'A vertical line lights only neuron 1, giving output 2 (vertical); a horizontal line lights only neuron 2, giving output −2 (horizontal). Earlier layers find small features, later layers combine them to decide.',
+  '왼쪽에 그림, 가운데 위아래에 뉴런 1과 2, 오른쪽에 출력이 있습니다. 그림이 두 뉴런으로 갈라졌다가 출력에서 합쳐집니다.':
+    'The picture is on the left, neurons 1 and 2 above and below in the middle, and the output on the right. The picture splits to the two neurons and joins again at the output.',
+  '뉴런 1(세로 찾기)은 조용합니다.': 'Neuron 1 (finds vertical) stays quiet.', '뉴런 2(가로 찾기)가 켜집니다.': 'Neuron 2 (finds horizontal) lights up.', '뉴런 2는 조용합니다.': 'Neuron 2 stays quiet.',
+  '출력 뉴런이 두 답을 모읍니다.': 'The output neuron gathers the two answers.', '출력이 모읍니다.': 'The output gathers them.',
+  '출력이 −2라서 가로선이라고 답합니다.': 'The output is −2, so it answers horizontal line.',
+  '세로선 그림을 넣으면 출력은?': 'What is the output for a vertical line picture?',
+  '뉴런 1은 2, 뉴런 2는 0이므로 2 × (+1) + 0 × (−1) = 2입니다.': 'Neuron 1 gives 2 and neuron 2 gives 0, so 2 × (+1) + 0 × (−1) = 2.',
+  // Step 3
+  '중요한 특징만 보므로 조금 달라도 알아본다': 'It looks only at the important features, so it still recognizes something slightly different',
+  '사람이 쓴 그림은 늘 깔끔하지 않습니다. 세로선 옆 구석에 점이 하나 더 찍혀 있으면 어떨까요? 뉴런 1과 2는 구석 칸에 가중치 0을 주므로 그 점을 무시합니다. 중요한 칸만 보는 덕분에 조금 다른 그림도 같은 답을 냅니다.':
+    'Pictures drawn by people are not always neat. What if there is an extra dot in a corner beside the vertical line? Neurons 1 and 2 give corner cells a weight of 0, so they ignore that dot. Because they look only at the important cells, a slightly different picture gets the same answer.',
+  '구석에 점이 있어도 출력은 여전히 2(세로선)입니다. 반대로 가중치가 0인 곳에만 차이가 있는 그림은 구별하지 못합니다. 무엇을 보고 무엇을 무시할지가 모두 가중치에 들어 있습니다.':
+    'Even with a dot in the corner, the output is still 2 (vertical line). On the other hand, pictures that differ only where the weights are 0 cannot be told apart. What to look at and what to ignore is all in the weights.',
+  '같은 장면입니다. 구석에 점이 하나 더 있는 세로선을 넣습니다.': 'The same scene. A vertical line with one extra dot in a corner goes in.',
+  '뉴런 1은 구석의 점을 무시합니다.': 'Neuron 1 ignores the dot in the corner.', '여전히 세로선이라고 답합니다.': 'It still answers vertical line.',
+  '구석의 점이 뉴런 1의 합을 바꿀까요?': 'Does the dot in the corner change neuron 1\'s sum?',
+  '구석 칸의 가중치가 0이라 켜져도 1 × 0 = 0입니다.': 'The corner cell\'s weight is 0, so even lit it gives 1 × 0 = 0.',
+  // Step 4
+  '가중치는 사람이 아니라 예시로 배운다': 'Weights are learned from examples, not set by people',
+  '여기서는 가중치를 사람이 정했지만, 실제 신경망은 7.10처럼 예시로 배웁니다. 무작위 가중치에서 시작해 정답이 붙은 그림을 넣고, 출력이 틀린 만큼 마지막 층부터 거꾸로 각 가중치의 책임을 계산해 조금씩 고칩니다(역전파). 손글씨 숫자 그림(28 × 28 = 784칸)을 읽는 신경망은 가중치가 수십만 개이고, 층이 깊어질수록 선 → 모양 → 숫자처럼 점점 큰 특징을 찾습니다.':
+    'Here a person set the weights, but real neural networks learn them from examples, as in 7.10. Starting from random weights, they take pictures with answers, and by how wrong the output is they work out each weight\'s share backward from the last layer and fix it a little (backpropagation). A network that reads handwritten digit pictures (28 × 28 = 784 cells) has hundreds of thousands of weights, and deeper layers find ever larger features: lines → shapes → digits.',
+  '곱하고 더하고 음수를 자르는 단순한 계산을 수백만 번 겹치고, 그 숫자들을 예시로 맞추면 그림, 말, 글을 다루는 모델이 됩니다. 이 곱셈들을 동시에 하는 데 6.7의 GPU가 쓰입니다.':
+    'Stack the simple calculation of multiply, add and cut negatives millions of times, tune the numbers with examples, and you get models that handle pictures, speech and text. The GPU of 6.7 does these multiplications at the same time.',
+  '같은 장면입니다. 처음에는 무작위 가중치라 틀리고, 틀린 만큼 고칩니다.': 'The same scene. At first the weights are random so it is wrong, and it fixes them by how wrong it was.',
+  '처음에는 가중치가 엉망입니다.': 'At first the weights are a mess.', '세로선을 가로선이라고 틀립니다.': 'It wrongly calls the vertical line horizontal.',
+  '오차를 거꾸로 전해 모든 가중치를 고칩니다.': 'The error is passed backward to fix every weight.', '되풀이한 뒤에는 맞게 답합니다.': 'After repeating, it answers correctly.',
+  '7.10의 경사 하강법을 층마다 거꾸로 적용합니다. 세로 칸의 가중치는 키우고 가로 칸은 줄이는 쪽으로 움직입니다.': 'The gradient descent of 7.10 is applied layer by layer, backward. Vertical cells\' weights move up and horizontal cells\' move down.',
+  '틀린 뒤 컴퓨터가 하는 일은?': 'What does the computer do after a wrong answer?',
+  '틀린 만큼 각 가중치를 조금씩 고친다': 'Fixes each weight a little by how wrong it was', '그 그림을 지운다': 'Deletes that picture',
+  '784칸 그림을 숨은 뉴런 100개에 모두 잇는다면 그 층의 가중치는 몇 개일까요?': 'If a 784-cell picture connects to all 100 hidden neurons, how many weights does that layer have?',
+  '입력 784개 × 뉴런 100개 = 78,400개의 곱하기가 있습니다. 그래서 동시에 계산하는 GPU가 필요합니다.': '784 inputs × 100 neurons = 78,400 multiplications. That is why a GPU computing them at once is needed.',
+};

@@ -48,6 +48,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
 .tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
 .badge{transition:opacity .37s}
+#world.power-off .node:not(.disk) .face,#world.power-off .node:not(.disk) polygon{filter:grayscale(1)}
+#world.power-off .node:not(.disk){opacity:.6}
 .badge rect{fill:#fff6ef;stroke:#a24c14;stroke-width:.9}
 .badge text{font:700 11px var(--mono);fill:#a24c14;text-anchor:middle;dominant-baseline:central;letter-spacing:.02em}
 .badge.ok rect{fill:#f1f7f2;stroke:#7fa891}
@@ -170,7 +172,7 @@ const lesson = [
     takeaway: 'CPU가 메모리에 값을 적고(실선) 다시 읽어 옵니다(점선). 그다음 계산 결과 5가 화면으로 갑니다.',
     description: '키보드, CPU, 메모리, 화면이 있습니다. 입력한 2와 3을 CPU가 메모리에 적고 다시 읽어 더한 뒤, 결과 5를 화면에 보냅니다.',
     nodes: ['keyboard', 'cpu', 'screen', 'memory'],
-    badges: { memory: { text: '2, 3', tone: 'ok' }, cpu: { text: '2 + 3', tone: 'ok' }, screen: { text: '5 표시', tone: 'ok' } },
+    badges: { keyboard: { text: '2, 3 입력', tone: 'ok' }, memory: { text: '2, 3', tone: 'ok' }, cpu: { text: '2 + 3 = 5', tone: 'ok' }, screen: { text: '5 표시', tone: 'ok' } },
     links: [['keyboard', 'cpu', 'request'], ['cpu', 'memory', 'request'], ['memory', 'cpu', 'response'], ['cpu', 'screen', 'request']],
   },
   {
@@ -178,10 +180,10 @@ const lesson = [
     example: ["메모리에만 있는 값", "저장 명령", "저장장치에 파일 생성"],
     title: '오래 두려면 저장장치에 적는다',
     body: '"저장"을 누르면 메모리에 있던 내용이 저장장치(SSD나 하드디스크)로 옮겨 적힙니다. 저장장치는 메모리보다 느리지만 전원이 꺼져도 내용이 남습니다. 우리가 파일이라고 부르는 것이 저장장치에 적힌 데이터입니다.',
-    takeaway: '메모리에서 저장장치로 실선이 이어지고, 저장장치 위에 "파일 저장"이 뜹니다.',
+    takeaway: '메모리에서 저장장치로 실선이 이어지고, 메모리의 "결과 5"가 저장장치 위에 "파일에 5 저장"으로 뜹니다.',
     description: 'CPU가 메모리의 내용을 저장장치로 보내 파일로 적습니다.',
     nodes: ['keyboard', 'cpu', 'screen', 'memory', 'disk'],
-    badges: { memory: { text: '계산 기록', tone: 'ok' }, disk: { text: '파일 저장', tone: 'ok' } },
+    badges: { memory: { text: '결과 5', tone: 'ok' }, disk: { text: '파일에 5 저장', tone: 'ok' } },
     links: [['cpu', 'memory', 'request'], ['memory', 'disk', 'request']],
   },
   {
@@ -189,10 +191,11 @@ const lesson = [
     example: ["전원 끄기", "메모리 내용 사라짐", "저장한 파일은 남음"],
     title: '전원이 꺼지면 메모리만 비워진다',
     body: '컴퓨터를 끄면 메모리는 전기가 끊겨 내용이 모두 사라집니다. 저장장치에 적어 둔 파일은 그대로 남습니다. 저장하지 않고 끄면 작업이 날아가는 이유가 이것입니다.',
-    takeaway: '선이 모두 사라지고, 메모리 위에는 "비어 있음", 저장장치 위에는 "파일 그대로"가 뜹니다.',
+    takeaway: '선이 모두 사라지고 저장장치 말고는 모두 회색이 됩니다. CPU 위에 "전원 꺼짐", 메모리 위에 "비어 있음", 저장장치 위에 "파일 5 그대로"가 뜹니다.',
     description: '전원이 꺼져 데이터가 흐르지 않습니다. 메모리는 비어 있고 저장장치의 파일은 그대로 남아 있습니다.',
     nodes: ['keyboard', 'cpu', 'screen', 'memory', 'disk'],
-    badges: { memory: { text: '비어 있음', tone: 'warn' }, disk: { text: '파일 그대로', tone: 'ok' } },
+    badges: { cpu: { text: '전원 꺼짐', tone: 'warn' }, memory: { text: '비어 있음', tone: 'warn' }, disk: { text: '파일 5 그대로', tone: 'ok' } },
+    powerOff: true,
     links: [],
   },
   {
@@ -203,7 +206,7 @@ const lesson = [
     takeaway: '점선을 따라 저장장치 → 메모리 → CPU로 데이터가 돌아오고, 실선으로 화면에 갑니다.',
     description: '저장장치의 파일이 메모리로 올라오고, CPU가 메모리에서 읽어 화면에 보냅니다.',
     nodes: ['keyboard', 'cpu', 'screen', 'memory', 'disk'],
-    badges: { memory: { text: '파일 불러옴', tone: 'ok' }, screen: { text: '다시 표시', tone: 'ok' } },
+    badges: { disk: { text: '파일 5', tone: 'ok' }, memory: { text: '5 불러옴', tone: 'ok' }, screen: { text: '5 다시 표시', tone: 'ok' } },
     links: [['disk', 'memory', 'response'], ['memory', 'cpu', 'response'], ['cpu', 'screen', 'request']],
   },
 ];
@@ -289,7 +292,7 @@ const laneGap = .42;
 const rise = 10;
 
 // Fit the scene into the 620x280 viewport. Measured from the union of all steps.
-byId('world').setAttribute('transform', 'translate(324 170) scale(.84)');
+byId('world').setAttribute('transform', 'translate(324 180) scale(.84)');
 
 const halo = svg('circle', { class: 'packet-halo', r: 9 }, byId('packets'));
 const packet = svg('circle', { class: 'packet', r: 4.6 }, byId('packets'));
@@ -461,7 +464,9 @@ function updateGeometry(view) {
     if (length > best) { best = length; index = i; }
   }
   const [p, q] = [screen[index], screen[index + 1]];
-  const t = screen.length === 2 ? .42 : .5;
+  // A straight line puts the marker past its middle, toward where the data goes: near the start it read as an
+  // arrowhead pointing back (0.5 review: storage → memory looked like memory → storage).
+  const t = screen.length === 2 ? .6 : .5;
   const angle = Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI;
   const transform = `translate(${mix(p[0], q[0], t)} ${mix(p[1], q[1], t)}) rotate(${angle})`;
   view.chevronCasing.setAttribute('transform', transform);
@@ -479,6 +484,8 @@ function createLink(key, from, to, kind) {
 
 function renderScene(step, animate) {
   byId('scene-desc').textContent = step.description;
+  // With the power off every part but the storage turns grey: only the storage keeps its contents.
+  byId('world').classList.toggle('power-off', !!step.powerOff);
   for (const view of nodeViews.values()) {
     view.from = [view.wx, view.wy, view.opacity, view.lift];
     view.to = [view.wx, view.wy, 0, rise];

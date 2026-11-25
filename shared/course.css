@@ -445,9 +445,27 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .course-shell .navigation button { min-height: 32px; padding: 2px 8px; font-size: .8rem; }
   .course-shell .steps button { min-height: 36px; }
 }
+/* A phone keeps the step buttons in one row, one control high, so the scene keeps its room (0.4 review: two rows
+   plus the lesson pager left the scene 106px high on 390 × 750). Long step names end in an ellipsis; the current
+   step's full title is in the explanation. */
+@media (max-width: 640px) and (min-height: 550px) {
+  .course-shell .timeline .steps { grid-template-columns: repeat(var(--step-count), minmax(0, 1fr)); gap: 4px; }
+  .course-shell .timeline .steps button {
+    display: block;
+    height: var(--course-control-height);
+    min-height: 0;
+    padding: 0 6px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: start;
+    line-height: calc(var(--course-control-height) - 2px);
+    font-size: .75rem;
+  }
+  .course-shell .timeline .steps .step-number { margin-inline-end: 4px; }
+}
 @media screen {
   .course-shell .controls .actions { align-items: center; }
-  .course-shell .controls .status { color: var(--course-muted); font-size: .75rem; }
   .course-shell .navigation button {
     display: grid;
     place-items: center;
@@ -523,7 +541,7 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 /* The diagram illustrates the selected step. Direct input belongs to practice. */
 .course-reading #scene * { pointer-events: none; }
 .course-shell .course-rail .course-views { order: -1; }
-.course-shell .navigation #next {
+.course-shell .navigation :is(#prev, #next) {
   width: auto;
   min-width: 60px;
   padding-inline: 10px;
@@ -653,16 +671,57 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 #view-reset, #pause, #replay, .stage-top > .status, .controls .actions > .status { display: none; }
 .controls .actions:not(:has(> :not(#pause, #replay, .status))) { display: none; }
 
-/* Home link as the drawer's first row; lesson-to-lesson links stand in for the timeline buttons at either end. */
+/* Home link as the drawer's first row. */
 .course-home { display: block; padding: 10px 12px; margin: 10px 10px 0; border: 1px solid var(--course-border); border-radius: var(--course-item-radius); color: var(--course-ink); font-weight: 700; text-decoration: none; background: #fff; }
 .course-home:hover { background: var(--course-active); }
-.course-lesson-link { display: none; text-decoration: none; white-space: nowrap; }
-.navigation #prev:disabled, .navigation #next:disabled { display: none; }
-.navigation #prev:disabled + .course-lesson-link, .navigation #next:disabled + .course-lesson-link { display: inline-flex; align-items: center; justify-content: center; padding: 0 10px; min-height: 0; align-self: stretch; }
-.navigation #prev:not(:disabled) + .course-lesson-link, .navigation #next:not(:disabled) + .course-lesson-link { display: none; }
 
-.course-lesson-link-short { display: none; }
+/* Lesson pager: one row of two links under the timeline where there is no sidebar: "← 0.1 비트와 이진수" and
+   "0.3 이미지와 소리 →", each one control high so the scene keeps its room on a phone. "이전 레슨"/"다음 레슨"
+   stays for screen readers; the next link is tinted so going forward reads as the main way on. */
+.course-pager { display: none; }
+@media (max-width: 959px) {
+  .course-pager { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 2px; padding-top: 6px; border-top: 1px solid var(--course-border); }
+  .course-pager-link { display: flex; align-items: center; gap: 4px; min-width: 0; height: var(--course-control-height); box-sizing: border-box; padding: 0 10px; border: 1px solid var(--course-border); border-radius: var(--course-item-radius); background: #fff; color: var(--course-ink); text-decoration: none; font-size: .8125rem; }
+  .course-pager-link:hover { border-color: var(--course-accent, #12634b); }
+  .course-pager-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .course-pager-title { font-weight: 700; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .course-pager-prev::before { content: "←"; flex: none; }
+  .course-pager-next::after { content: "→"; flex: none; }
+  .course-pager-next { grid-column: 2; justify-content: flex-end; background: var(--course-active); border-color: #9fcab4; color: #12634b; }
+}
+/* A low landscape screen has no room for another row: the two links join the end of the timeline row,
+   showing only "← 이전 레슨" and "다음 레슨 →" (the lesson name stays in the title). */
+@media (max-width: 959px) and (max-height: 549px) {
+  .course-shell .timeline:has(> .course-pager) { grid-template-columns: auto minmax(0, 1fr) auto auto; }
+  .course-pager { grid-column: auto; display: flex; gap: 6px; margin: 0; padding: 0 0 0 6px; border-top: 0; border-inline-start: 1px solid var(--course-border); }
+  .course-pager-link { display: inline-flex; align-items: center; padding: 0 10px; white-space: nowrap; }
+  .course-pager-prev::before, .course-pager-next::after { content: none; }
+  .course-pager-title { display: none; }
+  .course-pager-label { position: static; width: auto; height: auto; overflow: visible; clip: auto; font-size: .8rem; font-weight: 700; color: var(--course-muted); }
+  .course-pager-next .course-pager-label { color: #12634b; }
+}
+
+/* One control height per screen: the bar buttons, language switch and timeline step buttons line up. */
+.course-shell { --course-control-height: 40px; }
+@media (max-height: 549px) { .course-shell { --course-control-height: 32px; } }
+/* Every one-line control on a screen shares this height: bar, language, tabs, zoom, timeline, and the lesson's own
+   action buttons and text inputs. Answer choices may wrap, so they only share the minimum. Cells that are part of
+   a drawing (pixels, bit switches, boxes) follow the drawing instead. */
+.course-shell .course-bar .course-button,
+.course-shell .lang-switch button,
+.course-shell .navigation button,
+.course-shell .course-views button,
+.course-shell .course-camera .action,
+.course-shell main .action:not(.choice),
+.course-shell main .size-button,
+.course-shell main input[type="text"],
+.course-shell main input:not([type]) { height: var(--course-control-height); min-height: var(--course-control-height); box-sizing: border-box; }
+.course-shell .course-camera .action { width: var(--course-control-height); }
+.course-shell main .action.choice { min-height: var(--course-control-height); height: auto; box-sizing: border-box; }
+@media (max-width: 959px) and (max-height: 549px) { .course-shell .course-pager-link { height: var(--course-control-height); } }
+
+.course-step-short { display: none; }
 @media (max-height: 549px) {
-  .course-lesson-link-long { display: none; }
-  .course-lesson-link-short { display: inline; }
+  .course-step-long { display: none; }
+  .course-step-short { display: inline; }
 }

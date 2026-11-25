@@ -107,35 +107,33 @@
   if (timeline) {
     workspace.after(timeline);
     const navigation = explanation.querySelector('.navigation');
-    for (const [button, caption] of [[navigation.querySelector('#prev'), '‹'], [navigation.querySelector('#next'), '다음 ›']]) {
+    for (const [button, caption] of [[navigation.querySelector('#prev'), ['‹ 이전 단계', '‹ 이전']], [navigation.querySelector('#next'), ['다음 단계 ›', '다음 ›']]]) {
       const label = '타임라인 ' + button.textContent.trim();
       button.setAttribute('aria-label', label);
       button.title = label;
-      button.textContent = caption;
+      // A low landscape screen shows the short caption; both say which way the step goes.
+      button.replaceChildren(element('span', 'course-step-long', caption[0]), element('span', 'course-step-short', caption[1]));
     }
     timeline.append(navigation);
     timeline.style.setProperty('--step-count', timeline.querySelector('.steps').children.length);
   }
 
-  // Previous and next lesson in course order. They take the place of the timeline's ‹ and 다음 buttons when those
-  // are disabled (first and last step), so moving between lessons costs no extra space in a fitted layout.
+  // Previous and next lesson in course order: a row of two cards under the timeline, shown where the sidebar is not
+  // (phones). Step buttons stay in the timeline, so moving a step and moving a lesson are always separate.
   const ordered = chapters.flatMap((chapter) => [...chapter.lessons, ...chapter.tracks.flatMap((track) => track.lessons)]);
   const at = ordered.findIndex((lesson) => lesson.ref === pageRef);
-  const navigation = timeline?.querySelector('.navigation');
-  if (navigation && at >= 0) {
-    for (const [lesson, button, label, caption] of [
-      [ordered[at - 1], navigation.querySelector('#prev'), '이전 레슨', ['‹ 이전 레슨', '‹']],
-      [ordered[at + 1], navigation.querySelector('#next'), '다음 레슨', ['다음 레슨 ›', '다음 ›']]]) {
-      if (!lesson || !button) continue;
-      // A low landscape screen has room only for the short caption; the full name stays in the title and label.
-      const link = element('a', 'action course-lesson-link');
-      link.append(element('span', 'course-lesson-link-long', caption[0]), element('span', 'course-lesson-link-short', caption[1]));
+  if (at >= 0 && ordered.length > 1) {
+    const pager = element('nav', 'course-pager');
+    pager.setAttribute('aria-label', '레슨 이동');
+    for (const [lesson, label, className] of [[ordered[at - 1], '← 이전 레슨', 'course-pager-prev'], [ordered[at + 1], '다음 레슨 →', 'course-pager-next']]) {
+      if (!lesson) continue;
+      const link = element('a', 'course-pager-link ' + className);
       link.href = lesson.page;
-      link.title = `${label}: ${lesson.id} ${lesson.title}`;
-      link.setAttribute('aria-label', link.title);
-      if (button.id === 'next') link.classList.add('primary');
-      button.after(link);
+      link.title = `${lesson.id} ${lesson.title}`;
+      link.append(element('span', 'course-pager-label', label), element('span', 'course-pager-title', `${lesson.id} ${lesson.title}`));
+      pager.append(link);
     }
+    (timeline ?? main).append(pager);
   }
 
   function element(tag, className, text) {

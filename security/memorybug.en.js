@@ -1,0 +1,77 @@
+// English for 8C.3 Memory vulnerabilities. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  '메모리 취약점 · 레슨 8C.3': 'Memory vulnerabilities · Lesson 8C.3', '8장 심화 트랙 · 8C 보안 · 레슨 8C.3': 'Chapter 8: Advanced tracks · 8C Security · Lesson 8C.3',
+  '길이를 확인하지 않은 복사가 8칸 버퍼를 넘어 is_admin과 돌아갈 주소를 덮어쓰는 과정, 카나리아와 길이 확인으로 막는 방법, 칸 수를 확인하는 언어에서 같은 입력이 오류로 끝나는 모습을 따라가 보세요.':
+    'Follow a copy without a length check running past an 8-cell buffer and overwriting is_admin and the return address, how canaries and length checks stop it, and how the same input ends in an error in a language that checks cell counts.',
+  '정해진 칸을 넘겨 쓰면 왜 위험할까요? 이름 9글자가 8칸 버퍼를 넘쳐 관리자 권한과 실행 흐름을 빼앗는 과정을 스택 위에서 따라가 보세요.':
+    'Why is writing past the cells you were given dangerous? Follow on the stack how a 9-character name overflows an 8-cell buffer and takes over admin rights and the flow of execution.',
+  '스택 위의 칸들': 'Cells on the stack', '입력이 복사 코드를 지나 버퍼와 그 뒤의 칸까지 쓰이고 CPU가 실행하는 장면': 'Input passing through copy code into a buffer and the cells after it, with the CPU running',
+  '입력': 'Input', '복사 코드': 'Copy code', '파일': 'Data', '도구': 'Operation', '오류': 'Error',
+  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next step" and the input moves to the right.',
+  '"다음 단계"를 눌러 입력을를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the input one station at a time. Prediction questions come up along the way.',
+  '입력 → 복사 코드': 'Input → copy code', '복사 코드 → name[8]': 'Copy code → name[8]', 'name[8] → 돌아갈 주소': 'name[8] → return address', 'name[8] → 카나리아': 'name[8] → canary',
+  '돌아갈 주소 → CPU': 'Return address → CPU', '카나리아 → CPU': 'Canary → CPU',
+  '스택의 모습': 'The stack',
+  // Step 1
+  '칸 넘어 쓰기': 'Writing past the cells', '입력이 버퍼 크기를 넘음': 'Input exceeds the buffer size', '경계 검사 없이 쓰기': 'Writing with no bounds check', '이웃 데이터의 무결성 손상': 'Neighboring data is corrupted',
+  '길이를 확인하지 않고 복사하면 이웃 칸을 덮어쓴다': 'Copying without checking the length overwrites the neighboring cell',
+  '1.3의 호출 스택에서 함수의 변수들은 메모리에 나란히 놓입니다. C 같은 언어는 배열 칸 수를 넘어 써도 막지 않습니다. 로그인 코드가 이름을 8칸짜리 name에 복사하는데 길이를 확인하지 않으면, 9번째 글자부터는 바로 뒤에 있는 is_admin 칸에 써집니다. is_admin이 0이 아니면 관리자로 봅니다.':
+    'On the call stack of 1.3, a function\'s variables sit side by side in memory. Languages like C do not stop you writing past the end of an array. If login code copies a name into the 8-cell name without checking its length, the 9th character onward goes into the is_admin cell right after it. If is_admin is not 0, the user counts as an admin.',
+  '"minji"(5글자)는 name 안에 들어가 문제가 없었습니다. "AAAAAAAAX"(9글자)는 X가 is_admin을 덮어 88이 되었고, 비밀번호 없이 관리자가 되었습니다. 메모리에는 칸의 경계 표시가 없습니다.':
+    '"minji" (5 characters) fit inside name with no problem. In "AAAAAAAAX" (9 characters), the X overwrote is_admin, making it 88, and became an admin with no password. Memory has no marks for where cells end.',
+  '왼쪽부터 입력, 복사 코드, name[8] 칸, 바로 뒤의 is_admin 칸, CPU가 놓여 있습니다.': 'From the left: the input, the copy code, the name[8] cells, the is_admin cell right after them, and the CPU.',
+  'name[8]: ________ (8칸)': 'name[8]: ________ (8 cells)', 'is_admin: 0 (바로 뒤 1칸)': 'is_admin: 0 (1 cell right after)', 'strcpy(name, 입력)  // 길이 확인 없음': 'strcpy(name, input)  // no length check', '8칸 빈칸': '8 empty cells',
+  '보통 입력': 'Normal input', '5글자 + 끝 표시 = 6칸': '5 characters + end mark = 6 cells', '보통 이름을 넣습니다.': 'Put in a normal name.', '6칸 복사': 'Copy 6',
+  '칸 안에 들어감': 'Fits in the cells', 'is_admin: 0 그대로': 'is_admin: still 0', '8칸 안에 들어가 문제가 없습니다.': 'It fits in 8 cells, so no problem.',
+  '긴 입력': 'Long input', '9글자 + 끝 표시 = 10칸': '9 characters + end mark = 10 cells', '이번에는 9글자를 넣습니다.': 'This time put in 9 characters.', '10칸 복사': 'Copy 10',
+  '9번째 글자 X는 어디에 써질까요?': 'Where does the 9th character, X, get written?', '바로 뒤의 is_admin 칸': 'In the is_admin cell right after', '복사가 멈춰 안 써진다': 'The copy stops and it is not written',
+  '복사 코드는 칸 수를 확인하지 않습니다. 8칸을 채운 뒤 다음 메모리 칸에 계속 씁니다.': 'The copy code does not check the number of cells. After filling 8, it keeps writing into the next memory cell.',
+  '이웃 칸 덮어쓰기': 'Overwriting the neighbor', 'is_admin: X (= 88, 0이 아님) → 관리자!': 'is_admin: X (= 88, not 0) → admin!', '넘친 글자가 is_admin을 덮어 관리자가 되었습니다.': 'The overflowing character overwrote is_admin and became an admin.',
+  // Step 2
+  '돌아갈 주소': 'Return address', '제어 정보 옆의 메모리가 손상됨': 'Memory next to control data is corrupted', '원래 실행 경로를 신뢰할 수 없음': 'The original path of execution cannot be trusted', '안전한 실행 중단 필요': 'Execution must stop safely',
+  '돌아갈 주소를 덮으면 공격자의 코드로 뛴다': 'Overwriting the return address jumps to the attacker\'s code',
+  '1.3에서 함수를 부를 때 스택에는 "끝나면 돌아갈 주소"도 쌓였습니다. 이 주소는 변수들 바로 뒤에 있습니다. 더 길게 넘치게 쓰면 돌아갈 주소까지 덮을 수 있고, 함수가 끝나는 순간 CPU(3.5)는 그 주소로 뜁니다. 공격자가 그 자리에 자기가 넣어 둔 코드의 주소를 쓰면, 프로그램이 공격자의 코드를 실행합니다.':
+    'In 1.3, calling a function also pushed "the address to return to when done" onto the stack. That address sits right after the variables. A longer overflow can overwrite the return address too, and the moment the function ends, the CPU (3.5) jumps to that address. If the attacker writes there the address of code they planted, the program runs the attacker\'s code.',
+  '넘친 입력이 돌아갈 주소 0x4010을 0x7FF0으로 바꿨고, 함수가 끝나자 CPU가 공격자가 고른 곳으로 뛰었습니다. 1988년 모리스 웜부터 많은 공격이 이 방법을 썼습니다.':
+    'The overflowing input changed the return address from 0x4010 to 0x7FF0, and when the function ended, the CPU jumped where the attacker chose. Many attacks since the 1988 Morris worm have used this method.',
+  '같은 장면입니다. 이번에는 바로 뒤 칸이 돌아갈 주소입니다.': 'The same scene. This time the cell right after is the return address.',
+  '돌아갈 주소: 0x4010 (main으로)': 'return address: 0x4010 (back to main)',
+  '아주 긴 입력': 'A very long input', 'A × 8 + 주소 0x7FF0': 'A × 8 + address 0x7FF0', '8칸 뒤에 주소가 오도록 만든 입력입니다.': 'An input built so an address comes after the 8 cells.',
+  '주소 덮어쓰기': 'Overwriting the address', '돌아갈 주소: 0x4010 → 0x7FF0': 'return address: 0x4010 → 0x7FF0', '넘친 입력이 돌아갈 주소를 바꿉니다.': 'The overflowing input changes the return address.',
+  '함수가 끝나면': 'When the function ends', '공격자가 고른 코드로 뜀': 'jumps to code the attacker chose', '함수가 끝나자 CPU가 바뀐 주소로 뜁니다.': 'When the function ends, the CPU jumps to the changed address.', '0x7FF0 실행': 'Runs 0x7FF0',
+  '돌아갈 주소를 덮은 결과는?': 'What happens when the return address is overwritten?', 'CPU가 공격자가 고른 곳의 코드를 실행한다': 'The CPU runs code where the attacker chose', '프로그램이 그냥 느려진다': 'The program just gets slower',
+  'CPU는 스택의 주소를 그대로 믿고 PC에 넣습니다(3.5). 그 주소를 바꾸면 실행 흐름을 빼앗깁니다.': 'The CPU trusts the address on the stack and puts it in the PC (3.5). Change that address and the flow of execution is taken over.',
+  // Step 3
+  '막는 방법': 'Defenses', '함수의 보호 값이 바뀜': 'The function\'s guard value changes', '반환 전 카나리아 확인': 'Check the canary before returning', '손상 탐지 후 실행 중단': 'Detect the damage and stop',
+  '길이 확인, 카나리아, 실행 금지, 주소 섞기': 'Length checks, canaries, no-execute, address shuffling',
+  '가장 근본적인 방어는 복사하기 전에 길이를 확인하는 것입니다. 그래도 실수에 대비해 여러 겹으로 막습니다. 컴파일러(8A.1)는 버퍼와 돌아갈 주소 사이에 무작위 값(카나리아)을 넣고 함수가 끝날 때 바뀌었는지 확인합니다. 운영체제(8A.2)는 데이터 영역의 코드 실행을 금지하고, 프로그램을 올릴 때마다 주소를 무작위로 섞어 공격자가 뛸 곳을 맞히기 어렵게 합니다.':
+    'The most basic defense is checking the length before copying. Still, there are several layers in case of mistakes. The compiler (8A.1) puts a random value (a canary) between the buffer and the return address and checks whether it changed when the function ends. The operating system (8A.2) forbids running code in data areas and shuffles addresses at random every time a program is loaded, so the attacker can hardly guess where to jump.',
+  '넘친 입력이 카나리아를 먼저 덮어 함수가 끝날 때 들켰고, 프로그램은 돌아가는 대신 멈췄습니다. 멈추는 것도 피해지만, 공격자에게 흐름을 넘기는 것보다 훨씬 낫습니다.':
+    'The overflowing input overwrote the canary first and was caught when the function ended, so the program stopped instead of returning. Stopping is harm too, but far better than handing the flow to the attacker.',
+  '같은 장면입니다. 버퍼 바로 뒤에 카나리아가 들어 있습니다.': 'The same scene. A canary sits right after the buffer.',
+  '카나리아': 'Canary', '카나리아: 0x5A3C (실행할 때마다 무작위)': 'canary: 0x5A3C (random on every run)', '돌아갈 주소: 0x4010': 'return address: 0x4010', '카나리아 5A3C': 'Canary 5A3C',
+  '같은 공격': 'The same attack', 'A × 8 + … + 주소': 'A × 8 + … + address', '같은 긴 입력이 들어옵니다.': 'The same long input comes in.', '복사': 'Copy',
+  '카나리아가 먼저 덮임': 'The canary is hit first', '카나리아: 0x5A3C → 0x4141 (A A)': 'canary: 0x5A3C → 0x4141 (A A)', '돌아갈 주소에 닿기 전에 카나리아가 덮입니다.': 'The canary is overwritten before the return address is reached.', '4141 (바뀜)': '4141 (changed)',
+  '확인': 'Check', '함수 끝에서 확인': 'Checking at the end of the function', '카나리아가 바뀜 → 스택 망가짐 감지 → 즉시 종료': 'canary changed → stack damage detected → stop at once', '돌아갈 주소로 뛰지 않음': 'does not jump to the return address',
+  '바뀐 카나리아를 보고 프로그램을 멈춥니다.': 'Seeing the changed canary, it stops the program.', '안전하게 멈춤': 'Stopped safely',
+  '카나리아 값을 실행할 때마다 무작위로 바꾸는 까닭은?': 'Why does the canary value change at random on every run?',
+  '공격자가 미리 알고 같은 값으로 덮어쓰지 못하게': 'So the attacker cannot know it in advance and write the same value over it', '메모리를 아끼려고': 'To save memory',
+  '값을 알면 그 자리에 같은 값을 써서 확인을 통과할 수 있습니다. 무작위라 맞히기 어렵습니다.': 'Knowing the value, one could write the same value there and pass the check. Being random, it is hard to guess.',
+  '길이 확인': 'Length check', '근본 해결': 'The real fix', 'if (길이 > 7) 거절': 'if (length > 7) reject', 'strncpy(name, 입력, 7)': 'strncpy(name, input, 7)',
+  '복사하기 전에 길이를 확인하면 아예 넘치지 않습니다.': 'Check the length before copying and it never overflows at all.', '최대 7글자': 'Up to 7 chars', '카나리아 그대로': 'Canary intact',
+  // Step 4
+  '안전한 언어': 'Safe languages', '지정된 칸보다 긴 입력': 'Input longer than the cells given', '쓰기 전에 길이 확인': 'Length checked before writing', '이웃 칸이 그대로 유지': 'The neighboring cell stays as it was',
+  '칸 수를 언어가 확인하면 넘쳐 쓰기가 오류가 된다': 'When the language checks cell counts, an overflow becomes an error',
+  '파이썬, 자바, 러스트 같은 언어는 배열 칸 수를 넘으면 실행 중에 오류를 냅니다. 메모리를 조용히 망가뜨리는 대신 그 자리에서 멈춥니다. 다 쓴 메모리를 다시 쓰는 실수(해제 후 사용)도 언어가 막아 줍니다. 그래서 운영체제, 브라우저처럼 오래된 C/C++ 코드가 많은 곳도 새 부분은 메모리 안전한 언어로 바꿔 가고 있습니다.':
+    'Languages like Python, Java and Rust raise an error at run time when you go past the end of an array. Instead of quietly corrupting memory, they stop right there. The language also prevents reusing memory that was already freed (use after free). That is why even places with lots of old C/C++ code, like operating systems and browsers, are writing new parts in memory-safe languages.',
+  '같은 9글자를 넣자 파이썬은 IndexError를 내고 멈췄고 is_admin은 0 그대로였습니다. 메모리 안전한 언어는 큰 종류의 보안 버그를 처음부터 없앱니다. 대신 칸을 확인하는 데 아주 조금 시간이 듭니다.':
+    'Given the same 9 characters, Python raised IndexError and stopped, and is_admin stayed 0. Memory-safe languages rule out a whole large class of security bugs from the start, at the cost of a tiny bit of time to check the cells.',
+  '같은 장면입니다. 이번에는 칸 수를 확인하는 언어로 만든 프로그램입니다.': 'The same scene. This time the program is written in a language that checks cell counts.',
+  '파이썬으로 같은 코드': 'The same code in Python', 'for i, c in enumerate(입력): name[i] = c': 'for i, c in enumerate(input): name[i] = c', '8칸': '8 cells',
+  '같은 긴 입력': 'The same long input', '9글자': '9 characters', '같은 9글자를 넣습니다.': 'Put in the same 9 characters.', '복사 시작': 'Copy starts',
+  '9번째 글자': '9th char', '칸 수 확인': 'Checking the cell count', '복사가 그 자리에서 멈춤': 'the copy stops right there', '9번째 칸에 쓰려는 순간 언어가 막습니다.': 'The moment it tries to write the 9th cell, the language stops it.',
+  '이때 is_admin 칸은?': 'What happens to the is_admin cell?', '0 그대로': 'Stays 0', '88로 바뀜': 'Becomes 88',
+  '언어가 칸 밖에 쓰기 전에 오류를 내므로 이웃 칸은 건드리지 않습니다.': 'The language raises an error before writing outside the cells, so the neighbor is untouched.',
+  '안 넘침': 'No overflow', '이웃 칸은 안전': 'The neighbor is safe', 'is_admin = 0 · 관리자 아님': 'is_admin = 0 · not admin', '이웃 칸은 그대로입니다.': 'The neighboring cell is unchanged.',
+};

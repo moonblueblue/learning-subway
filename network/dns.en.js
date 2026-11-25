@@ -1,0 +1,86 @@
+// English for 5.10 DNS. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  'DNS · 레슨 5.10': 'DNS · Lesson 5.10',
+  '리졸버가 루트, .com, 권한 서버에 차례로 물어 이름을 IP 주소로 바꾸고, TTL 동안 캐시하고, 없는 이름에 답하는 과정을 한 단계씩 따라가 보세요.':
+    'Follow, one stage at a time, how a resolver asks the root, .com and authoritative servers in turn to turn a name into an IP address, caches it for the TTL, and answers for a name that does not exist.',
+  '주소창의 이름은 어떻게 IP 주소가 될까요? 브라우저의 질문이 리졸버를 거쳐 여러 이름 서버를 돌고 답이 되어 돌아오는 길을 따라가 보세요.':
+    'How does the name in the address bar become an IP address? Follow the browser\'s question through the resolver and around several name servers until it comes back as an answer.',
+  '브라우저, 리졸버, 루트 서버, .com 서버, 권한 서버 사이로 DNS 질문과 답이 오가는 장면': 'DNS questions and answers travelling between the browser, the resolver, the root server, the .com server and the authoritative server',
+  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets go back and forth.', '"다음 단계"를 눌러 패킷을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the packets one at a time. Prediction questions come up along the way.',
+  '브라우저': 'Browser', '리졸버': 'Resolver', '루트 서버': 'Root server', '.com 서버': '.com server', '권한 서버': 'Auth. server', '이름 서버': 'Name servers', '계층': 'Layers', '응용': 'Application', '라우터': 'Router', '전선': 'Wire',
+  '리졸버 캐시': 'Resolver cache', '리졸버가 아는 것': 'What the resolver knows', '지금 상황': 'Now', '진짜 답': 'The real answer', '질문': 'Question', '같은 질문': 'Same question', '새 주소': 'New address', '없음': 'None', '없는 이름': 'A name that does not exist',
+  // Badges
+  '기다리는 중': 'Waiting', '찾는 중': 'Looking up', '질문 받음': 'Question in', '주소 모름': 'Address unknown', '주소 답함': 'Answered address', '새 주소 답함': 'Answered new address', '답 캐시함': 'Answer cached', '새 답 캐시': 'New answer cached', '옛 답 캐시': 'Old answer cached', '답 만료됨': 'Answer expired',
+  '.com 안내': 'Points to .com', '권한 서버 안내': 'Points to auth.', '.com 서버 앎': 'Knows .com server', '권한 서버 앎': 'Knows auth. server', '캐시에서 찾음': 'Found in cache', '캐시에서 바로 답': 'Answered from cache',
+  '연결 실패': 'Connect failed', '찾을 수 없음': 'Not found', '사이트를 찾을 수 없음': 'Site not found', '"사이트를 찾을 수 없음"': '"Site not found"', '다시 시도': 'Try again', '"없음" 캐시': '"None" cached',
+  '캐시 비어 있음': 'Cache empty', '캐시: 비어 있음': 'Cache: empty', '캐시에 없음 → 직접 찾으러 감': 'Not in cache → goes to look it up',
+  '캐시에 있음 · TTL 240초 남음': 'In cache · TTL 240 s left', '캐시에 있음 · TTL 200초 남음': 'In cache · TTL 200 s left',
+  '캐시: .com 서버 주소': 'Cache: .com server address', '캐시: example.com 권한 서버 주소': 'Cache: example.com auth. server address',
+  '캐시: shop.example.com → 203.0.113.10 (TTL 300초)': 'Cache: shop.example.com → 203.0.113.10 (TTL 300 s)', '캐시: shop.example.com → 203.0.113.20': 'Cache: shop.example.com → 203.0.113.20', '캐시: shpo.example.com → 없음 (잠시)': 'Cache: shpo.example.com → none (briefly)',
+  'shop.example.com → 203.0.113.10 (TTL 240초 남음)': 'shop.example.com → 203.0.113.10 (TTL 240 s left)', '리졸버 캐시: → 203.0.113.10 (옛 주소, TTL 200초 남음)': 'Resolver cache: → 203.0.113.10 (old address, TTL 200 s left)',
+  'example.com 권한 서버 주소 (TTL 2일)': 'example.com auth. server address (TTL 2 days)', 'example.com 권한 서버 주소는 캐시에 있음': 'The example.com auth. server address is in the cache', '권한 서버 주소는 아직 남아 있음': 'The auth. server address is still there',
+  '루트 서버 주소: 처음부터 앎': 'Root server address: known from the start',
+  // Legs
+  '브라우저 → 리졸버': 'Browser → resolver', '리졸버 → 브라우저': 'Resolver → browser', '리졸버 → 루트 서버': 'Resolver → root server', '루트 서버 → 리졸버': 'Root server → resolver', '리졸버 → .com 서버': 'Resolver → .com server', '.com 서버 → 리졸버': '.com server → resolver', '리졸버 → 권한 서버': 'Resolver → auth. server', '권한 서버 → 리졸버': 'Auth. server → resolver',
+  '리졸버 · 203.0.113.10': 'Resolver · 203.0.113.10', '권한 서버 · 203.0.113.10': 'Auth. server · 203.0.113.10', '권한 서버 · 203.0.113.20': 'Auth. server · 203.0.113.20', '권한 서버 · NXDOMAIN': 'Auth. server · NXDOMAIN',
+  '"shop.example.com의 IP 주소는?"': '"What is the IP address of shop.example.com?"', '"shpo.example.com의 IP 주소는?"': '"What is the IP address of shpo.example.com?"',
+  '리졸버 → 루트: "shop.example.com?"': 'Resolver → root: "shop.example.com?"', '루트: "모른다. .com 서버에 물어봐"': 'Root: "Don\'t know. Ask the .com server"',
+  '리졸버 → .com: "shop.example.com?"': 'Resolver → .com: "shop.example.com?"', '.com: "example.com의 권한 서버에 물어봐"': '.com: "Ask the example.com auth. server"',
+  '리졸버 → 권한 서버: "shop.example.com?"': 'Resolver → auth. server: "shop.example.com?"', '권한 서버: "shop.example.com = 203.0.113.10, 300초 동안 믿어도 됨"': 'Auth. server: "shop.example.com = 203.0.113.10, trust it for 300 s"',
+  '권한 서버: "shpo.example.com은 없다"': 'Auth. server: "shpo.example.com does not exist"', '권한 서버: shop.example.com → 203.0.113.20 (새 주소)': 'Auth. server: shop.example.com → 203.0.113.20 (new address)',
+  '브라우저: 203.0.113.10으로 TCP 연결(5.9) 시작': 'Browser: starts a TCP connection (5.9) to 203.0.113.10', '브라우저: 203.0.113.20에 연결 성공': 'Browser: connected to 203.0.113.20', '브라우저: 연결할 수 없음': 'Browser: cannot connect', '브라우저: 연결을 시작하지도 못함': 'Browser: cannot even start a connection',
+  // Step 1
+  '차례로 묻기': 'Asking in turn', '브라우저의 질문': 'The browser\'s question', '루트의 답': 'The root\'s answer', '.com 서버의 답': 'The .com server\'s answer', '브라우저가 주소를 받음': 'The browser gets the address',
+  '루트 서버에 묻기': 'Ask the root server', '.com 서버에 묻기': 'Ask the .com server', '권한 서버에 묻기': 'Ask the auth. server', '.com은 저기': '.com is over there', 'example.com은 저기': 'example.com is over there', 'example.com의 권한 서버': 'The example.com auth. server',
+  '이름의 오른쪽부터 차례로 물어 주소를 찾는다': 'Ask about the name from the right, in turn, to find the address',
+  '사람은 shop.example.com 같은 이름을 기억하지만, 패킷(5.8)은 IP 주소로만 갑니다. 이름을 주소로 바꾸는 시스템이 DNS입니다. 브라우저는 리졸버(보통 통신사나 공용 서비스가 운영)에게 묻고, 리졸버는 이름을 오른쪽부터 읽으며 루트 서버, .com 서버, example.com의 권한 서버에 차례로 묻습니다.':
+    'People remember names like shop.example.com, but packets (5.8) go only by IP address. The system that turns names into addresses is DNS. The browser asks a resolver (usually run by the carrier or a public service), and the resolver reads the name from the right, asking the root server, the .com server and example.com\'s authoritative server in turn.',
+  '루트 서버와 .com 서버는 주소를 모르지만 "다음에 누구에게 물을지"를 알려 줍니다. 마지막 권한 서버만 진짜 답(203.0.113.10)을 압니다. 리졸버는 이 길을 대신 걸어 준 뒤 답을 브라우저에 돌려줍니다.': 'The root and .com servers do not know the address, but they say "who to ask next". Only the last, authoritative server knows the real answer (203.0.113.10). The resolver walks this path for the browser and hands the answer back.',
+  '왼쪽부터 브라우저, 리졸버, 루트 서버, .com 서버, 권한 서버가 놓여 있습니다. 질문과 답이 리졸버를 중심으로 오갑니다.': 'From the left stand the browser, the resolver, the root server, the .com server and the authoritative server. Questions and answers travel with the resolver at the centre.',
+  '브라우저가 리졸버에게 묻습니다.': 'The browser asks the resolver.', '리졸버는 맨 꼭대기인 루트 서버부터 묻습니다.': 'The resolver starts by asking the root server at the very top.', '루트 서버는 주소 대신 .com을 맡은 서버를 알려 줍니다.': 'Instead of the address, the root server names the server in charge of .com.',
+  '알려 준 .com 서버에 다시 묻습니다.': 'It asks the .com server it was told about.', '.com 서버는 example.com을 맡은 권한 서버를 알려 줍니다.': 'The .com server names the authoritative server in charge of example.com.', 'example.com의 이름을 직접 관리하는 권한 서버에 묻습니다.': 'It asks the authoritative server that manages example.com\'s names directly.',
+  '권한 서버가 주소와 유효 시간(TTL)을 함께 답합니다.': 'The authoritative server answers with the address and how long it is valid (TTL).', '리졸버가 답을 브라우저에 돌려줍니다. 이제 연결할 수 있습니다.': 'The resolver hands the answer back to the browser. Now it can connect.',
+  '루트 서버는 왜 shop.example.com의 주소를 바로 알려 주지 않을까요?': 'Why doesn\'t the root server just give the address of shop.example.com?', '보안 때문에 숨겨서': 'It hides it for security', '세상의 모든 이름을 한곳에 둘 수 없어서 아래 서버에 나눠 맡겼기 때문에': 'Every name in the world cannot sit in one place, so they are split among servers below', '루트 서버가 꺼져서': 'The root server is off',
+  '이름을 점(.) 단위로 나눠 맡기므로 루트는 .com, .kr 같은 꼭대기 서버만 압니다.': 'Names are divided up at each dot (.), so the root knows only top-level servers such as .com and .kr.',
+  '진짜 주소를 아는 곳은?': 'Who knows the real address?', '아무 라우터': 'Any router',
+  '도메인 주인이 자기 이름의 주소를 권한 서버에 적어 둡니다. 위쪽 서버는 길만 안내합니다.': 'A domain\'s owner writes its names\' addresses on the authoritative server. The servers above only give directions.',
+  // Step 2
+  '다른 탭에서 접속': 'Visit from another tab', 'TTL이 끝난 뒤 다시': 'Again after the TTL ends', '루트와 .com은 건너뜀': 'Root and .com skipped', '권한 서버로 바로': 'Straight to the auth. server',
+  '한 번 찾은 답은 TTL 동안 기억한다': 'An answer found once is remembered for the TTL',
+  '매번 루트부터 물으면 느리고 위쪽 서버에 질문이 몰립니다. 그래서 리졸버는 받은 답을 TTL(유효 시간) 동안 캐시에 둡니다(3.7의 캐시와 같은 생각). 브라우저와 운영체제도 자기 캐시를 가집니다. 같은 이름을 다시 물으면 바로 답이 나옵니다.':
+    'Asking from the root every time is slow and piles questions onto the servers at the top. So the resolver keeps answers in its cache for their TTL (time to live), the same idea as the cache of 3.7. The browser and the operating system have caches of their own too. Ask the same name again and the answer comes straight back.',
+  '두 번째 질문은 리졸버에서 바로 답이 돌아옵니다. TTL이 끝난 뒤에는 다시 물어야 하지만, .com 서버와 권한 서버 주소는 아직 캐시에 있어 루트를 건너뛰고 권한 서버에 바로 갑니다.': 'The second question is answered straight from the resolver. After the TTL ends it must ask again, but the .com and authoritative server addresses are still cached, so it skips the root and goes straight to the authoritative server.',
+  '같은 장면입니다. 리졸버의 캐시에 앞에서 찾은 답이 들어 있습니다.': 'The same scene. The resolver\'s cache holds the answer found before.',
+  '다른 탭에서 같은 이름을 묻습니다.': 'Another tab asks for the same name.', '리졸버가 캐시에서 바로 답합니다.': 'The resolver answers straight from its cache.', '시간이 지나 답의 TTL이 끝났습니다.': 'Time passes and the answer\'s TTL ends.',
+  '권한 서버 주소는 캐시에 있어 바로 갑니다.': 'The auth. server address is cached, so it goes straight there.', '권한 서버에 다시 묻습니다.': 'It asks the auth. server again.', '새 답을 다시 TTL 동안 기억합니다.': 'It remembers the new answer for another TTL.', '리졸버가 답을 돌려줍니다.': 'The resolver hands back the answer.',
+  'TTL 끝남 → 답을 지움': 'TTL ended → answer deleted',
+  '두 번째 질문은 서버 몇 곳을 거칠까요?': 'How many servers does the second question pass through?', '리졸버 한 곳': 'Only the resolver', '네 곳 모두': 'All four',
+  '답이 TTL 안에 있으므로 리졸버가 캐시에서 바로 돌려줍니다.': 'The answer is within its TTL, so the resolver returns it straight from the cache.',
+  '이번에는 왜 루트 서버에 묻지 않을까요?': 'Why doesn\'t it ask the root server this time?', '권한 서버 주소가 아직 캐시에 있어서': 'The auth. server address is still cached',
+  '길 안내 답도 각자 TTL이 있고, 보통 주소 답보다 훨씬 깁니다.': 'Direction answers have TTLs of their own too, usually much longer than address answers.',
+  // Step 3
+  '주소가 바뀌면': 'When the address changes', '옛 주소 203.0.113.10': 'Old address 203.0.113.10', '새 주소 203.0.113.20': 'New address 203.0.113.20', '옛 주소로 접속 실패': 'Old address fails', '새 서버로 접속': 'Connect to the new server', '4분 뒤 다시 묻기': 'Ask again 4 min later',
+  '203.0.113.10에는 이제 서버가 없음': 'No server at 203.0.113.10 now', 'TTL 끝남 → 옛 답 지움': 'TTL ended → old answer deleted',
+  'TTL이 끝날 때까지는 옛 주소로 간다': 'Until the TTL ends, traffic goes to the old address',
+  '서비스가 서버를 옮겨 shop.example.com의 주소를 203.0.113.20으로 바꿨다고 해 봅시다. 권한 서버에는 곧바로 새 주소가 적히지만, 리졸버 캐시에 남은 옛 답은 TTL이 끝날 때까지 그대로 쓰입니다. 그래서 주소를 바꾸기 전에 TTL을 미리 짧게 줄여 두는 것이 관례입니다.':
+    'Say a service moves servers and changes shop.example.com\'s address to 203.0.113.20. The new address goes onto the authoritative server at once, but the old answer left in the resolver\'s cache is still used until its TTL ends. That is why it is customary to shorten the TTL ahead of an address change.',
+  '캐시가 살아 있는 동안 브라우저는 옛 주소(203.0.113.10)로 가서 실패합니다. TTL이 끝난 뒤에야 새 주소를 받습니다. 캐시는 빠르지만 바뀐 정보를 늦게 반영합니다.': 'While the cache is alive, the browser goes to the old address (203.0.113.10) and fails. Only after the TTL ends does it get the new address. A cache is fast but slow to reflect changes.',
+  '같은 장면입니다. 권한 서버의 주소는 이미 바뀌었고, 리졸버 캐시에는 옛 답이 남아 있습니다.': 'The same scene. The address on the authoritative server has already changed, but the old answer remains in the resolver\'s cache.',
+  '브라우저가 묻습니다.': 'The browser asks.', '브라우저가 옛 주소로 가서 연결에 실패합니다.': 'The browser goes to the old address and fails to connect.', '시간이 지나 옛 답이 만료됐습니다.': 'Time passes and the old answer expires.', '이번에는 새 주소가 옵니다.': 'This time the new address comes.', '브라우저가 새 서버에 연결합니다.': 'The browser connects to the new server.',
+  '리졸버는 어떤 주소를 돌려줄까요?': 'Which address does the resolver return?', '리졸버는 주소가 바뀐 줄 모르고 TTL이 남은 캐시를 그대로 씁니다.': 'The resolver does not know the address changed and keeps using the cache while TTL remains.',
+  '서버를 옮기기 전에 할 일로 알맞은 것은?': 'What is the right thing to do before moving servers?', 'TTL을 미리 짧게 줄여 둔다': 'Shorten the TTL in advance', 'TTL을 아주 길게 늘린다': 'Make the TTL very long',
+  'TTL이 짧으면 옛 답이 캐시에 오래 남지 않아 새 주소가 빨리 퍼집니다.': 'With a short TTL, old answers do not linger in caches and the new address spreads quickly.',
+  // Step 4
+  '오타 입력': 'Typo entered', '오타 난 이름': 'Mistyped name', '외부 서버에 한 번도 묻지 않음': 'Never asks an outside server', '한 번 묻는 데 서버 두 곳만 거침': 'One question passes only two servers',
+  '없는 이름에는 "없다"는 답이 온다': 'A name that does not exist gets a "does not exist" answer',
+  '주소창에 shpo.example.com처럼 오타를 내면 어떻게 될까요? 리졸버는 평소처럼 권한 서버에 묻고, 권한 서버는 "그런 이름은 없다(NXDOMAIN)"고 답합니다. 브라우저는 서버에 연결해 보지도 못하고 "사이트를 찾을 수 없음" 화면을 보여 줍니다. DNS 질문은 대개 UDP(5.9) 53번 포트로 오갑니다. 작은 질문 하나라 연결 인사 없이 보내고, 답이 없으면 다시 묻습니다.':
+    'What if you mistype the address bar as shpo.example.com? The resolver asks the authoritative server as usual, and it answers "no such name (NXDOMAIN)". The browser never even tries to connect and shows a "Site not found" page. DNS questions usually travel over UDP (5.9) on port 53. A question is small, so it goes without a connection handshake, and if no answer comes, it is asked again.',
+  '권한 서버가 "없음"이라고 답하면 브라우저에 오류가 뜹니다. "없다"는 답도 잠시 캐시해 같은 오타를 매번 묻지 않습니다.': 'When the authoritative server answers "none", the browser shows an error. The "none" answer is cached briefly too, so the same typo is not asked every time.',
+  '같은 장면입니다. 이번에는 없는 이름을 묻습니다.': 'The same scene. This time it asks for a name that does not exist.',
+  '오타 난 이름을 묻습니다.': 'It asks for the mistyped name.', '권한 서버가 그런 이름은 없다고 답합니다.': 'The authoritative server answers that no such name exists.', '브라우저가 오류 화면을 보여 줍니다.': 'The browser shows an error page.',
+  '"없다"는 답을 줄 수 있는 곳은?': 'Who can answer "it does not exist"?', 'example.com 아래 이름 목록은 권한 서버만 알므로, 없다는 것도 권한 서버가 확인해 줍니다.': 'Only the authoritative server knows the list of names under example.com, so it is also the one that confirms a name does not exist.',
+  'DNS 질문이 대개 TCP가 아니라 UDP로 오가는 까닭은?': 'Why do DNS questions usually travel over UDP rather than TCP?', 'UDP가 더 믿을 만해서': 'UDP is more reliable', '작은 질문 하나에 세 번 인사까지 하면 너무 느려서': 'A three-way handshake for one small question would be too slow',
+  '질문과 답이 패킷 하나씩이라 연결 없이 보내고, 답이 없으면 다시 물으면 됩니다.': 'A question and an answer are one packet each, so they go without a connection, and with no answer you just ask again.',
+  '이름을 주소로': 'Names to addresses',
+};

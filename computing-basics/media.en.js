@@ -22,6 +22,11 @@ window.lessonText = {
   '샘플 수 {#0}개.': '{0} samples.', '샘플 크기 {#0}비트.': 'Sample size {0} bits.',
   'RGB ({0}) → {1} = {#2}바이트': 'RGB ({0}) → {1} = {2} {2|byte|bytes}',
   '샘플 {#0}개 × {#1}비트 = {#2}비트': '{0} samples × {1} bits = {2} bits',
+  // Size panel in the scene
+  '8 × 8칸 ×': '8 × 8 pixels ×', '{#0}비트': '{0} {0|bit|bits}', '샘플 {#0}개': '{0} samples',
+  '= {#0}비트 ({#1}바이트)': '= {0} bits ({1} bytes)', '= {#0}비트 · 밝기 4단계 (': '= {0} bits · 4 brightness levels (',
+  '칸 하나의 색 =': 'One pixel’s color =', '→ 8비트 × 3 = 3바이트': '→ 8 bits × 3 = 3 bytes',
+  '(높이 0~{#0}) = {#1}비트': '(height 0–{0}) = {1} bits',
   '그림을 모두 지웠습니다.': 'Cleared the whole picture.', '밝기를 반전했습니다.': 'Inverted the brightness.',
   '이 단계의 문제를 모두 풀었습니다. 자유롭게 바꿔 보세요.': 'You solved every problem in this step. Change anything you like.',
   '자유롭게 바꿔 보세요.': 'Change anything you like.',

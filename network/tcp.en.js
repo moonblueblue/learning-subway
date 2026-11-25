@@ -1,0 +1,74 @@
+// English for 5.9 TCP. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+// Data in the message: "안녕" / "하세" / "요!" → "Hello" / " the" / "re!" (three segments of "Hello there!").
+window.lessonText = {
+  // Page
+  'TCP · 레슨 5.9': 'TCP · Lesson 5.9',
+  'TCP의 세 번 인사, 순서 번호와 확인(ACK), 잃어버린 조각의 재전송, 늦게 온 조각의 순서 맞추기를 한 단계씩 따라가 보세요.':
+    'Follow TCP\'s three-way handshake, sequence numbers and acknowledgements (ACK), resending a lost segment, and putting a late segment back in order, one stage at a time.',
+  '잃어버린 패킷은 어떻게 다시 보내고 순서를 맞출까요? 내 컴퓨터와 서버 사이에 오가는 연결 인사, 조각, 확인을 하나씩 따라가 보세요.':
+    'How is a lost packet resent and put back in order? Follow the handshake, segments and acknowledgements between my computer and a server one at a time.',
+  '내 컴퓨터와 서버 사이 인터넷으로 TCP 조각과 확인이 오가는 장면': 'TCP segments and acknowledgements travelling across the internet between my computer and a server',
+  '내 컴퓨터와 서버 사이': 'Between my computer and the server', '내 컴퓨터': 'My computer', '서버': 'Server', '인터넷': 'Internet', '계층': 'Layers', '응용': 'Application', '응용 프로그램': 'Application', '라우터': 'Router', '전선': 'Wire', 'IP 주소': 'IP address',
+  '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets go back and forth.', '"다음 단계"를 눌러 패킷을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the packets one at a time. Prediction questions come up along the way.',
+  // States and badges
+  '연결 전': 'Not connected', '닫힘': 'Closed', '내 컴퓨터: 닫힘': 'My computer: closed', '서버: 기다리는 중(443번 포트)': 'Server: listening (port 443)', '연결됨': 'Connected', '양쪽: 연결됨': 'Both: connected', '기다림': 'Waiting',
+  'SYN 보냄': 'SYN sent', 'SYN 받음': 'SYN received', 'SYN-ACK 보냄': 'SYN-ACK sent', 'SYN-ACK 받음': 'SYN-ACK received',
+  '보낼 조각': 'Segments to send', '조각 1': 'Segment 1', '조각 2': 'Segment 2', '조각 3': 'Segment 3', '조각 1, 2, 3': 'Segments 1, 2, 3', '조각 2 다시': 'Segment 2 again',
+  '조각 1 도착': 'Segment 1 arrived', '조각 2 도착': 'Segment 2 arrived', '조각 3 도착': 'Segment 3 arrived', '조각 2 버려짐': 'Segment 2 dropped', '조각 2 사라짐': 'Segment 2 lost', '조각 3 먼저 도착': 'Segment 3 arrives first', '다시 보낸 조각 2 도착': 'Resent segment 2 arrives',
+  '1 받음': 'Got 1', '1–2 받음': 'Got 1–2', '1–3 받음': 'Got 1–3', '1–3 넘김': 'Passed on 1–3', '1 확인됨': '1 acknowledged', '2 확인됨': '2 acknowledged', '2 기다림': 'Waiting for 2', '3 보관': 'Holding 3', '모두 받음 · 다음은 4': 'All received · next is 4', '모두 확인': 'All acknowledged',
+  '들고 있는 조각: 1, 2, 3': 'Segments held: 1, 2, 3', '들고 있는 조각: 2, 3': 'Segments held: 2, 3', '들고 있는 조각: 3': 'Segments held: 3', '들고 있는 조각: 없음 · 모두 전달 완료': 'Segments held: none · all delivered',
+  'ACK 2 · 들고 있는 조각: 2, 3': 'ACK 2 · segments held: 2, 3', 'ACK 2 · 응용에 넘긴 것: "안녕"': 'ACK 2 · passed to the application: "Hello"',
+  '서버가 받은 것: "안녕"': 'Server has: "Hello"', '서버가 받은 것: "안녕하세"': 'Server has: "Hello the"', '서버가 받은 것: "안녕하세요!"': 'Server has: "Hello there!"', '응용이 받은 것: "안녕하세요!"': 'Application got: "Hello there!"',
+  '서버: 1 받음 → ACK 2': 'Server: got 1 → ACK 2', '서버: 1–2 받음': 'Server: got 1–2', '서버: 3은 보관(2가 아직 없음)': 'Server: holds 3 (no 2 yet)', '서버는 2를 받지 못함': 'The server did not get 2', '서버는 여전히 2를 기다림': 'The server still waits for 2',
+  '서버 · ACK 3': 'Server · ACK 3', '서버 · ACK 4': 'Server · ACK 4', '내 컴퓨터 · ACK': 'My computer · ACK', '내 컴퓨터 · 조각 2 다시': 'My computer · segment 2 again',
+  '내 컴퓨터 → 서버': 'My computer → server', '서버 → 내 컴퓨터': 'Server → my computer', '내 컴퓨터 → 인터넷': 'My computer → internet',
+  '조각 2 타이머 진행 중…': 'Segment 2 timer running…', '타이머 끝 → 조각 2를 다시 보냄': 'Timer out → resend segment 2', '인터넷 중간에서 버려짐': 'Dropped inside the internet',
+  '빈자리 채워짐 → 1, 2, 3 순서로 넘김': 'Gap filled → passed on in order 1, 2, 3', '조각 1 도착함, 2와 3 보냄': 'Segment 1 arrived; 2 and 3 sent', '조각 1까지 받았고 다음은 2를 기다린다': 'Got up to segment 1; waiting for 2 next', '"1까지 받았어, 다음은 2"': '"Got up to 1, next is 2"', '조각 2를 받았다': 'Got segment 2',
+  '조각 1: "안녕"  조각 2: "하세"  조각 3: "요!"': 'Segment 1: "Hello"  segment 2: " the"  segment 3: "re!"',
+  // Step 1
+  '연결 맺기': 'Connecting',
+  '세 번 인사하고 연결을 맺는다': 'Three greetings make a connection',
+  'IP(5.8)는 패킷을 최선을 다해 보낼 뿐, 도착을 약속하지 않습니다. TCP는 그 위에서 믿을 수 있는 연결을 만듭니다. 먼저 세 번 인사합니다. 내 컴퓨터가 SYN("연결할래?"), 서버가 SYN-ACK("좋아, 너도 들려?"), 내 컴퓨터가 ACK("응 들려")를 보내면 양쪽 모두 상대가 듣고 있다는 것을 압니다.':
+    'IP (5.8) only does its best to deliver packets; it promises nothing about arrival. TCP builds a reliable connection on top of it. First come three greetings. My computer sends SYN ("Shall we connect?"), the server SYN-ACK ("Sure, can you hear me?"), and my computer ACK ("Yes, I can"), and then both sides know the other is listening.',
+  '세 패킷이 오가면 양쪽에 "연결됨"이 뜹니다. 이때 서로 시작 순서 번호도 정합니다. 웹 페이지 하나를 열 때마다 이 인사가 먼저 일어납니다.': 'After three packets, both sides show "Connected". They also agree on their starting sequence numbers then. Every time a web page opens, this handshake happens first.',
+  '왼쪽에 내 컴퓨터, 가운데 인터넷, 오른쪽에 서버가 있습니다. 인사 패킷이 양쪽을 오갑니다.': 'My computer is on the left, the internet in the middle, the server on the right. Greeting packets travel between them.',
+  '내 컴퓨터가 SYN을 보냅니다.': 'My computer sends SYN.', '서버가 받았다는 확인과 자기 번호를 함께 보냅니다.': 'The server sends an acknowledgement together with its own number.', '내 컴퓨터가 마지막 확인을 보내면 양쪽 모두 연결됐습니다.': 'When my computer sends the last acknowledgement, both sides are connected.',
+  '내 컴퓨터 → 서버: "연결할래? 내 순서 번호는 100부터"': 'My computer → server: "Shall we connect? My sequence numbers start at 100"',
+  '서버 → 내 컴퓨터: "좋아. 100 잘 받았어(ACK 101). 내 번호는 500부터"': 'Server → my computer: "Sure. Got 100 (ACK 101). Mine start at 500"',
+  '내 컴퓨터 → 서버: "500 잘 받았어(ACK 501)"': 'My computer → server: "Got 500 (ACK 501)"',
+  '서버가 SYN-ACK로 확인해 주는 것은?': 'What does the server confirm with SYN-ACK?', '내 컴퓨터의 SYN을 받았다는 것': 'That it got my computer\'s SYN', '페이지 내용': 'The page contents',
+  'ACK 101은 "100번까지 받았으니 다음은 101"이라는 뜻입니다.': 'ACK 101 means "I got up to 100, so next is 101".',
+  '인사를 세 번 하는 까닭은?': 'Why greet three times?', '빨라서': 'It is fast', '양쪽 모두 상대가 듣는지 확인하려고': 'So both sides can confirm the other is listening', '보안 때문에': 'For security',
+  '두 번만 하면 서버는 자기 말이 내 컴퓨터에 닿았는지 모릅니다.': 'With only two, the server would not know whether its words reached my computer.',
+  // Step 2
+  '번호와 확인': 'Numbers and ACKs',
+  '조각마다 번호를 붙이고 받으면 확인을 보낸다': 'Every segment is numbered, and each one received is acknowledged',
+  '보낼 데이터는 조각(세그먼트)으로 나누고 순서 번호를 붙입니다. 받는 쪽은 받을 때마다 "여기까지 받았다"는 ACK를 돌려줍니다. 보내는 쪽은 ACK가 오면 그 조각을 지웁니다. ACK가 오지 않은 조각은 아직 들고 있습니다.':
+    'The data to send is split into segments, each given a sequence number. Each time the receiver gets one, it sends back an ACK saying "I have received up to here". When an ACK arrives, the sender deletes that segment. Segments not yet acknowledged it keeps holding.',
+  '조각 1, 2, 3이 가고 ACK가 하나씩 돌아옵니다. 보내는 쪽 "들고 있는 조각" 목록이 ACK를 받을 때마다 줄어듭니다.': 'Segments 1, 2 and 3 go out and ACKs come back one by one. The sender\'s "Segments held" list shrinks with every ACK.',
+  '연결된 상태에서 내 컴퓨터가 조각 세 개를 보내고 서버가 ACK를 돌려줍니다.': 'Once connected, my computer sends three segments and the server sends back ACKs.',
+  '조각 1이 도착합니다.': 'Segment 1 arrives.', 'ACK가 오면 내 컴퓨터는 조각 1을 지웁니다.': 'When the ACK arrives, my computer deletes segment 1.', '조각 2가 도착합니다.': 'Segment 2 arrives.', '조각 2도 확인됐습니다.': 'Segment 2 is acknowledged too.', '마지막 조각이 도착합니다.': 'The last segment arrives.', '모든 조각이 확인됐습니다.': 'Every segment is acknowledged.',
+  'ACK 2의 뜻은?': 'What does ACK 2 mean?', 'TCP의 ACK는 "다음에 받을 번호"를 알려 줍니다.': 'A TCP ACK gives "the number I expect next".',
+  // Step 3
+  '잃어버리면': 'When one is lost',
+  '확인이 안 오면 다시 보낸다': 'No acknowledgement means resend',
+  '인터넷 중간에서 패킷이 사라질 수 있습니다(혼잡한 라우터가 버리거나 전파가 끊김). 보내는 쪽은 조각을 보낼 때 타이머를 켜고, 정해진 시간 안에 ACK가 오지 않으면 같은 조각을 다시 보냅니다. 그래서 응용 프로그램은 잃어버림을 모른 채 온전한 데이터를 받습니다.':
+    'Packets can vanish inside the internet (a congested router drops them, or the radio signal cuts out). The sender starts a timer when it sends a segment, and if no ACK arrives in time, it sends the same segment again. So the application gets complete data without ever knowing something was lost.',
+  '조각 2가 인터넷에서 사라지면 서버는 계속 "ACK 2(2를 기다림)"를 보냅니다. 타이머가 끝나면 내 컴퓨터가 조각 2를 다시 보내고, 그제야 ACK 3이 옵니다.': 'When segment 2 vanishes in the internet, the server keeps sending "ACK 2 (waiting for 2)". When the timer runs out, my computer resends segment 2, and only then does ACK 3 come.',
+  '같은 연결에서 조각 2가 인터넷에서 사라집니다. 타이머가 끝나면 다시 보냅니다.': 'On the same connection, segment 2 vanishes in the internet. When the timer runs out, it is sent again.',
+  '조각 1은 잘 갑니다.': 'Segment 1 gets through.', '조각 2가 혼잡한 라우터에서 버려졌습니다.': 'Segment 2 was dropped by a congested router.', '서버는 계속 "다음은 2"라고 답합니다.': 'The server keeps answering "next is 2".', '타이머가 끝나 조각 2를 다시 보냈습니다.': 'The timer ran out, so segment 2 was sent again.', '이제 조각 2도 확인됐습니다.': 'Now segment 2 is acknowledged too.',
+  '내 컴퓨터는 조각 2가 사라진 것을 어떻게 알까요?': 'How does my computer know segment 2 vanished?', '라우터가 알려 준다': 'A router tells it', 'ACK가 제때 오지 않아서': 'Its ACK does not come in time', '서버가 전화한다': 'The server phones it',
+  '확인이 오지 않으면 잃어버렸다고 보고 다시 보냅니다.': 'With no acknowledgement, it assumes the segment was lost and sends it again.',
+  // Step 4
+  '순서 맞추기': 'Reordering',
+  '늦게 온 조각도 제자리에 끼운다': 'A late segment still goes in its place',
+  '조각마다 다른 길(5.8)로 갈 수 있어서 3이 2보다 먼저 도착하기도 합니다. 받는 쪽은 순서 번호를 보고 빈자리가 채워질 때까지 3을 잠시 보관했다가, 2가 오면 1, 2, 3 순서대로 응용 프로그램에 넘깁니다. 영상 통화처럼 늦게 오느니 버리는 게 나은 경우에는 TCP 대신 UDP를 씁니다.':
+    'Each segment can take a different path (5.8), so 3 sometimes arrives before 2. The receiver reads the sequence numbers, holds 3 for a while until the gap is filled, and when 2 comes passes them to the application in order 1, 2, 3. Where dropping beats arriving late, as in a video call, UDP is used instead of TCP.',
+  '조각 3이 먼저 와도 서버는 "ACK 2"를 보내며 기다리고, 2가 도착하면 한꺼번에 "1, 2, 3"을 넘기고 ACK 4를 보냅니다.': 'Even when segment 3 comes first, the server sends "ACK 2" and waits; when 2 arrives it passes "1, 2, 3" on all at once and sends ACK 4.',
+  '같은 연결에서 조각 3이 조각 2보다 먼저 도착합니다.': 'On the same connection, segment 3 arrives before segment 2.',
+  '3이 먼저 왔지만 2가 없어 보관만 합니다.': '3 came first, but with no 2 it is only held.', '2가 오자 보관하던 3까지 순서대로 넘깁니다.': 'When 2 comes, it passes them on in order, including the 3 it was holding.', '한 번의 ACK로 2와 3을 모두 확인합니다.': 'A single ACK acknowledges both 2 and 3.',
+  '조각 3이 먼저 오면 서버는 응용 프로그램에 무엇을 넘길까요?': 'If segment 3 comes first, what does the server pass to the application?', '3을 바로 넘긴다': 'It passes 3 on at once', '2가 올 때까지 기다린다': 'It waits until 2 comes',
+  'TCP는 순서를 지켜 넘기므로 빈자리가 채워질 때까지 기다립니다.': 'TCP passes data on in order, so it waits until the gap is filled.',
+  '영상 통화가 TCP 대신 UDP를 쓰는 까닭은?': 'Why does a video call use UDP instead of TCP?', 'UDP가 더 믿을 만해서': 'UDP is more reliable', '늦게 온 화면은 다시 받아 봐야 쓸모가 없어서': 'A late frame is useless even if received again',
+  '실시간 영상은 잃어버린 조각을 기다리기보다 다음 화면으로 넘어가는 편이 낫습니다.': 'Live video is better off moving to the next frame than waiting for a lost segment.',
+};

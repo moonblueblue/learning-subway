@@ -1,0 +1,91 @@
+// English for 5.3 System calls. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+// Data in the code: 메모장.txt notes.txt, "안녕" "hello", "오늘 할 일: …" "To do today: …".
+window.lessonText = {
+  // Page
+  '시스템 콜 · 레슨 5.3': 'System calls · Lesson 5.3',
+  '프로그램의 파일 읽기 부탁이 시스템 콜로 사용자 영역과 커널 영역의 경계를 넘어 장치까지 가는 길, 직접 접근이 막히는 이유, 경계를 넘는 비용을 따라가 보세요.':
+    'Follow a program\'s request to read a file as a system call crosses the boundary between user space and kernel space on its way to a device, why direct access is blocked, and what crossing the boundary costs.',
+  '프로그램이 파일을 읽을 때 운영체제는 어디에 끼어들까요? 부탁이 사용자 영역에서 커널을 거쳐 장치까지 가는 길을 한 정거장씩 따라가 보세요.':
+    'Where does the operating system step in when a program reads a file? Follow the request station by station from user space through the kernel to the device.',
+  '프로그램의 부탁이 시스템 콜 창구를 지나 커널과 장치 드라이버를 거쳐 SSD나 화면까지 가는 장면': 'A program\'s request passing the system-call gate, through the kernel and a device driver, to the SSD or the screen',
+  '사용자 영역과 커널 영역': 'User space and kernel space', '사용자 영역': 'User space', '커널 영역': 'Kernel space', '커널 영역 · 하드웨어': 'Kernel space · hardware', '창구': 'Gate',
+  '"다음 단계"를 누르면 메시지가 오른쪽으로 움직입니다.': 'Press "Next stage" and the message moves to the right.',
+  '"다음 단계"를 눌러 메시지를 한 계층씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the message one layer at a time. Prediction questions come up along the way.',
+  // Stations and badges
+  '내 프로그램': 'My program', '시스템 콜': 'System call', '커널': 'Kernel', '장치 드라이버': 'Device driver', '화면 드라이버': 'Screen driver', '화면': 'Screen',
+  'read 부탁': 'Asks read', 'write 부탁': 'Asks write', '직접 쓰기?': 'Write directly?', 'data 받음': 'Got data', '버퍼 100바이트': '100-byte buffer',
+  'READ 명령': 'READ command', '그리기': 'Draw', '{#0}번': '{0}×', '1번 처리': 'Handled once', '권한 OK': 'Permission OK', '터미널 창': 'Terminal window', '거부': 'Refused', '씀': 'Written', '읽음': 'Read',
+  '블록 {#0}': 'block {0}', '{#0}바이트': '{0} bytes', '픽셀': 'pixels', '장치 명령': 'device command', '"안녕"': '"hello"', '안녕': 'hello',
+  // Step 1
+  '파일 읽기': 'Reading a file',
+  '프로그램은 운영체제에 부탁해서 파일을 읽는다': 'A program reads a file by asking the operating system',
+  '프로그램이 메모장.txt를 읽으려면 read 같은 시스템 콜을 부릅니다. 시스템 콜은 프로그램이 운영체제 커널에 일을 맡기는 정해진 창구입니다. 커널은 파일 시스템(5.5)으로 파일이 SSD 어디에 있는지 찾고, 장치 드라이버로 SSD에 명령을 보낸 뒤, 읽어 온 내용을 프로그램의 메모리에 복사해 줍니다.':
+    'To read notes.txt, a program calls a system call such as read. A system call is the set gate through which a program hands work to the operating system\'s kernel. The kernel uses the file system (5.5) to find where the file is on the SSD, sends the SSD a command through the device driver, and copies what it reads into the program\'s memory.',
+  '점이 사용자 영역에서 경계를 넘어 커널로 들어가고, 드라이버와 SSD를 거쳐 돌아옵니다. 프로그램이 직접 한 일은 "read(파일, 100바이트)"라고 부탁한 것뿐입니다.':
+    'The dot crosses the boundary from user space into the kernel, goes through the driver and SSD, and comes back. All the program itself did was ask "read(file, 100 bytes)".',
+  '왼쪽 사용자 영역에 프로그램이, 가운데 경계 너머 커널 영역에 시스템 콜 창구, 커널, 장치 드라이버가, 오른쪽 끝에 SSD가 있습니다.': 'The program is in user space on the left; across the boundary in the middle, kernel space holds the system-call gate, the kernel and the device driver; the SSD is at the far right.',
+  'f = open("메모장.txt")': 'f = open("notes.txt")', 'data = f.read(100)': 'data = f.read(100)',
+  'read(파일 3번, 100바이트)': 'read(file 3, 100 bytes)', 'CPU가 커널 모드로 바뀜': 'CPU switches to kernel mode',
+  '파일 3번 = 메모장.txt': 'File 3 = notes.txt', '권한 확인: 읽기 가능': 'Permission check: may read', '위치: SSD 4812번 블록': 'Location: SSD block 4812',
+  'SSD 명령으로 바꾸기': 'Turn into an SSD command', 'READ 블록 4812': 'READ block 4812', '블록 4812 읽음': 'Block 4812 read', '"오늘 할 일: …"': '"To do today: …"',
+  'data = "오늘 할 일: …"': 'data = "To do today: …"', 'CPU가 사용자 모드로 돌아옴': 'CPU returns to user mode',
+  '내 프로그램 → 시스템 콜': 'My program → system call', '시스템 콜 → 커널': 'System call → kernel', '커널 → 장치 드라이버': 'Kernel → device driver', '장치 드라이버 → SSD': 'Device driver → SSD', 'SSD → 내 프로그램': 'SSD → my program',
+  '커널 · 블록 4812': 'Kernel · block 4812', '막힘': 'Blocked', '커널 → 내 프로그램': 'Kernel → my program', '내 프로그램 · read(100)': 'My program · read(100)',
+  '프로그램이 read 시스템 콜을 부릅니다. CPU가 사용자 모드에서 커널 모드로 바뀌며 경계를 넘습니다.': 'The program calls the read system call. The CPU switches from user mode to kernel mode, crossing the boundary.',
+  '커널은 이 프로그램이 이 파일을 읽어도 되는지 확인하고, 파일 시스템에서 파일이 SSD의 어느 블록에 있는지 찾습니다.': 'The kernel checks whether this program may read this file, and finds in the file system which SSD block holds it.',
+  '장치 드라이버가 "블록 4812를 읽어라"를 이 SSD가 알아듣는 명령으로 바꿉니다.': 'The device driver turns "read block 4812" into a command this SSD understands.',
+  'SSD가 블록을 읽어 내용을 돌려줍니다. 3.7에서 본 것처럼 이 단계가 가장 느립니다.': 'The SSD reads the block and returns its contents. As seen in 3.7, this stage is the slowest.',
+  '커널이 읽은 내용을 프로그램의 메모리에 복사하고, CPU는 사용자 모드로 돌아와 프로그램이 다음 줄을 실행합니다.': 'The kernel copies what was read into the program\'s memory, the CPU returns to user mode, and the program runs its next line.',
+  '프로그램이 파일을 읽으려고 처음 하는 일은?': 'What is the first thing a program does to read a file?', 'SSD에 직접 명령을 보낸다': 'Sends a command straight to the SSD', '운영체제에 시스템 콜로 부탁한다': 'Asks the operating system with a system call', '메모리를 뒤진다': 'Searches memory',
+  '하드웨어는 커널만 다룹니다. 프로그램은 정해진 창구로 부탁할 뿐입니다.': 'Only the kernel handles hardware. A program just asks through the set gate.',
+  // Step 2
+  '직접은 안 된다': 'No direct access', '사용자 모드에서 장치 명령 실행': 'Run a device command in user mode', 'CPU가 막는다': 'The CPU blocks it',
+  '프로그램은 하드웨어를 직접 만질 수 없다': 'A program cannot touch the hardware directly',
+  'CPU에는 사용자 모드와 커널 모드가 있습니다. 사용자 모드로 도는 프로그램이 장치를 직접 다루는 명령을 실행하면 CPU가 막고 운영체제가 그 프로그램을 멈춥니다. 그래서 한 프로그램이 남의 파일을 지우거나 디스크를 망가뜨릴 수 없습니다. 5.1에서 본 프로세스 격리도 이 덕분입니다.':
+    'A CPU has a user mode and a kernel mode. If a program running in user mode executes an instruction that handles a device directly, the CPU blocks it and the operating system stops the program. That is why one program cannot delete someone else\'s files or wreck the disk. The process isolation seen in 5.1 also relies on this.',
+  '"SSD에 직접 쓰기"는 경계에서 주황으로 막힙니다. 같은 일을 write 시스템 콜로 부탁하면 커널이 권한을 확인한 뒤 대신 해 줍니다.': '"Write directly to the SSD" is blocked in orange at the boundary. Ask for the same thing with the write system call and the kernel checks permission and does it instead.',
+  '같은 길입니다. 프로그램이 경계를 건너뛰어 SSD로 바로 가려 하면 막히고, 시스템 콜을 거치면 통과합니다.': 'The same road. If the program tries to skip the boundary and go straight to the SSD, it is blocked; through a system call, it gets through.',
+  '내 프로그램 · 장치 명령': 'My program · device command', 'SSD 블록 9에 직접 쓰기 시도': 'Try writing directly to SSD block 9', '막힘: 보호 위반': 'Blocked: protection violation',
+  'CPU가 막음 → 운영체제가 프로그램 중단': 'CPU blocks it → the operating system stops the program', '시스템 콜로 다시': 'Again through a system call',
+  'write(파일 3번, "새 내용")': 'write(file 3, "new contents")', '커널 모드로 바뀜': 'Switches to kernel mode', '권한 확인: 쓰기 가능': 'Permission check: may write', '파일 시스템이 블록 9 지정': 'The file system assigns block 9', '블록 9에 씀': 'Written to block 9', '커널 → SSD': 'Kernel → SSD', '블록 9': 'Block 9',
+  '사용자 모드의 프로그램이 장치 명령을 실행하자 CPU가 막았습니다. 운영체제는 이 프로그램을 멈춥니다.': 'The program in user mode ran a device instruction and the CPU blocked it. The operating system stops the program.',
+  '이번에는 write 시스템 콜로 부탁합니다. 정해진 창구라 통과합니다.': 'This time it asks with the write system call. It is the set gate, so it gets through.',
+  '커널이 권한을 확인하고 어느 블록에 쓸지 정합니다. 남의 파일이었다면 여기서 거절했을 것입니다.': 'The kernel checks permission and decides which block to write. Had it been someone else\'s file, it would have refused here.',
+  '커널이 드라이버를 거쳐 SSD에 씁니다. 프로그램은 결과(쓴 바이트 수)만 돌려받습니다.': 'The kernel writes to the SSD through the driver. The program gets back only the result (the number of bytes written).',
+  '사용자 모드의 프로그램이 SSD에 직접 명령을 보내면?': 'What happens if a program in user mode sends a command straight to the SSD?', '그대로 써진다': 'It gets written', 'SSD가 고장 난다': 'The SSD breaks',
+  '장치를 다루는 명령은 커널 모드에서만 실행됩니다. 사용자 모드에서는 CPU가 거부합니다.': 'Instructions that handle devices run only in kernel mode. In user mode the CPU refuses them.',
+  // Step 3
+  '경계를 넘는 비용': 'The cost of crossing', '1바이트씩 100번': '1 byte, 100 times', '모드 전환 200번(들어가고 나오기)': '200 mode switches (in and out)', '권한 검사 100번': '100 permission checks',
+  '시스템 콜은 공짜가 아니다': 'System calls are not free',
+  '경계를 넘을 때마다 CPU는 모드를 바꾸고, 커널은 검사를 합니다. 한 번은 짧지만 수백만 번이면 큽니다. 그래서 파일을 1바이트씩 100번 읽기보다 100바이트를 한 번에 읽는 편이 훨씬 빠릅니다. 프로그래밍 언어의 입출력 함수는 이 때문에 버퍼(모아 두는 칸)를 두고 한꺼번에 읽고 씁니다.':
+    'Each crossing makes the CPU switch modes and the kernel run checks. Once is quick, but millions of times add up. So reading a file 100 bytes at once is much faster than 1 byte 100 times. That is why programming languages\' input and output functions keep a buffer (a holding area) and read and write in bulk.',
+  '1바이트씩 읽으면 경계를 100번 넘지만, 한 번에 읽으면 한 번입니다. 3.7의 캐시 라인처럼 "한 번 갈 때 많이 가져오기"가 여기서도 통합니다.': 'Reading 1 byte at a time crosses the boundary 100 times; reading at once crosses it once. As with the cache lines of 3.7, "bring back a lot on each trip" works here too.',
+  '같은 길에서 1바이트씩 100번 읽기와 100바이트를 한 번에 읽기를 견줍니다.': 'On the same road, reading 1 byte 100 times is compared with reading 100 bytes at once.',
+  '1바이트씩 읽기': 'Reading 1 byte at a time', 'f.read(1)   # 시스템 콜 100번': 'f.read(1)   # 100 system calls', '경계를 100번 넘음': 'Crosses the boundary 100 times',
+  '한 번에 읽기': 'Reading at once', 'data = f.read(100)   # 시스템 콜 1번': 'data = f.read(100)   # 1 system call', '한 번 검사': 'One check', 'SSD에서 블록 하나 읽기': 'Read one block from the SSD',
+  'data에 100바이트': '100 bytes in data', '버퍼에서 한 글자씩 꺼내 쓰기': 'Take characters one at a time from the buffer',
+  '1바이트마다 시스템 콜을 부르면 경계를 100번 오갑니다.': 'Calling a system call for each byte crosses the boundary 100 times each way.',
+  '100바이트를 한 번에 부탁하면 경계를 한 번만 넘습니다.': 'Asking for 100 bytes at once crosses the boundary just once.',
+  '커널은 한 번 검사하고 블록 하나를 읽어 옵니다.': 'The kernel checks once and reads one block.',
+  '프로그램은 받은 100바이트를 자기 메모리(버퍼)에서 한 글자씩 꺼내 씁니다. 그 동안은 시스템 콜이 필요 없습니다.': 'The program takes the 100 bytes it got from its own memory (the buffer) one character at a time. Meanwhile no system calls are needed.',
+  '1바이트씩 100번 읽기와 100바이트를 한 번에 읽기, 어느 쪽이 빠를까요?': 'Which is faster: reading 1 byte 100 times, or 100 bytes at once?', '100바이트 한 번': '100 bytes, once', '같다': 'The same',
+  '경계를 넘는 고정 비용이 한 번뿐이라 훨씬 빠릅니다.': 'The fixed cost of crossing is paid just once, so it is much faster.',
+  // Step 4
+  '시스템 콜 가족': 'The system-call family',
+  '프로그램의 거의 모든 바깥일은 시스템 콜이다': 'Almost everything a program does with the outside world is a system call',
+  '파일만이 아닙니다. 화면에 글자 쓰기, 네트워크로 보내기(5.7), 새 프로세스 만들기(5.1), 메모리 더 받기(5.4), 시각 알아보기도 모두 시스템 콜입니다. 1.1에서 쓴 print도 결국 write 시스템 콜로 화면에 글자를 보냅니다.':
+    'Not just files. Writing text to the screen, sending over the network (5.7), making a new process (5.1), getting more memory (5.4) and finding the time are all system calls. Even the print used in 1.1 ends up sending text to the screen with the write system call.',
+  'print("안녕") 한 줄도 사용자 영역에서 경계를 넘어 커널, 화면 드라이버로 갑니다. 운영체제는 프로그램과 하드웨어 사이의 관리인입니다.': 'Even the single line print("hello") crosses from user space to the kernel and the screen driver. The operating system is the caretaker between programs and hardware.',
+  '왼쪽 사용자 영역에 프로그램이, 커널 영역에 시스템 콜 창구, 커널, 화면 드라이버가, 오른쪽에 화면이 있습니다.': 'The program is in user space on the left; kernel space holds the system-call gate, the kernel and the screen driver; the screen is on the right.',
+  'print("안녕")': 'print("hello")', 'write(1, "안녕")': 'write(1, "hello")', 'print가 write(표준 출력, "안녕") 부름': 'print calls write(standard output, "hello")',
+  '표준 출력 = 이 터미널 창': 'Standard output = this terminal window', '글자를 픽셀로 그리기 요청': 'Ask to draw the characters as pixels',
+  '커널 · "안녕"': 'Kernel · "hello"', '커널 → 화면 드라이버': 'Kernel → screen driver', '화면 드라이버 → 화면': 'Screen driver → screen',
+  'print는 파이썬 안에서 write 시스템 콜을 부릅니다. 화면도 파일처럼 번호(1번, 표준 출력)로 다룹니다.': 'print calls the write system call inside Python. The screen, too, is handled like a file by a number (1, standard output).',
+  '커널은 표준 출력이 어느 창(1.7의 터미널)과 연결됐는지 압니다.': 'The kernel knows which window (the terminal of 1.7) standard output is connected to.',
+  '화면 드라이버와 그래픽 장치가 글자를 픽셀(0.3)로 그립니다.': 'The screen driver and graphics device draw the characters as pixels (0.3).',
+  '화면에 "안녕"이 나타납니다.': '"hello" appears on the screen.',
+  'print("안녕")은 결국 어떤 시스템 콜을 부를까요?': 'Which system call does print("hello") end up calling?',
+  '화면에 내보내는 것도 "쓰기"입니다. 표준 출력이라는 파일 번호 1번에 씁니다.': 'Sending to the screen is "writing" too. It writes to file number 1, called standard output.',
+  '다음 중 시스템 콜이 필요 없는 일은?': 'Which of these needs no system call?', '파일 열기': 'Opening a file', '두 수 더하기': 'Adding two numbers', '네트워크로 보내기': 'Sending over the network',
+  '덧셈은 CPU 안에서 끝나는 계산이라 운영체제에 부탁할 필요가 없습니다. 바깥과 주고받을 때만 시스템 콜을 씁니다.': 'Addition is a calculation that finishes inside the CPU, so there is no need to ask the operating system. System calls are used only to deal with the outside.',
+};

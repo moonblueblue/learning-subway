@@ -27,6 +27,8 @@
     '스위치 {0}': 'Switch {0}', '스위치 {0}, 켜짐 1': 'Switch {0}, on 1', '스위치 {0}, 꺼짐 0': 'Switch {0}, off 0', '스위치 {0} 켜짐. {1}': 'Switch {0} on. {1}', '스위치 {0} 꺼짐. {1}': 'Switch {0} off. {1}', '{0}의 {#1} 자리, {#2}': '{0} {1}s place, {2}', '1이 흐르는 선': 'Line carrying 1', '0인 선': 'Line at 0', '여러 비트를 나르는 버스': 'Bus carrying several bits', '연산 신호': 'Operation signal', '입력 스위치 켜고 끄기': 'Turn the input switches on and off', '진리표 · 직접 만든 줄에 ✓': 'Truth table · ✓ on rows you made', '이 단계의 문제를 모두 풀었습니다. 스위치를 자유롭게 눌러 보세요.': 'You solved every problem in this step. Press the switches as you like.', '램프': 'Lamp', '램프 켜짐': 'Lamp on', '스위치': 'Switches',
     '처음 상태로': 'Reset', '처음 상태로 되돌렸습니다.': 'Reset to the starting state.', '직접 조작': 'Hands-on', '버튼을 눌러 보세요.': 'Press a button.',
     '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.': 'You solved every problem in this step. Try anything you like.',
+    // Station lessons (3.8, 5.3 …): code or a message carried from station to station.
+    '정거장': 'Stations', '지금 코드의 모습': 'What the code looks like now', '끝까지 왔습니다': 'Reached the end', '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.': 'You got every prediction in this step right. You can also watch it again from the start.', '저장장치': 'Storage',
     '모션 감소 · 정적 경로': 'Reduced motion · still paths', '확대 후 드래그로 이동': 'Zoom in, then drag to move', '두 손가락으로 확대 · 확대 후 드래그': 'Pinch to zoom · drag after zooming',
     '모션 감소 · 직접 실행': 'Reduced motion · manual run', '모션 감소 · 직접 조작': 'Reduced motion · hands-on',
     '타임라인': 'Timeline', '타임라인 {0}': 'Timeline: {0}', '{#0}장': 'Ch. {0}', '{#0}개 레슨': '{0} {0|lesson|lessons}',

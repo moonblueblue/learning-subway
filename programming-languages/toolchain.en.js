@@ -7,11 +7,9 @@ window.lessonText = {
   '작성한 코드는 어떤 과정을 거쳐 CPU에서 돌아갈까요? 코드 한 줄을 컴파일러, 로더, 인터프리터를 따라 한 정거장씩 옮겨 보세요.':
     'What does the code you write go through before it runs on a CPU? Move one line of code station by station through the compiler, loader and interpreter.',
   '소스 코드가 번역되고 메모리에 올라가 CPU에서 실행되기까지의 장면': 'Source code being translated, loaded into memory and run on the CPU',
-  '코드가 지나가는 정거장': 'Stations the code passes through', '정거장': 'Stations', '지금 코드의 모습': 'What the code looks like now', '파일': 'File', '도구': 'Tool', '저장장치': 'Storage',
-  '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next stage" and the code moves to the right.',
+  '코드가 지나가는 정거장': 'Stations the code passes through', '파일': 'File', '도구': 'Tool', '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.': 'Press "Next stage" and the code moves to the right.',
   '"다음 단계"를 눌러 코드를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next stage" to move the code one station at a time. Prediction questions come up along the way.',
-  '끝까지 왔습니다': 'Reached the end', '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.': 'You got every prediction in this step right. You can also watch it again from the start.',
-  '번역·적재 도구': 'Translating and loading tool',
+    '번역·적재 도구': 'Translating and loading tool',
   // Stations and badges
   '소스 코드': 'Source code', '컴파일러': 'Compiler', '어셈블리': 'Assembly', '어셈블러': 'Assembler', '기계어': 'Machine code', '운영체제 로더': 'OS loader',
   '파이썬 번역기': 'Python translator', '바이트코드': 'Bytecode', '파이썬 가상 머신': 'Python VM', 'L1 캐시': 'L1 cache', '실행 파일': 'Executable',

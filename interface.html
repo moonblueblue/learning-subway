@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="눌러도 되는 것이 그렇게 보이는지, 누른 뒤 반응을 보여 주는지, 실수를 막고 되돌릴 수 있는지, 누구나 쓸 수 있는지를 화면 설계 문제로 익혀 보세요.">
+<title>사람과 인터페이스 · 레슨 6.8</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.stage-top h2{font-size:1rem}
+.score{color:var(--accent);font:700 .875rem var(--mono)}
+.case{margin:18px;padding:16px 18px;border-radius:14px;background:#eef5ed;border:1px solid var(--border);display:grid;gap:6px}
+.case strong{color:var(--accent);font-size:.875rem}
+.case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
+.items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
+.item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
+.item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
+.workspace>*,.items>li,.item>*{min-width:0}
+.item-text.code{font:600 .9375rem/1.5 var(--mono);white-space:pre;overflow-x:auto;background:#1f2d29;color:#e8f2ec;padding:8px 12px;border-radius:8px;max-width:100%}
+.choices{display:flex;gap:6px}
+.choice{min-width:68px}
+.choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
+.choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
+.feedback{font-size:.9375rem;color:var(--muted);line-height:1.6}
+.feedback:empty{display:none}
+.feedback b{margin-right:4px}
+.item.right{border-color:var(--accent);background:#f6fbf7}
+.item.right .feedback b{color:var(--accent)}
+.item.wrong{border-color:#a24c14;background:#fffaf5}
+.item.wrong .feedback b{color:#a24c14}
+.think{margin:0 18px 18px;padding:14px 16px;border-radius:12px;border:1px dashed #9fb7a9;display:grid;gap:10px}
+.think label{font-weight:700}
+.think textarea{font:inherit;min-height:84px;padding:10px 12px;border:1px solid #9fb7a9;border-radius:10px;resize:vertical}
+.think .sample-answer{color:var(--muted);line-height:1.7}
+.think .sample-answer[hidden]{display:none}
+.done{margin:0 18px 18px;padding:12px 14px;border-radius:10px;background:#d2f4dd;color:#0f5a3c;font-weight:700}
+.done[hidden]{display:none}
+.timeline{border-top:1px solid var(--border)}
+.truth{margin:0 18px 14px}
+.truth[hidden]{display:none}
+.truth table{border-collapse:collapse;font:700 1rem var(--mono);margin:0 auto}
+.truth th,.truth td{border:1px solid var(--border);padding:6px 18px;text-align:center}
+.truth th{background:#eef5ed;color:var(--accent);font-family:system-ui,sans-serif}
+.truth td.blank{color:#9aa8a2}
+.truth td.filled{background:#d2f4dd;color:#0f5a3c}
+</style>
+<link rel="stylesheet" href="./course.css">
+<script defer src="./course-catalog.js"></script>
+<script defer src="./course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">6장 소프트웨어 만들기 · 레슨 6.8 · 실습</p>
+    <h1>사람과 인터페이스</h1>
+    <p class="lead">사람이 헷갈리지 않는 화면은 무엇이 다를까요? 보이는 단서, 반응, 실수 다루기, 접근성을 실제 화면 설계 예로 판단해 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="practice-heading">
+        <div class="stage-top"><h2 id="practice-heading">문제 풀기</h2><span class="score" id="score" aria-live="polite"></span></div>
+        <div class="case"><strong>문제</strong><p id="case"></p></div>
+        <div class="truth" id="table" hidden></div>
+        <ol class="items" id="items"></ol>
+        <p class="done" id="done" role="status" hidden></p>
+        <div class="think">
+          <label for="answer">생각해 보기 · <span id="question"></span></label>
+          <textarea id="answer" placeholder="자유롭게 적어 보세요. 저장되거나 채점되지 않습니다."></textarea>
+          <div><button class="action" id="reveal" type="button" aria-expanded="false">예시 답 보기</button></div>
+          <p class="sample-answer" id="sample" hidden></p>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const storageKey = 'interface-lab:v1:step';
+const BENEFIT = 'true', RISK = 'false';
+const yes = '참', no = '거짓';
+// Each step is one exercise. `choices` are the two answers; items are statements or truth-table rows.
+// A step with `table` shows its items as a truth table whose last column the learner fills in.
+const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : 'false', why });
+const TF = [['true', '참'], ['false', '거짓']];
+const lesson = [
+  {
+    label: '보이는 단서',
+    title: '눌러도 되는 것은 눌러도 되게 보여야 한다',
+    body: '사람은 설명서를 읽지 않고 화면의 모양을 보고 짐작합니다. 버튼은 버튼처럼, 글을 쓰는 칸은 칸처럼 보여야 합니다. 같은 일은 같은 모양과 같은 자리로, 다른 일은 다르게 보여야 헷갈리지 않습니다. 이런 단서가 맞으면 사용자는 생각하지 않고도 바르게 행동합니다.',
+    link: '6.1의 인터페이스는 코드끼리의 약속이었습니다. 화면은 사람과 프로그램 사이의 인터페이스입니다. 이 실험실의 버튼도 테두리와 색으로 누를 수 있음을 보여 줍니다.',
+    case: '이 화면 설계는 사람을 헷갈리게 할까요?',
+    choices: [['clear', '알기 쉽다'], ['confusing', '헷갈린다']],
+    items: [
+      { text: '파란 밑줄 글자인데 눌러도 아무 일이 없다.', answer: 'confusing', why: '파란 밑줄은 오랫동안 "누르면 이동하는 링크"의 모양이었습니다. 단서와 실제 동작이 어긋납니다.' },
+      { text: '"저장" 버튼이 화면마다 오른쪽 아래 같은 자리, 같은 색으로 있다.', answer: 'clear', why: '같은 일을 늘 같은 자리와 모양으로 두면 한 번 익힌 것이 모든 화면에서 통합니다.' },
+      { text: '"삭제"와 "저장" 버튼이 같은 색, 같은 크기로 바로 붙어 있다.', answer: 'confusing', why: '되돌리기 어려운 일과 흔한 일이 똑같아 보이면 잘못 누르기 쉽습니다. 삭제는 떨어뜨리고 색을 달리합니다.' },
+      { text: '글을 쓰는 칸 안에 흐린 글씨로 "예: hong@example.com"이 보인다.', answer: 'clear', why: '무엇을 어떤 모양으로 써야 하는지 칸 안에서 바로 알려 줍니다.' },
+    ],
+    question: '자주 쓰는 앱 하나에서, 설명 없이도 무엇을 해야 할지 알 수 있었던 단서를 하나 찾아보세요.',
+    sample: '예를 들어 사진 앱의 휴지통 아이콘(버린다), 메신저의 종이비행기 아이콘(보낸다), 회색으로 흐려진 버튼(지금은 누를 수 없다) 같은 것들입니다.',
+  },
+  {
+    label: '반응 보이기',
+    title: '누른 뒤에는 무슨 일이 일어났는지 곧바로 보여 준다',
+    body: '사용자가 무언가를 했으면 프로그램은 곧바로 반응을 보여야 합니다. 버튼이 눌린 모양, 불러오는 중 표시, "저장했습니다" 알림이 그것입니다. 반응이 없으면 사람은 "안 눌렸나?" 하고 다시 누르고, 결제가 두 번 되는 것 같은 일이 생깁니다. 오래 걸리는 일은 얼마나 남았는지도 알려 줍니다.',
+    link: '5.11에서 페이지 하나에도 왕복이 여러 번 필요했습니다. 그 사이 화면이 멈춰 있으면 사용자는 고장 난 줄 압니다.',
+    case: '다음 문장이 참인지 고르세요.',
+    choices: [['true', '참'], ['false', '거짓']],
+    items: [
+      { text: '결제 버튼을 누른 뒤 3초 동안 아무 변화가 없으면 사용자가 다시 누를 수 있다.', answer: 'true', why: '반응이 없으면 실패한 줄 압니다. 누르자마자 버튼을 "결제 중…"으로 바꾸고 다시 누를 수 없게 해야 합니다.' },
+      { text: '0.1초 안에 끝나는 일에도 불러오기 표시를 꼭 띄워야 한다.', answer: 'false', why: '아주 짧은 일은 결과가 바로 보이면 충분합니다. 깜빡이는 표시는 오히려 산만합니다.' },
+      { text: '파일 올리기처럼 오래 걸리는 일은 진행 막대나 남은 시간을 보여 주는 것이 좋다.', answer: 'true', why: '얼마나 남았는지 알면 기다릴지 말지 정할 수 있고, 멈춘 것과 느린 것을 구별할 수 있습니다.' },
+      { text: '오류가 나면 "오류 코드 0x80004005"만 보여 주면 충분하다.', answer: 'false', why: '무엇이 잘못됐고 무엇을 하면 되는지 사람의 말로 알려 줘야 합니다. 예: "인터넷 연결이 끊겼어요. 연결되면 다시 시도할게요."' },
+    ],
+    question: '"전송" 버튼을 누른 뒤 서버 응답을 기다리는 2초 동안 화면에 무엇을 보여 주면 좋을까요?',
+    sample: '버튼을 "보내는 중…"으로 바꾸고 다시 누를 수 없게 하고, 끝나면 "보냈습니다"를 잠깐 보여 줍니다. 실패하면 이유와 "다시 보내기"를 보여 줍니다.',
+  },
+  {
+    label: '실수 다루기',
+    title: '사람은 실수한다, 막고 되돌릴 수 있게 한다',
+    body: '사람의 실수는 피할 수 없으니, 화면이 실수를 막거나 되돌릴 수 있게 해야 합니다. 애초에 틀린 입력을 할 수 없게 막는 방법, 되돌리기를 주는 방법, 되돌릴 수 없는 일 앞에서 한 번 더 확인하는 방법이 있습니다. 확인 창을 너무 자주 띄우면 사람들이 읽지 않고 누르게 되므로, 되돌리기를 줄 수 있으면 그쪽이 낫습니다.',
+    link: '6.2에서는 테스트로 프로그래머의 실수를 잡았습니다. 여기서는 사용자의 실수를 다룹니다. 6.6의 트랜잭션도 "되돌릴 수 있게" 만드는 장치였습니다.',
+    case: '이 상황에 가장 알맞은 방법은?',
+    choices: [['prevent', '입력을 막기'], ['undo', '되돌리기 주기'], ['confirm', '한 번 더 확인']],
+    items: [
+      { text: '생년월일 칸에 사람들이 "2010.3.5", "10/03/05", "삼월 오일" 등 제각각으로 쓴다.', answer: 'prevent', why: '날짜 고르기 달력을 주면 틀린 모양을 쓸 수 없습니다. 틀린 뒤 고치게 하는 것보다 처음부터 막는 편이 낫습니다.' },
+      { text: '메일 하나를 실수로 보관함에서 지웠다.', answer: 'undo', why: '"삭제했습니다 · 되돌리기"를 몇 초 보여 주면 됩니다. 매번 확인을 묻는 것보다 빠르고 덜 귀찮습니다.' },
+      { text: '계정을 영구히 지우면 모든 데이터가 사라지고 되살릴 수 없다.', answer: 'confirm', why: '되돌릴 수 없는 큰일은 무엇이 사라지는지 보여 주고, 계정 이름을 직접 입력하게 하는 식으로 한 번 더 확인합니다.' },
+      { text: '수량 칸에 −3이나 "많이"를 넣을 수 있다.', answer: 'prevent', why: '숫자만, 1 이상만 입력되게 하거나 −, + 버튼으로 고르게 하면 틀린 값이 들어오지 않습니다.' },
+    ],
+    question: '앱이 "정말 삭제할까요?"를 하루에도 수십 번 묻는다면 어떤 일이 생길까요?',
+    sample: '사람들이 읽지 않고 습관처럼 "예"를 누르게 됩니다. 그러면 정말 중요한 확인도 무시됩니다. 자주 하는 일은 되돌리기로 바꾸고 확인은 정말 큰일에만 남깁니다.',
+  },
+  {
+    label: '모두를 위한 화면',
+    title: '눈, 손, 상황이 달라도 쓸 수 있게 만든다',
+    body: '화면을 쓰는 사람은 다양합니다. 색을 잘 구별하지 못하는 사람, 화면 읽기 프로그램으로 듣는 사람, 마우스 대신 키보드만 쓰는 사람, 햇빛 아래에서 휴대폰을 보는 사람도 있습니다. 색만으로 뜻을 전하지 않고, 글자와 배경의 대비를 충분히 하고, 그림에는 설명을 붙이고, 키보드로도 모든 기능을 쓸 수 있게 하는 것을 접근성이라 합니다.',
+    link: '이 실험실들도 장면마다 글로 된 설명을 붙이고, 키보드로 단계를 옮길 수 있게 만들었습니다. 맞고 틀림도 색과 함께 ✓, ✗ 글자로 보여 줍니다.',
+    case: '이 설계는 더 많은 사람이 쓸 수 있게 할까요?',
+    choices: [['good', '더 많은 사람이 쓸 수 있다'], ['bad', '누군가는 쓰기 어렵다']],
+    items: [
+      { text: '입력 칸의 오류를 테두리를 빨갛게 바꾸는 것으로만 알린다.', answer: 'bad', why: '빨강과 초록을 구별하기 어려운 사람이나 화면 읽기 프로그램 사용자는 알 수 없습니다. "이메일 모양이 아니에요" 같은 글을 함께 보여 줍니다.' },
+      { text: '상품 사진마다 "파란 줄무늬 면 티셔츠" 같은 대체 글을 붙인다.', answer: 'good', why: '화면 읽기 프로그램이 이 글을 읽어 줍니다. 사진이 안 열릴 때도 도움이 됩니다.' },
+      { text: '연한 회색 배경에 조금 더 연한 회색 글씨로 안내문을 쓴다.', answer: 'bad', why: '대비가 낮으면 시력이 약한 사람이나 햇빛 아래에서는 읽을 수 없습니다.' },
+      { text: '모든 버튼과 메뉴를 Tab과 Enter 키만으로도 쓸 수 있다.', answer: 'good', why: '마우스를 쓰기 어려운 사람, 키보드가 빠른 사람 모두에게 도움이 됩니다.' },
+    ],
+    question: '지금 쓰는 휴대폰에서 화면 읽기 기능(VoiceOver 또는 TalkBack)을 켜고 앱 하나를 써 보면 무엇이 불편할까요?',
+    sample: '이름 없는 아이콘 버튼이 "버튼"이라고만 읽히거나, 그림 속 글자가 읽히지 않는 경우가 많습니다. 만드는 사람이 직접 써 봐야 알게 되는 문제입니다.',
+  },
+];
+
+const byId = (id) => document.getElementById(id);
+const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
+
+function showStep(index, announce = true) {
+  state.index = index;
+  const step = lesson[index];
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.link;
+  // Text after a blank line in the question is code, shown in its own block.
+  const [caseText, ...caseCode] = step.case.split('\n\n');
+  byId('case').textContent = caseText;
+  let casePre = byId('case-code');
+  if (!casePre) { casePre = document.createElement('pre'); casePre.id = 'case-code'; casePre.className = 'item-text code'; byId('case').after(casePre); }
+  casePre.textContent = caseCode.join('\n\n');
+  casePre.hidden = !caseCode.length;
+  byId('question').textContent = step.question;
+  byId('sample').textContent = step.sample;
+  byId('sample').hidden = true;
+  byId('reveal').setAttribute('aria-expanded', 'false');
+  byId('reveal').textContent = '예시 답 보기';
+  byId('answer').value = '';
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  buildItems();
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
+}
+
+function buildItems() {
+  const step = lesson[state.index];
+  const list = byId('items');
+  list.replaceChildren();
+  step.items.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'item';
+    const top = document.createElement('div');
+    top.className = 'item-top';
+    const text = document.createElement('span');
+    text.className = 'item-text' + ((item.text ?? '').includes('\n') ? ' code' : '');
+    text.id = `item-${i}`;
+    text.textContent = step.table ? `${step.table[0]} ${item.cells[0]} · ${step.table[1]} ${item.cells[1]}` : item.text;
+    const choices = document.createElement('div');
+    choices.className = 'choices';
+    choices.setAttribute('role', 'group');
+    choices.setAttribute('aria-labelledby', text.id);
+    for (const [value, label] of step.choices) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `action choice ${value === 'false' ? 'risk' : 'benefit'}`;
+      button.textContent = label;
+      button.dataset.value = value;
+      button.addEventListener('click', () => pick(i, value));
+      choices.append(button);
+    }
+    const feedback = document.createElement('p');
+    feedback.className = 'feedback';
+    feedback.setAttribute('role', 'status');
+    top.append(text, choices);
+    li.append(top, feedback);
+    list.append(li);
+  });
+  syncItems();
+}
+
+// For table steps, a compact truth table mirrors the answers so far.
+function syncTable() {
+  const step = lesson[state.index];
+  const box = byId('table');
+  box.hidden = !step.table;
+  if (!step.table) return;
+  const picks = state.picks[state.index];
+  const label = (v) => step.choices.find(([value]) => value === v)?.[1] ?? '?';
+  box.innerHTML = '';
+  const table = document.createElement('table');
+  const head = table.createTHead().insertRow();
+  step.table.forEach((h) => { const th = document.createElement('th'); th.textContent = h; head.append(th); });
+  const body = table.createTBody();
+  step.items.forEach((item, i) => {
+    const tr = body.insertRow();
+    item.cells.forEach((c) => { tr.insertCell().textContent = c; });
+    const cell = tr.insertCell();
+    cell.textContent = picks[i] === item.answer ? label(item.answer) : '?';
+    cell.className = picks[i] === item.answer ? 'filled' : 'blank';
+  });
+  box.append(table);
+}
+
+function pick(i, value) {
+  state.picks[state.index][i] = value;
+  syncItems();
+  const item = lesson[state.index].items[i];
+  byId('announcement').textContent = value === item.answer ? '맞았습니다.' : '다시 생각해 보세요.';
+}
+
+function syncItems() {
+  const step = lesson[state.index];
+  const picks = state.picks[state.index];
+  [...byId('items').children].forEach((li, i) => {
+    const item = step.items[i];
+    const picked = picks[i];
+    li.classList.toggle('right', picked === item.answer);
+    li.classList.toggle('wrong', picked !== null && picked !== item.answer);
+    for (const button of li.querySelectorAll('.choice')) button.setAttribute('aria-pressed', String(button.dataset.value === picked));
+    const feedback = li.querySelector('.feedback');
+    feedback.replaceChildren();
+    if (picked !== null) {
+      const mark = document.createElement('b');
+      mark.textContent = picked === item.answer ? '✓ 맞았습니다.' : '✗ 다시 생각해 보세요.';
+      feedback.append(mark, picked === item.answer ? item.why : '');
+    }
+  });
+  const right = picks.filter((p, i) => p === step.items[i].answer).length;
+  byId('score').textContent = `${right} / ${step.items.length} 맞힘`;
+  byId('done').hidden = right !== step.items.length;
+  byId('done').textContent = step.table ? '✓ 진리표를 모두 채웠습니다. 아래 질문도 생각해 보세요.' : '✓ 모두 맞게 골랐습니다. 아래 질문도 생각해 보세요.';
+  syncTable();
+}
+
+byId('reveal').onclick = () => {
+  const open = byId('sample').hidden;
+  byId('sample').hidden = !open;
+  byId('reveal').setAttribute('aria-expanded', String(open));
+  byId('reveal').textContent = open ? '예시 답 숨기기' : '예시 답 보기';
+};
+
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/interface/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/interface\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/interface/${initial + 1}`);
+showStep(initial, false);
+</script>
+</body>
+</html>

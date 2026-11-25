@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="레지스터, 캐시, RAM, SSD에서 값을 읽어 보며 층마다 속도와 크기가 다른 이유, 캐시 적중과 지역성, 휘발성을 살펴보세요.">
+<title>메모리 계층 · 레슨 3.7</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.wire.idle{stroke:#a9b8b0;stroke-width:2;stroke-dasharray:4 4}
+.chevron.idle{stroke:#a9b8b0}
+.gate .left{fill:#dfe4f2;stroke:#7d88b4}
+.gate .right{fill:#c4cbe3;stroke:#7d88b4}
+.gate .top{fill:#f1f3fa;stroke:#7d88b4}
+.gate.OR .left{fill:#f3e2d3;stroke:#b48a64}
+.gate.OR .right{fill:#e5cdb6;stroke:#b48a64}
+.gate.OR .top{fill:#fbf3ec;stroke:#b48a64}
+.gate.NOT .left{fill:#eadcf0;stroke:#9a77ad}
+.gate.NOT .right{fill:#d9c4e3;stroke:#9a77ad}
+.gate.NOT .top{fill:#f7f0fa;stroke:#9a77ad}
+.gate .face{transition:fill .18s}
+.gate.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.gate .tag text{font:800 12px var(--mono);letter-spacing:.04em}
+.gate.AND .tag rect{stroke:#7d88b4}.gate.AND .tag text{fill:#3c4a85}
+.gate.OR .tag rect{stroke:#b48a64}.gate.OR .tag text{fill:#7a4b1f}
+.gate.NOT .tag rect{stroke:#9a77ad}.gate.NOT .tag text{fill:#5f3a73}
+.gate.XOR .left{fill:#d5ebe7;stroke:#4f9189}
+.gate.XOR .right{fill:#b9dcd6;stroke:#4f9189}
+.gate.XOR .top{fill:#eef8f6;stroke:#4f9189}
+.gate.XOR .tag rect{stroke:#4f9189}.gate.XOR .tag text{fill:#245f57}
+.gate.HA .left,.gate.FA .left{fill:#e4e1d3;stroke:#8f8763}
+.gate.HA .right,.gate.FA .right{fill:#d2cdb6;stroke:#8f8763}
+.gate.HA .top,.gate.FA .top{fill:#f7f5ec;stroke:#8f8763}
+.gate.HA .tag rect,.gate.FA .tag rect{stroke:#8f8763}
+.gate.HA .tag text,.gate.FA .tag text{fill:#5b5232;font:800 12px system-ui,sans-serif;letter-spacing:0}
+.input-row.numbers{flex-direction:column}
+.number-row{display:flex;gap:6px;align-items:center}
+.number-name{font:800 1.05rem var(--mono);width:1.6em;color:var(--ink)}
+.number-value{font:700 1rem var(--mono);color:var(--muted);min-width:3.2em;padding-left:4px}
+.truth.column-sum{font-size:1.05rem}
+.truth.column-sum th{background:none;border:none;text-align:right;padding-right:10px;font-size:.8125rem;color:var(--muted)}
+.truth.column-sum td{border:none;min-width:30px;padding:1px 6px}
+.truth.column-sum tr.carry td{color:#a24c14;font-size:.8125rem;height:1.2em}
+.truth.column-sum tr.sum td{border-top:2px solid var(--ink);font-weight:800}
+.truth.column-sum tr.sum td.one{color:#8a6300;background:#fff7d6}
+.truth.column-sum td.decimal{color:var(--muted);text-align:left;padding-left:12px;font-weight:600}
+.truth.column-sum tr.sum td.decimal{color:var(--accent);font-weight:800}
+.lamp .left{fill:#d7dfdb;stroke:#8c9d96}
+.lamp .right{fill:#b8c6c0;stroke:#8c9d96}
+.lamp .top{fill:#f4f7f5;stroke:#8c9d96}
+.lamp .bulb{fill:#e6ebe8;stroke:#8c9d96;stroke-width:1;transition:fill .2s,stroke .2s}
+.lamp .halo{fill:#ffd34d;opacity:0;transition:opacity .2s}
+.lamp.on .bulb{fill:#ffd34d;stroke:#c9940f}
+.lamp.on .halo{opacity:.7}
+.lamp.on .tag rect{stroke:#c9940f}
+.bit-badge circle{fill:#fff;stroke:#a9b8b0;stroke-width:1.1;transition:fill .18s,stroke .18s}
+.bit-badge text{font:700 10.5px var(--mono);fill:#7c8c85;text-anchor:middle;dominant-baseline:central}
+.bit-badge.on circle{fill:#d2f4dd;stroke:var(--accent)}
+.bit-badge.on text{fill:#0f5a3c}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.controls-row{display:flex;gap:12px 18px;align-items:flex-start;flex-wrap:wrap}
+.input-row{display:flex;gap:8px;flex-wrap:wrap}
+.input-button{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:64px;min-height:56px;padding:4px 10px;border:1px solid #9fb7a9;border-radius:10px;background:#f6f8f5;line-height:1.2}
+.input-button .name{font:700 .8125rem var(--mono);color:var(--muted)}
+.input-button .bit{font:700 1.2rem var(--mono);color:#7c8c85}
+.input-button:hover{border-color:var(--accent)}
+.input-button[aria-pressed=true]{background:#d2f4dd;border-color:var(--accent)}
+.input-button[aria-pressed=true] .name,.input-button[aria-pressed=true] .bit{color:#0f5a3c}
+.truth{border-collapse:collapse;font:600 .9375rem var(--mono);text-align:center}
+.truth caption{font:700 .8125rem system-ui,sans-serif;color:var(--muted);text-align:left;margin-bottom:4px}
+.truth th,.truth td{border:1px solid var(--border);padding:3px 12px;min-width:44px}
+.truth th{background:#f3f6f2;font-size:.8125rem}
+.truth th.out,.truth td.out{border-left:2px solid #9fb7a9}
+.truth td.out.one{color:#8a6300;background:#fff7d6}
+.truth tr.current td{background:#d9efe2;font-weight:800}
+.truth tr.current td.out.one{background:#ffe9a0}
+.truth td.seen{width:26px;min-width:26px;padding:0 4px;border:none;color:var(--accent);font-family:system-ui,sans-serif;text-align:left}
+.sample.idle{border-top:2px dashed #a9b8b0}
+.dot.lamp-on{border-color:#c9940f;background:#ffd34d;border-radius:50%}
+@media(max-width:600px){.tag text,.gate .tag text,.gate.HA .tag text,.gate.FA .tag text{font-size:16px}.packet-label{font-size:13px}.bit-badge text{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text,.gate .face,.lamp .bulb,.lamp .halo,.bit-badge circle{transition:none}}
+@media(max-width:420px){.shell{padding:18px 12px}.stage-top,.controls,.timeline,.view-controls,.hands-on{padding-inline:12px}.view-hint{flex-basis:100%;margin-inline-start:0}.steps{gap:5px}.steps button{padding-inline:6px}.truth th,.truth td{padding-inline:8px;min-width:36px}}
+.lane.unchosen,.casing.unchosen{opacity:.28}
+.casing.wide{stroke-width:11}
+.lane.bus .wire{stroke-width:5.5;stroke:#2f7d63;stroke-dasharray:none}
+.lane.bus .chevron{stroke:#2f7d63;stroke-width:2.6}
+.lane.control .wire{stroke:#c26a1e;stroke-width:2.2;stroke-dasharray:6 3}
+.lane.control .chevron{stroke:#c26a1e}
+.packet-group.control .packet,.packet-group.control .packet-halo{fill:#c26a1e}
+.packet-group.control .packet-label{fill:#8a4310}
+.packet-group.bus .packet{r:5.4}
+.dial{cursor:pointer}
+.dial .left{fill:#f6dfc8;stroke:#c26a1e}
+.dial .right{fill:#ecc8a4;stroke:#c26a1e}
+.dial .top{fill:#fdf2e7;stroke:#c26a1e}
+.dial .tag rect{stroke:#c26a1e}.dial .tag text{fill:#8a4310;font:800 12px var(--mono)}
+.number .left{fill:#dbe9e2;stroke:#5f8f78}
+.number .right{fill:#c2d9cd;stroke:#5f8f78}
+.number .top{fill:#f3f8f5;stroke:#5f8f78}
+.number .tag text{font:800 12px var(--mono);fill:#1d5a44}
+.number .tag rect{stroke:#5f8f78}
+.number.result .tag rect{stroke:var(--accent);stroke-width:1.4}
+.gate.MUX .left,.gate.ALU .left{fill:#e4e1d3;stroke:#8f8763}
+.gate.MUX .right,.gate.ALU .right{fill:#d2cdb6;stroke:#8f8763}
+.gate.MUX .top,.gate.ALU .top{fill:#f7f5ec;stroke:#8f8763}
+.gate.MUX .tag rect,.gate.ALU .tag rect{stroke:#8f8763}
+.gate.MUX .tag text,.gate.ALU .tag text{fill:#5b5232;font:800 12px system-ui,sans-serif}
+.gate.MUX.on .top{fill:#f7f5ec;stroke:#8f8763}
+.box-op{font:800 11px var(--mono);fill:#8a4310;text-anchor:middle;dominant-baseline:central}
+.op-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.op-button{min-height:44px;min-width:58px;padding:6px 10px;border:1px solid #d9a77a;border-radius:9px;background:#fff8f1;font:700 .875rem var(--mono);color:#8a4310}
+.op-button:hover{border-color:#c26a1e}
+.op-button[aria-pressed=true]{background:#c26a1e;border-color:#c26a1e;color:#fff}
+.truth td.picked{outline:2px solid #c26a1e;outline-offset:-2px}
+.truth.op-table td{padding:3px 10px}
+.truth.op-table td:first-child{text-align:left;font-family:system-ui,sans-serif;font-weight:700}
+.sample.bus{border-top:5px solid #2f7d63}
+.sample.control{border-top:2px dashed #c26a1e}
+@media(max-width:600px){.box-op{font-size:14px}.dial .tag text,.number .tag text{font-size:15px}}
+.truth tr.current td.seen{background:none}
+.number-name{min-width:2.6em;white-space:nowrap}
+.gate.SR .left,.gate.REG .left{fill:#e4e1d3;stroke:#8f8763}
+.gate.SR .right,.gate.REG .right{fill:#d2cdb6;stroke:#8f8763}
+.gate.SR .top,.gate.REG .top{fill:#f7f5ec;stroke:#8f8763}
+.gate.SR.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.gate.SR .tag rect,.gate.REG .tag rect{stroke:#8f8763}
+.gate.SR .tag text,.gate.REG .tag text{fill:#5b5232;font:800 12px system-ui,sans-serif}
+.box-value{font:800 13px var(--mono);fill:#1d5a44;text-anchor:middle;dominant-baseline:central;letter-spacing:.08em}
+.lane.feedback .wire.signal{stroke:#1d8a62}
+.truth.history td.note{color:#a24c14;font:700 .8125rem system-ui,sans-serif;white-space:nowrap}
+.truth.history td.empty{color:var(--muted);font:600 .8125rem system-ui,sans-serif;padding:8px 12px}
+.action.power{align-self:flex-start;border-color:#c26a1e;color:#8a4310;background:#fff8f1}
+.stage{transition:filter .25s}
+.power-off .stage{filter:brightness(.35) saturate(.3)}
+@media(max-width:600px){.box-value{font-size:15px}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
+.bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
+.core .left{fill:#3f4f4a;stroke:#26322e}.core .right{fill:#2f3d39;stroke:#26322e}.core .top{fill:#5d6f69;stroke:#26322e}
+.level .face{stroke-width:.8;transition:fill .2s}
+.level.reg .left{fill:#dbe9e2;stroke:#5f8f78}.level.reg .right{fill:#c2d9cd;stroke:#5f8f78}.level.reg .top{fill:#f3f8f5;stroke:#5f8f78}
+.level.cache .left{fill:#d5ebe7;stroke:#4f9189}.level.cache .right{fill:#b9dcd6;stroke:#4f9189}.level.cache .top{fill:#eef8f6;stroke:#4f9189}
+.level.ram .left{fill:#acd5b9;stroke:#5f9474}.level.ram .right{fill:#80b596;stroke:#5f9474}.level.ram .top{fill:#dcf1e2;stroke:#5f9474}
+.level.ssd .left{fill:#dfe4f2;stroke:#7a87b5}.level.ssd .right{fill:#c4cbe3;stroke:#7a87b5}.level.ssd .top{fill:#eaeef9;stroke:#7a87b5}
+.level.busy .top{fill:#fff1c9}
+.level-tag text{font-weight:800}
+.tag.info text{font:600 10.5px var(--mono);fill:var(--muted)}
+.tag.info rect{fill:none;stroke:none}
+.tag.badge text{font:700 11px system-ui,sans-serif}
+.tag.badge.ok rect{stroke:var(--accent);fill:#eaf7ef}.tag.badge.ok text{fill:var(--accent)}
+.tag.badge.warn rect{stroke:#a24c14;fill:#fff6ef}.tag.badge.warn text{fill:#a24c14}
+.tag.empty{display:none}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-group.back .packet,.packet-group.back .packet-halo{fill:var(--response)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.packet-group.back .packet-label{fill:#3b4880}
+.dot.go{background:var(--request);border-color:var(--request);border-radius:50%}
+.dot.back{background:var(--response);border-color:var(--response);border-radius:50%}
+.dot.ok{background:#eaf7ef;border-color:var(--accent)}
+.dot.warn{background:#fff6ef;border-color:#a24c14}
+.controls-area{display:flex;gap:6px;flex-wrap:wrap}
+.level-table td:first-child{font-family:system-ui,sans-serif;font-weight:700;text-align:left}
+.cache-view{display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap}
+.cache-name{font-weight:800;color:#245f57}
+.cache-slots{list-style:none;display:flex;gap:6px;margin:0;padding:0}
+.cache-slots li{padding:6px 10px;border:1.5px solid #4f9189;border-radius:8px;background:#eef8f6;font:700 .875rem var(--mono);color:#245f57}
+.cache-slots li.empty{border-style:dashed;color:#9aa8a2;background:#fff}
+.cache-slots li.newest{background:#d2f4dd}
+.cache-stats{font:600 .875rem var(--mono);color:var(--muted)}
+.stage{transition:filter .25s}
+.power-off .stage{filter:brightness(.35) saturate(.3)}
+@media(max-width:600px){.packet-label{font-size:13px}.tag.info text{font-size:13px}.tag.badge text{font-size:14px}}
+.cache-view[hidden]{display:none}
+</style>
+<link rel="stylesheet" href="./course.css">
+<script defer src="./course-catalog.js"></script>
+<script defer src="./course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">3장 컴퓨터를 바닥부터 · 레슨 3.7</p>
+    <h1>메모리 계층</h1>
+    <p class="lead">레지스터, 캐시, RAM, 디스크는 왜 속도가 이렇게 다를까요? 층마다 값을 읽어 보고, 캐시가 시간을 아끼는 방법을 확인해 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" id="stage-panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">CPU에서 가까운 층과 먼 층</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">CPU 코어에서 레지스터, 캐시, RAM, SSD까지 값을 가지러 가는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="controls-area" id="controls-area" role="group" aria-label="읽기 조작"></div>
+          <table class="truth level-table" id="level-table" hidden></table>
+          <div class="cache-view" id="cache-view" hidden>
+            <span class="cache-name">L1 캐시</span>
+            <ol class="cache-slots" id="cache-slots" aria-label="캐시 칸"></ol>
+            <span class="cache-stats" id="cache-stats"></span>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <button class="action" id="view-reset" type="button">원래 보기</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="dot go"></i>가지러 가는 길</span><span><i class="dot back"></i>값을 들고 오는 길</span><span><i class="dot ok"></i>적중·담김</span><span><i class="dot warn"></i>실패·비어 있음</span></div>
+          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+function setCamera(x, y, zoom) {
+  camera.zoom = clamp(zoom, 1, maxZoom);
+  const width = viewWidth / camera.zoom;
+  const height = viewHeight / camera.zoom;
+  camera.x = clamp(x, 0, viewWidth - width);
+  camera.y = clamp(y, 0, viewHeight - height);
+  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
+  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
+  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
+  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
+  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
+}
+
+function zoomBetween(nextZoom, from, to = from) {
+  const zoom = clamp(nextZoom, 1, maxZoom);
+  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
+            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
+}
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+function viewportPoint(event) {
+  const rect = viewport.getBoundingClientRect();
+  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
+  return {
+    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
+    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+  };
+}
+
+function pointerGeometry() {
+  const [a, b] = pointers.values();
+  if (!b) return { point: a, distance: 0 };
+  return {
+    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    distance: Math.hypot(a.x - b.x, a.y - b.y),
+  };
+}
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+function zoomBy(delta) {
+  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
+  zoomBetween(camera.zoom + delta, center);
+  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
+}
+
+function resetView() {
+  pointers.clear();
+  viewport.classList.remove('is-dragging');
+  setCamera(0, 0, 1);
+  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
+}
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+byId('view-reset').onclick = resetView;
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+// The memory hierarchy, left to right: the CPU core, then each level farther away the slower it is.
+// `ns` is a typical time to read once, `cycles` the same in clock ticks of a 3 GHz CPU, `human` that
+// time if one tick were stretched to one second, and `ms` how long the packet takes on screen each way.
+const levels = [
+  { id: 'reg', name: '레지스터', u: 4.6, h: .55, H: 8, size: '수백 바이트', ns: '0.3 ns', cycles: '1번', human: '1초', ms: 220, volatile: true },
+  { id: 'cache', name: 'L1 캐시', u: 10, h: .85, H: 10, size: '64 KB', ns: '1 ns', cycles: '4번', human: '4초', ms: 380, volatile: true },
+  { id: 'ram', name: 'RAM', u: 17.5, h: 1.45, H: 12, size: '16 GB', ns: '100 ns', cycles: '300번', human: '5분', ms: 900, volatile: true },
+  { id: 'ssd', name: 'SSD', u: 27, h: 2, H: 15, size: '1 TB', ns: '100 µs', cycles: '30만 번', human: '3일 반', ms: 2200, volatile: false },
+];
+const levelOf = (id) => levels.find((l) => l.id === id);
+const nsOf = { reg: .3, cache: 1, ram: 100, ssd: 100000 };
+
+// RAM holds 16 numbered values; the cache holds `slots` of them. In the locality step the cache
+// loads a whole line of 4 neighbouring addresses at once.
+const ramValue = (address) => (address * 7 + 3) % 10;
+const lesson = [
+  {
+    label: '거리와 크기',
+    title: '가까울수록 빠르고, 멀수록 크다',
+    body: 'CPU가 값을 읽는 곳은 여러 층으로 나뉩니다. CPU 안의 레지스터는 클럭 한 번이면 읽지만 몇 백 바이트뿐입니다. 캐시, RAM, SSD로 갈수록 크기는 커지고 값싸지지만 느려집니다. 빠르고 크고 싼 메모리는 만들기 어려워서, 작고 빠른 층과 크고 느린 층을 겹쳐 씁니다.',
+    takeaway: '각 층에서 읽기를 눌러 보세요. 점이 오가는 시간이 길어지고, 아래 표의 "1클럭이 1초라면" 칸이 1초, 4초, 5분, 3일 반으로 늘어납니다. RAM은 레지스터보다 300배, SSD는 30만 배 느립니다.',
+    description: '왼쪽의 CPU 코어에서 오른쪽으로 레지스터, L1 캐시, RAM, SSD가 차례로 놓여 있습니다. 멀리 있을수록 상자가 크고, 값을 가지러 가는 점이 오래 걸립니다.',
+    mode: 'levels',
+    tasks: [
+      { text: 'L1 캐시에서 값을 읽어 보세요.', test: (e) => e.read === 'cache', ok: '1 ns, 클럭 4번입니다.' },
+      { text: 'RAM에서 읽어 보세요. 캐시보다 얼마나 걸릴까요?', test: (e) => e.read === 'ram', ok: '100 ns로 캐시의 100배입니다. 1클럭이 1초라면 5분을 기다리는 셈입니다.' },
+      { text: '가장 큰 SSD에서 읽어 보세요.', test: (e) => e.read === 'ssd', ok: '100 µs, 1클럭이 1초라면 3일 반입니다. 그래서 자주 쓰는 값은 위층에 둡니다.' },
+    ],
+  },
+  {
+    label: '캐시 적중',
+    title: '캐시에 있으면 적중, 없으면 RAM까지 간다',
+    body: 'CPU는 RAM의 값을 읽을 때 먼저 캐시를 봅니다. 캐시에 있으면 적중(hit)이라 1 ns에 끝나고, 없으면 실패(miss)라 RAM까지 가서 가져온 뒤 캐시에 한 부 복사해 둡니다. 캐시는 작아서 꽉 차면 가장 오래 안 쓴 값을 내보냅니다. 7.2의 서버 캐시도 같은 원리입니다.',
+    takeaway: '처음 읽는 칸은 언제나 실패입니다. 같은 칸을 다시 읽으면 캐시에서 바로 돌아옵니다. 다섯 번째 다른 칸을 읽으면 캐시 칸 중 가장 오래 안 쓴 값이 밀려납니다.',
+    description: 'CPU 코어, L1 캐시, RAM이 있습니다. 읽기마다 점이 캐시에 먼저 들렀다가, 없으면 RAM까지 가서 값을 가져와 캐시에 넣습니다.',
+    mode: 'cache',
+    slots: 4,
+    tasks: [
+      { text: '아무 칸이나 읽어 보세요. 처음 읽는 칸은 어떻게 될까요?', test: (e) => e.miss > 0, ok: '캐시에 없어서 RAM까지 다녀왔습니다(실패, 약 100 ns).' },
+      { text: '방금 읽은 칸을 다시 읽어 적중시켜 보세요.', test: (e) => e.hit > 0, ok: '캐시에 있어서 1 ns에 끝났습니다(적중).' },
+      { text: '서로 다른 칸을 더 읽어 캐시에서 값이 밀려나게 해 보세요.', test: (e) => e.evicted > 0, ok: '캐시 4칸이 차서 가장 오래 안 쓴 값을 내보냈습니다.' },
+    ],
+  },
+  {
+    label: '지역성',
+    title: '이웃한 값을 함께 가져오면 적중이 는다',
+    body: '프로그램은 방금 쓴 값을 곧 다시 쓰고(시간 지역성), 방금 읽은 칸의 이웃을 곧 읽는 경향(공간 지역성)이 있습니다. 그래서 캐시는 실패할 때 값 하나가 아니라 이웃한 4칸(캐시 라인)을 한꺼번에 가져옵니다. 배열을 차례로 읽으면 이 덕을 크게 봅니다.',
+    takeaway: '"차례로 16칸"은 4칸마다 한 번만 실패해서 적중 12번, 실패 4번입니다. "4칸씩 건너뛰며 16번"은 매번 새 라인이라 거의 모두 실패합니다. 같은 16번 읽기인데 걸린 시간이 몇 배 차이 납니다.',
+    description: 'CPU 코어, L1 캐시, RAM이 있습니다. 캐시는 4칸짜리 라인 두 개를 담고, 실패하면 이웃한 4칸을 한꺼번에 가져옵니다.',
+    mode: 'locality',
+    slots: 2,
+    tasks: [
+      { text: '"차례로 16칸 읽기"를 눌러 보세요.', test: (e) => e.run === 'seq', ok: '실패 4번, 적중 12번. 한 번 가져온 라인을 네 번 씁니다.' },
+      { text: '이번에는 "건너뛰며 16번 읽기"를 눌러 보세요.', test: (e) => e.run === 'stride', ok: '거의 모든 읽기가 실패해 RAM까지 갑니다. 읽는 순서만 바꿨는데 훨씬 느립니다.' },
+    ],
+  },
+  {
+    label: '전원과 저장',
+    title: '전원이 꺼져도 남는 층은 SSD뿐이다',
+    body: '레지스터, 캐시, RAM은 3.4의 래치처럼 전기로 값을 붙잡는 휘발성 메모리입니다. SSD와 하드디스크는 전원이 없어도 값이 남는 비휘발성 저장장치입니다. 그래서 프로그램과 파일은 SSD에 두고, 실행할 때 RAM으로 올리고, 자주 쓰는 부분은 캐시와 레지스터까지 끌어 올립니다.',
+    takeaway: '전원을 끄면 SSD를 뺀 모든 층이 빈칸이 됩니다. "파일 열기"를 누르면 SSD의 파일이 RAM으로, 다시 캐시와 레지스터로 올라오는 길을 봅니다. 0.5에서 본 "저장"과 "열기"를 층으로 나누어 본 것입니다.',
+    description: 'CPU 코어, 레지스터, 캐시, RAM, SSD가 모두 있습니다. 각 층 위에 지금 담긴 내용이 적혀 있습니다.',
+    mode: 'power',
+    tasks: [
+      { text: '"전원 끄기"를 눌러 보세요. 어느 층이 남을까요?', test: (e) => e.power, ok: 'SSD의 파일만 남고 나머지는 비었습니다.' },
+      { text: '"파일 열기"로 파일을 다시 올려 보세요.', test: (e) => e.opened, ok: 'SSD → RAM → 캐시 → 레지스터로 올라와 CPU가 쓸 수 있게 됐습니다.' },
+    ],
+  },
+];
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'hierarchy-lab:v1:step';
+const state = { index: 0, playing: !motion.matches, userPaused: false, wait: 0, busy: false, solved: '',
+  cache: [], hits: 0, misses: 0, ns: 0, contents: {}, lastAddress: null, demoPosition: 0 };
+const progress = lesson.map(() => 0);
+let packets = [];
+let frame = null;
+let lastFrame = null;
+let timers = [];
+
+function svg(name, attrs, parent) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
+  if (parent) parent.append(element);
+  return element;
+}
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const laneHeight = 4;
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+byId('grid').setAttribute('d', gridLines.join(''));
+
+function drawShadow(node, half) {
+  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
+  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
+}
+function drawBox(node, h, H) {
+  const faces = {
+    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
+    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
+    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
+  };
+  for (const [name, corners] of Object.entries(faces)) svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
+  svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
+}
+
+let plates = [];
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  plate.label.setAttribute('x', plate.x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
+function addPlate(node, className, x, y, text, { pad = 1.4, round = false } = {}) {
+  const group = svg('g', { class: className }, node);
+  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
+  plate.label.textContent = text;
+  plates.push(plate);
+  sizePlate(plate);
+  return plate;
+}
+function setPlate(plate, text) {
+  plate.group.classList.toggle('empty', !text);
+  if (plate.label.textContent === text) return;
+  plate.label.textContent = text;
+  sizePlate(plate);
+}
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Scene ----------
+const shownLevels = () => lesson[state.index].mode === 'cache' || lesson[state.index].mode === 'locality'
+  ? levels.filter((l) => l.id === 'cache' || l.id === 'ram') : levels;
+let views = {};
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  views = {};
+  const list = shownLevels();
+  const far = list.at(-1).u;
+  const d = 'M' + [[0, 0], [far, 0]].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
+  svg('path', { class: 'casing', d }, byId('casings'));
+  svg('path', { class: 'bus', d }, byId('links'));
+  // CPU core: the dark chip from 0.5.
+  const core = svg('g', { class: 'node core', transform: `translate(${flat(0, 0).join(' ')})` }, byId('nodes'));
+  drawShadow(core, 1.2);
+  drawBox(core, 1.2, 8);
+  const mark = [[-.5, -.5, 8], [.5, -.5, 8], [.5, .5, 8], [-.5, .5, 8]];
+  svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, core);
+  addPlate(core, 'tag', 0, 34, 'CPU 코어', { round: true });
+  views.core = { node: core };
+  for (const level of list) {
+    const node = svg('g', { class: `node level ${level.id}`, transform: `translate(${flat(level.u, 0).join(' ')})` }, byId('nodes'));
+    drawShadow(node, level.h);
+    drawBox(node, level.h, level.H);
+    const name = addPlate(node, 'tag level-tag', 0, 14 * level.h + 16, level.name, { round: true });
+    const info = addPlate(node, 'tag info', 0, -level.H - 14 * level.h - 10, level.ns, { pad: 1.1 });
+    const badge = addPlate(node, 'tag badge', 0, -level.H - 14 * level.h - 32, '', { pad: 1.2 });
+    badge.group.classList.add('empty');
+    views[level.id] = { node, name, info, badge, level };
+  }
+  const left = -40, right = 14 * far + 14 * list.at(-1).h * 2 + 60;
+  const top = -90, bottom = 70;
+  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// ---------- Packets: to a level and back ----------
+// A trip is a list of legs [fromU, toU, ms, label]; the packet runs them one after another.
+function travel(legs, done) {
+  const total = legs.reduce((sum, leg) => sum + leg[2], 0);
+  if (motion.matches) { legs.forEach((leg) => leg[4]?.()); done?.(); return; }
+  const group = svg('g', { class: 'packet-group' }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  const label = svg('text', { class: 'packet-label', y: -10 }, group);
+  packets.push({ group, label, legs, start: performance.now(), total, fired: new Set(), done });
+  kick();
+}
+// Callbacks run after the list is updated, so a callback that starts a new trip is not lost.
+function movePackets(now) {
+  const finished = [];
+  packets = packets.filter((packet) => {
+    let t = now - packet.start;
+    if (t >= packet.total) {
+      packet.legs.forEach((leg, i) => { if (!packet.fired.has(i)) leg[4]?.(); });
+      packet.group.remove();
+      finished.push(packet.done);
+      return false;
+    }
+    let i = 0;
+    while (t > packet.legs[i][2]) {
+      if (!packet.fired.has(i)) { packet.fired.add(i); packet.legs[i][4]?.(); }
+      t -= packet.legs[i][2];
+      i++;
+    }
+    const [from, to, ms, text] = packet.legs[i];
+    const [x, y] = flat(mix(from, to, t / ms), 0, laneHeight);
+    packet.label.textContent = text;
+    packet.group.setAttribute('class', 'packet-group ' + (to < from ? 'back' : 'go'));
+    packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    return true;
+  });
+  finished.forEach((done) => done?.());
+}
+const edge = (id) => levelOf(id).u - levelOf(id).h * 1.6;
+
+function later(ms, fn) {
+  if (ms === 0 || motion.matches) { fn(); return; }
+  timers.push(setTimeout(fn, ms));
+}
+function cancelAll() {
+  timers.forEach(clearTimeout);
+  timers = [];
+  packets.forEach((packet) => packet.group.remove());
+  packets = [];
+  state.busy = false;
+}
+
+// ---------- Actions ----------
+// Level mode: read once from one level.
+function readLevel(id, user) {
+  if (state.busy) return;
+  state.busy = true;
+  const level = levelOf(id);
+  state.ns += nsOf[id];
+  flash(id, '읽는 중');
+  travel([[1.4, edge(id), level.ms, '가지러'], [edge(id), 1.4, level.ms, '값']], () => {
+    state.busy = false;
+    flash(id, `${level.ns}`);
+    report(`${level.name}에서 읽기: ${level.ns} · 클럭 ${level.cycles} · 1클럭이 1초라면 ${level.human}`);
+    if (user) afterUser({ read: id });
+  });
+}
+
+// Cache mode: read one RAM address through the cache. Locality mode caches 4-address lines.
+function readAddress(address, user, done, speed = 1) {
+  const step = lesson[state.index];
+  const lineMode = step.mode === 'locality';
+  const key = lineMode ? Math.floor(address / 4) : address;
+  const at = state.cache.findIndex((entry) => entry.key === key);
+  const cacheMs = 380 * speed, ramMs = 820 * speed;
+  const outcome = { hit: 0, miss: 0, evicted: 0 };
+  state.busy = true;
+  state.lastAddress = address;
+  if (at >= 0) {
+    const [entry] = state.cache.splice(at, 1);
+    state.cache.push(entry);   // most recently used goes to the end
+    state.hits++;
+    state.ns += 1;
+    outcome.hit = 1;
+    travel([[1.4, edge('cache'), cacheMs, `${address}번?`, () => flash('cache', '적중 ✓', 'ok')], [edge('cache'), 1.4, cacheMs, String(ramValue(address))]], finish);
+  } else {
+    state.misses++;
+    state.ns += 101;
+    outcome.miss = 1;
+    travel([
+      [1.4, edge('cache'), cacheMs, `${address}번?`, () => flash('cache', '실패 ✗', 'warn')],
+      [edge('cache'), edge('ram'), ramMs, `${address}번?`],
+      [edge('ram'), edge('cache'), ramMs, lineMode ? `${key * 4}–${key * 4 + 3}번` : String(ramValue(address)), () => {
+        if (state.cache.length >= step.slots) { state.cache.shift(); outcome.evicted = 1; }
+        state.cache.push({ key });
+        flash('ram', '여기서 가져옴', 'ok');
+        paintCache();
+      }],
+      [edge('cache'), 1.4, cacheMs, String(ramValue(address))],
+    ], finish);
+  }
+  function finish() {
+    state.busy = false;
+    paintCache();
+    report(outcome.hit ? `${address}번 칸: 캐시 적중 · 1 ns` : `${address}번 칸: 캐시 실패 → RAM까지 · 약 101 ns${outcome.evicted ? ' · 오래된 값이 밀려남' : ''}`);
+    if (user) afterUser({ hit: state.hits, miss: state.misses, evicted: outcome.evicted || state.evictedOnce ? 1 : 0 });
+    if (outcome.evicted) state.evictedOnce = true;
+    done?.();
+  }
+  paintCache();
+}
+
+// Locality mode: run 16 reads in a pattern, faster than single reads.
+function runPattern(kind, user) {
+  if (state.busy) return;
+  resetCache();
+  const addresses = kind === 'seq' ? [...Array(16).keys()] : [...Array(16).keys()].map((k) => (k * 4) % 16 + Math.floor(k / 4) % 4);
+  let k = 0;
+  const next = () => {
+    if (k >= addresses.length) {
+      state.busy = false;
+      report(`${kind === 'seq' ? '차례로 16칸' : '건너뛰며 16번'}: 적중 ${state.hits}번, 실패 ${state.misses}번 · 걸린 시간 약 ${state.ns} ns`);
+      if (user) afterUser({ run: kind });
+      state.runs = { ...state.runs, [kind]: { hits: state.hits, misses: state.misses, ns: state.ns } };
+      paintCache();
+      return;
+    }
+    readAddress(addresses[k++], false, next, .32);
+  };
+  next();
+}
+
+// Power mode.
+function powerOff(user) {
+  if (state.busy) return;
+  cancelAll();
+  for (const id of ['reg', 'cache', 'ram']) state.contents[id] = '비어 있음';
+  byId('stage-panel').classList.add('power-off');
+  later(500, () => byId('stage-panel').classList.remove('power-off'));
+  paintContents();
+  report('전원을 껐다 켰습니다. 휘발성 메모리(레지스터, 캐시, RAM)는 비었고 SSD의 파일만 남았습니다.');
+  if (user) afterUser({ power: true });
+}
+function openFile(user) {
+  if (state.busy) return;
+  state.busy = true;
+  const legs = [
+    [1.4, edge('ssd'), levelOf('ssd').ms * .6, '파일 열기'],
+    [edge('ssd'), edge('ram'), 900, '사진.jpg', () => { state.contents.ram = '사진.jpg 전체'; paintContents(); }],
+    [edge('ram'), edge('cache'), 500, '일부', () => { state.contents.cache = '사진 일부'; paintContents(); }],
+    [edge('cache'), edge('reg'), 300, '픽셀 몇 개', () => { state.contents.reg = '픽셀 값'; paintContents(); }],
+    [edge('reg'), 1.4, 200, '계산'],
+  ];
+  travel(legs, () => {
+    state.contents.ram = '사진.jpg 전체';
+    state.contents.cache = '사진 일부';
+    state.contents.reg = '픽셀 값';
+    state.busy = false;
+    paintContents();
+    report('파일 열기: SSD의 파일이 RAM으로 올라오고, CPU가 쓰는 부분이 캐시와 레지스터까지 올라왔습니다.');
+    if (user) afterUser({ opened: true });
+  });
+}
+
+// ---------- Painting ----------
+function flash(id, text, tone = '') {
+  const view = views[id];
+  if (!view) return;
+  setPlate(view.badge, text);
+  view.badge.group.setAttribute('class', `tag badge ${tone}`);
+  view.badge.group.classList.toggle('empty', !text);
+  view.node.classList.add('busy');
+  later(motion.matches ? 0 : 900, () => view.node.classList.remove('busy'));
+}
+function paintContents() {
+  if (lesson[state.index].mode !== 'power') return;
+  for (const id of ['reg', 'cache', 'ram', 'ssd']) {
+    const text = state.contents[id];
+    setPlate(views[id].badge, text);
+    views[id].badge.group.setAttribute('class', `tag badge ${text === '비어 있음' ? 'warn' : 'ok'}`);
+  }
+}
+function paintCache() {
+  const step = lesson[state.index];
+  const panel = byId('cache-view');
+  panel.hidden = !(step.mode === 'cache' || step.mode === 'locality');
+  if (panel.hidden) return;
+  const lineMode = step.mode === 'locality';
+  const slots = [...Array(step.slots).keys()].map((k) => state.cache[k]);
+  byId('cache-slots').replaceChildren(...slots.map((entry, k) => {
+    const li = document.createElement('li');
+    li.textContent = entry ? (lineMode ? `${entry.key * 4}–${entry.key * 4 + 3}번` : `${entry.key}번 = ${ramValue(entry.key)}`) : '빈칸';
+    li.classList.toggle('empty', !entry);
+    li.classList.toggle('newest', Boolean(entry) && k === state.cache.length - 1);
+    return li;
+  }));
+  const rate = state.hits + state.misses ? Math.round(100 * state.hits / (state.hits + state.misses)) : 0;
+  byId('cache-stats').textContent = `적중 ${state.hits} · 실패 ${state.misses} · 적중률 ${rate}% · 걸린 시간 약 ${state.ns} ns`;
+  if (views.cache) setPlate(views.cache.badge, lineMode ? `라인 ${state.cache.length}/${step.slots}` : `${state.cache.length}/${step.slots}칸`);
+}
+function report(text) {
+  byId('readout').textContent = text;
+  byId('announcement').textContent = text;
+}
+function resetCache() {
+  state.cache = [];
+  state.hits = 0;
+  state.misses = 0;
+  state.ns = 0;
+  state.evictedOnce = false;
+  paintCache();
+}
+
+// ---------- Controls ----------
+function buildControls() {
+  const step = lesson[state.index];
+  const box = byId('controls-area');
+  box.replaceChildren();
+  const button = (text, onClick, primary = false) => {
+    const b = Object.assign(document.createElement('button'), { type: 'button', className: 'action' + (primary ? ' primary' : ''), textContent: text });
+    b.addEventListener('click', () => { takeOver(); onClick(); });
+    box.append(b);
+    return b;
+  };
+  if (step.mode === 'levels') {
+    for (const level of levels) button(`${level.name}에서 읽기`, () => readLevel(level.id, true));
+    byId('level-table').hidden = false;
+  } else byId('level-table').hidden = true;
+  if (step.mode === 'cache') {
+    for (let a = 0; a < 8; a++) button(`${a}번 읽기`, () => { if (!state.busy) readAddress(a, true); });
+    button('캐시 비우기', () => { if (!state.busy) { resetCache(); report('캐시를 비웠습니다.'); } });
+  }
+  if (step.mode === 'locality') {
+    button('차례로 16칸 읽기', () => runPattern('seq', true), true);
+    button('건너뛰며 16번 읽기', () => runPattern('stride', true));
+  }
+  if (step.mode === 'power') {
+    button('전원 끄기', () => powerOff(true));
+    button('파일 열기', () => openFile(true), true);
+  }
+}
+function buildLevelTable() {
+  const table = byId('level-table');
+  table.replaceChildren(Object.assign(document.createElement('caption'), { textContent: '층마다 한 번 읽는 데 걸리는 시간' }));
+  const head = document.createElement('tr');
+  for (const name of ['층', '시간', '클럭', '1클럭이 1초라면', '크기']) head.append(Object.assign(document.createElement('th'), { textContent: name, scope: 'col' }));
+  table.append(head);
+  for (const level of levels) {
+    const tr = document.createElement('tr');
+    for (const text of [level.name, level.ns, level.cycles, level.human, level.size]) tr.append(Object.assign(document.createElement('td'), { textContent: text }));
+    table.append(tr);
+  }
+}
+
+// ---------- Tasks ----------
+function syncTask() {
+  const tasks = lesson[state.index].tasks;
+  const done = progress[state.index];
+  const allDone = done >= tasks.length;
+  byId('try').classList.toggle('solved', state.solved !== '');
+  byId('try-text').textContent = state.solved !== '' ? tasks[done - 1].text
+    : allDone ? '이 단계의 문제를 모두 풀었습니다. 자유롭게 눌러 보세요.' : tasks[done].text;
+  byId('try-result').textContent = state.solved === '' ? '' : `✓ 맞았습니다. ${state.solved}${allDone ? ' · 이 단계의 문제를 모두 풀었습니다.' : ''}`;
+}
+// Only the learner's own actions count, so the demo cannot solve a problem.
+function afterUser(event) {
+  const tasks = lesson[state.index].tasks;
+  const done = progress[state.index];
+  state.solved = '';
+  if (done < tasks.length && tasks[done].test(event)) {
+    progress[state.index] = done + 1;
+    state.solved = tasks[done].ok;
+  }
+  syncTask();
+}
+
+// ---------- Demo ----------
+function takeOver() {
+  if (!state.playing) return;
+  state.playing = false;
+  cancelAll();
+  syncPlayback();
+}
+const demos = {
+  levels: () => readLevel(levels[state.demoPosition++ % levels.length].id, false),
+  cache: () => { if (!state.busy) readAddress([0, 1, 0, 2, 3, 4, 1][state.demoPosition++ % 7], false); },
+  locality: () => runPattern(state.demoPosition++ % 2 ? 'stride' : 'seq', false),
+  power: () => (state.demoPosition++ % 2 ? openFile(false) : powerOff(false)),
+};
+function demoTick() {
+  if (state.busy) { state.wait = 300; return; }
+  demos[lesson[state.index].mode]();
+  state.wait = { levels: 5200, cache: 3800, locality: 9000, power: 5200 }[lesson[state.index].mode];
+}
+function tick(now) {
+  frame = null;
+  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
+  lastFrame = now;
+  if (state.playing) {
+    state.wait -= elapsed;
+    if (state.wait <= 0) demoTick();
+  }
+  movePackets(now);
+  if (state.playing || packets.length) frame = requestAnimationFrame(tick);
+  else lastFrame = null;
+}
+function kick() {
+  if (frame === null) frame = requestAnimationFrame(tick);
+}
+function syncPlayback() {
+  const reduced = motion.matches;
+  if (reduced) state.playing = false;
+  byId('status').textContent = reduced ? '모션 감소 · 직접 조작' : state.playing ? '자동 실행 중' : '직접 조작';
+  byId('pause').textContent = state.playing ? '일시정지' : '자동 실행';
+  byId('pause').disabled = reduced;
+  byId('replay').disabled = reduced;
+  if (state.playing) kick();
+}
+
+// ---------- Steps and routing ----------
+function startStep() {
+  cancelAll();
+  state.demoPosition = 0;
+  state.contents = { reg: '픽셀 값', cache: '사진 일부', ram: '사진.jpg 전체', ssd: '사진.jpg' };
+  state.runs = {};
+  buildScene();
+  resetCache();
+  paintContents();
+  byId('readout').textContent = lesson[state.index].mode === 'power' ? '각 층 위에 지금 담긴 내용이 적혀 있습니다.' : '버튼을 눌러 값을 읽어 보세요.';
+  state.wait = 900;
+}
+function showStep(index, announce = true) {
+  state.index = index;
+  if (!state.userPaused) state.playing = !motion.matches;
+  const s = lesson[index];
+  byId('step-title').textContent = s.title;
+  byId('body').textContent = s.body;
+  byId('takeaway').textContent = s.takeaway;
+  byId('scene-desc').textContent = s.description;
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  buildControls();
+  startStep();
+  state.solved = '';
+  syncTask();
+  syncPlayback();
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
+}
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/hierarchy/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/hierarchy\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+byId('pause').onclick = () => {
+  state.playing = !state.playing;
+  state.userPaused = !state.playing;
+  if (state.playing) state.wait = 400;
+  syncPlayback();
+  byId('announcement').textContent = byId('status').textContent;
+};
+byId('replay').onclick = () => {
+  state.playing = true;
+  state.userPaused = false;
+  startStep();
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 자동 실행';
+};
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches && !state.userPaused) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+buildLevelTable();
+const initial = routeIndex();
+history.replaceState(null, '', `#/hierarchy/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

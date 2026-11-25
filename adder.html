@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="XOR와 AND로 반가산기를, 반가산기와 전가산기를 이어 여러 자리 덧셈기를 만들며 올림이 번지는 모습을 살펴보세요.">
+<title>덧셈기 · 레슨 3.2</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.wire.idle{stroke:#a9b8b0;stroke-width:2;stroke-dasharray:4 4}
+.chevron.idle{stroke:#a9b8b0}
+.gate .left{fill:#dfe4f2;stroke:#7d88b4}
+.gate .right{fill:#c4cbe3;stroke:#7d88b4}
+.gate .top{fill:#f1f3fa;stroke:#7d88b4}
+.gate.OR .left{fill:#f3e2d3;stroke:#b48a64}
+.gate.OR .right{fill:#e5cdb6;stroke:#b48a64}
+.gate.OR .top{fill:#fbf3ec;stroke:#b48a64}
+.gate.NOT .left{fill:#eadcf0;stroke:#9a77ad}
+.gate.NOT .right{fill:#d9c4e3;stroke:#9a77ad}
+.gate.NOT .top{fill:#f7f0fa;stroke:#9a77ad}
+.gate .face{transition:fill .18s}
+.gate.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.gate .tag text{font:800 12px var(--mono);letter-spacing:.04em}
+.gate.AND .tag rect{stroke:#7d88b4}.gate.AND .tag text{fill:#3c4a85}
+.gate.OR .tag rect{stroke:#b48a64}.gate.OR .tag text{fill:#7a4b1f}
+.gate.NOT .tag rect{stroke:#9a77ad}.gate.NOT .tag text{fill:#5f3a73}
+.gate.XOR .left{fill:#d5ebe7;stroke:#4f9189}
+.gate.XOR .right{fill:#b9dcd6;stroke:#4f9189}
+.gate.XOR .top{fill:#eef8f6;stroke:#4f9189}
+.gate.XOR .tag rect{stroke:#4f9189}.gate.XOR .tag text{fill:#245f57}
+.gate.HA .left,.gate.FA .left{fill:#e4e1d3;stroke:#8f8763}
+.gate.HA .right,.gate.FA .right{fill:#d2cdb6;stroke:#8f8763}
+.gate.HA .top,.gate.FA .top{fill:#f7f5ec;stroke:#8f8763}
+.gate.HA .tag rect,.gate.FA .tag rect{stroke:#8f8763}
+.gate.HA .tag text,.gate.FA .tag text{fill:#5b5232;font:800 12px system-ui,sans-serif;letter-spacing:0}
+.input-row.numbers{flex-direction:column}
+.number-row{display:flex;gap:6px;align-items:center}
+.number-name{font:800 1.05rem var(--mono);width:1.6em;color:var(--ink)}
+.number-value{font:700 1rem var(--mono);color:var(--muted);min-width:3.2em;padding-left:4px}
+.truth.column-sum{font-size:1.05rem}
+.truth.column-sum th{background:none;border:none;text-align:right;padding-right:10px;font-size:.8125rem;color:var(--muted)}
+.truth.column-sum td{border:none;min-width:30px;padding:1px 6px}
+.truth.column-sum tr.carry td{color:#a24c14;font-size:.8125rem;height:1.2em}
+.truth.column-sum tr.sum td{border-top:2px solid var(--ink);font-weight:800}
+.truth.column-sum tr.sum td.one{color:#8a6300;background:#fff7d6}
+.truth.column-sum td.decimal{color:var(--muted);text-align:left;padding-left:12px;font-weight:600}
+.truth.column-sum tr.sum td.decimal{color:var(--accent);font-weight:800}
+.lamp .left{fill:#d7dfdb;stroke:#8c9d96}
+.lamp .right{fill:#b8c6c0;stroke:#8c9d96}
+.lamp .top{fill:#f4f7f5;stroke:#8c9d96}
+.lamp .bulb{fill:#e6ebe8;stroke:#8c9d96;stroke-width:1;transition:fill .2s,stroke .2s}
+.lamp .halo{fill:#ffd34d;opacity:0;transition:opacity .2s}
+.lamp.on .bulb{fill:#ffd34d;stroke:#c9940f}
+.lamp.on .halo{opacity:.7}
+.lamp.on .tag rect{stroke:#c9940f}
+.bit-badge circle{fill:#fff;stroke:#a9b8b0;stroke-width:1.1;transition:fill .18s,stroke .18s}
+.bit-badge text{font:700 10.5px var(--mono);fill:#7c8c85;text-anchor:middle;dominant-baseline:central}
+.bit-badge.on circle{fill:#d2f4dd;stroke:var(--accent)}
+.bit-badge.on text{fill:#0f5a3c}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.controls-row{display:flex;gap:12px 18px;align-items:flex-start;flex-wrap:wrap}
+.input-row{display:flex;gap:8px;flex-wrap:wrap}
+.input-button{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:64px;min-height:56px;padding:4px 10px;border:1px solid #9fb7a9;border-radius:10px;background:#f6f8f5;line-height:1.2}
+.input-button .name{font:700 .8125rem var(--mono);color:var(--muted)}
+.input-button .bit{font:700 1.2rem var(--mono);color:#7c8c85}
+.input-button:hover{border-color:var(--accent)}
+.input-button[aria-pressed=true]{background:#d2f4dd;border-color:var(--accent)}
+.input-button[aria-pressed=true] .name,.input-button[aria-pressed=true] .bit{color:#0f5a3c}
+.truth{border-collapse:collapse;font:600 .9375rem var(--mono);text-align:center}
+.truth caption{font:700 .8125rem system-ui,sans-serif;color:var(--muted);text-align:left;margin-bottom:4px}
+.truth th,.truth td{border:1px solid var(--border);padding:3px 12px;min-width:44px}
+.truth th{background:#f3f6f2;font-size:.8125rem}
+.truth th.out,.truth td.out{border-left:2px solid #9fb7a9}
+.truth td.out.one{color:#8a6300;background:#fff7d6}
+.truth tr.current td{background:#d9efe2;font-weight:800}
+.truth tr.current td.out.one{background:#ffe9a0}
+.truth tr.current td.seen{background:none}
+.truth td.seen{width:26px;min-width:26px;padding:0 4px;border:none;color:var(--accent);font-family:system-ui,sans-serif;text-align:left}
+.sample.idle{border-top:2px dashed #a9b8b0}
+.dot.lamp-on{border-color:#c9940f;background:#ffd34d;border-radius:50%}
+@media(max-width:600px){.tag text,.gate .tag text,.gate.HA .tag text,.gate.FA .tag text{font-size:16px}.packet-label{font-size:13px}.bit-badge text{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text,.gate .face,.lamp .bulb,.lamp .halo,.bit-badge circle{transition:none}}
+@media(max-width:420px){.shell{padding:18px 12px}.stage-top,.controls,.timeline,.view-controls,.hands-on{padding-inline:12px}.view-hint{flex-basis:100%;margin-inline-start:0}.steps{gap:5px}.steps button{padding-inline:6px}.truth th,.truth td{padding-inline:8px;min-width:36px}}
+</style>
+<link rel="stylesheet" href="./course.css">
+<script defer src="./course-catalog.js"></script>
+<script defer src="./course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">3장 컴퓨터를 바닥부터 · 레슨 3.2</p>
+    <h1>덧셈기</h1>
+    <p class="lead">게이트를 엮으면 어떻게 1 + 1을 계산할까요? 스위치로 두 수를 넣고 합과 올림이 램프에 켜지는 모습을 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">스위치, 덧셈 회로, 램프</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">두 수의 비트가 덧셈 회로를 지나 합과 올림 램프로 가는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="badges"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <button class="action" id="try-next" type="button" hidden>다음 문제</button>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="controls-row">
+            <div class="input-row" id="input-buttons" role="group" aria-label="입력 스위치 켜고 끄기"></div>
+            <table class="truth" id="truth"></table>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <button class="action" id="view-reset" type="button">원래 보기</button>
+          <span class="view-hint"><span class="mouse-hint">장면의 스위치를 눌러도 됩니다 · 확대 후 드래그로 이동</span><span class="touch-hint">장면의 스위치를 눌러도 됩니다 · 두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="sample"></i>1이 흐르는 선</span><span><i class="sample idle"></i>0인 선</span><span><i class="dot on"></i>켜짐 = 1</span><span><i class="dot lamp-on"></i>램프 켜짐 = 그 자리 1</span></div>
+          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+// Each step is a small circuit. Nodes are listed in signal order (inputs first, lamps last).
+// `u` runs left to right on screen and `v` top to bottom; on the floor that is x = (u + v) / 2, y = (u - v) / 2.
+// `in` names the nodes feeding a gate. An adder block (HA, FA) has two outputs, written `id.s` (sum) and
+// `id.c` (carry). `mids` is the u where each incoming wire turns, so wires in the same column do not overlap.
+// Steps with `outs` show a truth table of those lamps; steps with `bits` treat the switches as two
+// binary numbers A and B and show column addition instead. `demo` lists what the autoplay sets:
+// switch values in input order, or [A, B] as numbers when the step has `bits`.
+const num = (v, name, bits) => Array.from({ length: bits }, (_, k) => v[name + k] << k).reduce((a, b) => a + b, 0);
+const lesson = [
+  {
+    label: '반가산기',
+    title: '한 자리 덧셈은 게이트 두 개면 된다',
+    body: '이진수 한 자리끼리 더하면 0 + 0 = 0, 0 + 1 = 1, 1 + 1 = 10입니다. 결과는 두 자리라서 이 자리에 남는 합(S)과 윗자리로 넘기는 올림(C)으로 나눕니다. 합은 두 입력이 다를 때 1이므로 3.1에서 만든 XOR, 올림은 둘 다 1일 때만 1이므로 AND입니다. 이 회로를 반가산기라고 합니다.',
+    takeaway: '1 + 1이면 XOR는 0, AND는 1을 내보내 올림 램프만 켜집니다. 램프 두 개를 올림, 합 순서로 읽으면 10, 곧 2입니다. 진리표의 올림 열은 AND, 합 열은 XOR의 진리표와 같습니다.',
+    description: '스위치 A와 B가 위쪽 XOR와 아래쪽 AND로 갈라져 들어갑니다. XOR는 합 램프, AND는 올림 램프로 이어집니다.',
+    nodes: [
+      { id: 'A', type: 'IN', u: 0, v: -5 },
+      { id: 'B', type: 'IN', u: 0, v: 5 },
+      { id: 'x', type: 'XOR', in: ['A', 'B'], u: 9, v: -5, mids: [3.4, 5.6] },
+      { id: 'a', type: 'AND', in: ['A', 'B'], u: 9, v: 5, mids: [4.5, 3.4] },
+      { id: 'S', type: 'LAMP', in: ['x'], u: 16, v: -5, label: '합 S' },
+      { id: 'C', type: 'LAMP', in: ['a'], u: 16, v: 5, label: '올림 C' },
+    ],
+    outs: [['C', '올림 C'], ['S', '합 S']],
+    demo: [[0, 1], [1, 1], [1, 0], [0, 0]],
+    expr: (v) => [`A + B = ${v.A} + ${v.B} = `, `${v.C}${v.S}`, ` (이진수) · 올림 ${v.C}, 합 ${v.S}`],
+    tasks: [
+      { text: '1 + 1을 만들어 보세요. 어느 램프가 켜질까요?', test: (v) => v.A && v.B, ok: '1 + 1 = 10입니다. 합은 0, 올림은 1입니다.' },
+      { text: '합 램프만 켜 보세요.', test: (v) => v.S === 1 && v.C === 0, ok: '0 + 1 = 01입니다. 두 입력이 다르면 XOR가 1을 냅니다.' },
+      { text: '진리표의 네 줄을 모두 직접 만들어 보세요.', test: (v, seen) => seen.size === 4, ok: '올림 열은 AND, 합 열은 XOR와 같습니다.' },
+    ],
+  },
+  {
+    label: '전가산기',
+    title: '아랫자리 올림까지 세 개를 더한다',
+    body: '두 자리 이상을 더하면 아랫자리에서 올라온 올림도 함께 더해야 합니다. 그래서 A, B에 올림 입력(Cin)을 더한 세 비트를 더하는 회로가 필요합니다. XOR 두 개가 세 비트의 합을, AND 두 개와 OR 하나가 새 올림을 만듭니다. 이것을 전가산기라고 합니다.',
+    takeaway: '1 + 1 + 1 = 11이라 합과 올림 램프가 모두 켜집니다. 신호가 XOR 두 개를 지나야 해서 합 램프는 게이트 두 번만큼, 올림 램프는 세 번만큼 늦게 바뀝니다.',
+    description: '스위치 A, B, Cin이 있습니다. A와 B는 첫 XOR와 첫 AND로, 첫 XOR의 출력과 Cin은 둘째 XOR와 둘째 AND로 갑니다. 둘째 XOR는 합 램프로, 두 AND는 OR를 거쳐 올림 램프로 갑니다.',
+    nodes: [
+      { id: 'A', type: 'IN', u: 0, v: -6 },
+      { id: 'B', type: 'IN', u: 0, v: 1 },
+      { id: 'Ci', type: 'IN', u: 0, v: 8, label: 'Cin' },
+      { id: 'x1', type: 'XOR', in: ['A', 'B'], u: 7, v: -6, mids: [3, 4] },
+      { id: 'a1', type: 'AND', in: ['A', 'B'], u: 7, v: 2, mids: [2.4, 3] },
+      { id: 'x2', type: 'XOR', in: ['x1', 'Ci'], u: 14, v: -5, mids: [10.4, 12] },
+      { id: 'a2', type: 'AND', in: ['x1', 'Ci'], u: 14, v: 5, mids: [10.4, 12] },
+      { id: 'o', type: 'OR', in: ['a1', 'a2'], u: 20, v: 4, mids: [17.4, 17.4] },
+      { id: 'S', type: 'LAMP', in: ['x2'], u: 26, v: -5, label: '합 S' },
+      { id: 'C', type: 'LAMP', in: ['o'], u: 26, v: 4, label: '올림 C' },
+    ],
+    outs: [['C', '올림 C'], ['S', '합 S']],
+    demo: [[1, 0, 1], [1, 1, 1], [0, 1, 0], [0, 0, 0]],
+    expr: (v) => [`A + B + Cin = ${v.A} + ${v.B} + ${v.Ci} = `, `${v.C}${v.S}`, ` (이진수) = ${v.A + v.B + v.Ci}`],
+    tasks: [
+      { text: '세 스위치를 모두 켜 보세요. 1 + 1 + 1은 얼마일까요?', test: (v) => v.A && v.B && v.Ci, ok: '1 + 1 + 1 = 11, 곧 3입니다. 두 램프가 모두 켜집니다.' },
+      { text: 'Cin을 켠 채로 올림 램프만 켜 보세요.', test: (v) => v.Ci && v.C === 1 && v.S === 0, ok: '1 + 1이 Cin과 만나 10이 됐습니다.' },
+      { text: '진리표의 여덟 줄을 모두 직접 만들어 보세요.', test: (v, seen) => seen.size === 8, ok: '켜진 스위치 수를 이진수로 쓴 것이 올림·합입니다.' },
+    ],
+  },
+  {
+    label: '두 자리 덧셈',
+    title: '덧셈기를 이어 붙이면 여러 자리를 더한다',
+    body: '반가산기와 전가산기를 상자 하나로 묶어 생각해 봅시다. 1의 자리는 반가산기가 더하고, 거기서 나온 올림을 2의 자리 전가산기가 받아 함께 더합니다. 손으로 세로셈을 할 때 받아올림을 윗자리에 적는 것과 같습니다. 이제 두 자리 이진수(0–3)끼리 더할 수 있습니다.',
+    takeaway: '1 + 1이면 1의 자리 상자가 올림 1을 위쪽 상자로 보내고, 2의 자리 램프가 켜집니다. 결과는 램프 세 개라서 가장 큰 3 + 3 = 6(110)도 담을 수 있습니다.',
+    description: '아래 줄에는 A와 B의 1의 자리 스위치와 반가산기, 위 줄에는 2의 자리 스위치와 전가산기가 있습니다. 반가산기의 올림이 전가산기로 올라가고, 오른쪽 램프 세 개가 1, 2, 4의 자리를 보입니다.',
+    bits: 2,
+    nodes: [
+      { id: 'A1', type: 'IN', u: 0, v: -8 },
+      { id: 'B1', type: 'IN', u: 3.6, v: -4 },
+      { id: 'A0', type: 'IN', u: 0, v: 4 },
+      { id: 'B0', type: 'IN', u: 3.6, v: 8 },
+      { id: 'h0', type: 'HA', in: ['A0', 'B0'], u: 9, v: 6 },
+      { id: 'f1', type: 'FA', in: ['A1', 'B1', 'h0.c'], u: 15, v: -6, mids: [7, 7.6, 12.6] },
+      { id: 'S0', type: 'LAMP', in: ['h0.s'], u: 22, v: 6.7, label: '1의 자리' },
+      { id: 'S1', type: 'LAMP', in: ['f1.s'], u: 22, v: -5.3, label: '2의 자리' },
+      { id: 'S2', type: 'LAMP', in: ['f1.c'], u: 22, v: -14, label: '4의 자리' },
+    ],
+    demo: [[1, 1], [3, 1], [2, 1], [3, 3]],
+    expr: (v) => {
+      const a = num(v, 'A', 2), b = num(v, 'B', 2), s = num(v, 'S', 3);
+      return [`A + B = ${a} + ${b} = `, String(s), ` · 이진수 ${a.toString(2).padStart(2, '0')} + ${b.toString(2).padStart(2, '0')} = ${s.toString(2).padStart(3, '0')}`];
+    },
+    tasks: [
+      { text: '1 + 1을 만들어 보세요. 올림은 어디로 갈까요?', test: (v) => num(v, 'A', 2) === 1 && num(v, 'B', 2) === 1, ok: '01 + 01 = 10입니다. 1의 자리 올림이 2의 자리로 올라갔습니다.' },
+      { text: '합이 4가 되는 덧셈을 하나 만들어 보세요.', test: (v) => num(v, 'S', 3) === 4, ok: '4의 자리 램프는 2의 자리에서 올림이 나올 때만 켜집니다.' },
+      { text: '가장 큰 덧셈 3 + 3을 만들어 보세요.', test: (v) => num(v, 'A', 2) === 3 && num(v, 'B', 2) === 3, ok: '11 + 11 = 110, 곧 6입니다.' },
+    ],
+  },
+  {
+    label: '올림의 전달',
+    title: '올림은 한 자리씩 차례로 번진다',
+    body: '덧셈기 세 개를 이으면 세 자리 이진수(0–7)를 더할 수 있습니다. 상자마다 아랫자리 올림이 도착해야 답을 낼 수 있어서, 올림이 1의 자리에서 위로 한 칸씩 번져 갑니다. 이런 덧셈기를 리플 캐리(물결 올림) 덧셈기라고 합니다. 자리가 32개, 64개로 늘면 기다리는 시간도 길어지기 때문에 실제 CPU는 올림을 미리 계산하는 회로를 더 씁니다.',
+    takeaway: '7 + 1을 만들면 1의 자리 상자부터 올림이 위로 하나씩 넘어가고, 8의 자리 램프가 가장 늦게 켜집니다. 3 + 4처럼 올림이 없는 덧셈은 모든 램프가 거의 함께 바뀝니다.',
+    description: '아래부터 1, 2, 4의 자리 덧셈기가 오른쪽 위로 비스듬히 놓여 있고, 각 상자의 올림이 위 상자로 올라갑니다. 오른쪽 램프 네 개가 1, 2, 4, 8의 자리를 보입니다.',
+    bits: 3,
+    nodes: [
+      { id: 'A2', type: 'IN', u: 0, v: -14 },
+      { id: 'B2', type: 'IN', u: 3.6, v: -10 },
+      { id: 'A1', type: 'IN', u: 0, v: -3 },
+      { id: 'B1', type: 'IN', u: 3.6, v: 1 },
+      { id: 'A0', type: 'IN', u: 0, v: 8 },
+      { id: 'B0', type: 'IN', u: 3.6, v: 12 },
+      { id: 'h0', type: 'HA', in: ['A0', 'B0'], u: 9, v: 10 },
+      { id: 'f1', type: 'FA', in: ['A1', 'B1', 'h0.c'], u: 15, v: -1, mids: [7, 7.6, 12.6] },
+      { id: 'f2', type: 'FA', in: ['A2', 'B2', 'f1.c'], u: 21, v: -12, mids: [7, 7.6, 18.6] },
+      { id: 'S0', type: 'LAMP', in: ['h0.s'], u: 28, v: 10.7, label: '1의 자리' },
+      { id: 'S1', type: 'LAMP', in: ['f1.s'], u: 28, v: -.3, label: '2의 자리' },
+      { id: 'S2', type: 'LAMP', in: ['f2.s'], u: 28, v: -11.3, label: '4의 자리' },
+      { id: 'S3', type: 'LAMP', in: ['f2.c'], u: 28, v: -20, label: '8의 자리' },
+    ],
+    demo: [[7, 1], [3, 4], [5, 3], [2, 2]],
+    expr: (v) => {
+      const a = num(v, 'A', 3), b = num(v, 'B', 3), s = num(v, 'S', 4);
+      return [`A + B = ${a} + ${b} = `, String(s), ` · 이진수 ${a.toString(2).padStart(3, '0')} + ${b.toString(2).padStart(3, '0')} = ${s.toString(2).padStart(4, '0')}`];
+    },
+    tasks: [
+      { text: '7 + 1을 만들고 올림이 번지는 모습을 보세요.', test: (v) => num(v, 'A', 3) === 7 && num(v, 'B', 3) === 1, ok: '111 + 001 = 1000입니다. 올림이 세 칸을 건너 8의 자리 램프가 마지막에 켜졌습니다.' },
+      { text: '올림이 한 번도 생기지 않게 합이 7인 덧셈을 만들어 보세요.', test: (v) => num(v, 'S', 4) === 7 && (num(v, 'A', 3) & num(v, 'B', 3)) === 0, ok: '같은 자리에 1이 겹치지 않으면 올림이 없습니다.' },
+      { text: '가장 큰 덧셈 7 + 7을 만들어 보세요.', test: (v) => num(v, 'A', 3) === 7 && num(v, 'B', 3) === 7, ok: '111 + 111 = 1110, 곧 14입니다.' },
+    ],
+  },
+];
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+function setCamera(x, y, zoom) {
+  camera.zoom = clamp(zoom, 1, maxZoom);
+  const width = viewWidth / camera.zoom;
+  const height = viewHeight / camera.zoom;
+  camera.x = clamp(x, 0, viewWidth - width);
+  camera.y = clamp(y, 0, viewHeight - height);
+  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
+  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
+  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
+  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
+  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
+}
+
+function zoomBetween(nextZoom, from, to = from) {
+  const zoom = clamp(nextZoom, 1, maxZoom);
+  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
+            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
+}
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+function viewportPoint(event) {
+  const rect = viewport.getBoundingClientRect();
+  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
+  return {
+    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
+    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+  };
+}
+
+function pointerGeometry() {
+  const [a, b] = pointers.values();
+  if (!b) return { point: a, distance: 0 };
+  return {
+    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    distance: Math.hypot(a.x - b.x, a.y - b.y),
+  };
+}
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+function zoomBy(delta) {
+  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
+  zoomBetween(camera.zoom + delta, center);
+  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
+}
+
+function resetView() {
+  pointers.clear();
+  viewport.classList.remove('is-dragging');
+  setCamera(0, 0, 1);
+  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
+}
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+byId('view-reset').onclick = resetView;
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'adder-lab:v1:step';
+const gateDelay = 560;   // ms for a signal to cross one wire, so one gate "thinks" per wire
+const state = { index: 0, inputs: {}, values: {}, shown: {}, playing: !motion.matches, userPaused: false,
+  demoPosition: 0, wait: 0, solved: '', seen: new Set() };
+const progress = lesson.map(() => 0);  // try-it problems solved in each step
+let views = new Map();   // node id -> drawn node
+let wires = [];          // { from, to, port, line, casing, chevron, startLen, endLen }
+let events = [];         // pending { at, id }: when a node shows its new value
+let packets = [];
+let frame = null;
+let lastFrame = null;
+
+function svg(name, attrs, parent) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
+  if (parent) parent.append(element);
+  return element;
+}
+
+// The same world-to-screen projection as the other labs.
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+// Screen position of a (u, v) floor point: u = x + y, v = x - y.
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const laneHeight = 3;
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) {
+  gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+}
+byId('grid').setAttribute('d', gridLines.join(''));
+
+function drawShadow(node, half) {
+  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
+  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
+}
+
+function boxFaces(h, H) {
+  return {
+    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
+    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
+    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
+  };
+}
+function drawFaces(node, h, H) {
+  const faces = {};
+  for (const [name, corners] of Object.entries(boxFaces(h, H))) {
+    faces[name] = svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
+  }
+  const highlight = svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
+  return { faces, highlight };
+}
+
+// Plates are small labels whose box is sized to the text.
+let plates = [];
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  plate.label.setAttribute('x', plate.x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
+function addPlate(node, className, x, y, text, { pad = 1.5, round = true } = {}) {
+  const group = svg('g', { class: className }, node);
+  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
+  plate.label.textContent = text;
+  plates.push(plate);
+  sizePlate(plate);
+  return plate;
+}
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// Move a plate beside a box: side -1 = left of it, 1 = right of it.
+function besidePlate(plate, side, h) {
+  plate.x = side * (28 * h + 5 + plate.rect.getBBox().width / 2);
+  sizePlate(plate);
+}
+
+// Sizes: half-width h on the floor (a box covers u ± 2h) and height H.
+const size = { IN: [.78, 10], NOT: [1.05, 14], AND: [1.15, 14], OR: [1.15, 14], XOR: [1.15, 14], HA: [1.4, 17], FA: [1.4, 17], LAMP: [1.05, 11] };
+const blockName = { HA: '반가산기', FA: '전가산기' };
+const nodeOf = (ref) => ref.split('.')[0];
+const outOffset = (ref) => ref.endsWith('.s') ? .7 : ref.endsWith('.c') ? -.7 : 0;
+const switchHigh = 18;  // a switch pops up to this height when on
+
+function shapeSwitch(view, H) {
+  const h = size.IN[0];
+  for (const [name, corners] of Object.entries(boxFaces(h, H))) {
+    view.faces[name].setAttribute('points', corners.map((p) => point(...p)).join(' '));
+  }
+  view.highlight.setAttribute('d', `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}`);
+  view.digit.setAttribute('y', -H + .5);
+  view.plate.group.setAttribute('transform', `translate(0 ${(size.IN[1] - H) / 2})`);
+}
+
+function createNode(spec) {
+  const [h, H] = size[spec.type];
+  const kind = spec.type === 'IN' ? 'switch' : spec.type === 'LAMP' ? 'lamp' : 'gate ' + spec.type;
+  const node = svg('g', { class: 'node ' + kind, transform: `translate(${flat(spec.u, spec.v).join(' ')})` }, byId('nodes'));
+  const view = { spec, node, height: H, heightFrom: H, heightTo: H };
+  drawShadow(node, h);
+  if (spec.type === 'IN') {
+    node.dataset.input = spec.id;
+    const spill = [[-h, -h], [h, -h], [h, h], [-h, h]].map(([x, y]) => point(x * 1.9, y * 1.9, 0)).join(' ');
+    svg('polygon', { class: 'glow', points: spill, filter: 'url(#soft-glow)' }, node);
+    view.faces = {};
+    for (const name of ['left', 'right', 'top']) view.faces[name] = svg('polygon', { class: 'face ' + name }, node);
+    view.highlight = svg('path', { class: 'highlight' }, node);
+    view.digit = svg('text', { class: 'digit', x: 0 }, node);
+    // Switch names sit to the left so stacked switches do not cover each other's names.
+    view.plate = addPlate(node, 'tag', 0, -H / 2 - 4, spec.label ?? spec.id, { pad: 1.3 });
+    besidePlate(view.plate, -1, h);
+    shapeSwitch(view, H);
+    return view;
+  }
+  Object.assign(view, drawFaces(node, h, H));
+  if (spec.type === 'LAMP') {
+    svg('circle', { class: 'halo', cx: 0, cy: -H - 9, r: 17, filter: 'url(#soft-glow)' }, node);
+    svg('circle', { class: 'bulb', cx: 0, cy: -H - 9, r: 8.5 }, node);
+    const [cx, cy] = project(h, -h, 0);
+    besidePlate(addPlate(node, 'tag', 0, -H / 2, spec.label ?? '램프'), 1, h);
+    return view;
+  }
+  view.plate = addPlate(node, 'tag', 0, -H - 14 * h - 12, blockName[spec.type] ?? spec.type, { pad: 1.3, round: false });
+  if (blockName[spec.type]) return view;  // a block's two outputs show on their wires
+  // The gate's output value, on a badge just past its right corner.
+  const badge = svg('g', { class: 'bit-badge', transform: `translate(${14 * (2 * h + .9)} -12)` }, byId('badges'));
+  badge.setAttribute('transform', `translate(${14 * (spec.u + 2 * h + .95)} ${7 * spec.v - 13})`);
+  svg('circle', { r: 8 }, badge);
+  view.badgeText = svg('text', {}, badge);
+  view.badge = badge;
+  return view;
+}
+
+// Wires run on the floor like a schematic: right from the source, then up or down at `mid`,
+// then right into the gate's port. The part under each box is hidden by the box.
+function createWire(from, to, port, mid) {
+  const src = views.get(nodeOf(from)).spec, dst = views.get(to).spec;
+  const ports = [[0], [-.9, .9], [-1.1, 0, 1.1]][dst.in.length - 1];
+  const pv = dst.v + ports[port];
+  const sv = src.v + outOffset(from);
+  const turn = mid ?? (src.u + dst.u) / 2;
+  const route = [[src.u, sv], [turn, sv], [turn, pv], [dst.u, pv]].map(([u, v]) => flat(u, v, laneHeight));
+  const d = 'M' + route.map((p) => p.join(' ')).join('L');
+  const casing = svg('path', { class: 'casing', d }, byId('casings'));
+  const group = svg('g', {}, byId('links'));
+  const line = svg('path', { class: 'wire idle', d }, group);
+  // Chevron on the last straight part, pointing into the gate.
+  const [p, q] = route.slice(-2);
+  const at = [mix(p[0], q[0], .35), mix(p[1], q[1], .35)];
+  const chevron = svg('path', { class: 'chevron idle', d: 'M-4.5 -5L2.5 0L-4.5 5', transform: `translate(${at.join(' ')})` }, group);
+  const startLen = 14 * 2 * size[src.type][0] * .8;
+  const endLen = 14 * (2 * size[dst.type][0] - Math.abs(ports[port])) * .9;
+  return { from, to, port, line, casing, chevron, startLen, endLen };
+}
+
+function evaluate(inputs) {
+  const values = {};
+  for (const spec of lesson[state.index].nodes) {
+    const [a, b, c] = (spec.in ?? []).map((ref) => values[ref]);
+    if (spec.type === 'HA') { values[spec.id + '.s'] = a ^ b; values[spec.id + '.c'] = a & b; continue; }
+    if (spec.type === 'FA') { values[spec.id + '.s'] = a ^ b ^ c; values[spec.id + '.c'] = a & b | c & (a ^ b); continue; }
+    values[spec.id] = spec.type === 'IN' ? inputs[spec.id]
+      : spec.type === 'NOT' ? 1 - a : spec.type === 'AND' ? a & b : spec.type === 'OR' ? a | b
+      : spec.type === 'XOR' ? a ^ b : a;
+  }
+  return values;
+}
+
+// How many wires a signal crosses from the switches to each node.
+function depths() {
+  const depth = {};
+  for (const spec of lesson[state.index].nodes) {
+    depth[spec.id] = spec.in ? 1 + Math.max(...spec.in.map((ref) => depth[nodeOf(ref)])) : 0;
+  }
+  return depth;
+}
+
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'badges', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  events = [];
+  views = new Map();
+  const step = lesson[state.index];
+  // Painter's order: nodes higher on screen first.
+  const ordered = [...step.nodes].sort((a, b) => a.v - b.v || a.u - b.u);
+  for (const spec of ordered) views.set(spec.id, createNode(spec));
+  wires = [];
+  for (const spec of step.nodes) {
+    (spec.in ?? []).forEach((from, port) => wires.push(createWire(from, spec.id, port, spec.mids?.[port])));
+  }
+  fitWorld(step.nodes);
+}
+
+// Scale and centre the circuit in the 620 x 280 viewport.
+function fitWorld(nodes) {
+  const xs = nodes.map((n) => 14 * n.u), ys = nodes.map((n) => 7 * n.v);
+  const left = Math.min(...xs) - 70, right = Math.max(...xs) + 90;
+  const top = Math.min(...ys) - 50, bottom = Math.max(...ys) + 22;
+  const scale = Math.min(1.9, 580 / (right - left), 262 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 142 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// Show one node's value: light it, light its outgoing wires, and send a "1" down each of them.
+function showNode(id, send) {
+  const view = views.get(id);
+  for (const ref of [id, id + '.s', id + '.c']) if (ref in state.values) state.shown[ref] = state.values[ref];
+  if (!view) return;
+  const on = state.values[id] === 1;
+  view.node.classList.toggle('on', on);
+  if (view.digit) {
+    view.digit.textContent = String(state.values[id]);
+    view.heightFrom = view.height;
+    view.heightTo = on ? switchHigh : size.IN[1];
+    view.anim = motion.matches ? null : { start: performance.now(), ms: 300 };
+    if (!view.anim) { view.height = view.heightTo; shapeSwitch(view, view.height); }
+  }
+  if (view.badge) {
+    view.badge.classList.toggle('on', on);
+    view.badgeText.textContent = String(state.values[id]);
+  }
+  for (const wire of wires) {
+    if (nodeOf(wire.from) !== id) continue;
+    const on = state.values[wire.from] === 1;
+    for (const part of [wire.line, wire.chevron]) {
+      part.classList.toggle('signal', on);
+      part.classList.toggle('idle', !on);
+    }
+    if (on && send) sendPacket(wire);
+  }
+  kick();
+}
+
+function sendPacket(wire) {
+  if (motion.matches) return;
+  const group = svg('g', {}, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  svg('text', { class: 'packet-label', y: -9.5 }, group).textContent = '1';
+  packets.push({ group, wire, start: performance.now(), duration: gateDelay });
+  kick();
+}
+
+function movePackets(now) {
+  packets = packets.filter((packet) => {
+    const t = (now - packet.start) / packet.duration;
+    const { line, startLen, endLen, from } = packet.wire;
+    // A packet disappears on arrival, and when its source turns back to 0 mid-flight.
+    if (t >= 1 || !line.isConnected || state.shown[from] !== 1) { packet.group.remove(); return false; }
+    const total = line.getTotalLength();
+    const at = line.getPointAtLength(mix(Math.min(startLen, total), Math.max(total - endLen, 0), Math.max(t, 0)));
+    packet.group.setAttribute('transform', `translate(${at.x} ${at.y})`);
+    return true;
+  });
+}
+
+// Set the switches. Every node then shows its new value once the signal has had time to reach it,
+// one wire (gateDelay) per gate. With reduced motion everything updates at once.
+function setInputs(next, { send = true } = {}) {
+  state.inputs = { ...next };
+  state.values = evaluate(state.inputs);
+  events = [];
+  const depth = depths();
+  const now = performance.now();
+  for (const spec of lesson[state.index].nodes) {
+    if (motion.matches || depth[spec.id] === 0) showNode(spec.id, send);
+    else events.push({ at: now + depth[spec.id] * gateDelay, id: spec.id, send });
+  }
+  syncControls();
+  kick();
+}
+
+function demoTick() {
+  const step = lesson[state.index];
+  setInputs(comboInputs(step.demo[state.demoPosition]));
+  state.demoPosition = (state.demoPosition + 1) % step.demo.length;
+  state.wait = 1500 + Math.max(...Object.values(depths())) * gateDelay;
+}
+
+// A demo entry is switch values in input order, or [A, B] as numbers in steps with `bits`.
+function comboInputs(combo) {
+  const step = lesson[state.index];
+  if (!step.bits) return Object.fromEntries(inputIds().map((id, k) => [id, combo[k]]));
+  return Object.fromEntries(inputIds().map((id) => [id, combo[id[0] === 'A' ? 0 : 1] >> Number(id.slice(1)) & 1]));
+}
+
+const inputIds = () => lesson[state.index].nodes.filter((n) => n.type === 'IN').map((n) => n.id);
+
+function tick(now) {
+  frame = null;
+  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
+  lastFrame = now;
+  if (state.playing) {
+    state.wait -= elapsed;
+    if (state.wait <= 0) demoTick();
+  }
+  const due = events.filter((event) => event.at <= now);
+  events = events.filter((event) => event.at > now);
+  for (const event of due) showNode(event.id, event.send);
+  let animating = false;
+  for (const view of views.values()) {
+    if (!view.anim) continue;
+    const t = clamp((now - view.anim.start) / view.anim.ms, 0, 1);
+    const ease = t * t * (3 - 2 * t);
+    view.height = mix(view.heightFrom, view.heightTo, ease);
+    shapeSwitch(view, view.height);
+    if (t === 1) view.anim = null; else animating = true;
+  }
+  movePackets(now);
+  if (!(state.playing || events.length || packets.length || animating)) lastFrame = null;
+  else if (frame === null) frame = requestAnimationFrame(tick);
+}
+
+function kick() {
+  if (frame === null && (state.playing || events.length || packets.length || [...views.values()].some((v) => v.anim))) {
+    frame = requestAnimationFrame(tick);
+  }
+}
+
+function syncPlayback() {
+  const reduced = motion.matches;
+  if (reduced) {
+    state.playing = false;
+    for (const packet of packets) packet.group.remove();
+    packets = [];
+  }
+  byId('status').textContent = reduced ? '모션 감소 · 직접 조작' : state.playing ? '재생 중' : '일시정지됨';
+  byId('pause').textContent = state.playing ? '일시정지' : '재생';
+  byId('pause').disabled = reduced;
+  byId('replay').disabled = reduced;
+  kick();
+}
+
+// The HTML input buttons mirror the scene's switches and are the keyboard and screen reader controls.
+// Steps with `bits` group them into two numbers, A and B, highest place first.
+let inputButtons = [];
+const placeName = (id) => `${2 ** Number(id.slice(1))}의 자리`;
+function makeButton(id, text) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'input-button';
+  const name = document.createElement('span');
+  name.className = 'name';
+  name.textContent = text;
+  const digit = document.createElement('span');
+  digit.className = 'bit';
+  button.append(name, digit);
+  button.addEventListener('click', () => toggleInput(id));
+  inputButtons.push({ id, button, digit });
+  return button;
+}
+function buildButtons() {
+  const step = lesson[state.index];
+  const box = byId('input-buttons');
+  box.replaceChildren();
+  box.classList.toggle('numbers', Boolean(step.bits));
+  inputButtons = [];
+  if (!step.bits) {
+    for (const spec of step.nodes.filter((n) => n.type === 'IN')) box.append(makeButton(spec.id, '스위치 ' + (spec.label ?? spec.id)));
+    return;
+  }
+  for (const name of ['A', 'B']) {
+    const row = document.createElement('div');
+    row.className = 'number-row';
+    row.append(Object.assign(document.createElement('span'), { className: 'number-name', textContent: name }));
+    for (let k = step.bits - 1; k >= 0; k--) row.append(makeButton(name + k, name + k));
+    row.append(Object.assign(document.createElement('output'), { className: 'number-value', id: 'value-' + name }));
+    box.append(row);
+  }
+}
+
+// Truth table (steps with `outs`): every combination of the inputs, the current one highlighted,
+// and a check on the rows the learner has made with their own hands.
+// Steps with `bits` show column addition instead: carries, A, B and the sum, one column per place.
+const rowIndex = (inputs) => inputIds().reduce((index, id) => index * 2 + inputs[id], 0);
+const cell = (tag, text, className = '') => Object.assign(document.createElement(tag), { textContent: text, className });
+function buildTable() {
+  const step = lesson[state.index];
+  const table = byId('truth');
+  table.replaceChildren();
+  table.className = step.bits ? 'truth column-sum' : 'truth';
+  if (step.bits) {
+    const caption = cell('caption', '세로셈 · 위에 작게 쓴 수는 받아올림');
+    table.append(caption);
+    for (const name of ['carry', 'A', 'B', 'sum']) {
+      const tr = document.createElement('tr');
+      tr.className = name;
+      tr.append(cell('th', { carry: '올림', A: 'A', B: '+ B', sum: '합' }[name]));
+      for (let k = step.bits; k >= 0; k--) tr.append(cell('td', ''));
+      tr.append(cell('td', '', 'decimal'));
+      table.append(tr);
+    }
+    return;
+  }
+  const ids = inputIds();
+  const names = Object.fromEntries(step.nodes.map((n) => [n.id, n.label ?? n.id]));
+  table.append(cell('caption', '진리표 · 직접 만든 줄에 ✓'));
+  const head = document.createElement('tr');
+  for (const id of ids) head.append(Object.assign(cell('th', names[id]), { scope: 'col' }));
+  step.outs.forEach(([, label], k) => head.append(Object.assign(cell('th', label, k === 0 ? 'out' : ''), { scope: 'col' })));
+  head.append(cell('td', '', 'seen'));
+  table.append(head);
+  for (let row = 0; row < 2 ** ids.length; row++) {
+    const inputs = Object.fromEntries(ids.map((id, k) => [id, row >> (ids.length - 1 - k) & 1]));
+    const values = evaluate(inputs);
+    const tr = document.createElement('tr');
+    for (const id of ids) tr.append(cell('td', inputs[id]));
+    step.outs.forEach(([id], k) => tr.append(cell('td', values[id], (k === 0 ? 'out' : '') + (values[id] ? ' one' : ''))));
+    tr.append(cell('td', '', 'seen'));
+    table.append(tr);
+  }
+}
+
+function syncColumnSum(step) {
+  const n = step.bits;
+  const a = num(state.values, 'A', n), b = num(state.values, 'B', n);
+  const rows = [...byId('truth').querySelectorAll('tr')];
+  const digits = { A: a, B: b, sum: a + b };
+  rows.forEach((tr) => {
+    const tds = [...tr.querySelectorAll('td')];
+    for (let k = n; k >= 0; k--) {
+      const td = tds[n - k];
+      if (tr.className === 'carry') {
+        // The carry into place k comes from adding the places below it.
+        const carry = k > 0 && ((a & (2 ** k - 1)) + (b & (2 ** k - 1))) >= 2 ** k;
+        td.textContent = carry ? '1' : '';
+      } else {
+        td.textContent = k === n && tr.className !== 'sum' ? '' : String(digits[tr.className] >> k & 1);
+        td.classList.toggle('one', tr.className === 'sum' && (digits.sum >> k & 1) === 1);
+      }
+    }
+    if (tr.className !== 'carry') tds[n + 1].textContent = '= ' + digits[tr.className];
+  });
+  byId('value-A').textContent = '= ' + a;
+  byId('value-B').textContent = '= ' + b;
+}
+
+function syncControls() {
+  const step = lesson[state.index];
+  for (const { id, button, digit } of inputButtons) {
+    const on = state.inputs[id] === 1;
+    button.setAttribute('aria-pressed', String(on));
+    button.setAttribute('aria-label', `${step.bits ? `${id[0]}의 ${placeName(id)}` : '스위치 ' + id}, ${on ? '켜짐 1' : '꺼짐 0'}`);
+    digit.textContent = on ? '1' : '0';
+  }
+  if (step.bits) syncColumnSum(step);
+  else {
+    const current = rowIndex(state.inputs);
+    [...byId('truth').querySelectorAll('tr')].slice(1).forEach((tr, row) => {
+      tr.classList.toggle('current', row === current);
+      tr.lastChild.textContent = state.seen.has(row) ? '✓' : '';
+    });
+  }
+  const [lead, result, tail] = step.expr(state.values);
+  const bold = document.createElement('b');
+  bold.textContent = result;
+  byId('readout').replaceChildren(lead, bold, tail);
+}
+
+// Show the current try-it problem, or the result when the learner has just solved one.
+function syncTask() {
+  const tasks = lesson[state.index].tasks;
+  const done = progress[state.index];
+  const allDone = done >= tasks.length;
+  byId('try').classList.toggle('solved', state.solved !== '');
+  byId('try-text').textContent = state.solved !== '' ? tasks[done - 1].text
+    : allDone ? '이 단계의 문제를 모두 풀었습니다. 스위치를 자유롭게 눌러 보세요.' : tasks[done].text;
+  byId('try-result').textContent = state.solved === '' ? ''
+    : `✓ 맞았습니다. ${state.solved}${allDone ? ' · 이 단계의 문제를 모두 풀었습니다.' : ''}`;
+  byId('try-next').hidden = state.solved === '' || allDone;
+}
+
+// Only the learner's own changes count, so the demo cannot solve a problem.
+function checkTask() {
+  const tasks = lesson[state.index].tasks;
+  const done = progress[state.index];
+  if (state.solved !== '' || done >= tasks.length || !tasks[done].test(state.values, state.seen)) return;
+  progress[state.index] = done + 1;
+  state.solved = tasks[done].ok;
+  syncTask();
+}
+
+byId('try-next').onclick = () => {
+  state.solved = '';
+  syncTask();
+  inputButtons[0]?.button.focus();
+};
+
+function toggleInput(id) {
+  if (!(id in state.inputs)) return;
+  state.playing = false;
+  state.solved = '';  // a new move dismisses the last result and brings up the next problem
+  const next = { ...state.inputs, [id]: 1 - state.inputs[id] };
+  state.seen.add(rowIndex(next));
+  setInputs(next);
+  syncPlayback();
+  byId('announcement').textContent = `스위치 ${id} ${next[id] ? '켜짐' : '꺼짐'}. ${byId('readout').textContent}`;
+  syncTask();
+  checkTask();
+}
+
+function startStep() {
+  const step = lesson[state.index];
+  state.demoPosition = 0;
+  state.seen = new Set();
+  buildScene();
+  buildButtons();
+  buildTable();
+  // Start from the demo's last combination so the first tick visibly changes something.
+  const first = motion.matches ? step.demo[0] : step.demo[step.demo.length - 1];
+  setInputs(comboInputs(first), { send: true });
+  state.wait = 900;
+}
+
+function showStep(index, announce = true) {
+  state.index = index;
+  if (!state.userPaused) state.playing = !motion.matches;
+  const step = lesson[index];
+  startStep();
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.takeaway;
+  byId('scene-desc').textContent = step.description;
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  state.solved = '';
+  syncTask();
+  syncPlayback();
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
+}
+
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/adder/${index + 1}`);
+  showStep(index);
+}
+
+function routeIndex() {
+  const match = /^#\/adder\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+byId('pause').onclick = () => {
+  state.playing = !state.playing;
+  state.userPaused = !state.playing;
+  if (state.playing && state.wait <= 0) state.wait = 400;
+  syncPlayback();
+  byId('announcement').textContent = byId('status').textContent;
+};
+byId('replay').onclick = () => {
+  state.playing = true;
+  state.userPaused = false;
+  startStep();
+  syncPlayback();
+  byId('announcement').textContent = '현재 단계 다시 재생';
+};
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches && !state.userPaused) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/adder/${initial + 1}`);
+showStep(initial, false);
+</script>
+</body>
+</html>

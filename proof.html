@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="예시와 증명의 차이, 도미노로 보는 귀납법, 합 공식의 증명, 반복문과 재귀가 맞다는 것을 보이는 방법을 문제로 익혀 보세요.">
+<title>증명과 귀납법 · 레슨 2.3</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.stage-top h2{font-size:1rem}
+.score{color:var(--accent);font:700 .875rem var(--mono)}
+.case{margin:18px;padding:16px 18px;border-radius:14px;background:#eef5ed;border:1px solid var(--border);display:grid;gap:6px}
+.case strong{color:var(--accent);font-size:.875rem}
+.case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
+.items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
+.item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
+.item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
+.choices{display:flex;gap:6px}
+.choice{min-width:68px}
+.choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
+.choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
+.feedback{font-size:.9375rem;color:var(--muted);line-height:1.6}
+.feedback:empty{display:none}
+.feedback b{margin-right:4px}
+.item.right{border-color:var(--accent);background:#f6fbf7}
+.item.right .feedback b{color:var(--accent)}
+.item.wrong{border-color:#a24c14;background:#fffaf5}
+.item.wrong .feedback b{color:#a24c14}
+.think{margin:0 18px 18px;padding:14px 16px;border-radius:12px;border:1px dashed #9fb7a9;display:grid;gap:10px}
+.think label{font-weight:700}
+.think textarea{font:inherit;min-height:84px;padding:10px 12px;border:1px solid #9fb7a9;border-radius:10px;resize:vertical}
+.think .sample-answer{color:var(--muted);line-height:1.7}
+.think .sample-answer[hidden]{display:none}
+.done{margin:0 18px 18px;padding:12px 14px;border-radius:10px;background:#d2f4dd;color:#0f5a3c;font-weight:700}
+.done[hidden]{display:none}
+.timeline{border-top:1px solid var(--border)}
+.truth{margin:0 18px 14px}
+.truth[hidden]{display:none}
+.truth table{border-collapse:collapse;font:700 1rem var(--mono);margin:0 auto}
+.truth th,.truth td{border:1px solid var(--border);padding:6px 18px;text-align:center}
+.truth th{background:#eef5ed;color:var(--accent);font-family:system-ui,sans-serif}
+.truth td.blank{color:#9aa8a2}
+.truth td.filled{background:#d2f4dd;color:#0f5a3c}
+</style>
+<link rel="stylesheet" href="./course.css">
+<script defer src="./course-catalog.js"></script>
+<script defer src="./course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">2장 CS를 위한 수학 · 레슨 2.3 · 실습</p>
+    <h1>증명과 귀납법</h1>
+    <p class="lead">무한히 많은 경우가 모두 맞다고 어떻게 확신할까요? 반례와 도미노, 귀납법 증명을 차례로 따라가 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="practice-heading">
+        <div class="stage-top"><h2 id="practice-heading">참일까, 거짓일까</h2><span class="score" id="score" aria-live="polite"></span></div>
+        <div class="case"><strong>문제</strong><p id="case"></p></div>
+        <div class="truth" id="table" hidden></div>
+        <ol class="items" id="items"></ol>
+        <p class="done" id="done" role="status" hidden></p>
+        <div class="think">
+          <label for="answer">생각해 보기 · <span id="question"></span></label>
+          <textarea id="answer" placeholder="자유롭게 적어 보세요. 저장되거나 채점되지 않습니다."></textarea>
+          <div><button class="action" id="reveal" type="button" aria-expanded="false">예시 답 보기</button></div>
+          <p class="sample-answer" id="sample" hidden></p>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const storageKey = 'proof-lab:v1:step';
+const BENEFIT = 'true', RISK = 'false';
+const yes = '참', no = '거짓';
+// Each step is one exercise. `choices` are the two answers; items are statements or truth-table rows.
+// A step with `table` shows its items as a truth table whose last column the learner fills in.
+const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : 'false', why });
+const TF = [['true', '참'], ['false', '거짓']];
+const lesson = [
+  {
+    label: '예와 증명',
+    title: '예를 아무리 많이 확인해도 증명은 아니다',
+    body: 'n² + n + 41에 n = 0, 1, 2 …를 넣으면 41, 43, 47, 53 … 모두 소수가 나옵니다. 39까지 넣어도 계속 소수입니다. 그런데 n = 40을 넣으면 1681 = 41 × 41로 소수가 아닙니다. 그래서 수학과 컴퓨터 과학에서는 "모든 경우에 참"을 말하려면 예시가 아니라 증명이 필요합니다.',
+    link: '1.6에서 몇 번 실행해 맞게 나와도 경계(i가 3일 때)에서 틀리는 버그가 있었습니다. 테스트는 버그를 찾을 수 있지만, 버그가 없다는 것을 보여 주지는 못합니다.',
+    case: '다음 문장이 참인지 고르세요.',
+    choices: TF,
+    items: [
+      { text: '예를 100개 확인해 모두 맞으면, 모든 경우에 참이라고 확신할 수 있다.', answer: 'false', why: 'n² + n + 41처럼 40번째에서 처음 틀리는 경우도 있습니다.' },
+      { text: '반례 하나만 찾으면 "모든 경우에 참"이 거짓임을 보일 수 있다.', answer: 'true', why: 'n = 40 하나로 "항상 소수"가 거짓임이 드러납니다.' },
+      { text: '증명은 경우가 무한히 많아도 모두 참임을 보일 수 있다.', answer: 'true', why: '논리로 모든 경우를 한꺼번에 다루기 때문입니다.' },
+      { text: '프로그램을 몇 번 실행해 보고 맞으면 버그가 없다는 것이 증명된다.', answer: 'false', why: '실행해 본 입력에서만 맞는다는 것을 알 수 있을 뿐입니다.' },
+    ],
+    question: '"모든 홀수는 소수다"가 거짓임을 보이려면 무엇이 필요할까요?',
+    sample: '반례 하나면 됩니다. 9는 홀수지만 3 × 3이라 소수가 아닙니다.',
+  },
+  {
+    label: '도미노',
+    title: '첫 칸과 다음 칸이면 모든 칸이 넘어간다',
+    body: '도미노를 끝없이 세워 두었다고 해 봅시다. 첫 번째가 넘어지고, "어떤 도미노가 넘어지면 바로 다음 것도 넘어진다"가 참이면, 모든 도미노가 넘어집니다. 이것이 수학적 귀납법입니다. ① n = 1일 때 참임을 보이고(시작), ② n = k일 때 참이면 n = k + 1일 때도 참임을 보이면(이어 감), 모든 자연수 n에서 참입니다.',
+    link: '0.1에서 1씩 더하면 다음 수가 되었습니다. 귀납법은 이 "1씩 늘려 가기"를 무한히 이어 가는 논리입니다.',
+    case: '도미노 이야기로 다음 문장이 참인지 고르세요.',
+    choices: TF,
+    items: [
+      { text: '첫 도미노가 넘어지고, k번째가 넘어지면 k + 1번째도 넘어진다. 그러면 모두 넘어진다.', answer: 'true', why: '시작과 이어 감이 모두 있으므로 귀납법이 성립합니다.' },
+      { text: 'k번째가 넘어지면 k + 1번째도 넘어진다. 이것만으로 모두 넘어진다.', answer: 'false', why: '첫 도미노를 넘어뜨리지 않으면 아무것도 시작되지 않습니다.' },
+      { text: '첫 도미노만 넘어지면 나머지도 저절로 넘어진다.', answer: 'false', why: '도미노 사이가 멀면 다음 것이 넘어지지 않습니다. 이어 감도 보여야 합니다.' },
+      { text: '귀납법은 1, 2, 3 …처럼 차례로 셀 수 있는 대상에 쓴다.', answer: 'true', why: '다음 칸이 무엇인지 정해져 있어야 "k에서 k + 1로"를 말할 수 있습니다.' },
+    ],
+    question: '재귀 함수(1.5)의 "기저 조건"은 귀납법의 어느 부분과 닮았을까요?',
+    sample: '시작 단계(n = 1일 때)와 닮았습니다. 재귀의 나머지 부분인 "n − 1의 답으로 n의 답을 만든다"는 이어 감 단계와 닮았습니다.',
+  },
+  {
+    label: '증명 따라가기',
+    title: '1부터 n까지의 합은 n(n + 1)/2다',
+    body: '1 + 2 + … + n = n(n + 1)/2를 귀납법으로 증명해 봅시다. ① n = 1이면 왼쪽은 1, 오른쪽은 1 × 2 / 2 = 1로 같습니다. ② n = k일 때 1 + … + k = k(k + 1)/2라고 가정합니다. 양쪽에 k + 1을 더하면 오른쪽은 k(k + 1)/2 + (k + 1) = (k + 1)(k + 2)/2가 되어, n = k + 1일 때의 식과 같아집니다. 따라서 모든 n에서 참입니다.',
+    link: '1.2의 while 반복은 합계에 1, 2, 3을 차례로 더했습니다. 이 공식이 있으면 반복 없이 3 × 4 / 2 = 6을 바로 구할 수 있습니다.',
+    case: '증명의 각 문장이 맞는지 고르세요.',
+    choices: [['true', '맞다'], ['false', '틀리다']],
+    items: [
+      { text: 'n = 1일 때: 1 = 1 × 2 / 2', answer: 'true', why: '시작 단계입니다. 양쪽 모두 1입니다.' },
+      { text: 'n = k일 때 식이 성립한다고 가정해도 된다.', answer: 'true', why: '이어 감 단계에서는 k일 때를 가정하고 k + 1일 때를 보입니다. 시작 단계가 이 가정의 출발점이 됩니다.' },
+      { text: 'k(k + 1)/2 + (k + 1)은 (k + 1)(k + 2)/2와 같다.', answer: 'true', why: '(k + 1)로 묶으면 (k + 1)(k/2 + 1) = (k + 1)(k + 2)/2입니다.' },
+      { text: 'n = 1, 2, 3에서 맞으니 증명이 끝났다.', answer: 'false', why: '그것은 예시입니다. 이어 감 단계가 있어야 모든 n이 됩니다.' },
+    ],
+    question: '1부터 100까지의 합은 얼마일까요?',
+    sample: '100 × 101 / 2 = 5050입니다. 반복으로 100번 더하지 않아도 공식 한 번이면 됩니다.',
+  },
+  {
+    label: '코드의 정확성',
+    title: '귀납법으로 프로그램이 맞다는 것을 보인다',
+    body: '반복문이 맞다는 것은 "반복 불변식"으로 보입니다. 1.2의 합계 반복에서 "매 바퀴를 시작할 때 합계 = 1 + … + (i − 1)"이 처음에도 참이고, 한 바퀴가 지나도 계속 참이면, 반복이 끝났을 때 합계는 1 + … + n입니다. 재귀 함수도 같은 방식으로 보입니다.',
+    link: '1.5의 팩(n)은 팩(1)이 맞고, 팩(n − 1)이 맞으면 n × 팩(n − 1)도 맞습니다. 바로 귀납법의 두 단계입니다.',
+    case: '다음 문장이 참인지 고르세요.',
+    choices: TF,
+    items: [
+      { text: '반복 전에 합계 = 0, i = 1이면 "합계 = 1 + … + (i − 1)"은 참이다.', answer: 'true', why: 'i − 1 = 0이므로 더할 것이 없는 합 0과 같습니다.' },
+      { text: '한 바퀴에서 합계에 i를 더하고 i를 1 늘리면 불변식은 계속 참이다.', answer: 'true', why: '합계가 1 + … + i가 되고, 새 i로 보면 1 + … + (새 i − 1)입니다.' },
+      { text: '팩(1)이 맞고 팩(n − 1)이 맞으면 팩(n)도 맞으므로, 모든 n에서 팩이 맞다.', answer: 'true', why: '시작과 이어 감, 귀납법 그대로입니다.' },
+      { text: '불변식이 있으면 반복이 반드시 끝난다.', answer: 'false', why: '끝나는지는 따로 보여야 합니다. 1.2의 무한 반복처럼 i가 늘지 않으면 끝나지 않습니다.' },
+    ],
+    question: '1.6의 하나 차이 버그(while i < 3)를 불변식으로 보면 어디서 어긋날까요?',
+    sample: '반복이 끝났을 때 i = 3이라 불변식은 합계 = 1 + 2만 말해 줍니다. 원하는 결과(1 + 2 + 3)가 되려면 끝날 때 i가 4여야 하므로, 끝나는 조건이 잘못되었다는 것을 알 수 있습니다.',
+  },
+];
+
+const byId = (id) => document.getElementById(id);
+const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
+
+function showStep(index, announce = true) {
+  state.index = index;
+  const step = lesson[index];
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.link;
+  byId('case').textContent = step.case;
+  byId('question').textContent = step.question;
+  byId('sample').textContent = step.sample;
+  byId('sample').hidden = true;
+  byId('reveal').setAttribute('aria-expanded', 'false');
+  byId('reveal').textContent = '예시 답 보기';
+  byId('answer').value = '';
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  buildItems();
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
+}
+
+function buildItems() {
+  const step = lesson[state.index];
+  const list = byId('items');
+  list.replaceChildren();
+  step.items.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'item';
+    const top = document.createElement('div');
+    top.className = 'item-top';
+    const text = document.createElement('span');
+    text.className = 'item-text';
+    text.id = `item-${i}`;
+    text.textContent = step.table ? `${step.table[0]} ${item.cells[0]} · ${step.table[1]} ${item.cells[1]}` : item.text;
+    const choices = document.createElement('div');
+    choices.className = 'choices';
+    choices.setAttribute('role', 'group');
+    choices.setAttribute('aria-labelledby', text.id);
+    for (const [value, label] of step.choices) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `action choice ${value === 'false' ? 'risk' : 'benefit'}`;
+      button.textContent = label;
+      button.dataset.value = value;
+      button.addEventListener('click', () => pick(i, value));
+      choices.append(button);
+    }
+    const feedback = document.createElement('p');
+    feedback.className = 'feedback';
+    feedback.setAttribute('role', 'status');
+    top.append(text, choices);
+    li.append(top, feedback);
+    list.append(li);
+  });
+  syncItems();
+}
+
+// For table steps, a compact truth table mirrors the answers so far.
+function syncTable() {
+  const step = lesson[state.index];
+  const box = byId('table');
+  box.hidden = !step.table;
+  if (!step.table) return;
+  const picks = state.picks[state.index];
+  const label = (v) => step.choices.find(([value]) => value === v)?.[1] ?? '?';
+  box.innerHTML = '';
+  const table = document.createElement('table');
+  const head = table.createTHead().insertRow();
+  step.table.forEach((h) => { const th = document.createElement('th'); th.textContent = h; head.append(th); });
+  const body = table.createTBody();
+  step.items.forEach((item, i) => {
+    const tr = body.insertRow();
+    item.cells.forEach((c) => { tr.insertCell().textContent = c; });
+    const cell = tr.insertCell();
+    cell.textContent = picks[i] === item.answer ? label(item.answer) : '?';
+    cell.className = picks[i] === item.answer ? 'filled' : 'blank';
+  });
+  box.append(table);
+}
+
+function pick(i, value) {
+  state.picks[state.index][i] = value;
+  syncItems();
+  const item = lesson[state.index].items[i];
+  byId('announcement').textContent = value === item.answer ? '맞았습니다.' : '다시 생각해 보세요.';
+}
+
+function syncItems() {
+  const step = lesson[state.index];
+  const picks = state.picks[state.index];
+  [...byId('items').children].forEach((li, i) => {
+    const item = step.items[i];
+    const picked = picks[i];
+    li.classList.toggle('right', picked === item.answer);
+    li.classList.toggle('wrong', picked !== null && picked !== item.answer);
+    for (const button of li.querySelectorAll('.choice')) button.setAttribute('aria-pressed', String(button.dataset.value === picked));
+    const feedback = li.querySelector('.feedback');
+    feedback.replaceChildren();
+    if (picked !== null) {
+      const mark = document.createElement('b');
+      mark.textContent = picked === item.answer ? '✓ 맞았습니다.' : '✗ 다시 생각해 보세요.';
+      feedback.append(mark, picked === item.answer ? item.why : '');
+    }
+  });
+  const right = picks.filter((p, i) => p === step.items[i].answer).length;
+  byId('score').textContent = `${right} / ${step.items.length} 맞힘`;
+  byId('done').hidden = right !== step.items.length;
+  byId('done').textContent = step.table ? '✓ 진리표를 모두 채웠습니다. 아래 질문도 생각해 보세요.' : '✓ 모두 맞게 골랐습니다. 아래 질문도 생각해 보세요.';
+  syncTable();
+}
+
+byId('reveal').onclick = () => {
+  const open = byId('sample').hidden;
+  byId('sample').hidden = !open;
+  byId('reveal').setAttribute('aria-expanded', String(open));
+  byId('reveal').textContent = open ? '예시 답 숨기기' : '예시 답 보기';
+};
+
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/proof/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/proof\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/proof/${initial + 1}`);
+showStep(initial, false);
+</script>
+</body>
+</html>

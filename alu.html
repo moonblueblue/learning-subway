@@ -1,0 +1,1229 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="선택기로 신호를 고르고, 여러 연산을 한꺼번에 계산해 하나를 고르는 ALU와 플래그를 직접 조작해 보세요.">
+<title>ALU · 레슨 3.3</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.wire.idle{stroke:#a9b8b0;stroke-width:2;stroke-dasharray:4 4}
+.chevron.idle{stroke:#a9b8b0}
+.gate .left{fill:#dfe4f2;stroke:#7d88b4}
+.gate .right{fill:#c4cbe3;stroke:#7d88b4}
+.gate .top{fill:#f1f3fa;stroke:#7d88b4}
+.gate.OR .left{fill:#f3e2d3;stroke:#b48a64}
+.gate.OR .right{fill:#e5cdb6;stroke:#b48a64}
+.gate.OR .top{fill:#fbf3ec;stroke:#b48a64}
+.gate.NOT .left{fill:#eadcf0;stroke:#9a77ad}
+.gate.NOT .right{fill:#d9c4e3;stroke:#9a77ad}
+.gate.NOT .top{fill:#f7f0fa;stroke:#9a77ad}
+.gate .face{transition:fill .18s}
+.gate.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.gate .tag text{font:800 12px var(--mono);letter-spacing:.04em}
+.gate.AND .tag rect{stroke:#7d88b4}.gate.AND .tag text{fill:#3c4a85}
+.gate.OR .tag rect{stroke:#b48a64}.gate.OR .tag text{fill:#7a4b1f}
+.gate.NOT .tag rect{stroke:#9a77ad}.gate.NOT .tag text{fill:#5f3a73}
+.gate.XOR .left{fill:#d5ebe7;stroke:#4f9189}
+.gate.XOR .right{fill:#b9dcd6;stroke:#4f9189}
+.gate.XOR .top{fill:#eef8f6;stroke:#4f9189}
+.gate.XOR .tag rect{stroke:#4f9189}.gate.XOR .tag text{fill:#245f57}
+.gate.HA .left,.gate.FA .left{fill:#e4e1d3;stroke:#8f8763}
+.gate.HA .right,.gate.FA .right{fill:#d2cdb6;stroke:#8f8763}
+.gate.HA .top,.gate.FA .top{fill:#f7f5ec;stroke:#8f8763}
+.gate.HA .tag rect,.gate.FA .tag rect{stroke:#8f8763}
+.gate.HA .tag text,.gate.FA .tag text{fill:#5b5232;font:800 12px system-ui,sans-serif;letter-spacing:0}
+.input-row.numbers{flex-direction:column}
+.number-row{display:flex;gap:6px;align-items:center}
+.number-name{font:800 1.05rem var(--mono);width:1.6em;color:var(--ink)}
+.number-value{font:700 1rem var(--mono);color:var(--muted);min-width:3.2em;padding-left:4px}
+.truth.column-sum{font-size:1.05rem}
+.truth.column-sum th{background:none;border:none;text-align:right;padding-right:10px;font-size:.8125rem;color:var(--muted)}
+.truth.column-sum td{border:none;min-width:30px;padding:1px 6px}
+.truth.column-sum tr.carry td{color:#a24c14;font-size:.8125rem;height:1.2em}
+.truth.column-sum tr.sum td{border-top:2px solid var(--ink);font-weight:800}
+.truth.column-sum tr.sum td.one{color:#8a6300;background:#fff7d6}
+.truth.column-sum td.decimal{color:var(--muted);text-align:left;padding-left:12px;font-weight:600}
+.truth.column-sum tr.sum td.decimal{color:var(--accent);font-weight:800}
+.lamp .left{fill:#d7dfdb;stroke:#8c9d96}
+.lamp .right{fill:#b8c6c0;stroke:#8c9d96}
+.lamp .top{fill:#f4f7f5;stroke:#8c9d96}
+.lamp .bulb{fill:#e6ebe8;stroke:#8c9d96;stroke-width:1;transition:fill .2s,stroke .2s}
+.lamp .halo{fill:#ffd34d;opacity:0;transition:opacity .2s}
+.lamp.on .bulb{fill:#ffd34d;stroke:#c9940f}
+.lamp.on .halo{opacity:.7}
+.lamp.on .tag rect{stroke:#c9940f}
+.bit-badge circle{fill:#fff;stroke:#a9b8b0;stroke-width:1.1;transition:fill .18s,stroke .18s}
+.bit-badge text{font:700 10.5px var(--mono);fill:#7c8c85;text-anchor:middle;dominant-baseline:central}
+.bit-badge.on circle{fill:#d2f4dd;stroke:var(--accent)}
+.bit-badge.on text{fill:#0f5a3c}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.controls-row{display:flex;gap:12px 18px;align-items:flex-start;flex-wrap:wrap}
+.input-row{display:flex;gap:8px;flex-wrap:wrap}
+.input-button{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:64px;min-height:56px;padding:4px 10px;border:1px solid #9fb7a9;border-radius:10px;background:#f6f8f5;line-height:1.2}
+.input-button .name{font:700 .8125rem var(--mono);color:var(--muted)}
+.input-button .bit{font:700 1.2rem var(--mono);color:#7c8c85}
+.input-button:hover{border-color:var(--accent)}
+.input-button[aria-pressed=true]{background:#d2f4dd;border-color:var(--accent)}
+.input-button[aria-pressed=true] .name,.input-button[aria-pressed=true] .bit{color:#0f5a3c}
+.truth{border-collapse:collapse;font:600 .9375rem var(--mono);text-align:center}
+.truth caption{font:700 .8125rem system-ui,sans-serif;color:var(--muted);text-align:left;margin-bottom:4px}
+.truth th,.truth td{border:1px solid var(--border);padding:3px 12px;min-width:44px}
+.truth th{background:#f3f6f2;font-size:.8125rem}
+.truth th.out,.truth td.out{border-left:2px solid #9fb7a9}
+.truth td.out.one{color:#8a6300;background:#fff7d6}
+.truth tr.current td{background:#d9efe2;font-weight:800}
+.truth tr.current td.out.one{background:#ffe9a0}
+.truth td.seen{width:26px;min-width:26px;padding:0 4px;border:none;color:var(--accent);font-family:system-ui,sans-serif;text-align:left}
+.sample.idle{border-top:2px dashed #a9b8b0}
+.dot.lamp-on{border-color:#c9940f;background:#ffd34d;border-radius:50%}
+@media(max-width:600px){.tag text,.gate .tag text,.gate.HA .tag text,.gate.FA .tag text{font-size:16px}.packet-label{font-size:13px}.bit-badge text{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text,.gate .face,.lamp .bulb,.lamp .halo,.bit-badge circle{transition:none}}
+@media(max-width:420px){.shell{padding:18px 12px}.stage-top,.controls,.timeline,.view-controls,.hands-on{padding-inline:12px}.view-hint{flex-basis:100%;margin-inline-start:0}.steps{gap:5px}.steps button{padding-inline:6px}.truth th,.truth td{padding-inline:8px;min-width:36px}}
+.lane.unchosen,.casing.unchosen{opacity:.28}
+.casing.wide{stroke-width:11}
+.lane.bus .wire{stroke-width:5.5;stroke:#2f7d63;stroke-dasharray:none}
+.lane.bus .chevron{stroke:#2f7d63;stroke-width:2.6}
+.lane.control .wire{stroke:#c26a1e;stroke-width:2.2;stroke-dasharray:6 3}
+.lane.control .chevron{stroke:#c26a1e}
+.packet-group.control .packet,.packet-group.control .packet-halo{fill:#c26a1e}
+.packet-group.control .packet-label{fill:#8a4310}
+.packet-group.bus .packet{r:5.4}
+.dial{cursor:pointer}
+.dial .left{fill:#f6dfc8;stroke:#c26a1e}
+.dial .right{fill:#ecc8a4;stroke:#c26a1e}
+.dial .top{fill:#fdf2e7;stroke:#c26a1e}
+.dial .tag rect{stroke:#c26a1e}.dial .tag text{fill:#8a4310;font:800 12px var(--mono)}
+.number .left{fill:#dbe9e2;stroke:#5f8f78}
+.number .right{fill:#c2d9cd;stroke:#5f8f78}
+.number .top{fill:#f3f8f5;stroke:#5f8f78}
+.number .tag text{font:800 12px var(--mono);fill:#1d5a44}
+.number .tag rect{stroke:#5f8f78}
+.number.result .tag rect{stroke:var(--accent);stroke-width:1.4}
+.gate.MUX .left,.gate.ALU .left{fill:#e4e1d3;stroke:#8f8763}
+.gate.MUX .right,.gate.ALU .right{fill:#d2cdb6;stroke:#8f8763}
+.gate.MUX .top,.gate.ALU .top{fill:#f7f5ec;stroke:#8f8763}
+.gate.MUX .tag rect,.gate.ALU .tag rect{stroke:#8f8763}
+.gate.MUX .tag text,.gate.ALU .tag text{fill:#5b5232;font:800 12px system-ui,sans-serif}
+.gate.MUX.on .top{fill:#f7f5ec;stroke:#8f8763}
+.box-op{font:800 11px var(--mono);fill:#8a4310;text-anchor:middle;dominant-baseline:central}
+.op-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.op-button{min-height:44px;min-width:58px;padding:6px 10px;border:1px solid #d9a77a;border-radius:9px;background:#fff8f1;font:700 .875rem var(--mono);color:#8a4310}
+.op-button:hover{border-color:#c26a1e}
+.op-button[aria-pressed=true]{background:#c26a1e;border-color:#c26a1e;color:#fff}
+.truth td.picked{outline:2px solid #c26a1e;outline-offset:-2px}
+.truth.op-table td{padding:3px 10px}
+.truth.op-table td:first-child{text-align:left;font-family:system-ui,sans-serif;font-weight:700}
+.sample.bus{border-top:5px solid #2f7d63}
+.sample.control{border-top:2px dashed #c26a1e}
+@media(max-width:600px){.box-op{font-size:14px}.dial .tag text,.number .tag text{font-size:15px}}
+.truth tr.current td.seen{background:none}
+.number-name{min-width:2.6em;white-space:nowrap}
+</style>
+<link rel="stylesheet" href="./course.css">
+<script defer src="./course-catalog.js"></script>
+<script defer src="./course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">3장 컴퓨터를 바닥부터 · 레슨 3.3</p>
+    <h1>ALU</h1>
+    <p class="lead">계산기 회로는 어떻게 여러 연산 중 하나를 고를까요? 선택기에서 시작해 수 두 개와 연산 하나를 받는 ALU까지 만들어 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">입력, 계산 회로, 출력</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">입력과 연산 신호가 선택기와 ALU를 지나 출력으로 가는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="badges"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <button class="action" id="try-next" type="button" hidden>다음 문제</button>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="controls-row">
+            <div class="input-row" id="input-buttons" role="group" aria-label="입력 스위치 켜고 끄기"></div>
+            <table class="truth" id="truth"></table>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <button class="action" id="view-reset" type="button">원래 보기</button>
+          <span class="view-hint"><span class="mouse-hint">장면의 스위치와 연산 다이얼을 눌러도 됩니다 · 확대 후 드래그로 이동</span><span class="touch-hint">장면의 스위치와 연산 다이얼을 눌러도 됩니다 · 두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="sample"></i>1이 흐르는 선</span><span><i class="sample idle"></i>0인 선</span><span><i class="dot on"></i>켜짐 = 1</span><span><i class="sample bus"></i>여러 비트를 나르는 버스</span><span><i class="sample control"></i>연산 신호</span><span><i class="dot lamp-on"></i>램프 켜짐</span></div>
+          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+// Each step is a small circuit. Nodes are listed in signal order (inputs first, outputs last).
+// `u` runs left to right on screen and `v` top to bottom; on the floor that is x = (u + v) / 2, y = (u - v) / 2.
+// Node types: IN (a switch, one bit), NUM (a 3-bit number), OP (the operation dial, an index into `ops`),
+// gates, MUX (a selector: its last input picks which of the others goes through), ALU, OUT and LAMP.
+// The ALU has three outputs: `alu.r` (result), `alu.z` (zero flag) and `alu.c` (carry or borrow flag).
+// `mids` is the u where each incoming wire turns, and `outPorts` moves an output up or down on the box.
+// `demo` lists input values in node order for the autoplay; each task's `test` gets (values, inputs).
+const lesson = [
+  {
+    label: '선택기',
+    title: '선택 신호 하나로 둘 중 하나를 고른다',
+    body: '계산기는 더하기, 빼기, AND 같은 여러 연산 중 하나를 골라야 합니다. 고르는 일을 하는 회로가 선택기(멀티플렉서)입니다. 입력 D0, D1과 선택 신호 S가 있고, S가 0이면 D0이, 1이면 D1이 출력으로 나갑니다. NOT, AND 두 개, OR 하나로 만들 수 있습니다.',
+    takeaway: 'S가 0이면 NOT이 위쪽 AND에 1을 주어 D0만 통과시킵니다. S가 1이면 아래쪽 AND가 열려 D1만 통과합니다. 고르지 않은 쪽은 AND에서 막혀 0이 됩니다.',
+    description: '입력 D0, D1과 선택 S가 있습니다. D0은 S를 뒤집은 값과 위쪽 AND로, D1은 S와 아래쪽 AND로 들어갑니다. 두 AND는 OR로 모여 출력 램프로 갑니다.',
+    nodes: [
+      { id: 'D0', type: 'IN', u: 0, v: -6 },
+      { id: 'D1', type: 'IN', u: 0, v: 2 },
+      { id: 'S', type: 'IN', u: 0, v: 9, label: '선택 S' },
+      { id: 'n', type: 'NOT', in: ['S'], u: 6, v: 9 },
+      { id: 'a0', type: 'AND', in: ['D0', 'n'], u: 12, v: -5, mids: [6, 9.2] },
+      { id: 'a1', type: 'AND', in: ['D1', 'S'], u: 12, v: 3, mids: [6, 2.6] },
+      { id: 'o', type: 'OR', in: ['a0', 'a1'], u: 18, v: -1 },
+      { id: 'L', type: 'LAMP', in: ['o'], u: 24, v: -1, label: '출력' },
+    ],
+    outs: [['L', '출력']],
+    demo: [[1, 0, 0], [1, 0, 1], [0, 1, 1], [0, 1, 0]],
+    expr: (v) => [`S = ${v.S} → D${v.S}을 고름 · 출력 = D${v.S} = `, String(v.L), ''],
+    tasks: [
+      { text: 'S를 0으로 두고 출력 램프를 켜 보세요.', test: (v) => v.S === 0 && v.L === 1, ok: 'S = 0이면 D0이 그대로 나갑니다.' },
+      { text: 'D0은 켜 둔 채로 출력 램프를 꺼 보세요.', test: (v) => v.D0 === 1 && v.L === 0, ok: 'S를 1로 바꾸면 D0은 막히고 꺼진 D1이 나갑니다.' },
+      { text: 'D0은 끄고 S = 1에서 출력 램프를 켜 보세요.', test: (v) => v.D0 === 0 && v.S === 1 && v.L === 1, ok: '이제 D1이 출력을 정합니다.' },
+    ],
+  },
+  {
+    label: '1비트 ALU',
+    title: '모든 연산을 한꺼번에 하고, 하나를 고른다',
+    body: 'A와 B를 AND, OR, XOR 게이트에 동시에 넣으면 세 결과가 한꺼번에 나옵니다. 그중 무엇을 내보낼지는 연산 신호를 받은 선택기가 정합니다. 이렇게 여러 연산을 하고 하나를 고르는 회로가 ALU(산술 논리 장치)의 뼈대입니다.',
+    takeaway: '연산만 바꾸면 스위치는 그대로인데 출력이 바뀝니다. 진리표에는 세 게이트의 결과가 모두 있고, 지금 고른 열에 테두리가 생깁니다. 선택기로 들어가는 선 중 고르지 않은 선은 흐리게 보입니다.',
+    description: '스위치 A와 B가 AND, OR, XOR 게이트로 갈라져 들어가고, 세 결과가 선택기로 모입니다. 연산 다이얼에서 나온 주황 선이 선택기에 어떤 결과를 고를지 알려 줍니다.',
+    ops: ['AND', 'OR', 'XOR'],
+    nodes: [
+      { id: 'A', type: 'IN', u: 0, v: -5 },
+      { id: 'B', type: 'IN', u: 0, v: 5 },
+      { id: 'op', type: 'OP', u: 10, v: 17 },
+      { id: 'and', type: 'AND', in: ['A', 'B'], u: 8, v: -8, mids: [3, 4.6] },
+      { id: 'or', type: 'OR', in: ['A', 'B'], u: 8, v: 0, mids: [3, 4.6] },
+      { id: 'xor', type: 'XOR', in: ['A', 'B'], u: 8, v: 8, mids: [3, 4.6] },
+      { id: 'mux', type: 'MUX', in: ['and', 'or', 'xor', 'op'], u: 16, v: 0, mids: [12.4, 11.6, 12.4, 13.6] },
+      { id: 'L', type: 'LAMP', in: ['mux'], u: 22, v: 0, label: '출력' },
+    ],
+    outs: [['and', 'AND'], ['or', 'OR'], ['xor', 'XOR'], ['L', '출력']],
+    picked: (inputs) => ['and', 'or', 'xor'][inputs.op],
+    demo: [[1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 2], [1, 1, 0]],
+    expr: (v, i) => [`A ${['AND', 'OR', 'XOR'][i.op]} B = ${v.A} ${['AND', 'OR', 'XOR'][i.op]} ${v.B} = `, String(v.L), ''],
+    tasks: [
+      { text: 'A = 1, B = 1로 두고 연산만 바꿔서 출력 램프를 꺼 보세요.', test: (v, i) => v.A && v.B && v.L === 0, ok: 'XOR는 두 입력이 같으면 0입니다.' },
+      { text: 'A = 1, B = 0에서 AND를 골라 보세요. 램프는 어떻게 될까요?', test: (v, i) => v.A === 1 && v.B === 0 && i.op === 0, ok: '1 AND 0 = 0. OR나 XOR였다면 켜졌을 것입니다.' },
+      { text: 'OR를 고른 채로 출력 램프를 꺼 보세요.', test: (v, i) => i.op === 1 && v.L === 0, ok: 'OR는 둘 다 0일 때만 0입니다.' },
+    ],
+  },
+  {
+    label: 'ALU 상자',
+    title: 'ALU는 수 두 개와 연산 하나를 받는다',
+    body: '자리마다 1비트 ALU를 놓고 덧셈의 올림을 이어 주면 여러 자리 수를 계산하는 ALU가 됩니다. 이제 안을 상자로 감추고 A, B 두 수와 연산만 생각합시다. 굵은 선은 비트 여러 개를 한꺼번에 나르는 버스입니다. 여기서는 3비트라 0부터 7까지 다룹니다.',
+    takeaway: '같은 A, B라도 연산 다이얼에 따라 결과가 달라집니다. 아래 표처럼 ALU 안에서는 네 연산이 모두 계산되고, 그중 고른 하나만 결과 칸으로 나옵니다. 결과가 8 이상이면 3비트에 들어가지 않아 앞자리가 잘립니다.',
+    description: '왼쪽에 수 A와 B 칸, 아래에 연산 다이얼이 있습니다. A와 B의 굵은 버스와 다이얼의 주황 선이 ALU 상자로 들어가고, ALU에서 나온 버스가 결과 칸으로 갑니다.',
+    ops: ['ADD', 'SUB', 'AND', 'OR'],
+    nodes: [
+      { id: 'A', type: 'NUM', u: 0, v: -6, label: 'A' },
+      { id: 'B', type: 'NUM', u: 0, v: 4, label: 'B' },
+      { id: 'op', type: 'OP', u: 3, v: 12 },
+      { id: 'alu', type: 'ALU', in: ['A', 'B', 'op'], u: 11, v: 0, ports: [-1.7, 0, 1.7], mids: [6.5, 5.5, 7] },
+      { id: 'R', type: 'OUT', in: ['alu.r'], u: 20, v: 0, label: '결과' },
+    ],
+    demo: [[5, 2, 0], [5, 2, 1], [5, 2, 2], [5, 2, 3], [6, 3, 0]],
+    expr: (v, i) => {
+      const symbol = ['+', '−', 'AND', 'OR'][i.op];
+      return [`A ${symbol} B = ${i.A} ${symbol} ${i.B} = `, String(v.R), ` · 이진수 ${binary(i.A)} ${symbol} ${binary(i.B)} = ${binary(v.R)}`];
+    },
+    tasks: [
+      { text: '5 + 2를 계산해 보세요.', test: (v, i) => i.A === 5 && i.B === 2 && i.op === 0, ok: '101 + 010 = 111, 곧 7입니다.' },
+      { text: '6 AND 3을 계산해 보세요. 이진수로 겹치는 자리는?', test: (v, i) => i.A === 6 && i.B === 3 && i.op === 2, ok: '110 AND 011 = 010, 곧 2입니다. 둘 다 1인 자리만 남습니다.' },
+      { text: '같은 두 수로 ADD와 OR의 결과가 같아지게 해 보세요.', test: (v, i) => i.op <= 3 && (i.A & i.B) === 0 && i.A + i.B > 0 && (i.op === 0 || i.op === 3), ok: '같은 자리에 1이 겹치지 않으면 올림이 없어서 더하기와 OR가 같습니다.' },
+    ],
+  },
+  {
+    label: '플래그',
+    title: '결과에 대한 질문도 함께 답한다',
+    body: 'ALU는 결과와 함께 플래그라는 비트 몇 개를 냅니다. Z(제로)는 결과가 0이면 1, C(캐리)는 덧셈에서 올림이 넘치거나 뺄셈에서 빌려 와야 할 때 1입니다. CPU는 A − B를 해 보고 Z가 켜지면 "같다", C가 켜지면 "A가 더 작다"고 판단합니다. 1.2의 if 문도 이렇게 비교합니다.',
+    takeaway: 'SUB에서 A = B이면 결과 0과 함께 Z 램프가 켜집니다. A < B이면 3비트 안에서 한 바퀴 돌아 큰 수가 나오고 C 램프가 켜집니다. 7 + 1은 결과가 0이 되면서 Z와 C가 함께 켜집니다.',
+    description: '3단계 ALU에 램프 두 개가 더 붙었습니다. ALU 오른쪽 위의 Z 램프는 결과가 0인지, 오른쪽 아래의 C 램프는 올림이나 빌림이 있었는지 보입니다.',
+    ops: ['ADD', 'SUB', 'AND', 'OR'],
+    flags: true,
+    nodes: [
+      { id: 'A', type: 'NUM', u: 0, v: -6, label: 'A' },
+      { id: 'B', type: 'NUM', u: 0, v: 4, label: 'B' },
+      { id: 'op', type: 'OP', u: 3, v: 12 },
+      { id: 'alu', type: 'ALU', in: ['A', 'B', 'op'], u: 11, v: 0, ports: [-1.7, 0, 1.7], mids: [6.5, 5.5, 7],
+        outPorts: { r: 0, z: -1.6, c: 1.6 } },
+      { id: 'R', type: 'OUT', in: ['alu.r'], u: 20, v: 0, label: '결과' },
+      { id: 'Z', type: 'LAMP', in: ['alu.z'], u: 20, v: -11, label: 'Z 결과가 0', mids: [16.5] },
+      { id: 'C', type: 'LAMP', in: ['alu.c'], u: 20, v: 10, label: 'C 올림·빌림', mids: [16.5] },
+    ],
+    demo: [[5, 3, 1], [3, 3, 1], [2, 5, 1], [7, 1, 0]],
+    expr: (v, i) => {
+      const symbol = ['+', '−', 'AND', 'OR'][i.op];
+      return [`A ${symbol} B = ${i.A} ${symbol} ${i.B} → 결과 `, String(v.R), ` · Z = ${v.Z}, C = ${v.C}`];
+    },
+    tasks: [
+      { text: 'SUB를 골라 Z 램프를 켜 보세요.', test: (v, i) => i.op === 1 && v.Z === 1, ok: 'A − B = 0, 곧 A와 B가 같습니다.' },
+      { text: 'SUB로 C 램프를 켜 보세요. A와 B 중 어느 쪽이 커야 할까요?', test: (v, i) => i.op === 1 && v.C === 1, ok: 'A가 B보다 작으면 빌림이 생겨 C가 켜집니다.' },
+      { text: 'ADD로 Z와 C 램프를 동시에 켜 보세요.', test: (v, i) => i.op === 0 && v.Z === 1 && v.C === 1, ok: '합이 정확히 8이면 3비트에는 000만 남고 올림이 넘칩니다.' },
+    ],
+  },
+];
+const binary = (value, bits = 3) => value.toString(2).padStart(bits, '0');
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+function setCamera(x, y, zoom) {
+  camera.zoom = clamp(zoom, 1, maxZoom);
+  const width = viewWidth / camera.zoom;
+  const height = viewHeight / camera.zoom;
+  camera.x = clamp(x, 0, viewWidth - width);
+  camera.y = clamp(y, 0, viewHeight - height);
+  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
+  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
+  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
+  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
+  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
+}
+
+function zoomBetween(nextZoom, from, to = from) {
+  const zoom = clamp(nextZoom, 1, maxZoom);
+  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
+            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
+}
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+function viewportPoint(event) {
+  const rect = viewport.getBoundingClientRect();
+  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
+  return {
+    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
+    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+  };
+}
+
+function pointerGeometry() {
+  const [a, b] = pointers.values();
+  if (!b) return { point: a, distance: 0 };
+  return {
+    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    distance: Math.hypot(a.x - b.x, a.y - b.y),
+  };
+}
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+function zoomBy(delta) {
+  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
+  zoomBetween(camera.zoom + delta, center);
+  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
+}
+
+function resetView() {
+  pointers.clear();
+  viewport.classList.remove('is-dragging');
+  setCamera(0, 0, 1);
+  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
+}
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+byId('view-reset').onclick = resetView;
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'alu-lab:v1:step';
+const gateDelay = 560;   // ms for a signal to cross one wire, so one gate "thinks" per wire
+const state = { index: 0, inputs: {}, values: {}, shown: {}, playing: !motion.matches, userPaused: false,
+  demoPosition: 0, wait: 0, solved: '', seen: new Set() };
+const progress = lesson.map(() => 0);  // try-it problems solved in each step
+let views = new Map();   // node id -> drawn node
+let wires = [];          // { from, to, port, kind, line, casing, chevron, startLen, endLen }
+let events = [];         // pending { at, id }: when a node shows its new value
+let packets = [];
+let frame = null;
+let lastFrame = null;
+
+function svg(name, attrs, parent) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
+  if (parent) parent.append(element);
+  return element;
+}
+
+// The same world-to-screen projection as the other labs.
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+// Screen position of a (u, v) floor point: u = x + y, v = x - y.
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const laneHeight = 3;
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) {
+  gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+}
+byId('grid').setAttribute('d', gridLines.join(''));
+
+function drawShadow(node, half) {
+  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
+  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
+}
+
+function boxFaces(h, H) {
+  return {
+    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
+    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
+    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
+  };
+}
+function drawFaces(node, h, H) {
+  const faces = {};
+  for (const [name, corners] of Object.entries(boxFaces(h, H))) {
+    faces[name] = svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
+  }
+  const highlight = svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
+  return { faces, highlight };
+}
+
+// Plates are small labels whose box is sized to the text.
+let plates = [];
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  if (plate.side) plate.x = plate.side * (28 * plate.h + 5 + width / 2);
+  plate.label.setAttribute('x', plate.x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
+function addPlate(node, className, x, y, text, { pad = 1.5, round = true, side = 0, h = 0 } = {}) {
+  const group = svg('g', { class: className }, node);
+  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round, side, h };
+  plate.label.textContent = text;
+  plates.push(plate);
+  sizePlate(plate);
+  return plate;
+}
+function setPlate(plate, text) {
+  if (plate.label.textContent === text) return;
+  plate.label.textContent = text;
+  sizePlate(plate);
+}
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// Sizes: half-width h on the floor (a box covers u ± 2h) and height H.
+const size = { IN: [.78, 10], NOT: [1.05, 14], AND: [1.15, 14], OR: [1.15, 14], XOR: [1.15, 14], LAMP: [1.05, 11],
+  MUX: [1.35, 16], OP: [1.05, 12], NUM: [1.3, 12], OUT: [1.3, 12], ALU: [2.1, 22] };
+const boxName = { MUX: '선택기', ALU: 'ALU' };
+const nodeOf = (ref) => ref.split('.')[0];
+const specOf = (ref) => views.get(nodeOf(ref)).spec;
+const outOffset = (ref) => specOf(ref).outPorts?.[ref.split('.')[1]] ?? 0;
+const switchHigh = 18;  // a switch pops up to this height when on
+const ops = () => lesson[state.index].ops ?? [];
+
+function shapeSwitch(view, H) {
+  const h = size.IN[0];
+  for (const [name, corners] of Object.entries(boxFaces(h, H))) {
+    view.faces[name].setAttribute('points', corners.map((p) => point(...p)).join(' '));
+  }
+  view.highlight.setAttribute('d', `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}`);
+  view.digit.setAttribute('y', -H + .5);
+  view.plate.group.setAttribute('transform', `translate(0 ${(size.IN[1] - H) / 2})`);
+}
+
+function createNode(spec) {
+  const [h, H] = size[spec.type];
+  const kind = { IN: 'switch', LAMP: 'lamp', OP: 'dial', NUM: 'number', OUT: 'number result' }[spec.type] ?? 'gate ' + spec.type;
+  const node = svg('g', { class: 'node ' + kind, transform: `translate(${flat(spec.u, spec.v).join(' ')})` }, byId('nodes'));
+  const view = { spec, node, height: H, heightFrom: H, heightTo: H };
+  drawShadow(node, h);
+  if (spec.type === 'IN') {
+    node.dataset.input = spec.id;
+    const spill = [[-h, -h], [h, -h], [h, h], [-h, h]].map(([x, y]) => point(x * 1.9, y * 1.9, 0)).join(' ');
+    svg('polygon', { class: 'glow', points: spill, filter: 'url(#soft-glow)' }, node);
+    view.faces = {};
+    for (const name of ['left', 'right', 'top']) view.faces[name] = svg('polygon', { class: 'face ' + name }, node);
+    view.highlight = svg('path', { class: 'highlight' }, node);
+    view.digit = svg('text', { class: 'digit', x: 0 }, node);
+    // Switch names sit to the left so stacked switches do not cover each other's names.
+    view.plate = addPlate(node, 'tag', 0, -H / 2 - 4, spec.label ?? spec.id, { pad: 1.3, side: -1, h });
+    shapeSwitch(view, H);
+    return view;
+  }
+  Object.assign(view, drawFaces(node, h, H));
+  if (spec.type === 'LAMP') {
+    svg('circle', { class: 'halo', cx: 0, cy: -H - 9, r: 17, filter: 'url(#soft-glow)' }, node);
+    svg('circle', { class: 'bulb', cx: 0, cy: -H - 9, r: 8.5 }, node);
+    addPlate(node, 'tag', 0, -H / 2, spec.label ?? '램프', { side: 1, h });
+    return view;
+  }
+  if (spec.type === 'OP') {
+    // The operation dial: pressing it in the scene picks the next operation.
+    node.dataset.input = spec.id;
+    view.plate = addPlate(node, 'tag op-tag', 0, -H - 14 * h - 12, '', { pad: 1.3, round: false });
+    return view;
+  }
+  if (spec.type === 'NUM' || spec.type === 'OUT') {
+    view.plate = addPlate(node, 'tag value-tag', 0, -H - 14 * h - 12, '', { pad: 1.2, round: false });
+    return view;
+  }
+  view.plate = addPlate(node, 'tag', 0, -H - 14 * h - 12, boxName[spec.type] ?? spec.type, { pad: 1.3, round: false });
+  if (spec.type === 'ALU') {
+    view.opText = svg('text', { class: 'box-op', x: 0, y: -H + 1 }, node);
+    return view;
+  }
+  if (spec.type === 'MUX') view.opText = svg('text', { class: 'box-op', x: 0, y: -H + 1 }, node);
+  // The gate's output value, on a badge just past its right corner.
+  const badge = svg('g', { class: 'bit-badge', transform: `translate(${14 * (spec.u + 2 * h + .95)} ${7 * spec.v - 13})` }, byId('badges'));
+  svg('circle', { r: 8 }, badge);
+  view.badgeText = svg('text', {}, badge);
+  view.badge = badge;
+  return view;
+}
+
+// What a wire carries: one bit, a whole number (a bus), or the chosen operation (control).
+function wireKind(ref) {
+  const type = specOf(ref).type;
+  if (type === 'OP') return 'control';
+  if (type === 'NUM' || (type === 'ALU' && ref.endsWith('.r'))) return 'bus';
+  return 'bit';
+}
+
+// Wires run on the floor like a schematic: right from the source, then up or down at `mid`,
+// then right into the gate's port. The part under each box is hidden by the box.
+function createWire(from, to, port, mid) {
+  const src = specOf(from), dst = views.get(to).spec;
+  const n = dst.in.length;
+  const gap = n > 3 ? 1 : 1.1;
+  const pv = dst.v + (dst.ports?.[port] ?? (n === 2 ? (port ? .9 : -.9) : (port - (n - 1) / 2) * gap));
+  const sv = src.v + outOffset(from);
+  const turn = mid ?? (src.u + dst.u) / 2;
+  const route = [[src.u, sv], [turn, sv], [turn, pv], [dst.u, pv]].map(([u, v]) => flat(u, v, laneHeight));
+  const d = 'M' + route.map((p) => p.join(' ')).join('L');
+  const kind = wireKind(from);
+  const casing = svg('path', { class: 'casing' + (kind === 'bus' ? ' wide' : ''), d }, byId('casings'));
+  const group = svg('g', { class: 'lane ' + kind }, byId('links'));
+  const line = svg('path', { class: 'wire idle', d }, group);
+  const [p, q] = route.slice(-2);
+  const at = [mix(p[0], q[0], .35), mix(p[1], q[1], .35)];
+  const chevron = svg('path', { class: 'chevron idle', d: 'M-4.5 -5L2.5 0L-4.5 5', transform: `translate(${at.join(' ')})` }, group);
+  const startLen = 14 * 2 * size[src.type][0] * .8;
+  const endLen = 14 * (2 * size[dst.type][0] - Math.abs(pv - dst.v)) * .9;
+  return { from, to, port, kind, group, line, casing, chevron, startLen, endLen };
+}
+
+// One ALU operation on 3-bit numbers: the result keeps 3 bits, and C is the carry out of ADD
+// or the borrow of SUB (A smaller than B).
+function alu(op, a, b) {
+  const raw = { ADD: a + b, SUB: a - b, AND: a & b, OR: a | b, XOR: a ^ b }[op];
+  const r = (raw + 8) & 7;
+  return { r, z: r === 0 ? 1 : 0, c: op === 'ADD' ? (raw > 7 ? 1 : 0) : op === 'SUB' ? (a < b ? 1 : 0) : 0 };
+}
+
+function evaluate(inputs) {
+  const values = {};
+  for (const spec of lesson[state.index].nodes) {
+    const ins = (spec.in ?? []).map((ref) => values[ref]);
+    const [a, b] = ins;
+    if (spec.type === 'ALU') {
+      const out = alu(ops()[ins[2]], a, b);
+      for (const key of ['r', 'z', 'c']) values[spec.id + '.' + key] = out[key];
+      values[spec.id] = out.r;
+      continue;
+    }
+    values[spec.id] = spec.type === 'IN' || spec.type === 'NUM' || spec.type === 'OP' ? inputs[spec.id]
+      : spec.type === 'NOT' ? 1 - a : spec.type === 'AND' ? a & b : spec.type === 'OR' ? a | b
+      : spec.type === 'XOR' ? a ^ b : spec.type === 'MUX' ? ins[ins[ins.length - 1]] : a;
+  }
+  return values;
+}
+
+// How many wires a signal crosses from the inputs to each node.
+function depths() {
+  const depth = {};
+  for (const spec of lesson[state.index].nodes) {
+    depth[spec.id] = spec.in ? 1 + Math.max(...spec.in.map((ref) => depth[nodeOf(ref)])) : 0;
+  }
+  return depth;
+}
+
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'badges', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  events = [];
+  views = new Map();
+  const step = lesson[state.index];
+  // Painter's order: nodes higher on screen first.
+  const ordered = [...step.nodes].sort((a, b) => a.v - b.v || a.u - b.u);
+  for (const spec of ordered) views.set(spec.id, createNode(spec));
+  wires = [];
+  for (const spec of step.nodes) {
+    (spec.in ?? []).forEach((from, port) => wires.push(createWire(from, spec.id, port, spec.mids?.[port])));
+  }
+  fitWorld(step.nodes);
+}
+
+// Scale and centre the circuit in the 620 x 280 viewport.
+function fitWorld(nodes) {
+  const xs = nodes.map((n) => 14 * n.u), ys = nodes.map((n) => 7 * n.v);
+  const left = Math.min(...xs) - 70, right = Math.max(...xs) + 90;
+  const top = Math.min(...ys) - 58, bottom = Math.max(...ys) + 24;
+  const scale = Math.min(1.9, 580 / (right - left), 262 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 142 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// The text a packet carries along a wire.
+function packetText(wire) {
+  const value = state.values[wire.from];
+  return wire.kind === 'bus' ? String(value) : wire.kind === 'control' ? ops()[value] : '1';
+}
+
+// A selector only lets one data wire through: the others are drawn faint.
+function syncChosen() {
+  for (const wire of wires) {
+    const dst = views.get(wire.to).spec;
+    const chosen = dst.type !== 'MUX' || wire.port === dst.in.length - 1 || wire.port === state.shown[dst.in.at(-1)];
+    wire.group.classList.toggle('unchosen', !chosen);
+    wire.casing.classList.toggle('unchosen', !chosen);
+  }
+}
+
+// Show one node's value: light it, light its outgoing wires, and send the value down each of them.
+function showNode(id, send) {
+  const view = views.get(id);
+  for (const ref of Object.keys(state.values)) if (nodeOf(ref) === id) state.shown[ref] = state.values[ref];
+  if (!view) return;
+  const value = state.values[id];
+  const type = view.spec.type;
+  const on = value === 1 && !['NUM', 'OUT', 'OP', 'ALU'].includes(type);
+  view.node.classList.toggle('on', on);
+  if (view.digit) {
+    view.digit.textContent = String(value);
+    view.heightFrom = view.height;
+    view.heightTo = on ? switchHigh : size.IN[1];
+    view.anim = motion.matches ? null : { start: performance.now(), ms: 300 };
+    if (!view.anim) { view.height = view.heightTo; shapeSwitch(view, view.height); }
+  }
+  if (view.badge) {
+    view.badge.classList.toggle('on', on);
+    view.badgeText.textContent = String(value);
+  }
+  if (type === 'OP') setPlate(view.plate, `연산 ${ops()[value]}`);
+  if (type === 'NUM' || type === 'OUT') setPlate(view.plate, `${view.spec.label} = ${binary(value)} (${value})`);
+  if (type === 'MUX') view.opText.textContent = ops()[state.values[view.spec.in.at(-1)]];
+  if (type === 'ALU') view.opText.textContent = ops()[state.values[view.spec.in[2]]];
+  for (const wire of wires) {
+    if (nodeOf(wire.from) !== id) continue;
+    const lit = wire.kind !== 'bit' || state.values[wire.from] === 1;
+    for (const part of [wire.line, wire.chevron]) {
+      part.classList.toggle('signal', lit);
+      part.classList.toggle('idle', !lit);
+    }
+    if (lit && send) sendPacket(wire);
+  }
+  syncChosen();
+  kick();
+}
+
+function sendPacket(wire) {
+  if (motion.matches) return;
+  const group = svg('g', { class: 'packet-group ' + wire.kind }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  svg('text', { class: 'packet-label', y: -9.5 }, group).textContent = packetText(wire);
+  packets.push({ group, wire, start: performance.now(), duration: gateDelay });
+  kick();
+}
+
+function movePackets(now) {
+  packets = packets.filter((packet) => {
+    const t = (now - packet.start) / packet.duration;
+    const { line, startLen, endLen, from, kind } = packet.wire;
+    // A packet disappears on arrival, and when its bit turns back to 0 mid-flight.
+    if (t >= 1 || !line.isConnected || (kind === 'bit' && state.shown[from] !== 1)) { packet.group.remove(); return false; }
+    const total = line.getTotalLength();
+    const at = line.getPointAtLength(mix(Math.min(startLen, total), Math.max(total - endLen, 0), Math.max(t, 0)));
+    packet.group.setAttribute('transform', `translate(${at.x} ${at.y})`);
+    return true;
+  });
+}
+
+// Set the inputs. Every node then shows its new value once the signal has had time to reach it,
+// one wire (gateDelay) per gate. With reduced motion everything updates at once.
+// `changed` lists the inputs that changed: only their signals are sent again.
+function setInputs(next, { send = true } = {}) {
+  const changed = Object.keys(next).filter((id) => next[id] !== state.inputs[id]);
+  state.inputs = { ...next };
+  state.values = evaluate(state.inputs);
+  events = [];
+  const depth = depths();
+  const now = performance.now();
+  for (const spec of lesson[state.index].nodes) {
+    const sendThis = send && (depth[spec.id] > 0 || changed.includes(spec.id));
+    if (motion.matches || depth[spec.id] === 0) showNode(spec.id, sendThis);
+    else events.push({ at: now + depth[spec.id] * gateDelay, id: spec.id, send });
+  }
+  syncControls();
+  kick();
+}
+
+// A demo entry lists the input values in the order of `inputIds()`.
+function comboInputs(combo) {
+  return Object.fromEntries(inputIds().map((id, k) => [id, combo[k]]));
+}
+
+function demoTick() {
+  const step = lesson[state.index];
+  setInputs(comboInputs(step.demo[state.demoPosition]));
+  state.demoPosition = (state.demoPosition + 1) % step.demo.length;
+  state.wait = 1700 + Math.max(...Object.values(depths())) * gateDelay;
+}
+
+const inputIds = () => lesson[state.index].nodes.filter((n) => !n.in).map((n) => n.id);
+const bitIds = () => lesson[state.index].nodes.filter((n) => n.type === 'IN').map((n) => n.id);
+
+function tick(now) {
+  frame = null;
+  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
+  lastFrame = now;
+  if (state.playing) {
+    state.wait -= elapsed;
+    if (state.wait <= 0) demoTick();
+  }
+  const due = events.filter((event) => event.at <= now);
+  events = events.filter((event) => event.at > now);
+  for (const event of due) showNode(event.id, event.send);
+  let animating = false;
+  for (const view of views.values()) {
+    if (!view.anim) continue;
+    const t = clamp((now - view.anim.start) / view.anim.ms, 0, 1);
+    const ease = t * t * (3 - 2 * t);
+    view.height = mix(view.heightFrom, view.heightTo, ease);
+    shapeSwitch(view, view.height);
+    if (t === 1) view.anim = null; else animating = true;
+  }
+  movePackets(now);
+  if (!(state.playing || events.length || packets.length || animating)) lastFrame = null;
+  else if (frame === null) frame = requestAnimationFrame(tick);
+}
+
+function kick() {
+  if (frame === null && (state.playing || events.length || packets.length || [...views.values()].some((v) => v.anim))) {
+    frame = requestAnimationFrame(tick);
+  }
+}
+
+function syncPlayback() {
+  const reduced = motion.matches;
+  if (reduced) {
+    state.playing = false;
+    for (const packet of packets) packet.group.remove();
+    packets = [];
+  }
+  byId('status').textContent = reduced ? '모션 감소 · 직접 조작' : state.playing ? '재생 중' : '일시정지됨';
+  byId('pause').textContent = state.playing ? '일시정지' : '재생';
+  byId('pause').disabled = reduced;
+  byId('replay').disabled = reduced;
+  kick();
+}
+
+// The HTML controls mirror the scene and are the keyboard and screen reader controls:
+// a button per switch, a row of bit buttons per number (A:2 is bit 2 of A), and a row of operations.
+let inputButtons = [];
+let opButtons = [];
+function makeButton(control, text, onClick) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'input-button';
+  const name = document.createElement('span');
+  name.className = 'name';
+  name.textContent = text;
+  const digit = document.createElement('span');
+  digit.className = 'bit';
+  button.append(name, digit);
+  button.addEventListener('click', onClick);
+  inputButtons.push({ control, button, digit });
+  return button;
+}
+function buildButtons() {
+  const step = lesson[state.index];
+  const box = byId('input-buttons');
+  box.replaceChildren();
+  inputButtons = [];
+  opButtons = [];
+  const numbers = step.nodes.filter((n) => n.type === 'NUM');
+  box.classList.toggle('numbers', numbers.length > 0 || Boolean(step.ops));
+  const switches = document.createElement('div');
+  switches.className = 'number-row';
+  for (const spec of step.nodes.filter((n) => n.type === 'IN')) {
+    switches.append(makeButton(spec.id, spec.label ?? spec.id, () => toggleInput(spec.id)));
+  }
+  if (switches.children.length) box.append(switches);
+  for (const spec of numbers) {
+    const row = document.createElement('div');
+    row.className = 'number-row';
+    row.append(Object.assign(document.createElement('span'), { className: 'number-name', textContent: spec.label }));
+    for (let k = 2; k >= 0; k--) row.append(makeButton(`${spec.id}:${k}`, `${2 ** k}`, () => toggleInput(`${spec.id}:${k}`)));
+    row.append(Object.assign(document.createElement('output'), { className: 'number-value', id: 'value-' + spec.id }));
+    box.append(row);
+  }
+  const dial = step.nodes.find((n) => n.type === 'OP');
+  if (dial) {
+    const row = document.createElement('div');
+    row.className = 'op-row';
+    row.setAttribute('role', 'group');
+    row.setAttribute('aria-label', '연산 고르기');
+    row.append(Object.assign(document.createElement('span'), { className: 'number-name', textContent: '연산' }));
+    opButtons = step.ops.map((op, index) => {
+      const button = Object.assign(document.createElement('button'), { type: 'button', className: 'op-button', textContent: op });
+      button.addEventListener('click', () => chooseOp(index));
+      row.append(button);
+      return button;
+    });
+    box.append(row);
+  }
+}
+
+// Truth table for steps with bit switches (`outs` names its columns). Steps with numbers show
+// every operation's result instead, since the ALU works them all out and the selector picks one.
+const rowIndex = (inputs) => bitIds().reduce((index, id) => index * 2 + inputs[id], 0);
+const cell = (tag, text, className = '') => Object.assign(document.createElement(tag), { textContent: text, className });
+function buildTable() {
+  const step = lesson[state.index];
+  const table = byId('truth');
+  table.replaceChildren();
+  table.className = 'truth';
+  if (!step.outs) {
+    table.classList.add('op-table');
+    table.append(cell('caption', 'ALU 안에서 함께 계산된 결과'));
+    const head = document.createElement('tr');
+    for (const name of ['연산', '결과', '', ...(step.flags ? ['Z', 'C'] : [])]) head.append(Object.assign(cell('th', name), { scope: 'col' }));
+    table.append(head);
+    step.ops.forEach(() => {
+      const tr = document.createElement('tr');
+      for (let k = 0; k < (step.flags ? 5 : 3); k++) tr.append(cell('td', ''));
+      table.append(tr);
+    });
+    return;
+  }
+  const ids = bitIds();
+  const names = Object.fromEntries(step.nodes.map((n) => [n.id, n.label ?? n.id]));
+  table.append(cell('caption', '진리표 · 직접 만든 줄에 ✓'));
+  const head = document.createElement('tr');
+  for (const id of ids) head.append(Object.assign(cell('th', names[id]), { scope: 'col' }));
+  step.outs.forEach(([, label], k) => head.append(Object.assign(cell('th', label, k === 0 ? 'out' : ''), { scope: 'col' })));
+  head.append(cell('td', '', 'seen'));
+  table.append(head);
+  for (let row = 0; row < 2 ** ids.length; row++) {
+    const tr = document.createElement('tr');
+    for (let k = 0; k < ids.length + step.outs.length + 1; k++) tr.append(cell('td', ''));
+    table.append(tr);
+  }
+}
+
+// Fill the table for the current state: in a truth table the output column depends on the chosen operation.
+function syncTable() {
+  const step = lesson[state.index];
+  const rows = [...byId('truth').querySelectorAll('tr')].slice(1);
+  if (!step.outs) {
+    const a = state.inputs.A, b = state.inputs.B;
+    rows.forEach((tr, index) => {
+      const out = alu(step.ops[index], a, b);
+      const cells = [...tr.children];
+      const symbol = { ADD: '+', SUB: '−' }[step.ops[index]] ?? step.ops[index];
+      cells[0].textContent = `${a} ${symbol} ${b}`;
+      cells[1].textContent = binary(out.r);
+      cells[2].textContent = `(${out.r})`;
+      if (step.flags) { cells[3].textContent = out.z; cells[4].textContent = out.c; }
+      tr.classList.toggle('current', index === state.inputs.op);
+    });
+    return;
+  }
+  const ids = bitIds();
+  const current = rowIndex(state.inputs);
+  rows.forEach((tr, row) => {
+    const inputs = { ...state.inputs, ...Object.fromEntries(ids.map((id, k) => [id, row >> (ids.length - 1 - k) & 1])) };
+    const values = evaluate(inputs);
+    const cells = [...tr.children];
+    ids.forEach((id, k) => { cells[k].textContent = inputs[id]; });
+    step.outs.forEach(([id], k) => {
+      const td = cells[ids.length + k];
+      td.textContent = values[id];
+      td.className = (k === 0 ? 'out' : '') + (values[id] ? ' one' : '') + (step.picked?.(state.inputs) === id ? ' picked' : '');
+    });
+    tr.classList.toggle('current', row === current);
+    cells.at(-1).className = 'seen';
+    cells.at(-1).textContent = state.seen.has(row) ? '✓' : '';
+  });
+}
+
+function syncControls() {
+  const step = lesson[state.index];
+  for (const { control, button, digit } of inputButtons) {
+    const [id, bit] = control.split(':');
+    const value = bit === undefined ? state.inputs[id] : state.inputs[id] >> Number(bit) & 1;
+    button.setAttribute('aria-pressed', String(value === 1));
+    button.setAttribute('aria-label', bit === undefined ? `스위치 ${id}, ${value ? '켜짐 1' : '꺼짐 0'}`
+      : `${id}의 ${2 ** Number(bit)} 자리, ${value}`);
+    digit.textContent = String(value);
+  }
+  for (const spec of step.nodes.filter((n) => n.type === 'NUM')) byId('value-' + spec.id).textContent = '= ' + state.inputs[spec.id];
+  opButtons.forEach((button, index) => button.setAttribute('aria-pressed', String(index === state.inputs.op)));
+  syncTable();
+  const [lead, result, tail] = step.expr(state.values, state.inputs);
+  const bold = document.createElement('b');
+  bold.textContent = result;
+  byId('readout').replaceChildren(lead, bold, tail);
+}
+
+// Show the current try-it problem, or the result when the learner has just solved one.
+function syncTask() {
+  const tasks = lesson[state.index].tasks;
+  const done = progress[state.index];
+  const allDone = done >= tasks.length;
+  byId('try').classList.toggle('solved', state.solved !== '');
+  byId('try-text').textContent = state.solved !== '' ? tasks[done - 1].text
+    : allDone ? '이 단계의 문제를 모두 풀었습니다. 자유롭게 바꿔 보세요.' : tasks[done].text;
+  byId('try-result').textContent = state.solved === '' ? ''
+    : `✓ 맞았습니다. ${state.solved}${allDone ? ' · 이 단계의 문제를 모두 풀었습니다.' : ''}`;
+  byId('try-next').hidden = state.solved === '' || allDone;
+}
+
+// Only the learner's own changes count, so the demo cannot solve a problem.
+function checkTask() {
+  const tasks = lesson[state.index].tasks;
+  const done = progress[state.index];
+  if (state.solved !== '' || done >= tasks.length || !tasks[done].test(state.values, state.inputs)) return;
+  progress[state.index] = done + 1;
+  state.solved = tasks[done].ok;
+  syncTask();
+}
+
+byId('try-next').onclick = () => {
+  state.solved = '';
+  syncTask();
+  inputButtons[0]?.button.focus();
+};
+
+function userChange(next, message) {
+  state.playing = false;
+  state.solved = '';  // a new move dismisses the last result and brings up the next problem
+  if (lesson[state.index].outs) state.seen.add(rowIndex(next));
+  setInputs(next);
+  syncPlayback();
+  byId('announcement').textContent = `${message} ${byId('readout').textContent}`;
+  syncTask();
+  checkTask();
+}
+
+// A switch id ("A"), a number bit ("A:2"), or the operation dial (which steps to the next operation).
+function toggleInput(control) {
+  const [id, bit] = control.split(':');
+  if (!(id in state.inputs)) return;
+  const spec = views.get(id)?.spec;
+  if (spec?.type === 'OP') { chooseOp((state.inputs.op + 1) % ops().length); return; }
+  const value = bit === undefined ? 1 - state.inputs[id] : state.inputs[id] ^ 1 << Number(bit);
+  userChange({ ...state.inputs, [id]: value }, bit === undefined ? `스위치 ${id} ${value ? '켜짐' : '꺼짐'}.` : `${id} = ${value}.`);
+}
+
+function chooseOp(index) {
+  userChange({ ...state.inputs, op: index }, `연산 ${ops()[index]}.`);
+}
+
+function startStep() {
+  const step = lesson[state.index];
+  state.demoPosition = 0;
+  state.seen = new Set();
+  state.inputs = {};
+  buildScene();
+  buildButtons();
+  buildTable();
+  // Start from the demo's last combination so the first tick visibly changes something.
+  const first = motion.matches ? step.demo[0] : step.demo[step.demo.length - 1];
+  setInputs(comboInputs(first), { send: true });
+  state.wait = 900;
+}
+
+function showStep(index, announce = true) {
+  state.index = index;
+  if (!state.userPaused) state.playing = !motion.matches;
+  const step = lesson[index];
+  startStep();
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.takeaway;
+  byId('scene-desc').textContent = step.description;
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  state.solved = '';
+  syncTask();
+  syncPlayback();
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
+}
+
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/alu/${index + 1}`);
+  showStep(index);
+}
+
+function routeIndex() {
+  const match = /^#\/alu\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+byId('pause').onclick = () => {
+  state.playing = !state.playing;
+  state.userPaused = !state.playing;
+  if (state.playing && state.wait <= 0) state.wait = 400;
+  syncPlayback();
+  byId('announcement').textContent = byId('status').textContent;
+};
+byId('replay').onclick = () => {
+  state.playing = true;
+  state.userPaused = false;
+  startStep();
+  syncPlayback();
+  byId('announcement').textContent = '현재 단계 다시 재생';
+};
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches && !state.userPaused) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/alu/${initial + 1}`);
+showStep(initial, false);
+</script>
+</body>
+</html>

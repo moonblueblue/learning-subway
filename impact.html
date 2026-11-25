@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="위치 공유, 채용 프로그램, 접근성, 데이터센터 사례를 보고 기술이 주는 이익과 위험을 직접 나눠 보세요.">
+<title>컴퓨팅의 영향 · 레슨 0.8</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.stage-top h2{font-size:1rem}
+.score{color:var(--accent);font:700 .875rem var(--mono)}
+.case{margin:18px;padding:16px 18px;border-radius:14px;background:#eef5ed;border:1px solid var(--border);display:grid;gap:6px}
+.case strong{color:var(--accent);font-size:.875rem}
+.case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
+.items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
+.item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
+.item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
+.choices{display:flex;gap:6px}
+.choice{min-width:68px}
+.choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
+.choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
+.feedback{font-size:.9375rem;color:var(--muted);line-height:1.6}
+.feedback:empty{display:none}
+.feedback b{margin-right:4px}
+.item.right{border-color:var(--accent);background:#f6fbf7}
+.item.right .feedback b{color:var(--accent)}
+.item.wrong{border-color:#a24c14;background:#fffaf5}
+.item.wrong .feedback b{color:#a24c14}
+.think{margin:0 18px 18px;padding:14px 16px;border-radius:12px;border:1px dashed #9fb7a9;display:grid;gap:10px}
+.think label{font-weight:700}
+.think textarea{font:inherit;min-height:84px;padding:10px 12px;border:1px solid #9fb7a9;border-radius:10px;resize:vertical}
+.think .sample-answer{color:var(--muted);line-height:1.7}
+.think .sample-answer[hidden]{display:none}
+.done{margin:0 18px 18px;padding:12px 14px;border-radius:10px;background:#d2f4dd;color:#0f5a3c;font-weight:700}
+.done[hidden]{display:none}
+.timeline{border-top:1px solid var(--border)}
+</style>
+<link rel="stylesheet" href="./course.css">
+<script defer src="./course-catalog.js"></script>
+<script defer src="./course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">0장 컴퓨팅 둘러보기 · 레슨 0.8 · 실습</p>
+    <h1>컴퓨팅의 영향</h1>
+    <p class="lead">기술이 사람과 사회에 주는 이익과 위험은 무엇일까요? 실제로 있을 법한 사례를 읽고, 문장마다 이익인지 위험인지 골라 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="practice-heading">
+        <div class="stage-top"><h2 id="practice-heading">이익일까, 위험일까</h2><span class="score" id="score" aria-live="polite"></span></div>
+        <div class="case"><strong>사례</strong><p id="case"></p></div>
+        <ol class="items" id="items"></ol>
+        <p class="done" id="done" role="status" hidden></p>
+        <div class="think">
+          <label for="answer">생각해 보기 · <span id="question"></span></label>
+          <textarea id="answer" placeholder="자유롭게 적어 보세요. 저장되거나 채점되지 않습니다."></textarea>
+          <div><button class="action" id="reveal" type="button" aria-expanded="false">예시 답 보기</button></div>
+          <p class="sample-answer" id="sample" hidden></p>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const storageKey = 'impact-lab:v1:step';
+const BENEFIT = 'benefit', RISK = 'risk';
+
+// Each step is one case. Every statement has the expected answer and an explanation shown after a choice.
+const lesson = [
+  {
+    label: '개인정보',
+    title: '편리함 뒤에는 쌓이는 기록이 있다',
+    body: '앱이 편리해질수록 우리에 대한 데이터를 더 많이 모읍니다. 데이터는 한 번 보내면 여러 기계를 거쳐 저장되고, 지우기 어렵습니다. 그래서 무엇을 모으는지, 누가 볼 수 있는지, 얼마나 오래 두는지를 따져야 합니다.',
+    link: '0.7에서 패킷이 여러 라우터와 서버를 거치는 것을 보았습니다. 위치 기록도 그렇게 서버까지 가서 저장됩니다.',
+    case: '친구 찾기 앱이 내 위치를 1분마다 서버로 보내 친구들에게 보여 준다.',
+    items: [
+      { text: '약속 장소에서 서로를 쉽게 찾을 수 있다.', answer: BENEFIT, why: '실시간 위치는 만남과 안전에 실제로 도움이 됩니다.' },
+      { text: '내가 매일 어디에 가는지 기록이 계속 쌓인다.', answer: RISK, why: '집, 학교, 병원처럼 민감한 장소까지 드러나는 생활 기록이 됩니다.' },
+      { text: '서버가 해킹되면 위치 기록이 통째로 새어 나갈 수 있다.', answer: RISK, why: '모아 둔 데이터가 많을수록 유출되었을 때 피해도 큽니다.' },
+      { text: '길을 잃은 아이를 보호자가 바로 찾을 수 있다.', answer: BENEFIT, why: '같은 기능이 사람을 보호하는 데 쓰이기도 합니다.' },
+    ],
+    question: '이 앱을 쓴다면 어떤 설정이 있으면 좋을까요?',
+    sample: '친구마다 공유 여부를 따로 정하기, 정해진 시간에만 공유하기, 위치 기록을 일정 기간 뒤 자동으로 지우기, 정확한 위치 대신 "근처" 정도만 보여 주기 같은 설정이 있습니다. 필요한 만큼만 모으는 것을 "데이터 최소화"라고 합니다.',
+  },
+  {
+    label: '공정성',
+    title: '데이터로 배운 규칙은 데이터의 치우침도 배운다',
+    body: '프로그램이 과거 데이터에서 규칙을 스스로 배우면, 데이터에 섞인 사람들의 치우침까지 그대로 따라 할 수 있습니다. 게다가 수천 건을 한꺼번에 처리하므로, 사람 한 명의 실수보다 훨씬 넓게 퍼집니다.',
+    link: '0.6에서 알고리즘은 문제를 푸는 정확한 절차라고 했습니다. 절차가 정확해도 그 절차를 만든 데이터가 치우쳐 있으면 결과도 치우칩니다.',
+    case: '지원서를 자동으로 걸러 주는 프로그램이 지난 10년 동안의 합격자 자료로 규칙을 배웠다.',
+    items: [
+      { text: '지원서 수천 장을 몇 분 만에 읽는다.', answer: BENEFIT, why: '사람이 며칠 걸릴 일을 빠르게 처리합니다.' },
+      { text: '과거 합격자가 한쪽 성별에 치우쳐 있었다면 그 치우침도 배운다.', answer: RISK, why: '실제로 이런 이유로 사용을 멈춘 채용 프로그램 사례가 있습니다.' },
+      { text: '떨어진 사람에게 왜 떨어졌는지 설명하기 어렵다.', answer: RISK, why: '스스로 배운 규칙은 사람이 읽기 어려워 이의를 제기하기도 어렵습니다.' },
+      { text: '모든 지원서에 같은 기준을 똑같이 적용한다.', answer: BENEFIT, why: '기분이나 피로에 흔들리지 않는 일관성은 장점입니다. 다만 그 기준 자체가 공정한지는 따로 확인해야 합니다.' },
+    ],
+    question: '이 프로그램을 공정하게 쓰려면 무엇을 확인해야 할까요?',
+    sample: '배운 데이터가 여러 집단을 고르게 담고 있는지, 집단별 합격률에 큰 차이가 없는지 정기적으로 검사하기, 최종 결정은 사람이 하기, 떨어진 사람이 이유를 묻고 다시 검토를 요청할 수 있게 하기 같은 방법이 있습니다.',
+  },
+  {
+    label: '접근성',
+    title: '설계에 따라 기술은 사람을 잇기도, 막기도 한다',
+    body: '화면 낭독기, 자막, 글자 크기 조절 같은 기술은 장애가 있는 사람도 컴퓨터를 쓸 수 있게 합니다. 하지만 만드는 사람이 이를 고려하지 않으면 같은 기술이 오히려 누군가를 밀어냅니다. 접근성은 처음부터 설계에 넣어야 합니다.',
+    link: '0.3에서 이미지는 픽셀 숫자일 뿐이라고 했습니다. 화면 낭독기는 그 숫자를 읽을 수 없어서, 이미지에 글로 된 설명이 따로 있어야 합니다.',
+    case: '시각장애가 있는 사람이 화면 낭독기로 쇼핑 앱을 쓰고, 청각장애가 있는 사람이 자동 자막으로 강의를 본다.',
+    items: [
+      { text: '앞이 보이지 않아도 글을 소리로 들으며 웹을 쓸 수 있다.', answer: BENEFIT, why: '화면 낭독기는 화면의 글을 읽어 주고 키보드로 조작하게 해 줍니다.' },
+      { text: '상품 사진에 설명 글이 없으면 낭독기는 "이미지"라고만 읽는다.', answer: RISK, why: '만드는 사람이 대체 설명을 빠뜨리면 그 정보는 전달되지 않습니다.' },
+      { text: '소리를 듣지 못해도 자막으로 강의 내용을 따라간다.', answer: BENEFIT, why: '자막은 시끄러운 곳에 있는 사람, 외국어를 배우는 사람에게도 도움이 됩니다.' },
+      { text: '글자 크기를 키울 수 없는 앱은 시력이 약한 사람이 쓰기 어렵다.', answer: RISK, why: '작은 설계 결정 하나가 많은 사람을 막을 수 있습니다.' },
+    ],
+    question: '지금까지 본 레슨 페이지들에서 접근성을 위해 넣은 것을 찾아볼까요?',
+    sample: '장면 아래에 같은 조작을 하는 버튼 줄(키보드와 화면 낭독기용), 그림을 글로 설명하는 숨은 설명(desc), 단계가 바뀔 때 읽어 주는 안내, 모션 감소 설정을 켜면 애니메이션을 멈추는 기능, 색만이 아니라 0과 1 글자로도 상태를 보여 주는 것이 있습니다.',
+  },
+  {
+    label: '환경과 일',
+    title: '눈에 보이지 않는 비용도 있다',
+    body: '인터넷 서비스는 데이터센터라는 거대한 건물의 컴퓨터에서 돌아가고, 이 컴퓨터들은 전기와 냉각수를 많이 씁니다. 자동화는 힘든 일을 덜어 주지만 일자리의 모습도 바꿉니다. 기술의 영향은 화면 밖에서도 일어납니다.',
+    link: '0.5에서 본 CPU, 메모리, 저장장치 수만 대가 모인 곳이 데이터센터입니다. 0.6에서 본 것처럼 좋은 알고리즘은 같은 일을 더 적은 계산으로 해서 전기도 아낍니다.',
+    case: '회사가 업무를 클라우드 서비스로 옮기고, 반복되는 서류 작업을 프로그램으로 자동화했다.',
+    items: [
+      { text: '온라인 회의가 늘어 출장과 이동이 줄었다.', answer: BENEFIT, why: '이동이 줄면 시간과 탄소 배출이 함께 줄어듭니다.' },
+      { text: '데이터센터가 많은 전기와 냉각수를 쓴다.', answer: RISK, why: '전 세계 데이터센터의 전력 사용은 계속 늘고 있습니다.' },
+      { text: '반복 업무를 하던 사람의 일자리가 바뀌거나 줄어든다.', answer: RISK, why: '새로운 일자리도 생기지만, 바뀌는 사람에게는 배울 기회와 지원이 필요합니다.' },
+      { text: '바꾼 지 몇 년 안 된 기기들이 버려져 전자 폐기물이 쌓인다.', answer: RISK, why: '전자 폐기물에는 해로운 물질과 귀한 금속이 함께 들어 있어 재활용이 중요합니다.' },
+    ],
+    question: '개발자로서 줄일 수 있는 영향은 무엇일까요?',
+    sample: '불필요한 계산과 데이터 전송을 줄이는 효율적인 코드 쓰기, 오래된 기기에서도 돌아가게 만들어 기기 교체를 늦추기, 자동화로 바뀌는 일을 하는 사람들과 함께 새 역할을 설계하기 같은 일이 있습니다.',
+  },
+];
+
+const byId = (id) => document.getElementById(id);
+const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
+
+function showStep(index, announce = true) {
+  state.index = index;
+  const step = lesson[index];
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.link;
+  byId('case').textContent = step.case;
+  byId('question').textContent = step.question;
+  byId('sample').textContent = step.sample;
+  byId('sample').hidden = true;
+  byId('reveal').setAttribute('aria-expanded', 'false');
+  byId('reveal').textContent = '예시 답 보기';
+  byId('answer').value = '';
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  buildItems();
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
+}
+
+function buildItems() {
+  const step = lesson[state.index];
+  const list = byId('items');
+  list.replaceChildren();
+  step.items.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'item';
+    const top = document.createElement('div');
+    top.className = 'item-top';
+    const text = document.createElement('span');
+    text.className = 'item-text';
+    text.id = `item-${i}`;
+    text.textContent = item.text;
+    const choices = document.createElement('div');
+    choices.className = 'choices';
+    choices.setAttribute('role', 'group');
+    choices.setAttribute('aria-labelledby', text.id);
+    for (const [value, label] of [[BENEFIT, '이익'], [RISK, '위험']]) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `action choice ${value}`;
+      button.textContent = label;
+      button.dataset.value = value;
+      button.addEventListener('click', () => pick(i, value));
+      choices.append(button);
+    }
+    const feedback = document.createElement('p');
+    feedback.className = 'feedback';
+    feedback.setAttribute('role', 'status');
+    top.append(text, choices);
+    li.append(top, feedback);
+    list.append(li);
+  });
+  syncItems();
+}
+
+function pick(i, value) {
+  state.picks[state.index][i] = value;
+  syncItems();
+  const item = lesson[state.index].items[i];
+  byId('announcement').textContent = value === item.answer ? '맞았습니다.' : '다시 생각해 보세요.';
+}
+
+function syncItems() {
+  const step = lesson[state.index];
+  const picks = state.picks[state.index];
+  [...byId('items').children].forEach((li, i) => {
+    const item = step.items[i];
+    const picked = picks[i];
+    li.classList.toggle('right', picked === item.answer);
+    li.classList.toggle('wrong', picked !== null && picked !== item.answer);
+    for (const button of li.querySelectorAll('.choice')) button.setAttribute('aria-pressed', String(button.dataset.value === picked));
+    const feedback = li.querySelector('.feedback');
+    feedback.replaceChildren();
+    if (picked !== null) {
+      const mark = document.createElement('b');
+      mark.textContent = picked === item.answer ? '✓ 맞았습니다.' : '✗ 다시 생각해 보세요.';
+      feedback.append(mark, picked === item.answer ? item.why : '');
+    }
+  });
+  const right = picks.filter((p, i) => p === step.items[i].answer).length;
+  byId('score').textContent = `${right} / ${step.items.length} 맞힘`;
+  byId('done').hidden = right !== step.items.length;
+  byId('done').textContent = '✓ 이 사례의 문장을 모두 맞게 나눴습니다. 아래 질문도 생각해 보세요.';
+}
+
+byId('reveal').onclick = () => {
+  const open = byId('sample').hidden;
+  byId('sample').hidden = !open;
+  byId('reveal').setAttribute('aria-expanded', String(open));
+  byId('reveal').textContent = open ? '예시 답 숨기기' : '예시 답 보기';
+};
+
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/impact/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/impact\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/impact/${initial + 1}`);
+showStep(initial, false);
+</script>
+</body>
+</html>

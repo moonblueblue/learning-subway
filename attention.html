@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content=""고양이가 생선을 먹었다. 그것은 배가 불렀다"에서 "그것"이 고양이를 가리킨다는 것을, 단어 벡터, 질문과 열쇠의 내적 점수, 소프트맥스 비율, 값 섞기로 계산하고, 트랜스포머가 이를 모든 단어에 동시에 하는 방법을 따라가 보세요.">
+<title>어텐션과 트랜스포머 · 레슨 8B.5</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
+.cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
+.cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
+.cell.changed .top{animation:flash 1s ease-out}
+@keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
+.cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
+.cell.empty .cell-value{fill:#9aa8a2}
+.address{font:600 9px var(--mono);fill:#6b7d76;text-anchor:start}
+.tag.name{transition:opacity .25s}
+.tag.name rect{stroke:var(--accent);stroke-width:1.1}
+.tag.name text{fill:var(--accent);font-weight:700}
+.bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bus.active{stroke:#7fa891}
+.packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
+.packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
+.packet-group.read .packet-label{fill:#3b4880}
+.code-area{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.code{list-style:none;counter-reset:line;margin:0;padding:10px 0;background:#1f2d29;border-radius:12px;color:#e8f2ec;font:600 1rem/1.5 var(--mono);flex:1 1 300px}
+.code li{counter-increment:line;padding:5px 14px 5px 46px;position:relative}
+.code li::before{content:counter(line);position:absolute;left:16px;color:#6f8a80}
+.code li.done{color:#8fa79c}
+.code li.current{background:#2f4a41;color:#ffffff}
+.code li.current::after{content:'다음';position:absolute;right:14px;color:#9fe3b6;font-size:.8125rem}
+.code-actions{display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
+.try-choices{display:flex;gap:6px;flex-wrap:wrap}
+.try-choices:empty{display:none}
+.dot.read{background:var(--response);border-color:var(--response)}
+.dot.write{background:var(--request);border-color:var(--request)}
+@media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.bus.inner{stroke:#c9d6ce;stroke-dasharray:3 3}
+.bus.main{stroke:#9fbfae;stroke-width:3}
+.cpu-area{fill:#e2ece5;stroke:#9fb7a9;stroke-width:1.2;stroke-dasharray:6 4}
+.board-tag rect{fill:#26322e;stroke:#26322e}.board-tag text{fill:#fff;font-weight:800}
+.cell .left{fill:#e6ebe8;stroke:#8c9d96}.cell .right{fill:#cfd8d4;stroke:#8c9d96}.cell .top{fill:#fff;stroke:#8c9d96}
+.cell.code .top{fill:#eef1fb;stroke:#7d88b4}.cell.code .left{fill:#dfe4f2;stroke:#7d88b4}.cell.code .right{fill:#c4cbe3;stroke:#7d88b4}
+.cell.code .cell-value{fill:#3c4a85;font-size:8.5px}
+.address{text-anchor:middle}
+.cell.active .top{fill:#fff1c9;stroke:#c9940f}
+.cell.next-pc .address{fill:var(--accent);font-weight:800}
+.part .face{stroke-width:.8;transition:fill .2s}
+.part.register .left{fill:#dbe9e2;stroke:#5f8f78}.part.register .right{fill:#c2d9cd;stroke:#5f8f78}.part.register .top{fill:#f3f8f5;stroke:#5f8f78}
+.part.control .left{fill:#eadcf0;stroke:#9a77ad}.part.control .right{fill:#d9c4e3;stroke:#9a77ad}.part.control .top{fill:#f7f0fa;stroke:#9a77ad}
+.part.alu .left{fill:#e4e1d3;stroke:#8f8763}.part.alu .right{fill:#d2cdb6;stroke:#8f8763}.part.alu .top{fill:#f7f5ec;stroke:#8f8763}
+.part.busy .top{fill:#fff1c9}
+.part-tag text{font:700 11.5px var(--mono)}
+.part.busy .part-tag rect{stroke:#c9940f;stroke-width:1.3}
+.packet-group.inner .packet,.packet-group.inner .packet-halo{fill:#9a77ad}
+.packet-group.inner .packet-label{fill:#5f3a73}
+.dot.inner{background:#9a77ad;border-color:#9a77ad}
+.memory-panel{flex:1 1 320px;display:flex;flex-direction:column;gap:8px}
+.phase-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.phases{list-style:none;display:flex;gap:4px;margin:0;padding:0}
+.phases li{padding:4px 12px;border:1px solid var(--border);border-radius:999px;font-size:.875rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.phases li.current{background:var(--accent);border-color:var(--accent);color:#fff}
+.clock{font:700 .9375rem var(--mono);color:var(--accent);margin-left:auto}
+.clock.tick{animation:bump .3s ease-out}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+.clock{display:inline-block}
+.memory-list{counter-reset:none;flex:none}
+.memory-list li{counter-increment:none;padding:3px 12px 3px 44px;display:flex;gap:10px}
+.memory-list li::before{content:none}
+.memory-list .addr{position:absolute;left:14px;color:#6f8a80}
+.memory-list li.data code{color:#bfe8cf}
+.memory-list li.ir{background:#2f4a41}
+.memory-list li.touched{box-shadow:inset 3px 0 #ffd34d}
+.memory-list .mark{margin-left:auto;color:#9fe3b6;font-size:.8125rem}
+.memory-list li.current::after{content:none}
+@media(prefers-reduced-motion:reduce){.clock.tick{animation:none}}
+@media(max-width:600px){.part-tag text{font-size:14px}.cell.code .cell-value{font-size:12px}}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+@media(max-width:600px){.packet-label{font-size:13px}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
+.bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
+.station .face{stroke-width:.8;transition:fill .2s}
+.station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
+.sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
+.station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.ssd .left{fill:#dfe4f2;stroke:#7a87b5}.station.ssd .right{fill:#c4cbe3;stroke:#7a87b5}.station.ssd .top{fill:#eaeef9;stroke:#7a87b5}
+.station.ram .left{fill:#acd5b9;stroke:#5f9474}.station.ram .right{fill:#80b596;stroke:#5f9474}.station.ram .top{fill:#dcf1e2;stroke:#5f9474}
+.station.cpu .left{fill:#3f4f4a;stroke:#26322e}.station.cpu .right{fill:#2f3d39;stroke:#26322e}.station.cpu .top{fill:#5d6f69;stroke:#26322e}
+.station.active .top{fill:#fff1c9}
+.station.cpu.active .top{fill:#8a7d4a}
+.station.error.error .top{fill:#f6b893;stroke:#a24c14}
+.station-tag text{font-weight:800}
+.tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
+.tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
+.tag.empty{display:none}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.dot.file{background:#fff;border-color:#8c9d96}.dot.tool{background:#eadcf0;border-color:#9a77ad}.dot.errordot{background:#ffd9c2;border-color:#a24c14}
+.stage-list{list-style:none;display:flex;flex-wrap:wrap;gap:4px;margin:0;padding:0}
+.stage-list li{padding:3px 10px;border:1px solid var(--border);border-radius:999px;font-size:.8125rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.stage-list li.done{color:var(--accent);border-color:#9fb7a9}
+.stage-list li.current{background:var(--accent);color:#fff;border-color:var(--accent)}
+.work-title{font-weight:800;color:var(--ink)}
+.work-panel.error .work-title{color:#a24c14}
+.work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
+.work li{padding-left:16px}
+@media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+</style>
+<link rel="stylesheet" href="./course.css">
+<script defer src="./course-catalog.js"></script>
+<script defer src="./course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">8장 심화 트랙 · 8B 인공지능 · 레슨 8B.5</p>
+    <h1>어텐션과 트랜스포머</h1>
+    <p class="lead">문장에서 어떤 단어에 주목할지 어떻게 정할까요? "그것"이 무엇을 가리키는지 어텐션으로 직접 계산해 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">어텐션 정거장</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">문장의 단어들이 벡터가 되어 점수와 비율을 거쳐 섞인 결과가 되는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="code-area">
+            <div class="memory-panel work-panel" id="work-panel">
+              <ol class="stage-list" id="stage-list" aria-label="정거장"></ol>
+              <p class="work-title" id="work-title"></p>
+              <ol class="code memory-list work" id="work" aria-label="지금 코드의 모습"></ol>
+            </div>
+            <div class="code-actions">
+              <button class="action primary" id="run-stage" type="button">다음 단계</button>
+              <button class="action" id="restart" type="button">처음부터</button>
+            </div>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <button class="action" id="view-reset" type="button">원래 보기</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="dot file"></i>단어와 결과</span><span><i class="dot tool"></i>변환과 비율</span><span><i class="dot errordot"></i>오류</span></div>
+          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+function setCamera(x, y, zoom) {
+  camera.zoom = clamp(zoom, 1, maxZoom);
+  const width = viewWidth / camera.zoom;
+  const height = viewHeight / camera.zoom;
+  camera.x = clamp(x, 0, viewWidth - width);
+  camera.y = clamp(y, 0, viewHeight - height);
+  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
+  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
+  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
+  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
+  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
+}
+
+function zoomBetween(nextZoom, from, to = from) {
+  const zoom = clamp(nextZoom, 1, maxZoom);
+  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
+            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
+}
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+function viewportPoint(event) {
+  const rect = viewport.getBoundingClientRect();
+  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
+  return {
+    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
+    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+  };
+}
+
+function pointerGeometry() {
+  const [a, b] = pointers.values();
+  if (!b) return { point: a, distance: 0 };
+  return {
+    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    distance: Math.hypot(a.x - b.x, a.y - b.y),
+  };
+}
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+function zoomBy(delta) {
+  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
+  zoomBetween(camera.zoom + delta, center);
+  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
+}
+
+function resetView() {
+  pointers.clear();
+  viewport.classList.remove('is-dragging');
+  setCamera(0, 0, 1);
+  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
+}
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+byId('view-reset').onclick = resetView;
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+// Code on its way to the CPU. Each step is a row of stations (files and tools) and a list of stages.
+// A stage carries the work from one station to the next (`from` → `to`, `label` on the moving dot),
+// then shows what the work looks like now (`title`, `lines`) and what each station holds (`holds`).
+// `ask` is a prediction answered before the stage runs; `error` marks a stage that stops with an error.
+const kinds = { file: '파일', tool: '도구', ssd: '저장장치', ram: '메모리', cpu: 'CPU' };
+// Attention for the word "그것" in "고양이가 생선을 먹었다. 그것은 배가 불렀다".
+// Query of 그것 = [1, 0]; keys 고양이 [3, 0], 생선 [1, 1], 먹었다 [0, 2] → scores 3, 1, 0.
+// Softmax: e^3 / (e^3 + e^1 + e^0) ≈ 0.84, 0.11, 0.04. Values 고양이 [1, 0], 생선 [0, 1], 먹었다 [0, 0] → mix ≈ [0.84, 0.11].
+const ST = [['words', '단어들', 'file'], ['emb', '벡터화', 'tool'], ['score', '점수', 'cpu'], ['soft', '비율', 'tool'], ['mix', '섞은 결과', 'ram']];
+const lesson = [
+  {
+    label: '단어를 벡터로',
+    title: '단어마다 뜻을 담은 숫자 묶음을 준다',
+    body: '"고양이가 생선을 먹었다. 그것은 배가 불렀다." 사람은 "그것"이 고양이라는 것을 압니다. 컴퓨터가 이를 알려면 먼저 단어를 숫자로 바꿔야 합니다. 단어마다 수백 개 숫자로 된 벡터(8B.1)를 주는데, 뜻이 비슷한 단어는 비슷한 벡터가 되도록 배웁니다(8B.3). 여기서는 숫자 두 개짜리로 줄여 봅니다.',
+    takeaway: '고양이, 생선, 먹었다, 그것이 각각 벡터가 되었습니다. 하지만 "그것" 벡터만으로는 무엇을 가리키는지 알 수 없습니다. 문장의 다른 단어를 봐야 합니다. 이것이 어텐션이 하는 일입니다.',
+    description: '왼쪽부터 문장의 단어들, 벡터로 바꾸기, 점수, 비율, 섞은 결과가 한 줄로 놓여 있습니다.',
+    stations: ST,
+    start: { title: '문장', lines: ['고양이가 생선을 먹었다. 그것은 배가 불렀다.'], holds: { words: '단어 4개' } },
+    stages: [
+      { from: 'words', to: 'emb', label: '단어 4개', title: '벡터로 바꾸기', lines: ['고양이 → [0.9, 0.1]', '생선 → [0.8, 0.3]', '먹었다 → [0.1, 0.9]', '그것 → [0.5, 0.5] (무엇을 가리키는지 모름)'], text: '단어마다 뜻을 담은 벡터를 줍니다.', holds: { emb: '벡터 4개' },
+        ask: { q: '"고양이"와 "생선"처럼 둘 다 물건(명사)인 단어의 벡터는?', choices: ['서로 비슷하게 배운다', '아무 관계가 없다'], answer: '서로 비슷하게 배운다', why: '비슷한 자리에 자주 나오는 단어는 비슷한 벡터가 되도록 학습합니다. 그래서 내적으로 닮은 정도를 잴 수 있습니다(8B.1).' } },
+      { from: 'emb', to: 'score', label: '그것', title: '그것은 무엇?', lines: ['"그것"의 벡터 [0.5, 0.5]만으로는 고양이인지 생선인지 알 수 없음', '→ 문장의 다른 단어를 살펴봐야 함'], text: '"그것"이 누구인지는 주변 단어를 봐야 압니다.', holds: { score: '?' } },
+    ],
+  },
+  {
+    label: '누구를 볼까',
+    title: '질문 벡터와 열쇠 벡터의 내적으로 점수를 매긴다',
+    body: '어텐션에서 각 단어는 벡터를 세 가지로 바꿉니다. 질문(쿼리): "나는 무엇을 찾나", 열쇠(키): "나는 이런 단어다", 값(밸류): "나를 보면 이 정보를 가져가라". "그것"의 질문 벡터와 다른 단어들의 열쇠 벡터를 내적하면, 점수가 높을수록 "그것"이 찾는 단어입니다. "그것"의 질문은 "배가 부를 수 있는 것, 즉 살아 있는 것"을 찾습니다.',
+    takeaway: '점수는 고양이 3, 생선 1, 먹었다 0입니다. "그것"의 질문과 가장 잘 맞는 열쇠가 고양이입니다. 질문, 열쇠, 값을 만드는 행렬(8B.1)도 모두 경사 하강법으로 배웁니다.',
+    description: '같은 장면입니다. "그것"의 질문 벡터로 다른 단어들의 열쇠에 점수를 매깁니다.',
+    stations: ST,
+    start: { title: '질문과 열쇠', lines: ['그것의 질문 q = [1, 0] ("살아 있는 것을 찾아")', '열쇠: 고양이 [3, 0] · 생선 [1, 1] · 먹었다 [0, 2]'], holds: { words: '단어 4개', emb: '질문·열쇠·값' } },
+    stages: [
+      { from: 'emb', to: 'score', label: 'q · 열쇠', title: '고양이', lines: ['[1, 0] · [3, 0] = 3'], text: '"그것"의 질문과 고양이의 열쇠를 내적합니다.', holds: { score: '고양이 3' } },
+      { from: 'emb', to: 'score', label: 'q · 열쇠', title: '생선과 먹었다', lines: ['생선: [1, 0] · [1, 1] = 1', '먹었다: [1, 0] · [0, 2] = 0'], text: '나머지 단어와도 내적합니다.', holds: { score: '3, 1, 0' },
+        ask: { q: '"그것"이 가장 주목해야 할 단어는?', choices: ['고양이 (점수 3)', '생선 (점수 1)', '먹었다 (점수 0)'], answer: '고양이 (점수 3)', why: '질문과 열쇠의 내적이 가장 큰 단어가 "그것"이 찾는 것과 가장 잘 맞습니다.' } },
+    ],
+  },
+  {
+    label: '비율로 섞기',
+    title: '점수를 비율로 바꾸고 값 벡터를 그 비율로 섞는다',
+    body: '점수를 그대로 쓰지 않고, 모두 양수이면서 합이 1이 되는 비율로 바꿉니다(소프트맥스). 큰 점수는 훨씬 큰 비율을 받습니다. 그런 다음 각 단어의 값 벡터를 그 비율만큼 섞어 "그것"의 새 벡터를 만듭니다. 이제 "그것"의 벡터에는 고양이의 정보가 가득 담깁니다.',
+    takeaway: '비율은 고양이 약 84%, 생선 약 11%, 먹었다 약 4%이고, 섞은 결과 [0.84, 0.11]은 고양이의 값 [1, 0]과 거의 같습니다. 문장 속 "그것"이 고양이의 뜻을 갖게 되었습니다.',
+    description: '같은 장면입니다. 점수를 비율로 바꾸고 값을 섞습니다.',
+    stations: ST,
+    start: { title: '점수와 값', lines: ['점수: 고양이 3 · 생선 1 · 먹었다 0', '값: 고양이 [1, 0] · 생선 [0, 1] · 먹었다 [0, 0]'], holds: { score: '3, 1, 0' } },
+    stages: [
+      { from: 'score', to: 'soft', label: '3, 1, 0', title: '소프트맥스', lines: ['e³ ≈ 20.1 · e¹ ≈ 2.7 · e⁰ = 1 · 합 ≈ 23.8', '고양이 20.1 ÷ 23.8 ≈ 84%', '생선 ≈ 11% · 먹었다 ≈ 4%'], text: '점수를 합이 100%인 비율로 바꿉니다.', holds: { soft: '84·11·4%' },
+        ask: { q: '소프트맥스가 큰 점수에 하는 일은?', choices: ['훨씬 큰 비율을 준다', '모두 같은 비율로 만든다'], answer: '훨씬 큰 비율을 준다', why: '점수 차이가 2(3과 1)인데 비율은 약 7배(84%와 11%)입니다. 가장 맞는 단어에 집중하게 합니다.' } },
+      { from: 'soft', to: 'mix', label: '값 섞기', title: '값을 비율로 섞기', lines: ['0.84 × [1, 0] + 0.11 × [0, 1] + 0.04 × [0, 0]', '= [0.84, 0.11]'], text: '값 벡터를 비율만큼 섞습니다.', holds: { mix: '[.84, .11]' } },
+      { from: 'mix', to: 'words', label: '새 "그것"', title: '문맥을 담은 "그것"', lines: ['그것의 새 벡터 [0.84, 0.11] ≈ 고양이의 값 [1, 0]', '→ 다음 층은 "그것 = 고양이"를 알고 계산함'], text: '"그것"이 문맥 속 뜻을 갖게 되었습니다.', holds: { words: '그것 ≈ 고양이' },
+        ask: { q: '"그것"의 새 벡터가 고양이와 가까워진 까닭은?', choices: ['고양이의 값에 가장 큰 비율(84%)을 주어 섞어서', '그것과 고양이의 글자가 비슷해서'], answer: '고양이의 값에 가장 큰 비율(84%)을 주어 섞어서', why: '어텐션은 주목한 단어의 정보를 많이 가져와 섞습니다.' } },
+    ],
+  },
+  {
+    label: '트랜스포머',
+    title: '모든 단어가 동시에 서로를 보고, 이 층을 여러 번 쌓는다',
+    body: '"그것"만이 아니라 문장의 모든 단어가 같은 방법으로 동시에 서로를 봅니다. 앞에서부터 한 단어씩 읽지 않아도 되어 GPU(6.7)로 한꺼번에 계산할 수 있습니다. 한 층에 어텐션을 여러 개(머리) 두어 "누가 누구를 가리키나", "어떤 동사의 대상인가"처럼 다른 관계를 함께 보고, 단어 순서는 위치 정보를 벡터에 더해 알려 줍니다. 이런 층을 수십 개 쌓은 것이 트랜스포머입니다.',
+    takeaway: '단어 n개면 점수가 n × n개 필요합니다. 문장이 길어질수록 계산이 빠르게 늘어나지만(4.1), 모두 행렬 곱이라 GPU가 동시에 해냅니다. 8B.6의 대규모 언어 모델이 이 구조 위에 서 있습니다.',
+    description: '같은 장면입니다. 모든 단어가 동시에 점수를 매깁니다.',
+    stations: ST,
+    start: { title: '문장 전체', lines: ['단어 8개: 고양이가 생선을 먹었다 그것은 배가 불렀다 …', '어텐션 머리 4개 · 층 12개'], holds: { words: '단어 8개' } },
+    stages: [
+      { from: 'words', to: 'emb', label: '+ 위치', title: '위치 더하기', lines: ['단어 벡터 + 위치 벡터(첫째, 둘째 …)', '→ 순서 정보가 들어감'], text: '단어 벡터에 위치 정보를 더합니다.', holds: { emb: '8개 + 위치' } },
+      { from: 'emb', to: 'score', label: '8 × 8', title: '모두가 모두를', lines: ['단어 8개 × 8개 = 점수 64개', '행렬 곱 한 번으로 동시에 계산'], text: '모든 단어 쌍의 점수를 한꺼번에 구합니다.', holds: { score: '64개' },
+        ask: { q: '단어가 1,000개면 한 머리의 점수는 몇 개일까요?', choices: ['1,000,000개 (1,000 × 1,000)', '1,000개', '2,000개'], answer: '1,000,000개 (1,000 × 1,000)', why: '모든 단어가 모든 단어를 보므로 n × n입니다. 긴 글이 비싼 까닭입니다.' } },
+      { from: 'score', to: 'soft', label: '머리 4개', title: '여러 머리', lines: ['머리 1: 무엇을 가리키나 · 머리 2: 동사의 대상 …', '각자 비율을 구해 값을 섞음'], text: '머리마다 다른 관계를 봅니다.', holds: { soft: '머리 4개' } },
+      { from: 'soft', to: 'mix', label: '층 12개', title: '층 쌓기', lines: ['섞은 결과를 다음 층의 입력으로', '층마다 더 깊은 뜻을 담음'], text: '이 과정을 층마다 되풀이합니다.', holds: { mix: '12층 지남' } },
+    ],
+  },
+];
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'attention-lab:v1:step';
+const state = { index: 0, s: 0, playing: !motion.matches, userPaused: false, wait: 0, busy: false, wrong: '', solvedText: '' };
+const progress = lesson.map(() => 0);
+const answered = lesson.map(() => new Set());
+let packets = [];
+let frame = null;
+let lastFrame = null;
+let timers = [];
+
+function svg(name, attrs, parent) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
+  if (parent) parent.append(element);
+  return element;
+}
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const laneHeight = 4;
+const gap = 6;   // u between stations
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+byId('grid').setAttribute('d', gridLines.join(''));
+
+function drawShadow(node, half) {
+  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
+  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
+}
+function drawBox(node, h, H) {
+  const faces = {
+    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
+    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
+    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
+  };
+  for (const [name, corners] of Object.entries(faces)) svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
+  svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
+}
+
+let plates = [];
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  plate.label.setAttribute('x', plate.x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
+function addPlate(node, className, x, y, text, { pad = 1.4, round = false } = {}) {
+  const group = svg('g', { class: className }, node);
+  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
+  plate.label.textContent = text;
+  plates.push(plate);
+  sizePlate(plate);
+  return plate;
+}
+function setPlate(plate, text) {
+  plate.group.classList.toggle('empty', !text);
+  if (plate.label.textContent === text) return;
+  plate.label.textContent = text;
+  sizePlate(plate);
+}
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Scene: stations in a row ----------
+const shapeOf = { file: [.9, 7], tool: [1.15, 13], ssd: [1.3, 12], ram: [1.3, 10], cpu: [1.1, 8] };
+let views = {};
+const stationU = (id) => lesson[state.index].stations.findIndex(([sid]) => sid === id) * gap;
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  views = {};
+  const stations = lesson[state.index].stations;
+  const far = (stations.length - 1) * gap;
+  const d = 'M' + [[0, 0], [far, 0]].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
+  svg('path', { class: 'casing', d }, byId('casings'));
+  svg('path', { class: 'bus', d }, byId('links'));
+  stations.forEach(([id, name, kind], k) => {
+    const [h, H] = shapeOf[kind];
+    const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(k * gap, 0).join(' ')})` }, byId('nodes'));
+    drawShadow(node, h);
+    drawBox(node, h, H);
+    if (kind === 'file') {
+      // Lines of text on a sheet.
+      for (let r = 0; r < 3; r++) {
+        const y = -h + .45 + r * .5;
+        svg('path', { class: 'sheet-line', d: `M${point(-h + .35, y, H)}L${point(h - .35 - (r === 2 ? .5 : 0), y, H)}` }, node);
+      }
+    }
+    if (kind === 'cpu') {
+      const mark = [[-.45, -.45, H], [.45, -.45, H], [.45, .45, H], [-.45, .45, H]];
+      svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, node);
+    }
+    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    const holds = addPlate(node, 'tag holds', 0, -H - 14 * h - 14, '', { pad: 1.2 });
+    views[id] = { node, holds };
+  });
+  const left = -60, right = 14 * far + 60, top = -78, bottom = 52;
+  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// ---------- The moving dot ----------
+function travel(fromU, toU, label, done) {
+  if (motion.matches) { done(); return; }
+  const group = svg('g', { class: 'packet-group' }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  packets.push({ group, fromU, toU, start: performance.now(), ms: 950, done });
+  kick();
+}
+// Callbacks run after the list is updated, so a callback that starts a new trip is not lost.
+function movePackets(now) {
+  const finished = [];
+  packets = packets.filter((packet) => {
+    const t = (now - packet.start) / packet.ms;
+    if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
+    const ease = t * t * (3 - 2 * t);
+    const [x, y] = flat(mix(packet.fromU + 1.3, packet.toU - 1.3, ease), 0, laneHeight);
+    packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    return true;
+  });
+  finished.forEach((done) => done());
+}
+function later(ms, fn) {
+  if (motion.matches) { fn(); return; }
+  timers.push(setTimeout(fn, ms));
+}
+function cancelAll() {
+  timers.forEach(clearTimeout);
+  timers = [];
+  packets.forEach((packet) => packet.group.remove());
+  packets = [];
+  state.busy = false;
+}
+
+// ---------- State after s stages ----------
+function snapshot(s) {
+  const step = lesson[state.index];
+  const holds = { ...step.start.holds };
+  const errors = new Set();
+  let view = step.start;
+  for (const stage of step.stages.slice(0, s)) {
+    Object.assign(holds, stage.holds);
+    if (stage.reset) errors.delete(stage.reset);
+    if (stage.error) errors.add(stage.error);
+    view = stage;
+  }
+  return { holds, errors, view };
+}
+function paint() {
+  const step = lesson[state.index];
+  const { holds, errors, view } = snapshot(state.s);
+  const last = step.stages[state.s - 1];
+  for (const [id] of step.stations) {
+    setPlate(views[id].holds, holds[id] ?? '');
+    views[id].holds.group.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
+  }
+  byId('work-title').textContent = view.title;
+  byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
+  byId('work-panel').classList.toggle('error', Boolean(last?.error));
+  byId('readout').textContent = last ? last.text : '"다음 단계"를 누르면 코드가 오른쪽으로 움직입니다.';
+  const finished = state.s >= step.stages.length;
+  const blocked = !state.playing && (finished || state.busy || Boolean(pendingAsk()));
+  byId('run-stage').disabled = blocked;
+  byId('run-stage').textContent = finished ? '끝까지 왔습니다' : '다음 단계';
+  [...byId('stage-list').children].forEach((li, k) => {
+    li.classList.toggle('done', k < state.s);
+    li.classList.toggle('current', k === state.s);
+  });
+}
+
+function runStage(done) {
+  const step = lesson[state.index];
+  const stage = step.stages[state.s];
+  if (!stage || state.busy) return;
+  state.busy = true;
+  views[stage.from].node.classList.add('active');
+  travel(stationU(stage.from), stationU(stage.to), stage.label, () => {
+    state.s++;
+    state.busy = false;
+    paint();
+    byId('announcement').textContent = stage.text;
+    done?.();
+  });
+  paint();
+}
+
+// ---------- Predictions ----------
+function pendingAsk() {
+  if (state.playing) return null;
+  const stage = lesson[state.index].stages[state.s];
+  return stage?.ask && !answered[state.index].has(state.s) ? stage.ask : null;
+}
+const asksCount = () => lesson[state.index].stages.filter((stage) => stage.ask).length;
+function syncTask() {
+  const choices = byId('try-choices');
+  choices.replaceChildren();
+  const ask = pendingAsk();
+  if (ask && !state.busy) {
+    byId('try').classList.remove('solved');
+    byId('try-text').textContent = ask.q;
+    byId('try-result').textContent = state.wrong || state.solvedText;
+    for (const choice of ask.choices) {
+      const button = Object.assign(document.createElement('button'), { type: 'button', className: 'action choice-button', textContent: choice });
+      button.addEventListener('click', () => answer(choice));
+      choices.append(button);
+    }
+  } else if (state.solvedText) {
+    byId('try').classList.add('solved');
+    byId('try-text').textContent = state.solvedText;
+    byId('try-result').textContent = '';
+  } else {
+    byId('try').classList.remove('solved');
+    byId('try-result').textContent = '';
+    byId('try-text').textContent = state.s >= lesson[state.index].stages.length
+      ? (progress[state.index] >= asksCount() ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
+      : '"다음 단계"를 눌러 단어를를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.';
+  }
+}
+function answer(choice) {
+  const ask = pendingAsk();
+  if (!ask) return;
+  if (choice !== ask.answer) {
+    state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`;
+    byId('announcement').textContent = state.wrong;
+    syncTask();
+    return;
+  }
+  state.wrong = '';
+  answered[state.index].add(state.s);
+  progress[state.index] = answered[state.index].size;
+  state.solvedText = `✓ 맞았습니다. ${ask.why}`;
+  byId('announcement').textContent = state.solvedText;
+  runStage(() => syncTask());
+  syncTask();
+}
+
+// Taking over from the demo starts the learner's own run from the beginning, so no prediction is skipped.
+function takeOver() {
+  if (!state.playing) return;
+  state.playing = false;
+  resetRun();
+  syncPlayback();
+}
+function resetRun() {
+  cancelAll();
+  state.s = 0;
+  state.wrong = '';
+  state.solvedText = '';
+  paint();
+  syncTask();
+}
+byId('run-stage').onclick = () => {
+  takeOver();
+  if (state.busy || pendingAsk()) { syncTask(); return; }
+  state.solvedText = '';
+  runStage(() => syncTask());
+  syncTask();
+};
+byId('restart').onclick = () => {
+  state.playing = false;
+  resetRun();
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 다시 시작합니다.';
+};
+
+// ---------- Demo ----------
+function demoTick() {
+  if (state.busy) { state.wait = 200; return; }
+  if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
+  runStage();
+  state.wait = state.s + 1 >= lesson[state.index].stages.length ? 4200 : 2600;
+}
+function tick(now) {
+  frame = null;
+  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
+  lastFrame = now;
+  if (state.playing) {
+    state.wait -= elapsed;
+    if (state.wait <= 0) demoTick();
+  }
+  movePackets(now);
+  if (state.playing || packets.length) frame = requestAnimationFrame(tick);
+  else lastFrame = null;
+}
+function kick() {
+  if (frame === null) frame = requestAnimationFrame(tick);
+}
+function syncPlayback() {
+  const reduced = motion.matches;
+  if (reduced) state.playing = false;
+  byId('status').textContent = reduced ? '모션 감소 · 직접 실행' : state.playing ? '자동 실행 중' : '직접 실행';
+  byId('pause').textContent = state.playing ? '일시정지' : '자동 실행';
+  byId('pause').disabled = reduced;
+  byId('replay').disabled = reduced;
+  if (state.playing) kick();
+  paint();
+  syncTask();
+}
+
+// ---------- Steps and routing ----------
+function showStep(index, announce = true) {
+  cancelAll();
+  state.index = index;
+  if (!state.userPaused) state.playing = !motion.matches;
+  const s = lesson[index];
+  buildScene();
+  byId('stage-list').replaceChildren(...s.stages.map((stage) => {
+    const names = Object.fromEntries(s.stations.map(([id, name]) => [id, name]));
+    return Object.assign(document.createElement('li'), { textContent: `${names[stage.from]} → ${names[stage.to]}` });
+  }));
+  byId('step-title').textContent = s.title;
+  byId('body').textContent = s.body;
+  byId('takeaway').textContent = s.takeaway;
+  byId('scene-desc').textContent = s.description;
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  resetRun();
+  state.wait = 1000;
+  syncPlayback();
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
+}
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/attention/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/attention\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+byId('pause').onclick = () => {
+  state.playing = !state.playing;
+  state.userPaused = !state.playing;
+  if (state.playing) { if (state.s >= lesson[state.index].stages.length) resetRun(); state.wait = 400; }
+  syncPlayback();
+  byId('announcement').textContent = byId('status').textContent;
+};
+byId('replay').onclick = () => {
+  state.playing = true;
+  state.userPaused = false;
+  resetRun();
+  state.wait = 400;
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 자동 실행';
+};
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches && !state.userPaused) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/attention/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

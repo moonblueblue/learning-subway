@@ -195,7 +195,7 @@
   menu.setAttribute('aria-controls', 'course-drawer');
   menu.setAttribute('aria-haspopup', 'dialog');
   menu.setAttribute('aria-expanded', 'false');
-  const brand = element('a', 'course-brand', 'System Design');
+  const brand = element('a', 'course-brand', 'How It Runs');
   brand.href = './bits.html';
   bar.append(menu, brand);
   // A reflection or file tree can use the whole mobile pane without resetting its state.

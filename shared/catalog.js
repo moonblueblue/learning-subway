@@ -519,6 +519,104 @@ const courseCatalog = {
           "tracks": []
         }
       ]
+    },
+    {
+      "id": "operating-systems",
+      "title": "운영체제",
+      "titleEn": "Operating systems",
+      "chapters": [
+        {
+          "id": "1",
+          "title": "시작과 실행",
+          "titleEn": "Starting and running",
+          "lessons": [
+            {
+              "id": "1.1",
+              "ref": "os/kernel"
+            },
+            {
+              "id": "1.2",
+              "ref": "os/syscall"
+            },
+            {
+              "id": "1.3",
+              "ref": "os/interrupts"
+            }
+          ],
+          "tracks": []
+        },
+        {
+          "id": "2",
+          "title": "프로세스와 CPU",
+          "titleEn": "Processes and the CPU",
+          "lessons": [
+            {
+              "id": "2.1",
+              "ref": "os/process"
+            },
+            {
+              "id": "2.3",
+              "ref": "os/scheduling"
+            }
+          ],
+          "tracks": []
+        },
+        {
+          "id": "3",
+          "title": "메모리",
+          "titleEn": "Memory",
+          "lessons": [
+            {
+              "id": "3.1",
+              "ref": "os/virtual"
+            }
+          ],
+          "tracks": []
+        },
+        {
+          "id": "4",
+          "title": "동시성",
+          "titleEn": "Concurrency",
+          "lessons": [
+            {
+              "id": "4.1",
+              "ref": "os/locks"
+            }
+          ],
+          "tracks": []
+        },
+        {
+          "id": "5",
+          "title": "장치와 파일",
+          "titleEn": "Devices and files",
+          "lessons": [
+            {
+              "id": "5.2",
+              "ref": "os/filesystem"
+            }
+          ],
+          "tracks": []
+        },
+        {
+          "id": "6",
+          "title": "보호와 격리",
+          "titleEn": "Protection and isolation",
+          "lessons": [
+            {
+              "id": "6.2",
+              "ref": "os/virtualization"
+            }
+          ],
+          "tracks": []
+        },
+        {
+          "id": "7",
+          "title": "운영",
+          "titleEn": "Operations",
+          "lessons": [],
+          "tracks": []
+        }
+      ]
     }
   ],
   "topics": [
@@ -1007,6 +1105,18 @@ const courseCatalog = {
           "format": "실험",
           "requires": [],
           "page": "os/syscall.html"
+        },
+        {
+          "id": "interrupts",
+          "title": "인터럽트와 예외",
+          "titleEn": "Interrupts and exceptions",
+          "question": "키를 누르면 CPU는 하던 일을 어떻게 멈추고 돌아올까?",
+          "format": "실험",
+          "requires": [
+            "os/syscall",
+            "computer-architecture/cpu"
+          ],
+          "page": "os/interrupts.html"
         },
         {
           "id": "virtual",

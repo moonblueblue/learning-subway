@@ -111,7 +111,8 @@ addEventListener('DOMContentLoaded', () => {
     const others = new Set(refs.flatMap((ref) => [...lines.get(ref)].filter((id) => id !== roadmap.id)));
     return {
       label: chapter.id + ' ' + chapter.title, count: refs.length,
-      href: './' + refs[0] + '.html?roadmap=' + encodeURIComponent(roadmap.id),
+      // A chapter with no finished lesson yet is drawn as a station without a link.
+      href: refs.length ? './' + refs[0] + '.html?roadmap=' + encodeURIComponent(roadmap.id) : null,
       transfer: [...others].map((id) => roadmapTitle.get(id)),
     };
   });
@@ -132,10 +133,13 @@ addEventListener('DOMContentLoaded', () => {
   }
 
   function station(svg, s, x, y, color, last, label) {
-    const name = tr(s.label), sub = tr(`레슨 ${s.count}개${s.transfer.length ? ' · 환승 ' + s.transfer.join(', ') : ''}`);
-    const link = make('svg:a', { href: s.href, 'aria-label': tr(`${s.label}, 레슨 ${s.count}개${s.transfer.length ? ', 환승 ' + s.transfer.join(', ') : ''}`) });
+    const name = tr(s.label);
+    const sub = s.href ? tr(`레슨 ${s.count}개${s.transfer.length ? ' · 환승 ' + s.transfer.join(', ') : ''}`) : tr('준비 중');
+    const link = s.href
+      ? make('svg:a', { href: s.href, 'aria-label': tr(`${s.label}, 레슨 ${s.count}개${s.transfer.length ? ', 환승 ' + s.transfer.join(', ') : ''}`) })
+      : make('svg:g', { role: 'img', 'aria-label': tr(s.label) + ', ' + tr('준비 중') });
     if (s.transfer.length) link.append(make('svg:rect', { x: x - 13, y: y - 9, width: 26, height: 18, rx: 9, fill: '#fcfdfb', stroke: '#142620', 'stroke-width': 2.5 }));
-    else link.append(make('svg:circle', { cx: x, cy: y, r: 7, fill: last ? color : '#fcfdfb', stroke: color, 'stroke-width': 3 }));
+    else link.append(make('svg:circle', { cx: x, cy: y, r: 7, fill: last && s.href ? color : '#fcfdfb', stroke: color, 'stroke-width': 3, ...(s.href ? {} : { 'stroke-dasharray': '3 3' }) }));
     const names = wrap(name, '700 13px system-ui, sans-serif', label.max);
     const subs = wrap(sub, '400 12px system-ui, sans-serif', label.max);
     const rows = [...names.map((line) => [line, { 'font-weight': 700, class: 'name' }]), ...subs.map((line) => [line, { fill: '#43574f', 'font-size': 12 }])];

@@ -78,6 +78,10 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
 .tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
 .tag.place text{font:700 11.5px var(--mono)}
+.tag.kinds rect{rx:6}
+.tag.kinds .bits{font-family:var(--mono)}
+.tag.kinds .now{fill:var(--accent);font-weight:800}
+.caption{font:600 11px system-ui,sans-serif;fill:var(--muted);dominant-baseline:central}
 .total rect{fill:#fff;stroke:var(--accent);stroke-width:1.2}
 .total text{font:700 20px var(--mono);fill:var(--accent);text-anchor:middle;dominant-baseline:central}
 .total.max rect{fill:#fff6ef;stroke:#a24c14}
@@ -93,7 +97,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
-@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
+@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.tag.kinds text{font-size:12px}.tag.kinds.long text{font-size:16px}.caption{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:none}.note,.total.bump{animation:none}}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -205,6 +209,7 @@ const places = [1, 2, 4, 8, 16, 32, 64, 128];
 // `staticInitial` replaces it when motion is reduced and nothing plays.
 // `fit` is [translateX, translateY, scale] for the scene, so few switches appear large.
 // `tasks` are the try-it problems: the learner has to make `target` with the switches.
+// `byte` adds "비트 8개 = 1바이트" to the count panel under the switches.
 const lesson = [
   {
     label: '스위치 하나',
@@ -231,7 +236,7 @@ const lesson = [
     description: '스위치 두 개와 합계 화면이 있습니다. 왼쪽 스위치는 값 2, 오른쪽 스위치는 값 1을 맡고, 켜진 스위치의 값이 합계에 더해집니다.',
     switches: 2,
     fit: [216, 169, 1.7],
-    initial: 2,
+    initial: 1,
     demo: { values: [3, 0, 1, 2], interval: 1900 },
     tasks: [
       { target: 3, text: '스위치 두 개로 3을 만들어 보세요.' },
@@ -266,6 +271,7 @@ const lesson = [
     fit: [248, 126, 1.13],
     initial: 0,
     staticInitial: 255,
+    byte: true,
     demo: { count: true },
     tasks: [
       { target: 128, text: '스위치 하나만 켜서 128을 만들어 보세요.' },
@@ -477,9 +483,9 @@ function createSum() {
   const glare = [screen[2], screen[3], [-h + .35, -h, H - 10], [h - .35, -h, H - 10]];
   svg('polygon', { points: glare.map((p) => point(...p)).join(' '), fill: '#fff', opacity: .12 }, node);
   const [cx, cy] = project(h, -h, 0);
-  addPlate(node, 'tag', cx, cy + 16, '합계');
+  const name = addPlate(node, 'tag', cx, cy + 16, '합계');
   const total = addPlate(node, 'total', 0, -H - 14 * h - 20, '0', { pad: 1.1, round: false });
-  return { node, total };
+  return { node, total, name };
 }
 
 // Wire path: along the floor x axis to the display's column, then along the y axis into it.
@@ -494,6 +500,57 @@ function updateGeometry(view, sumAt) {
   const angle = Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI;
   const transform = `translate(${mix(p[0], q[0], .56)} ${mix(p[1], q[1], .56)}) rotate(${angle})`;
   view.lane.chevron.setAttribute('transform', transform);
+}
+
+// Labels that belong to the whole row rather than one switch (rules in references/visual-language.md, 0장).
+// `자릿값` names the plates above the switches; the count panel shows the current pattern and how many exist.
+const labels = {};
+const superscript = (n) => String(n).replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+function ensureLabels() {
+  if (labels.panel) return;
+  const group = svg('g', { id: 'row-labels' }, byId('world'));
+  labels.caption = svg('text', { class: 'caption' }, group);
+  labels.caption.textContent = '자릿값';
+  labels.panel = addPlate(group, 'tag kinds', 0, 0, '', { pad: 1.6, round: false });
+}
+function showKinds() {
+  ensureLabels();
+  const step = lesson[state.index];
+  const count = step.switches;
+  const binary = (value) => value.toString(2).padStart(count, '0').replace(/(\d{4})(?=\d)/g, '$1 ');
+  const parts = [];
+  if (count <= 2) {
+    for (let value = 0; value < 2 ** count; value++) parts.push(...(value ? [[' · ']] : []), [binary(value), value === state.value ? 'bits now' : 'bits']);
+    parts.push([count === 1 ? ' → 2가지' : ' → 2 × 2 = 4가지']);
+  } else {
+    parts.push([binary(state.value), 'bits now'], [` → 2${superscript(count)} = ${2 ** count}가지 (0~${2 ** count - 1})`]);
+  }
+  if (step.byte) parts.push([' · 비트 8개 = 1바이트']);
+  labels.panel.group.classList.toggle('long', count > 2);
+  const label = labels.panel.label;
+  label.replaceChildren(...parts.map(([text, now]) => {
+    const span = svg('tspan', now ? { class: now } : {}, label);
+    span.textContent = text;
+    return span;
+  }));
+  sizePlate(labels.panel);
+}
+// Follow the switches while they move: caption just above the leftmost plate, panel centred above the row.
+function placeLabels() {
+  const switches = [...nodeViews.values()].filter((view) => view.lane && view.to[1] === 1);
+  if (!labels.panel || !switches.length) return;
+  const left = switches.reduce((a, b) => (a.bit > b.bit ? a : b));
+  const plateLeft = 28 * left.c + Number(left.plate.rect.getAttribute('x'));
+  const plateTop = Number(left.plate.rect.getAttribute('y'));
+  labels.caption.setAttribute('x', plateLeft);
+  const captionHalf = parseFloat(getComputedStyle(labels.caption).fontSize) / 2;
+  const captionY = left.lift + switchLow - left.height + plateTop - captionHalf - 4;
+  labels.caption.setAttribute('y', captionY);
+  labels.caption.setAttribute('opacity', left.opacity);
+  const middle = switches.reduce((sum, view) => sum + 28 * view.c, 0) / switches.length;
+  // The panel sits on top of the caption, so it rises with the switches instead of colliding with the caption.
+  const panelY = captionY - captionHalf - 4 - Number(labels.panel.rect.getAttribute('height')) / 2;
+  labels.panel.group.setAttribute('transform', `translate(${middle} ${panelY})`);
 }
 
 const isOn = (bit) => (state.value >> bit & 1) === 1;
@@ -529,6 +586,8 @@ function retarget(animate, ms = transitionMs) {
   const sum = nodeViews.get('sum');
   sum.total.label.textContent = String(state.value);
   sum.total.group.classList.toggle('max', state.value === 255);
+  setPlate(sum.name, state.value === 255 ? '합계 · 최댓값' : '합계');
+  showKinds();
   sizePlate(sum.total);
   // A small pulse on the total when it changes at a watchable pace.
   sum.total.group.classList.remove('bump');
@@ -562,6 +621,7 @@ function updateScene(t) {
     view.height = mix(view.heightFrom, view.heightTo, ease);
     shapeSwitch(view, view.height);
   }
+  placeLabels();
   if (t !== 1) return;
   for (const [id, view] of nodeViews) {
     if (view.to[1] !== 0) continue;

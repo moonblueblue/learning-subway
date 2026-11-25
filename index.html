@@ -3,712 +3,95 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="브라우저에서 캐시 적중과 미스에 따른 요청 경로를 살펴보세요.">
-<title>캐시 흐름 실험실</title>
-<script>
-if (location.pathname.endsWith('/') && ['', '#/'].includes(location.hash)) {
-  location.replace('./bits.html');
-}
-</script>
+<meta name="description" content="컴퓨터와 시스템이 실제로 어떻게 돌아가는지, 개념 하나하나를 단계별 도식과 직접 조작하는 데모로 들여다봅니다.">
+<title>How It Runs</title>
 <style>
-:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--active:#d9eee1}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
-button{font:inherit;color:inherit;cursor:pointer}
-button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
 :focus-visible{outline:3px solid #a24c14;outline-offset:3px}
-.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
-header{margin-bottom:20px}
-h1,h2,p{margin:0}
-h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
-header p{color:var(--muted);margin-top:10px}
-.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
-.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
-.stage-top h2,.timeline h2{font-size:1rem}
-.status{color:var(--accent);font-size:.875rem;font-weight:700}
-.stage{background:#eaf3eb;border-block:1px solid var(--border)}
-svg{display:block;width:100%;height:auto;max-height:520px}
-#scene{touch-action:none;user-select:none}
-#scene:focus-visible{outline-offset:-4px}
-#scene.is-zoomed{cursor:grab}
-#scene.is-dragging{cursor:grabbing}
-.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
-.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
-.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
-.touch-hint{display:none}
-@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
-.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
-.node .face{stroke-width:.8;stroke-linejoin:round}
-.node .shadow{fill:#1f4434;opacity:.16}
-.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
-.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
-.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.wire.request{stroke:var(--request);stroke-width:2.6}
-.wire.response{stroke:var(--response);stroke-width:2.2;stroke-dasharray:6 5}
-.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.chevron.request{stroke:var(--request)}
-.chevron.response{stroke:var(--response)}
-.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
-.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
-.badge{transition:opacity .37s}
-.badge rect{fill:#fff6ef;stroke:#a24c14;stroke-width:.9}
-.badge text{font:700 11px var(--mono);fill:#a24c14;text-anchor:middle;dominant-baseline:central;letter-spacing:.02em}
-.badge.ok rect{fill:#f1f7f2;stroke:#7fa891}
-.badge.ok text{fill:#2f6b4f}
-.packet{stroke:white;stroke-width:1.6}
-.packet-halo{opacity:.22}
-@media(max-width:600px){.tag text{font-size:17px}.badge text{font-size:15px}}
-@media(prefers-reduced-motion:reduce){.badge{transition:none}}
-.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.sample{width:22px;border-top:3px solid var(--request)}
-.sample.return{border-top:3px dashed var(--response)}
-.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
-.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
-.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
-.primary{background:var(--accent);color:white;border-color:var(--accent)}
-.primary:hover:not(:disabled){background:#0a4c3a}
-.timeline{padding:15px 18px}
-.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0;margin:0;gap:8px}
-.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
-.steps button:hover{border-color:var(--accent)}
-.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
-.step-number{font:700 .875rem var(--mono);color:var(--accent)}
-.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
-.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
-.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
-.takeaway p{font-size:1rem}
-.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
-.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
-.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
-@media(max-width:420px){.shell{padding:18px 12px}.stage-top,.controls,.timeline,.view-controls{padding-inline:12px}.view-hint{flex-basis:100%;margin-inline-start:0}.steps{gap:5px}.steps button{padding-inline:6px}}
+a{color:inherit}
+.shell{max-width:1120px;margin:auto;padding:clamp(16px,4vw,48px)}
+header{margin-bottom:clamp(24px,4vw,40px)}
+h1{margin:0;font-size:clamp(2rem,5vw,3.25rem);line-height:1.12;letter-spacing:-.05em}
+.lead{margin:12px 0 0;color:var(--muted);max-width:44rem}
+h2{margin:0 0 4px;font-size:1.25rem}
+.note{margin:0 0 16px;color:var(--muted);font-size:.9375rem}
+section+section{margin-top:clamp(28px,4vw,44px)}
+.roadmaps,.topics{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.roadmaps{grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))}
+.topics{grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr))}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.card h3{margin:0;font-size:1.0625rem}
+.card p{margin:4px 0 0;color:var(--muted);font-size:.9375rem}
+.id{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.8125rem;color:var(--accent)}
+.start{display:inline-block;margin-top:12px;padding:6px 12px;border-radius:8px;background:var(--active);text-decoration:none;font-weight:600}
+details{margin-top:8px}
+summary{cursor:pointer;color:var(--accent);font-size:.9375rem}
+.lessons{margin:8px 0 0;padding-left:1.1rem;font-size:.9375rem}
+.lessons li+li{margin-top:2px}
 </style>
-<link rel="stylesheet" href="./course.css">
-<script defer src="./course-catalog.js"></script>
-<script defer src="./course.js"></script>
+<script defer src="./shared/catalog.js"></script>
 </head>
 <body>
 <main class="shell">
-  <header><h1>캐시 흐름 실험실</h1><p>같은 읽기 요청이 캐시 유무와 적중 여부에 따라 어디로 가는지 살펴보세요.</p></header>
-  <div class="workspace">
-    <div>
-      <section class="panel" aria-labelledby="stage-heading">
-        <div class="stage-top"><h2 id="stage-heading">요청 경로</h2><span class="status" id="status">재생 중</span></div>
-        <div class="stage">
-          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
-            <title id="scene-title">캐싱 요청 경로</title><desc id="scene-desc"></desc>
-            <defs>
-              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
-              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-              <mask id="grid-mask"><rect x="-420" y="-260" width="840" height="520" fill="url(#grid-fade)"/></mask>
-              <linearGradient id="db-body" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#ccd5ef"/><stop offset=".55" stop-color="#b4c0e6"/><stop offset="1" stop-color="#97a5d0"/></linearGradient>
-            </defs>
-            <g id="world" aria-hidden="true">
-              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
-              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
-            </g>
-          </svg>
-        </div>
-        <div class="view-controls" role="group" aria-label="장면 보기">
-          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
-          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
-          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
-          <button class="action" id="view-reset" type="button">원래 보기</button>
-          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대 · 확대 후 드래그</span></span>
-        </div>
-        <div class="controls">
-          <div class="legend" aria-label="범례"><span><i class="sample"></i>요청</span><span><i class="sample return"></i>응답 · 저장</span></div>
-          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
-        </div>
-        <nav class="timeline" aria-labelledby="timeline-heading">
-          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
-          <ol class="steps" id="steps"></ol>
-        </nav>
-      </section>
-    </div>
-    <section class="panel explanation" aria-labelledby="step-title">
-      <h2 id="step-title"></h2><p id="body"></p>
-      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
-      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
-    </section>
-  </div>
-  <div class="sr-only" id="announcement" role="status"></div>
+<header>
+<h1>How It Runs</h1>
+<p class="lead">컴퓨터와 시스템이 실제로 어떻게 돌아가는지, 개념 하나하나를 단계별 도식과 직접 조작하는 데모로 들여다봅니다. 로드맵을 따라가거나, 주제에서 필요한 레슨만 골라 봅니다.</p>
+</header>
+<section aria-labelledby="roadmaps-title">
+<h2 id="roadmaps-title">로드맵</h2>
+<p class="note">직군이나 목표에 맞춰 레슨을 순서대로 엮은 길입니다.</p>
+<ul class="roadmaps" id="roadmaps"></ul>
+</section>
+<section aria-labelledby="topics-title">
+<h2 id="topics-title">주제</h2>
+<p class="note">레슨은 주제 하나에만 속하고, 여러 로드맵이 같은 레슨을 함께 씁니다.</p>
+<ul class="topics" id="topics"></ul>
+</section>
 </main>
 <script>
-// World positions are on the floor grid. Keep linked nodes on a shared x or y line so lanes stay straight.
-const entities = {
-  client: { world: [0, -11], label: 'Client', shape: 'client' },
-  cache: { world: [0, 0], label: 'Cache', shape: 'cache', tag: 'corner' },
-  db: { world: [11, 0], label: 'Database', shape: 'db' },
-};
-
-const lesson = [
-  {
-    label: '캐시 없이 조회',
-    readingDiagram: {
-      title: "같은 값을 다시 물어도 매번 DB까지 간다",
-      description: "캐시가 없어서 같은 값의 두 요청이 각각 DB에 도달합니다.",
-      nodes: [],
-      edges: [],
-      labels: [
-        [28, 254, "요청 1: DB 조회 1회     +     요청 2: DB 조회 1회"],
-      ],
-      keepWorld: true,
-    },
-    example: ["같은 값 재요청", "클라이언트 → DB", "매번 DB가 응답"],
-    title: '모든 읽기가 DB에 도달한다',
-    body: '클라이언트가 값을 요청하면 DB가 직접 조회해 응답합니다. 같은 값을 반복해서 읽어도 매번 DB를 거칩니다.',
-    takeaway: '실선 요청이 DB까지 이동하고 점선 응답이 클라이언트로 돌아옵니다.',
-    description: '클라이언트가 DB로 직접 요청을 보내고 DB가 클라이언트로 응답합니다.',
-    nodes: ['client', 'db'],
-    positions: { db: [0, 0] },
-    links: [['client', 'db', 'request'], ['db', 'client', 'response']],
-  },
-  {
-    label: '캐시 적중',
-    readingDiagram: {
-      title: "캐시에 값이 있으므로 여기서 응답한다",
-      description: "요청이 캐시에서 값을 찾아 바로 돌아갑니다. DB에는 요청이 가지 않습니다.",
-      nodes: [],
-      edges: [],
-      labels: [
-        [28, 254, "Cache: 값 있음       Client에 반환       DB 조회 0회"],
-      ],
-      keepWorld: true,
-    },
-    example: ["캐시에 값 있음", "클라이언트 → 캐시", "DB 조회 0회"],
-    title: '캐시에서 바로 응답한다',
-    body: '요청한 값이 캐시에 이미 있습니다. 캐시가 저장해 둔 값으로 바로 응답하므로 이 읽기에는 DB 조회가 필요 없습니다.',
-    takeaway: '캐시 위에 HIT가 표시되고, 패킷은 클라이언트와 캐시 사이에서만 움직입니다.',
-    description: '클라이언트가 캐시에 요청하고 캐시가 바로 응답합니다. 캐시에 HIT가 표시되고, DB를 향하는 연결은 없습니다.',
-    nodes: ['client', 'cache', 'db'],
-    badges: { cache: { text: 'HIT', tone: 'ok' } },
-    links: [['client', 'cache', 'request'], ['cache', 'client', 'response']],
-  },
-  {
-    label: '캐시 미스',
-    readingDiagram: {
-      title: "캐시에 값이 없어서 DB에서 읽어 채운다",
-      description: "첫 요청은 캐시가 비어 DB에서 읽고, 읽은 값을 캐시에 저장합니다. 같은 값의 다음 요청은 DB에 가지 않습니다.",
-      nodes: [],
-      edges: [],
-      labels: [
-        [28, 254, "Cache: 비어 있음  →  DB에서 읽기  →  Cache에 저장"],
-      ],
-      keepWorld: true,
-    },
-    example: ["캐시에 값 없음", "DB에서 읽고 캐시에 저장", "다음 요청은 캐시 적중"],
-    title: '캐시에 값이 없으면 DB를 조회한다',
-    body: '캐시에 값이 없어서 DB에서 읽습니다. 조회 결과를 캐시에 채운 뒤 클라이언트에 응답하면, 같은 값의 다음 읽기는 캐시에서 처리할 수 있습니다.',
-    takeaway: '캐시 위에 MISS → 저장이 표시되고, 요청과 응답이 캐시를 거쳐 DB까지 왕복합니다. 응답이 캐시에 돌아오는 구간에서 값이 저장됩니다.',
-    description: '클라이언트가 캐시에 요청합니다. 캐시 미스가 발생해 DB를 조회하고, DB의 응답을 캐시에 저장한 뒤 클라이언트로 보냅니다.',
-    nodes: ['client', 'cache', 'db'],
-    badges: { cache: { text: 'MISS → 저장', tone: 'warn' } },
-    links: [['client', 'cache', 'request'], ['cache', 'db', 'request'], ['db', 'cache', 'response'], ['cache', 'client', 'response']],
-  },
-];
-
-const byId = (id) => document.getElementById(id);
-const viewport = byId('scene');
-const viewWidth = 620;
-const viewHeight = 280;
-const maxZoom = 3;
-const center = { x: viewWidth / 2, y: viewHeight / 2 };
-const camera = { x: 0, y: 0, zoom: 1 };
-const pointers = new Map();
-const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-
-function setCamera(x, y, zoom) {
-  camera.zoom = clamp(zoom, 1, maxZoom);
-  const width = viewWidth / camera.zoom;
-  const height = viewHeight / camera.zoom;
-  camera.x = clamp(x, 0, viewWidth - width);
-  camera.y = clamp(y, 0, viewHeight - height);
-  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
-  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
-  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
-  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
-  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
-}
-
-function zoomBetween(nextZoom, from, to = from) {
-  const zoom = clamp(nextZoom, 1, maxZoom);
-  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
-            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
-}
-
-// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
-function viewportPoint(event) {
-  const rect = viewport.getBoundingClientRect();
-  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
-  return {
-    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
-    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+addEventListener('DOMContentLoaded', () => {
+  const make = (tag, className, text) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
   };
-}
+  const titles = new Map(courseCatalog.topics.flatMap((topic) =>
+    topic.lessons.map((lesson) => [topic.id + '/' + lesson.id, lesson.title])));
 
-function pointerGeometry() {
-  const [a, b] = pointers.values();
-  if (!b) return { point: a, distance: 0 };
-  return {
-    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
-    distance: Math.hypot(a.x - b.x, a.y - b.y),
-  };
-}
-
-viewport.addEventListener('pointerdown', (event) => {
-  if (event.button !== 0 || pointers.size >= 2) return;
-  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
-  pointers.set(event.pointerId, viewportPoint(event));
-  viewport.setPointerCapture(event.pointerId);
-});
-viewport.addEventListener('pointermove', (event) => {
-  if (!pointers.has(event.pointerId)) return;
-  const before = pointerGeometry();
-  pointers.set(event.pointerId, viewportPoint(event));
-  const after = pointerGeometry();
-  const pinch = pointers.size === 2;
-  if (pinch && (before.distance < 1 || after.distance < 1)) return;
-  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
-  zoomBetween(zoom, before.point, after.point);
-  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
-});
-for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-  viewport.addEventListener(eventName, (event) => {
-    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
-  });
-}
-
-function zoomBy(delta) {
-  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
-  zoomBetween(camera.zoom + delta, center);
-  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
-}
-
-function resetView() {
-  pointers.clear();
-  viewport.classList.remove('is-dragging');
-  setCamera(0, 0, 1);
-  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
-}
-
-byId('zoom-in').onclick = () => zoomBy(.25);
-byId('zoom-out').onclick = () => zoomBy(-.25);
-byId('view-reset').onclick = resetView;
-viewport.addEventListener('keydown', (event) => {
-  if (event.ctrlKey || event.metaKey || event.altKey) return;
-  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
-  const direction = directions[event.key];
-  if (direction && camera.zoom > 1) {
-    event.preventDefault();
-    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
-  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
-    event.preventDefault();
-    zoomBy(event.key === '-' ? -.25 : .25);
-  } else if (event.key === '0') {
-    event.preventDefault();
-    resetView();
+  for (const roadmap of courseCatalog.roadmaps) {
+    const lessons = roadmap.chapters.flatMap((chapter) =>
+      [chapter, ...chapter.tracks].flatMap((group) => group.lessons));
+    const card = make('li', 'card');
+    card.append(make('h3', '', roadmap.title), make('span', 'id', roadmap.id),
+      make('p', '', roadmap.chapters.length + '개 장 · 레슨 ' + lessons.length + '개'));
+    const start = make('a', 'start', titles.get(lessons[0].ref) + '부터 시작');
+    start.href = './' + lessons[0].ref + '.html?roadmap=' + encodeURIComponent(roadmap.id);
+    card.append(start);
+    document.getElementById('roadmaps').append(card);
   }
-});
-setCamera(0, 0, 1);
 
-const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const storageKey = 'cache-flow-lab:v1:step';
-const state = { index: 0, playing: !motion.matches, elapsed: 0, lastFrame: null, frame: null };
-const segmentMs = 850;
-const transitionMs = 370;
-const nodeViews = new Map();
-const linkViews = new Map();
-let transition = null;
-let paths = [];
-
-function svg(name, attrs, parent) {
-  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
-  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
-  if (parent) parent.append(element);
-  return element;
-}
-
-// The same world-to-screen projection observed in the reference bundle.
-const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
-const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
-const mix = (a, b, t) => a + (b - a) * t;
-const laneColors = { request: '#187959', response: '#5362a0' };
-const laneHeight = 12;
-const laneGap = .42;
-const rise = 10;
-
-// Fit the scene into the 620x280 viewport. Measured from the union of all steps.
-byId('world').setAttribute('transform', 'translate(296 152) scale(1.08)');
-
-const halo = svg('circle', { class: 'packet-halo', r: 9 }, byId('packets'));
-const packet = svg('circle', { class: 'packet', r: 4.6 }, byId('packets'));
-
-const gridLines = [];
-for (let i = -18; i <= 18; i += 2) {
-  gridLines.push(`M${point(i, -18, 0)}L${point(i, 18, 0)}M${point(-18, i, 0)}L${point(18, i, 0)}`);
-}
-byId('grid').setAttribute('d', gridLines.join(''));
-
-const shapes = {
-  client: { half: 1.7, height: 26, colors: { top: '#f4f7f5', left: '#d7dfdb', right: '#b8c6c0', stroke: '#8c9d96' } },
-  cache: { half: 2.1, height: 40, colors: { top: '#dcf1e2', left: '#acd5b9', right: '#80b596', stroke: '#5f9474' } },
-  db: { radius: 1.9, height: 46, colors: { top: '#eaeef9', stroke: '#7a87b5' } },
-};
-
-// Soft floor shadow, offset away from the light (top left).
-function drawShadow(node, half) {
-  const corners = [[-half + .5, -half - .3], [half + 1.1, -half - .3], [half + 1.1, half], [-half + .5, half]];
-  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
-}
-
-// Box drawn around its own floor center: front-left face, front-right face, top.
-function drawBox(node, kind) {
-  const { half: h, height: H, colors: c } = shapes[kind];
-  drawShadow(node, h);
-  const left = [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]];
-  const right = [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]];
-  const top = [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]];
-  for (const [corners, fill] of [[left, c.left], [right, c.right], [top, c.top]]) {
-    svg('polygon', { class: 'face', points: corners.map((p) => point(...p)).join(' '), fill, stroke: c.stroke }, node);
-  }
-  svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
-  if (kind === 'client') {
-    // A screen on the front face.
-    const screen = [[-h + .35, -h, 7], [h - .35, -h, 7], [h - .35, -h, H - 6], [-h + .35, -h, H - 6]];
-    svg('polygon', { points: screen.map((p) => point(...p)).join(' '), fill: '#34514a', opacity: .85 }, node);
-    const glare = [screen[2], screen[3], [-h + .35, -h, H - 10], [h - .35, -h, H - 10]];
-    svg('polygon', { points: glare.map((p) => point(...p)).join(' '), fill: '#fff', opacity: .12 }, node);
-  } else {
-    // Memory slots with status lights on the front face.
-    for (const z of [H * .28, H * .52, H * .76]) {
-      svg('path', { d: `M${point(-h + .4, -h, z)}L${point(h - 1.1, -h, z)}`, stroke: c.stroke, 'stroke-width': 1.4, 'stroke-linecap': 'round', opacity: .55 }, node);
-      const [cx, cy] = project(h - .55, -h, z);
-      svg('circle', { cx, cy, r: 1.6, fill: '#2f9a63' }, node);
+  for (const topic of courseCatalog.topics) {
+    const card = make('li', 'card');
+    card.append(make('h3', '', topic.title), make('span', 'id', topic.id),
+      make('p', '', '레슨 ' + topic.lessons.length + '개'));
+    const details = make('details');
+    details.append(make('summary', '', '레슨 보기'));
+    const list = make('ol', 'lessons');
+    for (const lesson of topic.lessons) {
+      const item = make('li');
+      const link = make('a', '', lesson.title);
+      link.href = './' + topic.id + '/' + lesson.id + '.html';
+      item.append(link);
+      list.append(item);
     }
-  }
-  return { right: project(h, 0, 0), corner: project(h, -h, 0), top: -H - 14 * h };
-}
-
-function drawDatabase(node) {
-  const { radius: r, height: H, colors: c } = shapes.db;
-  drawShadow(node, r * .95);
-  // A floor circle of radius r projects to an ellipse with a 2:1 ratio.
-  const rx = 14 * Math.SQRT2 * r;
-  const ry = 7 * Math.SQRT2 * r;
-  svg('path', { class: 'face', d: `M${-rx} ${-H}V0A${rx} ${ry} 0 0 0 ${rx} 0V${-H}Z`, fill: 'url(#db-body)', stroke: c.stroke }, node);
-  for (const k of [1 / 3, 2 / 3]) {
-    const y = -H * k;
-    svg('path', { d: `M${-rx} ${y}A${rx} ${ry} 0 0 0 ${rx} ${y}`, fill: 'none', stroke: c.stroke, 'stroke-width': .8, opacity: .7 }, node);
-    svg('path', { d: `M${-rx + 2} ${y - 2}A${rx} ${ry} 0 0 0 ${rx - 2} ${y - 2}`, fill: 'none', stroke: '#fff', 'stroke-width': .9, opacity: .35 }, node);
-  }
-  svg('ellipse', { class: 'face', cx: 0, cy: -H, rx, ry, fill: c.top, stroke: c.stroke }, node);
-  svg('ellipse', { cx: 0, cy: -H, rx: rx * .62, ry: ry * .62, fill: 'none', stroke: c.stroke, 'stroke-width': .7, opacity: .35 }, node);
-  return { right: [rx * .7, ry * .7], corner: [0, ry], top: -H - ry };
-}
-
-// Name plates sit on the floor beside the shape so they never cover it.
-const plates = [];
-function sizePlate(plate) {
-  const size = parseFloat(getComputedStyle(plate.label).fontSize);
-  const width = plate.label.getComputedTextLength() + size * 1.5;
-  const height = size + 8;
-  const x = plate.centered ? plate.x : plate.x + width / 2 - 6;
-  plate.label.setAttribute('x', x);
-  plate.label.setAttribute('y', plate.y);
-  Object.entries({ x: x - width / 2, y: plate.y - height / 2, width, height, rx: height / 2 })
-    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
-}
-function addPlate(node, className, x, y, text, centered = true) {
-  const group = svg('g', { class: className }, node);
-  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, centered };
-  plate.label.textContent = text;
-  plates.push(plate);
-  sizePlate(plate);
-  return plate;
-}
-matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
-
-function createNode(id) {
-  const node = svg('g', { class: 'node ' + id, 'data-node': id }, byId('nodes'));
-  const entity = entities[id];
-  const anchors = entity.shape === 'db' ? drawDatabase(node) : drawBox(node, entity.shape);
-  const atCorner = entity.tag === 'corner';
-  const [x, y] = atCorner ? anchors.corner : anchors.right;
-  addPlate(node, 'tag', x, y + (atCorner ? 16 : 10), entity.label, atCorner);
-  const badge = addPlate(node, 'badge', 0, anchors.top - 14, '');
-  badge.group.style.opacity = 0;
-  return { node, badge };
-}
-
-function setBadge(view, spec) {
-  const { group, label } = view.badge;
-  if (spec) {
-    group.classList.toggle('ok', spec.tone === 'ok');
-    label.textContent = spec.text;
-    sizePlate(view.badge);
-  }
-  group.style.opacity = spec ? 1 : 0;
-}
-
-// Centerline between two floor points along the grid axes: x first, then y, then x.
-function centerline([ax, ay], [bx, by]) {
-  if (Math.abs(ax - bx) < 1e-6 || Math.abs(ay - by) < 1e-6) return [[ax, ay], [bx, by]];
-  const mx = (ax + bx) / 2;
-  return [[ax, ay], [mx, ay], [mx, by], [bx, by]];
-}
-
-// Shift a centerline to the right-hand side of its travel direction,
-// so a request and its response run as two parallel lanes.
-function offsetLane(points, gap) {
-  const shifts = [];
-  for (let i = 0; i < points.length - 1; i++) {
-    const dx = Math.sign(points[i + 1][0] - points[i][0]);
-    const dy = Math.sign(points[i + 1][1] - points[i][1]);
-    shifts.push(dx ? { y: dx * gap } : { x: -dy * gap });
-  }
-  return points.map(([x, y], i) => {
-    let nx = x, ny = y;
-    for (const shift of [shifts[i - 1], shifts[i]]) {
-      if (shift?.x !== undefined) nx = x + shift.x;
-      if (shift?.y !== undefined) ny = y + shift.y;
-    }
-    return [nx, ny];
-  });
-}
-
-function updateGeometry(view) {
-  const a = nodeViews.get(view.start);
-  const b = nodeViews.get(view.end);
-  const screen = offsetLane(centerline([a.wx, a.wy], [b.wx, b.wy]), laneGap)
-    .map(([x, y]) => project(x, y, laneHeight));
-  const d = 'M' + screen.map((p) => p.join(' ')).join('L');
-  view.casing.setAttribute('d', d);
-  view.line.setAttribute('d', d);
-  // Direction marker near the middle of the longest segment.
-  let best = -1, index = 0;
-  for (let i = 0; i < screen.length - 1; i++) {
-    const length = Math.hypot(screen[i + 1][0] - screen[i][0], screen[i + 1][1] - screen[i][1]);
-    if (length > best) { best = length; index = i; }
-  }
-  const [p, q] = [screen[index], screen[index + 1]];
-  const t = screen.length === 2 ? .42 : .5;
-  const angle = Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI;
-  const transform = `translate(${mix(p[0], q[0], t)} ${mix(p[1], q[1], t)}) rotate(${angle})`;
-  view.chevronCasing.setAttribute('transform', transform);
-  view.chevron.setAttribute('transform', transform);
-}
-
-function createLink(key, from, to, kind) {
-  const casing = svg('path', { class: 'casing', 'data-link': key }, byId('casings'));
-  const group = svg('g', { class: 'lane', 'data-link': key }, byId('links'));
-  const line = svg('path', { class: 'wire ' + kind }, group);
-  const chevronCasing = svg('path', { class: 'casing', d: 'M-5 -5.5L2.5 0L-5 5.5', 'stroke-width': 6 }, group);
-  const chevron = svg('path', { class: 'chevron ' + kind, d: 'M-5 -5.5L2.5 0L-5 5.5' }, group);
-  return { casing, group, line, chevronCasing, chevron, kind, start: from, end: to, from: 0, opacity: 0 };
-}
-
-function renderScene(step, animate) {
-  byId('scene-desc').textContent = step.description;
-  for (const view of nodeViews.values()) {
-    view.from = [view.wx, view.wy, view.opacity, view.lift];
-    view.to = [view.wx, view.wy, 0, rise];
-  }
-  for (const id of step.nodes) {
-    const [x, y] = step.positions?.[id] ?? entities[id].world;
-    if (!nodeViews.has(id)) {
-      const view = createNode(id);
-      Object.assign(view, { wx: x, wy: y, opacity: 0, lift: rise, from: [x, y, 0, rise] });
-      nodeViews.set(id, view);
-    }
-    const view = nodeViews.get(id);
-    view.to = [x, y, 1, 0];
-    setBadge(view, step.badges?.[id]);
-  }
-  for (const view of linkViews.values()) {
-    view.from = view.opacity;
-    view.to = 0;
-  }
-  paths = step.links.map(([from, to, kind]) => {
-    const key = `${from}-${to}-${kind}`;
-    if (!linkViews.has(key)) linkViews.set(key, createLink(key, from, to, kind));
-    const view = linkViews.get(key);
-    view.to = 1;
-    return view;
-  });
-  transition = animate && !motion.matches ? performance.now() : null;
-  updateScene(transition === null ? 1 : 0);
-}
-
-function updateScene(t) {
-  const ease = t * t * (3 - 2 * t);
-  for (const view of nodeViews.values()) {
-    [view.wx, view.wy, view.opacity, view.lift] = view.from.map((value, index) => mix(value, view.to[index], ease));
-    const [x, y] = project(view.wx, view.wy);
-    view.node.setAttribute('transform', `translate(${x} ${y + view.lift})`);
-    view.node.setAttribute('opacity', view.opacity);
-  }
-  const parent = byId('nodes');
-  const depthOrder = [...nodeViews.values()].sort((a, b) => project(a.wx, a.wy)[1] - project(b.wx, b.wy)[1]);
-  if (depthOrder.some((view, index) => parent.children[index] !== view.node)) {
-    parent.append(...depthOrder.map((view) => view.node));
-  }
-  for (const [id, view] of linkViews) {
-    view.opacity = mix(view.from, view.to, ease);
-    view.group.setAttribute('opacity', view.opacity);
-    view.casing.setAttribute('opacity', view.opacity * .9);
-    updateGeometry(view);
-    if (t !== 1) continue;
-    if (view.to === 0) {
-      view.group.remove();
-      view.casing.remove();
-      linkViews.delete(id);
-    } else view.length = view.line.getTotalLength();
-  }
-  if (t !== 1) return;
-  for (const [id, view] of nodeViews) {
-    if (view.to[2] !== 0) continue;
-    view.node.remove();
-    nodeViews.delete(id);
-  }
-}
-
-function paint() {
-  const segment = Math.floor(state.elapsed / segmentMs);
-  const path = paths[segment];
-  const visible = path && transition === null && !motion.matches;
-  for (const circle of [packet, halo]) circle.setAttribute('visibility', visible ? 'visible' : 'hidden');
-  if (!visible) return;
-  const at = path.line.getPointAtLength(path.length * ((state.elapsed % segmentMs) / segmentMs));
-  for (const circle of [packet, halo]) {
-    circle.setAttribute('cx', at.x);
-    circle.setAttribute('cy', at.y);
-    circle.setAttribute('fill', laneColors[path.kind]);
-  }
-}
-
-function tick(now) {
-  state.frame = null;
-  if (transition !== null) {
-    const progress = Math.max(0, Math.min((now - transition) / transitionMs, 1));
-    updateScene(progress);
-    if (progress === 1) transition = null;
-    state.lastFrame = null;
-  }
-  if (state.playing && state.lastFrame !== null) {
-    const cycle = paths.length * segmentMs + 600;
-    state.elapsed = (state.elapsed + Math.min(now - state.lastFrame, 80)) % cycle;
-  }
-  state.lastFrame = now;
-  paint();
-  if (state.playing || transition !== null) state.frame = requestAnimationFrame(tick);
-}
-
-function syncPlayback() {
-  if (state.frame !== null) cancelAnimationFrame(state.frame);
-  state.frame = null;
-  state.lastFrame = null;
-  const reduced = motion.matches;
-  if (reduced && transition !== null) {
-    updateScene(1);
-    transition = null;
-  }
-  byId('status').textContent = reduced ? '모션 감소 · 정적 경로' : state.playing ? '재생 중' : '일시정지됨';
-  byId('pause').textContent = state.playing ? '일시정지' : '재생';
-  byId('pause').disabled = reduced;
-  byId('replay').disabled = reduced;
-  paint();
-  if (!reduced && (state.playing || transition !== null)) state.frame = requestAnimationFrame(tick);
-}
-
-function showStep(index, announce = true) {
-  state.index = index;
-  state.elapsed = 0;
-  const step = lesson[index];
-  byId('step-title').textContent = step.title;
-  byId('body').textContent = step.body;
-  byId('takeaway').textContent = step.takeaway;
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  stepButtons.forEach((button, i) => {
-    if (i === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  try { localStorage.setItem(storageKey, String(index)); } catch {}
-  renderScene(step, announce);
-  syncPlayback();
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
-}
-
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/caching/${index + 1}`);
-  showStep(index);
-}
-
-function routeIndex() {
-  const match = /^#\/caching\/([123])$/.exec(location.hash);
-  if (match) return Number(match[1]) - 1;
-  try {
-    const index = Number(localStorage.getItem(storageKey));
-    if (Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
-  } catch {}
-  return 0;
-}
-
-const stepButtons = lesson.map(({ label }, index) => {
-  const listItem = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  const number = document.createElement('span');
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.addEventListener('click', () => goToStep(index));
-  listItem.append(button);
-  byId('steps').append(listItem);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
-byId('pause').onclick = () => {
-  state.playing = !state.playing;
-  syncPlayback();
-  byId('announcement').textContent = byId('status').textContent;
-};
-byId('replay').onclick = () => {
-  state.elapsed = 0;
-  state.playing = true;
-  syncPlayback();
-  byId('announcement').textContent = '현재 단계 다시 재생';
-};
-function syncRoute() {
-  const index = routeIndex();
-  if (index !== state.index) showStep(index);
-}
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
-motion.addEventListener('change', () => {
-  if (motion.matches) state.playing = false;
-  syncPlayback();
-});
-window.addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-    event.preventDefault();
-    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+    details.append(list);
+    card.append(details);
+    document.getElementById('topics').append(card);
   }
 });
-const initial = routeIndex();
-history.replaceState(null, '', `#/caching/${initial + 1}`);
-showStep(initial, false);
 </script>
 </body>
 </html>

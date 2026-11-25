@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="이름을 글자 코드의 합으로 계산해 칸 번호를 정하는 해시 테이블에 넣고 찾으며, 충돌과 칸 늘리기까지 살펴보세요.">
+<title>해시 테이블 · 레슨 4.5</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.truth{border-collapse:collapse;font:600 .9375rem var(--mono);text-align:center}
+.truth caption{font:700 .8125rem system-ui,sans-serif;color:var(--muted);text-align:left;margin-bottom:4px}
+.truth th,.truth td{border:1px solid var(--border);padding:3px 12px;min-width:44px}
+.truth th{background:#f3f6f2;font-size:.8125rem}
+.truth td.empty{color:var(--muted);font:600 .8125rem system-ui,sans-serif}
+.results td:first-child{font-family:system-ui,sans-serif;text-align:left}
+.machine .left{fill:#eadcf0;stroke:#9a77ad}.machine .right{fill:#d9c4e3;stroke:#9a77ad}.machine .top{fill:#f7f0fa;stroke:#9a77ad}
+.machine.busy .top{fill:#fff1c9}
+.work rect{stroke:#9a77ad;fill:#fff}.work text{font:700 11px var(--mono);fill:#5f3a73}
+.bucket .face{stroke-width:.8}
+.bucket .left{fill:#d7dfdb;stroke:#8c9d96}.bucket .right{fill:#b8c6c0;stroke:#8c9d96}.bucket .top{fill:#eef1ef;stroke:#8c9d96}
+.bucket.look>.face.top,.bucket.hit>.face.top{fill:#fff1c9;stroke:#c9940f}
+.bucket.collide>.face.top{fill:#ffd9c2;stroke:#a24c14}
+.bucket.miss>.face.top{fill:#f3f5f4;stroke:#a24c14;stroke-dasharray:3 2}
+.bucket-index{font:700 10px var(--mono);fill:#6b7d76;text-anchor:middle}
+.item .face{stroke-width:.8}
+.item .left{fill:#dfe4f2;stroke:#7a87b5}.item .right{fill:#c4cbe3;stroke:#7a87b5}.item .top{fill:#eef1fb;stroke:#7a87b5}
+.item.fresh .top{fill:#d2f4dd;stroke:var(--accent)}
+.item.compare .top{fill:#fff1c9;stroke:#c9940f}
+.item.found .top{fill:#ffd34d;stroke:#c9940f}
+.item-label{font:800 8.5px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.stage{transition:filter .3s}
+.resizing .stage{filter:saturate(.3) brightness(.8)}
+.packet{stroke:white;stroke-width:1.6;fill:#9a77ad}
+.packet-halo{opacity:.22;fill:#9a77ad}
+.packet-label{font:800 10px system-ui,sans-serif;fill:#5f3a73;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.dot.hit{background:#ffd34d;border-color:#c9940f}.dot.freshdot{background:#d2f4dd;border-color:var(--accent)}.dot.collide{background:#ffd9c2;border-color:#a24c14}
+.algo-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.row-name{font-size:.8125rem;font-weight:800;color:var(--muted);min-width:2.6em}
+.name-button{min-width:56px}
+.name-button.inside{background:#eef1fb;border-color:#7a87b5;color:#3c4a85}
+.stats-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stats{font:600 .875rem var(--mono);color:var(--muted)}
+.try-choices{display:flex;gap:6px;flex-wrap:wrap}
+.try-choices:empty{display:none}
+@media(max-width:600px){.item-label{font-size:11px}.bucket-index{font-size:12px}.work text{font-size:14px}.packet-label{font-size:13px}}
+.item-side{font:800 7px system-ui,sans-serif;fill:#3c4a85;text-anchor:middle;dominant-baseline:central}
+@media(max-width:600px){.item-side{font-size:9px}}
+</style>
+<link rel="stylesheet" href="../shared/course.css">
+<script defer src="../shared/catalog.js"></script>
+<script defer src="../shared/course.js"></script>
+</head>
+</style>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">4장 자료구조와 알고리즘 · 레슨 4.5</p>
+    <h1>해시 테이블</h1>
+    <p class="lead">이름 하나로 값을 어떻게 한 번에 찾을까요? 이름을 계산해 칸 번호를 정하는 해시 테이블에 넣고 찾아 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" id="stage-panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">해시 기계와 칸</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">해시 기계가 이름을 계산해 칸 번호를 정하고, 칸 위에 이름이 쌓이는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="algo-row name-row" id="name-row" role="group" aria-label="이름 고르기"></div>
+          <div class="stats-row"><span class="stats" id="stats"></span><button class="action" id="reset" type="button">처음 상태로</button></div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <button class="action" id="view-reset" type="button">원래 보기</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="dot hit"></i>찾은 이름</span><span><i class="dot freshdot"></i>방금 넣은 이름</span><span><i class="dot collide"></i>충돌한 칸</span></div>
+          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+function setCamera(x, y, zoom) {
+  camera.zoom = clamp(zoom, 1, maxZoom);
+  const width = viewWidth / camera.zoom;
+  const height = viewHeight / camera.zoom;
+  camera.x = clamp(x, 0, viewWidth - width);
+  camera.y = clamp(y, 0, viewHeight - height);
+  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
+  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
+  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
+  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
+  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
+}
+
+function zoomBetween(nextZoom, from, to = from) {
+  const zoom = clamp(nextZoom, 1, maxZoom);
+  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
+            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
+}
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+function viewportPoint(event) {
+  const rect = viewport.getBoundingClientRect();
+  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
+  return {
+    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
+    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+  };
+}
+
+function pointerGeometry() {
+  const [a, b] = pointers.values();
+  if (!b) return { point: a, distance: 0 };
+  return {
+    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    distance: Math.hypot(a.x - b.x, a.y - b.y),
+  };
+}
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+function zoomBy(delta) {
+  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
+  zoomBetween(camera.zoom + delta, center);
+  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
+}
+
+function resetView() {
+  pointers.clear();
+  viewport.classList.remove('is-dragging');
+  setCamera(0, 0, 1);
+  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
+}
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+byId('view-reset').onclick = resetView;
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+// A hash table of names. The hash is the sum of the characters' code numbers (0.2), and the bucket is
+// that sum mod the table size. Names that land in the same bucket form a chain stacked on it.
+const allNames = ['민수', '지아', '하준', '서연', '도윤', '예린', '시우', '하은', '주원', '지호', '수아', '건우'];
+const missing = '하늘';
+const codeSum = (name) => [...name].reduce((sum, ch) => sum + ch.codePointAt(0), 0);
+const fmt = (value) => value.toLocaleString('ko-KR');
+
+const lesson = [
+  {
+    label: '해시 함수',
+    example: ["이름을 입력", "해시를 13칸으로 나눔", "계산한 칸에 저장"],
+    title: '이름을 계산해서 칸 번호를 정한다',
+    body: '해시 테이블은 이름(키)을 계산해서 저장할 칸을 정합니다. 여기서는 글자 코드(0.2)를 모두 더한 수를 칸 수 13으로 나눈 나머지(2.6)를 칸 번호로 씁니다. 이 계산을 해시 함수라고 합니다. 같은 이름은 언제나 같은 수가 나오므로 언제나 같은 칸으로 갑니다.',
+    takeaway: '"민수"는 코드 합 97,812, 13으로 나눈 나머지 0이라 0번 칸에 들어갑니다. 이름을 넣을 때 계산 과정이 장면 왼쪽 해시 기계 위에 뜹니다.',
+    description: '왼쪽에 해시 기계, 오른쪽에 0번부터 12번까지 칸 13개가 한 줄로 놓여 있습니다. 이름을 넣으면 기계가 칸 번호를 계산하고, 이름이 그 칸 위에 올라갑니다.',
+    mode: 'insert', start: [], size: 13,
+    tasks: [
+      { text: '이름 세 개를 넣어 보세요.', test: (e) => e.count >= 3, ok: '이름마다 계산한 칸으로 바로 들어갔습니다.' },
+      { ask: '"민수"를 나중에 찾을 때, 해시 함수는 몇 번 칸을 알려 줄까요?', choices: ['0번', '매번 다름', '맨 끝 칸'], answer: '0번', why: '같은 이름은 언제나 같은 코드 합, 같은 나머지가 나옵니다. 그래서 넣은 칸을 다시 찾을 수 있습니다.' },
+    ],
+  },
+  {
+    label: '한 번에 찾기',
+    example: ["저장한 이름을 검색", "같은 해시 계산", "그 칸에서 이름 확인"],
+    title: '찾을 때도 계산 한 번이면 칸이 나온다',
+    body: '찾을 때도 이름으로 칸 번호를 계산하고 그 칸만 봅니다. 리스트에서 찾으면 앞에서부터 하나씩 봐야 하지만(0.6의 선형 탐색), 해시 테이블은 이름이 몇 개든 계산 한 번과 그 칸의 이름 몇 개만 보면 됩니다. 평균 O(1)입니다. 1.4의 딕셔너리가 이 구조입니다.',
+    takeaway: '"하은"을 찾으면 12번 칸으로 바로 가서 한두 개만 비교합니다. 리스트였다면 넣은 순서대로 8번을 봐야 합니다. 없는 이름 "하늘"도 칸 하나만 보고 "없음"을 압니다.',
+    description: '이름 여덟 개가 이미 들어 있는 칸 13개가 있습니다. 찾을 이름을 고르면 해시 기계가 칸 번호를 계산하고, 점이 그 칸으로 가서 이름을 비교합니다.',
+    mode: 'find', start: ['민수', '지아', '하준', '서연', '도윤', '예린', '시우', '하은'], size: 13,
+    tasks: [
+      { text: '"하은"을 찾아 보세요.', test: (e) => e.find === '하은', ok: '12번 칸만 봤습니다. 리스트였다면 8번째에서야 찾습니다.' },
+      { text: '없는 이름 "하늘"을 찾아 보세요.', test: (e) => e.find === '하늘', ok: '칸 하나만 보고 없다는 것을 알았습니다.' },
+    ],
+  },
+  {
+    label: '충돌',
+    example: ["다른 두 이름", "같은 칸 번호", "한 칸에 두 이름 연결"],
+    title: '다른 이름이 같은 칸에 오면 줄을 세운다',
+    body: '칸은 13개뿐이라 서로 다른 이름이 같은 칸 번호를 받을 수 있습니다. 이를 충돌이라 합니다. 여기서는 같은 칸에 온 이름을 그 칸 위에 차례로 쌓아 둡니다(체이닝, 4.2의 연결 리스트). 찾을 때는 그 칸의 이름들을 차례로 비교합니다.',
+    takeaway: '"하준"과 "지호"는 둘 다 5번 칸입니다. 충돌이 많아 한 칸에 몰리면 그 칸을 찾는 일이 리스트를 뒤지는 것과 같아집니다. 그래서 해시 함수는 이름을 칸마다 고르게 흩어야 합니다.',
+    description: '빈 칸 13개가 있습니다. 이름을 넣다가 이미 이름이 있는 칸으로 가면, 새 이름이 그 위에 쌓입니다.',
+    mode: 'insert', start: [], size: 13,
+    tasks: [
+      { text: '"하준"과 "지호"를 넣어 보세요.', test: (e) => e.names.includes('하준') && e.names.includes('지호'), ok: '둘 다 5번 칸입니다. 충돌이 일어나 위로 쌓였습니다.' },
+      { ask: '이름 100개가 모두 같은 칸에 몰리면 찾기는 어떻게 될까요?', choices: ['여전히 1번', '최악에 100번 비교', '찾을 수 없음'], answer: '최악에 100번 비교', why: '그 칸의 줄을 처음부터 뒤져야 해서 O(n)이 됩니다. 좋은 해시 함수가 중요한 이유입니다.' },
+    ],
+  },
+  {
+    label: '칸 늘리기',
+    example: ["13칸에 이름 10개", "채움 비율 0.75 초과", "29칸으로 재배치"],
+    title: '꽉 차기 전에 칸을 늘려 다시 나눈다',
+    body: '이름 수 ÷ 칸 수를 채움 비율이라 합니다. 비율이 높으면 충돌이 늘어 느려지므로, 해시 테이블은 비율이 0.75를 넘으면 칸을 두 배쯤(여기서는 29개)으로 늘리고 모든 이름의 칸을 새 크기로 다시 계산합니다. 한 번은 오래 걸리지만 자주 일어나지 않아 평균은 여전히 빠릅니다.',
+    takeaway: '이름 10개째에서 비율이 10 ÷ 13 ≈ 0.77이 되어 칸이 29개로 늘어납니다. 같은 이름도 나머지가 달라져 새 칸으로 흩어집니다. 두 개씩 몰린 칸이 3개에서 2개로 줄고, 비율이 0.34로 낮아져 다음 이름들이 들어갈 빈칸이 넉넉해집니다.',
+    description: '이름 아홉 개가 든 칸 13개가 있습니다. 하나를 더 넣으면 채움 비율이 0.75를 넘어, 칸이 29개로 늘어나고 모든 이름이 새 칸으로 옮겨집니다.',
+    mode: 'insert', start: ['민수', '지아', '하준', '서연', '도윤', '예린', '시우', '하은', '주원'], size: 13, resize: true,
+    tasks: [
+      { text: '이름을 하나 더 넣어 칸이 늘어나는 것을 보세요.', test: (e) => e.size === 29, ok: '13칸에서 29칸으로 늘었고, 모든 이름의 칸을 다시 계산했습니다.' },
+      { ask: '1.4에서 쓴 파이썬 딕셔너리는 이름(키)으로 값을 어떻게 찾을까요?', choices: ['앞에서부터 하나씩', '해시로 칸을 계산해서', '이진 탐색으로'], answer: '해시로 칸을 계산해서', why: '파이썬 딕셔너리는 해시 테이블이라, 키가 아무리 많아도 평균 한 번에 찾습니다.' },
+    ],
+  },
+];
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'hash-lab:v1:step';
+const state = { index: 0, size: 13, table: [], order: [], busy: false, playing: !motion.matches, userPaused: false, wait: 0,
+  solved: '', wrong: '', demoPosition: 0 };
+const progress = lesson.map(() => 0);
+let timers = [];
+
+function svg(name, attrs, parent) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
+  if (parent) parent.append(element);
+  return element;
+}
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+byId('grid').setAttribute('d', gridLines.join(''));
+function drawShadow(node, half) {
+  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
+  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
+}
+function drawBox(node, h, H, z0 = 0) {
+  const faces = {
+    left: [[-h, -h, z0], [h, -h, z0], [h, -h, z0 + H], [-h, -h, z0 + H]],
+    right: [[h, -h, z0], [h, h, z0], [h, h, z0 + H], [h, -h, z0 + H]],
+    top: [[-h, -h, z0 + H], [h, -h, z0 + H], [h, h, z0 + H], [-h, h, z0 + H]],
+  };
+  for (const [name, corners] of Object.entries(faces)) svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
+  svg('path', { class: 'highlight', d: `M${point(-h, -h, z0 + H)}L${point(h, -h, z0 + H)}L${point(h, h, z0 + H)}` }, node);
+}
+let plates = [];
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  plate.label.setAttribute('x', plate.x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
+function addPlate(node, className, x, y, text, { pad = 1.3, round = false } = {}) {
+  const group = svg('g', { class: className }, node);
+  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
+  plate.label.textContent = text;
+  plates.push(plate);
+  sizePlate(plate);
+  return plate;
+}
+function setPlate(plate, text) { plate.label.textContent = text; sizePlate(plate); }
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Layout ----------
+const wide = () => state.size > 13;
+const spacing = () => wide() ? 2.05 : 2.15;
+const cellHalf = () => wide() ? .6 : .72;
+const itemHalf = () => wide() ? .5 : .6;
+const itemH = 8.5;
+// 13 buckets sit in one row; 29 buckets in two rows (0–14 behind, 15–28 in front) so names do not overlap.
+const bucketPos = (k) => !wide() ? [k * spacing(), 0] : k < 15 ? [k * spacing(), -3.4] : [(k - 15) * spacing() + 1, 3.4];
+const machineU = -5;
+let machine;
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  // Hash machine.
+  const m = svg('g', { class: 'node machine', transform: `translate(${flat(machineU, 0).join(' ')})` }, byId('nodes'));
+  drawShadow(m, 1.4);
+  drawBox(m, 1.4, 16);
+  addPlate(m, 'tag', 0, 36, '해시 기계', { round: true });
+  machine = { node: m, work: addPlate(m, 'tag work', 0, -16 - 14 * 1.4 - 16, '이름 → 칸 번호', { pad: 1.1 }) };
+  // Buckets and their chains.
+  for (let k = 0; k < state.size; k++) {
+    const node = svg('g', { class: 'node bucket', 'data-bucket': k, transform: `translate(${flat(...bucketPos(k)).join(' ')})` }, byId('nodes'));
+    drawShadow(node, cellHalf());
+    drawBox(node, cellHalf(), 3);
+    svg('text', { class: 'bucket-index', x: 0, y: 7 * 2 * cellHalf() + 12 }, node).textContent = k;
+    state.table[k].forEach((name, i) => {
+      const item = svg('g', { class: 'item', 'data-name': name }, node);
+      drawBox(item, itemHalf(), itemH, 3 + i * (itemH + 1));
+      svg('text', { class: 'item-label', x: 0, y: -(3 + i * (itemH + 1) + itemH) + .5 }, item).textContent = name;
+      // Lower items in a chain are covered, so their name also goes on the front face.
+      if (i < state.table[k].length - 1) svg('text', { class: 'item-side', x: -14 * itemHalf() + 1, y: 7 * itemHalf() - (3 + i * (itemH + 1) + itemH / 2) + 1 }, item).textContent = name;
+    });
+  }
+  const right = 14 * Math.max(...Array.from({ length: state.size }, (_, k) => bucketPos(k)[0])) + 30, left = 14 * machineU - 50, top = wide() ? -110 : -96, bottom = wide() ? 66 : 46;
+  const scale = Math.min(1.7, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+const bucketNode = (k) => byId('nodes').querySelector(`[data-bucket="${k}"]`);
+const itemNode = (name) => byId('nodes').querySelector(`[data-name="${name}"]`);
+
+// ---------- Moving label ----------
+function later(ms, fn) {
+  if (motion.matches) { fn(); return; }
+  timers.push(setTimeout(fn, ms));
+}
+function cancelAll() {
+  timers.forEach(clearTimeout);
+  timers = [];
+  byId('packets').replaceChildren();
+  state.busy = false;
+}
+function floatLabel(text, from, to, ms) {
+  if (motion.matches) return;
+  const g = svg('g', { class: 'mover' }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 9 }, g);
+  svg('circle', { class: 'packet', r: 4.6 }, g);
+  svg('text', { class: 'packet-label', y: -10 }, g).textContent = text;
+  const start = performance.now();
+  const step = (now) => {
+    const t = Math.min((now - start) / ms, 1);
+    const e = t * t * (3 - 2 * t);
+    g.setAttribute('transform', `translate(${mix(from[0], to[0], e)} ${mix(from[1], to[1], e) - Math.sin(Math.PI * t) * 30})`);
+    if (t < 1) requestAnimationFrame(step); else g.remove();
+  };
+  requestAnimationFrame(step);
+}
+
+// ---------- Operations ----------
+const bucketOf = (name, size = state.size) => codeSum(name) % size;
+const hashText = (name) => `${name} → 코드 합 ${fmt(codeSum(name))} → ${fmt(codeSum(name))} mod ${state.size} = ${bucketOf(name)}`;
+function fill(names, size) {
+  state.size = size;
+  state.table = Array.from({ length: size }, () => []);
+  state.order = [];
+  for (const name of names) { state.table[bucketOf(name)].push(name); state.order.push(name); }
+}
+function insert(name, user) {
+  if (state.busy) return;
+  if (state.order.includes(name)) { report(`${name}은(는) 이미 들어 있습니다. 같은 이름은 한 번만 넣습니다.`); return; }
+  state.busy = true;
+  const k = bucketOf(name);
+  setPlate(machine.work, `${fmt(codeSum(name))} mod ${state.size} = ${k}`);
+  machine.node.classList.add('busy');
+  later(500, () => {
+    floatLabel(name, flat(machineU, 0, 40), flat(...bucketPos(k), 12 + state.table[k].length * (itemH + 1)), 700);
+    later(720, () => {
+      const collided = state.table[k].length > 0;
+      state.table[k].push(name);
+      state.order.push(name);
+      machine.node.classList.remove('busy');
+      buildScene();
+      bucketNode(k)?.classList.add(collided ? 'collide' : 'hit');
+      itemNode(name)?.classList.add('fresh');
+      const load = state.order.length / state.size;
+      report(`${hashText(name)}번 칸에 넣음${collided ? ' · 충돌! 이미 있는 이름 위에 쌓음' : ''} · 채움 비율 ${state.order.length} ÷ ${state.size} = ${load.toFixed(2)}`);
+      syncStats();
+      if (lesson[state.index].resize && state.size === 13 && load > .75) {
+        later(1300, () => resize(user));
+        return;
+      }
+      state.busy = false;
+      syncControls();
+      if (user) afterUser({ count: state.order.length, names: state.order, size: state.size });
+    });
+  });
+  syncControls();
+}
+function resize(user) {
+  report('채움 비율이 0.75를 넘었습니다. 칸을 29개로 늘리고 모든 이름의 칸을 다시 계산합니다.');
+  byId('stage-panel').classList.add('resizing');
+  later(700, () => {
+    fill([...state.order], 29);
+    buildScene();
+    byId('stage-panel').classList.remove('resizing');
+    const crowded = state.table.filter((chain) => chain.length > 1).length;
+    report(`칸이 29개가 됐습니다. 채움 비율 ${state.order.length} ÷ 29 = ${(state.order.length / 29).toFixed(2)} · 두 개 이상 몰린 칸 ${crowded}개`);
+    state.busy = false;
+    syncStats();
+    syncControls();
+    if (user) afterUser({ count: state.order.length, names: state.order, size: state.size });
+  });
+}
+function find(name, user) {
+  if (state.busy) return;
+  state.busy = true;
+  const k = bucketOf(name);
+  setPlate(machine.work, `${fmt(codeSum(name))} mod ${state.size} = ${k}`);
+  machine.node.classList.add('busy');
+  later(500, () => {
+    floatLabel(name, flat(machineU, 0, 40), flat(...bucketPos(k), 14), 700);
+    const chain = state.table[k];
+    let compared = 0;
+    const step = (i) => {
+      if (i >= chain.length) return done(false);
+      compared++;
+      itemNode(chain[i])?.classList.add('compare');
+      if (chain[i] === name) return done(true);
+      later(450, () => step(i + 1));
+    };
+    const done = (found) => {
+      machine.node.classList.remove('busy');
+      bucketNode(k)?.classList.add(found ? 'hit' : 'miss');
+      if (found) itemNode(name)?.classList.add('found');
+      const listSteps = found ? state.order.indexOf(name) + 1 : state.order.length;
+      report(`${hashText(name)}번 칸 · ${chain.length ? `이름 ${compared}개 비교` : '빈 칸'} → ${found ? '찾음' : '없음'} · 리스트였다면 ${listSteps}번 비교`);
+      state.busy = false;
+      syncControls();
+      if (user) afterUser({ find: name, found });
+    };
+    later(720, () => { buildScene(); bucketNode(k)?.classList.add('look'); step(0); });
+  });
+  syncControls();
+}
+
+// ---------- Panel ----------
+function buildControls() {
+  const step = lesson[state.index];
+  const row = byId('name-row');
+  row.replaceChildren(Object.assign(document.createElement('span'), { className: 'row-name', textContent: step.mode === 'find' ? '찾기' : '넣기' }));
+  for (const name of step.mode === 'find' ? [...allNames, missing] : allNames) {
+    const b = Object.assign(document.createElement('button'), { type: 'button', className: 'action name-button', textContent: name });
+    b.dataset.name = name;
+    b.addEventListener('click', () => { takeOver(); if (step.mode === 'find') find(name, true); else insert(name, true); });
+    row.append(b);
+  }
+}
+function syncControls() {
+  const step = lesson[state.index];
+  [...byId('name-row').querySelectorAll('button')].forEach((b) => {
+    b.disabled = state.busy && !state.playing;
+    b.classList.toggle('inside', state.order.includes(b.dataset.name));
+    b.setAttribute('aria-pressed', String(step.mode === 'insert' && state.order.includes(b.dataset.name)));
+  });
+  byId('reset').disabled = state.busy && !state.playing;
+}
+function syncStats() {
+  const crowded = state.table.filter((chain) => chain.length > 1).length;
+  byId('stats').textContent = `이름 ${state.order.length}개 · 칸 ${state.size}개 · 채움 비율 ${(state.order.length / state.size).toFixed(2)} · 충돌한 칸 ${crowded}개`;
+}
+function report(text) { byId('readout').textContent = text; byId('announcement').textContent = text; }
+function resetTable() {
+  cancelAll();
+  const step = lesson[state.index];
+  fill(step.start, step.size);
+  buildScene();
+  syncStats();
+  syncControls();
+}
+byId('reset').onclick = () => { takeOver(); resetTable(); report('처음 상태로 되돌렸습니다.'); };
+
+// ---------- Tasks ----------
+const currentTask = () => lesson[state.index].tasks[progress[state.index]];
+function syncTask() {
+  const tasks = lesson[state.index].tasks;
+  const task = currentTask();
+  const choices = byId('try-choices');
+  choices.replaceChildren();
+  byId('try').classList.toggle('solved', Boolean(state.solved) && !task?.ask);
+  if (task?.ask) {
+    byId('try-text').textContent = task.ask;
+    byId('try-result').textContent = state.wrong || (state.solved ? `✓ 맞았습니다. ${state.solved}` : '');
+    for (const choice of task.choices) {
+      const b = Object.assign(document.createElement('button'), { type: 'button', className: 'action choice-button', textContent: choice });
+      b.addEventListener('click', () => answer(choice));
+      choices.append(b);
+    }
+    return;
+  }
+  byId('try-text').textContent = task ? task.text : (state.solved ? '' : '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.');
+  byId('try-result').textContent = state.solved ? `✓ 맞았습니다. ${state.solved}${progress[state.index] >= tasks.length ? ' · 이 단계의 문제를 모두 풀었습니다.' : ''}` : '';
+}
+// Only the learner's own actions count, so the demo cannot solve a problem.
+function afterUser(event) {
+  const task = currentTask();
+  if (task && !task.ask && task.test(event)) { progress[state.index]++; state.solved = task.ok; state.wrong = ''; }
+  syncTask();
+}
+function answer(choice) {
+  const task = currentTask();
+  if (choice !== task.answer) { state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`; syncTask(); return; }
+  progress[state.index]++;
+  state.wrong = '';
+  state.solved = task.why;
+  syncTask();
+}
+
+// ---------- Demo ----------
+let frame = null, lastFrame = null;
+function takeOver() {
+  if (!state.playing) return;
+  state.playing = false;
+  resetTable();
+  syncPlayback();
+}
+function demoTick() {
+  if (state.busy) { state.wait = 300; return; }
+  const step = lesson[state.index];
+  if (step.mode === 'find') {
+    const names = ['하은', '민수', missing, '시우'];
+    find(names[state.demoPosition++ % names.length], false);
+    state.wait = 3600;
+    return;
+  }
+  const rest = allNames.filter((name) => !state.order.includes(name));
+  if (!rest.length || (step.resize && state.size === 29) || (!step.resize && state.order.length >= 6)) { resetTable(); state.wait = 1200; return; }
+  const pick = step.label === '충돌' ? ['하준', '지호', '지아', '도윤', '서연', '건우'].find((name) => !state.order.includes(name)) ?? rest[0] : rest[0];
+  insert(pick, false);
+  state.wait = step.resize ? 4200 : 2600;
+}
+function tick(now) {
+  frame = null;
+  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
+  lastFrame = now;
+  if (state.playing) {
+    state.wait -= elapsed;
+    if (state.wait <= 0) demoTick();
+    frame = requestAnimationFrame(tick);
+  } else lastFrame = null;
+}
+function syncPlayback() {
+  const reduced = motion.matches;
+  if (reduced) state.playing = false;
+  byId('status').textContent = reduced ? '모션 감소 · 직접 조작' : state.playing ? '자동 실행 중' : '직접 조작';
+  byId('pause').textContent = state.playing ? '일시정지' : '자동 실행';
+  byId('pause').disabled = reduced;
+  byId('replay').disabled = reduced;
+  if (state.playing && frame === null) frame = requestAnimationFrame(tick);
+  syncControls();
+}
+
+// ---------- Steps and routing ----------
+function showStep(index, announce = true) {
+  state.index = index;
+  if (!state.userPaused) state.playing = !motion.matches;
+  const s = lesson[index];
+  state.solved = '';
+  state.wrong = '';
+  state.demoPosition = 0;
+  byId('step-title').textContent = s.title;
+  byId('body').textContent = s.body;
+  byId('takeaway').textContent = s.takeaway;
+  byId('scene-desc').textContent = s.description;
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  buildControls();
+  resetTable();
+  report(s.mode === 'find' ? '찾을 이름을 눌러 보세요.' : '넣을 이름을 눌러 보세요.');
+  syncTask();
+  state.wait = 800;
+  syncPlayback();
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
+}
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/hash/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/hash\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+byId('pause').onclick = () => {
+  state.playing = !state.playing;
+  state.userPaused = !state.playing;
+  if (state.playing) { resetTable(); state.demoPosition = 0; state.wait = 400; }
+  syncPlayback();
+  byId('announcement').textContent = byId('status').textContent;
+};
+byId('replay').onclick = () => {
+  state.playing = true;
+  state.userPaused = false;
+  resetTable();
+  state.demoPosition = 0;
+  state.wait = 300;
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 자동 실행';
+};
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches && !state.userPaused) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/hash/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

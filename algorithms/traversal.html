@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 그래프를 너비 우선(큐)과 깊이 우선(스택)으로 한 걸음씩 탐색하며 방문 순서와 찾은 길을 비교해 보세요.">
+<title>그래프 탐색 · 레슨 4.7</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.truth{border-collapse:collapse;font:600 .9375rem var(--mono);text-align:center}
+.truth caption{font:700 .8125rem system-ui,sans-serif;color:var(--muted);text-align:left;margin-bottom:4px}
+.truth th,.truth td{border:1px solid var(--border);padding:3px 12px;min-width:44px}
+.truth th{background:#f3f6f2;font-size:.8125rem}
+.truth td.empty{color:var(--muted);font:600 .8125rem system-ui,sans-serif}
+.results td:first-child{font-family:system-ui,sans-serif;text-align:left}
+.edge{fill:none;stroke:#b9c6be;stroke-width:2.4;stroke-linecap:round}
+.edge.tree{stroke:#7a87b5;stroke-width:3}
+.edge.path{stroke:#c9940f;stroke-width:5}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
+.place .face{stroke-width:.8;transition:fill .2s}
+.place .left{fill:#e6ebe8;stroke:#8c9d96}.place .right{fill:#cfd8d4;stroke:#8c9d96}.place .top{fill:#fff;stroke:#8c9d96}
+.place.waiting .top{stroke:#c9940f;stroke-width:1.6;stroke-dasharray:3 2}
+.place.visited.d0 .top{fill:#d2f4dd}.place.visited.d1 .top{fill:#a9e2bd}.place.visited.d2 .top{fill:#7fcb9c}.place.visited.d3 .top{fill:#57b07d}.place.visited.d4 .top{fill:#3c8f62}
+.place.visited .top{stroke:var(--accent)}
+.place.visited.current.current .top{fill:#ffd34d;stroke:#c9940f}
+.place-name{font:800 13px var(--mono);fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.place.visited.d3 .place-name,.place.visited.d4 .place-name{fill:#fff}
+.place.visited.current.current .place-name{fill:var(--ink)}
+.order circle{fill:#fff;stroke:var(--accent);stroke-width:1.3}
+.order text{font:800 10px var(--mono);fill:var(--accent);text-anchor:middle;dominant-baseline:central}
+.dot.visited{background:#7fcb9c;border-color:var(--accent)}.dot.waiting{background:#fff;border:2px dashed #c9940f}
+.sample.tree{border-top:3px solid #7a87b5}.sample.path{border-top:5px solid #c9940f}
+.algo-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.row-name{font-size:.8125rem;font-weight:800;color:var(--muted);min-width:2.6em}
+.action.pick[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.frontier-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chips{display:inline-flex;gap:4px;flex-wrap:wrap}
+.chip{display:inline-grid;place-items:center;min-width:36px;height:36px;padding:0 8px;border:1px solid #9fb7a9;border-radius:8px;font:800 1rem var(--mono);background:#fff}
+.chip.next{border:2px solid #c9940f;background:#fff7d6}
+.chip.empty{font:600 .8125rem system-ui,sans-serif;color:var(--muted);border-style:dashed}
+.walk-line{color:var(--muted);font-weight:700}
+.walk-line b{font:800 1rem var(--mono);color:var(--accent);margin-left:6px}
+.try-choices{display:flex;gap:6px;flex-wrap:wrap}
+.try-choices:empty{display:none}
+@media(max-width:600px){.place-name{font-size:16px}.order text{font-size:12px}}
+</style>
+<link rel="stylesheet" href="../shared/course.css">
+<script defer src="../shared/catalog.js"></script>
+<script defer src="../shared/course.js"></script>
+</head>
+</style>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">4장 자료구조와 알고리즘 · 레슨 4.7</p>
+    <h1>그래프 탐색</h1>
+    <p class="lead">너비 우선과 깊이 우선은 어떤 순서로 길을 찾을까요? 같은 그래프를 큐와 스택으로 한 걸음씩 탐색해 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" id="stage-panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">길로 이어진 아홉 곳</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">A부터 I까지 아홉 곳이 길로 이어져 있고, 탐색 순서대로 번호가 붙는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="algo-row" id="kind-row" role="group" aria-label="탐색 고르기"></div>
+          <div class="frontier-row"><span class="row-name" id="frontier-name">큐</span><span class="chips" id="frontier" aria-live="off"></span></div>
+          <p class="walk-line">방문 순서 <b id="visit-order">–</b></p>
+          <div class="algo-row"><button class="action primary" id="step-tick" type="button">한 걸음</button><button class="action primary" id="step-all" type="button">끝까지</button><button class="action" id="restart" type="button">처음부터</button></div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <button class="action" id="view-reset" type="button">원래 보기</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="dot visited"></i>방문함 (짙을수록 먼 겹)</span><span><i class="dot waiting"></i>방문 대기</span><span><i class="sample tree"></i>처음 들어온 길</span><span><i class="sample path"></i>찾은 경로</span></div>
+          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+function setCamera(x, y, zoom) {
+  camera.zoom = clamp(zoom, 1, maxZoom);
+  const width = viewWidth / camera.zoom;
+  const height = viewHeight / camera.zoom;
+  camera.x = clamp(x, 0, viewWidth - width);
+  camera.y = clamp(y, 0, viewHeight - height);
+  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
+  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
+  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
+  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
+  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
+}
+
+function zoomBetween(nextZoom, from, to = from) {
+  const zoom = clamp(nextZoom, 1, maxZoom);
+  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
+            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
+}
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+function viewportPoint(event) {
+  const rect = viewport.getBoundingClientRect();
+  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
+  return {
+    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
+    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+  };
+}
+
+function pointerGeometry() {
+  const [a, b] = pointers.values();
+  if (!b) return { point: a, distance: 0 };
+  return {
+    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    distance: Math.hypot(a.x - b.x, a.y - b.y),
+  };
+}
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+function zoomBy(delta) {
+  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
+  zoomBetween(camera.zoom + delta, center);
+  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
+}
+
+function resetView() {
+  pointers.clear();
+  viewport.classList.remove('is-dragging');
+  setCamera(0, 0, 1);
+  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
+}
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+byId('view-reset').onclick = resetView;
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+// Breadth-first and depth-first search on one small graph. Each search is worked out in advance as a list
+// of moves (take a place from the frontier, visit it, add its unvisited neighbours), then played back.
+const places = {
+  A: [0, 0], B: [4.2, -4.4], C: [4.2, 4.4], D: [8.6, -6.6], E: [8.6, 0], F: [8.6, 6.6], G: [13, -3.4], H: [13, 3.4], I: [17.4, 0],
+};
+const edges = [['A', 'B'], ['A', 'C'], ['B', 'D'], ['B', 'E'], ['C', 'E'], ['C', 'F'], ['D', 'G'], ['E', 'G'], ['E', 'H'], ['F', 'H'], ['G', 'I'], ['H', 'I']];
+const neighbours = (p) => edges.filter((e) => e.includes(p)).map((e) => e[0] === p ? e[1] : e[0]).sort();
+
+// One search, as moves. BFS takes from the front of a queue; DFS from the top of a stack
+// (neighbours pushed in reverse so the alphabetically first is explored first).
+function plan(kind, goal) {
+  const moves = [];
+  const parent = { A: null };
+  const seen = new Set(['A']);
+  const frontier = ['A'];
+  let order = 0;
+  while (frontier.length) {
+    const place = kind === 'bfs' ? frontier.shift() : frontier.pop();
+    const added = [];
+    const next = kind === 'bfs' ? neighbours(place) : [...neighbours(place)].reverse();
+    if (kind === 'dfs' && order && moves.some((m) => m.place === place)) continue;
+    for (const n of next) {
+      if (kind === 'bfs' ? seen.has(n) : moves.some((m) => m.place === n) || n === place) continue;
+      if (kind === 'bfs') seen.add(n);
+      parent[n] = parent[n] ?? place;
+      if (kind === 'dfs') parent[n] = place;
+      frontier.push(n);
+      added.push(n);
+    }
+    moves.push({ place, order: ++order, added, frontier: [...frontier], parent: { ...parent } });
+    if (place === goal) break;
+  }
+  return moves;
+}
+function pathTo(goal, parent) {
+  const path = [];
+  for (let p = goal; p; p = parent[p]) path.unshift(p);
+  return path;
+}
+
+const lesson = [
+  {
+    label: '너비 우선',
+    readingSearch: {"kind": "bfs", "moves": 3},
+    example: ["A의 이웃을 큐에 넣음", "먼저 발견한 순서대로 방문", "거리 1인 점부터 탐색"],
+    title: '가까운 곳부터 한 겹씩 넓혀 간다',
+    body: '그래프(2.5)에서 A부터 모든 곳을 빠짐없이 방문해 봅시다. 너비 우선 탐색(BFS)은 큐(4.3)를 씁니다. A를 꺼내 방문하고, A의 이웃을 큐 뒤에 넣고, 다시 큐 앞에서 꺼냅니다. 그러면 A에서 한 칸 떨어진 곳, 두 칸 떨어진 곳 순서로 물결처럼 퍼져 나갑니다.',
+    takeaway: '방문 순서는 A, B, C, D, E, F, G, H, I입니다. 노드 위 숫자는 방문 순서이고, 색이 짙을수록 A에서 먼 겹입니다. 장면 아래 큐에서 앞의 것이 먼저 나갑니다.',
+    description: 'A부터 I까지 아홉 곳이 길로 이어진 그래프가 있습니다. 탐색이 진행되면 방문한 곳에 순서 번호가 붙고, 방문할 차례를 기다리는 곳은 테두리가 점선으로 바뀝니다.',
+    kinds: ['bfs'],
+    tasks: [
+      { text: '"끝까지"를 눌러 너비 우선 탐색을 끝까지 해 보세요.', test: (e) => e.done.bfs, ok: '한 칸 떨어진 B, C를 먼저, 그다음 두 칸 떨어진 D, E, F를 방문했습니다.' },
+      { ask: '너비 우선 탐색에서 I는 왜 마지막에 방문할까요?', choices: ['이름이 마지막이라서', 'A에서 가장 멀어서', '이웃이 적어서'], answer: 'A에서 가장 멀어서', why: 'I는 A에서 길 4개를 지나야 닿는 가장 바깥 겹이라 마지막에 방문합니다.' },
+    ],
+  },
+  {
+    label: '깊이 우선',
+    readingSearch: {"kind": "dfs", "moves": 5},
+    example: ["한 이웃을 골라 내려감", "막다른 곳에서 스택을 되감음", "다른 갈래를 계속 탐색"],
+    title: '한 길로 끝까지 갔다가 되돌아온다',
+    body: '깊이 우선 탐색(DFS)은 스택(4.3)을 씁니다. 방금 넣은 이웃을 먼저 꺼내므로, 한 방향으로 갈 수 있는 데까지 깊이 들어갔다가 막히면 되돌아와 다른 길로 갑니다. 1.5의 재귀로도 같은 일을 할 수 있습니다. 미로를 손으로 더듬어 가는 방식과 비슷합니다.',
+    takeaway: '방문 순서는 A, B, D, G, E, C, F, H, I입니다. B에서 D, G로 쭉 내려간 뒤 G의 이웃 E로, 다시 C, F, H로 이어 갑니다. 너비 우선과 같은 그래프인데 순서가 전혀 다릅니다.',
+    description: '같은 그래프에서 깊이 우선 탐색을 합니다. 방문한 곳에 순서 번호가 붙고, 장면 아래 스택의 맨 위가 다음에 방문할 곳입니다.',
+    kinds: ['dfs'],
+    tasks: [
+      { text: '"끝까지"를 눌러 깊이 우선 탐색을 끝까지 해 보세요.', test: (e) => e.done.dfs, ok: 'A, B, D, G로 깊이 들어간 뒤 되돌아가며 나머지를 방문했습니다.' },
+      { ask: '깊이 우선 탐색이 다음 방문할 곳을 꺼내는 구조는?', choices: ['큐', '스택', '해시 테이블'], answer: '스택', why: '가장 나중에 넣은 이웃을 먼저 꺼내야 한 방향으로 깊이 들어갈 수 있습니다.' },
+    ],
+  },
+  {
+    label: 'I까지 길 찾기',
+    readingSearch: {"kind": "bfs", "moves": 9},
+    example: ["A에서 I까지 같은 비용의 길", "BFS로 거리별 방문", "처음 도착한 경로가 최소 홉"],
+    title: '너비 우선은 가장 짧은 길을 찾는다',
+    body: '이번에는 A에서 I까지 가는 길을 찾고, I에 닿으면 멈춥니다. 노드마다 "어디서 왔는지"를 적어 두면 I에서 거꾸로 따라가 길을 얻습니다. 너비 우선은 가까운 겹부터 보므로 처음 닿은 길이 지나는 길 수가 가장 적은 길입니다. 깊이 우선은 먼저 들어간 길이 멀리 돌아가더라도 그 길을 씁니다.',
+    takeaway: '너비 우선은 A–B–D–G–I, 길 4개로 찾습니다. 깊이 우선은 A–B–D–G–E–C–F–H–I, 길 8개짜리 먼 길을 찾습니다. 길마다 걸리는 시간이 다르면 4.8의 최단 경로 알고리즘이 필요합니다.',
+    description: '같은 그래프에서 A부터 I까지 길을 찾습니다. I에 닿으면 탐색을 멈추고, 찾은 길이 굵은 금색으로 표시됩니다.',
+    kinds: ['bfs', 'dfs'], goal: 'I',
+    tasks: [
+      { text: '너비 우선과 깊이 우선으로 각각 I까지 길을 찾아 보세요.', test: (e) => e.done.bfs && e.done.dfs, ok: '너비 우선은 길 4개, 깊이 우선은 길 8개짜리 길을 찾았습니다.' },
+      { ask: '지나는 길의 수가 가장 적은 경로를 언제나 찾는 것은?', choices: ['너비 우선', '깊이 우선', '둘 다'], answer: '너비 우선', why: '가까운 겹부터 차례로 보므로 처음 닿은 순간이 가장 적은 길 수입니다.' },
+    ],
+  },
+  {
+    label: '어디에 쓰나',
+    readingSearch: {"kind": "bfs", "moves": 2},
+    example: ["가까운 점부터 찾기", "큐로 다음 이웃 선택", "한 갈래를 끝까지 볼 때는 스택"],
+    title: '물을 질문에 따라 탐색 방법을 고른다',
+    body: '두 탐색 모두 모든 노드와 길을 한 번씩 보므로 일의 양은 O(노드 수 + 길 수)로 같습니다. 차이는 순서입니다. "가장 가까운 것", "몇 단계 만에"를 묻는다면 너비 우선, "갈 수 있나", "모든 경우를 끝까지"를 묻는다면 깊이 우선이 편합니다. 웹 크롤러, SNS의 친구 추천, 미로 풀기, 4.10의 문제들에서 다시 만납니다.',
+    takeaway: '아래 상황마다 어느 탐색이 어울리는지 골라 보세요. 직접 두 탐색을 다시 돌려 봐도 됩니다.',
+    description: '같은 그래프에서 두 탐색을 모두 돌려 볼 수 있습니다.',
+    kinds: ['bfs', 'dfs'],
+    tasks: [
+      { ask: 'SNS에서 "친구의 친구"까지만 추천하려고 합니다. 어울리는 탐색은?', choices: ['너비 우선', '깊이 우선'], answer: '너비 우선', why: '나에게서 1단계, 2단계 떨어진 사람을 겹 순서대로 볼 수 있습니다.' },
+      { ask: '미로에서 출구로 가는 길이 하나라도 있는지만 알고 싶습니다. 메모리를 적게 쓰려면?', choices: ['너비 우선', '깊이 우선'], answer: '깊이 우선', why: '한 길만 따라가며 되돌아올 길만 기억하면 됩니다. 너비 우선은 한 겹의 노드를 모두 큐에 들고 있어야 합니다.' },
+    ],
+  },
+];
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'traversal-lab:v1:step';
+const state = { index: 0, kind: 'bfs', moves: [], pos: 0, auto: false, playing: !motion.matches, userPaused: false, wait: 0,
+  solved: '', wrong: '', demoPosition: 0, done: {}, user: false, next: 0 };
+const progress = lesson.map(() => 0);
+
+function svg(name, attrs, parent) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
+  if (parent) parent.append(element);
+  return element;
+}
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+byId('grid').setAttribute('d', gridLines.join(''));
+function drawShadow(node, half) {
+  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
+  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
+}
+function drawBox(node, h, H) {
+  const faces = {
+    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
+    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
+    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
+  };
+  for (const [name, corners] of Object.entries(faces)) svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
+  svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
+}
+
+// ---------- Scene ----------
+const H = 10, half = .8;
+let nodeViews = {}, edgeViews = {};
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  nodeViews = {};
+  edgeViews = {};
+  for (const [a, b] of edges) {
+    const d = `M${flat(...places[a], 4).join(' ')}L${flat(...places[b], 4).join(' ')}`;
+    svg('path', { class: 'casing', d }, byId('casings'));
+    edgeViews[a + b] = svg('path', { class: 'edge', d }, byId('links'));
+  }
+  Object.entries(places).sort(([, p], [, q]) => p[1] - q[1]).forEach(([name, at]) => {
+    const node = svg('g', { class: 'node place', transform: `translate(${flat(...at).join(' ')})` }, byId('nodes'));
+    drawShadow(node, half);
+    drawBox(node, half, H);
+    svg('text', { class: 'place-name', x: 0, y: -H + .5 }, node).textContent = name;
+    const badge = svg('g', { class: 'order', transform: `translate(${14 * half + 10} ${-H - 10})` }, node);
+    svg('circle', { r: 8.5 }, badge);
+    const text = svg('text', {}, badge);
+    nodeViews[name] = { node, badge, text };
+  });
+  const left = -30, right = 14 * 17.4 + 40, top = 7 * -6.6 - 40, bottom = 7 * 6.6 + 30;
+  const scale = Math.min(1.7, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+const edgeOf = (a, b) => edgeViews[a + b] ?? edgeViews[b + a];
+// Paint the search after `pos` moves.
+function paint() {
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? lesson[state.index].readingSearch : null;
+  const moves = preview ? plan(preview.kind, lesson[state.index].goal).slice(0, preview.moves) : state.moves.slice(0, state.pos);
+  const last = moves.at(-1);
+  const visited = new Map(moves.map((m) => [m.place, m.order]));
+  const frontier = last ? last.frontier : ['A'];
+  const depth = {};
+  for (const m of moves) depth[m.place] = m.place === 'A' ? 0 : depth[last.parent[m.place]] + 1;
+  for (const [name, view] of Object.entries(nodeViews)) {
+    const order = visited.get(name);
+    view.node.setAttribute('class', 'node place' + (order ? ` visited d${Math.min(depth[name] ?? 0, 4)}` : '') + (frontier.includes(name) && !order ? ' waiting' : '') + (last?.place === name ? ' current' : ''));
+    view.badge.style.display = order ? '' : 'none';
+    view.text.textContent = order ?? '';
+  }
+  for (const view of Object.values(edgeViews)) view.setAttribute('class', 'edge');
+  for (const m of moves) {
+    const from = m.parent[m.place];
+    if (from) edgeOf(from, m.place)?.classList.add('tree');
+  }
+  const goal = lesson[state.index].goal;
+  if (goal && visited.has(goal)) {
+    const path = pathTo(goal, last.parent);
+    for (let i = 1; i < path.length; i++) edgeOf(path[i - 1], path[i])?.classList.add('path');
+  }
+  // Frontier chips.
+  const box = byId('frontier');
+  const isQueue = state.kind === 'bfs';
+  byId('frontier-name').textContent = isQueue ? '큐 (앞에서 꺼냄)' : '스택 (맨 위에서 꺼냄)';
+  const shown = [...new Set(frontier.filter((p) => !visited.has(p)))];
+  const list = isQueue ? shown : [...shown].reverse();
+  box.replaceChildren(...list.map((p, i) => Object.assign(document.createElement('span'), { className: 'chip' + (i === 0 ? ' next' : ''), textContent: p })));
+  if (!list.length) box.append(Object.assign(document.createElement('span'), { className: 'chip empty', textContent: '비어 있음' }));
+  byId('visit-order').textContent = moves.map((m) => m.place).join(' → ') || '–';
+  byId('step-tick').disabled = state.pos >= state.moves.length && state.moves.length > 0;
+  byId('step-all').disabled = state.pos >= state.moves.length && state.moves.length > 0;
+}
+
+// ---------- Running ----------
+function startSearch(kind) {
+  state.kind = kind;
+  state.moves = plan(kind, lesson[state.index].goal);
+  state.pos = 0;
+  state.auto = false;
+  syncKinds();
+  paint();
+}
+function stepOnce(user) {
+  if (state.pos >= state.moves.length) return;
+  const m = state.moves[state.pos++];
+  const words = state.kind === 'bfs' ? '큐 앞에서' : '스택 맨 위에서';
+  report(`${m.order}번째: ${words} ${m.place}를 꺼내 방문 · ${m.added.length ? `이웃 ${m.added.join(', ')}를 ${state.kind === 'bfs' ? '큐 뒤에' : '스택에'} 넣음` : '새로 넣을 이웃 없음'}`);
+  paint();
+  if (state.pos >= state.moves.length) finish(user);
+}
+function finish(user) {
+  state.auto = false;
+  const goal = lesson[state.index].goal;
+  const last = state.moves.at(-1);
+  const name = state.kind === 'bfs' ? '너비 우선' : '깊이 우선';
+  if (goal) {
+    const path = pathTo(goal, last.parent);
+    report(`${name}: ${goal}에 닿았습니다. 찾은 길 ${path.join('–')} · 길 ${path.length - 1}개 · 방문 ${state.moves.length}곳`);
+  } else report(`${name} 끝: 방문 순서 ${state.moves.map((m) => m.place).join(', ')}`);
+  if (user) { state.done[state.kind] = true; afterUser(); }
+}
+function runAll(user) {
+  if (state.pos >= state.moves.length) startSearch(state.kind);
+  state.auto = true;
+  state.user = user;
+  state.next = 0;
+  if (motion.matches) { while (state.pos < state.moves.length) stepOnce(user); }
+  else kick();
+}
+byId('step-tick').onclick = () => { takeOver(); if (state.pos >= state.moves.length) startSearch(state.kind); stepOnce(true); };
+byId('step-all').onclick = () => { takeOver(); runAll(true); };
+byId('restart').onclick = () => { takeOver(); startSearch(state.kind); report('처음부터 다시 시작합니다.'); };
+function buildKinds() {
+  const row = byId('kind-row');
+  row.replaceChildren(Object.assign(document.createElement('span'), { className: 'row-name', textContent: '탐색' }));
+  for (const kind of lesson[state.index].kinds) {
+    const b = Object.assign(document.createElement('button'), { type: 'button', className: 'action pick', textContent: kind === 'bfs' ? '너비 우선 (BFS)' : '깊이 우선 (DFS)' });
+    b.dataset.kind = kind;
+    b.addEventListener('click', () => { takeOver(); startSearch(kind); report(`${b.textContent}를 골랐습니다.`); });
+    row.append(b);
+  }
+}
+function syncKinds() {
+  [...byId('kind-row').querySelectorAll('button')].forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === state.kind)));
+}
+function report(text) { byId('readout').textContent = text; byId('announcement').textContent = text; }
+
+// ---------- Tasks ----------
+const currentTask = () => lesson[state.index].tasks[progress[state.index]];
+function syncTask() {
+  const tasks = lesson[state.index].tasks;
+  const task = currentTask();
+  const choices = byId('try-choices');
+  choices.replaceChildren();
+  byId('try').classList.toggle('solved', Boolean(state.solved) && !task?.ask);
+  if (task?.ask) {
+    byId('try-text').textContent = task.ask;
+    byId('try-result').textContent = state.wrong || (state.solved ? `✓ 맞았습니다. ${state.solved}` : '');
+    for (const choice of task.choices) {
+      const b = Object.assign(document.createElement('button'), { type: 'button', className: 'action choice-button', textContent: choice });
+      b.addEventListener('click', () => answer(choice));
+      choices.append(b);
+    }
+    return;
+  }
+  byId('try-text').textContent = task ? task.text : (state.solved ? '' : '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.');
+  byId('try-result').textContent = state.solved ? `✓ 맞았습니다. ${state.solved}${progress[state.index] >= tasks.length ? ' · 이 단계의 문제를 모두 풀었습니다.' : ''}` : '';
+}
+// Only the learner's own runs count, so the demo cannot solve a problem.
+function afterUser() {
+  const task = currentTask();
+  if (task && !task.ask && task.test(state)) { progress[state.index]++; state.solved = task.ok; state.wrong = ''; }
+  syncTask();
+}
+function answer(choice) {
+  const task = currentTask();
+  if (choice !== task.answer) { state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`; syncTask(); return; }
+  progress[state.index]++;
+  state.wrong = '';
+  state.solved = task.why;
+  syncTask();
+}
+
+// ---------- Frame loop and demo ----------
+let frame = null, lastFrame = null;
+function kick() { if (frame === null) frame = requestAnimationFrame(tick); }
+function tick(now) {
+  frame = null;
+  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
+  lastFrame = now;
+  if (state.auto) {
+    state.next -= elapsed;
+    if (state.next <= 0) { stepOnce(state.user); state.next = 700; }
+  } else if (state.playing) {
+    state.wait -= elapsed;
+    if (state.wait <= 0) demoTick();
+  }
+  if (state.auto || state.playing) frame = requestAnimationFrame(tick);
+  else lastFrame = null;
+}
+function takeOver() {
+  if (!state.playing) return;
+  state.playing = false;
+  state.auto = false;
+  startSearch(state.kind);
+  syncPlayback();
+}
+function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
+  const kinds = lesson[state.index].kinds;
+  startSearch(kinds[state.demoPosition++ % kinds.length]);
+  runAll(false);
+  state.wait = state.moves.length * 700 + 2400;
+}
+function syncPlayback() {
+  const reduced = motion.matches;
+  if (reduced) state.playing = false;
+  byId('status').textContent = reduced ? '모션 감소 · 직접 조작' : state.playing ? '자동 실행 중' : '직접 조작';
+  byId('pause').textContent = state.playing ? '일시정지' : '자동 실행';
+  byId('pause').disabled = reduced;
+  byId('replay').disabled = reduced;
+  if (state.playing) kick();
+}
+
+// ---------- Steps and routing ----------
+function showStep(index, announce = true) {
+  state.index = index;
+  if (!state.userPaused) state.playing = !motion.matches;
+  const s = lesson[index];
+  state.solved = '';
+  state.wrong = '';
+  state.demoPosition = 0;
+  state.done = {};
+  state.auto = false;
+  byId('step-title').textContent = s.title;
+  byId('body').textContent = s.body;
+  byId('takeaway').textContent = s.takeaway;
+  byId('scene-desc').textContent = s.description;
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  buildScene();
+  buildKinds();
+  startSearch(s.kinds[0]);
+  report('"한 걸음"으로 하나씩, "끝까지"로 한 번에 탐색해 보세요.');
+  syncTask();
+  state.wait = 800;
+  syncPlayback();
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
+}
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/traversal/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/traversal\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+byId('pause').onclick = () => {
+  state.playing = !state.playing;
+  state.userPaused = !state.playing;
+  if (state.playing) { state.wait = 400; state.auto = false; }
+  syncPlayback();
+  byId('announcement').textContent = byId('status').textContent;
+};
+byId('replay').onclick = () => {
+  state.playing = true;
+  state.userPaused = false;
+  state.demoPosition = 0;
+  state.wait = 300;
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 자동 실행';
+};
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches && !state.userPaused) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/traversal/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

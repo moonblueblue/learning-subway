@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="8장에서 고른 트랙으로 스스로 문제를 정할 때, 알맞은 크기 고르기, 확인할 수 있는 완료 기준 적기, 가장 작은 판부터 나눠 만들기, 기준으로 확인하고 기록 남기기를 문제로 익혀 보세요.">
+<title>트랙 프로젝트 · 프로젝트 9.4</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.stage-top h2{font-size:1rem}
+.score{color:var(--accent);font:700 .875rem var(--mono)}
+.case{margin:18px;padding:16px 18px;border-radius:14px;background:#eef5ed;border:1px solid var(--border);display:grid;gap:6px}
+.case strong{color:var(--accent);font-size:.875rem}
+.case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
+.items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
+.item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
+.item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
+.workspace>*,.items>li,.item>*{min-width:0}
+.item-text.code{font:600 .9375rem/1.5 var(--mono);white-space:pre;overflow-x:auto;background:#1f2d29;color:#e8f2ec;padding:8px 12px;border-radius:8px;max-width:100%}
+.choices{display:flex;gap:6px}
+.choice{min-width:68px}
+.choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
+.choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
+.feedback{font-size:.9375rem;color:var(--muted);line-height:1.6}
+.feedback:empty{display:none}
+.feedback b{margin-right:4px}
+.item.right{border-color:var(--accent);background:#f6fbf7}
+.item.right .feedback b{color:var(--accent)}
+.item.wrong{border-color:#a24c14;background:#fffaf5}
+.item.wrong .feedback b{color:#a24c14}
+.think{margin:0 18px 18px;padding:14px 16px;border-radius:12px;border:1px dashed #9fb7a9;display:grid;gap:10px}
+.think label{font-weight:700}
+.think textarea{font:inherit;min-height:84px;padding:10px 12px;border:1px solid #9fb7a9;border-radius:10px;resize:vertical}
+.think .sample-answer{color:var(--muted);line-height:1.7}
+.think .sample-answer[hidden]{display:none}
+.done{margin:0 18px 18px;padding:12px 14px;border-radius:10px;background:#d2f4dd;color:#0f5a3c;font-weight:700}
+.done[hidden]{display:none}
+.timeline{border-top:1px solid var(--border)}
+.truth{margin:0 18px 14px}
+.truth[hidden]{display:none}
+.truth table{border-collapse:collapse;font:700 1rem var(--mono);margin:0 auto}
+.truth th,.truth td{border:1px solid var(--border);padding:6px 18px;text-align:center}
+.truth th{background:#eef5ed;color:var(--accent);font-family:system-ui,sans-serif}
+.truth td.blank{color:#9aa8a2}
+.truth td.filled{background:#d2f4dd;color:#0f5a3c}
+</style>
+<link rel="stylesheet" href="../shared/course.css">
+<script defer src="../shared/catalog.js"></script>
+<script defer src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">9장 최종 프로젝트 · 프로젝트 9.4 · 실습</p>
+    <h1>트랙 프로젝트</h1>
+    <p class="lead">8장에서 고른 트랙의 주제로 스스로 문제를 정해 해결하려면 어떻게 시작할까요? 프로젝트를 고르고, 기준을 정하고, 나누고, 마무리하는 방법을 문제로 확인해 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="practice-heading">
+        <div class="stage-top"><h2 id="practice-heading">문제 풀기</h2><span class="score" id="score" aria-live="polite"></span></div>
+        <div class="case"><strong>문제</strong><p id="case"></p></div>
+        <div class="truth" id="table" hidden></div>
+        <ol class="items" id="items"></ol>
+        <p class="done" id="done" role="status" hidden></p>
+        <div class="think">
+          <label for="answer">생각해 보기 · <span id="question"></span></label>
+          <textarea id="answer" placeholder="자유롭게 적어 보세요. 저장되거나 채점되지 않습니다."></textarea>
+          <div><button class="action" id="reveal" type="button" aria-expanded="false">예시 답 보기</button></div>
+          <p class="sample-answer" id="sample" hidden></p>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const storageKey = 'trackproject-lab:v1:step';
+const BENEFIT = 'true', RISK = 'false';
+const yes = '참', no = '거짓';
+// Each step is one exercise. `choices` are the two answers; items are statements or truth-table rows.
+// A step with `table` shows its items as a truth table whose last column the learner fills in.
+const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : 'false', why });
+const TF = [['true', '참'], ['false', '거짓']];
+const lesson = [
+  {
+    label: '문제 고르기',
+    example: ["몇 주 안에 완성할 주제", "대상과 한 가지 기능을 한정", "끝까지 시연할 범위 확보"],
+    title: '고른 트랙 안에서, 몇 주 안에 끝낼 수 있는 크기로 정한다',
+    body: '트랙 프로젝트는 8장에서 고른 트랙의 주제로 스스로 문제를 정해 끝까지 해결하는 일입니다. 가장 흔한 실패는 문제를 너무 크게 잡는 것입니다. 좋은 문제는 트랙의 레슨 몇 개를 실제로 써야 하고, 혼자 몇 주 안에 끝낼 수 있으며, 다 됐는지 확인할 방법이 있습니다.',
+    link: '9.1–9.3이 좋은 크기의 예입니다. 각각 여러 장을 엮지만 하나의 분명한 결과(답 6, 다시 켜도 남는 값, 버티는 부하)로 끝납니다.',
+    case: '트랙 프로젝트로 알맞은 크기일까요?',
+    choices: [['good', '알맞다'], ['big', '너무 크거나 흐릿하다']],
+    items: [
+      { text: '8B: 손글씨 숫자 0–9를 알아보는 작은 신경망을 만들어 시험 데이터 정확도 90% 넘기기', answer: 'good', why: '8B.1–8B.4를 직접 쓰고, 정확도라는 분명한 끝이 있습니다.' },
+      { text: '8B: 사람처럼 대화하는 인공지능 만들기', answer: 'big', why: '8B.6의 대규모 언어 모델은 거대한 데이터와 계산이 필요합니다. 몇 주 안에 혼자 끝낼 수 없습니다.' },
+      { text: '8A: 서버 3대짜리 Raft로 값 하나를 지키는 저장소, 리더를 꺼도 확정 값이 남는지 테스트', answer: 'good', why: '8A.4–8A.5를 실제로 구현하고, 테스트로 끝을 확인할 수 있습니다.' },
+      { text: '8C: 우리 학교 홈페이지 보안을 완벽하게 만들기', answer: 'big', why: '"완벽"은 끝이 없고, 허락받지 않은 시스템을 시험하면 안 됩니다. 내가 만든 앱의 위협 모델과 수정으로 좁힙니다(8C.6).' },
+    ],
+    question: '고른 트랙에서 해 보고 싶은 문제를 한 문장으로 적어 보세요. "무엇을, 어디까지"가 들어 있나요?',
+    sample: '예: "8D: 키보드만으로 끝까지 할 수 있는 작은 퍼즐 게임을 만들고, 사용자 5명 중 4명이 도움 없이 첫 판을 끝내게 하기."',
+  },
+  {
+    label: '완료 기준',
+    example: ["‘빠르게’라는 목표", "100건 처리 시간을 측정", "완료 여부를 재현해 판정"],
+    title: '다 됐는지 숫자나 테스트로 확인할 수 있게 적는다',
+    body: '"잘 동작한다"는 끝을 정해 주지 않습니다. 완료 기준은 누가 봐도 됐는지 아닌지 판단할 수 있게 적습니다. 정확도, 응답 시간, 통과해야 할 테스트, 사용자 과제 성공률처럼 잴 수 있는 것으로 적고, 시작할 때 미리 정해 둡니다.',
+    link: '6.2의 테스트, 8B.2와 8D.5의 숫자 재기, 9.3의 사용률 계산이 완료 기준을 적는 도구입니다.',
+    case: '완료 기준으로 쓸 수 있을까요?',
+    choices: [['clear', '확인할 수 있다'], ['vague', '흐릿하다']],
+    items: [
+      { text: '시험 데이터 1,000장 중 900장 이상을 맞힌다.', answer: 'clear', why: '숫자로 바로 확인할 수 있습니다.' },
+      { text: '코드가 깔끔하고 보기 좋다.', answer: 'vague', why: '사람마다 판단이 달라 끝을 정할 수 없습니다.' },
+      { text: '리더를 무작위로 100번 꺼도 확정된 값이 한 번도 바뀌지 않는 테스트를 통과한다.', answer: 'clear', why: '자동으로 되풀이해 확인할 수 있는 테스트입니다.' },
+      { text: '사용자가 좋아할 것이다.', answer: 'vague', why: '8D.5처럼 과제 성공률이나 시간으로 바꿔 적어야 확인할 수 있습니다.' },
+    ],
+    question: '앞에서 적은 문제의 완료 기준을 숫자나 테스트로 두 가지 적어 보세요.',
+    sample: '예: "사용자 5명 중 4명이 도움 없이 첫 판 완료", "Tab과 Enter만으로 모든 버튼에 닿는 자동 테스트 통과".',
+  },
+  {
+    label: '작게 나누기',
+    example: ["입력·계산·출력을 한 번 연결", "작은 데이터로 끝까지 실행", "어디가 끊기는지 일찍 확인"],
+    title: '처음부터 끝까지 도는 가장 작은 판을 먼저 만든다',
+    body: '큰 계획을 한 번에 다 만들면 마지막에야 문제가 드러납니다. 그래서 가장 작지만 처음부터 끝까지 도는 판(예: 숫자 두 개만 구별하는 신경망)을 먼저 만들고, 확인한 뒤 조금씩 키웁니다. 9.3에서 병목을 하나씩 넓혔듯, 한 번에 한 가지만 바꾸고 재면 무엇이 효과가 있었는지 압니다.',
+    link: '9.3의 "재고, 하나 고치고, 다시 재기"와 7.10의 "작은 예시로 고리 돌리기"가 같은 방법입니다.',
+    case: '이 일은 먼저 할까요, 나중에 할까요?',
+    choices: [['first', '먼저'], ['later', '나중']],
+    items: [
+      { text: '숫자 0과 1만 구별하는 가장 작은 신경망을 학습해 정확도를 재 본다.', answer: 'first', why: '처음부터 끝까지 도는 가장 작은 판입니다. 데이터, 학습, 평가가 연결되는지 먼저 확인합니다.' },
+      { text: '결과 화면의 색과 글꼴을 다듬는다.', answer: 'later', why: '핵심이 동작한 뒤에 해도 늦지 않습니다.' },
+      { text: '데이터를 학습용과 시험용으로 나누는 코드를 만든다.', answer: 'first', why: '처음부터 나눠야 나중의 모든 숫자를 믿을 수 있습니다(7.10).' },
+      { text: '층을 10개로 늘려 정확도를 0.5%p 더 올려 본다.', answer: 'later', why: '기본이 완료 기준을 넘은 뒤의 개선입니다.' },
+    ],
+    question: '여러분의 문제에서 "처음부터 끝까지 도는 가장 작은 판"은 무엇일까요?',
+    sample: '예: 퍼즐 게임이라면 칸 2개짜리 판 하나를 키보드로 끝까지 풀 수 있는 버전입니다. 화면 꾸미기와 레벨 추가는 그다음입니다.',
+  },
+  {
+    label: '확인과 공유',
+    example: ["처음 정한 기준으로 재측정", "예상과 실제 결과 비교", "남은 한계와 다음 개선 기록"],
+    title: '완료 기준으로 확인하고, 배운 것을 남긴다',
+    body: '끝났다고 느껴질 때 처음에 적은 완료 기준으로 다시 확인합니다. 그리고 무엇을 만들었고, 어떻게 확인했고, 무엇이 어려웠고, 다음엔 무엇을 하겠는지 짧게 적어 남깁니다. 다른 사람이 따라 해 볼 수 있게 실행 방법과 시험 결과를 함께 둡니다. 이 저장소의 실험 가이드(docs)가 그런 기록입니다.',
+    link: '6.2의 테스트, 8D.5의 다시 재기, 8C.6의 위협 모델처럼 "확인한 근거"를 남기는 습관이 프로젝트를 마무리합니다.',
+    case: '마무리 방법으로 좋을까요?',
+    choices: [['good', '좋다'], ['bad', '근거가 약하다']],
+    items: [
+      { text: '처음에 적은 완료 기준 두 가지를 다시 재서, 통과했는지 숫자와 함께 적는다.', answer: 'good', why: '끝났다는 근거가 남습니다.' },
+      { text: '"잘 된 것 같다"고 적고 끝낸다.', answer: 'bad', why: '확인한 근거가 없습니다.' },
+      { text: '실행 방법, 시험 결과, 어려웠던 점과 다음 계획을 한 페이지로 남긴다.', answer: 'good', why: '다른 사람이 따라 하고, 나도 나중에 이어서 할 수 있습니다.' },
+      { text: '실패한 시도는 부끄러우니 기록에서 뺀다.', answer: 'bad', why: '무엇이 안 됐는지가 가장 값진 배움입니다. 다음 사람이 같은 길을 피할 수 있습니다.' },
+    ],
+    question: '프로젝트를 마치고 남길 한 페이지 기록의 목차를 적어 보세요.',
+    sample: '예: ① 문제와 완료 기준 ② 만든 것과 실행 방법 ③ 확인 결과(숫자, 테스트) ④ 어려웠던 점과 실패한 시도 ⑤ 다음에 해 볼 것.',
+  },
+];
+
+const byId = (id) => document.getElementById(id);
+const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
+
+function showStep(index, announce = true) {
+  state.index = index;
+  const step = lesson[index];
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.link;
+  // Text after a blank line in the question is code, shown in its own block.
+  const [caseText, ...caseCode] = step.case.split('\n\n');
+  byId('case').textContent = caseText;
+  let casePre = byId('case-code');
+  if (!casePre) { casePre = document.createElement('pre'); casePre.id = 'case-code'; casePre.className = 'item-text code'; byId('case').after(casePre); }
+  casePre.textContent = caseCode.join('\n\n');
+  casePre.hidden = !caseCode.length;
+  byId('question').textContent = step.question;
+  byId('sample').textContent = step.sample;
+  byId('sample').hidden = true;
+  byId('reveal').setAttribute('aria-expanded', 'false');
+  byId('reveal').textContent = '예시 답 보기';
+  byId('answer').value = '';
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  buildItems();
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
+}
+
+function buildItems() {
+  const step = lesson[state.index];
+  const list = byId('items');
+  list.replaceChildren();
+  step.items.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'item';
+    const top = document.createElement('div');
+    top.className = 'item-top';
+    const text = document.createElement('span');
+    text.className = 'item-text' + ((item.text ?? '').includes('\n') ? ' code' : '');
+    text.id = `item-${i}`;
+    text.textContent = step.table ? `${step.table[0]} ${item.cells[0]} · ${step.table[1]} ${item.cells[1]}` : item.text;
+    const choices = document.createElement('div');
+    choices.className = 'choices';
+    choices.setAttribute('role', 'group');
+    choices.setAttribute('aria-labelledby', text.id);
+    for (const [value, label] of step.choices) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `action choice ${value === 'false' ? 'risk' : 'benefit'}`;
+      button.textContent = label;
+      button.dataset.value = value;
+      button.addEventListener('click', () => pick(i, value));
+      choices.append(button);
+    }
+    const feedback = document.createElement('p');
+    feedback.className = 'feedback';
+    feedback.setAttribute('role', 'status');
+    top.append(text, choices);
+    li.append(top, feedback);
+    list.append(li);
+  });
+  syncItems();
+}
+
+// For table steps, a compact truth table mirrors the answers so far.
+function syncTable() {
+  const step = lesson[state.index];
+  const box = byId('table');
+  box.hidden = !step.table;
+  if (!step.table) return;
+  const picks = state.picks[state.index];
+  const label = (v) => step.choices.find(([value]) => value === v)?.[1] ?? '?';
+  box.innerHTML = '';
+  const table = document.createElement('table');
+  const head = table.createTHead().insertRow();
+  step.table.forEach((h) => { const th = document.createElement('th'); th.textContent = h; head.append(th); });
+  const body = table.createTBody();
+  step.items.forEach((item, i) => {
+    const tr = body.insertRow();
+    item.cells.forEach((c) => { tr.insertCell().textContent = c; });
+    const cell = tr.insertCell();
+    cell.textContent = picks[i] === item.answer ? label(item.answer) : '?';
+    cell.className = picks[i] === item.answer ? 'filled' : 'blank';
+  });
+  box.append(table);
+}
+
+function pick(i, value) {
+  state.picks[state.index][i] = value;
+  syncItems();
+  const item = lesson[state.index].items[i];
+  byId('announcement').textContent = value === item.answer ? '맞았습니다.' : '다시 생각해 보세요.';
+}
+
+function syncItems() {
+  const step = lesson[state.index];
+  const picks = state.picks[state.index];
+  [...byId('items').children].forEach((li, i) => {
+    const item = step.items[i];
+    const picked = picks[i];
+    li.classList.toggle('right', picked === item.answer);
+    li.classList.toggle('wrong', picked !== null && picked !== item.answer);
+    for (const button of li.querySelectorAll('.choice')) button.setAttribute('aria-pressed', String(button.dataset.value === picked));
+    const feedback = li.querySelector('.feedback');
+    feedback.replaceChildren();
+    if (picked !== null) {
+      const mark = document.createElement('b');
+      mark.textContent = picked === item.answer ? '✓ 맞았습니다.' : '✗ 다시 생각해 보세요.';
+      feedback.append(mark, picked === item.answer ? item.why : '');
+    }
+  });
+  const right = picks.filter((p, i) => p === step.items[i].answer).length;
+  byId('score').textContent = `${right} / ${step.items.length} 맞힘`;
+  byId('done').hidden = right !== step.items.length;
+  byId('done').textContent = step.table ? '✓ 진리표를 모두 채웠습니다. 아래 질문도 생각해 보세요.' : '✓ 모두 맞게 골랐습니다. 아래 질문도 생각해 보세요.';
+  syncTable();
+}
+
+byId('reveal').onclick = () => {
+  const open = byId('sample').hidden;
+  byId('sample').hidden = !open;
+  byId('reveal').setAttribute('aria-expanded', String(open));
+  byId('reveal').textContent = open ? '예시 답 숨기기' : '예시 답 보기';
+};
+
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/trackproject/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/trackproject\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/trackproject/${initial + 1}`);
+showStep(initial, false);
+</script>
+</body>
+</html>

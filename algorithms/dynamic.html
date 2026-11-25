@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="재귀 피보나치의 반복 계산, 메모이제이션, 표를 아래부터 채우기, 동적 계획법이 맞는 문제까지 문제로 익혀 보세요.">
+<title>동적 계획법 · 레슨 4.9</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.stage-top h2{font-size:1rem}
+.score{color:var(--accent);font:700 .875rem var(--mono)}
+.case{margin:18px;padding:16px 18px;border-radius:14px;background:#eef5ed;border:1px solid var(--border);display:grid;gap:6px}
+.case strong{color:var(--accent);font-size:.875rem}
+.case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
+.items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
+.item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
+.item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
+.choices{display:flex;gap:6px}
+.choice{min-width:68px}
+.choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
+.choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
+.feedback{font-size:.9375rem;color:var(--muted);line-height:1.6}
+.feedback:empty{display:none}
+.feedback b{margin-right:4px}
+.item.right{border-color:var(--accent);background:#f6fbf7}
+.item.right .feedback b{color:var(--accent)}
+.item.wrong{border-color:#a24c14;background:#fffaf5}
+.item.wrong .feedback b{color:#a24c14}
+.think{margin:0 18px 18px;padding:14px 16px;border-radius:12px;border:1px dashed #9fb7a9;display:grid;gap:10px}
+.think label{font-weight:700}
+.think textarea{font:inherit;min-height:84px;padding:10px 12px;border:1px solid #9fb7a9;border-radius:10px;resize:vertical}
+.think .sample-answer{color:var(--muted);line-height:1.7}
+.think .sample-answer[hidden]{display:none}
+.done{margin:0 18px 18px;padding:12px 14px;border-radius:10px;background:#d2f4dd;color:#0f5a3c;font-weight:700}
+.done[hidden]{display:none}
+.timeline{border-top:1px solid var(--border)}
+.truth{margin:0 18px 14px}
+.truth[hidden]{display:none}
+.truth table{border-collapse:collapse;font:700 1rem var(--mono);margin:0 auto}
+.truth th,.truth td{border:1px solid var(--border);padding:6px 18px;text-align:center}
+.truth th{background:#eef5ed;color:var(--accent);font-family:system-ui,sans-serif}
+.truth td.blank{color:#9aa8a2}
+.truth td.filled{background:#d2f4dd;color:#0f5a3c}
+</style>
+<link rel="stylesheet" href="../shared/course.css">
+<script defer src="../shared/catalog.js"></script>
+<script defer src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">4장 자료구조와 알고리즘 · 레슨 4.9 · 실습</p>
+    <h1>동적 계획법</h1>
+    <p class="lead">같은 계산을 반복하지 않으려면 무엇을 기억해 둘까요? 피보나치와 계단 오르기로 동적 계획법을 문제로 익혀 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="practice-heading">
+        <div class="stage-top"><h2 id="practice-heading">문제 풀기</h2><span class="score" id="score" aria-live="polite"></span></div>
+        <div class="case"><strong>문제</strong><p id="case"></p></div>
+        <div class="truth" id="table" hidden></div>
+        <ol class="items" id="items"></ol>
+        <p class="done" id="done" role="status" hidden></p>
+        <div class="think">
+          <label for="answer">생각해 보기 · <span id="question"></span></label>
+          <textarea id="answer" placeholder="자유롭게 적어 보세요. 저장되거나 채점되지 않습니다."></textarea>
+          <div><button class="action" id="reveal" type="button" aria-expanded="false">예시 답 보기</button></div>
+          <p class="sample-answer" id="sample" hidden></p>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const storageKey = 'dynamic-lab:v1:step';
+const BENEFIT = 'true', RISK = 'false';
+const yes = '참', no = '거짓';
+// Each step is one exercise. `choices` are the two answers; items are statements or truth-table rows.
+// A step with `table` shows its items as a truth table whose last column the learner fills in.
+const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : 'false', why });
+const TF = [['true', '참'], ['false', '거짓']];
+const lesson = [
+  {
+    label: '같은 계산의 반복',
+    example: ["fib(4)의 두 갈래", "양쪽에서 fib(2) 호출", "같은 덧셈 반복"],
+    title: '재귀는 같은 계산을 몇 번이고 다시 한다',
+    body: '피보나치 수는 fib(n) = fib(n − 1) + fib(n − 2), fib(1) = fib(2) = 1입니다. 1.5의 재귀로 그대로 옮기면 fib(5)를 구하는 동안 fib(3)을 두 번, fib(2)를 세 번 다시 계산합니다. n이 커지면 같은 계산이 폭발적으로 늘어 fib(40)만 해도 호출이 3억 번을 넘습니다.',
+    link: '1.5에서 본 호출 스택이 fib(5) 한 번에 함수 9번 호출로 쌓였다 줄었다 합니다. 4.1의 말로는 O(2ⁿ)쯤으로, O(n²)보다도 훨씬 빠르게 늘어납니다.',
+    case: '재귀로 fib를 계산할 때 다음 문장이 참인지 고르세요.',
+    choices: [['true', '참'], ['false', '거짓']],
+    items: [
+      { text: 'fib(5)를 구하는 동안 fib(3)은 두 번 계산된다.', answer: 'true', why: 'fib(5) = fib(4) + fib(3)이고, fib(4) 안에서 fib(3)을 또 부릅니다.' },
+      { text: 'fib(6)의 호출 수는 fib(5)의 호출 수보다 하나 많다.', answer: 'false', why: 'fib(6)은 fib(5)와 fib(4)를 모두 부르므로 9 + 5 + 1 = 15번입니다. 거의 1.6배씩 늡니다.' },
+      { text: '같은 n으로 fib를 부르면 언제나 같은 답이 나온다.', answer: 'true', why: '그래서 한 번 구한 답을 적어 두면 다시 계산할 필요가 없습니다. 이것이 동적 계획법의 출발점입니다.' },
+      { text: '재귀 fib가 느린 까닭은 덧셈이 어려워서다.', answer: 'false', why: '덧셈은 빠릅니다. 같은 부분 문제를 셀 수 없이 다시 푸는 것이 문제입니다.' },
+    ],
+    question: 'fib(5)를 재귀로 구할 때 fib(2)는 몇 번 불릴까요? 호출 나무를 그려 세어 보세요.',
+    sample: '3번입니다. fib(5) → fib(4), fib(3) / fib(4) → fib(3), fib(2) / 두 fib(3)이 각각 fib(2)를 부르므로 1 + 2 = 3번입니다.',
+  },
+  {
+    label: '기억해 두기',
+    example: ["fib(2)를 한 번 계산", "답을 표에 저장", "다음 fib(2)는 조회 한 번"],
+    title: '한 번 구한 답을 표에 적어 둔다',
+    body: '답을 구할 때마다 표(1.4의 딕셔너리나 리스트)에 적어 두고, 같은 질문이 오면 계산하지 않고 표에서 꺼냅니다. 이를 메모이제이션이라 합니다. fib(n)은 fib(1)부터 fib(n)까지 n개의 답만 있으므로 각각 한 번씩만 계산하면 됩니다. O(2ⁿ)이던 일이 O(n)이 됩니다.',
+    link: '4.5의 해시 테이블이 "n → fib(n)" 기억 상자 역할을 합니다. 파이썬에서는 함수 위에 @cache 한 줄로 이 일을 해 줍니다.',
+    case: '메모이제이션을 쓴 fib에 대해 다음 문장이 참인지 고르세요.',
+    choices: [['true', '참'], ['false', '거짓']],
+    items: [
+      { text: 'fib(40)을 구하려면 서로 다른 계산이 40개쯤만 필요하다.', answer: 'true', why: 'fib(1)부터 fib(40)까지 한 번씩만 구하면 나머지는 표에서 꺼냅니다.' },
+      { text: '메모이제이션은 계산을 줄이는 대신 메모리를 조금 더 쓴다.', answer: 'true', why: '답을 적어 둘 표가 필요합니다. 시간과 공간을 맞바꾸는 대표적인 예입니다.' },
+      { text: '표에 적어 둔 답은 언젠가 틀린 값이 될 수 있다.', answer: 'false', why: '같은 입력에는 언제나 같은 답이 나오는 계산이므로 한 번 적은 답은 계속 맞습니다.' },
+      { text: '3.7의 캐시도 "다시 구하지 않으려고 적어 두는" 같은 생각이다.', answer: 'true', why: 'RAM까지 가는 대신 가까운 곳에 적어 둔 값을 쓰는 것과 같은 원리입니다.' },
+    ],
+    question: '메모이제이션을 쓰면 fib(5)를 구할 때 실제로 계산하는 부분 문제는 무엇무엇일까요?',
+    sample: 'fib(1), fib(2), fib(3), fib(4), fib(5) 다섯 개를 한 번씩입니다. 두 번째로 묻는 fib(3), fib(2)는 표에서 꺼냅니다.',
+  },
+  {
+    label: '표를 아래부터 채우기',
+    example: ["계단 1칸: 1 · 2칸: 2", "마지막에 1칸 또는 2칸 이동", "3칸은 2 + 1 = 3가지"],
+    title: '작은 문제부터 표를 채워 큰 답을 얻는다',
+    body: '계단을 한 번에 1칸 또는 2칸씩 오를 때, n칸을 오르는 방법은 몇 가지일까요? 마지막 걸음이 1칸이면 남은 n − 1칸, 2칸이면 n − 2칸을 오르는 방법과 같으므로 ways(n) = ways(n − 1) + ways(n − 2)입니다. 재귀 대신 ways(1) = 1, ways(2) = 2부터 표의 칸을 차례로 채우면 반복문 하나로 끝납니다.',
+    link: '2.3의 귀납법처럼 앞의 칸이 맞으면 다음 칸도 맞습니다. 2.4의 경우의 수를 하나하나 세지 않고, 작은 답을 더해 큰 답을 만듭니다.',
+    case: '계단 오르기 표(ways(1) = 1, ways(2) = 2)에서 답을 고르세요.',
+    choices: [['3', '3가지'], ['5', '5가지'], ['8', '8가지'], ['13', '13가지']],
+    items: [
+      { text: '계단 3칸을 오르는 방법은?', answer: '3', why: 'ways(2) + ways(1) = 2 + 1 = 3. (1,1,1), (1,2), (2,1)입니다.' },
+      { text: '계단 4칸을 오르는 방법은?', answer: '5', why: 'ways(3) + ways(2) = 3 + 2 = 5입니다.' },
+      { text: '계단 5칸을 오르는 방법은?', answer: '8', why: 'ways(4) + ways(3) = 5 + 3 = 8입니다.' },
+      { text: '계단 6칸을 오르는 방법은?', answer: '13', why: 'ways(5) + ways(4) = 8 + 5 = 13입니다. 표의 칸이 피보나치 수와 같습니다.' },
+    ],
+    question: '한 번에 1, 2, 3칸까지 오를 수 있다면 점화식은 어떻게 바뀔까요?',
+    sample: 'ways(n) = ways(n − 1) + ways(n − 2) + ways(n − 3)입니다. 마지막 걸음의 종류가 셋이 되었기 때문입니다.',
+  },
+  {
+    label: '언제 쓰나',
+    example: ["작은 문제가 여러 경로에 등장", "부분 답을 한 번씩 계산", "같은 문제의 재계산 감소"],
+    title: '쪼갠 문제들이 겹칠 때 쓴다',
+    body: '동적 계획법은 두 조건이 맞을 때 빛납니다. 큰 문제의 답을 작은 문제의 답으로 만들 수 있고(최적 부분 구조), 그 작은 문제들이 여러 번 겹쳐 나타날 때(겹치는 부분 문제)입니다. 4.8의 최단 경로, 맞춤법 검사의 편집 거리, 가방에 넣을 물건 고르기(배낭 문제)가 대표적입니다.',
+    link: '4.4의 병합 정렬도 문제를 쪼개지만 두 반쪽이 겹치지 않아서, 적어 둘 필요가 없습니다(분할 정복). 겹치는지가 동적 계획법과의 차이입니다.',
+    case: '다음 문장이 참인지 고르세요.',
+    choices: [['true', '참'], ['false', '거짓']],
+    items: [
+      { text: '병합 정렬은 같은 부분 문제를 여러 번 풀기 때문에 메모이제이션이 크게 도움 된다.', answer: 'false', why: '왼쪽 반과 오른쪽 반은 서로 다른 값이라 겹치지 않습니다. 적어 둬도 다시 쓸 일이 없습니다.' },
+      { text: '100원, 400원, 500원 동전으로 800원을 거슬러 줄 때 가장 큰 동전부터 고르면 늘 동전 수가 가장 적다.', answer: 'false', why: '500 + 100 × 3은 4개지만 400 × 2는 2개입니다. 모든 금액의 최소 개수를 표로 채우는 동적 계획법이 필요합니다.' },
+      { text: '"인공지능"과 "인공지농"이 몇 글자 다른지 구하는 편집 거리는 동적 계획법으로 푼다.', answer: 'true', why: '앞부분끼리의 거리를 표에 채워 가며 전체 거리를 구합니다.' },
+      { text: '동적 계획법을 쓰면 어떤 문제든 빨라진다.', answer: 'false', why: '부분 문제가 겹치지 않거나, 부분 문제의 수가 너무 많으면 도움이 안 됩니다. 4.10에서는 이런 방법으로도 어려운 문제를 봅니다.' },
+    ],
+    question: '동전 100원, 400원, 500원으로 800원을 만드는 최소 동전 수를 표로 구한다면 어떤 칸부터 채울까요?',
+    sample: '0원(0개)부터 100원 단위로 800원까지 채웁니다. 각 금액에서 "100원 칸 + 1", "400원 뺀 칸 + 1", "500원 뺀 칸 + 1" 중 가장 작은 값을 적으면 800원 칸에 2가 나옵니다.',
+  },
+];
+
+const byId = (id) => document.getElementById(id);
+const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
+
+function showStep(index, announce = true) {
+  state.index = index;
+  const step = lesson[index];
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.link;
+  byId('case').textContent = step.case;
+  byId('question').textContent = step.question;
+  byId('sample').textContent = step.sample;
+  byId('sample').hidden = true;
+  byId('reveal').setAttribute('aria-expanded', 'false');
+  byId('reveal').textContent = '예시 답 보기';
+  byId('answer').value = '';
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  buildItems();
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
+}
+
+function buildItems() {
+  const step = lesson[state.index];
+  const list = byId('items');
+  list.replaceChildren();
+  step.items.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'item';
+    const top = document.createElement('div');
+    top.className = 'item-top';
+    const text = document.createElement('span');
+    text.className = 'item-text';
+    text.id = `item-${i}`;
+    text.textContent = step.table ? `${step.table[0]} ${item.cells[0]} · ${step.table[1]} ${item.cells[1]}` : item.text;
+    const choices = document.createElement('div');
+    choices.className = 'choices';
+    choices.setAttribute('role', 'group');
+    choices.setAttribute('aria-labelledby', text.id);
+    for (const [value, label] of step.choices) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `action choice ${value === 'false' ? 'risk' : 'benefit'}`;
+      button.textContent = label;
+      button.dataset.value = value;
+      button.addEventListener('click', () => pick(i, value));
+      choices.append(button);
+    }
+    const feedback = document.createElement('p');
+    feedback.className = 'feedback';
+    feedback.setAttribute('role', 'status');
+    top.append(text, choices);
+    li.append(top, feedback);
+    list.append(li);
+  });
+  syncItems();
+}
+
+// For table steps, a compact truth table mirrors the answers so far.
+function syncTable() {
+  const step = lesson[state.index];
+  const box = byId('table');
+  box.hidden = !step.table;
+  if (!step.table) return;
+  const picks = state.picks[state.index];
+  const label = (v) => step.choices.find(([value]) => value === v)?.[1] ?? '?';
+  box.innerHTML = '';
+  const table = document.createElement('table');
+  const head = table.createTHead().insertRow();
+  step.table.forEach((h) => { const th = document.createElement('th'); th.textContent = h; head.append(th); });
+  const body = table.createTBody();
+  step.items.forEach((item, i) => {
+    const tr = body.insertRow();
+    item.cells.forEach((c) => { tr.insertCell().textContent = c; });
+    const cell = tr.insertCell();
+    cell.textContent = picks[i] === item.answer ? label(item.answer) : '?';
+    cell.className = picks[i] === item.answer ? 'filled' : 'blank';
+  });
+  box.append(table);
+}
+
+function pick(i, value) {
+  state.picks[state.index][i] = value;
+  syncItems();
+  const item = lesson[state.index].items[i];
+  byId('announcement').textContent = value === item.answer ? '맞았습니다.' : '다시 생각해 보세요.';
+}
+
+function syncItems() {
+  const step = lesson[state.index];
+  const picks = state.picks[state.index];
+  [...byId('items').children].forEach((li, i) => {
+    const item = step.items[i];
+    const picked = picks[i];
+    li.classList.toggle('right', picked === item.answer);
+    li.classList.toggle('wrong', picked !== null && picked !== item.answer);
+    for (const button of li.querySelectorAll('.choice')) button.setAttribute('aria-pressed', String(button.dataset.value === picked));
+    const feedback = li.querySelector('.feedback');
+    feedback.replaceChildren();
+    if (picked !== null) {
+      const mark = document.createElement('b');
+      mark.textContent = picked === item.answer ? '✓ 맞았습니다.' : '✗ 다시 생각해 보세요.';
+      feedback.append(mark, picked === item.answer ? item.why : '');
+    }
+  });
+  const right = picks.filter((p, i) => p === step.items[i].answer).length;
+  byId('score').textContent = `${right} / ${step.items.length} 맞힘`;
+  byId('done').hidden = right !== step.items.length;
+  byId('done').textContent = step.table ? '✓ 진리표를 모두 채웠습니다. 아래 질문도 생각해 보세요.' : '✓ 모두 맞게 골랐습니다. 아래 질문도 생각해 보세요.';
+  syncTable();
+}
+
+byId('reveal').onclick = () => {
+  const open = byId('sample').hidden;
+  byId('sample').hidden = !open;
+  byId('reveal').setAttribute('aria-expanded', String(open));
+  byId('reveal').textContent = open ? '예시 답 숨기기' : '예시 답 보기';
+};
+
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/dynamic/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/dynamic\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/dynamic/${initial + 1}`);
+showStep(initial, false);
+</script>
+</body>
+</html>

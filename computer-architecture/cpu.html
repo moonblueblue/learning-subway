@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="작은 CPU를 클럭 한 번씩 움직이며 명령을 가져오고, 해석하고, 실행하는 과정과 점프로 만드는 반복을 살펴보세요.">
+<title>CPU의 한 사이클 · 레슨 3.5</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
+.cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
+.cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
+.cell.changed .top{animation:flash 1s ease-out}
+@keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
+.cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
+.cell.empty .cell-value{fill:#9aa8a2}
+.address{font:600 9px var(--mono);fill:#6b7d76;text-anchor:start}
+.tag.name{transition:opacity .25s}
+.tag.name rect{stroke:var(--accent);stroke-width:1.1}
+.tag.name text{fill:var(--accent);font-weight:700}
+.bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bus.active{stroke:#7fa891}
+.packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
+.packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
+.packet-group.read .packet-label{fill:#3b4880}
+.code-area{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.code{list-style:none;counter-reset:line;margin:0;padding:10px 0;background:#1f2d29;border-radius:12px;color:#e8f2ec;font:600 1rem/1.5 var(--mono);flex:1 1 300px}
+.code li{counter-increment:line;padding:5px 14px 5px 46px;position:relative}
+.code li::before{content:counter(line);position:absolute;left:16px;color:#6f8a80}
+.code li.done{color:#8fa79c}
+.code li.current{background:#2f4a41;color:#ffffff}
+.code li.current::after{content:'다음';position:absolute;right:14px;color:#9fe3b6;font-size:.8125rem}
+.code-actions{display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
+.try-choices{display:flex;gap:6px;flex-wrap:wrap}
+.try-choices:empty{display:none}
+.dot.read{background:var(--response);border-color:var(--response)}
+.dot.write{background:var(--request);border-color:var(--request)}
+@media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.bus.inner{stroke:#c9d6ce;stroke-dasharray:3 3}
+.bus.main{stroke:#9fbfae;stroke-width:3}
+.cpu-area{fill:#e2ece5;stroke:#9fb7a9;stroke-width:1.2;stroke-dasharray:6 4}
+.board-tag rect{fill:#26322e;stroke:#26322e}.board-tag text{fill:#fff;font-weight:800}
+.cell .left{fill:#e6ebe8;stroke:#8c9d96}.cell .right{fill:#cfd8d4;stroke:#8c9d96}.cell .top{fill:#fff;stroke:#8c9d96}
+.cell.code .top{fill:#eef1fb;stroke:#7d88b4}.cell.code .left{fill:#dfe4f2;stroke:#7d88b4}.cell.code .right{fill:#c4cbe3;stroke:#7d88b4}
+.cell.code .cell-value{fill:#3c4a85;font-size:8.5px}
+.address{text-anchor:middle}
+.cell.active .top{fill:#fff1c9;stroke:#c9940f}
+.cell.next-pc .address{fill:var(--accent);font-weight:800}
+.part .face{stroke-width:.8;transition:fill .2s}
+.part.register .left{fill:#dbe9e2;stroke:#5f8f78}.part.register .right{fill:#c2d9cd;stroke:#5f8f78}.part.register .top{fill:#f3f8f5;stroke:#5f8f78}
+.part.control .left{fill:#eadcf0;stroke:#9a77ad}.part.control .right{fill:#d9c4e3;stroke:#9a77ad}.part.control .top{fill:#f7f0fa;stroke:#9a77ad}
+.part.alu .left{fill:#e4e1d3;stroke:#8f8763}.part.alu .right{fill:#d2cdb6;stroke:#8f8763}.part.alu .top{fill:#f7f5ec;stroke:#8f8763}
+.part.busy .top{fill:#fff1c9}
+.part-tag text{font:700 11.5px var(--mono)}
+.part.busy .part-tag rect{stroke:#c9940f;stroke-width:1.3}
+.packet-group.inner .packet,.packet-group.inner .packet-halo{fill:#9a77ad}
+.packet-group.inner .packet-label{fill:#5f3a73}
+.dot.inner{background:#9a77ad;border-color:#9a77ad}
+.memory-panel{flex:1 1 320px;display:flex;flex-direction:column;gap:8px}
+.phase-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.phases{list-style:none;display:flex;gap:4px;margin:0;padding:0}
+.phases li{padding:4px 12px;border:1px solid var(--border);border-radius:999px;font-size:.875rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.phases li.current{background:var(--accent);border-color:var(--accent);color:#fff}
+.clock{font:700 .9375rem var(--mono);color:var(--accent);margin-left:auto}
+.clock.tick{animation:bump .3s ease-out}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+.clock{display:inline-block}
+.memory-list{counter-reset:none;flex:none}
+.memory-list li{counter-increment:none;padding:3px 12px 3px 44px;display:flex;gap:10px}
+.memory-list li::before{content:none}
+.memory-list .addr{position:absolute;left:14px;color:#6f8a80}
+.memory-list li.data code{color:#bfe8cf}
+.memory-list li.ir{background:#2f4a41}
+.memory-list li.touched{box-shadow:inset 3px 0 #ffd34d}
+.memory-list .mark{margin-left:auto;color:#9fe3b6;font-size:.8125rem}
+.memory-list li.current::after{content:none}
+@media(prefers-reduced-motion:reduce){.clock.tick{animation:none}}
+@media(max-width:600px){.part-tag text{font-size:14px}.cell.code .cell-value{font-size:12px}}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+@media(max-width:600px){.packet-label{font-size:13px}}
+</style>
+<link rel="stylesheet" href="../shared/course.css">
+<script defer src="../shared/catalog.js"></script>
+<script defer src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">3장 컴퓨터를 바닥부터 · 레슨 3.5</p>
+    <h1>CPU의 한 사이클</h1>
+    <p class="lead">명령 하나를 가져오고, 해석하고, 실행하는 동안 무슨 일이 생길까요? 작은 CPU를 클럭 한 번씩 움직여 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">메모리와 CPU 내부</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">메모리의 명령을 CPU가 가져와 해석하고 실행하는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="code-area">
+            <div class="memory-panel"><div class="phase-row"><ol class="phases" id="phases" aria-label="지금 단계"><li data-phase="fetch">가져오기</li><li data-phase="decode">해석</li><li data-phase="execute">실행</li></ol><span class="clock" id="clock">클럭 0번</span></div><ol class="code memory-list" id="code" aria-label="메모리 내용"></ol></div>
+            <div class="code-actions">
+              <button class="action primary" id="run-tick" type="button">클럭 한 번</button>
+              <button class="action" id="run-instr" type="button">명령 하나</button>
+              <button class="action" id="restart" type="button">처음부터</button>
+            </div>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <button class="action" id="view-reset" type="button">원래 보기</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="dot read"></i>메모리 → CPU</span><span><i class="dot write"></i>CPU → 메모리</span><span><i class="dot inner"></i>CPU 안</span></div>
+          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+// A tiny CPU with 8 memory cells. Each step loads a program (`memory`: instructions and numbers)
+// and the engine works out every clock tick in advance: fetch (2 ticks), decode (1), execute (1–2).
+// Instructions: ['LOAD', r, addr], ['STORE', r, addr], ['ADD'], ['SUB'] (A = A ± B, sets Z),
+// ['JUMP', addr], ['JZ', addr] (jump if Z), ['HALT']. Numbers are plain values.
+// `asks` are predictions the learner answers before a tick runs; `at(tick)` picks that tick,
+// where tick has kind (F1 F2 D E1 E2), op, n (how many instructions ran before it) and the machine before it.
+const lesson = [
+  {
+    label: '가져오기',
+    readingDiagram: {
+      title: "주소는 메모리로, 명령은 IR로",
+      description: "PC의 주소 0으로 메모리의 LOAD A, [4]를 읽어 IR에 넣은 뒤 PC를 1로 올립니다.",
+      nodes: [
+        ["pc", 102, 122, 126, 46, ["PC", "주소 0"]],
+        ["mem", 310, 122, 126, 46, ["메모리 0번지", "LOAD A, [4]"], "active"],
+        ["ir", 517, 122, 126, 46, ["IR", "LOAD A, [4]"], "active"],
+        ["next", 102, 224, 126, 46, ["다음 PC", "주소 1"], "active"],
+      ],
+      edges: [
+        ["pc", "mem", "active"],
+        ["mem", "ir", "active"],
+        ["pc", "next", "muted", ""],
+      ],
+      labels: [
+        [35, 262, "명령을 가져온 뒤 PC + 1"],
+      ],
+    },
+    example: ["PC가 명령 주소를 가리킴", "메모리에서 명령 읽기", "IR에 실행할 명령"],
+    title: 'CPU는 먼저 명령을 가져온다',
+    body: '프로그램은 데이터와 똑같이 메모리 칸에 들어 있습니다. CPU의 프로그램 카운터(PC)는 다음에 실행할 명령의 주소를 기억합니다. 가져오기 단계에서 CPU는 PC의 주소를 메모리로 보내고, 그 칸의 명령을 명령 레지스터(IR)로 받아 온 뒤 PC를 1 늘립니다.',
+    takeaway: '주소가 PC에서 메모리로 가고, 명령이 메모리에서 IR로 돌아옵니다. 명령을 가져오자마자 PC가 다음 칸을 가리킵니다. 명령 하나가 끝나면 다시 가져오기로 돌아갑니다.',
+    description: '위쪽에 0–7번지 메모리 칸이 있고, 아래 CPU 판 위에 PC, IR, 제어 장치, 레지스터 A와 B, ALU가 있습니다. 메모리와 CPU는 버스로 이어져 있습니다.',
+    memory: [['LOAD', 'A', 4], ['HALT'], 0, 0, 7, 0, 0, 0],
+    asks: [
+      { at: (t) => t.kind === 'F2' && t.n === 0, q: '명령을 가져온 뒤 PC는 몇이 될까요?', choices: ['0', '1', '4'], answer: '1', why: '가져오자마자 PC는 다음 칸인 1번지를 가리킵니다.' },
+      { at: (t) => t.kind === 'E2' && t.n === 0, q: '레지스터 A에는 무엇이 들어갈까요?', choices: ['4', '7', 'LOAD'], answer: '7', why: 'LOAD A, [4]는 4번지에 있는 값 7을 A에 넣으라는 뜻입니다.' },
+    ],
+  },
+  {
+    label: '해석과 실행',
+    readingDiagram: {
+      title: "제어 장치가 명령에 맞춰 값의 경로를 연다",
+      description: "메모리 5와 6번지에서 A와 B로 값을 읽습니다. ALU에서 3과 4를 더해 A에 쓰고, STORE가 7번지에 7을 기록합니다.",
+      nodes: [
+        ["a", 81, 89, 109, 46, ["5번지: 3", "LOAD A"]],
+        ["b", 81, 192, 109, 46, ["6번지: 4", "LOAD B"]],
+        ["ra", 230, 89, 104, 26, ["A: 3"], "active"],
+        ["rb", 230, 192, 104, 26, ["B: 4"], "active"],
+        ["alu", 369, 142, 105, 46, ["ALU", "3 + 4"], "active"],
+        ["out", 535, 142, 121, 46, ["7번지: 7", "STORE A"], "active"],
+      ],
+      edges: [
+        ["a", "ra", "active"],
+        ["ra", "alu", "active"],
+        ["alu", "out", "active"],
+        ["b", "rb", "active"],
+        ["rb", "alu", "active"],
+      ],
+      labels: [
+        [28, 253, "ADD 결과를 A에 쓰고, STORE가 A의 7을 메모리에 저장"],
+      ],
+    },
+    example: ["5번지 3 · 6번지 4", "레지스터에 읽어 더함", "7번지에 7 저장"],
+    title: '해석하고, 실행하고, 다시 가져온다',
+    body: '제어 장치는 IR의 명령을 해석해 무엇을 할지 정합니다. LOAD면 메모리 값을 레지스터로 옮기고, ADD면 A와 B를 ALU로 보내 더한 결과를 A에 넣고, STORE면 레지스터 값을 메모리에 씁니다. 이 가져오기–해석–실행이 명령마다 되풀이됩니다.',
+    takeaway: '3 + 4를 계산하는 데 명령 다섯 개가 필요합니다. 값을 메모리에서 레지스터로 옮기고(LOAD), 계산하고(ADD), 다시 메모리에 적습니다(STORE). 1.1에서 본 "읽기, 계산, 쓰기"가 CPU 안에서는 이렇게 나뉩니다.',
+    description: '5번지의 3과 6번지의 4를 A, B로 불러와 더하고, 결과를 7번지에 적는 프로그램입니다.',
+    memory: [['LOAD', 'A', 5], ['LOAD', 'B', 6], ['ADD'], ['STORE', 'A', 7], ['HALT'], 3, 4, 0],
+    asks: [
+      { at: (t) => t.kind === 'D' && t.op === 'ADD', q: 'ADD를 해석했습니다. 이제 어디로 값이 갈까요?', choices: ['메모리', 'ALU', 'PC'], answer: 'ALU', why: '계산은 ALU가 합니다. A와 B의 값이 ALU로 갑니다.' },
+      { at: (t) => t.kind === 'E2' && t.op === 'STORE', q: '7번지에는 무엇이 적힐까요?', choices: ['0', '4', '7'], answer: '7', why: 'A에는 3 + 4 = 7이 들어 있고, STORE A, [7]이 그 값을 7번지에 적습니다.' },
+    ],
+  },
+  {
+    label: '점프와 반복',
+    readingDiagram: {
+      title: "SUB의 결과가 0인지에 따라 PC가 갈라진다",
+      description: "SUB 결과가 0이 아니면 JUMP 2로 돌아갑니다. 0이면 JZ가 5번지 HALT로 건너뜁니다.",
+      nodes: [
+        ["sub", 105, 146, 123, 46, ["2번지", "SUB A − 1"], "active"],
+        ["jz", 300, 146, 110, 46, ["3번지", "JZ 5"]],
+        ["back", 504, 89, 154, 46, ["A ≠ 0", "JUMP 2로 반복"], "blocked"],
+        ["end", 504, 212, 154, 46, ["A = 0", "5번지 HALT"], "active"],
+      ],
+      edges: [
+        ["sub", "jz", "active"],
+        ["jz", "back", "blocked"],
+        ["jz", "end", "active"],
+        ["back", "sub", "muted", "", -86],
+      ],
+    },
+    example: ["A에서 1씩 빼기", "A = 0이면 JZ", "PC가 HALT로 이동"],
+    title: 'PC를 바꾸면 반복과 조건이 된다',
+    body: '보통 PC는 1씩 늘어나 다음 칸으로 갑니다. JUMP는 PC에 다른 주소를 넣어 그곳으로 건너뜁니다. JZ는 방금 계산 결과가 0이었을 때(3.3의 Z 플래그)만 건너뜁니다. 이 둘로 1.2의 while 반복과 if 조건을 만듭니다. 이 프로그램은 A가 0이 될 때까지 1씩 뺍니다.',
+    takeaway: 'JUMP 2가 실행되면 PC가 5에서 2로 돌아가 SUB를 다시 합니다. A가 0이 된 뒤의 JZ에서만 PC가 5로 건너뛰어 HALT에 닿습니다. 반복문은 결국 "뒤로 점프"입니다.',
+    description: 'A에 2, B에 1을 불러온 뒤 SUB, JZ, JUMP를 되풀이합니다. A가 0이 되면 JZ가 5번지의 HALT로 건너뜁니다.',
+    memory: [['LOAD', 'A', 6], ['LOAD', 'B', 7], ['SUB'], ['JZ', 5], ['JUMP', 2], ['HALT'], 2, 1],
+    asks: [
+      { at: (t) => t.kind === 'E1' && t.op === 'JZ' && t.before.a === 1, q: 'A = 1입니다. JZ 5는 점프할까요?', choices: ['점프한다', '넘어간다'], answer: '넘어간다', why: 'A가 0이 아니라 Z = 0이므로 PC는 그대로 4번지로 갑니다.' },
+      { at: (t) => t.kind === 'E1' && t.op === 'JUMP', q: 'JUMP 2를 실행하면 PC는?', choices: ['2', '5', '6'], answer: '2', why: 'JUMP는 PC에 2를 넣어 SUB로 돌아갑니다.' },
+      { at: (t) => t.kind === 'E1' && t.op === 'JZ' && t.before.a === 0, q: '이번에는 A = 0입니다. JZ 5는?', choices: ['점프한다', '넘어간다'], answer: '점프한다', why: 'SUB 결과가 0이라 Z = 1이고, PC가 5로 바뀌어 HALT에 닿습니다.' },
+    ],
+  },
+  {
+    label: '클럭',
+    readingDiagram: {
+      title: "한 클럭마다 동작 하나가 진행된다",
+      description: "LOAD 한 명령의 클럭 다섯 번입니다. 주소 전송, 명령 읽기, 해석, 데이터 주소 전송, 레지스터 쓰기가 순서대로 진행됩니다.",
+      nodes: [
+        ["c1", 102, 142, 155, 46, ["클럭 1·2", "주소 전송 · 명령 읽기"]],
+        ["c3", 310, 142, 126, 46, ["클럭 3", "LOAD 해석"]],
+        ["c45", 517, 142, 161, 46, ["클럭 4·5", "데이터 읽어 A에 쓰기"], "active"],
+      ],
+      edges: [
+        ["c1", "c3", "active"],
+        ["c3", "c45", "active"],
+      ],
+      labels: [
+        [28, 254, "예시: LOAD A 한 명령 · 3 + 4 프로그램 전체는 24클럭"],
+      ],
+    },
+    example: ["같은 ADD 명령", "클럭마다 인출·해석·실행", "실행 때 레지스터 값 갱신"],
+    title: '클럭 한 번에 한 걸음씩',
+    body: 'CPU 안의 모든 움직임은 클럭이라는 일정한 박자에 맞춰 한 걸음씩 일어납니다. 이 CPU는 명령 하나를 가져오고, 해석하고, 실행하는 데 클럭 4–5번이 걸립니다. 3 GHz CPU의 클럭은 1초에 30억 번 뜁니다. 실제 CPU는 여러 명령의 단계를 겹쳐(파이프라인) 클럭마다 명령 하나 이상을 끝냅니다.',
+    takeaway: '아래 클럭 수를 보세요. 3 + 4 프로그램은 클럭 24번에 끝납니다. 사람이 한 걸음씩 누르면 한참 걸리지만, 3 GHz라면 8나노초(1억분의 1초보다 짧은 시간)입니다.',
+    description: '2단계와 같은 3 + 4 프로그램입니다. 클럭이 한 번 뛸 때마다 장면에서 한 걸음이 일어나고 클럭 수가 하나씩 늘어납니다.',
+    memory: [['LOAD', 'A', 5], ['LOAD', 'B', 6], ['ADD'], ['STORE', 'A', 7], ['HALT'], 3, 4, 0],
+    clock: true,
+    asks: [
+      { at: (t) => t.kind === 'F1' && t.n === 1, q: '첫 명령 LOAD A, [5]에 클럭이 몇 번 걸렸나요?', choices: ['1번', '3번', '5번'], answer: '5번', why: '가져오기 2번, 해석 1번, 실행 2번으로 클럭 5번입니다.' },
+      { at: (t) => t.kind === 'E1' && t.op === 'HALT', q: '3 GHz CPU는 1초에 클럭이 몇 번 뛸까요?', choices: ['3천 번', '300만 번', '30억 번'], answer: '30억 번', why: 'G(기가)는 10억이라 3 GHz는 1초에 30억 번입니다.' },
+    ],
+  },
+];
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+function setCamera(x, y, zoom) {
+  camera.zoom = clamp(zoom, 1, maxZoom);
+  const width = viewWidth / camera.zoom;
+  const height = viewHeight / camera.zoom;
+  camera.x = clamp(x, 0, viewWidth - width);
+  camera.y = clamp(y, 0, viewHeight - height);
+  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
+  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
+  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
+  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
+  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
+}
+
+function zoomBetween(nextZoom, from, to = from) {
+  const zoom = clamp(nextZoom, 1, maxZoom);
+  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
+            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
+}
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+function viewportPoint(event) {
+  const rect = viewport.getBoundingClientRect();
+  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
+  return {
+    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
+    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+  };
+}
+
+function pointerGeometry() {
+  const [a, b] = pointers.values();
+  if (!b) return { point: a, distance: 0 };
+  return {
+    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    distance: Math.hypot(a.x - b.x, a.y - b.y),
+  };
+}
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+function zoomBy(delta) {
+  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
+  zoomBetween(camera.zoom + delta, center);
+  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
+}
+
+function resetView() {
+  pointers.clear();
+  viewport.classList.remove('is-dragging');
+  setCamera(0, 0, 1);
+  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
+}
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+byId('view-reset').onclick = resetView;
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'cpu-lab:v1:step';
+const moveMs = 650;      // how long values travel along a wire in one clock tick
+const state = { index: 0, t: 0, playing: !motion.matches, userPaused: false, wait: 0, busy: false, wrong: '', solvedText: '' };
+const progress = lesson.map(() => 0);
+const answeredAsks = lesson.map(() => new Set());
+let timeline = [];   // every clock tick of the current program, worked out in advance
+let packets = [];
+let frame = null;
+let lastFrame = null;
+
+function svg(name, attrs, parent) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
+  if (parent) parent.append(element);
+  return element;
+}
+
+// The same world-to-screen projection as the other labs; (u, v) = (x + y, x - y) on the floor.
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const board = 0;          // parts stand on the floor inside the marked CPU area
+const laneHeight = 3;
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) {
+  gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+}
+byId('grid').setAttribute('d', gridLines.join(''));
+
+function drawShadow(node, half) {
+  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
+  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
+}
+function boxFaces(hx, hy, H, z0 = 0) {
+  return {
+    left: [[-hx, -hy, z0], [hx, -hy, z0], [hx, -hy, z0 + H], [-hx, -hy, z0 + H]],
+    right: [[hx, -hy, z0], [hx, hy, z0], [hx, hy, z0 + H], [hx, -hy, z0 + H]],
+    top: [[-hx, -hy, z0 + H], [hx, -hy, z0 + H], [hx, hy, z0 + H], [-hx, hy, z0 + H]],
+  };
+}
+function drawBox(node, h, H, z0 = 0) {
+  for (const [name, corners] of Object.entries(boxFaces(h, h, H, z0))) {
+    svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
+  }
+  svg('path', { class: 'highlight', d: `M${point(-h, -h, z0 + H)}L${point(h, -h, z0 + H)}L${point(h, h, z0 + H)}` }, node);
+}
+
+// Plates are small labels whose box is sized to the text.
+let plates = [];
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  plate.label.setAttribute('x', plate.x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
+function addPlate(node, className, x, y, text, { pad = 1.4, round = false } = {}) {
+  const group = svg('g', { class: className }, node);
+  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
+  plate.label.textContent = text;
+  plates.push(plate);
+  sizePlate(plate);
+  return plate;
+}
+function setPlate(plate, text) {
+  if (plate.label.textContent === text) return;
+  plate.label.textContent = text;
+  sizePlate(plate);
+}
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Layout ----------
+// Memory cells in a row at the top, the bus under them, the CPU board below with its parts.
+const cellCount = 8;
+const cellU = (k) => 2.6 * k - 2;
+const cellV = -11;
+const busV = -7.5;
+const leftBus = -4;
+const cellHalf = .6, cellHeight = 12;       // registers A and B reach the memory bus along this column
+const parts = {
+  PC: { u: 0, v: 0, name: 'PC', kind: 'register' },
+  IR: { u: 5.5, v: 0, name: 'IR', kind: 'register' },
+  CU: { u: 11.5, v: 0, name: '제어 장치', kind: 'control' },
+  A: { u: 1.5, v: 7, name: 'A', kind: 'register', below: true },
+  B: { u: 6.5, v: 7, name: 'B', kind: 'register', below: true },
+  ALU: { u: 12, v: 7, name: 'ALU', kind: 'alu', below: true },
+};
+const isCell = (name) => name[0] === 'M';
+const at = (name) => isCell(name) ? { u: cellU(Number(name.slice(1))), v: cellV } : parts[name];
+
+// The path a value takes between two places, as (u, v) points on the floor.
+function route(from, to) {
+  if (isCell(from) && !isCell(to)) return route(to, from).reverse();
+  const a = at(from), b = at(to);
+  if (isCell(to)) {
+    if (from === 'A') return [[a.u, a.v], [leftBus, a.v], [leftBus, busV], [b.u, busV], [b.u, b.v]];
+    if (from === 'B') return [[a.u, a.v], [a.u, 10.4], [leftBus, 10.4], [leftBus, busV], [b.u, busV], [b.u, b.v]];
+    return [[a.u, a.v], [a.u, busV], [b.u, busV], [b.u, b.v]];
+  }
+  const key = from + '>' + to;
+  if (key === 'ALU>A') return route('A', 'ALU').reverse();
+  if (key === 'A>ALU') return [[a.u, a.v], [a.u, 9.4], [b.u, 9.4], [b.u, b.v]];
+  if (key === 'CU>PC') return [[a.u, a.v], [a.u, 3.5], [b.u, 3.5], [b.u, b.v]];
+  return [[a.u, a.v], [b.u, b.v]];
+}
+
+// ---------- The machine ----------
+const regName = { A: 'A', B: 'B' };
+function instrText(word) {
+  if (!Array.isArray(word)) return String(word);
+  const [op, x, y] = word;
+  if (op === 'LOAD' || op === 'STORE') return `${op} ${x}, [${y}]`;
+  if (op === 'ADD' || op === 'SUB') return `${op} A, B`;
+  if (op === 'JUMP' || op === 'JZ') return `${op} ${x}`;
+  return op;
+}
+const meaning = {
+  LOAD: ([, r, a]) => `${r} ← ${a}번지`, STORE: ([, r, a]) => `${a}번지 ← ${r}`,
+  ADD: () => 'A ← A + B', SUB: () => 'A ← A − B',
+  JUMP: ([, a]) => `PC ← ${a}`, JZ: ([, a]) => `Z면 PC ← ${a}`, HALT: () => '멈춤',
+};
+
+// Work out every clock tick: each one records what moves (transfers), what it means, and the machine after it.
+function buildTimeline(memory) {
+  const m = { pc: 0, ir: null, a: 0, b: 0, z: 0, mem: memory.map((w) => Array.isArray(w) ? [...w] : w), cu: '', alu: '', halted: false };
+  const copy = () => ({ ...m, mem: [...m.mem] });
+  const ticks = [];
+  let n = 0;
+  const push = (kind, op, transfers, text, apply, cell = null) => {
+    const before = copy();
+    apply();
+    ticks.push({ kind, op, n, before, after: copy(), transfers, text, cell,
+      phase: kind[0] === 'F' ? 'fetch' : kind === 'D' ? 'decode' : 'execute' });
+  };
+  for (let guard = 0; !m.halted && guard < 40; guard++) {
+    const pc = m.pc;
+    const word = m.mem[pc];
+    const op = word[0];
+    push('F1', op, [{ from: 'PC', to: 'M' + pc, label: `주소 ${pc}` }], `가져오기: PC가 주소 ${pc}를 메모리로 보냅니다.`, () => { m.alu = ''; }, pc);
+    push('F2', op, [{ from: 'M' + pc, to: 'IR', label: instrText(word) }], `가져오기: ${pc}번지의 명령 "${instrText(word)}"가 IR로 오고, PC는 ${pc + 1}이 됩니다.`,
+      () => { m.ir = pc; m.pc = pc + 1; }, pc);
+    push('D', op, [{ from: 'IR', to: 'CU', label: op }], `해석: 제어 장치가 "${instrText(word)}"를 "${meaning[op](word)}"로 읽습니다.`,
+      () => { m.cu = meaning[op](word); });
+    if (op === 'LOAD') {
+      const [, r, a] = word;
+      push('E1', op, [{ from: 'CU', to: 'M' + a, label: `주소 ${a}` }], `실행: ${a}번지에 값을 달라고 주소를 보냅니다.`, () => {}, a);
+      push('E2', op, [{ from: 'M' + a, to: r, label: String(m.mem[a]) }], `실행: ${a}번지의 값 ${m.mem[a]}이 레지스터 ${r}에 들어갑니다.`,
+        () => { m[r.toLowerCase()] = m.mem[a]; }, a);
+    } else if (op === 'STORE') {
+      const [, r, a] = word;
+      const value = m[r.toLowerCase()];
+      push('E1', op, [{ from: 'CU', to: 'M' + a, label: `주소 ${a}` }], `실행: 값을 적을 ${a}번지에 주소를 보냅니다.`, () => {}, a);
+      push('E2', op, [{ from: r, to: 'M' + a, label: String(value) }], `실행: 레지스터 ${r}의 값 ${value}을 ${a}번지에 적습니다.`,
+        () => { m.mem[a] = value; }, a);
+    } else if (op === 'ADD' || op === 'SUB') {
+      const result = op === 'ADD' ? m.a + m.b : m.a - m.b;
+      const sign = op === 'ADD' ? '+' : '−';
+      push('E1', op, [{ from: 'A', to: 'ALU', label: String(m.a) }, { from: 'B', to: 'ALU', label: String(m.b) }],
+        `실행: A의 ${m.a}와 B의 ${m.b}이 ALU로 갑니다.`, () => { m.alu = `${m.a} ${sign} ${m.b} = ${result}`; });
+      push('E2', op, [{ from: 'ALU', to: 'A', label: String(result) }], `실행: ALU의 결과 ${result}이 A에 들어갑니다. 결과가 ${result === 0 ? '0이라 Z = 1' : '0이 아니라 Z = 0'}입니다.`,
+        () => { m.a = result; m.z = result === 0 ? 1 : 0; });
+    } else if (op === 'JUMP') {
+      push('E1', op, [{ from: 'CU', to: 'PC', label: String(word[1]) }], `실행: PC에 ${word[1]}을 넣습니다. 다음 명령은 ${word[1]}번지입니다.`, () => { m.pc = word[1]; });
+    } else if (op === 'JZ') {
+      const jump = m.z === 1;
+      push('E1', op, jump ? [{ from: 'CU', to: 'PC', label: String(word[1]) }] : [],
+        jump ? `실행: Z = 1이라 PC에 ${word[1]}을 넣습니다.` : `실행: Z = 0이라 건너뛰지 않습니다. PC는 ${m.pc} 그대로입니다.`,
+        () => { if (jump) m.pc = word[1]; });
+    } else {
+      push('E1', op, [], '실행: HALT. 프로그램이 끝났습니다.', () => { m.halted = true; });
+    }
+    n++;
+  }
+  return ticks;
+}
+
+// ---------- Drawing ----------
+let cellViews = [], partViews = {}, partPlates = {};
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  // The CPU: an area marked on the floor, holding its parts.
+  const area = [[-5.4, -4.6], [15.4, -4.6], [15.4, 11.8], [-5.4, 11.8]];
+  svg('polygon', { class: 'cpu-area', points: area.map(([u, v]) => flat(u, v).join(',')).join(' ') }, byId('casings'));
+  const areaNode = svg('g', {}, byId('nodes'));
+  addPlate(areaNode, 'tag board-tag', ...flat(-3.8, 11.8), 'CPU', { round: true });
+  // Faint wires for every path this program uses, plus the bus and a stub to every cell.
+  const drawn = new Set();
+  const drawPath = (points, className) => {
+    const d = 'M' + points.map(([u, v]) => flat(u, v, laneHeight + (isOnBoard(u, v) ? board : 0)).join(' ')).join('L');
+    if (drawn.has(d)) return;
+    drawn.add(d);
+    svg('path', { class: 'casing', d }, byId('casings'));
+    svg('path', { class: 'bus ' + className, d }, byId('links'));
+  };
+  drawPath([[leftBus, busV], [cellU(cellCount - 1), busV]], 'main');
+  for (let k = 0; k < cellCount; k++) drawPath([[cellU(k), busV], [cellU(k), cellV]], 'stub');
+  for (const tick of timeline) for (const move of tick.transfers) drawPath(route(move.from, move.to), 'inner');
+  // Memory cells.
+  cellViews = [];
+  for (let k = 0; k < cellCount; k++) {
+    const node = svg('g', { class: 'node cell', transform: `translate(${flat(cellU(k), cellV).join(' ')})` }, byId('nodes'));
+    drawShadow(node, cellHalf);
+    drawBox(node, cellHalf, cellHeight);
+    const value = svg('text', { class: 'cell-value', x: 0, y: -cellHeight + .5 }, node);
+    svg('text', { class: 'address', x: 0, y: 7 * 2 * cellHalf + 10 }, node).textContent = `${k}번지`;
+    cellViews.push({ node, value });
+  }
+  // CPU parts, standing on the board.
+  partViews = {};
+  partPlates = {};
+  const order = Object.entries(parts).sort(([, a], [, b]) => a.v - b.v || a.u - b.u);
+  for (const [name, part] of order) {
+    const h = part.kind === 'control' ? 1.2 : 1;
+    const H = part.kind === 'register' ? 9 : 11;
+    const node = svg('g', { class: `node part ${part.kind}`, transform: `translate(${flat(part.u, part.v, board).join(' ')})` }, byId('nodes'));
+    drawShadow(node, h);
+    drawBox(node, h, H);
+    partViews[name] = node;
+    partPlates[name] = addPlate(node, 'tag part-tag', 0, part.below ? 14 * h + 13 : -H - 14 * h - 12, part.name);
+  }
+  fitWorld();
+}
+const isOnBoard = () => false;
+
+// Scale and centre the scene: memory plates at the top, the CPU area's label at the bottom.
+function fitWorld() {
+  const left = 14 * -5.4 - 10, right = 14 * cellU(cellCount - 1) + 24, top = 7 * cellV - 26, bottom = 7 * 11.8 + 16;
+  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// Paint the machine as it is after `count` ticks.
+function paint(count, { flashCell = null } = {}) {
+  const m = count === 0 ? timeline[0].before : timeline[count - 1].after;
+  const next = timeline[count];
+  const last = timeline[count - 1];
+  cellViews.forEach((cell, k) => {
+    const word = m.mem[k];
+    cell.value.textContent = Array.isArray(word) ? word[0] : String(word);
+    cell.node.classList.toggle('code', Array.isArray(word));
+    cell.node.classList.toggle('active', last?.cell === k);
+    cell.node.classList.toggle('next-pc', k === m.pc && !m.halted);
+    if (k === flashCell) { cell.node.classList.remove('changed'); cell.node.getBBox(); cell.node.classList.add('changed'); }
+  });
+  setPlate(partPlates.PC, `PC ${m.pc}`);
+  setPlate(partPlates.IR, `IR ${m.ir === null ? '–' : instrText(m.mem[m.ir])}`);
+  setPlate(partPlates.CU, m.cu ? `제어: ${m.cu}` : '제어 장치');
+  setPlate(partPlates.A, `A ${m.a}`);
+  setPlate(partPlates.B, `B ${m.b}`);
+  setPlate(partPlates.ALU, m.alu ? `ALU ${m.alu}` : `ALU · Z ${m.z}`);
+  const involved = new Set((last?.transfers ?? []).flatMap((move) => [move.from, move.to]));
+  for (const [name, node] of Object.entries(partViews)) node.classList.toggle('busy', involved.has(name));
+  paintPanel(count, m, last, next);
+}
+
+// ---------- Packets ----------
+function sendPacket(move) {
+  const points = route(move.from, move.to).map(([u, v]) => flat(u, v, laneHeight + (isOnBoard(u, v) ? board : 0)));
+  const lengths = points.slice(1).map((p, i) => Math.hypot(p[0] - points[i][0], p[1] - points[i][1]));
+  const group = svg('g', { class: 'packet-group ' + (isCell(move.from) ? 'read' : isCell(move.to) ? 'write' : 'inner') }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  svg('text', { class: 'packet-label', y: -10 }, group).textContent = move.label;
+  packets.push({ group, points, lengths, total: lengths.reduce((a, b) => a + b, 0), start: performance.now() });
+  kick();
+}
+function movePackets(now) {
+  packets = packets.filter((packet) => {
+    const t = (now - packet.start) / moveMs;
+    if (t >= 1) { packet.group.remove(); return false; }
+    // Hide the first and last bits of the path, which lie under the boxes.
+    let along = mix(14, packet.total - 14, t);
+    let i = 0;
+    while (i < packet.lengths.length - 1 && along > packet.lengths[i]) { along -= packet.lengths[i]; i++; }
+    const f = packet.lengths[i] ? Math.min(along / packet.lengths[i], 1) : 0;
+    const [x, y] = [mix(packet.points[i][0], packet.points[i + 1][0], f), mix(packet.points[i][1], packet.points[i + 1][1], f)];
+    packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    return true;
+  });
+}
+
+// Timers that a step change or reset cancels.
+let timers = [];
+function later(ms, fn) {
+  if (ms === 0) { fn(); return; }
+  timers.push(setTimeout(fn, ms));
+}
+function cancelTimers() {
+  timers.forEach(clearTimeout);
+  timers = [];
+  packets.forEach((packet) => packet.group.remove());
+  packets = [];
+  state.busy = false;
+}
+
+// Run one clock tick: values travel, then the machine shows its new state.
+function runTick(done) {
+  const tick = timeline[state.t];
+  if (!tick || state.busy) return;
+  state.busy = true;
+  if (!motion.matches) tick.transfers.forEach(sendPacket);
+  for (const name of new Set(tick.transfers.flatMap((move) => [move.from, move.to]))) partViews[name]?.classList.add('busy');
+  if (tick.cell !== null) cellViews[tick.cell].node.classList.add('active');
+  paintPanel(state.t, state.t === 0 ? tick.before : timeline[state.t - 1].after, timeline[state.t - 1], tick, true);
+  later(motion.matches ? 0 : moveMs, () => {
+    state.t++;
+    state.busy = false;
+    const wrote = tick.kind === 'E2' && tick.op === 'STORE' ? tick.cell : null;
+    paint(state.t, { flashCell: wrote });
+    done?.();
+  });
+}
+
+// ---------- Panel: memory listing, phase, clock ----------
+function buildPanel() {
+  const list = byId('code');
+  list.replaceChildren();
+  for (let k = 0; k < cellCount; k++) {
+    const li = document.createElement('li');
+    li.append(Object.assign(document.createElement('span'), { className: 'addr', textContent: k }));
+    li.append(Object.assign(document.createElement('code'), {}));
+    li.append(Object.assign(document.createElement('span'), { className: 'mark' }));
+    list.append(li);
+  }
+}
+const phaseName = { fetch: '가져오기', decode: '해석', execute: '실행' };
+function paintPanel(count, m, last, next, running = false) {
+  const current = running ? next : last;
+  [...byId('code').children].forEach((li, k) => {
+    const word = m.mem[k];
+    li.querySelector('code').textContent = Array.isArray(word) ? instrText(word) : `값 ${word}`;
+    li.classList.toggle('data', !Array.isArray(word));
+    li.classList.toggle('pc', k === m.pc && !m.halted);
+    li.classList.toggle('ir', k === m.ir);
+    li.classList.toggle('touched', current?.cell === k);
+    li.querySelector('.mark').textContent = [k === m.ir ? 'IR' : '', k === m.pc && !m.halted ? 'PC →' : ''].filter(Boolean).join(' · ');
+  });
+  for (const chip of byId('phases').children) chip.classList.toggle('current', chip.dataset.phase === current?.phase);
+  byId('clock').textContent = `클럭 ${count + (running ? 1 : 0)}번`;
+  byId('clock').classList.remove('tick');
+  if (running && !motion.matches) { byId('clock').getBBox?.(); void byId('clock').offsetWidth; byId('clock').classList.add('tick'); }
+  const finished = count >= timeline.length;
+  byId('readout').textContent = current ? current.text : '"클럭 한 번"을 누르면 첫 가져오기가 시작됩니다.';
+  // While the demo plays the buttons stay enabled, so a click can take over from it.
+  const blocked = !state.playing && (finished || state.busy || Boolean(pendingAsk()));
+  byId('run-tick').disabled = blocked;
+  byId('run-instr').disabled = blocked;
+  byId('run-tick').textContent = finished ? '프로그램이 끝났습니다' : '클럭 한 번';
+}
+
+// ---------- Predictions ----------
+const asksOf = () => lesson[state.index].asks;
+function askFor(t) {
+  const tick = timeline[t];
+  if (!tick) return null;
+  const k = asksOf().findIndex((ask, i) => ask.at(tick) && !answeredAsks[state.index].has(i) && firstTickFor(i) === t);
+  return k >= 0 ? { ask: asksOf()[k], k } : null;
+}
+// An ask belongs to the first tick it matches, so it is asked once per run.
+const firstTickFor = (i) => timeline.findIndex((tick) => asksOf()[i].at(tick));
+const pendingAsk = () => state.playing ? null : askFor(state.t);
+
+function syncTask() {
+  const choices = byId('try-choices');
+  choices.replaceChildren();
+  const pending = pendingAsk();
+  const allDone = progress[state.index] >= asksOf().length;
+  if (pending && !state.busy) {
+    byId('try').classList.remove('solved');
+    byId('try-text').textContent = `클럭 ${state.t + 1} 전에 · ${pending.ask.q}`;
+    byId('try-result').textContent = state.wrong || state.solvedText;
+    for (const choice of pending.ask.choices) {
+      const button = Object.assign(document.createElement('button'), { type: 'button', className: 'action choice-button', textContent: choice });
+      button.addEventListener('click', () => answer(choice));
+      choices.append(button);
+    }
+  } else if (state.solvedText) {
+    byId('try').classList.add('solved');
+    byId('try-text').textContent = state.solvedText;
+    byId('try-result').textContent = '';
+  } else {
+    byId('try').classList.remove('solved');
+    byId('try-result').textContent = '';
+    byId('try-text').textContent = state.t >= timeline.length
+      ? (allDone ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 실행해 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
+      : '"클럭 한 번"으로 한 걸음씩, "명령 하나"로 명령 단위로 실행해 보세요. 중간에 예측 문제가 나옵니다.';
+  }
+}
+function answer(choice) {
+  const pending = pendingAsk();
+  if (!pending) return;
+  if (choice !== pending.ask.answer) {
+    state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`;
+    byId('announcement').textContent = state.wrong;
+    syncTask();
+    return;
+  }
+  state.wrong = '';
+  answeredAsks[state.index].add(pending.k);
+  progress[state.index] = answeredAsks[state.index].size;
+  state.solvedText = `✓ 맞았습니다. ${pending.ask.why}`;
+  byId('announcement').textContent = state.solvedText;
+  runTick(() => syncTask());
+  syncTask();
+}
+
+function takeOver() {
+  if (!state.playing) return;
+  state.playing = false;
+  cancelTimers();
+  paint(state.t);
+  syncPlayback();
+}
+function resetProgram() {
+  cancelTimers();
+  state.t = 0;
+  state.wrong = '';
+  state.solvedText = '';
+  paint(0);
+  syncTask();
+}
+byId('run-tick').onclick = () => {
+  takeOver();
+  if (state.busy || pendingAsk()) { syncTask(); return; }
+  state.solvedText = '';
+  runTick(() => syncTask());
+  syncTask();
+  byId('announcement').textContent = byId('readout').textContent;
+};
+// Run ticks until the next instruction starts, stopping at a prediction.
+byId('run-instr').onclick = () => {
+  takeOver();
+  state.solvedText = '';
+  const step = () => {
+    if (state.t >= timeline.length || pendingAsk()) { syncTask(); return; }
+    runTick(() => { if (timeline[state.t] && timeline[state.t].kind !== 'F1') step(); else syncTask(); });
+  };
+  if (!state.busy) step();
+  syncTask();
+};
+byId('restart').onclick = () => {
+  state.playing = false;
+  resetProgram();
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 다시 시작합니다.';
+};
+
+// ---------- Demo playback ----------
+function demoTick() {
+  if (state.busy) { state.wait = 200; return; }
+  if (state.t >= timeline.length) {
+    resetProgram();
+    state.wait = 1200;
+    return;
+  }
+  runTick();
+  state.wait = state.t + 1 >= timeline.length ? 3600 : 1150;
+}
+function tick(now) {
+  frame = null;
+  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
+  lastFrame = now;
+  if (state.playing) {
+    state.wait -= elapsed;
+    if (state.wait <= 0) demoTick();
+  }
+  movePackets(now);
+  if (state.playing || packets.length) frame = requestAnimationFrame(tick);
+  else lastFrame = null;
+}
+function kick() {
+  if (frame === null) frame = requestAnimationFrame(tick);
+}
+function syncPlayback() {
+  const reduced = motion.matches;
+  if (reduced) state.playing = false;
+  byId('status').textContent = reduced ? '모션 감소 · 직접 실행' : state.playing ? '자동 실행 중' : '직접 실행';
+  byId('pause').textContent = state.playing ? '일시정지' : '자동 실행';
+  byId('pause').disabled = reduced;
+  byId('replay').disabled = reduced;
+  if (state.playing) kick();
+  paint(state.t);
+  syncTask();
+}
+
+// ---------- Steps and routing ----------
+function showStep(index, announce = true) {
+  cancelTimers();
+  state.index = index;
+  if (!state.userPaused) state.playing = !motion.matches;
+  const s = lesson[index];
+  timeline = buildTimeline(s.memory);
+  buildScene();
+  buildPanel();
+  byId('step-title').textContent = s.title;
+  byId('body').textContent = s.body;
+  byId('takeaway').textContent = s.takeaway;
+  byId('scene-desc').textContent = s.description;
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  resetProgram();
+  state.wait = 1000;
+  syncPlayback();
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
+}
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/cpu/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/cpu\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+byId('pause').onclick = () => {
+  state.playing = !state.playing;
+  state.userPaused = !state.playing;
+  if (state.playing) { if (state.t >= timeline.length) resetProgram(); state.wait = 400; }
+  syncPlayback();
+  byId('announcement').textContent = byId('status').textContent;
+};
+byId('replay').onclick = () => {
+  state.playing = true;
+  state.userPaused = false;
+  resetProgram();
+  state.wait = 400;
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 자동 실행';
+};
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches && !state.userPaused) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/cpu/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

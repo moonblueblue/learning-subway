@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="3×3 그림이 곱하고 더하고 음수를 자르는 뉴런 두 개를 지나 출력 뉴런에서 세로선과 가로선으로 판단되는 과정, 조금 다른 그림을 알아보는 까닭, 가중치를 역전파로 배우는 모습을 따라가 보세요.">
+<title>신경망 · 레슨 7.11</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
+.cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
+.cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
+.cell.changed .top{animation:flash 1s ease-out}
+@keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
+.cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
+.cell.empty .cell-value{fill:#9aa8a2}
+.address{font:600 9px var(--mono);fill:#6b7d76;text-anchor:start}
+.tag.name{transition:opacity .25s}
+.tag.name rect{stroke:var(--accent);stroke-width:1.1}
+.tag.name text{fill:var(--accent);font-weight:700}
+.bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bus.active{stroke:#7fa891}
+.packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
+.packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
+.packet-group.read .packet-label{fill:#3b4880}
+.code-area{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.code{list-style:none;counter-reset:line;margin:0;padding:10px 0;background:#1f2d29;border-radius:12px;color:#e8f2ec;font:600 1rem/1.5 var(--mono);flex:1 1 300px}
+.code li{counter-increment:line;padding:5px 14px 5px 46px;position:relative}
+.code li::before{content:counter(line);position:absolute;left:16px;color:#6f8a80}
+.code li.done{color:#8fa79c}
+.code li.current{background:#2f4a41;color:#ffffff}
+.code li.current::after{content:'다음';position:absolute;right:14px;color:#9fe3b6;font-size:.8125rem}
+.code-actions{display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
+.try-choices{display:flex;gap:6px;flex-wrap:wrap}
+.try-choices:empty{display:none}
+.dot.read{background:var(--response);border-color:var(--response)}
+.dot.write{background:var(--request);border-color:var(--request)}
+@media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.bus.inner{stroke:#c9d6ce;stroke-dasharray:3 3}
+.bus.main{stroke:#9fbfae;stroke-width:3}
+.cpu-area{fill:#e2ece5;stroke:#9fb7a9;stroke-width:1.2;stroke-dasharray:6 4}
+.board-tag rect{fill:#26322e;stroke:#26322e}.board-tag text{fill:#fff;font-weight:800}
+.cell .left{fill:#e6ebe8;stroke:#8c9d96}.cell .right{fill:#cfd8d4;stroke:#8c9d96}.cell .top{fill:#fff;stroke:#8c9d96}
+.cell.code .top{fill:#eef1fb;stroke:#7d88b4}.cell.code .left{fill:#dfe4f2;stroke:#7d88b4}.cell.code .right{fill:#c4cbe3;stroke:#7d88b4}
+.cell.code .cell-value{fill:#3c4a85;font-size:8.5px}
+.address{text-anchor:middle}
+.cell.active .top{fill:#fff1c9;stroke:#c9940f}
+.cell.next-pc .address{fill:var(--accent);font-weight:800}
+.part .face{stroke-width:.8;transition:fill .2s}
+.part.register .left{fill:#dbe9e2;stroke:#5f8f78}.part.register .right{fill:#c2d9cd;stroke:#5f8f78}.part.register .top{fill:#f3f8f5;stroke:#5f8f78}
+.part.control .left{fill:#eadcf0;stroke:#9a77ad}.part.control .right{fill:#d9c4e3;stroke:#9a77ad}.part.control .top{fill:#f7f0fa;stroke:#9a77ad}
+.part.alu .left{fill:#e4e1d3;stroke:#8f8763}.part.alu .right{fill:#d2cdb6;stroke:#8f8763}.part.alu .top{fill:#f7f5ec;stroke:#8f8763}
+.part.busy .top{fill:#fff1c9}
+.part-tag text{font:700 11.5px var(--mono)}
+.part.busy .part-tag rect{stroke:#c9940f;stroke-width:1.3}
+.packet-group.inner .packet,.packet-group.inner .packet-halo{fill:#9a77ad}
+.packet-group.inner .packet-label{fill:#5f3a73}
+.dot.inner{background:#9a77ad;border-color:#9a77ad}
+.memory-panel{flex:1 1 320px;display:flex;flex-direction:column;gap:8px}
+.phase-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.phases{list-style:none;display:flex;gap:4px;margin:0;padding:0}
+.phases li{padding:4px 12px;border:1px solid var(--border);border-radius:999px;font-size:.875rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.phases li.current{background:var(--accent);border-color:var(--accent);color:#fff}
+.clock{font:700 .9375rem var(--mono);color:var(--accent);margin-left:auto}
+.clock.tick{animation:bump .3s ease-out}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+.clock{display:inline-block}
+.memory-list{counter-reset:none;flex:none}
+.memory-list li{counter-increment:none;padding:3px 12px 3px 44px;display:flex;gap:10px}
+.memory-list li::before{content:none}
+.memory-list .addr{position:absolute;left:14px;color:#6f8a80}
+.memory-list li.data code{color:#bfe8cf}
+.memory-list li.ir{background:#2f4a41}
+.memory-list li.touched{box-shadow:inset 3px 0 #ffd34d}
+.memory-list .mark{margin-left:auto;color:#9fe3b6;font-size:.8125rem}
+.memory-list li.current::after{content:none}
+@media(prefers-reduced-motion:reduce){.clock.tick{animation:none}}
+@media(max-width:600px){.part-tag text{font-size:14px}.cell.code .cell-value{font-size:12px}}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+@media(max-width:600px){.packet-label{font-size:13px}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
+.bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
+.station .face{stroke-width:.8;transition:fill .2s}
+.station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
+.sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
+.station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.ssd .left{fill:#dfe4f2;stroke:#7a87b5}.station.ssd .right{fill:#c4cbe3;stroke:#7a87b5}.station.ssd .top{fill:#eaeef9;stroke:#7a87b5}
+.station.ram .left{fill:#acd5b9;stroke:#5f9474}.station.ram .right{fill:#80b596;stroke:#5f9474}.station.ram .top{fill:#dcf1e2;stroke:#5f9474}
+.station.cpu .left{fill:#3f4f4a;stroke:#26322e}.station.cpu .right{fill:#2f3d39;stroke:#26322e}.station.cpu .top{fill:#5d6f69;stroke:#26322e}
+.station.active .top{fill:#fff1c9}
+.station.cpu.active .top{fill:#8a7d4a}
+.station.error.error .top{fill:#f6b893;stroke:#a24c14}
+.station-tag text{font-weight:800}
+.tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
+.tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
+.tag.empty{display:none}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.dot.file{background:#fff;border-color:#8c9d96}.dot.tool{background:#eadcf0;border-color:#9a77ad}.dot.errordot{background:#ffd9c2;border-color:#a24c14}
+.stage-list{list-style:none;display:flex;flex-wrap:wrap;gap:4px;margin:0;padding:0}
+.stage-list li{padding:3px 10px;border:1px solid var(--border);border-radius:999px;font-size:.8125rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.stage-list li.done{color:var(--accent);border-color:#9fb7a9}
+.stage-list li.current{background:var(--accent);color:#fff;border-color:var(--accent)}
+.work-title{font-weight:800;color:var(--ink)}
+.work-panel.error .work-title{color:#a24c14}
+.work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
+.work li{padding-left:16px}
+@media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+.station.app .left{fill:#bfe2cb;stroke:#4f8f6b}.station.app .right{fill:#9fcfb1;stroke:#4f8f6b}.station.app .top{fill:#e2f5e8;stroke:#4f8f6b}
+.station.layer .left{fill:#dfe4f2;stroke:#5362a0}.station.layer .right{fill:#c4cbe3;stroke:#5362a0}.station.layer .top{fill:#eef1fb;stroke:#5362a0}
+.station.wire .left{fill:#d7dfdb;stroke:#8c9d96}.station.wire .right{fill:#b8c6c0;stroke:#8c9d96}.station.wire .top{fill:#eef1ef;stroke:#8c9d96}
+.station.router .left{fill:#f6dfc8;stroke:#c26a1e}.station.router .right{fill:#ecc8a4;stroke:#c26a1e}.station.router .top{fill:#fdf2e7;stroke:#c26a1e}
+.work li{white-space:pre-wrap}
+.dot.ssddot{background:#eaeef9;border-color:#7a87b5}.dot.ramdot{background:#dcf1e2;border-color:#5f9474}.dot.wiredot{background:#eef1ef;border-color:#8c9d96}.dot.appdot{background:#e2f5e8;border-color:#4f8f6b}.dot.layerdot{background:#eef1fb;border-color:#5362a0}.dot.routerdot{background:#fdf2e7;border-color:#c26a1e}
+</style>
+<link rel="stylesheet" href="../shared/course.css">
+<script defer src="../shared/catalog.js"></script>
+<script defer src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">7장 규모와 지능 · 레슨 7.11</p>
+    <h1>신경망</h1>
+    <p class="lead">숫자를 곱하고 더하는 층을 쌓으면 어떻게 그림을 알아볼까요? 3×3 그림 하나가 작은 신경망을 지나 세로선인지 가로선인지 판단되는 과정을 계산해 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">작은 신경망</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">3×3 그림이 숨은 뉴런 둘로 갈라졌다가 출력 뉴런에서 합쳐지는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="code-area">
+            <div class="memory-panel work-panel" id="work-panel">
+              <ol class="stage-list" id="stage-list" aria-label="정거장"></ol>
+              <p class="work-title" id="work-title"></p>
+              <ol class="code memory-list work" id="work" aria-label="지금 코드의 모습"></ol>
+            </div>
+            <div class="code-actions">
+              <button class="action primary" id="run-stage" type="button">다음 단계</button>
+              <button class="action" id="restart" type="button">처음부터</button>
+            </div>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <button class="action" id="view-reset" type="button">원래 보기</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="dot file"></i>입력 그림</span><span><i class="dot tool"></i>숨은 뉴런</span><span><i class="dot errordot"></i>틀린 답</span></div>
+          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+function setCamera(x, y, zoom) {
+  camera.zoom = clamp(zoom, 1, maxZoom);
+  const width = viewWidth / camera.zoom;
+  const height = viewHeight / camera.zoom;
+  camera.x = clamp(x, 0, viewWidth - width);
+  camera.y = clamp(y, 0, viewHeight - height);
+  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
+  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
+  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
+  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
+  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
+}
+
+function zoomBetween(nextZoom, from, to = from) {
+  const zoom = clamp(nextZoom, 1, maxZoom);
+  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
+            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
+}
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+function viewportPoint(event) {
+  const rect = viewport.getBoundingClientRect();
+  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
+  return {
+    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
+    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+  };
+}
+
+function pointerGeometry() {
+  const [a, b] = pointers.values();
+  if (!b) return { point: a, distance: 0 };
+  return {
+    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    distance: Math.hypot(a.x - b.x, a.y - b.y),
+  };
+}
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+function zoomBy(delta) {
+  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
+  zoomBetween(camera.zoom + delta, center);
+  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
+}
+
+function resetView() {
+  pointers.clear();
+  viewport.classList.remove('is-dragging');
+  setCamera(0, 0, 1);
+  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
+}
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+byId('view-reset').onclick = resetView;
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+// Code on its way to the CPU. Each step is a row of stations (files and tools) and a list of stages.
+// A stage carries the work from one station to the next (`from` → `to`, `label` on the moving dot),
+// then shows what the work looks like now (`title`, `lines`) and what each station holds (`holds`).
+// `ask` is a prediction answered before the stage runs; `error` marks a stage that stops with an error.
+const kinds = { app: '응용', layer: '계층', wire: '전선', router: '라우터' };
+// A message travels down the sender's layers, across the wire, and up the receiver's layers.
+// Each layer adds (or removes) its own header; the work panel shows the nested envelopes.
+// A 3×3 picture goes through two hidden neurons to one output that says "vertical" or "horizontal".
+// Neuron 1: +1 for the top and bottom middle pixels, −1 for the left and right middle pixels, then ReLU.
+// Neuron 2: the opposite weights. Output: neuron 1 − neuron 2; above 0 means vertical.
+const NET = [['img', '3×3 그림', 'file', [0, 0]], ['h1', '뉴런 1 (세로 찾기)', 'tool', [11, -13]], ['h2', '뉴런 2 (가로 찾기)', 'tool', [11, 13]], ['out', '출력', 'cpu', [22, 0]]];
+const NET_LINKS = [['img', 'h1'], ['img', 'h2'], ['h1', 'out'], ['h2', 'out']];
+const lesson = [
+  {
+    label: '뉴런 하나',
+    readingStage: 2,
+    title: '뉴런은 곱해서 더하고, 음수는 0으로 바꾼다',
+    body: '인공 뉴런은 아주 단순한 계산기입니다. 입력마다 가중치를 곱해 모두 더하고, 그 합이 음수면 0, 아니면 그대로 내보냅니다(ReLU). 7.10의 "w × 기온"을 입력 여러 개로 늘린 것입니다. 3×3 그림의 칸(켜짐 1, 꺼짐 0)을 입력으로 받는 뉴런 1은 가운데 세로줄의 위·아래 칸에 +1, 가운데 가로줄의 왼쪽·오른쪽 칸에 −1을 곱합니다.',
+    takeaway: '세로선 그림에서 뉴런 1은 1 + 1 − 0 − 0 = 2를 내보냅니다. 가중치가 "어떤 모양을 좋아하는지"를 정합니다. 이 뉴런은 세로선을 좋아하고 가로선을 싫어합니다.',
+    description: '왼쪽에 3×3 그림, 오른쪽에 뉴런 1이 놓여 있습니다.',
+    stations: [['img', '3×3 그림', 'file'], ['h1', '뉴런 1 (세로 찾기)', 'tool']],
+    start: { title: '입력 그림 (세로선)', lines: ['. # .', '. # .', '. # .', '뉴런 1의 가중치:', ' 0 +1  0', '−1  0 −1', ' 0 +1  0'], holds: { img: '세로선' } },
+    stages: [
+      { from: 'img', to: 'h1', label: '칸 9개', title: '곱해서 더하기', lines: ['위 가운데 1 × (+1) = 1', '아래 가운데 1 × (+1) = 1', '왼쪽 가운데 0 × (−1) = 0', '오른쪽 가운데 0 × (−1) = 0', '합 = 2'], text: '켜진 칸과 가중치를 곱해 더합니다.', holds: { h1: '합 2' },
+        ask: { q: '가로선 그림(가운데 줄 # # #)을 넣으면 뉴런 1의 합은?', choices: ['−2', '2', '0'], answer: '−2', why: '위·아래 가운데는 꺼져 0, 왼쪽·오른쪽 가운데가 켜져 1 × (−1) 두 번 = −2입니다.' } },
+      { from: 'h1', to: 'h1', label: 'ReLU', title: '음수는 0으로', lines: ['세로선: 2 → 2', '가로선: −2 → 0'], text: '합이 음수면 0으로 바꿉니다.', holds: { h1: '세로선 → 2' },
+        ask: { q: '음수를 0으로 바꾸는 단계가 하는 일은?', choices: ['"이 모양이 아니다"를 0으로 조용히 만든다', '숫자를 더 크게 만든다'], answer: '"이 모양이 아니다"를 0으로 조용히 만든다', why: '찾는 모양이 없으면 아예 신호를 내지 않게 합니다. 이 꺾임 덕분에 층을 쌓는 의미가 생깁니다.' } },
+    ],
+  },
+  {
+    label: '층 쌓기',
+    readingStage: 4,
+    title: '뉴런 여러 개의 답을 다음 층이 다시 합친다',
+    body: '뉴런 2는 뉴런 1과 반대 가중치를 가져 가로선을 좋아합니다. 두 뉴런이 한 층(숨은 층)을 이루고, 그 답을 출력 뉴런이 다시 곱해 더합니다. 출력 = 뉴런 1 × (+1) + 뉴런 2 × (−1)이고, 0보다 크면 "세로선", 작으면 "가로선"이라고 답합니다.',
+    takeaway: '세로선은 뉴런 1만 켜져 출력 2(세로선), 가로선은 뉴런 2만 켜져 출력 −2(가로선)입니다. 앞층은 작은 특징을 찾고, 뒷층은 특징들을 합쳐 판단합니다.',
+    description: '왼쪽에 그림, 가운데 위아래에 뉴런 1과 2, 오른쪽에 출력이 있습니다. 그림이 두 뉴런으로 갈라졌다가 출력에서 합쳐집니다.',
+    stations: NET,
+    links: NET_LINKS,
+    start: { title: '입력 그림 (가로선)', lines: ['. . .', '# # #', '. . .'], holds: { img: '가로선' } },
+    stages: [
+      { from: 'img', to: 'h1', label: '칸 9개', title: '뉴런 1', lines: ['합 = −2 → ReLU → 0'], text: '뉴런 1(세로 찾기)은 조용합니다.', holds: { h1: '0' } },
+      { from: 'img', to: 'h2', label: '칸 9개', title: '뉴런 2', lines: ['왼쪽·오른쪽 가운데 +1 두 번 = 2 → ReLU → 2'], text: '뉴런 2(가로 찾기)가 켜집니다.', holds: { h2: '2' } },
+      { from: 'h1', to: 'out', label: '0', title: '출력에 모으기', lines: ['출력 = 0 × (+1) + …'], text: '출력 뉴런이 두 답을 모읍니다.', holds: { out: '모으는 중' } },
+      { from: 'h2', to: 'out', label: '2', title: '판단', lines: ['출력 = 0 × (+1) + 2 × (−1) = −2', '0보다 작음 → "가로선"'], text: '출력이 −2라서 가로선이라고 답합니다.', holds: { out: '−2 → 가로선' },
+        ask: { q: '세로선 그림을 넣으면 출력은?', choices: ['2 → 세로선', '−2 → 가로선', '0'], answer: '2 → 세로선', why: '뉴런 1은 2, 뉴런 2는 0이므로 2 × (+1) + 0 × (−1) = 2입니다.' } },
+    ],
+  },
+  {
+    label: '조금 다른 그림',
+    readingStage: 4,
+    title: '중요한 특징만 보므로 조금 달라도 알아본다',
+    body: '사람이 쓴 그림은 늘 깔끔하지 않습니다. 세로선 옆 구석에 점이 하나 더 찍혀 있으면 어떨까요? 뉴런 1과 2는 구석 칸에 가중치 0을 주므로 그 점을 무시합니다. 중요한 칸만 보는 덕분에 조금 다른 그림도 같은 답을 냅니다.',
+    takeaway: '구석에 점이 있어도 출력은 여전히 2(세로선)입니다. 반대로 가중치가 0인 곳에만 차이가 있는 그림은 구별하지 못합니다. 무엇을 보고 무엇을 무시할지가 모두 가중치에 들어 있습니다.',
+    description: '같은 장면입니다. 구석에 점이 하나 더 있는 세로선을 넣습니다.',
+    stations: NET,
+    links: NET_LINKS,
+    start: { title: '입력 그림 (구석에 점이 있는 세로선)', lines: ['# # .', '. # .', '. # .'], holds: { img: '점 있는 세로선' } },
+    stages: [
+      { from: 'img', to: 'h1', label: '칸 9개', title: '뉴런 1', lines: ['구석 칸 가중치 0 → 무시', '합 = 1 + 1 = 2 → 2'], text: '뉴런 1은 구석의 점을 무시합니다.', holds: { h1: '2' },
+        ask: { q: '구석의 점이 뉴런 1의 합을 바꿀까요?', choices: ['바꾸지 않는다 (가중치 0)', '1 늘린다'], answer: '바꾸지 않는다 (가중치 0)', why: '구석 칸의 가중치가 0이라 켜져도 1 × 0 = 0입니다.' } },
+      { from: 'img', to: 'h2', label: '칸 9개', title: '뉴런 2', lines: ['합 = −2 → 0'], text: '뉴런 2는 조용합니다.', holds: { h2: '0' } },
+      { from: 'h1', to: 'out', label: '2', title: '모으기', lines: ['2 × (+1)'], text: '출력이 모읍니다.', holds: { out: '모으는 중' } },
+      { from: 'h2', to: 'out', label: '0', title: '판단', lines: ['출력 = 2 → "세로선"'], text: '여전히 세로선이라고 답합니다.', holds: { out: '2 → 세로선' } },
+    ],
+  },
+  {
+    label: '가중치는 배운다',
+    readingStage: 4,
+    title: '가중치는 사람이 아니라 예시로 배운다',
+    body: '여기서는 가중치를 사람이 정했지만, 실제 신경망은 7.10처럼 예시로 배웁니다. 무작위 가중치에서 시작해 정답이 붙은 그림을 넣고, 출력이 틀린 만큼 마지막 층부터 거꾸로 각 가중치의 책임을 계산해 조금씩 고칩니다(역전파). 손글씨 숫자 그림(28 × 28 = 784칸)을 읽는 신경망은 가중치가 수십만 개이고, 층이 깊어질수록 선 → 모양 → 숫자처럼 점점 큰 특징을 찾습니다.',
+    takeaway: '곱하고 더하고 음수를 자르는 단순한 계산을 수백만 번 겹치고, 그 숫자들을 예시로 맞추면 그림, 말, 글을 다루는 모델이 됩니다. 이 곱셈들을 동시에 하는 데 6.7의 GPU가 쓰입니다.',
+    description: '같은 장면입니다. 처음에는 무작위 가중치라 틀리고, 틀린 만큼 고칩니다.',
+    stations: NET,
+    links: NET_LINKS,
+    start: { title: '학습 시작', lines: ['가중치: 무작위', '예시: 세로선 그림 (정답: 세로선)'], holds: { img: '세로선 · 정답 세로' } },
+    stages: [
+      { from: 'img', to: 'h1', label: '칸 9개', title: '무작위 가중치로 계산', lines: ['뉴런 1: 0.3 · 뉴런 2: 0.8'], text: '처음에는 가중치가 엉망입니다.', holds: { h1: '0.3', h2: '0.8' } },
+      { from: 'h2', to: 'out', label: '0.8', title: '틀린 답', lines: ['출력 = 0.3 − 0.8 = −0.5 → "가로선" (틀림)'], error: 'out', text: '세로선을 가로선이라고 틀립니다.', holds: { out: '−0.5 · 틀림' },
+        ask: { q: '틀린 뒤 컴퓨터가 하는 일은?', choices: ['틀린 만큼 각 가중치를 조금씩 고친다', '그 그림을 지운다'], answer: '틀린 만큼 각 가중치를 조금씩 고친다', why: '7.10의 경사 하강법을 층마다 거꾸로 적용합니다. 세로 칸의 가중치는 키우고 가로 칸은 줄이는 쪽으로 움직입니다.' } },
+      { from: 'out', to: 'h1', label: '고치기', title: '거꾸로 고치기 (역전파)', lines: ['출력 오차 → 뉴런 1, 2의 책임 계산 → 그림 칸 가중치까지 고침', '예시 수천 개로 되풀이하면 세로 · 가로 찾는 가중치가 생김'], reset: 'out', text: '오차를 거꾸로 전해 모든 가중치를 고칩니다.', holds: { h1: '가중치 고침', h2: '가중치 고침' } },
+      { from: 'h1', to: 'out', label: '다시 계산', title: '배운 뒤', lines: ['출력 = 2 → "세로선" (맞음)'], text: '되풀이한 뒤에는 맞게 답합니다.', holds: { out: '2 → 세로선' },
+        ask: { q: '784칸 그림을 숨은 뉴런 100개에 모두 잇는다면 그 층의 가중치는 몇 개일까요?', choices: ['78,400개', '884개', '100개'], answer: '78,400개', why: '입력 784개 × 뉴런 100개 = 78,400개의 곱하기가 있습니다. 그래서 동시에 계산하는 GPU가 필요합니다.' } },
+    ],
+  },
+];
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'neural-lab:v1:step';
+const state = { index: 0, s: 0, playing: !motion.matches, userPaused: false, wait: 0, busy: false, wrong: '', solvedText: '' };
+const progress = lesson.map(() => 0);
+const answered = lesson.map(() => new Set());
+let packets = [];
+let frame = null;
+let lastFrame = null;
+let timers = [];
+
+function svg(name, attrs, parent) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
+  if (parent) parent.append(element);
+  return element;
+}
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const laneHeight = 4;
+const gap = 9;   // u between stations
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+byId('grid').setAttribute('d', gridLines.join(''));
+
+function drawShadow(node, half) {
+  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
+  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
+}
+function drawBox(node, h, H) {
+  const faces = {
+    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
+    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
+    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
+  };
+  for (const [name, corners] of Object.entries(faces)) svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
+  svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
+}
+
+let plates = [];
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  plate.label.setAttribute('x', plate.x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
+function addPlate(node, className, x, y, text, { pad = 1.4, round = false } = {}) {
+  const group = svg('g', { class: className }, node);
+  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
+  plate.label.textContent = text;
+  plates.push(plate);
+  sizePlate(plate);
+  return plate;
+}
+function setPlate(plate, text) {
+  plate.group.classList.toggle('empty', !text);
+  if (plate.label.textContent === text) return;
+  plate.label.textContent = text;
+  sizePlate(plate);
+}
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Scene: stations in a row ----------
+const shapeOf = { app: [1.1, 14], layer: [1.1, 10], wire: [1.2, 5], router: [1.1, 12], file: [.9, 7], tool: [1.15, 13], ssd: [1.3, 12], ram: [1.3, 10], cpu: [1.1, 8] };
+let views = {};
+// A station's floor position: its own [u, v] when given, otherwise its place in the row.
+const posOf = (id) => {
+  const stations = lesson[state.index].stations;
+  const k = stations.findIndex(([sid]) => sid === id);
+  return stations[k][3] ?? [k * gap, 0];
+};
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  views = {};
+  const stations = lesson[state.index].stations;
+  // Links: the step's own list, or each station to the next one in the row.
+  const pairs = lesson[state.index].links ?? stations.slice(1).map(([id], k) => [stations[k][0], id]);
+  for (const [a, b] of pairs) {
+    const d = 'M' + [posOf(a), posOf(b)].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
+    svg('path', { class: 'casing', d }, byId('casings'));
+    svg('path', { class: 'bus', d }, byId('links'));
+  }
+  stations.forEach(([id, name, kind]) => {
+    const [h, H] = shapeOf[kind];
+    const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(...posOf(id)).join(' ')})` }, byId('nodes'));
+    drawShadow(node, h);
+    drawBox(node, h, H);
+    if (kind === 'file') {
+      // Lines of text on a sheet.
+      for (let r = 0; r < 3; r++) {
+        const y = -h + .45 + r * .5;
+        svg('path', { class: 'sheet-line', d: `M${point(-h + .35, y, H)}L${point(h - .35 - (r === 2 ? .5 : 0), y, H)}` }, node);
+      }
+    }
+    if (kind === 'cpu') {
+      const mark = [[-.45, -.45, H], [.45, -.45, H], [.45, .45, H], [-.45, .45, H]];
+      svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, node);
+    }
+    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    const holds = addPlate(node, 'tag holds', 0, -H - 14 * h - 14, '', { pad: 1.2 });
+    views[id] = { node, holds };
+  });
+  const spots = stations.map(([id]) => posOf(id));
+  const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
+  const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
+  const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
+  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// ---------- The moving dot ----------
+function travel(from, to, label, done) {
+  if (motion.matches) { done(); return; }
+  const group = svg('g', { class: 'packet-group' }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  // Screen points, pulled in a little from both stations so the dot starts and ends beside the boxes.
+  const a = flat(...from, laneHeight), b = flat(...to, laneHeight);
+  const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const inset = length > 40 ? 18 / length : 0;
+  const start = [mix(a[0], b[0], inset), mix(a[1], b[1], inset)];
+  const end = [mix(b[0], a[0], inset), mix(b[1], a[1], inset)];
+  packets.push({ group, start: performance.now(), from: start, to: end, ms: 950, done });
+  kick();
+}
+// Callbacks run after the list is updated, so a callback that starts a new trip is not lost.
+function movePackets(now) {
+  const finished = [];
+  packets = packets.filter((packet) => {
+    const t = (now - packet.start) / packet.ms;
+    if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
+    const ease = t * t * (3 - 2 * t);
+    const x = mix(packet.from[0], packet.to[0], ease), y = mix(packet.from[1], packet.to[1], ease);
+    packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    return true;
+  });
+  finished.forEach((done) => done());
+}
+function later(ms, fn) {
+  if (motion.matches) { fn(); return; }
+  timers.push(setTimeout(fn, ms));
+}
+function cancelAll() {
+  timers.forEach(clearTimeout);
+  timers = [];
+  packets.forEach((packet) => packet.group.remove());
+  packets = [];
+  state.busy = false;
+}
+
+// ---------- State after s stages ----------
+function snapshot(s) {
+  const step = lesson[state.index];
+  const holds = { ...step.start.holds };
+  const errors = new Set();
+  let view = step.start;
+  for (const stage of step.stages.slice(0, s)) {
+    Object.assign(holds, stage.holds);
+    if (stage.reset) errors.delete(stage.reset);
+    if (stage.error) errors.add(stage.error);
+    view = stage;
+  }
+  return { holds, errors, view };
+}
+function paint() {
+  const step = lesson[state.index];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
+  for (const [id] of step.stations) {
+    setPlate(views[id].holds, holds[id] ?? '');
+    views[id].holds.group.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
+  }
+  byId('work-title').textContent = view.title;
+  byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
+  byId('work-panel').classList.toggle('error', Boolean(last?.error));
+  byId('readout').textContent = last ? last.text : '"다음 단계"를 누르면 패킷이 오갑니다.';
+  const finished = state.s >= step.stages.length;
+  const blocked = !state.playing && (finished || state.busy || Boolean(pendingAsk()));
+  byId('run-stage').disabled = blocked;
+  byId('run-stage').textContent = finished ? '끝까지 왔습니다' : '다음 단계';
+  [...byId('stage-list').children].forEach((li, k) => {
+    li.classList.toggle('done', k < state.s);
+    li.classList.toggle('current', k === state.s);
+  });
+}
+
+function runStage(done) {
+  const step = lesson[state.index];
+  const stage = step.stages[state.s];
+  if (!stage || state.busy) return;
+  state.busy = true;
+  views[stage.from].node.classList.add('active');
+  travel(posOf(stage.from), posOf(stage.to), stage.label, () => {
+    state.s++;
+    state.busy = false;
+    paint();
+    byId('announcement').textContent = stage.text;
+    done?.();
+  });
+  paint();
+}
+
+// ---------- Predictions ----------
+function pendingAsk() {
+  if (state.playing) return null;
+  const stage = lesson[state.index].stages[state.s];
+  return stage?.ask && !answered[state.index].has(state.s) ? stage.ask : null;
+}
+const asksCount = () => lesson[state.index].stages.filter((stage) => stage.ask).length;
+function syncTask() {
+  const choices = byId('try-choices');
+  choices.replaceChildren();
+  const ask = pendingAsk();
+  if (ask && !state.busy) {
+    byId('try').classList.remove('solved');
+    byId('try-text').textContent = ask.q;
+    byId('try-result').textContent = state.wrong || state.solvedText;
+    for (const choice of ask.choices) {
+      const button = Object.assign(document.createElement('button'), { type: 'button', className: 'action choice-button', textContent: choice });
+      button.addEventListener('click', () => answer(choice));
+      choices.append(button);
+    }
+  } else if (state.solvedText) {
+    byId('try').classList.add('solved');
+    byId('try-text').textContent = state.solvedText;
+    byId('try-result').textContent = '';
+  } else {
+    byId('try').classList.remove('solved');
+    byId('try-result').textContent = '';
+    byId('try-text').textContent = state.s >= lesson[state.index].stages.length
+      ? (progress[state.index] >= asksCount() ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
+      : '"다음 단계"를 눌러 그림을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.';
+  }
+}
+function answer(choice) {
+  const ask = pendingAsk();
+  if (!ask) return;
+  if (choice !== ask.answer) {
+    state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`;
+    byId('announcement').textContent = state.wrong;
+    syncTask();
+    return;
+  }
+  state.wrong = '';
+  answered[state.index].add(state.s);
+  progress[state.index] = answered[state.index].size;
+  state.solvedText = `✓ 맞았습니다. ${ask.why}`;
+  byId('announcement').textContent = state.solvedText;
+  runStage(() => syncTask());
+  syncTask();
+}
+
+// Taking over from the demo starts the learner's own run from the beginning, so no prediction is skipped.
+function takeOver() {
+  if (!state.playing) return;
+  state.playing = false;
+  resetRun();
+  syncPlayback();
+}
+function resetRun() {
+  cancelAll();
+  state.s = 0;
+  state.wrong = '';
+  state.solvedText = '';
+  paint();
+  syncTask();
+}
+byId('run-stage').onclick = () => {
+  takeOver();
+  if (state.busy || pendingAsk()) { syncTask(); return; }
+  state.solvedText = '';
+  runStage(() => syncTask());
+  syncTask();
+};
+byId('restart').onclick = () => {
+  state.playing = false;
+  resetRun();
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 다시 시작합니다.';
+};
+
+// ---------- Demo ----------
+function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
+  if (state.busy) { state.wait = 200; return; }
+  if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
+  runStage();
+  state.wait = state.s + 1 >= lesson[state.index].stages.length ? 4200 : 2600;
+}
+function tick(now) {
+  frame = null;
+  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
+  lastFrame = now;
+  if (state.playing) {
+    state.wait -= elapsed;
+    if (state.wait <= 0) demoTick();
+  }
+  movePackets(now);
+  if (state.playing || packets.length) frame = requestAnimationFrame(tick);
+  else lastFrame = null;
+}
+function kick() {
+  if (frame === null) frame = requestAnimationFrame(tick);
+}
+function syncPlayback() {
+  const reduced = motion.matches;
+  if (reduced) state.playing = false;
+  byId('status').textContent = reduced ? '모션 감소 · 직접 실행' : state.playing ? '자동 실행 중' : '직접 실행';
+  byId('pause').textContent = state.playing ? '일시정지' : '자동 실행';
+  byId('pause').disabled = reduced;
+  byId('replay').disabled = reduced;
+  if (state.playing) kick();
+  paint();
+  syncTask();
+}
+
+// ---------- Steps and routing ----------
+function showStep(index, announce = true) {
+  cancelAll();
+  state.index = index;
+  if (!state.userPaused) state.playing = !motion.matches;
+  const s = lesson[index];
+  buildScene();
+  byId('stage-list').replaceChildren(...s.stages.map((stage) => {
+    const names = Object.fromEntries(s.stations.map(([id, name]) => [id, name]));
+    return Object.assign(document.createElement('li'), { textContent: `${names[stage.from]} → ${names[stage.to]}` });
+  }));
+  byId('step-title').textContent = s.title;
+  byId('body').textContent = s.body;
+  byId('takeaway').textContent = s.takeaway;
+  byId('scene-desc').textContent = s.description;
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  resetRun();
+  state.wait = 1000;
+  syncPlayback();
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
+}
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/neural/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/neural\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+byId('pause').onclick = () => {
+  state.playing = !state.playing;
+  state.userPaused = !state.playing;
+  if (state.playing) { if (state.s >= lesson[state.index].stages.length) resetRun(); state.wait = 400; }
+  syncPlayback();
+  byId('announcement').textContent = byId('status').textContent;
+};
+byId('replay').onclick = () => {
+  state.playing = true;
+  state.userPaused = false;
+  resetRun();
+  state.wait = 400;
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 자동 실행';
+};
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches && !state.userPaused) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/neural/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="평균과 중앙값, 드문 병 검사로 보는 조건부 확률, 표본의 크기와 치우침, 상관과 인과의 차이를 문제로 익혀 보세요.">
+<title>확률과 통계 · 레슨 8B.2</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.stage-top h2{font-size:1rem}
+.score{color:var(--accent);font:700 .875rem var(--mono)}
+.case{margin:18px;padding:16px 18px;border-radius:14px;background:#eef5ed;border:1px solid var(--border);display:grid;gap:6px}
+.case strong{color:var(--accent);font-size:.875rem}
+.case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
+.items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
+.item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
+.item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
+.workspace>*,.items>li,.item>*{min-width:0}
+.item-text.code{font:600 .9375rem/1.5 var(--mono);white-space:pre;overflow-x:auto;background:#1f2d29;color:#e8f2ec;padding:8px 12px;border-radius:8px;max-width:100%}
+.choices{display:flex;gap:6px}
+.choice{min-width:68px}
+.choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
+.choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
+.feedback{font-size:.9375rem;color:var(--muted);line-height:1.6}
+.feedback:empty{display:none}
+.feedback b{margin-right:4px}
+.item.right{border-color:var(--accent);background:#f6fbf7}
+.item.right .feedback b{color:var(--accent)}
+.item.wrong{border-color:#a24c14;background:#fffaf5}
+.item.wrong .feedback b{color:#a24c14}
+.think{margin:0 18px 18px;padding:14px 16px;border-radius:12px;border:1px dashed #9fb7a9;display:grid;gap:10px}
+.think label{font-weight:700}
+.think textarea{font:inherit;min-height:84px;padding:10px 12px;border:1px solid #9fb7a9;border-radius:10px;resize:vertical}
+.think .sample-answer{color:var(--muted);line-height:1.7}
+.think .sample-answer[hidden]{display:none}
+.done{margin:0 18px 18px;padding:12px 14px;border-radius:10px;background:#d2f4dd;color:#0f5a3c;font-weight:700}
+.done[hidden]{display:none}
+.timeline{border-top:1px solid var(--border)}
+.truth{margin:0 18px 14px}
+.truth[hidden]{display:none}
+.truth table{border-collapse:collapse;font:700 1rem var(--mono);margin:0 auto}
+.truth th,.truth td{border:1px solid var(--border);padding:6px 18px;text-align:center}
+.truth th{background:#eef5ed;color:var(--accent);font-family:system-ui,sans-serif}
+.truth td.blank{color:#9aa8a2}
+.truth td.filled{background:#d2f4dd;color:#0f5a3c}
+</style>
+<link rel="stylesheet" href="../shared/course.css">
+<script defer src="../shared/catalog.js"></script>
+<script defer src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">8장 심화 트랙 · 8B 인공지능 · 레슨 8B.2 · 실습</p>
+    <h1>확률과 통계</h1>
+    <p class="lead">불확실한 것을 어떻게 수로 다룰까요? 용돈, 병 검사, 동전, A/B 테스트 예로 데이터를 요약하고 확률로 판단하는 방법을 문제로 확인해 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="practice-heading">
+        <div class="stage-top"><h2 id="practice-heading">문제 풀기</h2><span class="score" id="score" aria-live="polite"></span></div>
+        <div class="case"><strong>문제</strong><p id="case"></p></div>
+        <div class="truth" id="table" hidden></div>
+        <ol class="items" id="items"></ol>
+        <p class="done" id="done" role="status" hidden></p>
+        <div class="think">
+          <label for="answer">생각해 보기 · <span id="question"></span></label>
+          <textarea id="answer" placeholder="자유롭게 적어 보세요. 저장되거나 채점되지 않습니다."></textarea>
+          <div><button class="action" id="reveal" type="button" aria-expanded="false">예시 답 보기</button></div>
+          <p class="sample-answer" id="sample" hidden></p>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const storageKey = 'statistics-lab:v1:step';
+const BENEFIT = 'true', RISK = 'false';
+const yes = '참', no = '거짓';
+// Each step is one exercise. `choices` are the two answers; items are statements or truth-table rows.
+// A step with `table` shows its items as a truth table whose last column the learner fills in.
+const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : 'false', why });
+const TF = [['true', '참'], ['false', '거짓']];
+const lesson = [
+  {
+    label: '대푯값',
+    example: ["용돈 3, 3, 4, 5, 35", "총 50을 5로 나눔", "평균 10 · 중앙값 4"],
+    title: '평균은 튀는 값 하나에 크게 흔들린다',
+    body: '데이터를 한 숫자로 요약할 때 평균(모두 더해 개수로 나눔)과 중앙값(크기순으로 줄 세운 가운데 값)을 씁니다. 대부분은 비슷하고 한 값만 크게 튀면, 평균은 그 값 쪽으로 끌려가지만 중앙값은 거의 그대로입니다. 그래서 소득이나 응답 시간처럼 튀는 값이 있는 데이터는 중앙값이나 상위 몇 %를 함께 봅니다.',
+    link: '2.4에서 경우의 수와 확률을 셌습니다. 7.10의 오차(차이 제곱의 평균)도 평균의 한 가지입니다.',
+    case: '다섯 명의 한 달 용돈(만 원)입니다. 다음 문장이 참인지 고르세요.\n\n3, 3, 4, 5, 35',
+    choices: [['true', '참'], ['false', '거짓']],
+    items: [
+      { text: '평균은 10만 원이다.', answer: 'true', why: '(3 + 3 + 4 + 5 + 35) ÷ 5 = 50 ÷ 5 = 10입니다.' },
+      { text: '중앙값은 4만 원이다.', answer: 'true', why: '크기순 3, 3, 4, 5, 35의 가운데(세 번째) 값은 4입니다.' },
+      { text: '평균 10만 원이 이 다섯 명의 보통 용돈을 잘 나타낸다.', answer: 'false', why: '다섯 명 중 네 명이 5만 원 이하입니다. 35만 원 한 명이 평균을 끌어올렸습니다.' },
+      { text: '35를 5로 바꾸면 평균은 크게 바뀌지만 중앙값은 그대로다.', answer: 'true', why: '평균은 (3 + 3 + 4 + 5 + 5) ÷ 5 = 4로 떨어지지만, 중앙값은 여전히 4입니다.' },
+    ],
+    question: '웹 서비스 응답 시간을 "평균 0.2초"로만 보고하면 무엇을 놓칠 수 있을까요?',
+    sample: '100명 중 1명이 10초씩 기다리는 일을 놓칩니다. 그래서 응답 시간은 중앙값과 함께 "상위 1%가 겪는 시간(p99)"을 같이 봅니다.',
+  },
+  {
+    label: '조건부 확률',
+    example: ["1,000명 중 실제 환자 10명", "진짜 양성과 거짓 양성이 각각 약 10명", "양성 중 환자는 약 절반"],
+    title: '양성이 나와도 병일 확률은 생각보다 낮을 수 있다',
+    body: '"A가 일어났을 때 B일 확률"을 조건부 확률이라 합니다. 1,000명 중 10명(1%)만 걸리는 병이 있고, 검사는 병이 있으면 99% 양성, 병이 없어도 1%는 잘못 양성이 나온다고 합시다. 양성이 나온 사람만 모으면, 진짜 환자 약 10명과 잘못 양성인 약 10명(990명의 1%)이 섞여 있습니다.',
+    link: '스팸 필터는 "이 단어가 있을 때 스팸일 확률"을, 그림을 분류하는 신경망(7.11)은 "이 그림일 때 세로선일 확률"을 계산합니다. 모두 조건부 확률입니다.',
+    case: '1,000명 중 10명이 병, 검사 정확도 99%(병 있으면 99% 양성, 없으면 1% 양성)입니다. 다음 문장이 참인지 고르세요.',
+    choices: [['true', '참'], ['false', '거짓']],
+    items: [
+      { text: '병이 없는 990명 중 약 10명이 잘못 양성이 나온다.', answer: 'true', why: '990 × 1% ≈ 9.9명입니다.' },
+      { text: '양성이 나온 사람은 약 20명이다.', answer: 'true', why: '진짜 환자 약 10명(10 × 99%) + 잘못 양성 약 10명입니다.' },
+      { text: '양성이 나온 사람이 실제로 병일 확률은 99%다.', answer: 'false', why: '양성 약 20명 중 진짜 환자는 약 10명이라 약 50%입니다. 병이 드물수록 잘못된 양성의 비중이 커집니다.' },
+      { text: '한 번 더 검사해 또 양성이면 병일 확률이 크게 올라간다.', answer: 'true', why: '잘못 양성이 두 번 연속 나올 확률은 1% × 1% = 0.01%라, 두 번 양성인 사람은 대부분 진짜 환자입니다.' },
+    ],
+    question: '하루 1억 건의 로그인 중 0.01%가 공격이고, 탐지기가 공격의 99%를 잡지만 정상 로그인의 1%도 공격이라고 잘못 경보를 냅니다. 경보의 대부분은 무엇일까요?',
+    sample: '공격 1만 건 중 9,900건, 정상 9,999만 건 중 약 100만 건이 경보를 냅니다. 경보 대부분(99% 가까이)이 잘못된 경보라 사람이 다 볼 수 없습니다. 드문 일을 찾을 때는 잘못 경보율이 아주 낮아야 합니다.',
+  },
+  {
+    label: '표본과 오차',
+    example: ["운동장에서만 조사", "운동을 자주 하는 사람이 많이 뽑힘", "표본을 키워도 편향이 남음"],
+    title: '적게 보면 우연에 속고, 치우치게 보면 크게 봐도 틀린다',
+    body: '전체를 다 볼 수 없으니 일부(표본)를 보고 추측합니다. 표본이 작으면 우연 때문에 크게 틀릴 수 있고, 표본이 클수록 비율이 참값에 가까워집니다(큰 수의 법칙). 하지만 표본을 한쪽에서만 뽑으면 아무리 많아도 틀립니다. 7.10에서 여름 데이터만으로 배운 모델이 겨울을 틀린 것과 같습니다.',
+    link: '7.10에서 학습 데이터와 시험 데이터를 나눈 것도 표본으로 실력을 추측하는 일입니다.',
+    case: '다음 문장이 참인지 고르세요.',
+    choices: [['true', '참'], ['false', '거짓']],
+    items: [
+      { text: '동전을 10번 던져 앞면이 7번 나왔으니 이 동전은 앞면이 잘 나오는 동전이다.', answer: 'false', why: '공정한 동전도 10번 중 7번 이상 앞면이 나올 확률이 약 17%입니다. 10번은 너무 적습니다.' },
+      { text: '공정한 동전을 1만 번 던지면 앞면 비율은 50%에 아주 가까워진다.', answer: 'true', why: '큰 수의 법칙입니다. 던질수록 우연의 영향이 줄어듭니다.' },
+      { text: '무작위로 뽑은 1,000명 여론조사의 오차는 대략 ±3%p다.', answer: 'true', why: '무작위 표본의 오차는 대략 1 ÷ √n입니다. 1 ÷ √1000 ≈ 0.032입니다.' },
+      { text: '앱 사용자 10만 명에게만 물어본 설문은 크기가 크니 전 국민의 생각을 나타낸다.', answer: 'false', why: '그 앱을 쓰는 사람에게 치우친 표본입니다. 크기가 커도 치우침은 사라지지 않습니다.' },
+    ],
+    question: '새 기능을 써 본 사용자 20명 중 15명이 좋다고 했습니다. 이것만으로 모든 사용자가 좋아한다고 말할 수 있을까요?',
+    sample: '어렵습니다. 20명은 적고, 새 기능을 먼저 써 본 사람은 원래 새것을 좋아하는 쪽으로 치우쳤을 수 있습니다. 무작위로 고른 더 많은 사용자로 확인해야 합니다.',
+  },
+  {
+    label: '상관과 인과',
+    example: ["더운 날이 늘어남", "아이스크림 판매와 물놀이 모두 증가", "함께 늘어도 직접 원인은 미확정"],
+    title: '함께 변한다고 원인이라는 뜻은 아니다',
+    body: '두 값이 함께 오르내리는 것을 상관이라 합니다. 상관이 있어도 하나가 다른 하나의 원인이라는 보장은 없습니다. 둘 다 제3의 원인 때문일 수도 있고, 방향이 거꾸로일 수도 있고, 우연일 수도 있습니다. 원인을 확인하는 가장 확실한 방법은 무작위로 두 집단을 나눠 하나만 바꾸고 비교하는 실험(A/B 테스트)입니다.',
+    link: '6.8의 화면 설계나 9.3의 성능 개선도 "바꾸기 전과 후"를 무작위 집단으로 비교해야 효과를 믿을 수 있습니다.',
+    case: '이 근거로 "원인"이라고 말할 수 있을까요?',
+    choices: [['causal', '원인이라고 볼 근거가 있다'], ['corr', '함께 변할 뿐, 원인이라 단정 못 한다']],
+    items: [
+      { text: '아이스크림 판매량이 늘 때 물놀이 사고도 는다. → 아이스크림이 사고를 부른다.', answer: 'corr', why: '둘 다 더운 날씨라는 제3의 원인 때문에 함께 늘어납니다.' },
+      { text: '사용자를 무작위로 반씩 나눠 B 집단에만 새 버튼을 보여 줬더니 B의 구매율만 올랐다.', answer: 'causal', why: '무작위로 나눠 버튼만 달리했으므로, 다른 차이는 고르게 섞여 버튼이 원인이라고 볼 수 있습니다.' },
+      { text: '앱을 오래 쓰는 사용자가 구매도 많다. → 앱 사용 시간을 늘리면 구매가 는다.', answer: 'corr', why: '원래 물건을 살 마음이 있는 사람이 앱을 오래 볼 수도 있습니다. 방향이 거꾸로일 수 있습니다.' },
+      { text: '서버를 무작위로 반씩 나눠 한쪽에만 새 캐시 설정을 켰더니 그쪽 응답 시간만 줄었다.', answer: 'causal', why: '무작위로 나눈 실험에서 설정만 달랐으므로 설정이 원인입니다.' },
+    ],
+    question: '"우리 앱 알림을 켠 사용자는 재방문율이 2배"라는 보고를 보고 "모든 사용자에게 알림을 강제로 켜자"고 하면 무엇이 문제일까요?',
+    sample: '알림을 스스로 켠 사람은 원래 앱을 좋아하는 사람일 수 있습니다. 무작위로 고른 일부에게만 알림을 켜는 실험으로 효과를 먼저 확인해야 합니다.',
+  },
+];
+
+const byId = (id) => document.getElementById(id);
+const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
+
+function showStep(index, announce = true) {
+  state.index = index;
+  const step = lesson[index];
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.link;
+  // Text after a blank line in the question is code, shown in its own block.
+  const [caseText, ...caseCode] = step.case.split('\n\n');
+  byId('case').textContent = caseText;
+  let casePre = byId('case-code');
+  if (!casePre) { casePre = document.createElement('pre'); casePre.id = 'case-code'; casePre.className = 'item-text code'; byId('case').after(casePre); }
+  casePre.textContent = caseCode.join('\n\n');
+  casePre.hidden = !caseCode.length;
+  byId('question').textContent = step.question;
+  byId('sample').textContent = step.sample;
+  byId('sample').hidden = true;
+  byId('reveal').setAttribute('aria-expanded', 'false');
+  byId('reveal').textContent = '예시 답 보기';
+  byId('answer').value = '';
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  buildItems();
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
+}
+
+function buildItems() {
+  const step = lesson[state.index];
+  const list = byId('items');
+  list.replaceChildren();
+  step.items.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'item';
+    const top = document.createElement('div');
+    top.className = 'item-top';
+    const text = document.createElement('span');
+    text.className = 'item-text' + ((item.text ?? '').includes('\n') ? ' code' : '');
+    text.id = `item-${i}`;
+    text.textContent = step.table ? `${step.table[0]} ${item.cells[0]} · ${step.table[1]} ${item.cells[1]}` : item.text;
+    const choices = document.createElement('div');
+    choices.className = 'choices';
+    choices.setAttribute('role', 'group');
+    choices.setAttribute('aria-labelledby', text.id);
+    for (const [value, label] of step.choices) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `action choice ${value === 'false' ? 'risk' : 'benefit'}`;
+      button.textContent = label;
+      button.dataset.value = value;
+      button.addEventListener('click', () => pick(i, value));
+      choices.append(button);
+    }
+    const feedback = document.createElement('p');
+    feedback.className = 'feedback';
+    feedback.setAttribute('role', 'status');
+    top.append(text, choices);
+    li.append(top, feedback);
+    list.append(li);
+  });
+  syncItems();
+}
+
+// For table steps, a compact truth table mirrors the answers so far.
+function syncTable() {
+  const step = lesson[state.index];
+  const box = byId('table');
+  box.hidden = !step.table;
+  if (!step.table) return;
+  const picks = state.picks[state.index];
+  const label = (v) => step.choices.find(([value]) => value === v)?.[1] ?? '?';
+  box.innerHTML = '';
+  const table = document.createElement('table');
+  const head = table.createTHead().insertRow();
+  step.table.forEach((h) => { const th = document.createElement('th'); th.textContent = h; head.append(th); });
+  const body = table.createTBody();
+  step.items.forEach((item, i) => {
+    const tr = body.insertRow();
+    item.cells.forEach((c) => { tr.insertCell().textContent = c; });
+    const cell = tr.insertCell();
+    cell.textContent = picks[i] === item.answer ? label(item.answer) : '?';
+    cell.className = picks[i] === item.answer ? 'filled' : 'blank';
+  });
+  box.append(table);
+}
+
+function pick(i, value) {
+  state.picks[state.index][i] = value;
+  syncItems();
+  const item = lesson[state.index].items[i];
+  byId('announcement').textContent = value === item.answer ? '맞았습니다.' : '다시 생각해 보세요.';
+}
+
+function syncItems() {
+  const step = lesson[state.index];
+  const picks = state.picks[state.index];
+  [...byId('items').children].forEach((li, i) => {
+    const item = step.items[i];
+    const picked = picks[i];
+    li.classList.toggle('right', picked === item.answer);
+    li.classList.toggle('wrong', picked !== null && picked !== item.answer);
+    for (const button of li.querySelectorAll('.choice')) button.setAttribute('aria-pressed', String(button.dataset.value === picked));
+    const feedback = li.querySelector('.feedback');
+    feedback.replaceChildren();
+    if (picked !== null) {
+      const mark = document.createElement('b');
+      mark.textContent = picked === item.answer ? '✓ 맞았습니다.' : '✗ 다시 생각해 보세요.';
+      feedback.append(mark, picked === item.answer ? item.why : '');
+    }
+  });
+  const right = picks.filter((p, i) => p === step.items[i].answer).length;
+  byId('score').textContent = `${right} / ${step.items.length} 맞힘`;
+  byId('done').hidden = right !== step.items.length;
+  byId('done').textContent = step.table ? '✓ 진리표를 모두 채웠습니다. 아래 질문도 생각해 보세요.' : '✓ 모두 맞게 골랐습니다. 아래 질문도 생각해 보세요.';
+  syncTable();
+}
+
+byId('reveal').onclick = () => {
+  const open = byId('sample').hidden;
+  byId('sample').hidden = !open;
+  byId('reveal').setAttribute('aria-expanded', String(open));
+  byId('reveal').textContent = open ? '예시 답 숨기기' : '예시 답 보기';
+};
+
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/statistics/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/statistics\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/statistics/${initial + 1}`);
+showStep(initial, false);
+</script>
+</body>
+</html>

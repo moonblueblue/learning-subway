@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="상자 16개에서 수 하나를 찾으며, 하나씩 찾기와 반씩 줄이기가 일의 양을 얼마나 다르게 만드는지 살펴보세요.">
+<title>알고리즘이란 · 레슨 0.6</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.readout .total{color:var(--accent);font-size:1.3rem}
+.switch-area{display:flex;gap:10px 14px;align-items:stretch;flex-wrap:wrap}
+.switch-row{display:grid;grid-template-columns:repeat(var(--n,8),minmax(0,1fr));gap:6px;flex:1 1 320px;max-width:calc(var(--n,8) * 66px)}
+.bit-button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:54px;padding:4px 2px;border:1px solid #9fb7a9;border-radius:10px;background:#f6f8f5;line-height:1.2}
+.bit-button .place{font:600 .75rem var(--mono);color:var(--muted)}
+.bit-button .bit{font:700 1.15rem var(--mono);color:#7c8c85}
+.bit-button:hover{border-color:var(--accent)}
+.bit-button[aria-pressed=true]{background:#d2f4dd;border-color:var(--accent)}
+.bit-button[aria-pressed=true] .place,.bit-button[aria-pressed=true] .bit{color:#0f5a3c}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.tag.place text{font:700 11.5px var(--mono)}
+.total rect{fill:#fff;stroke:var(--accent);stroke-width:1.2}
+.total text{font:700 20px var(--mono);fill:var(--accent);text-anchor:middle;dominant-baseline:central}
+.total.max rect{fill:#fff6ef;stroke:#a24c14}
+.total.max text{fill:#a24c14}
+.total{transform-box:fill-box;transform-origin:center}
+.total.bump{animation:bump .32s ease-out}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+.note{animation:note 1.6s ease-out forwards}
+.note path{fill:none;stroke:#43574f;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.note .arc{stroke-dasharray:3 3.5}
+.note text{font:700 9.5px system-ui,sans-serif;fill:#43574f;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3.5px;stroke-linejoin:round}
+@keyframes note{0%{opacity:0}10%{opacity:1}72%{opacity:1}100%{opacity:0}}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+@media(max-width:600px){.tag text{font-size:16px}.tag.place text{font-size:15px}.switch .digit{font-size:14px}.total text{font-size:26px}.packet-label{font-size:13px}.note text{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:none}.note,.total.bump{animation:none}}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#0a4c3a}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.shell{padding:18px 12px}.stage-top,.controls,.timeline,.view-controls,.hands-on{padding-inline:12px}.view-hint{flex-basis:100%;margin-inline-start:0}.steps{gap:5px}.steps button{padding-inline:6px}.switch-row{gap:4px}}
+
+.mode-group{transition:opacity .37s}
+.mode-group.hidden{opacity:0;pointer-events:none}
+.box{cursor:pointer}
+.box .face{stroke-width:.8;transition:fill .18s}
+.box.closed .left{fill:#d3dad6}.box.closed .right{fill:#b9c4be}.box.closed .top{fill:#eef1ef}.box.closed .face{stroke:#8c9d96}
+.box.open .left{fill:#e6ebe8}.box.open .right{fill:#cfd8d4}.box.open .top{fill:#ffffff}.box.open .face{stroke:#8c9d96}
+.box.out{opacity:.38}
+.box.out .left{fill:#d3dad6}.box.out .right{fill:#b9c4be}.box.out .top{fill:#eef1ef}.box.out .face{stroke:#8c9d96;stroke-dasharray:2 2}
+.box.found .left{fill:#a5d6b6}.box.found .right{fill:#78b592}.box.found .top{fill:#d2f4dd}.box.found .face{stroke:#4f8f6b}
+.box .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.box.open .digit,.box.out .digit{fill:#142620}
+.box.found .digit{fill:#0f5a3c}
+.box-index{font:600 9px var(--mono);fill:#6b7d76;text-anchor:middle}
+.box-area{display:flex;gap:10px 14px;align-items:flex-start;flex-wrap:wrap}
+.box-row{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:4px;flex:1 1 520px}
+.box-button{min-height:44px;padding:2px 0;border:1px solid #9fb7a9;border-radius:8px;background:#eef1ef;font:700 .95rem var(--mono);color:#7c8c85}
+.box-button.open{background:#fff;color:var(--ink)}
+.box-button.out{opacity:.4;background:#fff;color:var(--ink);border-style:dashed}
+.box-button.found{background:#d2f4dd;border-color:var(--accent);color:#0f5a3c}
+.box-button:disabled{cursor:default;opacity:1}
+.box-button.out:disabled{opacity:.4}
+.choices{display:flex;gap:12px 28px;flex-wrap:wrap}
+.choice{display:flex;gap:10px;align-items:center}
+.choice > span{font-weight:650;color:var(--muted)}
+.choice > div{display:flex;gap:6px;flex-wrap:wrap}
+.choice-button[aria-pressed=true]{background:#d2f4dd;border-color:var(--accent);color:#0f5a3c}
+.dot.open{background:#fff}
+.dot.out{background:#eef1ef;border-style:dashed;opacity:.6}
+.dot.warn{background:#f2c49a;border-color:#a24c14}
+@media(max-width:720px){.box-row{grid-template-columns:repeat(8,minmax(0,1fr));flex-basis:100%}}
+@media(prefers-reduced-motion:reduce){.mode-group,.box .face{transition:none}}
+</style>
+<link rel="stylesheet" href="../shared/course.css">
+<script defer src="../shared/catalog.js"></script>
+<script defer src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">0장 컴퓨팅 둘러보기 · 레슨 0.6</p>
+    <h1>알고리즘이란</h1>
+    <p class="lead">같은 문제를 푸는 방법에 따라 일의 양이 얼마나 달라질까요? 상자를 직접 열어 수를 찾아 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">상자와 찾는 수</h2><span class="status" id="status">재생 중</span></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">상자를 열어 수를 찾는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <button class="action" id="try-next" type="button" hidden>다음 문제</button>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="box-area" id="box-area">
+            <div class="box-row" id="box-buttons" role="group" aria-label="상자 열기"></div>
+            <button class="action" id="new-round" type="button">새 문제</button>
+          </div>
+          <div class="choices" id="size-area">
+            <div class="choice" role="group" aria-label="데이터 수"><span>데이터 수</span><div id="size-choices"></div></div>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <button class="action" id="view-reset" type="button">원래 보기</button>
+          <span class="view-hint"><span class="mouse-hint">장면의 상자를 눌러도 됩니다 · 확대 후 드래그로 이동</span><span class="touch-hint">장면의 상자를 눌러도 됩니다 · 두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례" id="legend"></div>
+          <div class="actions"><button class="action" id="pause" type="button">일시정지</button><button class="action" id="replay" type="button">다시 보기</button></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+function setCamera(x, y, zoom) {
+  camera.zoom = clamp(zoom, 1, maxZoom);
+  const width = viewWidth / camera.zoom;
+  const height = viewHeight / camera.zoom;
+  camera.x = clamp(x, 0, viewWidth - width);
+  camera.y = clamp(y, 0, viewHeight - height);
+  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
+  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
+  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
+  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
+  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
+}
+
+function zoomBetween(nextZoom, from, to = from) {
+  const zoom = clamp(nextZoom, 1, maxZoom);
+  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
+            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
+}
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+function viewportPoint(event) {
+  const rect = viewport.getBoundingClientRect();
+  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
+  return {
+    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
+    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
+  };
+}
+
+function pointerGeometry() {
+  const [a, b] = pointers.values();
+  if (!b) return { point: a, distance: 0 };
+  return {
+    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    distance: Math.hypot(a.x - b.x, a.y - b.y),
+  };
+}
+
+// A press that starts on a scene object and ends without moving counts as a tap on it.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-hit]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { hit: target.dataset.hit, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    sceneTap(tap.hit);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+function zoomBy(delta) {
+  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
+  zoomBetween(camera.zoom + delta, center);
+  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
+}
+
+function resetView() {
+  pointers.clear();
+  viewport.classList.remove('is-dragging');
+  setCamera(0, 0, 1);
+  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
+}
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+byId('view-reset').onclick = resetView;
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'search-lab:v1:step';
+const count = 16;
+
+// Sixteen distinct numbers between 1 and 99, sorted. `shuffled` keeps the same numbers in a mixed order.
+function makeNumbers(seed) {
+  let x = seed;
+  const random = () => (x = (x * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const set = new Set();
+  while (set.size < count) set.add(1 + Math.floor(random() * 99));
+  const sorted = [...set].sort((a, b) => a - b);
+  const shuffled = [...sorted];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return { sorted, shuffled, random };
+}
+
+const sizes = [16, 1000, 1000000];
+const lesson = [
+  {
+    label: '하나씩 찾기',
+    example: ["목표가 마지막 상자에 있음", "첫 칸부터 하나씩 열기", "16칸이면 최대 16회"],
+    mode: 'linear',
+    title: '순서가 없으면 하나씩 열어 봐야 한다',
+    body: '상자 16개에 수가 하나씩 들어 있고, 순서는 뒤섞여 있습니다. 찾는 수가 어디 있는지 알 수 없으니 하나씩 열어 볼 수밖에 없습니다. 이렇게 처음부터 차례로 확인하는 방법을 순차 탐색이라고 합니다. 운이 좋으면 1번, 나쁘면 16번 열어야 합니다.',
+    takeaway: '연 상자는 숫자가 보이고, 찾으면 초록으로 솟아오릅니다. 아래 줄에 지금까지 연 횟수가 쌓입니다.',
+    description: '닫힌 상자 16개가 한 줄로 놓여 있습니다. 상자를 하나 열 때마다 그 안의 수가 보이고, 찾는 수와 같으면 상자가 초록으로 바뀝니다.',
+    tasks: [
+      { text: '상자를 열어 찾는 수를 찾아 보세요.', check: (s) => s.found },
+      { text: '새 문제로 바꾼 뒤 다시 찾아 보세요. 몇 번 만에 찾았나요?', check: (s) => s.found && s.round > 0 },
+    ],
+  },
+  {
+    label: '반씩 줄이기',
+    example: ["정렬된 16칸", "가운데보다 큰 값 찾기", "왼쪽 범위를 한꺼번에 제외"],
+    mode: 'binary',
+    title: '정렬되어 있으면 반씩 버릴 수 있다',
+    body: '이번에는 수가 작은 것부터 차례로 놓여 있습니다. 가운데 상자를 열었는데 찾는 수보다 작으면, 그 왼쪽 상자는 볼 필요도 없이 모두 버릴 수 있습니다. 매번 남은 상자의 가운데를 열면 16개가 8개, 4개, 2개, 1개로 줄어, 많아야 5번이면 찾습니다. 이것을 이진 탐색이라고 합니다.',
+    takeaway: '상자를 열면 찾는 수보다 작은지 큰지 표시되고, 볼 필요 없는 쪽 상자들이 가라앉아 흐려집니다. 남은 상자의 가운데를 열어 보세요.',
+    description: '닫힌 상자 16개가 작은 수부터 차례로 놓여 있습니다. 상자를 열면 찾는 수가 그보다 작은지 큰지 알려 주고, 남은 범위 밖의 상자는 가라앉습니다.',
+    tasks: [
+      { text: '5번 이내로 찾는 수를 찾아 보세요. 남은 상자의 가운데를 여세요.', check: (s) => s.found && s.opened <= 5, result: (s) => `${s.opened}번 만에 찾았습니다` },
+      { text: '새 문제로 바꿔 다시 5번 이내로 찾아 보세요.', check: (s) => s.found && s.opened <= 5 && s.round > 0, result: (s) => `${s.opened}번 만에 찾았습니다` },
+    ],
+  },
+  {
+    label: '크기가 커지면',
+    example: ["데이터가 두 배로 증가", "순차 탐색 범위도 두 배", "이진 탐색 깊이는 약 한 단계 증가"],
+    mode: 'compare',
+    title: '데이터가 많을수록 차이가 커진다',
+    body: '상자가 16개일 때는 16번과 5번의 차이지만, 100만 개라면 하나씩 찾기는 최악에 100만 번, 반씩 줄이기는 20번이면 됩니다. 같은 문제를 푸는 정확한 절차를 알고리즘이라고 하고, 어떤 알고리즘을 고르느냐에 따라 일의 양이 이렇게 달라집니다. 대신 반씩 줄이려면 먼저 정렬되어 있어야 합니다.',
+    takeaway: '데이터 수를 바꾸면 두 기둥의 높이(최악일 때 여는 횟수)가 바뀝니다. 하나씩 찾기는 데이터 수만큼, 반씩 줄이기는 반으로 나눈 횟수만큼만 늘어납니다.',
+    description: '"하나씩"과 "반씩" 두 기둥이 있습니다. 기둥 높이는 최악의 경우 상자를 여는 횟수이고, 데이터가 많아질수록 "하나씩" 기둥이 훨씬 빨리 높아집니다.',
+    tasks: [
+      { text: '데이터를 1,000개로 늘려 두 방법의 횟수를 비교해 보세요.', check: (s) => s.size === 1000, result: () => '하나씩 1,000번 · 반씩 10번' },
+      { text: '100만 개로 늘려 보세요.', check: (s) => s.size === 1000000, result: () => '하나씩 1,000,000번 · 반씩 20번' },
+    ],
+  },
+];
+
+const step = () => lesson[state.index];
+const state = { index: 0, playing: !motion.matches, userPaused: false, wait: 0, solved: '',
+  round: 0, numbers: [], target: 0, openedSet: new Set(), opened: 0, lo: 0, hi: count - 1, found: false, size: 16, plan: [] };
+const progress = lesson.map(() => 0);
+
+function svg(name, attrs, parent) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
+  if (parent) parent.append(element);
+  return element;
+}
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const mix = (a, b, t) => a + (b - a) * t;
+
+const gridLines = [];
+for (let i = -22; i <= 22; i += 2) {
+  gridLines.push(`M${point(i, -22, 0)}L${point(i, 22, 0)}M${point(-22, i, 0)}L${point(22, i, 0)}`);
+}
+byId('grid').setAttribute('d', gridLines.join(''));
+
+function drawShadow(node, half) {
+  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
+  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
+}
+
+function drawFaces(node, h, H, fills) {
+  const faces = {
+    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
+    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
+    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
+  };
+  for (const [name, corners] of Object.entries(faces)) {
+    const attrs = { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') };
+    if (fills) Object.assign(attrs, { fill: fills[name], stroke: fills.stroke });
+    svg('polygon', attrs, node);
+  }
+  svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
+}
+
+// Plates are small labels whose box is sized to the text.
+let plates = [];
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  plate.label.setAttribute('x', plate.x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
+function addPlate(node, className, x, y, text, { pad = 1.5, round = true } = {}) {
+  const group = svg('g', { class: className }, node);
+  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
+  plate.label.textContent = text;
+  plates.push(plate);
+  sizePlate(plate);
+  return plate;
+}
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Boxes in a row on the floor diagonal ----------
+const spacing = 1.3;
+const half = .52;
+const low = 11, high = 20, sunk = 3;
+const boxes = [];
+let targetPlate, boxGroup;
+function buildBoxes() {
+  boxGroup = svg('g', { class: 'mode-group', 'data-mode': 'boxes' }, byId('nodes'));
+  for (let i = 0; i < count; i++) {
+    const c = (i - (count - 1) / 2) * spacing;
+    const [bx, by] = project(c, c);
+    const node = svg('g', { class: 'node box', 'data-hit': `b${i}`, transform: `translate(${bx} ${by})` }, boxGroup);
+    drawShadow(node, half);
+    const faces = {};
+    for (const name of ['left', 'right', 'top']) faces[name] = svg('polygon', { class: 'face ' + name }, node);
+    const highlight = svg('path', { class: 'highlight' }, node);
+    const digit = svg('text', { class: 'digit', x: 0 }, node);
+    const index = svg('text', { class: 'box-index', x: 0, y: 20 }, node);
+    index.textContent = i + 1;
+    boxes.push({ node, faces, highlight, digit, height: low, target: low });
+  }
+  // The number to find floats above the middle of the row.
+  targetPlate = addPlate(boxGroup, 'total', 0, -62, '찾는 수 ?', { pad: 1.1, round: false });
+  groups.boxes = boxGroup;
+}
+function shapeBox(box, H) {
+  const h = half;
+  const faces = {
+    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
+    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
+    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
+  };
+  for (const [name, corners] of Object.entries(faces)) box.faces[name].setAttribute('points', corners.map((p) => point(...p)).join(' '));
+  box.highlight.setAttribute('d', `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}`);
+  box.digit.setAttribute('y', -H + .5);
+}
+
+// ---------- Two towers comparing the worst-case number of boxes opened ----------
+const groups = {};
+let towers = [];
+function buildTowers() {
+  const group = svg('g', { class: 'mode-group', 'data-mode': 'compare' }, byId('nodes'));
+  towers = [['하나씩 찾기', -3.2, { top: '#ffe5cc', left: '#f2c49a', right: '#d99a62', stroke: '#a24c14' }],
+            ['반씩 줄이기', 3.2, { top: '#d2f4dd', left: '#a5d6b6', right: '#78b592', stroke: '#4f8f6b' }]].map(([name, c, color]) => {
+    const node = svg('g', { class: 'node', transform: `translate(${28 * c} 0)` }, group);
+    drawShadow(node, 1.3);
+    const faces = {};
+    for (const face of ['left', 'right', 'top']) faces[face] = svg('polygon', { class: 'face', fill: color[face], stroke: color.stroke }, node);
+    const highlight = svg('path', { class: 'highlight' }, node);
+    const plate = addPlate(node, 'total', 0, 0, '0', { pad: 1.1, round: false });
+    const [nx, ny] = project(1.3, -1.3, 0);
+    addPlate(node, 'tag', nx, ny + 16, name);
+    return { node, faces, highlight, plate, height: 6, target: 6 };
+  });
+  groups.compare = group;
+}
+function shapeTower(tower, H) {
+  const h = 1.3;
+  const faces = {
+    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
+    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
+    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
+  };
+  for (const [name, corners] of Object.entries(faces)) tower.faces[name].setAttribute('points', corners.map((p) => point(...p)).join(' '));
+  tower.highlight.setAttribute('d', `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}`);
+  tower.plate.y = -H - 14 * h - 20;
+  sizePlate(tower.plate);
+}
+const worstLinear = (n) => n;
+const worstBinary = (n) => Math.ceil(Math.log2(n + 1));
+// Heights on a log scale so a million still fits: 1 → 8px, 1,000,000 → 150px.
+const towerHeight = (n) => 8 + 142 * Math.log10(n) / 6;
+
+// ---------- Drawing ----------
+function boxState(i) {
+  if (state.found && state.numbers[i] === state.target) return 'found';
+  if (step().mode === 'binary' && (i < state.lo || i > state.hi)) return 'out';
+  return state.openedSet.has(i) ? 'open' : 'closed';
+}
+function paint() {
+  const s = step();
+  for (const group of byId('world').querySelectorAll('.mode-group')) group.classList.toggle('hidden', group.dataset.mode !== (s.mode === 'compare' ? 'compare' : 'boxes'));
+  if (s.mode === 'compare') {
+    towers[0].target = towerHeight(worstLinear(state.size));
+    towers[1].target = towerHeight(worstBinary(state.size));
+    towers[0].plate.label.textContent = `${worstLinear(state.size).toLocaleString('ko-KR')}번`;
+    towers[1].plate.label.textContent = `${worstBinary(state.size)}번`;
+  } else {
+    targetPlate.label.textContent = `찾는 수 ${state.target}`;
+    sizePlate(targetPlate);
+    boxes.forEach((box, i) => {
+      const kind = boxState(i);
+      box.node.setAttribute('class', `node box ${kind}`);
+      box.digit.textContent = kind === 'closed' ? '?' : String(state.numbers[i]);
+      box.target = kind === 'found' ? high : kind === 'out' ? sunk : low;
+    });
+  }
+  animate();
+  syncControls();
+}
+
+let shapeFrame = null;
+function animate() {
+  if (shapeFrame !== null) return;
+  const frameStep = () => {
+    shapeFrame = null;
+    let moving = false;
+    for (const item of [...boxes, ...towers]) {
+      const next = motion.matches ? item.target : mix(item.height, item.target, .22);
+      item.height = Math.abs(next - item.target) < .3 ? item.target : next;
+      if (item.height !== item.target) moving = true;
+      (item.plate ? shapeTower : shapeBox)(item, item.height);
+    }
+    if (moving) shapeFrame = requestAnimationFrame(frameStep);
+  };
+  frameStep();
+}
+
+// ---------- HTML controls ----------
+const boxButtons = [];
+function buildControls() {
+  const row = byId('box-buttons');
+  for (let i = 0; i < count; i++) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'box-button';
+    button.addEventListener('click', () => openBox(i));
+    row.append(button);
+    boxButtons.push(button);
+  }
+  byId('new-round').onclick = () => {
+    state.playing = false;
+    state.solved = '';
+    state.round++;
+    newRound();
+    paint();
+    syncPlayback();
+    syncTask();
+    byId('announcement').textContent = `새 문제. 찾는 수 ${state.target}`;
+  };
+  for (const n of sizes) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'action choice-button';
+    button.textContent = `${n.toLocaleString('ko-KR')}개`;
+    button.dataset.value = n;
+    button.addEventListener('click', () => userChange(() => { state.size = n; }, `데이터 ${n.toLocaleString('ko-KR')}개.`));
+    byId('size-choices').append(button);
+  }
+}
+function syncControls() {
+  const s = step();
+  byId('box-area').hidden = s.mode === 'compare';
+  byId('size-area').hidden = s.mode !== 'compare';
+  boxButtons.forEach((button, i) => {
+    const kind = boxState(i);
+    button.className = `box-button ${kind}`;
+    button.textContent = kind === 'closed' ? '?' : state.numbers[i];
+    button.disabled = state.found || kind === 'out' || kind === 'open';
+    button.setAttribute('aria-label', `${i + 1}번 상자, ${kind === 'closed' ? '닫힘' : kind === 'out' ? `제외됨, ${state.numbers[i]}` : state.numbers[i]}`);
+  });
+  for (const button of document.querySelectorAll('#size-choices button')) button.setAttribute('aria-pressed', String(Number(button.dataset.value) === state.size));
+  byId('readout').replaceChildren(...readout());
+}
+function readout() {
+  const s = step();
+  const strong = (text, className) => {
+    const element = document.createElement('b');
+    if (className) element.className = className;
+    element.textContent = text;
+    return element;
+  };
+  if (s.mode === 'compare') {
+    return ['데이터 ', strong(`${state.size.toLocaleString('ko-KR')}개`), ' → 하나씩 최대 ', strong(`${worstLinear(state.size).toLocaleString('ko-KR')}번`),
+      ' · 반씩 최대 ', strong(`${worstBinary(state.size)}번`, 'total')];
+  }
+  const parts = ['찾는 수 ', strong(String(state.target)), ' · 연 상자 ', strong(`${state.opened}개`, 'total')];
+  if (s.mode === 'binary' && !state.found) parts.push(` · 남은 범위 ${state.hi - state.lo + 1}개`);
+  if (state.hint) parts.push(` · ${state.hint}`);
+  return parts;
+}
+
+// ---------- Searching ----------
+function newRound() {
+  const { sorted, shuffled, random } = makeNumbers(state.round * 7919 + state.index * 104729 + 17);
+  state.numbers = step().mode === 'binary' ? sorted : shuffled;
+  state.target = sorted[Math.floor(random() * count)];
+  state.openedSet = new Set();
+  state.opened = 0;
+  state.lo = 0;
+  state.hi = count - 1;
+  state.found = false;
+  state.hint = '';
+  // The demo's order of boxes to open.
+  if (step().mode === 'binary') {
+    state.plan = [];
+    let lo = 0, hi = count - 1;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      state.plan.push(mid);
+      if (sorted[mid] === state.target) break;
+      if (sorted[mid] < state.target) lo = mid + 1; else hi = mid - 1;
+    }
+  } else state.plan = [...Array(count).keys()];
+}
+function revealBox(i) {
+  if (state.found || state.openedSet.has(i) || i < state.lo || i > state.hi) return false;
+  state.openedSet.add(i);
+  state.opened++;
+  const value = state.numbers[i];
+  if (value === state.target) {
+    state.found = true;
+    state.hint = `${i + 1}번 상자에서 찾았습니다`;
+  } else if (step().mode === 'binary') {
+    if (value < state.target) { state.lo = i + 1; state.hint = `${value}은(는) 찾는 수보다 작습니다 → 왼쪽을 버립니다`; }
+    else { state.hi = i - 1; state.hint = `${value}은(는) 찾는 수보다 큽니다 → 오른쪽을 버립니다`; }
+  } else state.hint = `${value}, 아닙니다`;
+  return true;
+}
+function openBox(i) {
+  if (step().mode === 'compare') return;
+  userChange(() => { revealBox(i); }, '');
+  byId('announcement').textContent = state.hint;
+}
+function sceneTap(hit) {
+  if (hit?.startsWith('b')) openBox(Number(hit.slice(1)));
+}
+function userChange(change, message) {
+  if (state.playing) {
+    // The learner takes over from the demo: start a fresh search.
+    state.playing = false;
+    if (step().mode !== 'compare') newRound();
+  }
+  state.solved = '';
+  change();
+  paint();
+  syncPlayback();
+  if (message) byId('announcement').textContent = message;
+  syncTask();
+  checkTask();
+}
+
+// ---------- Try-it problems ----------
+function syncTask() {
+  const tasks = step().tasks;
+  const done = progress[state.index];
+  const allDone = done >= tasks.length;
+  byId('try').classList.toggle('solved', state.solved !== '');
+  byId('try-text').textContent = state.solved !== '' ? tasks[done - 1].text
+    : allDone ? '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.' : tasks[done].text;
+  byId('try-result').textContent = state.solved === '' ? ''
+    : `✓ 맞았습니다. ${state.solved}${allDone ? ' · 이 단계의 문제를 모두 풀었습니다.' : ''}`;
+  byId('try-next').hidden = state.solved === '' || allDone;
+}
+function checkTask() {
+  const tasks = step().tasks;
+  const done = progress[state.index];
+  if (state.solved !== '' || done >= tasks.length || !tasks[done].check(state)) return;
+  progress[state.index] = done + 1;
+  state.solved = tasks[done].result?.(state) ?? `${state.opened}번 만에 찾았습니다`;
+  syncTask();
+}
+byId('try-next').onclick = () => { state.solved = ''; syncTask(); };
+
+// ---------- Demo playback ----------
+let frame = null, lastFrame = null;
+function demoTick() {
+  const s = step();
+  if (s.mode === 'compare') {
+    state.size = sizes[(sizes.indexOf(state.size) + 1) % sizes.length];
+    paint();
+    state.wait = 2600;
+    return;
+  }
+  if (state.found) {
+    state.round++;
+    newRound();
+    paint();
+    state.wait = 900;
+    return;
+  }
+  const next = state.plan.find((i) => !state.openedSet.has(i) && i >= state.lo && i <= state.hi);
+  revealBox(next);
+  paint();
+  state.wait = state.found ? 2200 : s.mode === 'binary' ? 1300 : 520;
+}
+function tick(now) {
+  frame = null;
+  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
+  lastFrame = now;
+  if (state.playing) {
+    state.wait -= elapsed;
+    if (state.wait <= 0) demoTick();
+    frame = requestAnimationFrame(tick);
+  } else lastFrame = null;
+}
+function syncPlayback() {
+  const reduced = motion.matches;
+  if (reduced) state.playing = false;
+  byId('status').textContent = reduced ? '모션 감소 · 직접 조작' : state.playing ? '재생 중' : '일시정지됨';
+  byId('pause').textContent = state.playing ? '일시정지' : '재생';
+  byId('pause').disabled = reduced;
+  byId('replay').disabled = reduced;
+  if (state.playing && frame === null) frame = requestAnimationFrame(tick);
+}
+
+// ---------- Steps and routing ----------
+const legends = {
+  linear: '<span><i class="dot"></i>닫힌 상자</span><span><i class="dot open"></i>열어 본 상자</span><span><i class="dot on"></i>찾은 상자</span>',
+  binary: '<span><i class="dot open"></i>열어 본 상자</span><span><i class="dot out"></i>버린 범위</span><span><i class="dot on"></i>찾은 상자</span>',
+  compare: '<span><i class="dot warn"></i>하나씩 찾기</span><span><i class="dot on"></i>반씩 줄이기</span><span>기둥 높이 = 최악일 때 여는 횟수(로그 눈금)</span>',
+};
+function startStep() {
+  state.size = 16;
+  state.round = 0;
+  newRound();
+  state.wait = 900;
+}
+function showStep(index, announce = true) {
+  state.index = index;
+  if (!state.userPaused) state.playing = !motion.matches;
+  startStep();
+  const s = step();
+  byId('step-title').textContent = s.title;
+  byId('body').textContent = s.body;
+  byId('takeaway').textContent = s.takeaway;
+  byId('scene-desc').textContent = s.description;
+  byId('legend').innerHTML = legends[s.mode];
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  byId('world').setAttribute('transform', s.mode === 'compare' ? 'translate(310 205) scale(.9)' : 'translate(310 150) scale(1.04)');
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  state.solved = '';
+  syncTask();
+  paint();
+  syncPlayback();
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
+}
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/search/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/search\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+byId('pause').onclick = () => {
+  state.playing = !state.playing;
+  state.userPaused = !state.playing;
+  if (state.playing && state.wait <= 0) state.wait = 400;
+  syncPlayback();
+  byId('announcement').textContent = byId('status').textContent;
+};
+byId('replay').onclick = () => {
+  state.playing = true;
+  state.userPaused = false;
+  startStep();
+  paint();
+  syncPlayback();
+  byId('announcement').textContent = '현재 단계 다시 재생';
+};
+function syncRoute() {
+  const index = routeIndex();
+  if (index !== state.index) showStep(index);
+}
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches && !state.userPaused) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+
+buildBoxes();
+buildTowers();
+buildControls();
+const initial = routeIndex();
+history.replaceState(null, '', `#/search/${initial + 1}`);
+state.index = initial;
+showStep(initial, false);
+</script>
+</body>
+</html>

@@ -83,6 +83,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
 </style>
 <link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
 <script defer src="../shared/catalog.js"></script>
 <script defer src="../shared/course.js"></script>
 </head>
@@ -357,10 +358,6 @@ const stepButtons = lesson.map(({ label }, index) => {
 });
 byId('prev').onclick = () => goToStep(state.index - 1);
 byId('next').onclick = () => goToStep(state.index + 1);
-function syncRoute() {
-  const index = routeIndex();
-  if (index !== state.index) showStep(index);
-}
 window.addEventListener('hashchange', syncRoute);
 window.addEventListener('popstate', syncRoute);
 window.addEventListener('keydown', (event) => {

@@ -133,6 +133,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 @media(max-width:600px){.box-label{font-size:13px}.zone-label,.col-label{font-size:14px}.frame-num{font-size:11px}}
 </style>
 <link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
 <script defer src="../shared/catalog.js"></script>
 <script defer src="../shared/course.js"></script>
 </head>
@@ -212,43 +213,10 @@ const camera = { x: 0, y: 0, zoom: 1 };
 const pointers = new Map();
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
-function setCamera(x, y, zoom) {
-  camera.zoom = clamp(zoom, 1, maxZoom);
-  const width = viewWidth / camera.zoom;
-  const height = viewHeight / camera.zoom;
-  camera.x = clamp(x, 0, viewWidth - width);
-  camera.y = clamp(y, 0, viewHeight - height);
-  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
-  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
-  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
-  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
-  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
-}
 
-function zoomBetween(nextZoom, from, to = from) {
-  const zoom = clamp(nextZoom, 1, maxZoom);
-  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
-            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
-}
 
 // Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
-function viewportPoint(event) {
-  const rect = viewport.getBoundingClientRect();
-  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
-  return {
-    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
-    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
-  };
-}
 
-function pointerGeometry() {
-  const [a, b] = pointers.values();
-  if (!b) return { point: a, distance: 0 };
-  return {
-    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
-    distance: Math.hypot(a.x - b.x, a.y - b.y),
-  };
-}
 
 // A press that starts on a switch and ends without moving toggles that switch.
 // Tracked separately from the camera pointers so it also works when the pointer is captured.
@@ -290,18 +258,7 @@ for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
   });
 }
 
-function zoomBy(delta) {
-  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
-  zoomBetween(camera.zoom + delta, center);
-  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
-}
 
-function resetView() {
-  pointers.clear();
-  viewport.classList.remove('is-dragging');
-  setCamera(0, 0, 1);
-  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
-}
 
 byId('zoom-in').onclick = () => zoomBy(.25);
 byId('zoom-out').onclick = () => zoomBy(-.25);
@@ -390,12 +347,6 @@ const state = { index: 0, table: startTable(), lastUse: {}, clock: 0, read: new 
   playing: !motion.matches, userPaused: false, wait: 0, solved: '', wrong: '', demoPosition: 0 };
 const progress = lesson.map(() => 0);
 
-function svg(name, attrs, parent) {
-  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
-  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
-  if (parent) parent.append(element);
-  return element;
-}
 const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
 const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
 const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
@@ -704,10 +655,6 @@ byId('replay').onclick = () => {
   syncPlayback();
   byId('announcement').textContent = '처음부터 자동 실행';
 };
-function syncRoute() {
-  const index = routeIndex();
-  if (index !== state.index) showStep(index);
-}
 window.addEventListener('hashchange', syncRoute);
 window.addEventListener('popstate', syncRoute);
 motion.addEventListener('change', () => {

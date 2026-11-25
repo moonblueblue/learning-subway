@@ -264,6 +264,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .cache-view[hidden]{display:none}
 </style>
 <link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
 <script defer src="../shared/catalog.js"></script>
 <script defer src="../shared/course.js"></script>
 </head>
@@ -343,43 +344,10 @@ const camera = { x: 0, y: 0, zoom: 1 };
 const pointers = new Map();
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
-function setCamera(x, y, zoom) {
-  camera.zoom = clamp(zoom, 1, maxZoom);
-  const width = viewWidth / camera.zoom;
-  const height = viewHeight / camera.zoom;
-  camera.x = clamp(x, 0, viewWidth - width);
-  camera.y = clamp(y, 0, viewHeight - height);
-  viewport.setAttribute('viewBox', `${camera.x} ${camera.y} ${width} ${height}`);
-  viewport.classList.toggle('is-zoomed', camera.zoom > 1);
-  byId('view-scale').textContent = `${Math.round(camera.zoom * 100)}%`;
-  byId('zoom-out').setAttribute('aria-disabled', String(camera.zoom === 1));
-  byId('zoom-in').setAttribute('aria-disabled', String(camera.zoom === maxZoom));
-}
 
-function zoomBetween(nextZoom, from, to = from) {
-  const zoom = clamp(nextZoom, 1, maxZoom);
-  setCamera(camera.x + from.x / camera.zoom - to.x / zoom,
-            camera.y + from.y / camera.zoom - to.y / zoom, zoom);
-}
 
 // Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
-function viewportPoint(event) {
-  const rect = viewport.getBoundingClientRect();
-  const scale = Math.min(rect.width / viewWidth, rect.height / viewHeight);
-  return {
-    x: center.x + (event.clientX - rect.left - rect.width / 2) / scale,
-    y: center.y + (event.clientY - rect.top - rect.height / 2) / scale,
-  };
-}
 
-function pointerGeometry() {
-  const [a, b] = pointers.values();
-  if (!b) return { point: a, distance: 0 };
-  return {
-    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
-    distance: Math.hypot(a.x - b.x, a.y - b.y),
-  };
-}
 
 // A press that starts on a switch and ends without moving toggles that switch.
 // Tracked separately from the camera pointers so it also works when the pointer is captured.
@@ -421,18 +389,7 @@ for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
   });
 }
 
-function zoomBy(delta) {
-  if (clamp(camera.zoom + delta, 1, maxZoom) === camera.zoom) return;
-  zoomBetween(camera.zoom + delta, center);
-  byId('announcement').textContent = `장면 배율 ${Math.round(camera.zoom * 100)}%`;
-}
 
-function resetView() {
-  pointers.clear();
-  viewport.classList.remove('is-dragging');
-  setCamera(0, 0, 1);
-  byId('announcement').textContent = '원래 보기로 돌아왔습니다';
-}
 
 byId('zoom-in').onclick = () => zoomBy(.25);
 byId('zoom-out').onclick = () => zoomBy(-.25);
@@ -537,12 +494,6 @@ let frame = null;
 let lastFrame = null;
 let timers = [];
 
-function svg(name, attrs, parent) {
-  const element = document.createElementNS('http://www.w3.org/2000/svg', name);
-  for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value);
-  if (parent) parent.append(element);
-  return element;
-}
 const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
 const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
 const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
@@ -553,44 +504,8 @@ const gridLines = [];
 for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
 byId('grid').setAttribute('d', gridLines.join(''));
 
-function drawShadow(node, half) {
-  const corners = [[-half + .4, -half - .25], [half + .9, -half - .25], [half + .9, half], [-half + .4, half]];
-  svg('polygon', { class: 'shadow', points: corners.map(([x, y]) => point(x, y, 0)).join(' '), filter: 'url(#soft-shadow)' }, node);
-}
-function drawBox(node, h, H) {
-  const faces = {
-    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
-    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
-    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
-  };
-  for (const [name, corners] of Object.entries(faces)) svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
-  svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
-}
 
 let plates = [];
-function sizePlate(plate) {
-  const size = parseFloat(getComputedStyle(plate.label).fontSize);
-  const width = plate.label.getComputedTextLength() + size * plate.pad;
-  const height = size + 8;
-  plate.label.setAttribute('x', plate.x);
-  plate.label.setAttribute('y', plate.y);
-  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
-    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
-}
-function addPlate(node, className, x, y, text, { pad = 1.4, round = false } = {}) {
-  const group = svg('g', { class: className }, node);
-  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
-  plate.label.textContent = text;
-  plates.push(plate);
-  sizePlate(plate);
-  return plate;
-}
-function setPlate(plate, text) {
-  plate.group.classList.toggle('empty', !text);
-  if (plate.label.textContent === text) return;
-  plate.label.textContent = text;
-  sizePlate(plate);
-}
 matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
 
 // ---------- Scene ----------
@@ -675,13 +590,6 @@ const edge = (id) => levelOf(id).u - levelOf(id).h * 1.6;
 function later(ms, fn) {
   if (ms === 0 || motion.matches) { fn(); return; }
   timers.push(setTimeout(fn, ms));
-}
-function cancelAll() {
-  timers.forEach(clearTimeout);
-  timers = [];
-  packets.forEach((packet) => packet.group.remove());
-  packets = [];
-  state.busy = false;
 }
 
 // ---------- Actions ----------
@@ -926,21 +834,6 @@ function demoTick() {
   demos[lesson[state.index].mode]();
   state.wait = { levels: 5200, cache: 3800, locality: 9000, power: 5200 }[lesson[state.index].mode];
 }
-function tick(now) {
-  frame = null;
-  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
-  lastFrame = now;
-  if (state.playing) {
-    state.wait -= elapsed;
-    if (state.wait <= 0) demoTick();
-  }
-  movePackets(now);
-  if (state.playing || packets.length) frame = requestAnimationFrame(tick);
-  else lastFrame = null;
-}
-function kick() {
-  if (frame === null) frame = requestAnimationFrame(tick);
-}
 function syncPlayback() {
   const reduced = motion.matches;
   if (reduced) state.playing = false;
@@ -1031,10 +924,6 @@ byId('replay').onclick = () => {
   syncPlayback();
   byId('announcement').textContent = '처음부터 자동 실행';
 };
-function syncRoute() {
-  const index = routeIndex();
-  if (index !== state.index) showStep(index);
-}
 window.addEventListener('hashchange', syncRoute);
 window.addEventListener('popstate', syncRoute);
 motion.addEventListener('change', () => {

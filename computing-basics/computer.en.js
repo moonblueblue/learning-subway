@@ -7,8 +7,7 @@ window.lessonText = {
   '입력, 처리, 저장, 출력은 어떻게 이어질까요? 글자 하나를 치고, 계산하고, 저장했다 다시 여는 동안 데이터가 지나는 길을 따라가 보세요.':
     'How do input, processing, storage and output connect? Follow the path data takes as you type a character, calculate, save and open a file again.',
   '데이터가 지나는 길': 'The path data takes', '컴퓨터 부품 사이의 데이터 경로': 'Data paths between the parts of a computer',
-  '보내는 데이터': 'Data sent', '돌려받는 데이터': 'Data read back', '모션 감소 · 정적 경로': 'Reduced motion · still paths',
-  '확대 후 드래그로 이동': 'Zoom in, then drag to move', '두 손가락으로 확대 · 확대 후 드래그': 'Pinch to zoom · drag after zooming',
+  '보내는 데이터': 'Data sent', '돌려받는 데이터': 'Data read back',
   // Parts
   '키보드 · 입력': 'Keyboard · input', 'CPU · 처리': 'CPU · processing', '화면 · 출력': 'Screen · output',
   '메모리': 'Memory', '저장장치': 'Storage',

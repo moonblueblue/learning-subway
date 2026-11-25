@@ -7,8 +7,7 @@ window.lessonText = {
   '메시지 하나는 어떻게 지구 반대편까지 갈까요? 내 노트북에서 출발한 패킷이 여러 기계를 건너 서버에 닿고, 답장이 돌아오는 길을 따라가 보세요.':
     'How does one message get to the other side of the world? Follow packets that leave your laptop, cross many machines to reach a server, and the reply that comes back.',
   '데이터가 지나는 길': 'The path data takes', '노트북에서 해외 서버까지 패킷이 가는 경로': 'The path packets take from a laptop to an overseas server',
-  '보내는 패킷': 'Packets sent', '답장 패킷': 'Reply packets', '모션 감소 · 정적 경로': 'Reduced motion · still paths',
-  '확대 후 드래그로 이동': 'Zoom in, then drag to move', '두 손가락으로 확대 · 확대 후 드래그': 'Pinch to zoom · drag after zooming',
+  '보내는 패킷': 'Packets sent', '답장 패킷': 'Reply packets',
   // Machines
   '내 노트북': 'My laptop', '공유기': 'Home router', '통신사': 'Internet provider', '라우터 A': 'Router A', '라우터 B': 'Router B',
   '해저 케이블 끝': 'Undersea cable end', '해외 서버': 'Overseas server',

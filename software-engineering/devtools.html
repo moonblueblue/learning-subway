@@ -107,6 +107,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 <link rel="stylesheet" href="../shared/course.css">
 <script src="../shared/engine.js"></script>
 <script defer src="../shared/catalog.js"></script>
+<script defer src="./devtools.en.js"></script>
 <script defer src="../shared/i18n.js"></script>
 <script defer src="../shared/course.js"></script>
 </head>
@@ -226,9 +227,14 @@ const inRepo = (w) => w.cwd === '~/레슨' || w.cwd.startsWith('~/레슨/');
 let idCounter = 0;
 const newId = () => ['b72e04d', 'c93a1f2', 'd4e8b60', 'e15c7a3'][idCounter++ % 4];
 
+// The English page shows the folder and file names in English (devtools.en.js). Names typed in English
+// are read as the Korean names the lab keeps, so "cd lesson" works there like "cd 레슨".
+const typedNames = [['break notes', '메모 망치기'], ['notes.txt', '메모.txt'], ['lesson', '레슨'], ['practice', '연습'], ['photos', '사진']];
+const fromTyped = (cmd) => typedNames.reduce((c, [en, ko]) => c.replace(new RegExp(`(^|[\\s/])${en.replace('.', '\\.')}(?=$|[\\s/])`, 'g'), `$1${ko}`), cmd);
+
 function run(raw) {
   const w = state.world;
-  const cmd = raw.trim().replace(/\s+/g, ' ');
+  const cmd = fromTyped(raw.trim().replace(/\s+/g, ' '));
   if (!cmd) return;
   print(`${w.cwd} $ ${cmd}`, 'cmd');
   const [head, ...args] = cmd.split(' ');

@@ -415,6 +415,7 @@ const S = [['b', '브라우저', 'app'], ['api', '서버', 'layer'], ['db', '데
 const lesson = [
   {
     label: '비밀번호 확인',
+    readingStage: 3,
     title: '서버는 비밀번호 대신 해시를 저장해 비교한다',
     body: '로그인은 "당신이 정말 그 사람인가"를 확인하는 인증입니다. 비밀번호는 HTTPS(6.11)로 암호화되어 서버에 갑니다. 서버는 비밀번호를 그대로 저장하지 않고, 되돌릴 수 없는 해시 함수에 소금(사람마다 다른 임의 값)을 섞어 만든 값만 저장합니다. 로그인할 때 들어온 비밀번호로 같은 계산을 해서 저장된 값과 같은지 비교합니다.',
     takeaway: '데이터베이스에는 "$2b$12$Qx…" 같은 해시만 있고 비밀번호는 어디에도 없습니다. 데이터베이스가 통째로 유출되어도 공격자는 비밀번호를 바로 알 수 없습니다. 4.5의 해시 함수와 비슷하지만, 일부러 느리고 거꾸로 계산할 수 없게 만든 것을 씁니다.',
@@ -432,6 +433,7 @@ const lesson = [
   },
   {
     label: '세션',
+    readingStage: 4,
     title: '로그인 상태는 추측할 수 없는 세션 번호로 기억한다',
     body: 'HTTP 요청은 하나하나가 따로입니다. 서버가 "이 요청이 방금 로그인한 그 사람"임을 알려면 표시가 필요합니다. 서버는 로그인에 성공하면 길고 무작위한 세션 번호를 만들어 "이 번호 = 사용자 7"로 기억하고, 브라우저에 쿠키로 줍니다. 브라우저는 이후 모든 요청에 쿠키를 붙여 보냅니다.',
     takeaway: '세션 번호는 비밀번호와 같습니다. 누가 훔치면 그 사람인 척할 수 있습니다. 그래서 번호를 추측할 수 없게 길고 무작위로 만들고, HTTPS로만 보내고(Secure), 페이지의 자바스크립트가 읽지 못하게(HttpOnly) 합니다.',
@@ -449,6 +451,7 @@ const lesson = [
   },
   {
     label: '권한 확인',
+    readingStage: 3,
     title: '누구인지 확인한 뒤, 그 일을 해도 되는지 따로 확인한다',
     body: '인증은 "누구인가", 인가(권한 확인)는 "그 사람이 이 일을 해도 되는가"입니다. 주소의 번호만 바꿔 /api/orders/503처럼 남의 주문을 요청할 수도 있습니다. 로그인했다고 끝이 아니라, 서버는 요청마다 그 주문의 주인이 지금 사용자인지 확인해야 합니다. 이 확인을 빠뜨리는 것이 아주 흔한 보안 사고입니다.',
     takeaway: '사용자 7은 로그인되어 있지만, 주문 503의 주인은 사용자 9라서 403(금지)을 받습니다. 6.9의 "검사는 서버에서"와 같은 원리입니다.',
@@ -467,6 +470,7 @@ const lesson = [
   },
   {
     label: 'SQL 인젝션',
+    readingStage: 4,
     title: '입력을 코드에 이어 붙이면 입력이 코드가 된다',
     body: '사용자 입력을 SQL 문장(6.4)에 글자로 그냥 이어 붙이면, 입력 안의 따옴표와 기호가 SQL 코드로 해석됩니다. 이메일 칸에 \' OR \'1\'=\'1 같은 것을 넣으면 조건이 언제나 참이 되어 남의 정보가 나옵니다. 해결책은 입력을 "값"으로만 넘기는 매개변수 질의입니다. 6.3에서 봤듯이 파서가 문장 구조를 먼저 정한 뒤 값을 끼워 넣으므로, 입력이 구조를 바꿀 수 없습니다.',
     takeaway: '이어 붙인 질의는 WHERE email = \'\' OR \'1\'=\'1\'이 되어 모든 행이 나왔습니다. 매개변수 질의에서는 같은 입력이 그냥 이상한 이메일 값으로 취급되어 아무 행도 나오지 않습니다. 사용자 입력은 언제나 데이터로만 다룹니다.',
@@ -643,8 +647,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -762,6 +768,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

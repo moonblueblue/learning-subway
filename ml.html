@@ -416,6 +416,7 @@ const LOOP_LINKS = [['data', 'model'], ['model', 'pred'], ['pred', 'loss'], ['lo
 const lesson = [
   {
     label: '규칙 대신 예시',
+    readingStage: 2,
     title: '사람이 규칙을 쓰는 대신 예시에서 규칙을 찾게 한다',
     body: '지금까지는 사람이 규칙을 코드로 썼습니다("300보다 작으면 물 주기", 6.10). 그런데 "기온으로 아이스크림 판매량 예측하기"처럼 규칙을 정확히 모를 때가 많습니다. 머신러닝은 기온과 실제 판매량의 예시를 보여 주고, 컴퓨터가 둘 사이의 규칙을 찾게 합니다. 여기서는 "판매량 = w × 기온"이라는 모양만 정해 두고, 숫자 w를 예시로부터 배웁니다.',
     takeaway: '예시 세 개를 보면 판매량이 기온의 두 배쯤입니다. 사람은 눈으로 찾았지만, 컴퓨터는 w를 조금씩 고치는 방법으로 찾습니다(다음 단계). 이렇게 정답이 붙은 예시로 배우는 것을 지도 학습이라 합니다.',
@@ -430,6 +431,7 @@ const lesson = [
   },
   {
     label: '틀린 만큼 고치기',
+    readingStage: 5,
     title: '예측하고, 틀린 정도를 재고, w를 조금 고친다',
     body: '컴퓨터는 w = 1처럼 아무 값에서 시작합니다. 예시마다 예측하고 정답과 비교해 오차를 잽니다. 오차가 줄어드는 방향으로 w를 조금 옮기고 다시 예측합니다. 이것을 되풀이하는 것이 학습이고, 오차가 줄어드는 쪽으로 내려가는 방법을 경사 하강법이라 합니다. 한 번에 얼마나 옮길지(학습률)는 사람이 정합니다.',
     takeaway: 'w가 1 → 1.64 → 1.87로 2에 다가갑니다. 2와의 차이는 매번 3분의 1쯤으로, 오차(차이 제곱의 평균)는 8분의 1쯤으로 줄어듭니다. 컴퓨터는 "두 배"라는 규칙을 몰랐지만, 틀린 만큼 고치기를 되풀이해 찾아냈습니다.',
@@ -451,6 +453,7 @@ const lesson = [
   },
   {
     label: '처음 보는 데이터',
+    readingStage: 3,
     title: '배운 데이터가 아니라 처음 보는 데이터로 평가한다',
     body: '모델이 쓸모 있는지는 배울 때 본 예시가 아니라 처음 보는 데이터에서 잘 맞히는지로 판단합니다. 그래서 예시를 미리 나눠, 일부는 학습에 쓰고 일부(시험 데이터)는 숨겨 두었다가 평가에만 씁니다. 6.2의 테스트처럼, 시험 문제를 미리 보여 주면 실력을 잴 수 없습니다.',
     takeaway: '숨겨 둔 22°C와 33°C에서 예측 44.0과 66.0이 실제 45개, 65개와 가깝습니다. 처음 보는 데이터에서도 잘 맞으니 규칙을 제대로 배운 것입니다(일반화).',
@@ -467,6 +470,7 @@ const lesson = [
   },
   {
     label: '외우기와 치우침',
+    readingStage: 4,
     title: '너무 외우거나 치우친 예시로 배우면 틀린다',
     body: '모델을 아주 복잡하게 만들면, 예시의 작은 우연(그날 비가 와서 덜 팔림)까지 외워 학습 예시는 완벽히 맞히지만 처음 보는 데이터는 틀립니다. 이것을 과적합이라 합니다. 또 예시가 여름 데이터뿐이라면 모델은 겨울을 본 적이 없어 영하의 기온에 음수 판매량을 예측합니다. 모델은 보여 준 예시만큼만 압니다.',
     takeaway: '과적합은 시험 데이터 점수로 알아채고, 모델을 단순하게 하거나 예시를 늘려 막습니다. 데이터의 치우침은 모델에 그대로 옮겨지므로, 어떤 예시로 배웠는지가 결과만큼 중요합니다(0.8 컴퓨팅의 영향).',
@@ -660,8 +664,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -779,6 +785,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

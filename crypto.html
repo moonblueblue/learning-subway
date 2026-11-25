@@ -405,6 +405,7 @@ const CH = [['a', '민지', 'file'], ['enc', '암호화', 'tool'], ['net', '인�
 const lesson = [
   {
     label: '글자 밀기',
+    readingStage: 3,
     title: '열쇠로 글을 바꾸면 엿봐도 읽을 수 없다',
     body: '암호화는 열쇠(키)를 써서 평문을 알아볼 수 없는 암호문으로 바꾸고, 같은 열쇠가 있는 사람만 되돌리게(복호화) 하는 일입니다. 가장 오래된 방법은 글자를 알파벳에서 정해진 칸만큼 미는 카이사르 암호입니다. 열쇠가 3이면 A→D, H→K이고, Z 다음은 다시 A로 돕니다(2.6의 나머지 연산, mod 26).',
     takeaway: '중간에서 엿본 사람은 KHOOR만 봅니다. 하지만 열쇠가 될 수 있는 수가 25개뿐이라, 하나씩 다 해 보면(전수 조사) 금방 풀립니다. 좋은 암호는 열쇠의 경우가 엄청나게 많아야 합니다.',
@@ -422,6 +423,7 @@ const lesson = [
   },
   {
     label: '긴 열쇠',
+    readingStage: 3,
     title: '열쇠의 경우가 아주 많으면 다 해 볼 수 없다',
     body: '오늘날 쓰는 AES 같은 암호는 글자를 미는 대신 비트를 여러 번 섞고 뒤집습니다. 핵심은 열쇠 길이입니다. 128비트 열쇠는 2¹²⁸가지, 약 3.4 × 10³⁸가지라 세상의 모든 컴퓨터로 다 해 봐도 우주의 나이보다 오래 걸립니다(4.10의 "풀 수는 있지만 너무 오래 걸리는" 문제). 같은 열쇠로 잠그고 여는 이런 방식을 대칭 키 암호라 합니다.',
     takeaway: '암호문만으로는 풀 수 없으니, 지켜야 할 것은 열쇠 하나입니다. 그런데 민지와 서준이 처음 만나 열쇠를 정하려면, 그 열쇠를 어떻게 안전하게 건넬까요? 엿보는 이가 있는 인터넷으로 열쇠를 보내면 다 들킵니다.',
@@ -439,6 +441,7 @@ const lesson = [
   },
   {
     label: '열쇠 두 개',
+    readingStage: 4,
     title: '잠그는 열쇠는 공개하고, 여는 열쇠만 숨긴다',
     body: '공개 키 암호는 열쇠를 짝으로 만듭니다. 공개 키로 잠근 것은 짝인 개인 키로만 열립니다. 서준은 공개 키를 누구에게나 나눠 주고 개인 키만 숨깁니다. 민지가 서준의 공개 키로 잠가 보내면, 엿보는 이가 공개 키를 가지고 있어도 열 수 없습니다. 아래는 RSA를 아주 작은 수로 해 본 것입니다(실제로는 수백 자리 수를 씁니다).',
     takeaway: '잠글 때는 4³ mod 33 = 31, 열 때는 31⁷ mod 33 = 4입니다. 공개 키(33, 3)로 개인 키 7을 알아내려면 33을 3 × 11로 쪼개야 하는데, 수가 수백 자리면 그 일이 너무 오래 걸립니다. 2.6의 나머지 연산이 여기서 쓰입니다.',
@@ -457,6 +460,7 @@ const lesson = [
   },
   {
     label: '함께 쓰기',
+    readingStage: 3,
     title: '공개 키로 열쇠를 건네고, 대칭 키로 빠르게 대화한다',
     body: '공개 키 암호는 계산이 무거워 큰 데이터를 잠그기에는 느립니다. 그래서 5.11의 TLS는 둘을 함께 씁니다. 먼저 공개 키 방식으로 이번 대화에만 쓸 대칭 키를 안전하게 정하고, 그 뒤의 모든 내용은 빠른 대칭 키(AES)로 암호화합니다. 2단계의 "열쇠를 어떻게 건네나" 문제를 3단계가 풀어 준 것입니다.',
     takeaway: '한 번의 공개 키 계산으로 대칭 키를 정하고, 나머지 수천 개의 패킷은 대칭 키로 빠르게 잠급니다. 브라우저 주소창의 자물쇠가 이 과정을 거쳤다는 표시입니다. 6.12에서는 상대가 진짜인지 확인하는 일을 봅니다.',
@@ -633,8 +637,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -752,6 +758,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

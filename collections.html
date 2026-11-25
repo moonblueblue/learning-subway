@@ -359,6 +359,8 @@ const line = (code, reads, writes, show, ask = null) => ({ code, reads, writes, 
 const lesson = [
   {
     label: '리스트 만들기',
+    readingMemory: [["점수[0]", 70], ["점수[1]", 85], ["점수[2]", 90], ["둘째", 85]],
+    example: ["점수 = [70, 85, 90]", "인덱스 1 읽기", "두 번째 값 85"],
     title: '리스트는 값을 이웃한 칸에 차례로 담는다',
     body: '리스트는 값 여러 개를 순서대로 담는 상자입니다. 점수 = [70, 85, 90]이라고 쓰면 이웃한 칸 세 개에 값이 차례로 들어가고, 각 칸은 0번부터 번호(인덱스)로 부릅니다. 첫 칸이 1번이 아니라 0번인 것이 처음엔 헷갈리는 부분입니다.',
     takeaway: '칸 세 개에 점수[0], 점수[1], 점수[2] 이름표가 붙습니다. 점수[1]을 읽으면 두 번째 칸의 85가 CPU로 갑니다.',
@@ -371,6 +373,8 @@ const lesson = [
   },
   {
     label: '덧붙이기',
+    readingMemory: [["점수[0]", 70], ["점수[1]", 85], ["점수[2]", 90], ["점수[3]", 60], ["개수", 4]],
+    example: ["점수 3개", "끝에 60 추가", "점수[3] = 60 · 길이 4"],
     title: '리스트는 끝에 새 칸을 이어 붙인다',
     body: 'append는 리스트 맨 끝 다음 칸에 값을 붙입니다. 리스트의 길이(len)는 칸 수이고, 마지막 칸의 인덱스는 길이보다 1 작습니다. 칸이 이웃해 있어서 "몇 번째"로 바로 찾아갈 수 있다는 것이 리스트의 장점입니다.',
     takeaway: 'append(60)을 하면 점수[3] 칸이 새로 생깁니다. 길이는 4이고, 마지막 인덱스는 3입니다.',
@@ -385,6 +389,8 @@ const lesson = [
   },
   {
     label: '딕셔너리',
+    readingMemory: [["나이[\"민수\"]", 15], ["나이[\"지아\"]", 14], ["답", 14]],
+    example: ["나이 표에 지아: 14", "키 ‘지아’ 조회", "답 14"],
     title: '딕셔너리는 이름(키)으로 값을 찾는다',
     body: '딕셔너리는 값마다 번호 대신 이름표(키)를 붙여 담습니다. 나이 = {"민수": 15, "지아": 14}이면 "지아"라는 키로 14를 바로 꺼낼 수 있습니다. 순서보다 "무엇에 대한 값인지"가 중요할 때 씁니다.',
     takeaway: '칸에 나이["민수"], 나이["지아"] 이름표가 붙습니다. 나이["지아"]를 읽으면 그 칸 하나만 CPU로 갑니다.',
@@ -399,6 +405,8 @@ const lesson = [
   },
   {
     label: '찾는 방법 비교',
+    readingMemory: [["명단[0]", "민수"], ["명단[1]", "하늘"], ["명단[2]", "지아"], ["번호[\"민수\"]", 1], ["번호[\"하늘\"]", 2], ["번호[\"지아\"]", 3], ["위치", 2], ["바로", 3]],
+    example: ["마지막 이름 ‘지아’", "리스트 3칸 훑기", "키 조회는 해당 칸으로"],
     title: '값으로 찾으면 훑고, 키로 찾으면 바로 간다',
     body: '리스트에서 "지아가 몇 번째에 있는지" 모르면 0.6의 순차 탐색처럼 앞에서부터 칸을 하나씩 읽어야 합니다. 딕셔너리는 키에서 칸의 위치를 바로 계산해 한 칸만 읽습니다. 그래서 이름으로 자주 찾는 데이터는 딕셔너리에 담습니다. 위치를 계산하는 방법은 4.5 해시 테이블에서 다룹니다.',
     takeaway: '리스트에서 "지아"를 찾을 때는 파란 점이 칸 세 개에서 차례로 CPU로 갑니다. 딕셔너리에서는 한 개만 갑니다.',
@@ -601,10 +609,11 @@ function setPlate(plate, text) {
 
 // ---------- Drawing ----------
 function paint(changed = -1) {
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? step().readingMemory : null;
   cells.forEach((cell, k) => {
-    const name = state.names[k];
+    const name = preview ? preview[k]?.[0] : state.names[k];
     cell.node.setAttribute('class', `node cell ${name ? 'used' : 'empty'}${k === changed ? ' changed' : ''}`);
-    cell.value.textContent = name ? String(state.cells[k]) : '–';
+    cell.value.textContent = name ? String(preview ? preview[k][1] : state.cells[k]) : '–';
     setPlate(cell.name, name ?? '');
     cell.name.group.style.opacity = name ? 1 : 0;
     cell.wire.classList.toggle('active', Boolean(name));
@@ -744,6 +753,7 @@ byId('restart').onclick = () => {
 // ---------- Demo playback ----------
 let frame = null, lastFrame = null;
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.pc >= step().program.length) {
     resetProgram();

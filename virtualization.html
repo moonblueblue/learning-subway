@@ -418,6 +418,7 @@ const CT_LINKS = [['c1', 'hk'], ['c2', 'hk'], ['hk', 'hw']];
 const lesson = [
   {
     label: '가상 머신',
+    readingStage: 3,
     title: '하이퍼바이저가 컴퓨터 한 대를 여러 대처럼 나눈다',
     body: '서버 한 대(CPU 32코어, RAM 128GB)를 서비스 하나가 다 쓰지 못하면 낭비입니다. 하이퍼바이저는 실제 하드웨어 위에서 가상 머신(VM) 여러 대를 만들고, 각 VM에 가짜 CPU, RAM, 디스크를 나눠 줍니다. VM 안에는 자기만의 운영체제 커널(8A.2)이 돌고, 그 커널은 자기가 진짜 컴퓨터 위에 있다고 믿습니다.',
     takeaway: 'VM 1의 앱이 파일을 읽으면, VM 1의 커널이 받아 가상 디스크에 요청하고, 하이퍼바이저가 그것을 실제 디스크 읽기로 바꿉니다. 커널이 둘 있고, 하이퍼바이저가 그 아래에서 진짜 하드웨어를 나눠 줍니다.',
@@ -435,6 +436,7 @@ const lesson = [
   },
   {
     label: '서로 막기',
+    readingStage: 2,
     title: '한 VM이 망가져도 다른 VM은 멀쩡하다',
     body: '하이퍼바이저는 VM마다 실제 RAM의 다른 구역을 주고, 한 VM이 다른 VM의 메모리나 디스크에 손대지 못하게 막습니다. 5.4에서 운영체제가 프로세스끼리 메모리를 나눈 것을 한 층 아래에서 다시 하는 셈입니다. 그래서 VM 1의 커널이 멈춰도 VM 2는 계속 돕니다. 클라우드 회사가 여러 고객을 한 서버에 태울 수 있는 까닭입니다.',
     takeaway: 'VM 1의 커널이 멈췄지만 하이퍼바이저와 VM 2는 영향을 받지 않았습니다. 대신 VM마다 커널 전체를 따로 돌리므로 메모리를 더 쓰고, 켜는 데 커널 부팅(수십 초)이 걸립니다.',
@@ -451,6 +453,7 @@ const lesson = [
   },
   {
     label: '컨테이너',
+    readingStage: 3,
     title: '컨테이너는 커널 하나를 함께 쓰는 갇힌 프로세스다',
     body: '컨테이너는 VM처럼 커널을 따로 두지 않습니다. 호스트의 커널 하나 위에서 도는 평범한 프로세스(5.1)인데, 커널이 그 프로세스에게 자기만의 파일 시스템, 프로세스 목록, 네트워크만 보이게 가려 줍니다(네임스페이스). 커널 부팅이 없으니 1초도 안 걸려 뜨고, 메모리도 앱만큼만 씁니다. 앱과 필요한 파일을 묶은 이미지만 있으면 어디서나 같은 모습으로 뜹니다.',
     takeaway: '웹 컨테이너와 DB 컨테이너가 같은 커널을 쓰지만 서로의 파일과 프로세스를 보지 못합니다. VM보다 가볍고 빠른 대신, 커널을 공유하므로 격리는 VM보다 약합니다(커널 버그 하나가 모두에게 영향).',
@@ -468,6 +471,7 @@ const lesson = [
   },
   {
     label: '자원 제한',
+    readingStage: 3,
     title: '컨테이너마다 쓸 수 있는 CPU와 메모리를 제한한다',
     body: '커널을 함께 쓰므로 한 컨테이너가 메모리를 다 써 버리면 다른 컨테이너까지 굶습니다. 그래서 커널은 컨테이너마다 쓸 수 있는 CPU 몫과 메모리 한도를 정해 둡니다(cgroups). 한도를 넘으면 그 컨테이너의 프로세스만 강제로 끝내고(메모리 부족 종료), 다른 컨테이너는 영향을 받지 않습니다. 끝난 컨테이너는 관리 도구가 다시 띄웁니다.',
     takeaway: '웹 컨테이너가 메모리 한도 2GB를 넘자 그것만 종료되고 DB는 멀쩡했습니다. 이런 한도와 재시작을 수많은 서버에서 자동으로 해 주는 것이 컨테이너 오케스트레이션(예: 쿠버네티스)입니다.',
@@ -660,8 +664,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -779,6 +785,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

@@ -416,6 +416,7 @@ const kinds = { user: '프로그램', gate: '창구', kernel: '커널', ssd: '�
 const lesson = [
   {
     label: '파일 읽기',
+    readingStage: 3,
     title: '프로그램은 운영체제에 부탁해서 파일을 읽는다',
     body: '프로그램이 메모장.txt를 읽으려면 read 같은 시스템 콜을 부릅니다. 시스템 콜은 프로그램이 운영체제 커널에 일을 맡기는 정해진 창구입니다. 커널은 파일 시스템(5.5)으로 파일이 SSD 어디에 있는지 찾고, 장치 드라이버로 SSD에 명령을 보낸 뒤, 읽어 온 내용을 프로그램의 메모리에 복사해 줍니다.',
     takeaway: '점이 사용자 영역에서 경계를 넘어 커널로 들어가고, 드라이버와 SSD를 거쳐 돌아옵니다. 프로그램이 직접 한 일은 "read(파일, 100바이트)"라고 부탁한 것뿐입니다.',
@@ -439,6 +440,7 @@ const lesson = [
   },
   {
     label: '직접은 안 된다',
+    readingStage: 1,
     title: '프로그램은 하드웨어를 직접 만질 수 없다',
     body: 'CPU에는 사용자 모드와 커널 모드가 있습니다. 사용자 모드로 도는 프로그램이 장치를 직접 다루는 명령을 실행하면 CPU가 막고 운영체제가 그 프로그램을 멈춥니다. 그래서 한 프로그램이 남의 파일을 지우거나 디스크를 망가뜨릴 수 없습니다. 5.1에서 본 프로세스 격리도 이 덕분입니다.',
     takeaway: '"SSD에 직접 쓰기"는 경계에서 주황으로 막힙니다. 같은 일을 write 시스템 콜로 부탁하면 커널이 권한을 확인한 뒤 대신 해 줍니다.',
@@ -460,6 +462,7 @@ const lesson = [
   },
   {
     label: '경계를 넘는 비용',
+    readingStage: 2,
     title: '시스템 콜은 공짜가 아니다',
     body: '경계를 넘을 때마다 CPU는 모드를 바꾸고, 커널은 검사를 합니다. 한 번은 짧지만 수백만 번이면 큽니다. 그래서 파일을 1바이트씩 100번 읽기보다 100바이트를 한 번에 읽는 편이 훨씬 빠릅니다. 프로그래밍 언어의 입출력 함수는 이 때문에 버퍼(모아 두는 칸)를 두고 한꺼번에 읽고 씁니다.',
     takeaway: '1바이트씩 읽으면 경계를 100번 넘지만, 한 번에 읽으면 한 번입니다. 3.7의 캐시 라인처럼 "한 번 갈 때 많이 가져오기"가 여기서도 통합니다.',
@@ -481,6 +484,7 @@ const lesson = [
   },
   {
     label: '시스템 콜 가족',
+    readingStage: 3,
     title: '프로그램의 거의 모든 바깥일은 시스템 콜이다',
     body: '파일만이 아닙니다. 화면에 글자 쓰기, 네트워크로 보내기(5.7), 새 프로세스 만들기(5.1), 메모리 더 받기(5.4), 시각 알아보기도 모두 시스템 콜입니다. 1.1에서 쓴 print도 결국 write 시스템 콜로 화면에 글자를 보냅니다.',
     takeaway: 'print("안녕") 한 줄도 사용자 영역에서 경계를 넘어 커널, 화면 드라이버로 갑니다. 운영체제는 프로그램과 하드웨어 사이의 관리인입니다.',
@@ -671,8 +675,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -790,6 +796,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

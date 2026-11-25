@@ -416,6 +416,7 @@ const NET_LINKS = [['net', 'fw'], ['fw', 'web'], ['fw', 'admin'], ['web', 'db'],
 const lesson = [
   {
     label: '방화벽',
+    readingStage: 3,
     title: '정해 둔 규칙에 맞는 연결만 들여보낸다',
     body: '방화벽은 네트워크 입구에서 들어오는 패킷(5.8)을 규칙과 비교해 통과시키거나 버립니다. 규칙은 "어디서, 어디로, 몇 번 포트(5.9)"로 적습니다. 가장 중요한 규칙은 마지막 줄의 "나머지는 모두 막기"입니다. 열어 둔 것만 지나가므로, 실수로 켜 둔 서비스가 있어도 밖에서는 닿지 않습니다.',
     takeaway: '443번(HTTPS)으로 웹 서버에 오는 연결은 통과하고, 인터넷에서 DB의 5432번으로 바로 오는 연결은 버려졌습니다. "필요한 것만 열고 나머지는 막기"가 방화벽의 기본입니다.',
@@ -432,6 +433,7 @@ const lesson = [
   },
   {
     label: '망 나누기',
+    readingStage: 2,
     title: '뚫려도 번지지 않게 네트워크를 칸으로 나눈다',
     body: '밖에서 닿아야 하는 웹 서버는 DMZ라는 따로 떨어진 칸에 두고, DB와 관리 서버는 안쪽 칸에 둡니다. 칸 사이에도 규칙을 둬서, 웹 서버는 DB의 5432번에만 말할 수 있고 관리 서버에는 아예 닿지 못하게 합니다. 웹 서버가 8C.4 같은 공격으로 뚫려도, 공격자가 갈 수 있는 곳이 좁아집니다.',
     takeaway: '뚫린 웹 서버에서 관리 서버로 가려는 연결은 칸 사이 규칙에 막혔습니다. DB에는 닿지만 웹 서버용 계정의 권한만큼만 할 수 있습니다. 한 곳이 뚫려도 전부 뚫리지 않게 하는 것이 망 나누기입니다.',
@@ -447,6 +449,7 @@ const lesson = [
   },
   {
     label: '침입 탐지',
+    readingStage: 2,
     title: '수상한 패턴을 찾아 알린다',
     body: '규칙으로 막는 것만으로는 모자랍니다. 침입 탐지 시스템은 로그와 트래픽을 지켜보다 수상한 패턴을 찾으면 알립니다. 한 IP가 1분에 로그인을 500번 실패하거나, 짧은 시간에 포트 1,000개를 차례로 두드리면(포트 스캔) 공격 신호입니다. 다만 8B.2처럼 드문 공격을 찾을수록 잘못된 경보가 많아지므로, 경보의 기준을 잘 맞춰야 합니다.',
     takeaway: '한 IP의 로그인 실패 500번이 경보를 울렸고, 방화벽이 그 IP를 1시간 막았습니다. 탐지와 차단이 이어지면 사람이 보기 전에도 막을 수 있습니다. 기준이 너무 낮으면 비밀번호를 몇 번 틀린 사용자까지 막게 됩니다.',
@@ -463,6 +466,7 @@ const lesson = [
   },
   {
     label: '여러 겹',
+    readingStage: 3,
     title: '한 겹이 뚫려도 다음 겹이 막는다',
     body: '완벽한 방어 한 겹은 없습니다. 그래서 방화벽, 망 나누기, 최소 권한, 탐지, 암호화(8C.2), 안전한 코드(8C.3, 8C.4), 빠른 보안 업데이트를 겹겹이 둡니다. 공격자는 모든 겹을 뚫어야 하고, 방어자는 그중 한 겹에서만 막으면 됩니다. 마지막 겹은 백업과 복구 계획입니다.',
     takeaway: '이번 공격은 웹 서버의 알려진 취약점으로 들어왔지만, 망 나누기와 DB 권한에 막혀 고객 정보에 닿지 못했고, 탐지가 이상한 연결을 알렸습니다. 업데이트를 미루지 않았다면 첫 겹에서 막혔을 것입니다.',
@@ -655,8 +659,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -774,6 +780,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

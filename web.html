@@ -416,6 +416,7 @@ const S = [['dns', '리졸버', 'layer'], ['b', '브라우저', 'app'], ['web', 
 const lesson = [
   {
     label: '찾고 잇기',
+    readingStage: 5,
     title: '주소를 찾고 연결을 맺는다',
     body: '주소창에 https://shop.example.com/products를 치고 엔터를 누르면, 브라우저는 먼저 이름을 IP 주소로 바꿉니다(5.10). 주소를 알면 그 서버의 443번 포트로 TCP 연결을 맺습니다(5.9). 아직 페이지 내용은 한 글자도 오가지 않았습니다.',
     takeaway: 'DNS 질문과 답 한 번, TCP 인사 세 번이 지나야 "연결됨"이 뜹니다. 서버가 멀수록 이 왕복 하나하나가 시간을 잡아먹습니다.',
@@ -434,6 +435,7 @@ const lesson = [
   },
   {
     label: '안전한 통로',
+    readingStage: 3,
     title: 'TLS로 상대를 확인하고 암호화한다',
     body: '주소가 https로 시작하면 TCP 연결 위에 TLS라는 안전한 통로를 하나 더 만듭니다. 서버는 인증서를 보내 "나는 진짜 shop.example.com"임을 증명하고, 양쪽은 둘만 아는 암호 키를 정합니다. 이후 오가는 내용은 중간의 라우터가 엿봐도 읽을 수 없습니다.',
     takeaway: '인증서 확인과 키 정하기가 끝나면 브라우저 주소창에 자물쇠가 뜹니다. 연결 준비에 왕복이 더 들지만, 그 대가로 내용을 숨기고 가짜 서버를 막습니다.',
@@ -450,6 +452,7 @@ const lesson = [
   },
   {
     label: '요청과 응답',
+    readingStage: 4,
     title: 'HTTP로 요청하고, 서버는 데이터를 꺼내 답한다',
     body: '이제 브라우저는 HTTP 요청을 보냅니다. "GET /products"는 상품 목록 페이지를 달라는 뜻입니다. 웹 서버는 데이터베이스(6장)에서 상품을 꺼내 HTML을 만들고, 상태 코드와 함께 돌려줍니다. 200은 성공, 404는 그런 페이지 없음, 500은 서버 안 오류입니다.',
     takeaway: '요청 하나에 웹 서버와 데이터베이스 사이 왕복이 한 번 더 숨어 있습니다. 브라우저는 "200 OK"와 HTML을 받습니다.',
@@ -467,6 +470,7 @@ const lesson = [
   },
   {
     label: '화면 그리기',
+    readingStage: 5,
     title: 'HTML을 읽고 필요한 파일을 더 받아 화면을 그린다',
     body: 'HTML 안에는 스타일(CSS), 그림, 스크립트(JS) 주소가 적혀 있습니다. 브라우저는 HTML을 읽으면서 이 파일들을 더 요청하고, 다 모이면 글자와 그림을 화면에 배치해 그립니다. 같은 서버라면 이미 맺은 연결을 다시 써서, DNS·TCP·TLS 준비를 되풀이하지 않습니다.',
     takeaway: '페이지 하나에 요청이 여러 개입니다. 연결을 다시 쓰고, 자주 쓰는 파일은 브라우저 캐시에 두면(3.7) 다음 방문이 빨라집니다.',
@@ -643,8 +647,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -762,6 +768,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

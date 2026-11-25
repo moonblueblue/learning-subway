@@ -405,6 +405,7 @@ const STUDENTS = ['id | name | grade', '1  | 민지 | 2', '2  | 서준 | 1', '3 
 const lesson = [
   {
     label: '표',
+    readingStage: 3,
     title: '데이터는 이름 붙은 칸을 가진 표에 줄로 담긴다',
     body: '관계형 데이터베이스는 데이터를 표(테이블)에 담습니다. 열(칼럼)은 id, name, grade처럼 이름과 종류가 정해진 칸이고, 행(로우)은 학생 한 명 같은 기록 하나입니다. 원하는 것은 SQL이라는 언어로 "무엇을" 달라고만 말하고, "어떻게" 찾을지는 데이터베이스 엔진이 정합니다.',
     takeaway: 'SELECT * FROM students는 students 표의 모든 열, 모든 행을 달라는 뜻입니다. 결과도 표 모양으로 돌아옵니다.',
@@ -420,6 +421,7 @@ const lesson = [
   },
   {
     label: '거르기',
+    readingStage: 3,
     title: 'WHERE로 조건에 맞는 행만 고른다',
     body: 'WHERE 뒤에 조건을 쓰면 맞는 행만 남깁니다. SELECT name을 쓰면 열도 name 하나만 고릅니다. 엔진은 표의 행을 하나씩 꺼내 조건을 확인합니다. 지금처럼 다른 도움 없이 모든 행을 훑는 것을 전체 스캔이라 합니다.',
     takeaway: '2학년 3명을 찾으려고 6행을 모두 확인했습니다. 행이 백만 개면 백만 번 확인해야 합니다. 6.5의 인덱스가 이 문제를 풉니다.',
@@ -436,6 +438,7 @@ const lesson = [
   },
   {
     label: '잇기',
+    readingStage: 4,
     title: 'JOIN으로 두 표를 같은 값으로 잇는다',
     body: '학생이 듣는 과목을 students 표에 함께 적으면, 과목이 여럿인 학생의 이름이 여러 번 반복됩니다. 그래서 과목은 enrollments 표에 따로 두고 student_id로 학생을 가리킵니다. 함께 볼 때는 JOIN으로 students.id와 enrollments.student_id가 같은 행끼리 이어 붙입니다. 이것이 "관계형"이라는 이름의 뜻입니다.',
     takeaway: '수학을 듣는 학생 id(1, 3, 5)를 enrollments에서 찾고, 그 id로 students에서 이름을 찾아 이어 붙였습니다. 이름은 students 한곳에만 있으니, 이름을 바꿀 때도 한 행만 고치면 됩니다(6.1의 "한 곳만 고치기").',
@@ -453,6 +456,7 @@ const lesson = [
   },
   {
     label: '묶어 세기',
+    readingStage: 3,
     title: 'GROUP BY로 같은 값끼리 묶어 센다',
     body: '"과목마다 몇 명이 듣나?"처럼 묶어서 세거나 더하는 질문도 SQL 한 줄로 합니다. GROUP BY subject는 subject가 같은 행끼리 한 묶음으로 모으고, COUNT(*)는 묶음마다 행 수를 셉니다. SUM, AVG, MAX도 같은 방식으로 씁니다.',
     takeaway: 'enrollments 6행이 수학 3, 과학 2, 음악 1로 묶였습니다. 반복문을 직접 쓰지 않고 "무엇을" 원하는지만 말하면, 엔진이 4.5의 해시 테이블 같은 방법으로 묶어 줍니다.',
@@ -627,8 +631,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -746,6 +752,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

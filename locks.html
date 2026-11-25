@@ -342,6 +342,8 @@ const lockProgram = ['잠금 얻기', ...program, '잠금 풀기'];
 const lesson = [
   {
     label: '차례대로',
+    readingRows: [["스레드 1", "읽기 0", "더하기 1", "쓰기 1"], ["이어서 스레드 2", "읽기 1", "더하기 1", "쓰기 2"]],
+    example: ["count = 0", "T1이 1 쓴 뒤 T2가 읽음", "두 번 더해 2"],
     title: '한 스레드씩 하면 아무 문제가 없다',
     body: '5.1의 스레드 둘이 같은 변수 count에 1씩 더한다고 해 봅시다. count = count + 1은 CPU에서 읽기, 더하기, 쓰기 세 걸음입니다(3.5). 스레드 1이 세 걸음을 다 마친 뒤 스레드 2가 하면 count는 0 → 1 → 2로 바르게 늘어납니다.',
     takeaway: '스레드 1 세 걸음, 이어서 스레드 2 세 걸음을 하면 count는 2입니다. 아래 기록에 걸음마다 레지스터와 count가 남습니다.',
@@ -354,6 +356,8 @@ const lesson = [
   },
   {
     label: '경쟁 상태',
+    readingRows: [["스레드 1", "읽기 0", "쓰기 1"], ["겹친 스레드 2", "읽기 0", "쓰기 1", "최종 1"]],
+    example: ["T1·T2 모두 0을 읽음", "각자 1을 써서 덮어씀", "두 번 더했지만 1"],
     title: '걸음이 섞이면 더한 값을 잃는다',
     body: '스케줄러(5.2)는 스레드를 아무 때나 바꿉니다. 스레드 1이 count(0)를 읽은 직후 스레드 2로 바뀌어 스레드 2도 0을 읽으면, 둘 다 1을 써서 count는 2가 아니라 1이 됩니다. 실행 순서에 따라 결과가 달라지는 이런 버그를 경쟁 상태라고 합니다.',
     takeaway: '스레드 1 읽기 → 스레드 2 읽기 → 1 더하기 → 2 더하기 → 1 쓰기 → 2 쓰기 순서로 진행하면 count가 1로 끝납니다. 한 번의 더하기를 잃었습니다. 매번 생기지 않아 찾기 어려운 버그입니다.',
@@ -366,6 +370,8 @@ const lesson = [
   },
   {
     label: '잠금',
+    readingRows: [["잠금 보유 T1", "읽기 0", "쓰기 1", "잠금 해제"], ["대기하던 T2", "잠금 획득", "읽기 1", "쓰기 2"]],
+    example: ["T1이 잠금 획득", "T2는 T1이 쓸 때까지 대기", "T2가 1을 읽고 2를 씀"],
     title: '잠금으로 세 걸음을 한 덩어리로 만든다',
     body: '잠금(락)은 한 번에 한 스레드만 들어갈 수 있는 구역을 만듭니다. 스레드는 count를 고치기 전에 잠금을 얻고, 다 고친 뒤 풉니다. 다른 스레드가 잠금을 가지고 있으면 풀릴 때까지 기다립니다. 그러면 읽기·더하기·쓰기가 섞이지 않습니다.',
     takeaway: '스레드 1이 잠금을 얻은 뒤에는 스레드 2를 눌러도 "기다림"이 됩니다. 스레드 1이 잠금을 풀어야 스레드 2가 들어갑니다. 어떤 순서로 눌러도 count는 2입니다.',
@@ -378,9 +384,12 @@ const lesson = [
   },
   {
     label: '교착 상태',
+    staticComparison: true,
+    readingRows: [["스레드 1", "A 보유", "B 대기", "진행 정지"], ["스레드 2", "B 보유", "A 대기", "진행 정지"]],
+    example: ["T1은 A 보유 · T2는 B 보유", "각자 상대의 잠금을 기다림", "둘 다 진행할 수 없음"],
     title: '잠금 둘을 엇갈려 잡으면 서로 기다린다',
     body: '잠금이 둘 이상이면 새 문제가 생깁니다. 스레드 1이 잠금 A를 잡고 B를 기다리는데, 스레드 2는 B를 잡고 A를 기다리면 둘 다 영원히 멈춥니다. 이것이 교착 상태(데드락)입니다. 모든 스레드가 잠금을 같은 순서(A 다음 B)로 잡게 하면 막을 수 있습니다.',
-    takeaway: '해 보기의 질문으로 정리해 보세요. 잠금을 쓰는 코드는 "무엇을, 어떤 순서로, 얼마나 짧게" 잠글지가 중요합니다. 데이터베이스(6장)도 같은 문제를 다룹니다.',
+    takeaway: '두 스레드가 서로 가진 잠금을 기다리면 어느 쪽도 먼저 풀 수 없습니다. 두 스레드 모두 A를 먼저 얻도록 순서를 정하면 이 순환이 사라집니다.',
     description: '잠금이 있는 같은 장면입니다. 직접 진행해 보며 질문에 답할 수 있습니다.',
     lock: true,
     tasks: [
@@ -588,6 +597,7 @@ function takeOver() {
 // The demo alternates: in plain steps it interleaves reads to show the lost update; with a lock it shows waiting.
 const demoOrder = [1, 2, 1, 2, 1, 2, 1, 1, 2, 2, 1, 2];
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.done[1] && state.done[2]) { resetAll(); state.wait = 1400; return; }
   const want = lesson[state.index].label === '차례대로' ? (state.done[1] ? 2 : 1) : demoOrder[state.demoPosition++ % demoOrder.length];
   stepThread(state.done[want] ? 3 - want : want, false);

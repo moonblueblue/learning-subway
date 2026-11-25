@@ -359,6 +359,8 @@ const line = (code, write, calc, reads = [], show = null, ask = null) => ({ code
 const lesson = [
   {
     label: '변수 만들기',
+    readingMemory: [["나이", 15]],
+    example: ["나이 = 15", "빈 칸에 이름과 값 저장", "이름 ‘나이’로 15 읽기"],
     title: '변수는 메모리 칸에 붙인 이름이다',
     body: '메모리는 번호(주소)가 붙은 칸이 줄지어 있는 곳입니다. "나이 = 15"라고 쓰면 컴퓨터는 빈 칸 하나를 골라 15를 적고, 그 칸에 "나이"라는 이름표를 붙입니다. 이름표 덕분에 우리는 100번지 같은 주소를 외우지 않고 이름으로 값을 다룰 수 있습니다.',
     takeaway: 'CPU에서 메모리 칸으로 값이 가고, 칸 위에 이름표가 붙습니다. 왼쪽부터 빈 칸을 차례로 씁니다.',
@@ -371,6 +373,8 @@ const lesson = [
   },
   {
     label: '값 바꾸기',
+    readingMemory: [["나이", 16]],
+    example: ["나이 15", "같은 칸에 15 + 1 쓰기", "나이 16"],
     title: '새 값을 넣으면 예전 값은 지워진다',
     body: '"나이 = 나이 + 1"은 수학의 등식이 아니라 명령입니다. 오른쪽부터 읽어서, 나이 칸의 값을 CPU로 가져오고, 1을 더한 뒤, 그 결과를 다시 나이 칸에 적으라는 뜻입니다. 칸에는 값이 하나만 들어가므로 예전 값은 사라집니다.',
     takeaway: '파란 점(읽기)이 칸에서 CPU로 가고, CPU 위에 "15 + 1 = 16"이 뜬 뒤, 초록 점(쓰기)이 다시 칸으로 돌아와 값을 바꿉니다.',
@@ -385,6 +389,8 @@ const lesson = [
   },
   {
     label: '여러 변수로 계산',
+    readingMemory: [["가격", 3000], ["개수", 2], ["합계", 6000]],
+    example: ["가격 3000 · 개수 2", "두 칸을 읽어 곱셈", "합계 칸 6000"],
     title: '계산은 여러 칸을 읽어 한 칸에 적는다',
     body: '"합계 = 가격 × 개수"를 실행하면 CPU는 가격 칸과 개수 칸을 모두 읽어 와서 곱하고, 결과를 새 칸 "합계"에 적습니다. 읽은 칸의 값은 그대로 남습니다. 읽기는 값을 복사해 오는 것이지 가져가 버리는 것이 아니기 때문입니다.',
     takeaway: '마지막 줄에서 파란 점 두 개가 가격 칸과 개수 칸에서 CPU로 가고, 초록 점 하나가 합계 칸으로 갑니다. 가격과 개수 칸의 값은 바뀌지 않습니다.',
@@ -398,6 +404,8 @@ const lesson = [
   },
   {
     label: '두 값 바꾸기',
+    readingMemory: [["a", 7], ["b", 7]],
+    example: ["a = 5 · b = 7", "a = b 후 b = a", "a = 7 · b = 7"],
     title: '두 값을 바꾸려다 하나를 잃는다',
     body: 'a에는 5, b에는 7이 있을 때 두 값을 서로 바꾸고 싶다고 해 봅시다. "a = b"를 실행하면 a 칸에 7이 적히면서 원래 있던 5는 사라집니다. 그다음 "b = a"를 해도 a에는 이미 7뿐이라, 두 칸 모두 7이 됩니다.',
     takeaway: '세 번째 줄에서 a 칸의 5가 7로 덮입니다. 네 번째 줄에서 b에 a를 적어도 7이 그대로 들어갑니다.',
@@ -412,6 +420,8 @@ const lesson = [
   },
   {
     label: '임시 변수',
+    readingMemory: [["a", 7], ["b", 5], ["임시", 5]],
+    example: ["a = 5 · b = 7", "임시에 5를 보관하고 교환", "a = 7 · b = 5"],
     title: '잠깐 맡겨 둘 칸이 있으면 바꿀 수 있다',
     body: '사라질 값을 먼저 다른 칸에 적어 두면 됩니다. "임시 = a"로 5를 맡겨 둔 뒤 a에 b의 7을 적고, 마지막으로 b에 임시의 5를 적습니다. 칸 하나를 더 쓰는 대신 값을 잃지 않습니다.',
     takeaway: '세 번째 줄에서 5가 임시 칸으로 복사되고, 마지막 줄에서 임시 칸의 5가 b 칸으로 갑니다.',
@@ -608,10 +618,11 @@ function setPlate(plate, text) {
 
 // ---------- Drawing ----------
 function paint(changed = -1) {
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? step().readingMemory : null;
   cells.forEach((cell, k) => {
-    const name = state.names[k];
+    const name = preview ? preview[k]?.[0] : state.names[k];
     cell.node.setAttribute('class', `node cell ${name ? 'used' : 'empty'}${k === changed ? ' changed' : ''}`);
-    cell.value.textContent = name ? String(state.cells[k]) : '–';
+    cell.value.textContent = name ? String(preview ? preview[k][1] : state.cells[k]) : '–';
     setPlate(cell.name, name ?? '');
     cell.name.group.style.opacity = name ? 1 : 0;
     cell.wire.classList.toggle('active', Boolean(name));
@@ -751,6 +762,7 @@ byId('restart').onclick = () => {
 // ---------- Demo playback ----------
 let frame = null, lastFrame = null;
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.pc >= step().program.length) {
     resetProgram();

@@ -405,6 +405,7 @@ const LSM = [['req', '요청', 'file'], ['eng', '저장 엔진', 'tool'], ['wal'
 const lesson = [
   {
     label: '페이지 고치기',
+    readingStage: 4,
     title: 'B-트리는 디스크의 페이지를 제자리에서 고친다',
     body: '저장 엔진은 데이터베이스(6.4) 안에서 실제로 디스크에 쓰고 읽는 부분입니다. 6.5의 B-트리 엔진은 데이터를 4KB짜리 페이지에 나눠 담습니다. 한 행을 고치려면 그 행이 든 페이지를 디스크에서 읽어 와 메모리에서 고치고 페이지 전체를 제자리에 다시 씁니다. 6.6처럼 고치기 전에 로그부터 씁니다.',
     takeaway: '숫자 하나(재고 40 → 38)를 바꾸려고 4KB 페이지를 읽고 다시 썼습니다. 고칠 행들이 디스크 여기저기 흩어져 있으면 여기저기를 오가며 써야 합니다(임의 쓰기). 읽기는 빠르지만 쓰기가 많으면 부담이 큽니다.',
@@ -421,6 +422,7 @@ const lesson = [
   },
   {
     label: '모았다가 쓰기',
+    readingStage: 4,
     title: 'LSM 트리는 메모리에 모았다가 정렬된 파일로 한 번에 쓴다',
     body: '쓰기가 아주 많은 서비스(메시지, 기록, 센서 값)는 다른 엔진을 씁니다. LSM 트리 엔진은 쓰기를 로그 끝에 붙이고(순차 쓰기), 메모리 표에 키 순서로 넣기만 합니다. 메모리 표가 차면(예: 64MB) 통째로 정렬된 파일(SSTable)로 디스크에 한 번에 내려 씁니다. 디스크의 파일은 한 번 쓰면 고치지 않습니다.',
     takeaway: '쓰기는 로그 끝에 붙이기와 메모리에 넣기뿐이라 매우 빠릅니다. 디스크에는 큰 덩어리로 한 번에 차례대로 씁니다. 대신 같은 키의 옛 값이 옛 파일에 남아 있게 됩니다.',
@@ -437,6 +439,7 @@ const lesson = [
   },
   {
     label: 'LSM 읽기',
+    readingStage: 3,
     title: '읽을 때는 가장 새것부터 찾아본다',
     body: '같은 키가 여러 곳에 있을 수 있으므로, 읽을 때는 가장 최근 것부터 봅니다. 메모리 표 → 가장 새 파일 → 그다음 파일 순서입니다. 처음 찾은 값이 최신 값입니다. 파일이 많으면 여러 파일을 뒤져야 해서 읽기가 느려지므로, 파일마다 "이 키가 이 파일에 없다"를 빨리 알려 주는 작은 요약(블룸 필터)을 둡니다.',
     takeaway: 'id 1은 메모리 표에 없고, 파일 2에서 38을 찾아 바로 끝났습니다. 파일 1의 옛 값 40은 볼 필요가 없습니다. 쓰기를 빠르게 한 대가로 읽기는 여러 곳을 볼 수 있습니다.',
@@ -453,6 +456,7 @@ const lesson = [
   },
   {
     label: '합치기',
+    readingStage: 3,
     title: '정렬 파일들을 합치며 옛 값과 지운 것을 치운다',
     body: '파일이 계속 늘면 읽을 곳도 늘고 옛 값이 디스크를 차지합니다. 그래서 엔진은 뒤에서 정렬된 파일 여러 개를 하나로 합칩니다(컴팩션). 이미 정렬되어 있어 4.4의 병합 정렬처럼 한 번 훑으며 합칠 수 있고, 같은 키는 최신 값만 남기고, 지운 표시(묘비)가 붙은 키는 버립니다.',
     takeaway: '파일 1, 2가 합쳐져 id 1 = 38만 남고 40은 사라졌으며, 지운 id 7도 정리됐습니다. B-트리는 읽기에, LSM은 쓰기에 유리합니다. 어떤 일을 더 많이 하는지 보고 엔진을 고릅니다.',
@@ -627,8 +631,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -746,6 +752,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

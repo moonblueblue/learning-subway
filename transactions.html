@@ -405,6 +405,7 @@ const ST = [['app', '이체 요청', 'file'], ['db', 'DB 엔진', 'tool'], ['log
 const lesson = [
   {
     label: '반쪽 이체',
+    readingStage: 4,
     title: '두 번 고치는 사이에 꺼지면 돈이 사라진다',
     body: '민지가 서준에게 3만 원을 보냅니다. 데이터베이스에서는 "민지 −3만"과 "서준 +3만" 두 번의 고치기입니다. 그런데 첫 번째만 끝나고 전원이 꺼지면 어떻게 될까요? 각 고치기를 따로 하면, 민지 돈은 빠졌는데 서준 돈은 늘지 않은 반쪽 상태가 남습니다.',
     takeaway: '두 계좌 합이 20만 원에서 17만 원이 됐습니다. 3만 원이 어디에도 없습니다. 여러 번의 고치기를 "전부 되거나 전부 안 되거나"로 묶는 방법이 필요합니다.',
@@ -421,6 +422,7 @@ const lesson = [
   },
   {
     label: '트랜잭션',
+    readingStage: 4,
     title: 'BEGIN과 COMMIT 사이는 전부 되거나 전부 안 된다',
     body: '트랜잭션은 여러 고치기를 한 덩어리로 묶습니다. BEGIN으로 시작하고 COMMIT으로 확정합니다. COMMIT 전까지의 고치기는 임시이고, 중간에 문제가 생기면 ROLLBACK으로 전부 되돌립니다. 이 "전부 아니면 전무" 성질을 원자성이라 합니다. 다른 사용자는 COMMIT 전의 임시 값을 보지 못합니다(격리성, 5.6의 잠금으로 지킴).',
     takeaway: '임시로 고친 두 계좌가 COMMIT 순간 함께 확정됩니다. 합계는 언제 보아도 20만 원입니다.',
@@ -438,6 +440,7 @@ const lesson = [
   },
   {
     label: '꺼져도 되돌리기',
+    readingStage: 5,
     title: '로그를 먼저 쓰면 꺼져도 되돌릴 수 있다',
     body: '전원이 꺼지면 메모리의 임시 값은 사라지고, 디스크에 반쯤 쓰인 값이 남을 수 있습니다. 그래서 데이터베이스는 표를 고치기 전에 "무엇을 무엇으로 바꾼다"를 디스크의 로그에 먼저 적습니다(먼저 쓰는 로그, WAL). 다시 켜면 로그를 읽어, COMMIT이 없는 트랜잭션의 고치기를 거꾸로 되돌립니다.',
     takeaway: '로그에 "#42 민지 100,000 → 70,000"은 있지만 COMMIT이 없습니다. 재시작한 엔진은 이것을 되돌려 민지를 100,000원으로 돌려놓습니다. 반쪽 이체가 남지 않습니다.',
@@ -455,6 +458,7 @@ const lesson = [
   },
   {
     label: '확정은 남는다',
+    readingStage: 6,
     title: 'COMMIT한 것은 꺼져도 남는다',
     body: '반대로 COMMIT이 끝났다는 답을 받았다면, 그 직후 전원이 꺼져도 이체는 남아야 합니다. 이것이 지속성입니다. 엔진은 COMMIT 기록을 디스크의 로그에 확실히 쓴 뒤에야 "완료"라고 답합니다. 계좌 표에 아직 반영되지 않았더라도, 재시작 때 로그를 다시 실행해 채워 넣습니다.',
     takeaway: '원자성, 일관성(합계 20만 원 같은 규칙), 격리성, 지속성을 묶어 ACID라 부릅니다. 은행, 결제, 재고처럼 틀리면 안 되는 일에 트랜잭션을 씁니다.',
@@ -632,8 +636,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -751,6 +757,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

@@ -364,6 +364,7 @@ const horizon = Array.from({ length: size * size }, (_, i) => (Math.floor(i / si
 const lesson = [
   {
     label: '반복 세기',
+    example: ["00000000 한 줄", "0 한 묶음 × 8칸", "8비트 → 4비트"],
     mode: 'rle',
     levels: 2,
     title: '같은 값이 이어지면 개수만 적는다',
@@ -379,6 +380,7 @@ const lesson = [
   },
   {
     label: '반복이 없으면',
+    example: ["01010101 한 줄", "같은 값이 연달아 없음", "8비트 → 8묶음 × 4비트"],
     mode: 'rle',
     levels: 2,
     title: '반복이 없으면 오히려 커진다',
@@ -394,6 +396,7 @@ const lesson = [
   },
   {
     label: '조금 버리기',
+    example: ["밝기 4단계 · 8×8칸", "2×2마다 평균 하나", "128비트 → 32비트"],
     mode: 'lossy',
     levels: 4,
     title: '조금 버리면 훨씬 줄어든다',
@@ -709,7 +712,7 @@ function showStep(index, announce = true) {
   state.index = index;
   if (!state.userPaused) state.playing = !motion.matches;
   startStep();
-  if (kept && !state.playing) state.image = kept;
+  if (kept && !state.playing && !document.querySelector('.workspace.course-reading')) state.image = kept;
   const s = step();
   byId('step-title').textContent = s.title;
   byId('body').textContent = s.body;

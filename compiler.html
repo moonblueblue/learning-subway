@@ -404,6 +404,7 @@ const kinds = { file: '파일', tool: '도구', ssd: '저장장치', ram: '메�
 const lesson = [
   {
     label: '앞단',
+    readingStage: 4,
     title: '토큰, 트리, 그리고 뜻 검사',
     body: '컴파일러는 크게 앞단, 중간, 뒷단으로 나뉩니다. 앞단은 6.3의 인터프리터처럼 코드를 토큰으로 자르고 구문 트리로 엮습니다. 컴파일러는 여기에 의미 분석을 더합니다. 변수가 선언되었는지, 타입이 맞는지(정수에 글자를 더하지 않는지)를 실행하기 전에 모두 확인합니다.',
     takeaway: '"int x = 2 * 3 + y;"는 트리가 되고 타입 검사를 통과합니다. "int z = "hi" + 1;"은 문법은 맞지만 정수 칸에 글자를 넣으려 해 실행 전에 오류가 납니다. 인터프리터라면 실행하다가야 알았을 오류입니다(6.3의 이름 오류).',
@@ -420,6 +421,7 @@ const lesson = [
   },
   {
     label: '중간 표현',
+    readingStage: 2,
     title: '트리를 기계와 상관없는 단순한 명령 줄로 펼친다',
     body: '중간 단계는 트리를 중간 표현(IR)으로 바꿉니다. 흔한 모양은 한 줄에 연산 하나만 하는 3주소 코드입니다. 계산 중간값은 t1, t2 같은 임시 이름에 담습니다. IR은 특정 CPU와 상관이 없어서, 같은 IR에서 여러 CPU용 기계어를 만들 수 있고 최적화도 여기서 합니다.',
     takeaway: '트리가 "t1 = 2 * 3; t2 = t1 + y; x = t2" 세 줄이 되었습니다. 트리의 아래쪽(먼저 계산할 것)이 위 줄로 갑니다. 앞단은 언어마다, 뒷단은 CPU마다 따로 만들고 IR에서 만나게 하면 언어 n개 × CPU m개를 n + m개로 만들 수 있습니다.',
@@ -434,6 +436,7 @@ const lesson = [
   },
   {
     label: '최적화',
+    readingStage: 3,
     title: '같은 결과를 내는 더 짧은 코드로 바꾼다',
     body: '최적화는 결과는 그대로 두고 일을 줄입니다. 상수 접기는 "2 * 3"처럼 컴파일할 때 이미 아는 계산을 미리 해 6으로 바꿉니다. 복사 전파는 "x = t2"처럼 옮겨 담기만 하는 줄을 없앱니다. 죽은 코드 제거는 결과에 쓰이지 않는 계산을 지웁니다. 실행할 때마다 할 일을 컴파일할 때 한 번만 하는 셈입니다.',
     takeaway: '네 줄이 한 줄 "x = 6 + y"로 줄었습니다. 프로그램이 백만 번 돌면 줄인 일도 백만 번 아낍니다. 최적화는 결과가 같을 때만 해야 하므로, 컴파일러는 바꿔도 안전한지 꼼꼼히 따집니다.',
@@ -450,6 +453,7 @@ const lesson = [
   },
   {
     label: '코드 생성',
+    readingStage: 3,
     title: '뒷단이 CPU 명령과 레지스터를 고른다',
     body: '뒷단은 최적화된 IR을 특정 CPU의 명령으로 바꿉니다. 변수는 메모리 주소에, 계산 중간값은 레지스터에 둡니다. 레지스터는 몇 개 안 되므로(3.5의 A, B) 무엇을 어느 레지스터에 둘지 정하는 레지스터 할당이 중요합니다. 같은 IR이라도 다른 CPU용 뒷단을 쓰면 다른 기계어가 나옵니다.',
     takeaway: '"x = 6 + y" 한 줄이 명령 네 개가 되었습니다. 최적화 전 IR을 그대로 옮겼다면 곱하기와 옮겨 담기까지 더 많은 명령이 필요했습니다. 3.8에서 한 번에 본 컴파일러 안에서 이렇게 여러 단계가 일합니다.',
@@ -623,8 +627,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -742,6 +748,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

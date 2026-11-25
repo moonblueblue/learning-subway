@@ -352,6 +352,8 @@ function simulate(policy, slice = 2) {
 const lesson = [
   {
     label: '먼저 온 순서',
+    readingSchedule: {"policy": "fcfs", "slice": 2},
+    example: ["작업 길이 8, 4, 2", "도착 순서대로 실행", "평균 대기 6.7"],
     title: 'CPU는 하나, 기다리는 일은 여럿',
     body: 'CPU 하나는 한 번에 한 프로세스(5.1)만 실행합니다. 실행할 차례를 기다리는 프로세스들은 준비 큐(4.3)에 줄을 섭니다. 무엇을 먼저 실행할지 정하는 것이 운영체제의 스케줄러입니다. 가장 단순한 방법은 먼저 온 순서대로 끝까지 실행하는 것입니다(FCFS).',
     takeaway: '긴 동영상 변환(8)이 먼저 오면 짧은 키 입력(2)은 12만큼 기다립니다. 평균 기다린 시간은 (0 + 8 + 12) ÷ 3 ≈ 6.7입니다. 긴 일 뒤에 짧은 일들이 줄줄이 막히는 것을 호송 효과라 합니다.',
@@ -364,6 +366,8 @@ const lesson = [
   },
   {
     label: '짧은 것 먼저',
+    readingSchedule: {"policy": "sjf", "slice": 2},
+    example: ["같은 작업 3개", "길이 2 → 4 → 8 순서", "평균 대기 2.7"],
     title: '짧은 일을 먼저 하면 평균 대기가 준다',
     body: '같은 세 일을 짧은 것부터 실행해 봅시다(SJF). 키 입력(2), 메일(4), 동영상(8) 순서가 되어 짧은 일들은 금방 끝나고, 긴 일 하나만 조금 더 기다립니다. 평균 기다린 시간이 가장 작아지는 순서입니다. 다만 실제로는 일이 얼마나 걸릴지 미리 알기 어렵습니다.',
     takeaway: '평균 기다린 시간이 (0 + 2 + 6) ÷ 3 ≈ 2.7로, FCFS의 6.7보다 훨씬 작습니다. 그러나 짧은 일이 계속 들어오면 긴 일은 영영 차례가 오지 않을 수도 있습니다(기아).',
@@ -376,6 +380,8 @@ const lesson = [
   },
   {
     label: '라운드 로빈',
+    readingSchedule: {"policy": "rr", "slice": 2},
+    example: ["시간 조각 2", "끝나지 않은 일은 큐 뒤로", "세 작업 모두 시각 4까지 첫 실행"],
     title: '조금씩 돌아가며 실행한다',
     body: '라운드 로빈은 일마다 정해진 시간 조각(여기서는 2)만큼만 실행하고, 다 못 하면 큐 뒤로 보내 다음 일에 CPU를 넘깁니다. 어떤 일도 오래 기다리지 않고 곧 한 번은 실행되므로, 키 입력처럼 바로 반응해야 하는 일에 좋습니다. 대신 일을 바꿀 때마다 문맥 교환(상태 저장과 복원)이 일어납니다.',
     takeaway: '세 일이 2씩 번갈아 실행되어 모두 시각 4 안에 처음 실행됩니다. 키 입력은 시각 6에 끝납니다(먼저 온 순서에서는 14). 대신 문맥 교환이 여러 번 일어나고, 긴 동영상 변환은 가장 늦게 끝납니다.',
@@ -388,6 +394,8 @@ const lesson = [
   },
   {
     label: '시간 조각',
+    readingSchedule: {"policy": "rr", "slice": 1},
+    example: ["시간 조각 4 → 1", "CPU를 더 자주 교대", "첫 반응은 빨라지고 교환 횟수 증가"],
     title: '조각이 작을수록 빠르게 반응하지만 바꾸는 비용이 는다',
     body: '시간 조각을 1로 줄이면 일이 더 자주 번갈아 실행되어 반응은 빨라지지만, 문맥 교환이 훨씬 많아집니다. 문맥 교환 동안 CPU는 쓸모 있는 일을 하지 못합니다. 조각을 키우면 교환은 줄지만 FCFS에 가까워집니다. 실제 운영체제는 수 밀리초 정도의 조각을 쓰고, 대화형 일에 우선순위를 더 줍니다.',
     takeaway: '조각 1과 4로 각각 실행해 문맥 교환 횟수를 비교해 보세요. 조각 1은 교환이 10번, 조각 2는 5번, 조각 4는 3번입니다.',
@@ -446,8 +454,9 @@ function text(parent, x, y, value, cls) { const t = svg('text', { x, y, class: c
 const unitU = 1.1;
 function paint() {
   for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
-  const run = state.run;
-  const t = state.t;
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? lesson[state.index].readingSchedule : null;
+  const run = preview ? simulate(preview.policy, preview.slice) : state.run;
+  const t = preview ? run.timeline.length : state.t;
   const timeline = run ? run.timeline.slice(0, t) : [];
   const left = Object.fromEntries(jobs.map((j) => [j.id, j.burst - timeline.filter((id) => id === j.id).length]));
   const current = run && t > 0 && t <= run.timeline.length ? run.timeline[t - 1] : null;
@@ -654,6 +663,7 @@ function takeOver() {
   syncPlayback();
 }
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   const step = lesson[state.index];
   const options = step.slices ? step.slices.map((s) => ['rr', s]) : step.policies.map((p) => [p, 2]);
   const [policy, slice] = options[state.demoPosition++ % options.length];

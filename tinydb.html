@@ -408,6 +408,7 @@ const ST = [['cmd', '명령', 'file'], ['eng', '작은 DB', 'tool'], ['idx', '�
 const lesson = [
   {
     label: '파일 끝에 쓰기',
+    readingStage: 3,
     title: '쓰기는 언제나 파일 끝에 한 줄을 붙인다',
     body: '가장 단순하면서 튼튼한 저장 방법부터 시작합니다. SET 명령이 올 때마다 데이터 파일 끝에 "키=값" 한 줄을 붙입니다(5.5의 파일, 8A.3의 로그). 같은 키를 다시 쓰면 옛 줄은 그대로 두고 새 줄을 또 붙입니다. 파일 중간을 고치지 않으므로 쓰기가 빠르고, 쓰다가 꺼져도 앞의 줄은 망가지지 않습니다.',
     takeaway: '연필 값을 1200에서 1100으로 바꾸자 파일에는 두 줄이 모두 남았습니다. 어느 줄이 최신인지는 나중 줄이 이깁니다. 이 규칙만으로 데이터베이스의 뼈대가 생겼습니다.',
@@ -423,6 +424,7 @@ const lesson = [
   },
   {
     label: '인덱스로 찾기',
+    readingStage: 3,
     title: '키마다 최신 줄의 위치를 해시 인덱스에 적어 둔다',
     body: '"연필 값은?"을 찾으려고 매번 파일 처음부터 끝까지 읽으면 줄이 백만 개일 때 너무 느립니다(6.5의 전체 스캔). 그래서 메모리에 해시 테이블(4.5)을 두고, 줄을 붙일 때마다 "키 → 그 줄의 위치"를 적어 둡니다. 찾을 때는 해시 테이블에서 위치를 얻고 그 줄 하나만 읽습니다.',
     takeaway: '인덱스에는 연필 → 줄 2, 공책 → 줄 1만 있습니다. GET 연필은 인덱스에서 줄 2를 얻어 그 줄만 읽었습니다. 옛 줄 0은 인덱스가 가리키지 않아 읽을 일이 없습니다.',
@@ -439,6 +441,7 @@ const lesson = [
   },
   {
     label: '트랜잭션',
+    readingStage: 3,
     title: 'COMMIT 줄이 있어야 확정으로 본다',
     body: '6.6의 이체처럼 두 키를 함께 바꿔야 할 때가 있습니다. 작은 DB는 트랜잭션 번호를 붙여 줄을 쓰고, 마지막에 "COMMIT #7" 줄을 붙입니다. 이 줄을 디스크에 확실히 쓴 뒤에야 인덱스를 고치고 "완료"라고 답합니다. COMMIT 줄이 없는 트랜잭션의 줄은 없었던 일로 봅니다.',
     takeaway: '#7은 COMMIT까지 써서 확정됐습니다. #8은 첫 줄만 쓰고 꺼져 COMMIT이 없으므로, 다시 켜면 그 줄을 무시합니다. 파일 끝에 붙이기만 하는 구조라 "어디까지 확정인가"를 COMMIT 줄 하나로 판단할 수 있습니다.',
@@ -454,6 +457,7 @@ const lesson = [
   },
   {
     label: '다시 켜기',
+    readingStage: 2,
     title: '파일을 처음부터 읽어 인덱스를 다시 만든다',
     body: '전원이 꺼지면 메모리의 해시 인덱스는 사라집니다. 하지만 데이터 파일이 디스크에 남아 있으니, 켤 때 파일을 처음부터 끝까지 한 번 읽으며 인덱스를 다시 만듭니다. 확정된 줄만 반영하고, COMMIT 없는 트랜잭션의 줄은 버립니다. 파일이 너무 커지면 키마다 최신 줄만 모아 새 파일로 다시 쓰고(8A.3의 합치기) 옛 파일을 지웁니다.',
     takeaway: '파일을 한 번 훑어 인덱스가 민지 → 70000(#7), 서준 → 130000(#7)으로 다시 만들어졌고 #8의 줄은 버려졌습니다. 파일에 붙이기, 해시 인덱스, COMMIT 줄, 다시 읽기, 이 네 가지가 작은 데이터베이스의 전부입니다. 실제 데이터베이스도 이 생각을 크게 키운 것입니다.',
@@ -627,8 +631,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -746,6 +752,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

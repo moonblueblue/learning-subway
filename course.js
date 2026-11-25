@@ -40,10 +40,7 @@
       cameraTools.classList.add('course-camera');
       const reset = cameraTools.querySelector('#view-reset');
       if (reset) {
-        const label = reset.textContent.trim();
-        reset.setAttribute('aria-label', label);
-        reset.title = label;
-        reset.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7 3H3v4m10-4h4v4M3 13v4h4m10-4v4h-4"/></svg>';
+        reset.title = '장면을 처음 배율과 위치로 되돌리기';
       }
       stageHeader.classList.add('course-stage-header');
       stageHeader.append(cameraTools);
@@ -273,7 +270,86 @@
   barSize.observe(bar);
   const landscape = matchMedia('(min-width: 620px) and (max-height: 549px)');
   const hasScene = Boolean(canvas.querySelector('#scene'));
-  let selectedView = 'canvas';
+  const example = element('figure', 'course-example');
+  example.setAttribute('aria-label', '이 단계의 예시');
+  const parts = ['before', 'change', 'after'].map(key => {
+    const part = element('span', 'course-example-part');
+    part.dataset.part = key;
+    return part;
+  });
+  for (const part of parts) {
+    if (example.childElementCount) {
+      const arrow = element('span', 'course-example-arrow', '→');
+      arrow.setAttribute('aria-hidden', 'true');
+      example.append(arrow);
+    }
+    example.append(part);
+  }
+  if (hasScene) canvas.querySelector('.course-scene').after(example);
+  else prose.after(example);
+
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  reducedMotion.addEventListener('change', showExample);
+  // Keep the existing camera and exercise diagram. A motion-free reading can compare
+  // two states side by side in time without advancing the simulation or its answers.
+  const scene = canvas.querySelector('#scene');
+  let previewStep = null;
+  workspace.addEventListener('course-playback-start', () => {
+    workspace.classList.remove('course-step-preview');
+    showExample();
+  });
+  function drawComparison(step) {
+    scene?.querySelector('.course-comparison')?.remove();
+    const visible = step.readingRows && workspace.classList.contains('course-reading') && (reducedMotion.matches || step.staticComparison || workspace.classList.contains('course-step-preview'));
+    workspace.classList.toggle('course-static-comparison', Boolean(visible && (reducedMotion.matches || step.staticComparison)));
+    if (!visible) return;
+    const draw = (parent, tag, attrs, value) => {
+      const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [key, val] of Object.entries(attrs)) node.setAttribute(key, val);
+      if (value !== undefined) node.textContent = value;
+      parent.append(node);
+      return node;
+    };
+    const group = draw(scene, 'g', {class: 'course-comparison', 'aria-hidden': 'true'});
+    step.readingRows.forEach(([label, ...items], row) => {
+      const y = 73 + row * 112;
+      draw(group, 'text', {x: 30, y: y - 22, class: 'course-row-label'}, label);
+      const gap = 14;
+      const width = (560 - gap * (items.length - 1)) / items.length;
+      items.forEach((item, i) => {
+        const x = 30 + i * (width + gap);
+        draw(group, 'rect', {x, y, width, height: 44, rx: 6, class: row ? 'course-row-result' : 'course-row-input'});
+        draw(group, 'text', {x: x + width / 2, y: y + 28, 'text-anchor': 'middle'}, item);
+        if (i < items.length - 1) draw(group, 'path', {d: 'M' + (x + width + 2) + ' ' + (y + 22) + 'h9m-4 -4 4 4 -4 4', class: 'course-row-link'});
+      });
+    });
+  }
+  function showExample() {
+    const current = timeline.querySelector('[aria-current="step"]');
+    const index = [...timeline.querySelectorAll('.steps button')].indexOf(current);
+    const step = lesson[index];
+    if (!step) return;
+    if (step !== previewStep) {
+      previewStep = step;
+      workspace.classList.toggle('course-step-preview', Boolean(step.readingRows || step.readingStage || step.readingMemory || step.readingSearch || step.readingRoute || step.readingSchedule));
+    }
+    drawComparison(step);
+    let values = step.example;
+    if (step.readingStage) {
+      const event = step.stages[step.readingStage - 1];
+      const names = new Map(step.stations.map(([id, name]) => [id, name]));
+      values = [names.get(event.from) + ' · ' + event.label, event.title, event.text];
+    }
+    // Refresh the diagram from the preview or the learner’s own simulation state.
+    if (step.readingStage || step.readingMemory || step.readingSearch || step.readingRoute || step.readingSchedule) paint();
+    example.hidden = !values;
+    if (values) parts.forEach((part, i) => { part.textContent = values[i]; });
+    scheduleFit();
+  }
+  new MutationObserver(showExample).observe(timeline.querySelector('.steps'), {
+    attributes: true, subtree: true, attributeFilter: ['aria-current']
+  });
+  let selectedView = hasScene ? 'canvas' : 'guide';
   function placeViews() {
     if (fitted.matches) rail.prepend(views);
     else if (landscape.matches) bar.append(views);
@@ -300,7 +376,7 @@
       button.hidden = desktop && (id === 'canvas' || id === 'detail');
       button.setAttribute('aria-pressed', String(id === selected));
     }
-    scheduleFit();
+    showExample();
   }
   views.addEventListener('click', (event) => {
     const id = event.target.closest('button')?.dataset.view;

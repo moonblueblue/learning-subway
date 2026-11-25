@@ -417,6 +417,7 @@ const FAN_LINKS = [['user', 'api'], ['api', 'q'], ['q', 'w1'], ['q', 'w2'], ['w1
 const lesson = [
   {
     label: '바로 부르기',
+    readingStage: 3,
     title: '느린 일을 바로 부르면 사용자가 함께 기다린다',
     body: '주문이 들어오면 확인 메일을 보내야 합니다. 주문 API가 메일 서비스를 바로 부르면(동기 호출), 메일을 보내는 3초 동안 사용자도 "주문 중…" 화면을 보며 기다립니다. 메일 서비스가 고장 나면 메일 때문에 주문까지 실패합니다. 주문과 메일이 단단히 묶여 있습니다.',
     takeaway: '주문 저장은 0.05초인데 사용자는 3초를 기다렸고, 메일 서비스가 죽자 주문도 500 오류가 됐습니다. 메일은 조금 늦어도 되는 일인데 말입니다.',
@@ -433,6 +434,7 @@ const lesson = [
   },
   {
     label: '큐에 넣기',
+    readingStage: 3,
     title: '할 일을 큐에 넣고 바로 답한다',
     body: '메시지 큐는 "할 일 쪽지"를 차례로 쌓아 두는 곳입니다(4.3의 큐). 주문 API는 주문을 저장하고 "주문 501 확인 메일"이라는 쪽지를 큐에 넣은 뒤 바로 사용자에게 답합니다. 뒤에서 일꾼이 큐에서 쪽지를 꺼내 메일을 보냅니다. 주문 API와 메일 서비스는 서로를 직접 모릅니다.',
     takeaway: '사용자는 0.06초 만에 주문 완료를 봤고, 메일은 몇 초 뒤 도착합니다. 메일 서비스가 잠시 죽어 있어도 쪽지는 큐에 남아 있다가 살아나면 처리됩니다.',
@@ -451,6 +453,7 @@ const lesson = [
   },
   {
     label: '몰려도 버티기',
+    readingStage: 4,
     title: '큐가 몰린 요청을 담아 두고 일꾼은 제 속도로 처리한다',
     body: '반짝 세일로 1초에 주문이 1,000개 들어옵니다. 일꾼 하나는 1초에 메일 100개를 보낼 수 있습니다. 바로 부르는 방식이라면 메일 서비스가 넘쳐 주문까지 실패했겠지만, 큐는 넘치는 쪽지를 담아 두고 일꾼은 제 속도로 꺼내 갑니다. 큐 길이를 보고 일꾼을 늘리면 더 빨리 비웁니다.',
     takeaway: '10초 세일 동안 쪽지 10,000개가 쌓였고, 일꾼 하나라면 100초, 둘이면 50초 만에 모두 보냅니다. 주문은 세일 내내 빠르게 성공했습니다. 큐가 갑작스러운 몰림을 흡수하는 완충기 역할을 합니다.',
@@ -469,6 +472,7 @@ const lesson = [
   },
   {
     label: '실패와 다시 하기',
+    readingStage: 4,
     title: '처리 확인 전에 일꾼이 죽으면 쪽지를 다시 준다',
     body: '일꾼이 쪽지를 꺼내 처리하다 죽으면 그 일은 어떻게 될까요? 큐는 일꾼이 "다 했다"(확인, ack)고 알려 주기 전까지 쪽지를 지우지 않고, 일정 시간 확인이 없으면 다른 일꾼에게 다시 줍니다. 그래서 일은 최소 한 번은 처리됩니다. 대신 메일을 보낸 직후, 확인 전에 죽으면 같은 메일이 두 번 갈 수 있습니다.',
     takeaway: '쪽지 501은 일꾼 2가 다시 받아 처리했습니다. 같은 쪽지가 두 번 처리되어도 결과가 한 번과 같도록(멱등성), "주문 501 메일은 이미 보냄" 기록을 남기고 처리 전에 확인합니다.',
@@ -663,8 +667,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -782,6 +788,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

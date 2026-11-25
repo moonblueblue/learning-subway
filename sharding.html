@@ -415,6 +415,7 @@ const SH_LINKS = [['app', 'rt'], ['rt', 's0'], ['rt', 's1'], ['rt', 's2']];
 const lesson = [
   {
     label: '한 대에 안 들어가면',
+    readingStage: 1,
     title: '데이터와 쓰기가 DB 한 대를 넘친다',
     body: '7.4의 복제는 읽기를 나눠 주지만, 모든 복제본이 전체 데이터를 가지고 쓰기는 여전히 주 DB 한 대가 받습니다. 사용자가 3천만 명이 되어 데이터가 6TB, 쓰기가 1초에 3만 개가 되면 DB 한 대의 디스크(2TB)와 쓰기 처리량(1만/초)을 넘습니다.',
     takeaway: '복제본을 늘려도 각자 6TB를 다 가져야 하고 쓰기는 줄지 않습니다. 데이터 자체를 여러 DB에 나눠 담아야 합니다. 이것이 샤딩(나눠 담기)입니다.',
@@ -428,6 +429,7 @@ const lesson = [
   },
   {
     label: '키로 나누기',
+    readingStage: 4,
     title: '사용자 번호로 어느 샤드에 담을지 정한다',
     body: '샤딩은 데이터를 키(여기서는 사용자 번호) 기준으로 나눠 여러 DB(샤드)에 담습니다. 가장 간단한 규칙은 "사용자 번호 mod 3"(2.6)입니다. 나머지가 0이면 샤드 0, 1이면 샤드 1, 2면 샤드 2입니다. 샤드마다 데이터 2TB, 쓰기 1만/초씩 맡게 됩니다. 앱 서버는 같은 규칙으로 어느 샤드에 물을지 계산합니다.',
     takeaway: '사용자 7은 7 mod 3 = 1이라 언제나 샤드 1에 있습니다. 한 사용자의 데이터는 한 샤드에 모여 있으니, 그 사용자에 대한 질의는 샤드 하나만 보면 됩니다.',
@@ -447,6 +449,7 @@ const lesson = [
   },
   {
     label: '키가 아닌 질의',
+    readingStage: 5,
     title: '샤드 키로 찾지 않으면 모든 샤드에 물어야 한다',
     body: '샤드는 사용자 번호로 나눴습니다. 그런데 "이메일이 jiu@example.com인 사용자"처럼 다른 칸으로 찾으면, 어느 샤드에 있는지 알 수 없어 모든 샤드에 물어보고 답을 모아야 합니다. "오늘 전체 주문 수"처럼 모두를 합하는 질의도 마찬가지입니다. 샤드가 많을수록 이런 질의는 느리고 비쌉니다.',
     takeaway: '이메일 질의는 세 샤드를 모두 거쳤고, 가장 느린 샤드(7.1)를 기다려야 합니다. 그래서 가장 자주 찾는 기준으로 샤드 키를 정하고, 이메일 → 사용자 번호 같은 작은 찾아보기 표를 따로 두기도 합니다.',
@@ -465,6 +468,7 @@ const lesson = [
   },
   {
     label: '샤드 늘리기',
+    readingStage: 2,
     title: 'mod 규칙에서 샤드를 늘리면 데이터 대부분이 이사한다',
     body: '사용자가 더 늘어 샤드를 3개에서 4개로 늘립니다. 규칙이 "mod 3"에서 "mod 4"로 바뀌면, 많은 사용자의 샤드 번호가 바뀌어 데이터를 옮겨야 합니다. 사용자 1–12로 따져 보면 샤드가 그대로인 사용자는 1, 2, 12 셋뿐이고 아홉 명(75%)이 이사합니다. 그동안 DB는 엄청난 복사 작업을 해야 합니다.',
     takeaway: '샤드 수로 나머지를 구하는 규칙은 샤드 수가 바뀌면 거의 모두 흔들립니다. 실제 시스템은 처음부터 샤드를 잘게(예: 가상 샤드 1,024개) 만들어 서버에 나눠 주거나, 일관된 해싱으로 옮길 양을 1/n 정도로 줄입니다.',
@@ -657,8 +661,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -776,6 +782,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

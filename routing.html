@@ -371,6 +371,8 @@ function tableFrom(src, weights) {
 const lesson = [
   {
     label: '한 칸씩 전달',
+    readingRoute: {"hops": ["A", "B", "E", "H", "I"], "cut": false},
+    example: ["A에서 I로 전송", "A → B → E → H → I", "합계 12ms"],
     title: '라우터는 다음 한 칸만 안다',
     body: '0.7에서 본 라우터들은 지도 전체를 들고 다니지 않습니다. 패킷이 오면 IP 봉투(5.7)의 목적지 주소를 보고, 자기 라우팅 표에서 "그 목적지라면 다음은 누구"만 찾아 넘깁니다. 다음 라우터도 똑같이 합니다. 이렇게 한 칸씩 넘기다 보면 목적지에 닿습니다.',
     takeaway: 'A에서 I(10.0.8.1)로 보낸 패킷이 A → B → E → H → I로 넘어갑니다. 라우터마다 아래 표의 "I로 가려면 다음" 한 줄만 썼습니다.',
@@ -383,6 +385,8 @@ const lesson = [
   },
   {
     label: '라우팅 표',
+    readingRoute: {"hops": ["B", "E", "H"], "cut": false},
+    example: ["B에서 목적지 I 조회", "B의 표는 다음 홉 E를 지정", "E가 다시 H로 전달"],
     title: '라우팅 표는 목적지마다 다음 라우터를 적은 목록',
     body: '라우터마다 표를 가집니다. 표의 줄은 "목적지 → 다음 라우터, 거리"입니다. 라우터들은 이웃과 "나는 어디까지 얼마에 갈 수 있다"를 주고받으며(라우팅 프로토콜) 4.8의 최단 경로와 같은 계산으로 표를 채웁니다. 라우터를 골라 표를 보세요.',
     takeaway: '라우터 B의 표에서 I로 가는 다음은 E(8ms)입니다. 라우터 E의 표에서는 H입니다. 표만 따라가도 A의 패킷이 가장 빠른 길로 갑니다.',
@@ -395,6 +399,8 @@ const lesson = [
   },
   {
     label: '링크가 끊기면',
+    readingRoute: {"hops": ["A", "C", "F", "H", "I"], "cut": true},
+    example: ["E–H 링크 단절", "A → C → F → H → I", "우회로 14ms"],
     title: '길이 끊기면 표를 고쳐 돌아간다',
     body: 'E–H 링크가 끊겼다고 해 봅시다. 이웃 라우터들이 이를 알리고, 모두가 표를 다시 계산합니다. 그러면 같은 목적지로 가는 패킷이 다른 길로 돌아갑니다. 인터넷이 한 곳이 고장 나도 계속 도는 이유입니다(0.7).',
     takeaway: 'E–H를 끊고 보내면 패킷이 A → C → F → H → I로 돌아갑니다(14ms). 끊기 전 12ms보다 느리지만, 끊긴 줄 모르고 막히는 일은 없습니다.',
@@ -407,6 +413,8 @@ const lesson = [
   },
   {
     label: '주소와 수명',
+    readingRoute: {"hops": ["A", "B", "E", "H"], "cut": false},
+    example: ["TTL 3 · 네 홉 필요", "라우터마다 TTL 1 감소", "목적지 전에 폐기"],
     title: 'IP 주소는 묶음으로, 패킷은 수명을 가진다',
     body: 'IP 주소는 10.0.8.1처럼 네 칸의 수입니다. 앞부분이 같은 주소들은 한 줄(예: 10.0.8.x는 모두 I 쪽)로 묶어 표를 짧게 합니다. 또 패킷에는 수명(TTL)이 있어 라우터를 지날 때마다 1씩 줄고 0이 되면 버려집니다. 표가 잘못돼 패킷이 빙빙 돌아도 언젠가 사라지게 하는 안전장치입니다.',
     takeaway: '해 보기의 질문으로 정리해 보세요. 패킷을 다시 보내 봐도 됩니다.',
@@ -487,13 +495,16 @@ function buildScene() {
 }
 function paint() {
   const w = weights();
-  const hopsRoads = state.hops.slice(1).map((p, i) => roadOf(state.hops[i], p));
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? lesson[state.index].readingRoute : null;
+  const hops = preview?.hops ?? state.hops;
+  const at = preview ? hops.at(-1) : state.at;
+  const hopsRoads = hops.slice(1).map((p, i) => roadOf(hops[i], p));
   for (const [name, view] of Object.entries(nodeViews)) {
-    view.node.setAttribute('class', 'node place' + (state.hops.includes(name) ? ' settled' : '') + (state.at === name ? ' current' : '') + (state.selected === name ? ' current' : ''));
+    view.node.setAttribute('class', 'node place' + (hops.includes(name) ? ' settled' : '') + (at === name ? ' current' : '') + (state.selected === name ? ' current' : ''));
     view.text.textContent = ipOf[name].split('.').slice(2).join('.');
   }
   for (const [road, view] of Object.entries(roadViews)) {
-    const cut = state.cut && road === 'EH';
+    const cut = (preview?.cut ?? state.cut) && road === 'EH';
     view.text.textContent = cut ? '✗' : roads[road];
     view.line.setAttribute('class', 'road' + (cut ? ' jam' : '') + (hopsRoads.includes(road) ? ' path' : ''));
     view.tag.classList.toggle('jam', cut);
@@ -632,6 +643,7 @@ function takeOver() {
   syncPlayback();
 }
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   const mode = lesson[state.index].mode;
   if (mode === 'table') { const n = names[state.demoPosition++ % names.length]; state.selected = n; paint(); report(`라우터 ${n}의 라우팅 표`); state.wait = 2200; return; }
   if (mode === 'fail') { state.cut = state.demoPosition++ % 2 === 1; const b = byId('cut'); if (b) b.textContent = state.cut ? 'E–H 링크 잇기' : 'E–H 링크 끊기'; }

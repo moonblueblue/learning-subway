@@ -405,6 +405,7 @@ const ST = [['text', '지금까지의 글', 'file'], ['tok', '토큰 나누기',
 const lesson = [
   {
     label: '다음 토큰',
+    readingStage: 3,
     title: '언어 모델은 다음에 올 토큰의 확률을 계산한다',
     body: '대규모 언어 모델이 하는 일은 하나입니다. 지금까지의 글을 보고 다음에 올 조각(토큰)마다 확률을 매기는 것입니다. 글은 먼저 토큰으로 잘립니다(6.3의 렉서와 비슷하지만, 자주 나오는 글자 묶음 단위). 토큰들은 8B.5의 트랜스포머 층 수십 개를 지나고, 마지막에 모든 토큰 후보(수만 개)의 점수가 소프트맥스로 확률이 됩니다.',
     takeaway: '"오늘 날씨가 정말" 다음은 "좋" 45%, "덥" 30%, "춥" 15%, 나머지 10%입니다. 모델은 정답을 하나 아는 것이 아니라, 수많은 글에서 배운 "이어질 만한 정도"를 숫자로 가집니다.',
@@ -420,6 +421,7 @@ const lesson = [
   },
   {
     label: '이어 쓰기',
+    readingStage: 2,
     title: '고른 토큰을 글 끝에 붙이고 다시 묻는다',
     body: '확률표에서 토큰 하나를 고르면 그것을 글 끝에 붙이고, 늘어난 글 전체로 다시 다음 토큰을 묻습니다. 이것을 끝 표시가 나올 때까지 되풀이하면 문장이 됩니다. 그래서 답이 한 토큰씩 화면에 나타나고, 긴 답일수록 오래 걸립니다. 모델이 한 번에 볼 수 있는 글의 길이(문맥 창)에는 한도가 있습니다.',
     takeaway: '"좋" → "다" → "." → 끝으로 네 번 되풀이해 "오늘 날씨가 정말 좋다."가 됐습니다. 모델은 미리 문장을 다 정해 두지 않고 매번 다음 한 토큰만 정합니다.',
@@ -435,6 +437,7 @@ const lesson = [
   },
   {
     label: '온도',
+    readingStage: 2,
     title: '온도로 얼마나 모험할지 정한다',
     body: '늘 가장 높은 확률만 고르면 답이 매번 똑같고 단조로워집니다. 그래서 확률대로 무작위로 뽑는데, 이때 온도라는 숫자로 확률표를 조절합니다. 온도가 낮으면 높은 확률이 더 커져 거의 늘 1등을 고르고, 높으면 확률이 고르게 퍼져 낮은 후보도 자주 뽑힙니다. 사실을 답할 때는 낮게, 이야기를 지을 때는 높게 씁니다.',
     takeaway: '온도 0.2에서는 "좋"이 약 88%로 커지고, 온도 1.5에서는 "좋" 38%, "덥" 29%, "춥" 18%, 그 밖 14%로 퍼졌습니다. 같은 질문에 답이 매번 조금씩 다른 까닭이 이 무작위 뽑기입니다.',
@@ -450,6 +453,7 @@ const lesson = [
   },
   {
     label: '대화가 되기까지',
+    readingStage: 4,
     title: '글을 이어 쓰는 모델을 대화하는 조수로 길러 낸다',
     body: '먼저 인터넷과 책의 엄청난 글로 다음 토큰 맞히기를 배웁니다(사전 학습, 8B.3의 경사 하강법). 그러면 글은 잘 이어 쓰지만 질문에 답하는 법은 모릅니다. 다음으로 "질문 → 좋은 답" 예시로 더 배우고(지시 학습), 사람이 여러 답 중 더 나은 것을 고른 기록으로 다듬습니다. 그래도 본질은 "그럴듯한 다음 토큰"이라, 모르는 것을 자신 있게 지어내기도 합니다(환각).',
     takeaway: '대화는 "질문 + 지금까지의 대화"를 글로 놓고 다음 토큰을 이어 쓰는 것입니다. 그럴듯함과 사실은 다르므로, 중요한 답은 출처를 확인하거나 검색 결과를 함께 넣어 답하게 합니다.',
@@ -625,8 +629,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -744,6 +750,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

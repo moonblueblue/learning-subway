@@ -404,6 +404,7 @@ const kinds = { file: '파일', tool: '도구', ssd: '저장장치', ram: '메�
 const lesson = [
   {
     label: '토큰 나누기',
+    readingStage: 2,
     title: '글자 줄을 뜻 있는 낱말(토큰)로 자른다',
     body: '인터프리터는 코드를 미리 기계어로 바꾸지 않고, 읽으면서 바로 실행하는 프로그램입니다. 첫 일은 글자 줄 "total = price * 3 + 500"을 낱말로 자르는 것입니다. 이 단계(렉서)는 글자를 하나씩 읽어 이름, 숫자, 기호를 가려내고 띄어쓰기는 버립니다.',
     takeaway: '글자 23개가 토큰 7개가 됩니다. 각 토큰에는 종류(이름, 숫자, 기호)가 붙습니다. 3.8에서 컴파일러가 처음 한 일과 같습니다.',
@@ -418,6 +419,7 @@ const lesson = [
   },
   {
     label: '구문 트리',
+    readingStage: 2,
     title: '토큰을 계산 순서가 드러나는 나무로 엮는다',
     body: '토큰을 나열만 해서는 무엇부터 계산할지 모릅니다. 파서는 문법 규칙(곱하기가 더하기보다 먼저, 괄호가 가장 먼저)에 따라 토큰을 구문 트리로 엮습니다. 나무의 아래쪽일수록 먼저 계산합니다. 4.6의 트리가 여기서 쓰입니다.',
     takeaway: '곱하기 노드가 더하기 노드 아래에 들어갑니다. 그래서 price * 3을 먼저 하고 500을 더합니다. 괄호를 치면 나무 모양이 바뀝니다.',
@@ -434,6 +436,7 @@ const lesson = [
   },
   {
     label: '나무 따라 실행',
+    readingStage: 4,
     title: '실행기가 나무를 아래부터 계산하고 변수 표에 쓴다',
     body: '실행기는 구문 트리를 위에서부터 내려가며 "아래 가지의 값부터 구해 와"를 되풀이합니다(1.5의 재귀). 이름을 만나면 변수 표에서 값을 찾고, 숫자는 그대로 씁니다. 대입 노드에 이르면 계산한 값을 변수 표에 적습니다. 변수 표는 1.1에서 본 이름과 값의 짝입니다.',
     takeaway: 'price를 표에서 1200으로 찾고, 1200 × 3 = 3600, 3600 + 500 = 4100을 계산한 뒤 total = 4100을 표에 적습니다. 다음 줄은 이 표를 그대로 이어 씁니다.',
@@ -452,6 +455,7 @@ const lesson = [
   },
   {
     label: '오류',
+    readingStage: 5,
     title: '문법 오류는 실행 전에, 이름 오류는 실행 중에 드러난다',
     body: '오류는 어느 단계에서 발견되느냐로 나뉩니다. "total = price * + 3"처럼 문법이 틀리면 파서가 나무를 만들지 못해 한 줄도 실행되지 않습니다(SyntaxError). 문법은 맞지만 "total = prise * 3"처럼 없는 이름을 쓰면, 나무는 만들어지고 실행기가 변수 표를 찾을 때에야 오류가 납니다(NameError).',
     takeaway: '파서에서 멈춘 오류는 실행 전에 바로 알려 줍니다. 이름 오류는 그 줄에 실제로 닿아야 드러나서, 드물게 실행되는 줄에 숨어 있을 수 있습니다. 그래서 6.2의 테스트로 그 줄까지 실행해 봐야 합니다.',
@@ -628,8 +632,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -747,6 +753,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

@@ -415,6 +415,7 @@ const S = [['c', '내 컴퓨터', 'app'], ['net', '인터넷', 'router'], ['s', 
 const lesson = [
   {
     label: '연결 맺기',
+    readingStage: 3,
     title: '세 번 인사하고 연결을 맺는다',
     body: 'IP(5.8)는 패킷을 최선을 다해 보낼 뿐, 도착을 약속하지 않습니다. TCP는 그 위에서 믿을 수 있는 연결을 만듭니다. 먼저 세 번 인사합니다. 내 컴퓨터가 SYN("연결할래?"), 서버가 SYN-ACK("좋아, 너도 들려?"), 내 컴퓨터가 ACK("응 들려")를 보내면 양쪽 모두 상대가 듣고 있다는 것을 압니다.',
     takeaway: '세 패킷이 오가면 양쪽에 "연결됨"이 뜹니다. 이때 서로 시작 순서 번호도 정합니다. 웹 페이지 하나를 열 때마다 이 인사가 먼저 일어납니다.',
@@ -431,6 +432,7 @@ const lesson = [
   },
   {
     label: '번호와 확인',
+    readingStage: 4,
     title: '조각마다 번호를 붙이고 받으면 확인을 보낸다',
     body: '보낼 데이터는 조각(세그먼트)으로 나누고 순서 번호를 붙입니다. 받는 쪽은 받을 때마다 "여기까지 받았다"는 ACK를 돌려줍니다. 보내는 쪽은 ACK가 오면 그 조각을 지웁니다. ACK가 오지 않은 조각은 아직 들고 있습니다.',
     takeaway: '조각 1, 2, 3이 가고 ACK가 하나씩 돌아옵니다. 보내는 쪽 "들고 있는 조각" 목록이 ACK를 받을 때마다 줄어듭니다.',
@@ -449,6 +451,7 @@ const lesson = [
   },
   {
     label: '잃어버리면',
+    readingStage: 4,
     title: '확인이 안 오면 다시 보낸다',
     body: '인터넷 중간에서 패킷이 사라질 수 있습니다(혼잡한 라우터가 버리거나 전파가 끊김). 보내는 쪽은 조각을 보낼 때 타이머를 켜고, 정해진 시간 안에 ACK가 오지 않으면 같은 조각을 다시 보냅니다. 그래서 응용 프로그램은 잃어버림을 모른 채 온전한 데이터를 받습니다.',
     takeaway: '조각 2가 인터넷에서 사라지면 서버는 계속 "ACK 2(2를 기다림)"를 보냅니다. 타이머가 끝나면 내 컴퓨터가 조각 2를 다시 보내고, 그제야 ACK 3이 옵니다.',
@@ -466,6 +469,7 @@ const lesson = [
   },
   {
     label: '순서 맞추기',
+    readingStage: 3,
     title: '늦게 온 조각도 제자리에 끼운다',
     body: '조각마다 다른 길(5.8)로 갈 수 있어서 3이 2보다 먼저 도착하기도 합니다. 받는 쪽은 순서 번호를 보고 빈자리가 채워질 때까지 3을 잠시 보관했다가, 2가 오면 1, 2, 3 순서대로 응용 프로그램에 넘깁니다. 영상 통화처럼 늦게 오느니 버리는 게 나은 경우에는 TCP 대신 UDP를 씁니다.',
     takeaway: '조각 3이 먼저 와도 서버는 "ACK 2"를 보내며 기다리고, 2가 도착하면 한꺼번에 "1, 2, 3"을 넘기고 ACK 4를 보냅니다.',
@@ -640,8 +644,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -759,6 +765,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

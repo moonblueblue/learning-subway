@@ -368,6 +368,8 @@ const test = (kind, code, fn, reads, show, to) => ({ kind, code, test: fn, reads
 const lesson = [
   {
     label: '갈림길 if',
+    readingMemory: [["점수", 75], ["결과", "합격"]],
+    example: ["점수 75", "75 ≥ 60은 참", "결과 ‘합격’"],
     title: '조건이 참이면 그 아래 줄을 실행한다',
     body: 'if 뒤의 조건은 참(True) 아니면 거짓(False) 둘 중 하나입니다. 참이면 들여 쓴 줄을 실행하고, 거짓이면 그 줄들을 건너뛰어 else 아래로 갑니다. 프로그램은 이렇게 한 갈래만 골라 갑니다.',
     takeaway: 'CPU가 점수 칸을 읽어 "75 >= 60 → 참"을 띄우고, 코드 창의 밝은 줄이 3번 줄로 갑니다. else 아래 5번 줄은 실행하지 않고 건너뜁니다.',
@@ -386,6 +388,8 @@ const lesson = [
   },
   {
     label: 'else 쪽',
+    readingMemory: [["점수", 45], ["결과", "다시"]],
+    example: ["점수 45", "45 ≥ 60은 거짓", "else에서 ‘다시’"],
     title: '거짓이면 else 아래로 건너뛴다',
     body: '같은 코드라도 값이 바뀌면 다른 길로 갑니다. 점수가 45라면 조건이 거짓이 되어, if 아래 줄을 건너뛰고 else 아래 줄을 실행합니다. 프로그램을 짤 때는 두 갈래 모두 맞게 동작하는지 따져 봐야 합니다.',
     takeaway: 'CPU에 "45 >= 60 → 거짓"이 뜨고, 밝은 줄이 3번 줄을 건너뛰어 5번 줄로 바로 갑니다.',
@@ -403,6 +407,8 @@ const lesson = [
   },
   {
     label: '반복 while',
+    readingMemory: [["합계", 6], ["i", 4]],
+    example: ["i = 1 · 합계 0", "1 + 2 + 3 누적", "i = 4에서 종료 · 합계 6"],
     title: '조건이 참인 동안 같은 줄을 되풀이한다',
     body: 'while은 조건이 참인 동안 들여 쓴 줄들을 반복합니다. 반복 안의 마지막 줄을 실행하면 다시 while로 올라가 조건을 확인합니다. 아래 프로그램은 i를 1, 2, 3으로 바꿔 가며 합계에 더하고, i가 4가 되면 조건이 거짓이 되어 멈춥니다.',
     takeaway: '밝은 줄이 3 → 4 → 5 → 다시 3으로 돌아갑니다. i 칸이 1, 2, 3, 4로, 합계 칸이 1, 3, 6으로 바뀌고, "4 <= 3 → 거짓"에서 반복이 끝납니다.',
@@ -421,6 +427,8 @@ const lesson = [
   },
   {
     label: '끝나지 않는 반복',
+    readingMemory: [["합계", 6], ["i", 1]],
+    example: ["i = 1", "반복 중 i가 그대로", "종료 조건에 도달하지 못함"],
     title: '조건이 바뀌지 않으면 영원히 반복한다',
     body: '앞 단계에서 i = i + 1 줄을 빠뜨리면 어떻게 될까요? i는 계속 1이라서 i <= 3은 언제나 참입니다. 반복이 끝나지 않고 합계만 끝없이 커집니다. 이런 무한 반복은 초보자가 가장 자주 만드는 실수 중 하나입니다. 이 실험은 반복을 여섯 번 돈 뒤 강제로 멈춥니다.',
     takeaway: '밝은 줄이 3 → 4 → 3 → 4를 계속 오가고, i 칸은 1에서 바뀌지 않습니다. 여섯 바퀴 뒤 CPU에 "강제로 멈춤"이 뜹니다.',
@@ -638,10 +646,11 @@ function setPlate(plate, text) {
 
 // ---------- Drawing ----------
 function paint(changed = -1) {
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? step().readingMemory : null;
   cells.forEach((cell, k) => {
-    const name = state.names[k];
+    const name = preview ? preview[k]?.[0] : state.names[k];
     cell.node.setAttribute('class', `node cell ${name ? 'used' : 'empty'}${k === changed ? ' changed' : ''}`);
-    cell.value.textContent = name ? String(state.cells[k]) : '–';
+    cell.value.textContent = name ? String(preview ? preview[k][1] : state.cells[k]) : '–';
     setPlate(cell.name, name ?? '');
     cell.name.group.style.opacity = name ? 1 : 0;
     cell.wire.classList.toggle('active', Boolean(name));
@@ -795,6 +804,7 @@ byId('restart').onclick = () => {
 // ---------- Demo playback ----------
 let frame = null, lastFrame = null;
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.pc >= step().program.length || state.halted) {
     resetProgram();

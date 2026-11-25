@@ -415,6 +415,7 @@ const CB = [['user', '사용자', 'wire'], ['order', '상품 페이지 서비스
 const lesson = [
   {
     label: '계속 부르면',
+    readingStage: 4,
     title: '고장 난 서비스를 기다리다 나까지 멈춘다',
     body: '상품 페이지 서비스는 페이지를 만들 때마다 추천 서비스에 "이 상품과 비슷한 것"을 묻습니다. 추천 서비스가 고장 나 응답을 안 하면, 상품 페이지 서비스는 요청마다 시간 초과(10초)까지 기다립니다. 동시에 처리할 수 있는 요청은 20개뿐이라(5.1의 스레드), 20개가 모두 기다리는 데 묶이면 상품 페이지 자체가 멈춥니다. 고장이 번지는 것입니다.',
     takeaway: '추천이라는 곁가지 기능 하나 때문에 상품 페이지 전체가 멈췄습니다. 고장 난 곳을 계속 부르면 기다림이 쌓여 나까지 쓰러집니다.',
@@ -431,6 +432,7 @@ const lesson = [
   },
   {
     label: '차단기 열림',
+    readingStage: 4,
     title: '실패가 이어지면 차단기를 열고 바로 포기한다',
     body: '서킷 브레이커는 전기 차단기처럼 부르는 쪽 앞에 섭니다. 평소(닫힘)에는 요청을 그대로 보내면서 실패를 셉니다. 실패가 연속 5번이면 차단기가 열리고, 그 뒤로는 추천 서비스를 부르지 않고 즉시 실패를 돌려줍니다. 상품 페이지는 추천 칸만 "인기 상품"으로 대신 채우고(대체 응답) 나머지를 정상으로 보여 줍니다.',
     takeaway: '열린 뒤의 요청은 10초가 아니라 0.001초 만에 실패를 받았습니다. 일꾼이 묶이지 않아 상품 페이지는 살아 있고, 고장 난 추천 서비스도 요청 폭탄에서 벗어나 회복할 틈을 얻습니다.',
@@ -449,6 +451,7 @@ const lesson = [
   },
   {
     label: '살짝 열어 보기',
+    readingStage: 3,
     title: '시간이 지나면 한 번만 시험해 보고 닫는다',
     body: '차단기가 영원히 열려 있으면 추천 서비스가 고쳐져도 쓰지 못합니다. 그래서 열린 지 30초가 지나면 "반쯤 열림" 상태가 되어 요청 하나만 시험 삼아 보냅니다. 성공하면 다시 닫고 평소처럼 부르고, 실패하면 다시 열고 30초를 더 기다립니다.',
     takeaway: '시험 요청이 성공해 차단기가 닫혔고 추천이 다시 보입니다. 고장 난 동안에는 요청을 막아 서로를 보호하고, 회복되면 스스로 돌아옵니다.',
@@ -465,6 +468,7 @@ const lesson = [
   },
   {
     label: '다시 시도의 함정',
+    readingStage: 2,
     title: '실패하자마자 다시 보내면 고장을 키운다',
     body: '실패하면 다시 시도하는 것은 자연스럽지만, 모든 클라이언트가 실패하자마자 세 번씩 다시 보내면 고장 난 서비스에 요청이 네 배로 몰립니다. 그래서 다시 시도할 때는 1초, 2초, 4초…처럼 기다리는 시간을 늘리고(지수 백오프), 다들 같은 순간에 몰리지 않게 조금씩 무작위로 흩뜨립니다(지터). 다시 시도 횟수에도 한도를 둡니다.',
     takeaway: '즉시 3번 다시 보내면 1초에 100개가 400개가 되어 회복 중인 서비스를 다시 쓰러뜨립니다. 백오프와 지터, 서킷 브레이커를 함께 쓰면 고장 난 곳에 숨 쉴 틈을 줍니다.',
@@ -656,8 +660,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -775,6 +781,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

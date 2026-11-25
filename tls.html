@@ -416,6 +416,7 @@ const TLS_LINKS = [['br', 'srv'], ['br', 'ca'], ['ca', 'srv']];
 const lesson = [
   {
     label: '인증서 사슬',
+    readingStage: 3,
     title: '믿는 기관의 서명이 이어지면 서버의 공개 키를 믿는다',
     body: '8C.1의 중간자 공격을 막으려면 "이 공개 키가 정말 shop.example.com의 것"이라는 증명이 필요합니다. 그것이 인증서입니다. 인증서에는 도메인 이름, 서버의 공개 키, 유효 기간이 적혀 있고, 인증 기관(CA)이 개인 키로 서명합니다. 브라우저와 운영체제에는 믿을 만한 루트 기관 수십 곳의 공개 키가 처음부터 들어 있어, 서명을 따라 올라가 루트에 닿으면 믿습니다.',
     takeaway: '서버 인증서는 중간 기관이, 중간 기관 인증서는 루트가 서명했고, 루트 공개 키는 브라우저에 이미 있었습니다. 서명 사슬이 끊김 없이 이어져 "이 공개 키는 shop.example.com의 것"을 믿게 됐습니다.',
@@ -432,6 +433,7 @@ const lesson = [
   },
   {
     label: '악수',
+    readingStage: 4,
     title: '한 번 왕복으로 키를 나누고 상대를 확인한다',
     body: 'TLS 1.3의 악수는 짧습니다. 브라우저는 첫 인사에 디피–헬만(8C.1) 공개 수를 담아 보냅니다. 서버는 자기 공개 수, 인증서 사슬, 그리고 지금까지 주고받은 내용 전체에 대한 서명을 한 번에 돌려줍니다. 브라우저는 인증서와 서명을 확인하고, 양쪽은 디피–헬만으로 같은 비밀을 얻어 대칭 키(6.11의 AES)를 만듭니다.',
     takeaway: '왕복 한 번 만에 키를 나누고 서버가 진짜임을 확인했습니다. 서버가 악수 내용에 서명했으므로, 가운데에서 공개 수를 바꿔치면 서명이 맞지 않아 들킵니다. 8C.1의 중간자 공격이 막혔습니다.',
@@ -449,6 +451,7 @@ const lesson = [
   },
   {
     label: '가짜 서버',
+    readingStage: 3,
     title: '사슬이 끊기거나 이름이 다르면 경고한다',
     body: '공격자가 같은 와이파이에서 shop.example.com인 척하는 가짜 서버로 브라우저를 끌어들였다고 해 봅시다. 공격자는 shop.example.com의 진짜 인증서를 보내도 그 공개 키에 맞는 개인 키가 없어 악수 서명을 만들 수 없습니다. 스스로 만든 인증서를 보내면 루트까지 사슬이 이어지지 않습니다. 브라우저는 어느 경우든 접속을 멈추고 경고를 띄웁니다.',
     takeaway: '스스로 서명한 인증서는 루트에 닿지 않아 "연결이 비공개로 설정되어 있지 않습니다" 경고가 떴습니다. 이 경고를 무시하고 들어가면 TLS의 보호가 모두 사라집니다.',
@@ -465,6 +468,7 @@ const lesson = [
   },
   {
     label: '자물쇠의 뜻',
+    readingStage: 3,
     title: '자물쇠는 "이 이름의 주인과 비밀 대화 중"이라는 뜻일 뿐이다',
     body: '자물쇠가 보장하는 것은 두 가지입니다. 주소창의 이름을 가진 주인과 대화하고 있다는 것, 그리고 그 대화가 중간에서 읽히거나 바뀌지 않는다는 것입니다. 그 사이트가 착한 사이트라는 뜻은 아닙니다. 사기꾼도 shop-example-login.test 같은 비슷한 이름을 사서 진짜 인증서를 받을 수 있습니다. 그 사이트에서는 자물쇠가 떠도 비밀번호를 넣으면 안 됩니다.',
     takeaway: '피싱 사이트에도 정상 자물쇠가 떴습니다. 자물쇠는 "누구와"를 이름으로만 보장하므로, 주소창의 이름을 직접 확인하는 습관이 필요합니다. 서버 쪽은 6.12처럼 비밀번호 대신 다른 확인 수단(일회용 코드, 패스키)을 더합니다.',
@@ -656,8 +660,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -775,6 +781,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

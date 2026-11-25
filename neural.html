@@ -417,6 +417,7 @@ const NET_LINKS = [['img', 'h1'], ['img', 'h2'], ['h1', 'out'], ['h2', 'out']];
 const lesson = [
   {
     label: '뉴런 하나',
+    readingStage: 2,
     title: '뉴런은 곱해서 더하고, 음수는 0으로 바꾼다',
     body: '인공 뉴런은 아주 단순한 계산기입니다. 입력마다 가중치를 곱해 모두 더하고, 그 합이 음수면 0, 아니면 그대로 내보냅니다(ReLU). 7.10의 "w × 기온"을 입력 여러 개로 늘린 것입니다. 3×3 그림의 칸(켜짐 1, 꺼짐 0)을 입력으로 받는 뉴런 1은 가운데 세로줄의 위·아래 칸에 +1, 가운데 가로줄의 왼쪽·오른쪽 칸에 −1을 곱합니다.',
     takeaway: '세로선 그림에서 뉴런 1은 1 + 1 − 0 − 0 = 2를 내보냅니다. 가중치가 "어떤 모양을 좋아하는지"를 정합니다. 이 뉴런은 세로선을 좋아하고 가로선을 싫어합니다.',
@@ -432,6 +433,7 @@ const lesson = [
   },
   {
     label: '층 쌓기',
+    readingStage: 4,
     title: '뉴런 여러 개의 답을 다음 층이 다시 합친다',
     body: '뉴런 2는 뉴런 1과 반대 가중치를 가져 가로선을 좋아합니다. 두 뉴런이 한 층(숨은 층)을 이루고, 그 답을 출력 뉴런이 다시 곱해 더합니다. 출력 = 뉴런 1 × (+1) + 뉴런 2 × (−1)이고, 0보다 크면 "세로선", 작으면 "가로선"이라고 답합니다.',
     takeaway: '세로선은 뉴런 1만 켜져 출력 2(세로선), 가로선은 뉴런 2만 켜져 출력 −2(가로선)입니다. 앞층은 작은 특징을 찾고, 뒷층은 특징들을 합쳐 판단합니다.',
@@ -449,6 +451,7 @@ const lesson = [
   },
   {
     label: '조금 다른 그림',
+    readingStage: 4,
     title: '중요한 특징만 보므로 조금 달라도 알아본다',
     body: '사람이 쓴 그림은 늘 깔끔하지 않습니다. 세로선 옆 구석에 점이 하나 더 찍혀 있으면 어떨까요? 뉴런 1과 2는 구석 칸에 가중치 0을 주므로 그 점을 무시합니다. 중요한 칸만 보는 덕분에 조금 다른 그림도 같은 답을 냅니다.',
     takeaway: '구석에 점이 있어도 출력은 여전히 2(세로선)입니다. 반대로 가중치가 0인 곳에만 차이가 있는 그림은 구별하지 못합니다. 무엇을 보고 무엇을 무시할지가 모두 가중치에 들어 있습니다.',
@@ -466,6 +469,7 @@ const lesson = [
   },
   {
     label: '가중치는 배운다',
+    readingStage: 4,
     title: '가중치는 사람이 아니라 예시로 배운다',
     body: '여기서는 가중치를 사람이 정했지만, 실제 신경망은 7.10처럼 예시로 배웁니다. 무작위 가중치에서 시작해 정답이 붙은 그림을 넣고, 출력이 틀린 만큼 마지막 층부터 거꾸로 각 가중치의 책임을 계산해 조금씩 고칩니다(역전파). 손글씨 숫자 그림(28 × 28 = 784칸)을 읽는 신경망은 가중치가 수십만 개이고, 층이 깊어질수록 선 → 모양 → 숫자처럼 점점 큰 특징을 찾습니다.',
     takeaway: '곱하고 더하고 음수를 자르는 단순한 계산을 수백만 번 겹치고, 그 숫자들을 예시로 맞추면 그림, 말, 글을 다루는 모델이 됩니다. 이 곱셈들을 동시에 하는 데 6.7의 GPU가 쓰입니다.',
@@ -659,8 +663,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -778,6 +784,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

@@ -415,6 +415,7 @@ const FAN_LINKS = [['job', 'split'], ['split', 'w1'], ['split', 'w2'], ['split',
 const lesson = [
   {
     label: '혼자서',
+    readingStage: 3,
     title: '일꾼 하나는 사진을 하나씩 차례로 처리한다',
     body: '사진 9장의 크기를 줄이는 일이 있습니다. 한 장에 1초가 걸립니다. 일꾼(CPU 코어, 스레드, 서버 무엇이든)이 하나면 1번부터 9번까지 차례로 처리해 9초가 걸립니다. 5.1의 스레드 하나, 3.5의 CPU 하나가 이렇게 일합니다.',
     takeaway: '9장 × 1초 = 9초입니다. 사진이 900장이면 900초입니다. 일꾼을 늘리면 얼마나 빨라질까요?',
@@ -430,6 +431,7 @@ const lesson = [
   },
   {
     label: '셋이 나눠서',
+    readingStage: 8,
     title: '서로 상관없는 일은 나눠서 동시에 한다',
     body: '사진 한 장을 줄이는 일은 다른 사진과 상관이 없습니다. 그러니 일꾼 셋에게 세 장씩 나눠 주면 동시에 처리할 수 있습니다. 6.7에서 GPU가 칸마다 색을 동시에 칠한 것도, 7.3에서 서버 여러 대가 요청을 나눠 받는 것도 같은 생각입니다.',
     takeaway: '세 일꾼이 동시에 3초씩 일해 전체가 3초에 끝납니다. 일꾼이 3배면 3배 빨라졌습니다. 언제나 그럴까요?',
@@ -451,6 +453,7 @@ const lesson = [
   },
   {
     label: '나눌 수 없는 부분',
+    readingStage: 6,
     title: '혼자 해야 하는 부분이 빨라지는 한계를 정한다',
     body: '이번에는 사진이 압축 파일 하나에 들어 있어서, 먼저 3초 동안 압축을 풀어야 합니다. 압축 풀기는 나눌 수 없어 한 명이 해야 합니다. 일꾼 하나면 3 + 9 = 12초, 셋이면 3 + 3 = 6초입니다. 일꾼을 3배로 늘렸는데 2배만 빨라졌습니다. 이것을 암달의 법칙이라 합니다.',
     takeaway: '일꾼을 아무리 늘려도 압축 풀기 3초는 그대로라, 12초는 3초보다 짧아질 수 없습니다. 최대 4배입니다. 프로그램에서 나눌 수 없는 부분이 클수록 일꾼을 늘린 효과가 빨리 멈춥니다.',
@@ -471,6 +474,7 @@ const lesson = [
   },
   {
     label: '가장 느린 일꾼',
+    readingStage: 5,
     title: '모두 끝나야 끝난다, 가장 느린 일꾼이 시간을 정한다',
     body: '나눠서 동시에 하는 일은 모든 일꾼이 끝나야 모을 수 있습니다. 일꾼 3이 다른 일을 함께 하느라 두 배 느려지면, 일꾼 1과 2가 3초에 끝내도 모으기는 일꾼 3을 기다려야 합니다. 서버 여러 대에 나눠 맡길 때도 가장 느린 한 대가 응답 시간을 정합니다.',
     takeaway: '일꾼 1, 2는 3초에 끝나고 놀지만, 일꾼 3이 6초가 걸려 전체도 6초입니다. 일을 더 잘게 나눠 먼저 끝난 일꾼이 남은 조각을 가져가게 하면(일 훔치기) 기다림이 줄어듭니다.',
@@ -667,8 +671,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -786,6 +792,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

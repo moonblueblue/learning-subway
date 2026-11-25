@@ -408,6 +408,7 @@ const LINE2 = ['. . # . .', '. . # . .', '. . # . .', '. . # . .', '. . # . .'];
 const lesson = [
   {
     label: '필터 하나',
+    readingStage: 3,
     title: '작은 필터를 그림 위에서 밀며 곱해서 더한다',
     body: '7.11의 뉴런은 그림 전체 칸마다 가중치를 따로 가졌습니다. 합성곱 신경망은 대신 3×3짜리 작은 가중치 묶음(필터)을 하나 만들어 그림 위에서 한 칸씩 밀며, 겹친 9칸과 곱해서 더합니다. 이 필터는 줄마다 [−1, +2, −1]이라 가운데 세로줄이 밝고 양옆이 어두우면 큰 값을 냅니다. 세로선 찾기 필터입니다.',
     takeaway: '필터를 맨 왼쪽(0열)에 두면 선이 필터의 오른쪽 끝에 걸려 −3, 한 칸 오른쪽(1열)에 두면 선이 필터 가운데에 와서 6입니다. 같은 필터를 어디에나 대 보는 것이 합성곱입니다.',
@@ -423,6 +424,7 @@ const lesson = [
   },
   {
     label: '특징 지도',
+    readingStage: 2,
     title: '모든 자리에 대 보면 "어디에 세로선이 있는지" 지도가 생긴다',
     body: '5×5 그림에 3×3 필터를 댈 수 있는 자리는 가로 3 × 세로 3 = 9곳입니다. 9곳의 값을 모으면 3×3 특징 지도가 됩니다. 7.11처럼 음수는 0으로 바꿉니다(ReLU). 큰 값이 있는 자리가 "여기에 세로선이 있다"는 뜻입니다.',
     takeaway: '특징 지도는 세 줄 모두 [0, 6, 0]입니다. 가운데 열이 6으로 밝아, 그림의 가운데에 세로선이 있다고 알려 줍니다. 필터가 그림을 "세로선이 어디 있는지"의 지도로 바꿨습니다.',
@@ -438,6 +440,7 @@ const lesson = [
   },
   {
     label: '위치가 달라도',
+    readingStage: 3,
     title: '가장 큰 값만 보면 선이 옮겨 가도 알아본다',
     body: '같은 세로선이 한 칸 오른쪽(3열)에 그려져도 알아봐야 합니다. 필터는 모든 자리에 똑같이 대 보므로, 선이 옮겨 가면 특징 지도의 6도 함께 옮겨 갑니다. 마지막에 지도에서 가장 큰 값만 고르면(최대 풀링) 위치와 상관없이 "세로선이 어딘가에 있다"를 얻습니다.',
     takeaway: '선이 2열이든 3열이든 가장 큰 값은 6입니다. 7.11의 뉴런은 칸마다 가중치가 달라 선이 옮겨 가면 다시 배워야 했지만, 합성곱은 같은 필터를 모든 자리에 쓰므로 위치가 달라도 알아봅니다.',
@@ -454,6 +457,7 @@ const lesson = [
   },
   {
     label: '층 쌓기',
+    readingStage: 3,
     title: '작은 특징을 모아 큰 모양을 찾는다',
     body: '실제 합성곱 신경망은 필터를 수십 개 씁니다. 첫 층의 필터들은 세로선, 가로선, 대각선, 색 경계 같은 작은 특징을 찾습니다. 다음 층은 그 특징 지도들 위에서 다시 필터를 밀어 모서리, 원, 눈 같은 더 큰 모양을 찾고, 그다음 층은 얼굴이나 바퀴를 찾습니다. 필터의 숫자는 사람이 정하지 않고 8B.3의 경사 하강법으로 배웁니다.',
     takeaway: '필터 하나의 가중치는 그림 크기와 상관없이 9개입니다. 28×28 그림을 7.11처럼 뉴런 하나에 모두 이으면 784개가 필요하지만, 필터는 9개를 모든 자리에서 함께 씁니다. 적은 가중치로 위치에 강한 모델을 만드는 것이 합성곱의 힘입니다.',
@@ -628,8 +632,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -747,6 +753,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

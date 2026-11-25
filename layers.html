@@ -412,6 +412,7 @@ const kinds = { app: '응용', layer: '계층', wire: '전선', router: '라우�
 const lesson = [
   {
     label: '봉투 싸기',
+    readingStage: 3,
     title: '계층마다 자기 봉투를 하나씩 씌운다',
     body: '웹 브라우저가 보내는 "안녕"은 그대로 전선을 타지 않습니다. 응용 계층(HTTP)의 내용을 전송 계층(TCP)이 포트 번호를 적은 봉투에 넣고, 네트워크 계층(IP)이 주소를 적은 봉투에 다시 넣고, 링크 계층(와이파이·이더넷)이 다음 기계의 주소를 적은 봉투로 한 번 더 싼 뒤, 물리 계층이 비트(0.1)로 바꿔 보냅니다.',
     takeaway: '아래 창에서 봉투가 한 겹씩 늘어납니다. 각 계층은 자기 봉투의 머리말만 읽고 씁니다. 안의 내용은 몰라도 됩니다.',
@@ -433,6 +434,7 @@ const lesson = [
   },
   {
     label: '봉투 벗기기',
+    readingStage: 3,
     title: '받는 쪽은 아래에서부터 한 겹씩 벗긴다',
     body: '받는 컴퓨터는 거꾸로 합니다. 물리 계층이 비트를 받아 링크 계층에 넘기면, 링크 계층은 자기 봉투를 벗겨 IP 계층에, IP 계층은 주소가 자기 것인지 확인하고 벗겨 TCP에, TCP는 포트 번호를 보고 맞는 프로그램에 내용을 건넵니다.',
     takeaway: '봉투가 한 겹씩 줄어 마지막에 "GET /인사 HTTP 안녕"만 웹 서버 프로그램에 닿습니다. 보낼 때 씌운 순서의 거꾸로, 4.3의 스택처럼 벗깁니다.',
@@ -453,6 +455,7 @@ const lesson = [
   },
   {
     label: '라우터는 어디까지',
+    readingStage: 3,
     title: '길목의 라우터는 IP 봉투까지만 연다',
     body: '내 기기와 서버 사이에는 공유기와 라우터가 여럿 있습니다(0.7). 라우터는 링크 봉투를 벗기고 IP 봉투의 목적지 주소만 본 뒤, 다음 구간용 링크 봉투를 새로 씌워 내보냅니다. TCP 봉투와 그 안의 내용은 열지 않습니다.',
     takeaway: '라우터에서 링크 봉투만 "와이파이"에서 "광케이블"로 바뀌고, IP 봉투와 안쪽은 그대로 지나갑니다. 계층을 나눠 두었기에 라우터는 응용 프로그램을 몰라도 됩니다.',
@@ -473,6 +476,7 @@ const lesson = [
   },
   {
     label: '왜 나누나',
+    readingStage: 3,
     title: '계층을 나누면 갈아 끼울 수 있다',
     body: '각 계층은 바로 아래 계층이 무엇을 해 주는지만 알면 됩니다. 그래서 와이파이를 5G로 바꿔도 IP와 TCP와 브라우저는 그대로 돌고, 새 앱을 만들어도 라우터를 바꿀 필요가 없습니다. 3.8의 컴파일러 단계, 5.3의 운영체제 경계처럼 "나누고 약속하기"가 큰 시스템을 만드는 방법입니다.',
     takeaway: '해 보기의 질문으로 정리해 보세요. 봉투 싸기를 다시 따라가 봐도 됩니다.',
@@ -648,8 +652,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -767,6 +773,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

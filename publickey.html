@@ -417,6 +417,7 @@ const ROW_LINKS = [['a', 'net'], ['net', 'b']];
 const lesson = [
   {
     label: '열쇠 함께 만들기',
+    readingStage: 4,
     title: '공개된 수만 주고받아 둘만 아는 비밀 수를 만든다',
     body: '6.11에서는 공개 키로 대칭 키를 잠가 건넸습니다. 디피–헬만 키 교환은 열쇠를 건네지도 않고 양쪽이 같은 비밀 수를 계산해 냅니다. 모두가 아는 수 p = 23, g = 5를 정하고, 민지는 비밀 a = 6, 서준은 비밀 b = 15를 고릅니다. 각자 g의 비밀 제곱을 p로 나눈 나머지(2.6)를 보내고, 받은 수를 다시 자기 비밀만큼 제곱합니다.',
     takeaway: '민지는 8을, 서준은 19를 보냈고, 둘 다 2라는 같은 비밀 수에 닿았습니다. 엿보는 이는 23, 5, 8, 19를 모두 봤지만 6이나 15를 모르면 2를 계산하기 어렵습니다(수가 수백 자리면 사실상 불가능).',
@@ -434,6 +435,7 @@ const lesson = [
   },
   {
     label: '전자 서명',
+    readingStage: 3,
     title: '개인 키로 서명하고 공개 키로 누구나 확인한다',
     body: '공개 키 암호는 거꾸로도 쓸 수 있습니다. 서준이 글의 해시(6.12처럼 글을 짧게 줄인 지문)를 자기 개인 키로 계산하면 서명이 됩니다. 누구든 서준의 공개 키로 서명을 풀어 해시와 같은지 확인할 수 있습니다. 개인 키는 서준만 가졌으니, 확인이 통과하면 "서준이 쓴 글이고, 중간에 바뀌지 않았다"는 뜻입니다.',
     takeaway: '서준은 해시 4를 개인 키 7로 16으로 만들어 붙였고, 민지는 공개 키 3으로 16³ mod 33 = 4를 얻어 해시와 같음을 확인했습니다. 6.11의 RSA 수를 서명에 그대로 썼습니다.',
@@ -450,6 +452,7 @@ const lesson = [
   },
   {
     label: '바꿔치기 들키기',
+    readingStage: 3,
     title: '글을 한 글자만 바꿔도 서명이 맞지 않는다',
     body: '엿보는 이가 중간에서 글을 "내일 5시"로 바꿔 보냈다고 해 봅시다. 글이 바뀌면 해시도 바뀝니다. 그런데 서명은 원래 글의 해시로 만든 것이라, 공개 키로 풀어 나온 4와 새 해시가 맞지 않습니다. 맞는 서명을 새로 만들려면 서준의 개인 키가 있어야 합니다.',
     takeaway: '바뀐 글의 해시는 5인데 서명을 풀면 4가 나와 바꿔치기가 드러났습니다. 소프트웨어 업데이트 파일, 은행 거래, 인증서(8C.2)가 모두 이 원리로 위조를 막습니다.',
@@ -466,6 +469,7 @@ const lesson = [
   },
   {
     label: '중간자 공격',
+    readingStage: 3,
     title: '상대가 진짜인지 모르면 가운데에서 둘 다 속일 수 있다',
     body: '디피–헬만에는 약점이 있습니다. 민지와 서준은 받은 수가 정말 상대가 보낸 것인지 모릅니다. 공격자가 가운데에서 자기 비밀 3으로 만든 10을 양쪽에 보내면, 민지는 공격자와 6을, 서준은 공격자와 5를 비밀 수로 갖게 됩니다. 공격자는 양쪽 대화를 풀어 읽고 다시 잠가 넘깁니다. 이것을 막으려면 받은 수에 상대의 전자 서명이 있어야 하고, 그 공개 키가 진짜인지는 인증서(8C.2)로 확인합니다.',
     takeaway: '민지와 서준은 서로 다른 비밀 수(6과 5)를 가졌는데도 서로 대화하는 줄 알았습니다. 키 교환은 "누구와" 교환하는지 확인하는 서명과 함께 써야 안전합니다.',
@@ -657,8 +661,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -776,6 +782,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

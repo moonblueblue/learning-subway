@@ -376,6 +376,8 @@ const ret = (code, calc, show) => ({ kind: 'return', code, calc, show });
 const lesson = [
   {
     label: '팩토리얼',
+    readingRows: [["호출", "팩(4)", "팩(3)", "팩(2)", "팩(1)"], ["반환", "1", "2", "6", "24"]],
+    example: ["팩(4) 호출", "팩(1)까지 내려간 뒤 곱셈", "1 → 2 → 6 → 24"],
     title: '자기 자신을 부르며 문제를 작게 만든다',
     body: '재귀는 함수가 자기 자신을 부르는 것입니다. 4! = 4 × 3!이고, 3! = 3 × 2!처럼 큰 문제를 한 단계 작은 같은 문제로 바꿉니다. 그리고 n이 1이면 더 부르지 않고 바로 1을 돌려줍니다. 이 멈추는 조건을 기저 조건이라고 합니다.',
     takeaway: '팩(4), 팩(3), 팩(2), 팩(1) 층이 차례로 쌓입니다. 팩(1)이 1을 돌려주면 위층부터 2, 6, 24를 돌려주며 하나씩 사라집니다.',
@@ -396,6 +398,8 @@ const lesson = [
   },
   {
     label: '기저 조건이 없으면',
+    readingRows: [["정상 종료", "팩(2)", "팩(1)", "1 반환"], ["기저 조건 누락", "팩(1)", "팩(0)", "팩(−1)", "계속 호출"]],
+    example: ["멈추는 조건 없음", "팩(1)도 팩(0)을 호출", "호출 층이 계속 쌓임"],
     title: '멈추는 조건이 없으면 끝없이 내려간다',
     body: '같은 함수에서 if n == 1 부분을 빼면, n이 0, −1, −2로 계속 작아지며 호출이 끝나지 않습니다. 1.3에서 본 스택 넘침이 그대로 일어납니다. 재귀 함수를 쓸 때는 먼저 "언제 멈추는가"를 정해야 합니다.',
     takeaway: '팩(1) 다음에도 팩(0), 팩(−1)…이 계속 쌓이다가 아홉 층에서 스택이 넘칩니다.',
@@ -414,6 +418,8 @@ const lesson = [
   },
   {
     label: '같은 계산 반복',
+    readingRows: [["왼쪽 가지", "fib(3)", "fib(2)", "fib(1)"], ["오른쪽 가지", "fib(3)", "fib(1)"]],
+    example: ["fib(3) 계산", "두 갈래에서 fib(1)을 다시 호출", "호출 5번 · 결과 2"],
     title: '재귀는 같은 계산을 여러 번 할 수도 있다',
     body: '피보나치 수 fib(n)은 fib(n − 1) + fib(n − 2)입니다. 재귀로 그대로 쓰면 짧고 읽기 쉽지만, fib(3)만 구해도 fib(1)을 두 번 계산합니다. n이 커지면 같은 계산이 기하급수적으로 늘어나는데, 이를 피하는 방법은 4.9 동적 계획법에서 다룹니다.',
     takeaway: '스택이 fib(3) → fib(2) → fib(1)로 쌓였다 줄었다를 반복합니다. 아래 줄의 "부른 횟수"에서 fib(1)이 두 번 불리는 것을 확인하세요.',
@@ -797,6 +803,7 @@ byId('restart').onclick = () => {
 // ---------- Demo playback ----------
 let frame = null, lastFrame = null;
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.pc >= step().program.length || state.halted) {
     resetProgram();

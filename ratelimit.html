@@ -416,6 +416,7 @@ const RL_LINKS = [['user', 'lim'], ['bot', 'lim'], ['lim', 'api']];
 const lesson = [
   {
     label: '막지 않으면',
+    readingStage: 2,
     title: '누군가 너무 많이 보내면 모두가 느려진다',
     body: '공개된 API에는 사람만 오지 않습니다. 잘못 짠 프로그램이 같은 요청을 끝없이 되풀이하거나, 봇이 1초에 만 번씩 로그인을 시도하기도 합니다. 서버가 1초에 1,000개를 처리할 수 있다면, 한 봇이 그 몫을 다 차지해 보통 사용자의 요청까지 줄을 서다 실패합니다(7.3의 과부하).',
     takeaway: '봇 하나 때문에 지우의 요청도 시간 초과가 났습니다. 누가 얼마나 보내는지 세어서, 정해진 양을 넘으면 서버에 닿기 전에 거절해야 합니다.',
@@ -431,6 +432,7 @@ const lesson = [
   },
   {
     label: '토큰 양동이',
+    readingStage: 3,
     title: '사용자마다 양동이의 토큰만큼만 통과시킨다',
     body: '레이트 리미터는 서버 앞에서 요청을 셉니다. 흔한 방법인 토큰 양동이는 사용자마다 토큰을 최대 5개 담는 양동이를 두고, 1초에 1개씩 채웁니다. 요청 하나가 토큰 하나를 쓰고, 토큰이 없으면 서버로 보내지 않고 "429 Too Many Requests"로 바로 거절합니다. 잠깐 몰아서 5개까지는 허용하고, 길게 보면 1초에 1개로 제한됩니다.',
     takeaway: '봇의 요청 7개 중 5개만 통과하고 2개는 429로 거절됐습니다. 거절은 서버에 닿기 전에 일어나므로 서버는 일을 하지 않습니다.',
@@ -450,6 +452,7 @@ const lesson = [
   },
   {
     label: '다시 채워짐',
+    readingStage: 3,
     title: '시간이 지나면 토큰이 다시 찬다',
     body: '토큰은 1초에 1개씩 다시 찹니다. 봇이 3초를 기다렸다가 다시 보내면 토큰 3개만큼은 통과합니다. 그래서 길게 보면 봇은 1초에 1개, 1분에 약 60개까지만 서버에 닿습니다. 양동이 크기는 잠깐 몰아서 보내는 것을 얼마나 봐줄지, 채우는 속도는 평균 허용량을 정합니다.',
     takeaway: '양동이 크기(5)와 채우는 속도(1/초) 두 숫자로 "잠깐 몰림은 허용, 계속 몰아치기는 차단"을 표현했습니다. 로그인처럼 민감한 곳은 더 작게, 상품 보기처럼 가벼운 곳은 더 넉넉하게 정합니다.',
@@ -467,6 +470,7 @@ const lesson = [
   },
   {
     label: '어디서 셀까',
+    readingStage: 2,
     title: '누구 기준으로, 어디서 함께 셀지 정한다',
     body: '레이트 리미터는 보통 서버 앞의 게이트웨이나 로드밸런서(7.3)에 둡니다. 셀 기준은 로그인한 사용자, API 키, IP 주소 등입니다. 리미터도 여러 대라면, 각자 따로 세면 봇이 리미터마다 5개씩 써 버립니다. 그래서 토큰 수를 모든 리미터가 함께 보는 빠른 저장소(7.2의 캐시 같은 것)에 둡니다.',
     takeaway: '리미터가 두 대여도 토큰을 함께 세면 봇은 합쳐서 5개만 씁니다. 거절할 때는 언제 다시 시도할지(Retry-After)를 알려 주어, 잘 만든 프로그램은 기다렸다 다시 보냅니다.',
@@ -660,8 +664,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -779,6 +785,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

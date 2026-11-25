@@ -415,6 +415,7 @@ const LB_LINKS = [['users', 'lb'], ['lb', 'a'], ['lb', 'b'], ['lb', 'c']];
 const lesson = [
   {
     label: '한 서버에 몰리면',
+    readingStage: 3,
     title: '서버 하나가 감당할 수 있는 양을 넘으면 줄이 길어진다',
     body: '6.9의 문구점이 인기를 얻어 1초에 요청이 300개씩 옵니다. 서버 한 대는 1초에 100개를 처리할 수 있습니다. 처리하지 못한 요청은 줄을 서고, 줄이 길어질수록 응답이 늦어지다가 결국 시간 초과와 오류가 납니다. 서버 한 대를 더 좋은 것으로 바꾸는 방법(수직 확장)은 한계가 있고 비쌉니다.',
     takeaway: '들어오는 양(300/초)이 처리량(100/초)보다 많으면 줄은 1초에 200개씩 늘어납니다. 서버를 여러 대 두고 요청을 나눠야 합니다(수평 확장).',
@@ -430,6 +431,7 @@ const lesson = [
   },
   {
     label: '돌아가며 나누기',
+    readingStage: 5,
     title: '로드밸런서가 요청을 서버들에 차례로 나눠 준다',
     body: '로드밸런서는 사용자 앞에 서서 요청을 받아 뒤의 서버 여러 대에 나눠 줍니다. 사용자는 로드밸런서 주소 하나만 압니다. 가장 간단한 방법은 A, B, C, A, B, C… 차례로 돌아가며 주는 라운드 로빈입니다. 서버 셋이면 1초에 300개를 100개씩 나눠 받아 줄이 생기지 않습니다.',
     takeaway: '요청 1, 2, 3이 A, B, C로 가고 4는 다시 A로 갑니다. 같은 사용자의 요청이 매번 다른 서버로 갈 수 있으므로, 6.12의 세션은 서버 메모리가 아니라 모든 서버가 함께 보는 저장소에 둬야 합니다.',
@@ -449,6 +451,7 @@ const lesson = [
   },
   {
     label: '가장 한가한 서버',
+    readingStage: 2,
     title: '요청마다 무게가 다르면 한가한 서버를 고른다',
     body: '요청은 무게가 다릅니다. 상품 목록은 10ms면 되지만, 엑셀 보고서 만들기는 3초가 걸립니다. 라운드 로빈은 무게를 모르고 차례만 지키므로, 무거운 요청이 몰린 서버는 바쁘고 다른 서버는 놉니다. 그래서 지금 처리 중인 요청이 가장 적은 서버로 보내는 방법(최소 연결)을 씁니다.',
     takeaway: '서버 A가 무거운 보고서 두 개를 처리하느라 바쁠 때, 최소 연결은 새 요청을 처리 중인 것이 없는 B나 C로 보냅니다. 로드밸런서가 각 서버의 처리 중 개수를 세고 있어야 합니다.',
@@ -466,6 +469,7 @@ const lesson = [
   },
   {
     label: '서버가 죽으면',
+    readingStage: 4,
     title: '건강 검사로 죽은 서버를 빼고 나머지로 나눈다',
     body: '서버는 고장 나고, 배포하느라 다시 켜지기도 합니다. 로드밸런서는 몇 초마다 각 서버에 "살아 있니?"(건강 검사, 예: GET /health)를 보내고, 연속으로 답이 없으면 그 서버를 목록에서 뺍니다. 그동안 요청은 살아 있는 서버들이 나눠 받습니다. 서버가 돌아오면 다시 넣습니다.',
     takeaway: '서버 B가 죽어도 사용자는 오류를 거의 보지 않습니다. 다만 남은 A, C가 1초에 150개씩 받아야 하므로, 평소에 여유를 두거나 서버를 자동으로 더 띄워야 합니다. 로드밸런서 자신도 하나면 그곳이 고장 지점이 되므로 보통 두 대 이상 둡니다.',
@@ -660,8 +664,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -779,6 +785,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

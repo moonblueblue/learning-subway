@@ -408,6 +408,7 @@ const ST = [['words', '단어들', 'file'], ['emb', '벡터화', 'tool'], ['scor
 const lesson = [
   {
     label: '단어를 벡터로',
+    readingStage: 2,
     title: '단어마다 뜻을 담은 숫자 묶음을 준다',
     body: '"고양이가 생선을 먹었다. 그것은 배가 불렀다." 사람은 "그것"이 고양이라는 것을 압니다. 컴퓨터가 이를 알려면 먼저 단어를 숫자로 바꿔야 합니다. 단어마다 수백 개 숫자로 된 벡터(8B.1)를 주는데, 뜻이 비슷한 단어는 비슷한 벡터가 되도록 배웁니다(8B.3). 여기서는 숫자 두 개짜리로 줄여 봅니다.',
     takeaway: '고양이, 생선, 먹었다, 그것이 각각 벡터가 되었습니다. 하지만 "그것" 벡터만으로는 무엇을 가리키는지 알 수 없습니다. 문장의 다른 단어를 봐야 합니다. 이것이 어텐션이 하는 일입니다.',
@@ -422,6 +423,7 @@ const lesson = [
   },
   {
     label: '누구를 볼까',
+    readingStage: 2,
     title: '질문 벡터와 열쇠 벡터의 내적으로 점수를 매긴다',
     body: '어텐션에서 각 단어는 벡터를 세 가지로 바꿉니다. 질문(쿼리): "나는 무엇을 찾나", 열쇠(키): "나는 이런 단어다", 값(밸류): "나를 보면 이 정보를 가져가라". "그것"의 질문 벡터와 다른 단어들의 열쇠 벡터를 내적하면, 점수가 높을수록 "그것"이 찾는 단어입니다. "그것"의 질문은 "배가 부를 수 있는 것, 즉 살아 있는 것"을 찾습니다.',
     takeaway: '점수는 고양이 3, 생선 1, 먹었다 0입니다. "그것"의 질문과 가장 잘 맞는 열쇠가 고양이입니다. 질문, 열쇠, 값을 만드는 행렬(8B.1)도 모두 경사 하강법으로 배웁니다.',
@@ -436,6 +438,7 @@ const lesson = [
   },
   {
     label: '비율로 섞기',
+    readingStage: 2,
     title: '점수를 비율로 바꾸고 값 벡터를 그 비율로 섞는다',
     body: '점수를 그대로 쓰지 않고, 모두 양수이면서 합이 1이 되는 비율로 바꿉니다(소프트맥스). 큰 점수는 훨씬 큰 비율을 받습니다. 그런 다음 각 단어의 값 벡터를 그 비율만큼 섞어 "그것"의 새 벡터를 만듭니다. 이제 "그것"의 벡터에는 고양이의 정보가 가득 담깁니다.',
     takeaway: '비율은 고양이 약 84%, 생선 약 11%, 먹었다 약 4%이고, 섞은 결과 [0.84, 0.11]은 고양이의 값 [1, 0]과 거의 같습니다. 문장 속 "그것"이 고양이의 뜻을 갖게 되었습니다.',
@@ -452,6 +455,7 @@ const lesson = [
   },
   {
     label: '트랜스포머',
+    readingStage: 3,
     title: '모든 단어가 동시에 서로를 보고, 이 층을 여러 번 쌓는다',
     body: '"그것"만이 아니라 문장의 모든 단어가 같은 방법으로 동시에 서로를 봅니다. 앞에서부터 한 단어씩 읽지 않아도 되어 GPU(6.7)로 한꺼번에 계산할 수 있습니다. 한 층에 어텐션을 여러 개(머리) 두어 "누가 누구를 가리키나", "어떤 동사의 대상인가"처럼 다른 관계를 함께 보고, 단어 순서는 위치 정보를 벡터에 더해 알려 줍니다. 이런 층을 수십 개 쌓은 것이 트랜스포머입니다.',
     takeaway: '단어 n개면 점수가 n × n개 필요합니다. 문장이 길어질수록 계산이 빠르게 늘어나지만(4.1), 모두 행렬 곱이라 GPU가 동시에 해냅니다. 8B.6의 대규모 언어 모델이 이 구조 위에 서 있습니다.',
@@ -626,8 +630,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -745,6 +751,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

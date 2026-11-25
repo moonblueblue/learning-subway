@@ -415,6 +415,7 @@ const LINKS = [['client', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'c']];
 const lesson = [
   {
     label: '서로 다른 값',
+    readingStage: 4,
     title: '아무나 쓰기를 받으면 서버마다 값이 달라진다',
     body: '중요한 설정값(예: "지금 주 DB는 누구인가")을 서버 세 대가 함께 보관한다고 해 봅시다. 한 대만 두면 그 서버가 죽을 때 함께 사라지니까요. 그런데 클라이언트 둘이 서로 다른 서버에 동시에 다른 값을 쓰면, 서버마다 값이 달라집니다. 어느 것이 진짜인지 아무도 모릅니다.',
     takeaway: 'A는 x = 5, B는 x = 7이라고 믿습니다. 서버 여러 대가 하나의 값에 동의하려면 "누가 순서를 정하는가"와 "몇 대가 받아야 확정인가"라는 규칙이 필요합니다. 이것이 합의 알고리즘(Raft, Paxos)이 하는 일입니다.',
@@ -432,6 +433,7 @@ const lesson = [
   },
   {
     label: '리더와 과반',
+    readingStage: 3,
     title: '리더가 순서를 정하고, 과반이 받으면 확정한다',
     body: 'Raft에서는 서버 중 하나가 리더가 됩니다. 쓰기는 모두 리더가 받아 순서대로 기록하고(6.6의 로그), 다른 서버(팔로워)에 복사합니다. 리더를 포함해 과반(3대 중 2대)이 기록했다고 확인되면 그 값을 확정하고 클라이언트에 답합니다. 한 대가 느리거나 죽어도 과반만 있으면 진행됩니다.',
     takeaway: 'A(리더)와 B가 기록한 순간 x = 5가 확정됐습니다. C가 늦게 받아도 결과는 같습니다. 과반은 서로 겹치므로, 확정된 값은 이후 어느 과반에도 반드시 한 대 이상 남아 있습니다.',
@@ -450,6 +452,7 @@ const lesson = [
   },
   {
     label: '리더가 죽으면',
+    readingStage: 3,
     title: '남은 서버들이 투표로 새 리더를 뽑는다',
     body: '리더는 평소 짧은 간격으로 "나 살아 있어" 신호(하트비트)를 보냅니다. 신호가 일정 시간 끊기면 팔로워는 리더가 죽었다고 보고, 임기 번호를 하나 올려 후보가 되어 다른 서버에 표를 달라고 합니다. 과반의 표를 얻으면 새 리더가 됩니다. 한 임기에 한 서버는 한 표만 줄 수 있어 리더가 둘이 되지 않습니다.',
     takeaway: 'B가 임기 2의 후보가 되어 C의 표를 얻고, 자기 표와 합쳐 2표(과반)로 리더가 됐습니다. 그 뒤 쓰기는 B가 받습니다. 리더가 바뀌는 몇 초 동안은 쓰기가 잠깐 멈춥니다.',
@@ -468,6 +471,7 @@ const lesson = [
   },
   {
     label: '네트워크가 갈라지면',
+    readingStage: 3,
     title: '과반이 없는 쪽은 확정하지 못하고 기다린다',
     body: '서버는 살아 있는데 네트워크가 끊겨 A 혼자와 B, C 둘로 갈라질 수 있습니다. A는 아직 자기가 리더라고 믿고 쓰기를 받지만, 과반(2대)에게 복사할 수 없어 확정하지 못합니다. 반대편 B, C는 새 리더를 뽑아 계속 확정합니다. 네트워크가 다시 이어지면 A는 더 높은 임기를 보고 팔로워로 내려와 B의 로그를 따릅니다.',
     takeaway: 'A 쪽에서 받은 x = 9는 확정되지 않았다가 버려지고, B 쪽의 x = 8이 남았습니다. 합의 알고리즘은 갈라졌을 때 과반 쪽만 진행하게 해서, 서로 다른 값이 둘 다 확정되는 일을 막습니다. 대신 소수 쪽은 그동안 쓰기를 못 합니다(가용성을 조금 내주고 일관성을 지킴).',
@@ -661,8 +665,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -780,6 +786,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

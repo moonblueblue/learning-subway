@@ -415,6 +415,7 @@ const RP_LINKS = [['app', 'p'], ['p', 'r1'], ['p', 'r2'], ['app', 'r1'], ['app',
 const lesson = [
   {
     label: 'DB 하나',
+    readingStage: 1,
     title: '읽기와 쓰기가 모두 DB 한 대에 몰린다',
     body: '7.3에서 앱 서버는 여러 대로 늘렸지만, 데이터베이스는 아직 한 대입니다. 쇼핑몰 요청은 대부분 읽기(상품 보기)이고 쓰기(주문)는 적습니다. 예를 들어 1초에 읽기 900개, 쓰기 100개가 모두 DB 한 대로 갑니다. DB 한 대가 1초에 600개를 처리할 수 있다면 버티지 못합니다.',
     takeaway: '앱 서버를 아무리 늘려도 모두 같은 DB 한 대를 부르면, 그 DB가 병목이 됩니다. 읽기가 대부분이라는 점을 이용해 읽기를 나눌 수 있습니다.',
@@ -428,6 +429,7 @@ const lesson = [
   },
   {
     label: '읽기 나누기',
+    readingStage: 4,
     title: '쓰기는 주 DB로, 읽기는 복제본으로',
     body: '복제는 같은 데이터를 가진 DB를 여러 대 두는 것입니다. 쓰기는 주 DB 한 곳에서만 받고, 주 DB는 바뀐 내용(6.6의 로그)을 복제본들에 보내 똑같이 따라 하게 합니다. 읽기는 복제본들이 나눠 받습니다. 복제본은 고장에 대비한 예비 DB 역할도 합니다.',
     takeaway: '쓰기 100개는 주 DB가, 읽기 900개는 복제본 두 대가 450개씩 받습니다. 주 DB의 바뀐 내용이 로그로 복제본에 흘러가 세 DB가 같은 데이터를 갖습니다.',
@@ -445,6 +447,7 @@ const lesson = [
   },
   {
     label: '복제 지연',
+    readingStage: 2,
     title: '복사가 도착하기 전에 읽으면 옛 값이 보인다',
     body: '주 DB는 보통 쓰기를 마치자마자 "완료"라고 답하고, 복제본으로의 복사는 뒤이어 따로 보냅니다(비동기 복제). 그 사이 아주 짧은 순간, 복제본은 아직 옛 값을 갖고 있습니다. 바로 그때 복제본에서 읽으면 방금 바꾼 것이 안 보입니다. 이것을 복제 지연이라 합니다.',
     takeaway: '닉네임을 바꾸고 새로 고쳤더니 옛 닉네임이 보였습니다. 잠시 뒤에는 맞게 보입니다(결국 일관성). 자기가 방금 쓴 데이터는 주 DB에서 읽게 하면 이 혼란을 막을 수 있습니다.',
@@ -463,6 +466,7 @@ const lesson = [
   },
   {
     label: '주 DB가 죽으면',
+    readingStage: 2,
     title: '복제본 하나를 새 주 DB로 올린다',
     body: '주 DB가 고장 나면 쓰기를 받을 곳이 없어집니다. 그래서 가장 최신인 복제본 하나를 새 주 DB로 올리고(장애 조치), 앱 서버가 그쪽으로 쓰기를 보내게 합니다. 다른 복제본은 새 주 DB를 따라 합니다. 다만 비동기 복제라면, 고장 직전 주 DB가 받고 아직 복사하지 못한 쓰기는 잃을 수 있습니다.',
     takeaway: '주 DB가 죽어도 몇 초 안에 복제본 1이 주 DB가 되어 서비스가 이어집니다. 복사되지 못한 마지막 주문 하나는 잃었습니다. 잃으면 안 되는 데이터라면 복제본이 받았다고 확인한 뒤에 완료라고 답하는 동기 복제를 씁니다. 대신 쓰기가 느려집니다.',
@@ -656,8 +660,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -775,6 +781,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

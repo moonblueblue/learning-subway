@@ -415,6 +415,7 @@ const kinds = { app: '응용', layer: '계층', wire: '전선', router: '라우�
 const lesson = [
   {
     label: '부하 걸기',
+    readingStage: 3,
     title: '부하를 올리며 가장 먼저 꽉 차는 곳을 찾는다',
     body: '6.9의 문구점을 직접 운영한다고 해 봅시다. 앱 서버 한 대는 1초에 페이지 500개를 만들 수 있고, 페이지마다 DB 질의 2번이 필요하며, DB는 1초에 질의 1,000개를 처리합니다. 부하를 조금씩 올리며 가장 먼저 꽉 차는 곳(병목)을 찾는 것이 한계 찾기입니다. 병목이 아닌 곳을 키워 봐야 소용이 없습니다.',
     takeaway: '1초에 400개일 때는 앱 서버 80%, DB 80%로 버팁니다. 800개로 올리면 앱 서버가 500개에서 막혀 첫 병목이 됩니다. 숫자로 각 부품의 사용률을 계산하면 어디부터 고칠지 보입니다.',
@@ -430,6 +431,7 @@ const lesson = [
   },
   {
     label: '서버 늘리기',
+    readingStage: 3,
     title: '병목을 넓히면 다음 병목이 드러난다',
     body: '앱 서버가 병목이니 7.3처럼 로드밸런서 뒤에 앱 서버를 두 대 둡니다. 이제 1초에 1,000개까지 페이지를 만들 수 있습니다. 그런데 페이지마다 DB 질의 2번이 필요하므로, 앱 서버가 처리량을 늘린 만큼 DB에 가는 질의도 늘어납니다.',
     takeaway: '앱 서버는 800 / 1,000 = 80%로 여유가 생겼지만, DB가 1,600 / 1,000 = 160%로 넘쳤습니다. 한 병목을 고치면 다음으로 좁은 곳이 병목이 됩니다. 한계 찾기는 이 과정을 되풀이하는 일입니다.',
@@ -446,6 +448,7 @@ const lesson = [
   },
   {
     label: '캐시 붙이기',
+    readingStage: 2,
     title: '자주 읽는 것은 캐시에서 끝내 DB를 지킨다',
     body: '상품 목록과 상품 정보는 자주 읽히고 잘 바뀌지 않습니다. 7.2처럼 앱 서버와 DB 사이에 캐시를 두면, 캐시에 있는 질의는 DB까지 가지 않습니다. 질의의 90%가 캐시에서 끝난다면(적중률 90%) DB에는 10%만 갑니다.',
     takeaway: 'DB 질의가 1,600에서 160으로 줄어 DB 사용률이 16%가 됐습니다. 이제 다시 앱 서버 두 대의 1,000 페이지/초가 한계입니다. 캐시는 싸게 DB를 몇 배 버티게 하지만, 상품 가격이 바뀌면 캐시를 비워야 하는 일이 생깁니다.',
@@ -463,6 +466,7 @@ const lesson = [
   },
   {
     label: '몰림에 대비',
+    readingStage: 4,
     title: '갑자기 몰리는 쓰기는 큐에 담고 제 속도로 처리한다',
     body: '반짝 세일에는 주문(쓰기)이 1초에 3,000개씩 10초 동안 몰립니다. 쓰기는 캐시로 줄일 수 없고, DB 한 대는 쓰기를 1초에 200개 정도만 안전하게 처리합니다. 7.6처럼 주문을 큐에 넣고 바로 "접수됨"이라고 답한 뒤, 일꾼이 DB가 감당할 속도로 꺼내 저장합니다. 7.7의 레이트 리미터로 한 사람이 너무 많이 보내는 것도 막습니다.',
     takeaway: '30,000개 주문이 큐에 쌓였고, 일꾼이 200/초로 150초 동안 저장했습니다. 사용자는 0.1초 만에 접수 답을 받았고 DB는 넘치지 않았습니다. 한계 찾기의 결론은 "어디가 먼저 꽉 차는지 재고, 그 곳에 맞는 도구(서버 늘리기, 캐시, 큐, 제한)를 고른다"입니다.',
@@ -657,8 +661,10 @@ function snapshot(s) {
 }
 function paint() {
   const step = lesson[state.index];
-  const { holds, errors, view } = snapshot(state.s);
-  const last = step.stages[state.s - 1];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');
     views[id].holds.group.classList.toggle('error', errors.has(id));
@@ -776,6 +782,7 @@ byId('restart').onclick = () => {
 
 // ---------- Demo ----------
 function demoTick() {
+  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
   runStage();

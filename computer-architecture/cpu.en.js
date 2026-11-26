@@ -2,7 +2,7 @@
 window.lessonText = {
   // Reading diagrams: the ADD result going back into A, and the SUB result deciding the jump
   'ALU · ADD': 'ALU · ADD', '3 + 4 = 7': '3 + 4 = 7', 'A: 7': 'A: 7',
-  '2번지 SUB': 'Address 2 SUB', 'A = 1 − 1 = 0': 'A = 1 − 1 = 0', '3번지 JZ 5': 'Address 3 JZ 5', '0이라 점프': 'jumps since it is 0',
+  '2번지 SUB': 'Address 2 SUB', 'A = 1 − 1 = 0': 'A = 1 − 1 = 0', '3번지 JZ 5': '3: JZ 5', '0이라 점프': 'Jump on zero',
   // Page
   'CPU의 한 사이클 · 레슨 3.5': 'One CPU cycle · Lesson 3.5',
   '작은 CPU를 클럭 한 번씩 움직이며 명령을 가져오고, 해석하고, 실행하는 과정과 점프로 만드는 반복을 살펴보세요.':
@@ -19,7 +19,7 @@ window.lessonText = {
   // Parts, cells and readouts
   '제어 장치': 'Control unit', '제어: {0}': 'Control: {0}', '주소 {#0}': 'address {0}', '값 {#0}': 'value {0}', '멈춤': 'Halt',
   '{0} ← {#1}번지': '{0} ← address {1}', '{#0}번지 ← {1}': 'address {0} ← {1}', 'Z면 PC ← {0}': 'if Z, PC ← {0}',
-  '{#0}번지: {1}': 'address {0}: {1}', '5번지 HALT': 'address 5 HALT', '다음 PC': 'Next PC', '명령을 가져온 뒤 PC + 1': 'PC + 1 after fetching the instruction', '메모리 0번지': 'Memory address 0',
+  '{#0}번지: {1}': 'address {0}: {1}', '5번지 HALT': 'address 5 HALT', '다음 PC': 'Next PC', '명령을 가져온 뒤 PC + 1': 'PC + 1 after fetching the instruction', '메모리 0번지': 'RAM[0]',
   '클럭 {#0}번': 'Ticks: {0}', '클럭 {#0} 전에 · {1}': 'Before tick {0} · {1}', '클럭 {#0}': 'Tick {0}', '클럭 {#0}·{#1}': 'Ticks {0}·{1}',
   '가져오기: PC가 주소 {#0}를 메모리로 보냅니다.': 'Fetch: PC sends address {0} to memory.',
   '가져오기: {#0}번지의 명령 "{1}"가 IR로 오고, PC는 {#2}이 됩니다.': 'Fetch: the instruction "{1}" at address {0} comes to IR, and PC becomes {2}.',
@@ -46,9 +46,10 @@ window.lessonText = {
   '위쪽에 0–7번지 메모리 칸이 있고, 아래 CPU 판 위에 PC, IR, 제어 장치, 레지스터 A와 B, ALU가 있습니다. 메모리와 CPU는 버스로 이어져 있습니다.':
     'At the top are memory cells at addresses 0–7, and on the CPU board below are PC, IR, the control unit, registers A and B, and the ALU. Memory and CPU are joined by a bus.',
   '주소는 메모리로, 명령은 IR로': 'The address goes to memory, the instruction to IR',
-  'PC의 주소 0으로 메모리의 LOAD A, [4]를 읽어 IR에 넣은 뒤 PC를 1로 올립니다.': 'With PC\'s address 0, LOAD A, [4] is read from memory into IR, and PC goes up to 1.',
+  'PC의 주소 0으로 메모리의 LOAD A, [5]를 읽어 IR에 넣습니다. PC는 1이 되고 A는 아직 바뀌지 않습니다.': 'At PC address 0, fetch LOAD A, [5] into IR. PC becomes 1, while A stays unchanged.',
+  '아직 그대로': 'Still unchanged',
   '명령을 가져온 뒤 PC는 몇이 될까요?': 'After fetching the instruction, what does PC become?', '가져오자마자 PC는 다음 칸인 1번지를 가리킵니다.': 'Right after the fetch, PC points at the next cell, address 1.',
-  '레지스터 A에는 무엇이 들어갈까요?': 'What goes into register A?', 'LOAD A, [4]는 4번지에 있는 값 7을 A에 넣으라는 뜻입니다.': 'LOAD A, [4] means put the value 7 at address 4 into A.',
+  '레지스터 A에는 무엇이 들어갈까요?': 'What goes into register A?', 'LOAD A, [5]는 5번지의 값 3을 A에 넣습니다.': 'LOAD A, [5] puts the value 3 from address 5 into A.',
   // Step 2
   '해석과 실행': 'Decode and execute', '5번지 3 · 6번지 4': 'address 5: 3 · address 6: 4', '레지스터에 읽어 더함': 'Read into registers and add', '7번지에 7 저장': 'Store 7 at address 7',
   '해석하고, 실행하고, 다시 가져온다': 'Decode, execute, fetch again',
@@ -57,7 +58,7 @@ window.lessonText = {
   '3 + 4를 계산하는 데 명령 다섯 개가 필요합니다. 값을 메모리에서 레지스터로 옮기고(LOAD), 계산하고(ADD), 다시 메모리에 적습니다(STORE). 1.1에서 본 "읽기, 계산, 쓰기"가 CPU 안에서는 이렇게 나뉩니다.':
     'Working out 3 + 4 takes five instructions. Values move from memory into registers (LOAD), are computed (ADD), and are written back to memory (STORE). The "read, compute, write" seen in 1.1 splits up like this inside the CPU.',
   '5번지의 3과 6번지의 4를 A, B로 불러와 더하고, 결과를 7번지에 적는 프로그램입니다.': 'A program that loads 3 from address 5 and 4 from address 6 into A and B, adds them, and writes the result to address 7.',
-  '제어 장치가 명령에 맞춰 값의 경로를 연다': 'The control unit opens the path for values to suit the instruction',
+  '제어 장치가 명령에 맞춰 값의 경로를 연다': 'The control unit routes values for each instruction',
   '메모리 5와 6번지에서 A와 B로 값을 읽습니다. ALU에서 3과 4를 더해 A에 쓰고, STORE가 7번지에 7을 기록합니다.': 'Values are read from memory addresses 5 and 6 into A and B. The ALU adds 3 and 4 and writes it to A, and STORE records 7 at address 7.',
   'ADD 결과를 A에 쓰고, STORE가 A의 7을 메모리에 저장': 'ADD\'s result is written to A, and STORE saves A\'s 7 to memory',
   'ADD를 해석했습니다. 이제 어디로 값이 갈까요?': 'ADD has been decoded. Where do the values go now?', 
@@ -79,7 +80,7 @@ window.lessonText = {
   'JUMP 2를 실행하면 PC는?': 'When JUMP 2 runs, what is PC?', 'JUMP는 PC에 2를 넣어 SUB로 돌아갑니다.': 'JUMP puts 2 into PC and goes back to SUB.',
   '이번에는 A = 0입니다. JZ 5는?': 'This time A = 0. What about JZ 5?', 'SUB 결과가 0이라 Z = 1이고, PC가 5로 바뀌어 HALT에 닿습니다.': 'SUB\'s result is 0, so Z = 1, and PC changes to 5 and reaches HALT.',
   // Step 4
-  '클럭': 'Clock', '같은 ADD 명령': 'The same ADD instruction', '클럭마다 인출·해석·실행': 'Fetch, decode, execute on each tick', '실행 때 레지스터 값 갱신': 'Register values update on execute',
+  '클럭': 'Clock', 'PC 0의 LOAD A, [5]': 'LOAD A, [5] at PC 0', '가져오기 두 번 · 해석 한 번 · 실행 두 번': 'Two fetch ticks · one decode · two execute', '다섯째 클럭에서 A에 3 기록': 'Write 3 to A on tick five',
   '클럭 한 번에 한 걸음씩': 'One step per clock tick',
   'CPU 안의 모든 움직임은 클럭이라는 일정한 박자에 맞춰 한 걸음씩 일어납니다. 이 CPU는 명령 하나를 가져오고, 해석하고, 실행하는 데 클럭 4–5번이 걸립니다. 3 GHz CPU의 클럭은 1초에 30억 번 뜁니다. 실제 CPU는 여러 명령의 단계를 겹쳐(파이프라인) 클럭마다 명령 하나 이상을 끝냅니다.':
     'Every movement inside a CPU happens one step at a time to a steady beat called the clock. This CPU takes 4–5 ticks to fetch, decode and execute one instruction. A 3 GHz CPU\'s clock ticks 3 billion times a second. Real CPUs overlap the phases of several instructions (a pipeline) and finish one or more instructions per tick.',
@@ -96,4 +97,12 @@ window.lessonText = {
   '3 GHz CPU는 1초에 클럭이 몇 번 뛸까요?': 'How many times a second does a 3 GHz CPU\'s clock tick?',
   '3천 번': '3 thousand', '300만 번': '3 million', '30억 번': '3 billion',
   'G(기가)는 10억이라 3 GHz는 1초에 30억 번입니다.': 'G (giga) is a billion, so 3 GHz is 3 billion times a second.',
+  "LOAD 한 명령을 이루는 다섯 클럭": "Five ticks for one LOAD",
+  "PC 0의 LOAD A, [5]를 인출하고 해석한 뒤 5번지의 3을 다섯 번째 클럭에서 A에 기록합니다.": "Fetch and decode LOAD A, [5] at PC 0. Write the value 3 from address 5 to A on the fifth tick.",
+  "1 · 주소 제시": "1 · Address",
+  "2 · 명령 읽기": "2 · Fetch",
+  "3 · 해석": "3 · Decode",
+  "4 · 읽기": "4 · Read",
+  "5 · 기록": "5 · Write",
+  "다음 명령의 주소는 1 · A는 다섯째 클럭에 바뀜": "Next address: 1. A changes on the fifth tick.",
 };

@@ -60,4 +60,8 @@ window.lessonText = {
   '두 스위치를 모두 켜 보세요. 램프는 어떻게 될까요?': 'Turn both switches on. What happens to the lamp?',
   '1과 1이면 OR는 1이지만 NOT이 0을 보내 램프가 꺼집니다.': 'With 1 and 1, OR is 1 but NOT sends 0, so the lamp goes off.',
   '두 입력이 서로 다를 때만 램프가 켜집니다.': 'The lamp lights only when the two inputs differ.',
+  "B 하나만 바꾸면 XOR가 켜진다": "Changing B alone turns XOR on",
+  "두 입력 조합에서 OR와 AND의 출력, NOT의 출력, 마지막 램프를 비교합니다.": "Compare the OR, AND and NOT outputs and the final lamp for two inputs.",
+  "램프 꺼짐": "Lamp off",
+  "램프 켜짐": "Lamp on",
 };

@@ -1,5 +1,24 @@
 // English for 5.10 DNS. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Chapter 5 reading diagrams
+  "리졸버가 서버를 바꿔 가며 묻는다": "The resolver queries each server in turn",
+  "브라우저": "Browser",
+  "① 루트": "① Root",
+  ".com 위임": ".com referral",
+  "example.com 위임": "example.com referral",
+  "③ 권한 서버": "③ Authoritative",
+  "남은 TTL이 있으면 캐시에서 즉시 답한다": "A valid cache entry answers immediately",
+  "외부 서버": "External servers",
+  "조회 0회": "0 lookups",
+  "TTL 만료 전후에는 답이 달라진다": "Cached answers change after TTL expiration",
+  "만료 직전": "Just before expiry",
+  "캐시 .10 · TTL 1s": "Cache .10 · TTL 1s",
+  "새 주소 .20": "New address .20",
+  "만료 후": "After expiry",
+  "캐시를 .20으로 갱신": "Cache refreshed to .20",
+  "재조회": "Lookup again",
+  "브라우저에 .10 반환": "Return .10 to browser",
+  "브라우저에 .20 반환": "Return .20 to browser",
   // Page
   'DNS · 레슨 5.10': 'DNS · Lesson 5.10',
   '리졸버가 루트, .com, 권한 서버에 차례로 물어 이름을 IP 주소로 바꾸고, TTL 동안 캐시하고, 없는 이름에 답하는 과정을 한 단계씩 따라가 보세요.':

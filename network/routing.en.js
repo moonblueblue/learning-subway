@@ -1,5 +1,12 @@
 // English for 5.8 IP and routing. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Chapter 5 reading diagrams
+  "단절을 반영하면 A의 다음 홉이 바뀐다": "A updates its next hop after the link breaks",
+  "단절 전 · A의 표": "Before · A’s table",
+  "E–H 사용": "Uses E–H",
+  "단절 후 · A의 표": "After · A’s table",
+  "E–H 단절": "E–H is down",
+  "경로 재계산": "Recompute",
   // Page
   'IP와 라우팅 · 레슨 5.8': 'IP and routing · Lesson 5.8',
   '라우터마다 가진 라우팅 표를 따라 패킷을 한 칸씩 넘기고, 표를 열어 보고, 링크가 끊겼을 때 길이 바뀌는 모습을 확인해 보세요.':

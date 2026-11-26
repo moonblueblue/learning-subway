@@ -1,6 +1,27 @@
 // English for 5.7 Network layers. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // Data in the message: GET /인사 → GET /greeting, "안녕" → "hello".
 window.lessonText = {
+  // Chapter 5 reading diagrams
+  "내용에 머리말을 한 겹씩 더한다": "Each layer wraps the same payload",
+  "HTTP · 안녕": "HTTP · Hello",
+  "Wi-Fi → 공유기": "Wi-Fi → router",
+  "TCP 443 · HTTP 안녕": "TCP 443 · HTTP Hello",
+  "마지막 프레임 전체를 전송: 0100 1000 …": "Transmit the entire frame as bits: 0100 1000 …",
+  "라우터는 다음 구간의 링크를 새로 씌운다": "A router replaces the local link header",
+  "라우터": "Router",
+  "IP 목적지 조회": "Look up destination IP",
+  "이더넷 → 다음 홉": "Ethernet → next hop",
+  "링크만 교체 · 목적지 IP와 TCP·HTTP 내용은 유지": "Replace the link header; keep the destination IP and payload",
+  "서버는 바깥부터 벗겨 HTTP에 넘긴다": "The server unwraps the frame from the outside",
+  "이더넷": "Ethernet",
+  "웹 서버 443": "Web server 443",
+  "라우터에서 링크 봉투는 와이파이에서 이더넷으로 바뀝니다. 목적지 IP와 TCP·HTTP 내용은 유지됩니다.": "The router replaces Wi-Fi with Ethernet. It keeps the destination IP and the TCP and HTTP data.",
+  "다음 구간에 맞는 이더넷 머리말을 씌웁니다.": "The router adds an Ethernet header for the next hop.",
+  "구간마다 링크 머리말 교체": "Each hop replaces the link header",
+  "목적지 IP는 그대로": "The destination IP stays the same",
+  "목적지 IP와 TCP·HTTP 내용은 다음 구간으로 이어집니다.": "The destination IP and the TCP and HTTP data continue to the next hop.",
+  "[이더넷 라우터 → 통신사]": "[Ethernet: router → provider]",
+  "+ 이더넷": "+ Ethernet",
   // Page
   '네트워크 계층 · 레슨 5.7': 'Network layers · Lesson 5.7',
   '메시지가 HTTP, TCP, IP, 링크, 물리 계층을 내려가며 봉투를 한 겹씩 쓰고, 라우터를 지나 받는 쪽에서 벗겨지는 과정을 따라가 보세요.':

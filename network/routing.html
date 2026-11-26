@@ -381,6 +381,27 @@ const lesson = [
   {
     label: '링크가 끊기면',
     readingDiagram: {
+      title: "단절을 반영하면 A의 다음 홉이 바뀐다",
+      description: "단절을 반영하면 A의 다음 홉이 바뀐다",
+      nodes: [
+        ["old", 132, 105, 197, 74, ["단절 전 · A의 표", "I → B · 12 ms", "E–H 사용"], "active"],
+        ["new", 478, 105, 199, 74, ["단절 후 · A의 표", "I → C · 14 ms", "E–H 단절"], "active"],
+        ["a", 63, 218, 63, 34, ["A"], "active"],
+        ["c", 184, 218, 63, 34, ["C"], "active"],
+        ["f", 305, 218, 63, 34, ["F"], "active"],
+        ["h", 426, 218, 63, 34, ["H"], "active"],
+        ["i", 547, 218, 63, 34, ["I"], "active"],
+      ],
+      edges: [
+        ["old", "new", "active", "경로 재계산"],
+        ["new", "c", "muted"],
+        ["a", "c", "active", "2 ms"],
+        ["c", "f", "active", "3 ms"],
+        ["f", "h", "active", "4 ms"],
+        ["h", "i", "active", "5 ms"],
+      ],
+    },
+    readingDiagram: {
       title: "E–H가 끊기면 그 링크를 피해 간다",
       description: "12ms 경로의 E–H 링크가 끊겨 A, C, F, H, I를 잇는 14ms 경로를 사용합니다.",
       nodes: [],

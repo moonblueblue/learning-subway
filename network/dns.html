@@ -206,6 +206,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .station.router .left{fill:#f6dfc8;stroke:#c26a1e}.station.router .right{fill:#ecc8a4;stroke:#c26a1e}.station.router .top{fill:#fdf2e7;stroke:#c26a1e}
 .work li{white-space:pre-wrap}
 .dot.appdot{background:#e2f5e8;border-color:#4f8f6b}.dot.layerdot{background:#eef1fb;border-color:#5362a0}.dot.routerdot{background:#fdf2e7;border-color:#c26a1e}
+.course-diagram-open #scene #example-note { display: none; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -374,6 +375,28 @@ const S = [['b', '브라우저', 'app'], ['r', '리졸버', 'layer'], ['root', '
 const lesson = [
   {
     label: '차례로 묻기',
+    readingDiagram: {
+      title: "리졸버가 서버를 바꿔 가며 묻는다",
+      description: "리졸버가 서버를 바꿔 가며 묻는다",
+      nodes: [
+        ["browser", 101, 145, 153, 54, ["브라우저", "shop.example.com"], "active"],
+        ["resolver", 306, 145, 179, 54, ["리졸버", ".10 · TTL 300s"], "active"],
+        ["root", 520, 80, 153, 54, ["① 루트", ".com 위임"], "active"],
+        ["com", 520, 151, 153, 54, ["② .com", "example.com 위임"], "active"],
+        ["auth", 520, 222, 153, 54, ["③ 권한 서버", ".10 · TTL 300s"], "active"],
+      ],
+      edges: [
+        ["browser", "resolver", "plain"],
+        ["resolver", "browser", "active", "", 33],
+        ["resolver", "root", "plain"],
+        ["root", "resolver", "muted", "", -28],
+        ["resolver", "com", "plain"],
+        ["com", "resolver", "muted", "", -22],
+        ["resolver", "auth", "plain"],
+        ["auth", "resolver", "muted", "", 28],
+      ],
+      labels: [[33, 222, "④ .10"]],
+    },
     readingStage: 8,
     note: ['shop.example.com?', ' → ', '루트: .com은 저기', ' → ', '.com: example.com은 저기', ' → ', '권한 서버: 203.0.113.10 (TTL 300초)'],
     title: '이름의 오른쪽부터 차례로 물어 주소를 찾는다',
@@ -397,6 +420,19 @@ const lesson = [
   },
   {
     label: '캐시',
+    readingDiagram: {
+      title: "남은 TTL이 있으면 캐시에서 즉시 답한다",
+      description: "남은 TTL이 있으면 캐시에서 즉시 답한다",
+      nodes: [
+        ["browser", 101, 145, 155, 54, ["브라우저", "shop.example.com"], "active"],
+        ["resolver", 313, 145, 177, 54, ["리졸버 캐시", ".10 · TTL 240s"], "active"],
+        ["outside", 523, 145, 143, 54, ["외부 서버", "조회 0회"], "muted"],
+      ],
+      edges: [
+        ["browser", "resolver", "plain"],
+        ["resolver", "browser", "active", ".10", 32],
+      ],
+    },
     readingStage: 2,
     note: ['shop.example.com? (TTL 240초 남음)', ' → ', '리졸버 캐시에서 바로 203.0.113.10', ' · ', '다른 서버에 묻지 않음'],
     title: '한 번 찾은 답은 TTL 동안 기억한다',
@@ -418,6 +454,25 @@ const lesson = [
   },
   {
     label: '주소가 바뀌면',
+    readingDiagram: {
+      title: "TTL 만료 전후에는 답이 달라진다",
+      description: "TTL 만료 전후에는 답이 달라진다",
+      nodes: [
+        ["pre", 118, 109, 181, 54, ["만료 직전", "캐시 .10 · TTL 1s"], "active"],
+        ["authority", 310, 196, 169, 54, ["권한 서버", "새 주소 .20"], "active"],
+        ["post", 512, 109, 181, 54, ["만료 후", "캐시를 .20으로 갱신"], "active"],
+      ],
+      edges: [
+        ["pre", "post", "muted", "TTL 1 → 0"],
+        ["post", "authority", "plain", "", 36],
+        ["authority", "post", "active", "", -24],
+      ],
+      labels: [
+        [35, 242, "브라우저에 .10 반환"],
+        [428, 177, "재조회"],
+        [412, 242, "브라우저에 .20 반환"],
+      ],
+    },
     readingStage: 6,
     note: ['브라우저: 캐시의 옛 주소 203.0.113.10 → 연결 실패', ' · ', 'TTL이 끝난 뒤 권한 서버에 바로 다시 물음', ' → ', '새 주소 203.0.113.20'],
     title: 'TTL이 끝날 때까지는 옛 주소로 간다',

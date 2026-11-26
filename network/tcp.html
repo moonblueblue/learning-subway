@@ -206,6 +206,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .station.router .left{fill:#f6dfc8;stroke:#c26a1e}.station.router .right{fill:#ecc8a4;stroke:#c26a1e}.station.router .top{fill:#fdf2e7;stroke:#c26a1e}
 .work li{white-space:pre-wrap}
 .dot.appdot{background:#e2f5e8;border-color:#4f8f6b}.dot.layerdot{background:#eef1fb;border-color:#5362a0}.dot.routerdot{background:#fdf2e7;border-color:#c26a1e}
+.course-diagram-open #scene #example-note { display: none; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -374,6 +375,27 @@ const S = [['c', '내 컴퓨터', 'app'], ['net', '인터넷', 'router'], ['s', 
 const lesson = [
   {
     label: '연결 맺기',
+    readingDiagram: {
+      title: "세 메시지로 연결을 확인한다",
+      description: "세 메시지로 연결을 확인한다",
+      nodes: [
+        ["cs", 129, 89, 143, 34, ["송신 · 시작"], "active"],
+        ["rs", 491, 105, 143, 34, ["수신 · 대기"], "active"],
+        ["ca", 129, 155, 143, 34, ["송신 · 확인"], "active"],
+        ["ra", 491, 170, 143, 34, ["수신 · 확인"], "active"],
+        ["ce", 129, 218, 143, 34, ["송신 · 연결됨"], "active"],
+        ["re", 491, 237, 143, 34, ["수신 · 연결됨"], "active"],
+      ],
+      edges: [
+        ["cs", "ca", "muted"],
+        ["ca", "ce", "muted"],
+        ["rs", "ra", "muted"],
+        ["ra", "re", "muted"],
+        ["cs", "rs", "active", "① SYN"],
+        ["ra", "ca", "active", "② SYN-ACK"],
+        ["ce", "re", "active", "③ ACK"],
+      ],
+    },
     readingStage: 3,
     title: '세 번 인사하고 연결을 맺는다',
     body: 'IP(5.8)는 패킷을 최선을 다해 보낼 뿐, 도착을 약속하지 않습니다. TCP는 그 위에서 믿을 수 있는 연결을 만듭니다. 먼저 세 번 인사합니다. 내 컴퓨터가 SYN("연결할래?"), 서버가 SYN-ACK("좋아, 너도 들려?"), 내 컴퓨터가 ACK("응 들려")를 보내면 양쪽 모두 상대가 듣고 있다는 것을 압니다.',
@@ -391,6 +413,23 @@ const lesson = [
   },
   {
     label: '번호와 확인',
+    readingDiagram: {
+      title: "ACK는 다음에 기대하는 번호다",
+      description: "ACK는 다음에 기대하는 번호다",
+      nodes: [
+        ["s1", 124, 96, 181, 34, ["송신 · 조각 1"], "active"],
+        ["r1", 493, 109, 181, 34, ["수신 [1]"], "active"],
+        ["a2", 124, 148, 181, 34, ["다음 · 조각 2"], "active"],
+        ["r2", 493, 176, 181, 34, ["수신 [1, 2]"], "active"],
+        ["a3", 124, 233, 181, 34, ["미확인 0개"], "active"],
+      ],
+      edges: [
+        ["s1", "r1", "active", "① DATA 1"],
+        ["r1", "a2", "plain", "② ACK 2"],
+        ["a2", "r2", "active", "③ DATA 2"],
+        ["r2", "a3", "plain", "④ ACK 3"],
+      ],
+    },
     readingStage: 4,
     title: '조각마다 번호를 붙이고 받으면 확인을 보낸다',
     body: '보낼 데이터는 조각(세그먼트)으로 나누고 순서 번호를 붙입니다. 받는 쪽은 받을 때마다 "여기까지 받았다"는 ACK를 돌려줍니다. 보내는 쪽은 ACK가 오면 그 조각을 지웁니다. ACK가 오지 않은 조각은 아직 들고 있습니다.',
@@ -410,6 +449,22 @@ const lesson = [
   },
   {
     label: '잃어버리면',
+    readingDiagram: {
+      title: "확인이 오지 않으면 같은 조각을 다시 보낸다",
+      description: "확인이 오지 않으면 같은 조각을 다시 보낸다",
+      nodes: [
+        ["send", 126, 101, 179, 34, ["송신 · 2 전송"], "active"],
+        ["loss", 493, 115, 179, 54, ["조각 2 소실", "ACK 3 없음"], "blocked"],
+        ["timer", 126, 192, 179, 54, ["타이머 만료", "2는 아직 미확인"], "active"],
+        ["retry", 493, 220, 179, 54, ["수신 · 조각 2", "ACK 3 반환"], "active"],
+      ],
+      edges: [
+        ["send", "loss", "blocked", "① DATA 2"],
+        ["send", "timer", "muted"],
+        ["timer", "retry", "active", "② DATA 2"],
+        ["retry", "timer", "plain", "③ ACK 3", 44],
+      ],
+    },
     readingStage: 4,
     title: '확인이 안 오면 다시 보낸다',
     body: '인터넷 중간에서 패킷이 사라질 수 있습니다(혼잡한 라우터가 버리거나 전파가 끊김). 보내는 쪽은 조각을 보낼 때 타이머를 켜고, 정해진 시간 안에 ACK가 오지 않으면 같은 조각을 다시 보냅니다. 그래서 응용 프로그램은 잃어버림을 모른 채 온전한 데이터를 받습니다.',
@@ -428,6 +483,19 @@ const lesson = [
   },
   {
     label: '순서 맞추기',
+    readingDiagram: {
+      title: "빠진 조각이 오면 순서대로 앱에 넘긴다",
+      description: "빠진 조각이 오면 순서대로 앱에 넘긴다",
+      nodes: [
+        ["hold", 114, 139, 169, 74, ["먼저 온 조각 3", "수신 [1, _, 3]", "ACK 2 · 3 보관"], "active"],
+        ["fill", 312, 139, 162, 54, ["늦은 조각 2", "수신 [1, 2, 3]"], "active"],
+        ["app", 511, 139, 166, 74, ["앱에 순서대로 인도", "1 → 2 → 3", "ACK 4"], "active"],
+      ],
+      edges: [
+        ["hold", "fill", "active"],
+        ["fill", "app", "active"],
+      ],
+    },
     readingStage: 3,
     title: '늦게 온 조각도 제자리에 끼운다',
     body: '조각마다 다른 길(5.8)로 갈 수 있어서 3이 2보다 먼저 도착하기도 합니다. 받는 쪽은 순서 번호를 보고 빈자리가 채워질 때까지 3을 잠시 보관했다가, 2가 오면 1, 2, 3 순서대로 응용 프로그램에 넘깁니다. 영상 통화처럼 늦게 오느니 버리는 게 나은 경우에는 TCP 대신 UDP를 씁니다.',

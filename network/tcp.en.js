@@ -1,6 +1,35 @@
 // English for 5.9 TCP. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // Data in the message: "안녕" / "하세" / "요!" → "Hello" / " the" / "re!" (three segments of "Hello there!").
 window.lessonText = {
+  // Chapter 5 reading diagrams
+  "세 메시지로 연결을 확인한다": "Three messages establish the connection",
+  "송신 · 시작": "Sender · start",
+  "수신 · 대기": "Receiver · listen",
+  "송신 · 확인": "Sender · reply",
+  "수신 · 확인": "Receiver · reply",
+  "송신 · 연결됨": "Sender · connected",
+  "수신 · 연결됨": "Receiver · connected",
+  "ACK는 다음에 기대하는 번호다": "An ACK names the next expected number",
+  "송신 · 조각 1": "Send · unit 1",
+  "수신 [1]": "Received [1]",
+  "다음 · 조각 2": "Next · unit 2",
+  "수신 [1, 2]": "Received [1, 2]",
+  "미확인 0개": "None unacknowledged",
+  "확인이 오지 않으면 같은 조각을 다시 보낸다": "A timeout sends the missing unit again",
+  "송신 · 2 전송": "Sender · send 2",
+  "조각 2 소실": "Unit 2 lost",
+  "ACK 3 없음": "No ACK 3",
+  "타이머 만료": "Timer expires",
+  "2는 아직 미확인": "2 still unacknowledged",
+  "수신 · 조각 2": "Receiver · unit 2",
+  "ACK 3 반환": "Returns ACK 3",
+  "빠진 조각이 오면 순서대로 앱에 넘긴다": "The app gets ordered data once the gap fills",
+  "먼저 온 조각 3": "Unit 3 arrives first",
+  "수신 [1, _, 3]": "Received [1, _, 3]",
+  "ACK 2 · 3 보관": "ACK 2 · hold 3",
+  "늦은 조각 2": "Late unit 2",
+  "수신 [1, 2, 3]": "Received [1, 2, 3]",
+  "앱에 순서대로 인도": "Deliver in order",
   // Note on the still pictures: the packets so far
   '내 컴퓨터 · 서버:': 'My computer · server:', '(인터넷에서 버려짐)': '(dropped in the internet)',
   // Page

@@ -35,7 +35,7 @@ window.lessonText = {
   '표: aa → 1': 'Table: aa → 1', '표: aa → 1 · cc → 3': 'Table: aa → 1 · cc → 3', '답장 보냄': 'Replied', 'aa ← cc': 'aa ← cc',
   'aa → 포트 1만': 'aa → port 1 only', 'aa = 나 → 받음': 'aa = me → take', '아무것도 안 옴': 'Nothing arrives', '다시 보냄 · 목적지 cc': 'Sent again · to cc', 'cc → 포트 3만': 'cc → port 3 only',
   '표: aa→1 · bb→2 · cc→3': 'Table: aa→1 · bb→2 · cc→3', '보낼 프레임 있음': 'Has a frame to send', '보냄': 'Sent', 'aa 것 받음 → 포트 3': 'Holds aa\'s → port 3', 'cc ← bb': 'cc ← bb',
-  '포트 3 바쁨 · bb 것 줄 섬': 'Port 3 busy · bb\'s queued', 'aa 것 먼저': 'aa\'s first', 'aa 것 받음': 'Got aa\'s', '포트 3 줄: bb 것 1개': 'Port 3 queue: bb\'s', 'bb 것 다음': 'bb\'s next',
+  '포트 3 바쁨 · bb 것 줄 섬': 'Port 3 busy · bb\'s queued', 'aa 것 먼저': 'aa\'s first', 'aa 것 받음': 'Got aa\'s', '포트 3 줄: bb 것 1개': 'Port 3 queue: 1 frame from bb', 'bb 것 다음': 'bb\'s next',
   '2개 모두 받음': 'Got both', '줄 비었음': 'Queue empty', '300초 동안 보낸 것 없음': 'Sent nothing for 300 s', 'cc 300초 소식 없음 → 지움': 'cc silent 300 s → removed',
   // Step 1
   '처음 보는 주소': 'A new address',
@@ -92,8 +92,8 @@ window.lessonText = {
   '오래 소식이 없는 주소는 표에서 지워지고 다시 모든 포트로 간다': 'An address silent for long is removed from the table, and frames for it go to every port again',
   '스위치는 표의 각 줄에 마지막으로 본 시각을 함께 적고, 그 주소에서 프레임이 오래 오지 않으면 줄을 지웁니다. 리눅스 브리지와 많은 스위치의 기본값은 300초입니다. 컴퓨터가 꺼지거나 다른 포트로 옮겨 가도 표가 언젠가 바로잡히게 하려는 것입니다. 지워진 주소로 프레임이 오면 스위치는 다시 모든 포트로 보내고, 답장이 오면 다시 배웁니다.':
     'The switch records, for each table entry, when it last saw that address, and removes the entry when no frame has come from it for a long time. The default on Linux bridges and many switches is 300 seconds. This lets the table correct itself when a computer is switched off or moved to another port. When a frame comes for a removed address, the switch sends it to every port again and learns the address again from the reply.',
-  'C 이름표는 "300초 동안 보낸 것 없음"이고 스위치 이름표가 "cc 300초 소식 없음 → 지움"이 된 뒤, A의 프레임이 아래 B와 오른쪽 C 두 케이블로 모두 나갑니다. B는 버리고 C는 받습니다.':
-    'C\'s badge reads "sent nothing for 300 s", and after the switch badge becomes "cc silent 300 s → removed", A\'s frame goes down both cables, to B below and C on the right. B drops it and C takes it.',
+  'C에서 300초 동안 프레임이 오지 않아 스위치의 cc 항목이 지워집니다. A의 프레임은 포트 2와 3으로 나가 B는 버리고 C는 받습니다.':
+    'After 300 seconds without a frame from C, the switch removes its cc entry. A’s frame goes out through ports 2 and 3. B drops it, and C receives it.',
   '스위치 표에 cc가 포트 3으로 적혀 있었지만 300초 동안 C에게서 프레임이 오지 않아 지워졌습니다. A가 C에게 보낸 프레임은 다시 포트 2와 3으로 모두 나갑니다.':
     'The switch table had cc on port 3, but no frame came from C for 300 seconds, so the entry was removed. A\'s frame to C goes out of both ports 2 and 3 again.',
   'cc 300초 소식 없음 → 표에서 지움': 'cc silent 300 s → removed from the table', 'cc 모름': 'cc unknown', '다시 포트 2·3 모두로': 'To ports 2 and 3 again',

@@ -216,7 +216,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .station.pc.active .top,.station.switch.active .top{fill:#fff1c9}
 .station.error.error .top{fill:#f6b893;stroke:#a24c14}
 .pc-screen{fill:#34514a;stroke:#26322e;stroke-width:.6}
-.badge-leader{stroke:#9fb7a9;stroke-width:1;stroke-dasharray:2 2}
+.badge-leader{fill:none;stroke:#9fb7a9;stroke-width:1;stroke-dasharray:2 2}
 .port-light{fill:#4fcf87;stroke:#2f6b4f;stroke-width:.5}
 .dot.activedot{background:#fff1c9;border-color:#c9940f}.dot.pcdot{background:#bfe2cb;border-color:#4f8f6b}.dot.hubdot{background:#cfd6ec;border-color:#5f6ea3}
 </style>
@@ -448,10 +448,10 @@ const lesson = [
   },
   {
     label: '잊어버린 주소',
-    readingStage: 2,
+    readingStage: 3,
     title: '오래 소식이 없는 주소는 표에서 지워지고 다시 모든 포트로 간다',
     body: '스위치는 표의 각 줄에 마지막으로 본 시각을 함께 적고, 그 주소에서 프레임이 오래 오지 않으면 줄을 지웁니다. 리눅스 브리지와 많은 스위치의 기본값은 300초입니다. 컴퓨터가 꺼지거나 다른 포트로 옮겨 가도 표가 언젠가 바로잡히게 하려는 것입니다. 지워진 주소로 프레임이 오면 스위치는 다시 모든 포트로 보내고, 답장이 오면 다시 배웁니다.',
-    takeaway: 'C 이름표는 "300초 동안 보낸 것 없음"이고 스위치 이름표가 "cc 300초 소식 없음 → 지움"이 된 뒤, A의 프레임이 아래 B와 오른쪽 C 두 케이블로 모두 나갑니다. B는 버리고 C는 받습니다.',
+    takeaway: 'C에서 300초 동안 프레임이 오지 않아 스위치의 cc 항목이 지워집니다. A의 프레임은 포트 2와 3으로 나가 B는 버리고 C는 받습니다.',
     description: '스위치 표에 cc가 포트 3으로 적혀 있었지만 300초 동안 C에게서 프레임이 오지 않아 지워졌습니다. A가 C에게 보낸 프레임은 다시 포트 2와 3으로 모두 나갑니다.',
     note: ['cc 300초 소식 없음 → 표에서 지움', ' → ', '포트 1로 cc ← aa', ' → ', 'cc 모름', ' → ', '다시 포트 2·3 모두로'],
     stations: star,
@@ -557,13 +557,14 @@ function buildScene() {
     if (onTop) { namePlate.y = -H - 10; sizePlate(namePlate); }
     else if (under) { namePlate.end = -20; namePlate.y += 24; sizePlate(namePlate); }
     else if (sidestep) { namePlate.start = 20; sizePlate(namePlate); }
-    // The PC below the switch puts its badge under its name, so it does not crowd the switch's name.
-    const below = v > 0;
-    // The switch badge (its table) sits one row higher than the PCs on either side, so the three never touch.
-    const lift = kind === 'switch' ? 32 : 0;
-    if (lift) svg('path', { class: 'badge-leader', d: `M0 ${-H - 14 * h - 4}V${-H - 14 * h - 18 - lift + 8}` }, node);
-    const holds = addPlate(node, 'tag holds', 0, below ? 14 * h + 42 : -H - 14 * h - 18 - lift - (onTop ? 8 : 0),   // 8px more over a name on the top face
-      '', { pad: 1.2 });
+    // Keep the switch status beside the downward cable and clear of the two-line summary above the scene.
+    const isSwitch = kind === 'switch';
+    const statusY = 59;
+    const statusStart = 30;
+    if (isSwitch) svg('path', { class: 'badge-leader', d: `M14 15V${statusY}H${statusStart}` }, node);
+    const holdsY = isSwitch ? statusY : v > 0 ? 14 * h + 42 : -H - 14 * h - 18;
+    const holds = addPlate(node, 'tag holds', 0, holdsY, '', { pad: 1.2 });
+    if (isSwitch) holds.start = statusStart;
     views[id] = { node, holds };
   });
   const us = stations.map(([, , , [u]]) => u), vs = stations.map(([, , , [, v]]) => v);
@@ -609,7 +610,9 @@ function paint() {
   const { holds, errors, view } = snapshot(shown);
   const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
-    setPlate(views[id].holds, holds[id] ?? '');
+    const plate = views[id].holds;
+    setPlate(plate, holds[id] ?? '');
+    if (plate.start !== undefined) sizePlate(plate);
     views[id].holds.group.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);

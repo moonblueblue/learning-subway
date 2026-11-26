@@ -3,8 +3,8 @@ window.lessonText = {
   // Note under the still picture: the inputs it went through
   'S를 1로 켰다가 0으로 끔 → Q는 1 그대로': 'S switched to 1, then back to 0 → Q stays 1',
   'S로 Q = 1을 만든 뒤 R을 켬 → Q = 0': 'Q set to 1 with S, then R switched on → Q = 0',
-  'D = 1에서 E를 켰다가 끔 → 1이 남음': 'With D = 1, E switched on then off → 1 is kept',
-  'D = 101에서 E를 켰다가 끔 → 101이 남음': 'With D = 101, E switched on then off → 101 is kept',
+  'E = 0에서 D를 0으로 → Q는 1': 'With E = 0, D changes to 0 → Q stays 1',
+  'E = 0에서 D를 010으로 → 저장값은 101': 'With E = 0, D changes to 010 → stored value stays 101',
   // Page
   '기억하는 회로 · 레슨 3.4': 'Circuits that remember · Lesson 3.4',
   '출력을 입력으로 되돌리는 되먹임에서 SR 래치, D 래치, 레지스터까지 만들며 회로가 값을 기억하는 방법을 살펴보세요.':
@@ -72,4 +72,13 @@ window.lessonText = {
   'E를 끈 채로 D를 다른 수로 바꿔 보세요.': 'With E off, change D to another number.', '입력이 바뀌어도 저장된 5는 그대로입니다.': 'The stored 5 stays even when the input changes.',
   '"전원 껐다 켜기"를 눌러 보세요. 저장한 값은 어떻게 될까요?': 'Press "Turn power off and on". What happens to the stored value?',
   '전기가 끊기면 되먹임 고리의 값이 사라져 0이 됩니다.': 'When the electricity is cut, the value in the feedback loop vanishes and becomes 0.',
+  "하나의 쓰기 신호로 세 자리를 저장한다": "One write signal controls three stored bits",
+  "공통 E가 1일 때 101을 씁니다. E를 0으로 한 뒤 입력만 010으로 바꾸면 저장된 101은 5로 남습니다.": "With shared E set to 1, write 101. Lower E to 0 and change the input to 010. The stored 101 remains 5.",
+  "101을 쓴 뒤 쓰기 닫힘": "101 saved · write off",
+  "쓰기를 닫으면 새 D가 Q로 가지 않는다": "Closing write keeps the new D from reaching Q",
+  "D에 1을 써 넣은 뒤 E를 0으로 내립니다. D가 0으로 바뀌어도 S와 R은 0이고 Q는 1을 유지합니다.": "Write D=1, then lower E to 0. When D becomes 0, S and R stay 0 and Q holds 1.",
+  "쓰기 열림": "Write enabled",
+  "1을 저장": "Store 1",
+  "쓰기 닫힘": "Write disabled",
+  "1을 유지": "Hold 1",
 };

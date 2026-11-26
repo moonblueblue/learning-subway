@@ -203,6 +203,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+.course-diagram-open #example-note{visibility:hidden}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -410,7 +411,7 @@ const lesson = [
         ["pairs", 279, 143, 152, 46, ["email → 행 번호", "100만 쌍"], "active"],
         ["a", 521, 80, 133, 43, ["a–f", "ana… → 1"]],
         ["b", 521, 143, 133, 43, ["g–m", "jiu… → 734,201"]],
-        ["c", 521, 206, 133, 43, ["n–z", "yejun… → 1,000,000"]],
+        ["c", 521, 206, 160, 43, ["n–z", "yejun… → 1,000,000"]],
       ],
       edges: [
         ["table", "pairs", "active"],
@@ -479,23 +480,28 @@ const lesson = [
   {
     label: '대가',
     readingDiagram: {
-      title: "인덱스가 있으면 읽기는 줄고 쓰기는 늘어난다",
-      description: "새 회원을 표에 쓰고, email 인덱스에도 같은 회원의 행 번호를 적어야 합니다. 끝부분 검색은 앞에서부터 정렬한 범위로 가지를 고를 수 없습니다.",
+      title: "앞부분의 범위로 새 인덱스 자리를 고른다",
+      description: "hajun@example.com은 h로 시작하므로 g–m 가지의 ga–ha 잎에 새 행 번호를 넣는다. users 표에도 행을 쓴다. 접미사만으로는 어느 가지도 제외할 수 없다.",
       nodes: [
-        ["new", 102, 127, 142, 26, ["새 회원 추가"]],
-        ["row", 312, 88, 156, 46, ["users 표", "행 추가"], "active"],
-        ["leaf", 312, 168, 156, 46, ["email 인덱스", "해당 범위에 추가"], "active"],
-        ["two", 518, 127, 146, 26, ["쓰기 두 곳"], "blocked"],
+        ["key", 110, 117, 184, 48, ["hajun@example.com", "새 사용자 #1,000,001"], "plain"],
+        ["table", 310, 73, 134, 28, ["① 표에 새 행"], "active"],
+        ["root", 310, 129, 140, 28, ["email 인덱스"], "plain"],
+        ["a_f", 483, 81, 167, 28, ["a–f"], "muted"],
+        ["g_m", 483, 129, 167, 48, ["g–m · ga–ha", "② 잎에 #1,000,001"], "active"],
+        ["n_z", 483, 177, 167, 28, ["n–z"], "muted"],
+        ["suffix", 110, 213, 164, 28, ["끝: @example.com"], "plain"],
+        ["no", 332, 230, 208, 48, ["앞부분을 모름", "세 갈래 모두 후보"], "blocked"],
       ],
       edges: [
-        ["new", "row", "active"],
-        ["row", "two", "active"],
-        ["new", "leaf", "active"],
-        ["leaf", "two", "active"],
+        ["key", "table", "active"],
+        ["key", "root", "active"],
+        ["root", "a_f", "muted"],
+        ["root", "g_m", "active"],
+        ["root", "n_z", "muted"],
+        ["suffix", "no", "blocked"],
       ],
       labels: [
-        [28, 240, "읽기는 인덱스로 빨라지지만 쓸 때마다 두 곳을 고친다"],
-        [28, 262, "email 끝부분으로 검색하면 범위를 못 골라 다시 전체 스캔"],
+        [29, 267, "새 행은 두 곳에 쓰고, 끝으로 찾을 때는 가지를 좁히지 못한다"],
       ],
     },
     readingStage: 3,

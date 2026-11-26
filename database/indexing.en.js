@@ -78,6 +78,30 @@ window.lessonText = {
   '인덱스가 있으면 읽기는 줄고 쓰기는 늘어난다': 'With an index, reads shrink and writes grow', 'email 인덱스는 앞부분 순서로 정렬됨': 'The email index is sorted by the start', 'email 끝부분으로 검색하면 범위를 못 골라 다시 전체 스캔': 'Searching by the end of email cannot pick a range, so it is a full scan again',
   '새 회원을 표에 쓰고, email 인덱스에도 같은 회원의 행 번호를 적어야 합니다. 끝부분 검색은 앞에서부터 정렬한 범위로 가지를 고를 수 없습니다.': 'A new member is written to the table, and the same member\'s row number must also be written in the email index. A search by the ending cannot choose a branch by ranges sorted from the start.',
   '100만 쌍': '1M pairs', 'g–m 안의 잎 ji–ka': 'leaf ji–ka inside g–m', 'jiu → 행 734,201': 'jiu → row 734,201', '… 마지막 행 1,000,000': '… last row 1,000,000', '가지 g–m': 'branch g–m',
-  '같은 값이 또 있을 수 있어 끝까지': 'to the end: there may be another match', '100만 행 · 열 여러 개': '1M rows · many columns', '표를 한 번 읽어 모든 email을 순서대로 범위에 나눠 저장': 'Read the table once, store every email in order by range',
+  '같은 값이 또 있을 수 있어 끝까지': 'to the end: there may be another match', '100만 행 · 열 여러 개': '1M rows', '표를 한 번 읽어 모든 email을 순서대로 범위에 나눠 저장': 'Read the table once, store every email in order by range',
   '읽기는 인덱스로 빨라지지만 쓸 때마다 두 곳을 고친다': 'Reads get faster with the index, but every write changes two places',
 };
+
+Object.assign(window.lessonText, {
+  "정렬된 앞부분이 있어야 갈래를 고른다": "Only a leading key can pick a branch",
+  "han으로 시작하는 주소는 g–m 가지로 들어간다. 새 행과 인덱스 항목을 함께 쓴다. 끝만 알면 세 갈래 모두 후보에 남는다.": "An address starting with han goes into the g–m branch. Write both the row and index entry. A suffix alone leaves all three branches possible.",
+  "새 키 → 행 #1000001": "New key → row #1000001",
+  "쓰기 두 곳": "Two writes",
+  "표 행 + 인덱스": "Table row + index",
+  "끝이 @example.org": "Ends with @example.org",
+  "갈래 하나 선택 불가": "No single branch",
+  "앞부분 범위 기준: a–f / g–m / n–z": "Leading-key ranges: a–f / g–m / n–z",
+});
+
+Object.assign(window.lessonText, {
+  "앞부분의 범위로 새 인덱스 자리를 고른다": "Use the leading-key range to place the new index entry",
+  "hajun@example.com은 h로 시작하므로 g–m 가지의 ga–ha 잎에 새 행 번호를 넣는다. users 표에도 행을 쓴다. 접미사만으로는 어느 가지도 제외할 수 없다.": "hajun@example.com starts with h. Write the users row and add its number to the ga–ha leaf of g–m. A suffix alone cannot rule out any branch.",
+  "새 사용자 #1,000,001": "New user #1,000,001",
+  "① 표에 새 행": "① New table row",
+  "email 인덱스": "Email index",
+  "② 잎에 #1,000,001": "② Leaf: #1,000,001",
+  "끝: @example.com": "Ends: @example.com",
+  "앞부분을 모름": "Leading key unknown",
+  "세 갈래 모두 후보": "All three branches possible",
+  "새 행은 두 곳에 쓰고, 끝으로 찾을 때는 가지를 좁히지 못한다": "Two writes for the new row. A suffix alone cannot narrow the branches.",
+});

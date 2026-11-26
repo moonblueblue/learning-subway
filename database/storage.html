@@ -200,6 +200,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+/* The diagram explains the step itself. Keep the caption on the simulation only. */
+.course-diagram-open #scene #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -382,6 +384,23 @@ const lesson = [
   },
   {
     label: '모았다가 쓰기',
+    readingDiagram: {
+      title: "메모리 표가 가득 차면 파일로 내린다",
+      description: "로그와 메모리 표에 1:38을 기록합니다. 64MB에 이르면 파일 2를 만들고 파일 1은 보존합니다.",
+      nodes: [
+        ["a0", 150, 82, 244, 48, ["로그 · 메모리 표", "1:38"], "plain"],
+        ["b0", 470, 82, 230, 48, ["메모리 표 갱신", "1:38"], "active"],
+        ["a1", 150, 139, 244, 48, ["메모리 표 64 MB", "1:38"], "plain"],
+        ["b1", 470, 139, 230, 48, ["새 파일 2 · 표 비움", "1:38"], "active"],
+        ["a2", 150, 196, 244, 48, ["이전 파일 1", "1:30"], "plain"],
+        ["b2", 470, 196, 230, 48, ["파일 1 유지", "1:30"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+        ["a2", "b2", "active", "", 0],
+      ],
+    },
     readingStage: 4,
     note: ['id 1 → 38을 로그 끝에 붙이고 메모리 표에', ' → ', '64MB가 차서', ' → ', '정렬 파일 2로 한 번에 내려씀 · 메모리 표 비움'],
     title: 'LSM 트리는 메모리에 모았다가 정렬된 파일로 한 번에 쓴다',
@@ -400,6 +419,22 @@ const lesson = [
   },
   {
     label: 'LSM 읽기',
+    readingDiagram: {
+      title: "가장 새 파일에서 38을 찾고 멈춘다",
+      description: "키 1은 메모리 표에 없어서 파일 2에서 찾아 38을 반환합니다. 이전 파일 1은 읽지 않습니다.",
+      nodes: [
+        ["get", 60, 95, 95, 28, ["GET 1"], "plain"],
+        ["mem", 224, 95, 143, 48, ["메모리 표", "없음"], "blocked"],
+        ["new", 398, 95, 145, 48, ["새 파일 2", "1:38"], "active"],
+        ["old", 398, 211, 145, 68, ["이전 파일 1", "1:30", "읽지 않음"], "muted"],
+        ["out", 551, 95, 99, 48, ["반환", "38"], "active"],
+      ],
+      edges: [
+        ["get", "mem", "active", "", 0],
+        ["mem", "new", "active", "", 0],
+        ["new", "out", "active", "", 0],
+      ],
+    },
     readingStage: 4,
     note: ['id 1 읽기', ' → ', '메모리 표에 없음', ' → ', '새 파일 2부터 봐서 38을 찾고 끝'],
     title: '읽을 때는 가장 새것부터 찾아본다',
@@ -418,6 +453,23 @@ const lesson = [
   },
   {
     label: '합치기',
+    readingDiagram: {
+      title: "최신 버전과 삭제 표식으로 병합한다",
+      description: "이 예는 관련 파일을 모두 합칩니다. 키 1은 최신 38을, 키 3은 기존 값을 남기고 삭제된 키 7은 남기지 않습니다.",
+      nodes: [
+        ["a0", 150, 82, 244, 28, ["1:30(옛 값) · 1:38(새 값)"], "plain"],
+        ["b0", 470, 82, 230, 48, ["파일 3 · 1:38", "최신 버전"], "active"],
+        ["a1", 150, 139, 244, 28, ["3:50"], "plain"],
+        ["b1", 470, 139, 230, 28, ["파일 3 · 3:50"], "active"],
+        ["a2", 150, 196, 244, 28, ["7:19 · 7:삭제"], "plain"],
+        ["b2", 470, 196, 230, 48, ["키 7 제거", "관련 파일 전부 병합"], "blocked"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+        ["a2", "b2", "blocked", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['파일 1, 2를 합침', ' → ', 'id 1은 새 값 38을 남김 · 지운 id 7은 버림', ' → ', '키 1, 3만 담은 파일 3 하나'],
     title: '정렬 파일들을 합치며 옛 값과 지운 것을 치운다',

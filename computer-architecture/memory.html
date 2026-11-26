@@ -225,6 +225,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .stage{transition:filter .25s}
 .power-off .stage{filter:brightness(.35) saturate(.3)}
 @media(max-width:600px){.box-value{font-size:15px}}
+.course-diagram-open #static-note { display: none; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -356,6 +357,28 @@ const lesson = [
   },
   {
     label: 'D 래치',
+    readingDiagram: {
+      title: "쓰기를 닫으면 새 D가 Q로 가지 않는다",
+      description: "D에 1을 써 넣은 뒤 E를 0으로 내립니다. D가 0으로 바뀌어도 S와 R은 0이고 Q는 1을 유지합니다.",
+      nodes: [
+        ["d1", 65, 99, 91, 30, ["D = 1"]],
+        ["e1", 215, 99, 124, 46, ["E = 1", "쓰기 열림"]],
+        ["l1", 371, 99, 127, 30, ["S = 1 · R = 0"]],
+        ["q1", 538, 99, 114, 46, ["Q = 1", "1을 저장"], "active"],
+        ["d0", 65, 217, 91, 30, ["D = 0"]],
+        ["e0", 215, 217, 124, 46, ["E = 0", "쓰기 닫힘"]],
+        ["l0", 371, 217, 127, 30, ["S = 0 · R = 0"]],
+        ["q0", 538, 217, 114, 46, ["Q = 1", "1을 유지"], "active"],
+      ],
+      edges: [
+        ["d1", "e1", "active", ""],
+        ["e1", "l1", "active", ""],
+        ["l1", "q1", "active", ""],
+        ["d0", "e0", "blocked", ""],
+        ["e0", "l0", "blocked", ""],
+        ["q1", "q0", "active", ""],
+      ],
+    },
     example: ["입력 D = 1", "쓰기 E를 켜서 저장", "E를 끄면 값 유지"],
     title: '저장할 값과 저장할 때를 나눈다',
     body: 'SR 래치를 상자로 묶고 앞에 게이트 셋을 붙입니다. D는 저장할 값, E는 "지금 써라"는 신호입니다. E가 1인 동안에는 D가 S나 R로 바뀌어 Q가 D를 따라가고, E가 0이면 S와 R이 모두 0이라 Q는 마지막 값을 지킵니다. 이것이 1비트를 저장하는 D 래치입니다.',
@@ -372,8 +395,8 @@ const lesson = [
     ],
     log: ['D', 'E'],
     demo: [[1, 0], [1, 1], [1, 0], [0, 0], [0, 1], [0, 0]],
-    staticPath: [[1, 0], [1, 1], [1, 0]],
-    staticNote: 'D = 1에서 E를 켰다가 끔 → 1이 남음',
+    staticPath: [[1, 0], [1, 1], [1, 0], [0, 0]],
+    staticNote: 'E = 0에서 D를 0으로 → Q는 1',
     expr: (v) => [`D = ${v.D}, E = ${v.E} → Q = `, String(v.Q), v.E ? ' (쓰는 중: Q가 D를 따라감)' : ' (쓰기 꺼짐: 그대로 유지)'],
     tasks: [
       { text: '1을 저장해 보세요. D를 1로, E를 켰다가 끄면 됩니다.', test: (v) => v.E === 0 && v.Q === 1, ok: 'Q = 1이 저장됐습니다.' },
@@ -383,6 +406,31 @@ const lesson = [
   },
   {
     label: '레지스터',
+    readingDiagram: {
+      title: "하나의 쓰기 신호로 세 자리를 저장한다",
+      description: "공통 E가 1일 때 101을 씁니다. E를 0으로 한 뒤 입력만 010으로 바꾸면 저장된 101은 5로 남습니다.",
+      nodes: [
+        ["e", 101, 81, 174, 46, ["E = 0", "101을 쓴 뒤 쓰기 닫힘"]],
+        ["in0", 69, 143, 114, 30, ["D2 = 0"], "muted"],
+        ["in1", 69, 193, 114, 30, ["D1 = 1"], "muted"],
+        ["in2", 69, 243, 114, 30, ["D0 = 0"], "muted"],
+        ["q0", 344, 143, 124, 30, ["Q2 = 1"], "active"],
+        ["q1", 344, 193, 124, 30, ["Q1 = 0"], "active"],
+        ["q2", 344, 243, 124, 30, ["Q0 = 1"], "active"],
+        ["out", 540, 193, 121, 30, ["101₂ = 5"], "active"],
+      ],
+      edges: [
+        ["e", "q0", "muted", "", -24],
+        ["e", "q1", "muted", "", -24],
+        ["e", "q2", "muted", "", -24],
+        ["in0", "q0", "blocked", ""],
+        ["in1", "q1", "blocked", ""],
+        ["in2", "q2", "blocked", ""],
+        ["q0", "out", "active", ""],
+        ["q1", "out", "active", ""],
+        ["q2", "out", "active", ""],
+      ],
+    },
     example: ["D = 101 · 쓰기 허용", "래치 세 개에 한 비트씩 저장", "레지스터 값 5"],
     title: '래치를 나란히 놓으면 수를 저장한다',
     body: 'D 래치 세 개를 나란히 놓고 E를 함께 연결하면 3비트 수 하나를 저장하는 레지스터가 됩니다. CPU 안에는 이런 레지스터가 여러 개 있어 계산할 값을 잠시 담아 둡니다. 다만 이 기억은 전기가 계속 흘러야 유지됩니다. 전원이 꺼지면 되먹임 고리의 1도 사라집니다.',
@@ -397,8 +445,8 @@ const lesson = [
     ],
     log: ['D', 'E'],
     demo: [[5, 0], [5, 1], [5, 0], [2, 0], [2, 1], [2, 0]],
-    staticPath: [[5, 0], [5, 1], [5, 0]],
-    staticNote: 'D = 101에서 E를 켰다가 끔 → 101이 남음',
+    staticPath: [[5, 0], [5, 1], [5, 0], [2, 0]],
+    staticNote: 'E = 0에서 D를 010으로 → 저장값은 101',
     expr: (v) => [`D = ${v.D}, E = ${v.E} → 저장된 값 `, String(v.R), v.E ? ' (쓰는 중)' : ' (유지)'],
     tasks: [
       { text: '5를 저장해 보세요. D를 5로 맞추고 E를 켰다 끄세요.', test: (v) => v.E === 0 && v.R === 5, ok: '101이 레지스터에 들어갔습니다.' },

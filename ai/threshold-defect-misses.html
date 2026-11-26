@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 문턱 변경이 흠집과 찍힘에 다르게 작용할까요?">
+<title>검출 임계값과 결함별 미검출 · C15</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./threshold-defect-misses.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C15</p><h1>검출 임계값과 결함별 미검출</h1><p>같은 문턱 변경이 흠집과 찍힘에 다르게 작용할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">검출 임계값과 결함별 미검출</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-threshold-defect-misses-1"><svg><g>
+<text x="34" y="105" fill="#18344a" font-size="23" font-weight="700" text-anchor="start">흠집</text>
+<text x="34" y="163" fill="#18344a" font-size="23" font-weight="700" text-anchor="start">찍힘</text>
+<path d="M 151 192 L 557 192" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="578" y="200" fill="#18344a" font-size="21" font-weight="700" text-anchor="start">s</text>
+<path d="M 151 186 L 151 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="151" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">0</text>
+<path d="M 232.2 186 L 232.2 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="232.2" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">.2</text>
+<path d="M 313.4 186 L 313.4 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="313.4" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">.4</text>
+<path d="M 394.6 186 L 394.6 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="394.6" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">.6</text>
+<path d="M 475.8 186 L 475.8 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="475.8" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">.8</text>
+<path d="M 557 186 L 557 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="557" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">1</text>
+<path d="M 313.4 72 L 313.4 192" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="313.4" y="61" fill="#a24d12" font-size="22" font-weight="700" text-anchor="middle">0.40</text>
+<circle cx="504.21999999999997" cy="113" r="5" fill="#12639b"/>
+<text x="512.22" y="102" fill="#12639b" font-size="20" font-weight="700" text-anchor="start">S1 · 0.87</text>
+<circle cx="435.2" cy="113" r="5" fill="#12639b"/>
+<text x="427.2" y="102" fill="#12639b" font-size="20" font-weight="700" text-anchor="end">S2 · 0.70</text>
+<circle cx="374.3" cy="167" r="5" fill="#12639b"/>
+<text x="382.3" y="156" fill="#12639b" font-size="20" font-weight="700" text-anchor="start">D1 · 0.55</text>
+<circle cx="284.98" cy="167" r="5" fill="#a24d12"/>
+<text x="276.98" y="156" fill="#a24d12" font-size="20" font-weight="700" text-anchor="end">D2 · 0.33</text>
+<text x="166" y="263" fill="#12639b" font-size="22" font-weight="700" text-anchor="middle">흠집 미검출 0/2</text>
+<text x="461" y="263" fill="#a24d12" font-size="22" font-weight="700" text-anchor="middle">찍힘 미검출 1/2</text>
+</g></svg></template>
+<template id="figure-threshold-defect-misses-2"><svg><g>
+<text x="34" y="105" fill="#18344a" font-size="23" font-weight="700" text-anchor="start">흠집</text>
+<text x="34" y="163" fill="#18344a" font-size="23" font-weight="700" text-anchor="start">찍힘</text>
+<path d="M 151 192 L 557 192" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="578" y="200" fill="#18344a" font-size="21" font-weight="700" text-anchor="start">s</text>
+<path d="M 151 186 L 151 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="151" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">0</text>
+<path d="M 232.2 186 L 232.2 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="232.2" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">.2</text>
+<path d="M 313.4 186 L 313.4 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="313.4" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">.4</text>
+<path d="M 394.6 186 L 394.6 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="394.6" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">.6</text>
+<path d="M 475.8 186 L 475.8 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="475.8" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">.8</text>
+<path d="M 557 186 L 557 199" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="557" y="224" fill="#18344a" font-size="20" font-weight="700" text-anchor="middle">1</text>
+<path d="M 313.4 73 L 313.4 192" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<path d="M 414.90000000000003 72 L 414.90000000000003 192" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="414.90000000000003" y="61" fill="#a24d12" font-size="22" font-weight="700" text-anchor="middle">0.65</text>
+<circle cx="504.21999999999997" cy="113" r="5" fill="#12639b"/>
+<text x="512.22" y="102" fill="#12639b" font-size="20" font-weight="700" text-anchor="start">S1 · 0.87</text>
+<circle cx="435.2" cy="113" r="5" fill="#12639b"/>
+<text x="427.2" y="102" fill="#12639b" font-size="20" font-weight="700" text-anchor="end">S2 · 0.70</text>
+<circle cx="374.3" cy="167" r="5" fill="#a24d12"/>
+<text x="382.3" y="156" fill="#a24d12" font-size="20" font-weight="700" text-anchor="start">D1 · 0.55</text>
+<circle cx="284.98" cy="167" r="5" fill="#a24d12"/>
+<text x="276.98" y="156" fill="#a24d12" font-size="20" font-weight="700" text-anchor="end">D2 · 0.33</text>
+<text x="166" y="263" fill="#12639b" font-size="22" font-weight="700" text-anchor="middle">흠집 미검출 0/2</text>
+<text x="461" y="263" fill="#a24d12" font-size="22" font-weight="700" text-anchor="middle">찍힘 미검출 2/2</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "문턱 0.40",
+    "title": "낮은 문턱에서는 찍힘 D2만 빠집니다",
+    "body": "네 결함의 후보 상자는 정답과 일치합니다. 점수가 문턱 이상일 때만 출력하므로 점수 0.33의 D2가 빠집니다.",
+    "takeaway": "세로 문턱선 왼쪽에는 D2만 있습니다. 흠집 0/2, 찍힘 1/2가 미검출입니다.",
+    "example": [
+      "흠집 2 · 찍힘 2",
+      "문턱 0.40",
+      "찍힘 미검출 1/2"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "문턱 0.40",
+      "description": "세로 문턱선 왼쪽에는 D2만 있습니다. 흠집 0/2, 찍힘 1/2가 미검출입니다.",
+      "figure": "figure-threshold-defect-misses-1"
+    },
+    "quiz": [
+      "정답 흠집 5개 중 임계값을 넘은 후보가 4개입니다. 미검출률은?",
+      "1/5",
+      "1/4",
+      "전체 정답 결함 수가 분모입니다."
+    ]
+  },
+  {
+    "label": "문턱 0.65",
+    "title": "문턱을 올리면 찍힘 D1도 미검출이 됩니다",
+    "body": "영상과 후보 점수는 그대로입니다. 점수 0.55인 D1에서만 통과 여부가 달라집니다.",
+    "takeaway": "0.40의 점선과 0.65의 실선 사이에 D1이 있습니다. 찍힘 미검출은 1/2에서 2/2가 됩니다.",
+    "example": [
+      "같은 네 결함",
+      "문턱 0.65",
+      "찍힘 미검출 2/2"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "문턱 0.65",
+      "description": "0.40의 점선과 0.65의 실선 사이에 D1이 있습니다. 찍힘 미검출은 1/2에서 2/2가 됩니다.",
+      "figure": "figure-threshold-defect-misses-2"
+    },
+    "quiz": [
+      "이 예에서 0.65보다 오탐이 적다고 판단하려면 어떤 입력이 더 필요할까요?",
+      "정상 영역과 그 점수",
+      "같은 결함 종류 이름",
+      "결함이 없는 곳에서 나온 후보도 평가해야 합니다."
+    ]
+  }
+];
+const slug = 'threshold-defect-misses';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

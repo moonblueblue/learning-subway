@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="영상과 음성을 합치는 시점은 무엇을 바꿀까요?">
+<title>조기 융합과 후기 융합 · C29</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./early-late-multimodal-fusion.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C29</p><h1>조기 융합과 후기 융합</h1><p>영상과 음성을 합치는 시점은 무엇을 바꿀까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">조기 융합과 후기 융합</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-early-late-multimodal-fusion-1"><svg><g>
+<rect x="25" y="86" width="119" height="44" fill="#f1f6f9" stroke="#12639b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="85" y="115" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">영상 v</text>
+<text x="43" y="162" fill="#12639b" font-size="20" font-weight="700" text-anchor="start">0.8</text>
+<rect x="25" y="170" width="119" height="44" fill="#f1f6f9" stroke="#a24d12" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="85" y="199" fill="#a24d12" font-size="21" font-weight="700" text-anchor="middle">음성 a</text>
+<text x="43" y="246" fill="#a24d12" font-size="20" font-weight="700" text-anchor="start">0.2</text>
+<path d="M 154 108 L 223 150" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="223,150 212.02,149.27 217.31,140.59" fill="#12639b" stroke="none" stroke-width="2"/>
+<path d="M 154 192 L 223 150" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="223,150 217.31,159.41 212.02,150.73" fill="#12639b" stroke="none" stroke-width="2"/>
+<rect x="230" y="128" width="126" height="44" fill="#dcebf2" stroke="#12639b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="292" y="157" fill="#12639b" font-size="25" font-weight="700" text-anchor="middle">[0.8,0.2]</text>
+<path d="M 365 150 L 405 150" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="405,150 395.24,155.08 395.24,144.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<rect x="410" y="124" width="180" height="52" fill="#f1f6f9" stroke="#12639b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="500" y="157" fill="#12639b" font-size="23" font-weight="700" text-anchor="middle">공동 모델</text>
+<text x="309" y="259" fill="#12639b" font-size="25" font-weight="700" text-anchor="middle">0.7×0.8 + 0.3×0.2 = 0.62</text>
+</g></svg></template>
+<template id="figure-early-late-multimodal-fusion-2"><svg><g>
+<rect x="25" y="86" width="119" height="44" fill="#f1f6f9" stroke="#12639b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="85" y="115" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">영상 v</text>
+<rect x="25" y="170" width="119" height="44" fill="#f1f6f9" stroke="#a24d12" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="85" y="199" fill="#a24d12" font-size="21" font-weight="700" text-anchor="middle">음성 a</text>
+<path d="M 152 108 L 205 108" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="205,108 195.24,113.08 195.24,102.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<rect x="211" y="86" width="148" height="44" fill="#f1f6f9" stroke="#12639b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="285" y="115" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">영상 모델</text>
+<path d="M 366 108 L 420 108" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="420,108 410.24,113.08 410.24,102.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<text x="465" y="115" fill="#12639b" font-size="22" font-weight="700" text-anchor="middle">pV=0.8</text>
+<path d="M 509 108 L 559 150" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="559,150 548.26,147.61 554.8,139.83" fill="#12639b" stroke="none" stroke-width="2"/>
+<path d="M 152 192 L 205 192" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="205,192 195.24,197.08 195.24,186.92" fill="#a24d12" stroke="none" stroke-width="2"/>
+<rect x="211" y="170" width="148" height="44" fill="#f1f6f9" stroke="#a24d12" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="285" y="199" fill="#a24d12" font-size="21" font-weight="700" text-anchor="middle">음성 모델</text>
+<path d="M 366 192 L 420 192" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="420,192 410.24,197.08 410.24,186.92" fill="#a24d12" stroke="none" stroke-width="2"/>
+<text x="465" y="199" fill="#a24d12" font-size="22" font-weight="700" text-anchor="middle">pA=0.2</text>
+<path d="M 509 192 L 559 150" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="559,150 554.8,160.17 548.26,152.39" fill="#a24d12" stroke="none" stroke-width="2"/>
+<text x="575" y="155" fill="#12639b" font-size="22" font-weight="700" text-anchor="middle">½</text>
+<text x="309" y="261" fill="#12639b" font-size="25" font-weight="700" text-anchor="middle">(0.8 + 0.2) / 2 = 0.50</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "특징에서 결합",
+    "title": "하나의 모델이 결합된 특징을 읽습니다",
+    "body": "영상 특징 v=0.8과 소리 특징 a=0.2를 이어 붙입니다. 예제의 공동 모델은 0.7v+0.3a로 점수 0.62를 냅니다.",
+    "takeaway": "두 경로가 [0.8,0.2]에서 합쳐져 단일 모델로 들어갑니다.",
+    "example": [
+      "v=0.8 · a=0.2",
+      "결합 벡터 [0.8,0.2]",
+      "공동 점수 0.62"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "특징에서 결합",
+      "description": "두 경로가 [0.8,0.2]에서 합쳐져 단일 모델로 들어갑니다.",
+      "figure": "figure-early-late-multimodal-fusion-1"
+    },
+    "quiz": [
+      "v=0.3, a=0.7을 이어 붙인 두 성분이 영상·음성 순이면?",
+      "[0.3,0.7]",
+      "[0.7,0.3]",
+      "조기 결합에 정한 영상 다음 음성 순서를 따릅니다."
+    ]
+  },
+  {
+    "label": "예측에서 결합",
+    "title": "두 모델의 예측 점수가 마지막에 만납니다",
+    "body": "독립 모델이 pV=0.8과 pA=0.2를 냈습니다. 예제는 두 점수의 평균 0.50을 씁니다. 앞 장면과 계산 규칙을 따로 제시한 모델입니다.",
+    "takeaway": "영상과 소리는 별도 모델을 통과한 뒤 pV와 pA에서 합쳐집니다.",
+    "example": [
+      "영상 · 음성",
+      "개별 점수 0.8 · 0.2",
+      "평균 0.50"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "예측에서 결합",
+      "description": "영상과 소리는 별도 모델을 통과한 뒤 pV와 pA에서 합쳐집니다.",
+      "figure": "figure-early-late-multimodal-fusion-2"
+    },
+    "quiz": [
+      "독립 점수 0.6과 0.4를 단순 평균하는 후기 결합 결과는?",
+      "0.50",
+      "1.00",
+      "두 점수 합을 모델 수 2로 나눕니다."
+    ]
+  }
+];
+const slug = 'early-late-multimodal-fusion';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="영상 증강 뒤 어느 레이블을 바꿔야 할까요?">
+<title>증강 뒤 레이블 보존 · C09</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./augmentation-labels.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C09</p><h1>증강 뒤 레이블 보존</h1><p>영상 증강 뒤 어느 레이블을 바꿔야 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">증강 뒤 레이블 보존</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-augmentation-labels-1"><svg><g>
+<rect x="27" y="107" width="208" height="130" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="27" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="209" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="27" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="209" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="27" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="209" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="133" width="26" height="26" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="185" width="26" height="26" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="133" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="133" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="159" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 27 107 L 27 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 53 107 L 53 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 79 107 L 79 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 105 107 L 105 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 107 L 131 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 157 107 L 157 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 183 107 L 183 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 209 107 L 209 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 235 107 L 235 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 107 L 235 107" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 133 L 235 133" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 159 L 235 159" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 185 L 235 185" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 211 L 235 211" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 237 L 235 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="53" y="133" width="52" height="52" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<text x="131" y="92" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">원본 부품 A</text>
+<rect x="374" y="107" width="208" height="130" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="556" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="556" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="556" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="133" width="26" height="26" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="185" width="26" height="26" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="133" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="133" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="159" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 374 107 L 374 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 400 107 L 400 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 426 107 L 426 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 452 107 L 452 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 478 107 L 478 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 504 107 L 504 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 530 107 L 530 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 556 107 L 556 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 582 107 L 582 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 107 L 582 107" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 133 L 582 133" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 159 L 582 159" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 185 L 582 185" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 211 L 582 211" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 237 L 582 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="504" y="133" width="52" height="52" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<path d="M 252 175 L 351 175" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="351,175 341.24,180.08 341.24,169.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<text x="301" y="152" fill="#12639b" font-size="23" font-weight="700" text-anchor="middle">8−x</text>
+<text x="478" y="92" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">반전 영상</text>
+<text x="131" y="267" fill="#12639b" font-size="24" font-weight="700" text-anchor="middle">[1,3)</text>
+<text x="478" y="267" fill="#12639b" font-size="24" font-weight="700" text-anchor="middle">[5,7)</text>
+</g></svg></template>
+<template id="figure-augmentation-labels-2"><svg><g>
+<rect x="27" y="107" width="208" height="130" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="27" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="209" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="27" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="209" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="27" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="209" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="133" width="26" height="26" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="185" width="26" height="26" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="133" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="133" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="159" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 27 107 L 27 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 53 107 L 53 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 79 107 L 79 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 105 107 L 105 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 107 L 131 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 157 107 L 157 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 183 107 L 183 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 209 107 L 209 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 235 107 L 235 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 107 L 235 107" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 133 L 235 133" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 159 L 235 159" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 185 L 235 185" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 211 L 235 211" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 237 L 235 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="53" y="133" width="52" height="52" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<text x="131" y="92" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">원본 부품 A</text>
+<rect x="374" y="107" width="208" height="130" fill="#d3dce1" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="107" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="107" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="107" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="107" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="107" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="107" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="133" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="133" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="133" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="133" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="133" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="133" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="133" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="556" y="133" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="159" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="159" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="159" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="159" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="159" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="159" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="159" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="556" y="159" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="185" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="185" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="185" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="185" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="185" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="185" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="185" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="556" y="185" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="211" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="211" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="211" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="478" y="211" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="504" y="211" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="211" width="26" height="26" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="133" width="26" height="26" fill="#596b74" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="185" width="26" height="26" fill="#596b74" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="133" width="26" height="26" fill="#34434c" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="133" width="26" height="26" fill="#34434c" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="159" width="26" height="26" fill="#34434c" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 374 107 L 374 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 400 107 L 400 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 426 107 L 426 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 452 107 L 452 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 478 107 L 478 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 504 107 L 504 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 530 107 L 530 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 556 107 L 556 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 582 107 L 582 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 107 L 582 107" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 133 L 582 133" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 159 L 582 159" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 185 L 582 185" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 211 L 582 211" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 237 L 582 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="400" y="133" width="52" height="52" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<path d="M 252 175 L 351 175" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="351,175 341.24,180.08 341.24,169.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<text x="301" y="152" fill="#12639b" font-size="22" font-weight="700" text-anchor="middle">−빛</text>
+<text x="478" y="92" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">어두운 부품 A</text>
+<text x="131" y="267" fill="#12639b" font-size="24" font-weight="700" text-anchor="middle">[1,3)</text>
+<text x="478" y="267" fill="#12639b" font-size="24" font-weight="700" text-anchor="middle">[1,3)</text>
+</g></svg></template>
+<template id="figure-augmentation-labels-3"><svg><g>
+<rect x="27" y="107" width="208" height="130" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="27" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="209" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="27" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="209" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="27" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="209" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="105" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="131" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="157" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="183" y="133" width="26" height="26" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="185" width="26" height="26" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="53" y="133" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="133" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="79" y="159" width="26" height="26" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 27 107 L 27 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 53 107 L 53 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 79 107 L 79 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 105 107 L 105 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 107 L 131 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 157 107 L 157 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 183 107 L 183 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 209 107 L 209 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 235 107 L 235 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 107 L 235 107" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 133 L 235 133" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 159 L 235 159" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 185 L 235 185" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 211 L 235 211" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 27 237 L 235 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="53" y="133" width="52" height="52" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<text x="131" y="92" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">원본 부품 A</text>
+<path d="M 131 97 L 131 244" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<text x="131" y="268" fill="#a24d12" font-size="23" font-weight="700" text-anchor="middle">x=4</text>
+<rect x="374" y="107" width="104" height="130" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="374" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="400" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="107" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="211" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="133" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="159" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="452" y="185" width="26" height="26" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="426" y="133" width="26" height="26" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 374 107 L 374 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 400 107 L 400 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 426 107 L 426 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 452 107 L 452 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 478 107 L 478 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 107 L 478 107" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 133 L 478 133" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 159 L 478 159" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 185 L 478 185" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 211 L 478 211" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 374 237 L 478 237" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="426" y="92" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">출력 4×5</text>
+<path d="M 254 173 L 352 173" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="352,173 342.24,178.08 342.24,167.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<text x="426" y="269" fill="#12639b" font-size="23" font-weight="700" text-anchor="middle">불량 0개</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "좌우 반전",
+    "title": "같은 반전으로 영상과 마스크를 함께 옮깁니다",
+    "body": "너비 8의 영상에서 상자 경계 x는 8−x로 바뀝니다. 두 끝을 다시 왼쪽부터 쓰면 [5,7)이 됩니다.",
+    "takeaway": "원본 흠집과 반전 흠집, 그리고 반전된 상자가 같은 픽셀 위에 있습니다.",
+    "example": [
+      "[1,3)",
+      "x → 8−x",
+      "[5,7)"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "좌우 반전",
+      "description": "원본 흠집과 반전 흠집, 그리고 반전된 상자가 같은 픽셀 위에 있습니다.",
+      "figure": "figure-augmentation-labels-1"
+    },
+    "quiz": [
+      "너비 10에서 원본 상자의 x 경계 [1,4)를 좌우 반전하면?",
+      "[6,9)",
+      "[5,8)",
+      "오른쪽 경계는 10−1, 왼쪽 경계는 10−4입니다."
+    ]
+  },
+  {
+    "label": "밝기 변경",
+    "title": "밝기 변환은 픽셀 위치를 유지합니다",
+    "body": "부품 전체 밝기를 낮췄습니다. 영상의 픽셀 값은 바뀌어도 상자 좌표는 [1,3)으로 유지됩니다.",
+    "takeaway": "양쪽 상자가 같은 격자 위치에 있고 명암만 바뀌었습니다.",
+    "example": [
+      "[1,3)",
+      "밝기만 감소",
+      "좌표 유지"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "밝기 변경",
+      "description": "양쪽 상자가 같은 격자 위치에 있고 명암만 바뀌었습니다.",
+      "figure": "figure-augmentation-labels-2"
+    },
+    "quiz": [
+      "같은 영상의 대비만 올리면 마스크는 어떻게 될까요?",
+      "같은 위치 유지",
+      "오른쪽으로 이동",
+      "대비는 픽셀 값의 변환입니다."
+    ]
+  },
+  {
+    "label": "결함을 자른 경우",
+    "title": "잘려 나간 결함은 출력의 양성으로 남지 않습니다",
+    "body": "원본의 x=4부터 7까지 남기는 잘라내기는 x\u003c3의 결함을 전부 제거합니다. 자른 영상의 검출 레이블에서 결함을 뺍니다.",
+    "takeaway": "절단선 왼쪽에 결함 상자가 있고 오른쪽 결과에는 남은 결함이 0개입니다.",
+    "example": [
+      "[1,3) 결함",
+      "[4,8) 남기기",
+      "남은 결함 0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "결함을 자른 경우",
+      "description": "절단선 왼쪽에 결함 상자가 있고 오른쪽 결과에는 남은 결함이 0개입니다.",
+      "figure": "figure-augmentation-labels-3"
+    },
+    "quiz": [
+      "정답 x=[2,5)에서 오른쪽 [4,8)만 자릅니다. 새 영상 원점 기준 상자는?",
+      "[0,1)",
+      "[4,5)",
+      "원본 [4,5)만 남기고 잘라낸 시작 4를 뺍니다."
+    ]
+  }
+];
+const slug = 'augmentation-labels';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

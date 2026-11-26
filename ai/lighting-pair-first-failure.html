@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="조명만 바뀌면 검사 파이프라인의 어느 출력이 먼저 달라질까요?">
+<title>조명만 바꾼 쌍으로 최초 실패 찾기 · C20</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./lighting-pair-first-failure.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C20</p><h1>조명만 바꾼 쌍으로 최초 실패 찾기</h1><p>조명만 바뀌면 검사 파이프라인의 어느 출력이 먼저 달라질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">조명만 바꾼 쌍으로 최초 실패 찾기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-lighting-pair-first-failure-1"><svg><g>
+<text x="144" y="84" fill="#18344a" font-size="24" font-weight="700" text-anchor="middle">조명 1.00</text>
+<rect x="36" y="99" width="216" height="135" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="63" y="99" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="90" y="99" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="117" y="99" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="144" y="99" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="171" y="99" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="198" y="99" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="36" y="126" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="63" y="126" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="90" y="126" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="117" y="126" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="144" y="126" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="171" y="126" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="198" y="126" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="225" y="126" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="36" y="153" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="63" y="153" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="90" y="153" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="117" y="153" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="144" y="153" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="171" y="153" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="198" y="153" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="225" y="153" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="36" y="180" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="63" y="180" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="90" y="180" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="117" y="180" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="144" y="180" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="171" y="180" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="198" y="180" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="225" y="180" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="63" y="207" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="90" y="207" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="117" y="207" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="144" y="207" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="171" y="207" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="198" y="207" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="198" y="126" width="27" height="27" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="63" y="180" width="27" height="27" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="90" y="153" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="117" y="153" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="144" y="153" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 36 99 L 36 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 63 99 L 63 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 90 99 L 90 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 117 99 L 117 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 144 99 L 144 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 171 99 L 171 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 198 99 L 198 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 225 99 L 225 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 252 99 L 252 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 36 99 L 252 99" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 36 126 L 252 126" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 36 153 L 252 153" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 36 180 L 252 180" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 36 207 L 252 207" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 36 234 L 252 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="90" y="153" width="81" height="27" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<text x="144" y="267" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">정상 180 · 흠집 104</text>
+<text x="476" y="84" fill="#18344a" font-size="24" font-weight="700" text-anchor="middle">조명 0.55</text>
+<rect x="368" y="99" width="216" height="135" fill="#d3dce1" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="395" y="99" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="422" y="99" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="449" y="99" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="476" y="99" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="503" y="99" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="99" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="368" y="126" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="395" y="126" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="422" y="126" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="449" y="126" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="476" y="126" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="503" y="126" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="126" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="557" y="126" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="368" y="153" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="395" y="153" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="422" y="153" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="449" y="153" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="476" y="153" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="503" y="153" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="153" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="557" y="153" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="368" y="180" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="395" y="180" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="422" y="180" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="449" y="180" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="476" y="180" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="503" y="180" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="180" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="557" y="180" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="395" y="207" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="422" y="207" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="449" y="207" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="476" y="207" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="503" y="207" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="207" width="27" height="27" fill="#8f9ea5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="530" y="126" width="27" height="27" fill="#596b74" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="395" y="180" width="27" height="27" fill="#596b74" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="422" y="153" width="27" height="27" fill="#34434c" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="449" y="153" width="27" height="27" fill="#34434c" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="476" y="153" width="27" height="27" fill="#34434c" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 368 99 L 368 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 395 99 L 395 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 422 99 L 422 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 449 99 L 449 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 476 99 L 476 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 503 99 L 503 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 530 99 L 530 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 557 99 L 557 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 584 99 L 584 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 368 99 L 584 99" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 368 126 L 584 126" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 368 153 L 584 153" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 368 180 L 584 180" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 368 207 L 584 207" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 368 234 L 584 234" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="422" y="153" width="81" height="27" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<text x="476" y="267" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">정상 113 · 흠집 72</text>
+<path d="M 270 165 L 351 165" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="351,165 341.24,170.08 341.24,159.92" fill="#12639b" stroke="none" stroke-width="2"/>
+</g></svg></template>
+<template id="figure-lighting-pair-first-failure-2"><svg><g>
+<text x="25" y="107" fill="#12639b" font-size="21" font-weight="700" text-anchor="start">조명 1.00</text>
+<text x="25" y="141" fill="#12639b" font-size="24" font-weight="700" text-anchor="start">180−104 = 76</text>
+<path d="M 173 121 L 218 121" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="218,121 208.24,126.08 208.24,115.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<rect x="224" y="98" width="153" height="49" fill="#f1f6f9" stroke="#12639b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="300" y="130" fill="#12639b" font-size="20" font-weight="700" text-anchor="middle">검출 상자 P</text>
+<path d="M 387 121 L 440 121" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="440,121 430.24,126.08 430.24,115.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<text x="452" y="129" fill="#12639b" font-size="22" font-weight="700" text-anchor="start">지침 S</text>
+<text x="25" y="197" fill="#a24d12" font-size="21" font-weight="700" text-anchor="start">조명 0.55</text>
+<text x="25" y="231" fill="#a24d12" font-size="24" font-weight="700" text-anchor="start">113−72 = 41</text>
+<path d="M 173 211 L 218 211" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="218,211 208.24,216.08 208.24,205.92" fill="#a24d12" stroke="none" stroke-width="2"/>
+<rect x="224" y="188" width="153" height="49" fill="#f1f6f9" stroke="#a24d12" stroke-width="2" stroke-dasharray="5 4" opacity="1"/>
+<text x="300" y="220" fill="#a24d12" font-size="20" font-weight="700" text-anchor="middle">검출 상자 없음</text>
+<path d="M 387 211 L 440 211" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<polygon points="440,211 430.24,216.08 430.24,205.92" fill="#a24d12" stroke="none" stroke-width="2"/>
+<text x="452" y="219" fill="#a24d12" font-size="22" font-weight="700" text-anchor="start">검색 없음</text>
+<text x="310" y="67" fill="#18344a" font-size="22" font-weight="700" text-anchor="middle">대비 ≥ 48 → 검출</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "촬영만 변경",
+    "title": "조명 쌍은 같은 좌표의 픽셀을 비교합니다",
+    "body": "같은 부품을 같은 위치에서 촬영합니다. 밝은 쪽은 정상 180, 결함 104이고 어두운 쪽은 정상 113, 결함 72입니다.",
+    "takeaway": "같은 상자 자리에서 두 픽셀값이 달라졌지만 실제 흠집의 좌표는 그대로입니다.",
+    "example": [
+      "같은 흠집",
+      "조명 1.00 → 0.55",
+      "대비 76 → 41"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "촬영만 변경",
+      "description": "같은 상자 자리에서 두 픽셀값이 달라졌지만 실제 흠집의 좌표는 그대로입니다.",
+      "figure": "figure-lighting-pair-first-failure-1"
+    },
+    "quiz": [
+      "파트가 다른 사진 두 장으로 조명 효과만 추정할 수 있을까요?",
+      "아니요",
+      "예",
+      "같은 부품과 카메라를 유지하고 조명만 바꿉니다."
+    ]
+  },
+  {
+    "label": "검출부터 달라짐",
+    "title": "대비가 문턱 아래로 떨어지면 검색에는 잘라낼 상자가 없습니다",
+    "body": "이 검출기는 정상−결함이 48 이상이면 상자를 출력합니다. 밝은 입력의 대비 76은 통과하고 어두운 입력의 41은 빠집니다.",
+    "takeaway": "밝은 경로는 상자와 지침 S로 이어집니다. 어두운 경로는 검출 상자에서 처음 끊겨 검색을 실행하지 않습니다.",
+    "example": [
+      "대비 76 · 41",
+      "문턱 48",
+      "밝음 P · 어두움 ∅"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "검출부터 달라짐",
+      "description": "밝은 경로는 상자와 지침 S로 이어집니다. 어두운 경로는 검출 상자에서 처음 끊겨 검색을 실행하지 않습니다.",
+      "figure": "figure-lighting-pair-first-failure-2"
+    },
+    "quiz": [
+      "두 영상의 검출 상자는 같고 검색 1위만 달라졌습니다. 최초로 다른 분석 출력은?",
+      "지침 순위",
+      "검출 상자",
+      "동일한 출력은 건너뛰고 처음 달라진 결과를 기록합니다."
+    ]
+  }
+];
+const slug = 'lighting-pair-first-failure';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -568,7 +568,12 @@ function track(points, lift = 0) {
 }
 function floatLabel(text, from, to, ms, path = null) {
   if (motion.matches) return;
-  const g = svg('g', { class: 'mover' }, byId('packets'));
+  const position = (progress) => {
+    const at = path ? path.getPointAtLength(progress * path.getTotalLength())
+      : { x: mix(from[0], to[0], progress), y: mix(from[1], to[1], progress) };
+    return `translate(${at.x} ${at.y})`;
+  };
+  const g = svg('g', { class: 'mover', transform: position(0) }, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 9 }, g);
   svg('circle', { class: 'packet', r: 4.6 }, g);
   svg('text', { class: 'packet-label', y: -10 }, g).textContent = text;
@@ -576,8 +581,7 @@ function floatLabel(text, from, to, ms, path = null) {
   const step = (now) => {
     const t = Math.min((now - start) / ms, 1);
     const e = t * t * (3 - 2 * t);
-    const at = path ? path.getPointAtLength(e * path.getTotalLength()) : { x: mix(from[0], to[0], e), y: mix(from[1], to[1], e) };
-    g.setAttribute('transform', `translate(${at.x} ${at.y})`);
+    g.setAttribute('transform', position(e));
     if (t < 1) requestAnimationFrame(step); else g.remove();
   };
   requestAnimationFrame(step);

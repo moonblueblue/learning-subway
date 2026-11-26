@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="상자와 마스크는 어떤 픽셀을 결함으로 표시할까요?">
+<title>상자와 마스크로 불량 표시 · C04</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./box-mask-annotation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C04</p><h1>상자와 마스크로 불량 표시</h1><p>상자와 마스크는 어떤 픽셀을 결함으로 표시할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">상자와 마스크로 불량 표시</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-box-mask-annotation-1"><svg><g>
+<rect x="28" y="105" width="240" height="150" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="28" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="238" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="28" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="238" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="28" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="238" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="135" width="30" height="30" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="195" width="30" height="30" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="135" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="135" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="165" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="165" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="195" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 28 105 L 28 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 58 105 L 58 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 88 105 L 88 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 118 105 L 118 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 148 105 L 148 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 178 105 L 178 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 208 105 L 208 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 238 105 L 238 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 268 105 L 268 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 105 L 268 105" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 135 L 268 135" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 165 L 268 165" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 195 L 268 195" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 225 L 268 225" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 255 L 268 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="88" y="135" width="90" height="90" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<text x="148" y="89" fill="#18344a" font-size="24" font-weight="700" text-anchor="middle">부품 A · 상자</text>
+<circle cx="133.0" cy="150.0" r="3" fill="#fff"/>
+<circle cx="163.0" cy="180.0" r="3" fill="#fff"/>
+<circle cx="163.0" cy="210.0" r="3" fill="#fff"/>
+<circle cx="103.0" cy="150.0" r="3" fill="#fff"/>
+<circle cx="133.0" cy="180.0" r="3" fill="#fff"/>
+<path d="M 280 174 L 331 174" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="331,174 321.24,179.08 321.24,168.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<text x="350" y="131" fill="#18344a" font-size="24" font-weight="700" text-anchor="start">3 × 3 = 9 px</text>
+<text x="350" y="178" fill="#12639b" font-size="24" font-weight="700" text-anchor="start">결함 5 px</text>
+<text x="350" y="221" fill="#4e6478" font-size="24" font-weight="700" text-anchor="start">정상 4 px</text>
+</g></svg></template>
+<template id="figure-box-mask-annotation-2"><svg><g>
+<rect x="28" y="105" width="240" height="150" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="105" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="28" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="238" y="135" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="28" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="238" y="165" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="28" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="238" y="195" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="225" width="30" height="30" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="208" y="135" width="30" height="30" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="58" y="195" width="30" height="30" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="88" y="135" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="135" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="165" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="165" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="195" width="30" height="30" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 28 105 L 28 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 58 105 L 58 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 88 105 L 88 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 118 105 L 118 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 148 105 L 148 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 178 105 L 178 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 208 105 L 208 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 238 105 L 238 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 268 105 L 268 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 105 L 268 105" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 135 L 268 135" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 165 L 268 165" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 195 L 268 195" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 225 L 268 225" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 28 255 L 268 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="88" y="135" width="90" height="90" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="5 4" opacity="1"/>
+<text x="148" y="89" fill="#18344a" font-size="24" font-weight="700" text-anchor="middle">부품 A · 상자</text>
+<text x="471" y="89" fill="#18344a" font-size="24" font-weight="700" text-anchor="middle">부품 A · 마스크</text>
+<rect x="351" y="105" width="240" height="150" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="411" y="135" width="30" height="30" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="441" y="135" width="30" height="30" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="441" y="165" width="30" height="30" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="471" y="165" width="30" height="30" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="471" y="195" width="30" height="30" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 351 105 L 351 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 381 105 L 381 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 411 105 L 411 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 441 105 L 441 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 471 105 L 471 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 501 105 L 501 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 531 105 L 531 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 561 105 L 561 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 591 105 L 591 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 351 105 L 591 105" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 351 135 L 591 135" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 351 165 L 591 165" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 351 195 L 591 195" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 351 225 L 591 225" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 351 255 L 591 255" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="366.0" y="125.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="396.0" y="125.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="426.0" y="125.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="456.0" y="125.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="486.0" y="125.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="516.0" y="125.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="546.0" y="125.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="576.0" y="125.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="366.0" y="155.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="396.0" y="155.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="426.0" y="155.4" fill="#fff" font-size="17.099999999999998" font-weight="700" text-anchor="middle">1</text>
+<text x="456.0" y="155.4" fill="#fff" font-size="17.099999999999998" font-weight="700" text-anchor="middle">1</text>
+<text x="486.0" y="155.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="516.0" y="155.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="546.0" y="155.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="576.0" y="155.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="366.0" y="185.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="396.0" y="185.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="426.0" y="185.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="456.0" y="185.4" fill="#fff" font-size="17.099999999999998" font-weight="700" text-anchor="middle">1</text>
+<text x="486.0" y="185.4" fill="#fff" font-size="17.099999999999998" font-weight="700" text-anchor="middle">1</text>
+<text x="516.0" y="185.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="546.0" y="185.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="576.0" y="185.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="366.0" y="215.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="396.0" y="215.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="426.0" y="215.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="456.0" y="215.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="486.0" y="215.4" fill="#fff" font-size="17.099999999999998" font-weight="700" text-anchor="middle">1</text>
+<text x="516.0" y="215.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="546.0" y="215.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="576.0" y="215.4" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="366.0" y="245.39999999999998" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="396.0" y="245.39999999999998" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="426.0" y="245.39999999999998" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="456.0" y="245.39999999999998" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="486.0" y="245.39999999999998" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="516.0" y="245.39999999999998" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="546.0" y="245.39999999999998" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<text x="576.0" y="245.39999999999998" fill="#4e6478" font-size="17.099999999999998" font-weight="700" text-anchor="middle">0</text>
+<path d="M 284 180 L 334 180" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="334,180 324.24,185.08 324.24,174.92" fill="#12639b" stroke="none" stroke-width="2"/>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "둘러싼 상자",
+    "title": "상자는 흠집을 둘러싼 직사각형입니다",
+    "body": "부품 A의 흠집은 5픽셀입니다. 가장 작은 직사각형도 계단 모양 사이의 정상 픽셀을 포함합니다.",
+    "takeaway": "3×3 상자에서 어두운 5칸과 밝은 4칸이 함께 보입니다.",
+    "example": [
+      "계단형 흠집",
+      "3×3 상자",
+      "결함 5 · 정상 4"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "둘러싼 상자",
+      "description": "3×3 상자에서 어두운 5칸과 밝은 4칸이 함께 보입니다.",
+      "figure": "figure-box-mask-annotation-1"
+    },
+    "quiz": [
+      "폭 4칸, 높이 2칸인 상자에 불량 5칸이 있습니다. 상자 속 정상은?",
+      "3칸",
+      "5칸",
+      "상자 전체 8칸에서 결함 5칸을 뺍니다."
+    ]
+  },
+  {
+    "label": "불량 마스크",
+    "title": "마스크는 결함 픽셀을 하나씩 표시합니다",
+    "body": "불량이면 1, 그 외에는 0으로 칠합니다. 상자의 배경 네 칸은 마스크에서 0입니다.",
+    "takeaway": "양쪽 격자의 계단 모양을 비교해 1이 된 다섯 칸을 셉니다.",
+    "example": [
+      "같은 격자",
+      "픽셀별 레이블",
+      "다섯 칸만 1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "불량 마스크",
+      "description": "양쪽 격자의 계단 모양을 비교해 1이 된 다섯 칸을 셉니다.",
+      "figure": "figure-box-mask-annotation-2"
+    },
+    "quiz": [
+      "마스크가 점 두 개만 1로 표시했습니다. 돌려주는 불량 픽셀 수는?",
+      "2",
+      "점 사이까지 포함",
+      "마스크는 픽셀별로 읽습니다."
+    ]
+  }
+];
+const slug = 'box-mask-annotation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

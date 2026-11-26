@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="말한 구간과 영상 사건을 어떻게 같은 시간에서 비교할까요?">
+<title>음성 구간과 시간 정렬 · C27</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./speech-segment-alignment.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C27</p><h1>음성 구간과 시간 정렬</h1><p>말한 구간과 영상 사건을 어떻게 같은 시간에서 비교할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">음성 구간과 시간 정렬</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-speech-segment-alignment-1"><svg><g>
+<rect x="124.75" y="123.5" width="140.24999999999997" height="57" fill="#dcebf2" stroke="#12639b" stroke-width="1" stroke-dasharray="none" opacity="1"/>
+<path d="M 124.75 152.00 L 127.09 150.98 L 129.43 150.23 L 131.76 150.66 L 134.10 150.94 L 136.44 154.12 L 138.77 159.49 L 141.11 158.15 L 143.45 150.46 L 145.79 146.67 L 148.12 145.72 L 150.46 142.58 L 152.80 146.65 L 155.14 160.93 L 157.47 167.35 L 159.81 159.77 L 162.15 153.48 L 164.49 149.32 L 166.82 137.70 L 169.16 132.72 L 171.50 148.32 L 173.84 164.67 L 176.17 165.23 L 178.51 163.83 L 180.85 163.27 L 183.19 147.65 L 185.52 129.05 L 187.86 133.61 L 190.20 150.34 L 192.54 157.10 L 194.87 163.15 L 197.21 173.26 L 199.55 165.70 L 201.89 142.12 L 204.22 132.80 L 206.56 139.87 L 208.90 143.63 L 211.24 149.94 L 213.57 167.31 L 215.91 173.95 L 218.25 158.97 L 220.59 145.38 L 222.92 143.45 L 225.26 140.01 L 227.60 138.87 L 229.94 152.19 L 232.28 165.84 L 234.61 163.55 L 236.95 155.97 L 239.29 153.13 L 241.62 147.76 L 243.96 141.38 L 246.30 144.96 L 248.64 153.81 L 250.97 156.51 L 253.31 155.30 L 255.65 155.07 L 257.99 153.23 L 260.32 150.51 L 262.66 150.73 L 265.00 152.00" fill="none" stroke="#12639b" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 124.75 180.5 L 124.75 232" fill="none" stroke="#12639b" stroke-width="1" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<path d="M 265.0 180.5 L 265.0 232" fill="none" stroke="#12639b" stroke-width="1" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<text x="194.875" y="109" fill="#12639b" font-size="22" font-weight="700" text-anchor="middle">닦아</text>
+<text x="194.875" y="210" fill="#12639b" font-size="20" font-weight="700" text-anchor="middle">0.15–0.48 s</text>
+<rect x="337.25" y="123.5" width="148.75" height="57" fill="#dcebf2" stroke="#11634b" stroke-width="1" stroke-dasharray="none" opacity="1"/>
+<path d="M 337.25 152.00 L 339.73 150.88 L 342.21 150.31 L 344.69 151.83 L 347.17 153.34 L 349.65 155.83 L 352.12 157.44 L 354.60 151.32 L 357.08 142.43 L 359.56 144.36 L 362.04 153.93 L 364.52 158.48 L 367.00 159.71 L 369.48 159.80 L 371.96 149.36 L 374.44 135.15 L 376.92 139.64 L 379.40 158.21 L 381.88 165.68 L 384.35 161.49 L 386.83 157.37 L 389.31 146.47 L 391.79 131.51 L 394.27 137.68 L 396.75 162.58 L 399.23 172.28 L 401.71 161.31 L 404.19 151.54 L 406.67 143.35 L 409.15 132.49 L 411.62 139.19 L 414.10 165.19 L 416.58 175.59 L 419.06 159.72 L 421.54 145.13 L 424.02 141.04 L 426.50 137.22 L 428.98 143.54 L 431.46 165.07 L 433.94 174.07 L 436.42 157.34 L 438.90 141.17 L 441.38 140.69 L 443.85 143.56 L 446.33 148.84 L 448.81 162.32 L 451.29 168.05 L 453.77 154.83 L 456.25 141.62 L 458.73 143.10 L 461.21 149.03 L 463.69 152.61 L 466.17 157.80 L 468.65 159.65 L 471.13 152.82 L 473.60 146.58 L 476.08 148.23 L 478.56 151.81 L 481.04 152.76 L 483.52 152.71 L 486.00 152.00" fill="none" stroke="#11634b" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 337.25 180.5 L 337.25 232" fill="none" stroke="#11634b" stroke-width="1" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<path d="M 486.0 180.5 L 486.0 232" fill="none" stroke="#11634b" stroke-width="1" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<text x="411.625" y="109" fill="#11634b" font-size="22" font-weight="700" text-anchor="middle">확인</text>
+<text x="411.625" y="210" fill="#11634b" font-size="20" font-weight="700" text-anchor="middle">0.65–1.00 s</text>
+<path d="M 61 152 L 571.0 152" fill="none" stroke="#7196a7" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 61 224 L 571.0 224" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 61 224 L 61 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="61" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.0</text>
+<path d="M 146.0 224 L 146.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="146.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.2</text>
+<path d="M 231.0 224 L 231.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="231.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.4</text>
+<path d="M 316.0 224 L 316.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="316.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.6</text>
+<path d="M 401.0 224 L 401.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="401.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.8</text>
+<path d="M 486.0 224 L 486.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="486.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">1.0</text>
+<path d="M 571.0 224 L 571.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="571.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">1.2</text>
+<text x="591" y="270" fill="#4e6478" font-size="19" font-weight="700" text-anchor="start">s</text>
+</g></svg></template>
+<template id="figure-speech-segment-alignment-2"><svg><g>
+<rect x="124.75" y="150.5" width="140.24999999999997" height="57" fill="#dcebf2" stroke="#12639b" stroke-width="1" stroke-dasharray="none" opacity="1"/>
+<path d="M 124.75 179.00 L 127.09 177.98 L 129.43 177.23 L 131.76 177.66 L 134.10 177.94 L 136.44 181.12 L 138.77 186.49 L 141.11 185.15 L 143.45 177.46 L 145.79 173.67 L 148.12 172.72 L 150.46 169.58 L 152.80 173.65 L 155.14 187.93 L 157.47 194.35 L 159.81 186.77 L 162.15 180.48 L 164.49 176.32 L 166.82 164.70 L 169.16 159.72 L 171.50 175.32 L 173.84 191.67 L 176.17 192.23 L 178.51 190.83 L 180.85 190.27 L 183.19 174.65 L 185.52 156.05 L 187.86 160.61 L 190.20 177.34 L 192.54 184.10 L 194.87 190.15 L 197.21 200.26 L 199.55 192.70 L 201.89 169.12 L 204.22 159.80 L 206.56 166.87 L 208.90 170.63 L 211.24 176.94 L 213.57 194.31 L 215.91 200.95 L 218.25 185.97 L 220.59 172.38 L 222.92 170.45 L 225.26 167.01 L 227.60 165.87 L 229.94 179.19 L 232.28 192.84 L 234.61 190.55 L 236.95 182.97 L 239.29 180.13 L 241.62 174.76 L 243.96 168.38 L 246.30 171.96 L 248.64 180.81 L 250.97 183.51 L 253.31 182.30 L 255.65 182.07 L 257.99 180.23 L 260.32 177.51 L 262.66 177.73 L 265.00 179.00" fill="none" stroke="#12639b" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 124.75 207.5 L 124.75 232" fill="none" stroke="#12639b" stroke-width="1" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<path d="M 265.0 207.5 L 265.0 232" fill="none" stroke="#12639b" stroke-width="1" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<text x="194.875" y="244" fill="#12639b" font-size="22" font-weight="700" text-anchor="middle">닦아</text>
+<rect x="337.25" y="150.5" width="148.75" height="57" fill="#dcebf2" stroke="#11634b" stroke-width="1" stroke-dasharray="none" opacity="1"/>
+<path d="M 337.25 179.00 L 339.73 177.88 L 342.21 177.31 L 344.69 178.83 L 347.17 180.34 L 349.65 182.83 L 352.12 184.44 L 354.60 178.32 L 357.08 169.43 L 359.56 171.36 L 362.04 180.93 L 364.52 185.48 L 367.00 186.71 L 369.48 186.80 L 371.96 176.36 L 374.44 162.15 L 376.92 166.64 L 379.40 185.21 L 381.88 192.68 L 384.35 188.49 L 386.83 184.37 L 389.31 173.47 L 391.79 158.51 L 394.27 164.68 L 396.75 189.58 L 399.23 199.28 L 401.71 188.31 L 404.19 178.54 L 406.67 170.35 L 409.15 159.49 L 411.62 166.19 L 414.10 192.19 L 416.58 202.59 L 419.06 186.72 L 421.54 172.13 L 424.02 168.04 L 426.50 164.22 L 428.98 170.54 L 431.46 192.07 L 433.94 201.07 L 436.42 184.34 L 438.90 168.17 L 441.38 167.69 L 443.85 170.56 L 446.33 175.84 L 448.81 189.32 L 451.29 195.05 L 453.77 181.83 L 456.25 168.62 L 458.73 170.10 L 461.21 176.03 L 463.69 179.61 L 466.17 184.80 L 468.65 186.65 L 471.13 179.82 L 473.60 173.58 L 476.08 175.23 L 478.56 178.81 L 481.04 179.76 L 483.52 179.71 L 486.00 179.00" fill="none" stroke="#11634b" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 337.25 207.5 L 337.25 232" fill="none" stroke="#11634b" stroke-width="1" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<path d="M 486.0 207.5 L 486.0 232" fill="none" stroke="#11634b" stroke-width="1" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<text x="411.625" y="244" fill="#11634b" font-size="22" font-weight="700" text-anchor="middle">확인</text>
+<path d="M 61 179 L 571.0 179" fill="none" stroke="#7196a7" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 61 224 L 571.0 224" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 61 224 L 61 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="61" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.0</text>
+<path d="M 146.0 224 L 146.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="146.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.2</text>
+<path d="M 231.0 224 L 231.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="231.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.4</text>
+<path d="M 316.0 224 L 316.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="316.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.6</text>
+<path d="M 401.0 224 L 401.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="401.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0.8</text>
+<path d="M 486.0 224 L 486.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="486.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">1.0</text>
+<path d="M 571.0 224 L 571.0 231" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="571.0" y="270" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">1.2</text>
+<text x="591" y="270" fill="#4e6478" font-size="19" font-weight="700" text-anchor="start">s</text>
+<text x="61" y="109" fill="#18344a" font-size="21" font-weight="700" text-anchor="start">영상</text>
+<text x="519" y="143" fill="#18344a" font-size="21" font-weight="700" text-anchor="start">음성</text>
+<path d="M 61 118 L 571.0 118" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="401.0" cy="118" r="6" fill="#a24d12"/>
+<path d="M 401.0 118 L 401.0 222" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<text x="401.0" y="89" fill="#a24d12" font-size="23" font-weight="700" text-anchor="middle">불 켜짐 0.80 s</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "음성 구간",
+    "title": "발화는 시작과 끝 시간을 가진 구간입니다",
+    "body": "파형에서 음성이 있는 곳을 두 구간으로 표시합니다. 이 예의 ‘닦아’는 0.15–0.48 s, ‘확인’은 0.65–1.00 s입니다.",
+    "takeaway": "두 파형 묶음의 양끝이 시간축 위의 시작·끝과 일치합니다.",
+    "example": [
+      "녹음 0–1.20 s",
+      "시작·끝 표시",
+      "0.15–0.48 s · 0.65–1.00 s"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "음성 구간",
+      "description": "두 파형 묶음의 양끝이 시간축 위의 시작·끝과 일치합니다.",
+      "figure": "figure-speech-segment-alignment-1"
+    },
+    "quiz": [
+      "음성 0.30–0.55 s의 길이는?",
+      "0.25 s",
+      "0.85 s",
+      "끝에서 시작을 뺍니다."
+    ]
+  },
+  {
+    "label": "영상 사건 맞추기",
+    "title": "같은 원점을 쓰면 어느 발화 때 사건이 있었는지 보입니다",
+    "body": "영상에서 점검 불이 켜진 시각은 0.80 s입니다. 녹화 시작을 공통 0 s로 쓰면 0.80 s가 ‘확인’ 사이에 들어갑니다.",
+    "takeaway": "영상의 불 켜짐에서 내려온 0.80 s 선이 ‘확인’ 파형과 만납니다.",
+    "example": [
+      "공통 시간 원점",
+      "불 켜짐 0.80 s",
+      "확인 발화와 겹침"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "영상 사건 맞추기",
+      "description": "영상의 불 켜짐에서 내려온 0.80 s 선이 ‘확인’ 파형과 만납니다.",
+      "figure": "figure-speech-segment-alignment-2"
+    },
+    "quiz": [
+      "영상 사건이 0.56 s에 발생했습니다. 어느 음성 구간에 속할까요?",
+      "두 발화 사이",
+      "확인 중",
+      "0.48보다 뒤이고 0.65보다 앞입니다."
+    ]
+  }
+];
+const slug = 'speech-segment-alignment';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

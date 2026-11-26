@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="영상 속 움직임에서 카메라 흔들림을 어떻게 덜어 낼까요?">
+<title>카메라 흔들림과 광류 · C23</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./camera-motion-optical-flow.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C23</p><h1>카메라 흔들림과 광류</h1><p>영상 속 움직임에서 카메라 흔들림을 어떻게 덜어 낼까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">카메라 흔들림과 광류</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-camera-motion-optical-flow-1"><svg><g>
+<text x="39" y="80" fill="#18344a" font-size="22" font-weight="700" text-anchor="start">이전 + 관측 = 다음</text>
+<text x="37" y="131" fill="#4e6478" font-size="23" font-weight="700" text-anchor="start">B1</text>
+<path d="M 95 124 L 383 124" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 95 120 L 95 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 120 L 131 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 167 120 L 167 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 203 120 L 203 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 239 120 L 239 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 275 120 L 275 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 311 120 L 311 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 347 120 L 347 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 383 120 L 383 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="131" cy="124" r="5" fill="#4e6478"/>
+<path d="M 131 124 L 239 124" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="239,124 229.24,129.08 229.24,118.92" fill="#4e6478" stroke="none" stroke-width="2"/>
+<text x="400" y="131" fill="#4e6478" font-size="23" font-weight="700" text-anchor="start">1 + 3 = 4 px</text>
+<text x="37" y="183" fill="#4e6478" font-size="23" font-weight="700" text-anchor="start">B2</text>
+<path d="M 95 176 L 383 176" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 95 172 L 95 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 172 L 131 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 167 172 L 167 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 203 172 L 203 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 239 172 L 239 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 275 172 L 275 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 311 172 L 311 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 347 172 L 347 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 383 172 L 383 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="167" cy="176" r="5" fill="#4e6478"/>
+<path d="M 167 176 L 275 176" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="275,176 265.24,181.08 265.24,170.92" fill="#4e6478" stroke="none" stroke-width="2"/>
+<text x="400" y="183" fill="#4e6478" font-size="23" font-weight="700" text-anchor="start">2 + 3 = 5 px</text>
+<text x="37" y="235" fill="#12639b" font-size="23" font-weight="700" text-anchor="start">P</text>
+<path d="M 95 228 L 383 228" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 95 224 L 95 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 224 L 131 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 167 224 L 167 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 203 224 L 203 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 239 224 L 239 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 275 224 L 275 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 311 224 L 311 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 347 224 L 347 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 383 224 L 383 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="203" cy="228" r="5" fill="#12639b"/>
+<path d="M 203 228 L 383 228" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="383,228 373.24,233.08 373.24,222.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<text x="400" y="235" fill="#12639b" font-size="23" font-weight="700" text-anchor="start">3 + 5 = 8 px</text>
+<text x="95" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0</text>
+<text x="131" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">1</text>
+<text x="167" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">2</text>
+<text x="203" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">3</text>
+<text x="239" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">4</text>
+<text x="275" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">5</text>
+<text x="311" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">6</text>
+<text x="347" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">7</text>
+<text x="383" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">8</text>
+<text x="404" y="267" fill="#4e6478" font-size="21" font-weight="700" text-anchor="start">x (px)</text>
+</g></svg></template>
+<template id="figure-camera-motion-optical-flow-2"><svg><g>
+<text x="39" y="80" fill="#18344a" font-size="22" font-weight="700" text-anchor="start">관측 − 배경 = 잔차</text>
+<text x="37" y="131" fill="#4e6478" font-size="23" font-weight="700" text-anchor="start">B1</text>
+<path d="M 95 124 L 383 124" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 95 120 L 95 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 120 L 131 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 167 120 L 167 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 203 120 L 203 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 239 120 L 239 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 275 120 L 275 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 311 120 L 311 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 347 120 L 347 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 383 120 L 383 128" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="131" cy="124" r="5" fill="#4e6478"/>
+<path d="M 131 137 L 239 137" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<polygon points="239,137 229.24,142.08 229.24,131.92" fill="#4e6478" stroke="none" stroke-width="2"/>
+<text x="400" y="131" fill="#4e6478" font-size="23" font-weight="700" text-anchor="start">3 − 3 = 0 px</text>
+<text x="37" y="183" fill="#4e6478" font-size="23" font-weight="700" text-anchor="start">B2</text>
+<path d="M 95 176 L 383 176" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 95 172 L 95 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 172 L 131 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 167 172 L 167 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 203 172 L 203 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 239 172 L 239 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 275 172 L 275 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 311 172 L 311 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 347 172 L 347 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 383 172 L 383 180" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="167" cy="176" r="5" fill="#4e6478"/>
+<path d="M 167 189 L 275 189" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<polygon points="275,189 265.24,194.08 265.24,183.92" fill="#4e6478" stroke="none" stroke-width="2"/>
+<text x="400" y="183" fill="#4e6478" font-size="23" font-weight="700" text-anchor="start">3 − 3 = 0 px</text>
+<text x="37" y="235" fill="#12639b" font-size="23" font-weight="700" text-anchor="start">P</text>
+<path d="M 95 228 L 383 228" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 95 224 L 95 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 224 L 131 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 167 224 L 167 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 203 224 L 203 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 239 224 L 239 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 275 224 L 275 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 311 224 L 311 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 347 224 L 347 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 383 224 L 383 232" fill="none" stroke="#a0b1bc" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="203" cy="228" r="5" fill="#12639b"/>
+<path d="M 203 228 L 275 228" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="275,228 265.24,233.08 265.24,222.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<path d="M 203 241 L 383 241" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<polygon points="383,241 373.24,246.08 373.24,235.92" fill="#4e6478" stroke="none" stroke-width="2"/>
+<text x="400" y="235" fill="#12639b" font-size="23" font-weight="700" text-anchor="start">5 − 3 = +2 px</text>
+<text x="95" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0</text>
+<text x="131" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">1</text>
+<text x="167" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">2</text>
+<text x="203" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">3</text>
+<text x="239" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">4</text>
+<text x="275" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">5</text>
+<text x="311" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">6</text>
+<text x="347" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">7</text>
+<text x="383" y="267" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">8</text>
+<text x="404" y="267" fill="#4e6478" font-size="21" font-weight="700" text-anchor="start">x (px)</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "관측 흐름",
+    "title": "광류는 영상 좌표에서 보이는 이동입니다",
+    "body": "카메라가 흔들려 두 배경 점이 모두 오른쪽 3 px 이동합니다. 부품 점 P의 관측 이동은 오른쪽 5 px입니다.",
+    "takeaway": "같은 눈금에서 B1·B2의 +3 화살표와 P의 +5 화살표를 비교합니다.",
+    "example": [
+      "B1 · B2 · P",
+      "다음 위치 − 이전 위치",
+      "+3 · +3 · +5 px"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "관측 흐름",
+      "description": "같은 눈금에서 B1·B2의 +3 화살표와 P의 +5 화살표를 비교합니다.",
+      "figure": "figure-camera-motion-optical-flow-1"
+    },
+    "quiz": [
+      "프레임 간 점 x=10이 x=7이 됐습니다. 관측 흐름은?",
+      "−3 px",
+      "+3 px",
+      "다음 위치에서 이전 위치를 뺍니다."
+    ]
+  },
+  {
+    "label": "공통 흐름 빼기",
+    "title": "배경 이동을 빼면 부품의 잔차 이동이 남습니다",
+    "body": "이 예에서는 영상 전체의 카메라 이동 성분을 +3 px로 근사합니다. 부품의 잔차는 관측 +5에서 +3을 뺀 +2입니다.",
+    "takeaway": "보정 뒤 배경 두 점은 0, 부품 P만 오른쪽 2 px를 가리킵니다.",
+    "example": [
+      "B1 · B2 · P",
+      "관측 − 배경 3 px",
+      "0 · 0 · +2 px"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "공통 흐름 빼기",
+      "description": "보정 뒤 배경 두 점은 0, 부품 P만 오른쪽 2 px를 가리킵니다.",
+      "figure": "figure-camera-motion-optical-flow-2"
+    },
+    "quiz": [
+      "배경 흐름이 −2 px, 부품 관측 흐름은 +1 px라면 잔차는?",
+      "+3 px",
+      "−1 px",
+      "관측에서 배경을 뺍니다. +1−(−2)=+3입니다."
+    ]
+  }
+];
+const slug = 'camera-motion-optical-flow';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="상자 두 개에서 겹친 칸은 전체의 몇 분의 몇일까요?">
+<title>겹침 비율 IoU 계산 · C12</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./intersection-over-union.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C12</p><h1>겹침 비율 IoU 계산</h1><p>상자 두 개에서 겹친 칸은 전체의 몇 분의 몇일까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">겹침 비율 IoU 계산</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-intersection-over-union-1"><svg><g>
+<rect x="42" y="100" width="228" height="152" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="80" y="138" width="38" height="38" fill="#e9eff3" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="138" width="38" height="38" fill="#e9eff3" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="156" y="138" width="38" height="38" fill="#e9eff3" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="194" y="138" width="38" height="38" fill="#e9eff3" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="80" y="176" width="38" height="38" fill="#e9eff3" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="176" width="38" height="38" fill="#e9eff3" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="156" y="176" width="38" height="38" fill="#e9eff3" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="194" y="176" width="38" height="38" fill="#e9eff3" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="138" width="38" height="38" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="156" y="138" width="38" height="38" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="176" width="38" height="38" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="156" y="176" width="38" height="38" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 42 100 L 42 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 80 100 L 80 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 118 100 L 118 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 156 100 L 156 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 194 100 L 194 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 232 100 L 232 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 270 100 L 270 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 100 L 270 100" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 138 L 270 138" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 176 L 270 176" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 214 L 270 214" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 252 L 270 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="137.0" y="163.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">1</text>
+<text x="175.0" y="163.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">2</text>
+<text x="137.0" y="201.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">3</text>
+<text x="175.0" y="201.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">4</text>
+<rect x="80" y="138" width="114" height="76" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="138" width="114" height="76" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="5 4" opacity="1"/>
+<text x="64" y="87" fill="#11634b" font-size="22" font-weight="700" text-anchor="start">G · 정답</text>
+<text x="299" y="87" fill="#a24d12" font-size="22" font-weight="700" text-anchor="start">P · 예측</text>
+<text x="317" y="158" fill="#18344a" font-size="22" font-weight="700" text-anchor="start">공통 너비 × 높이</text>
+<text x="317" y="207" fill="#12639b" font-size="29" font-weight="700" text-anchor="start">2 × 2 = 4</text>
+</g></svg></template>
+<template id="figure-intersection-over-union-2"><svg><g>
+<rect x="42" y="100" width="228" height="152" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="80" y="138" width="38" height="38" fill="#d9e5eb" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="138" width="38" height="38" fill="#d9e5eb" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="156" y="138" width="38" height="38" fill="#d9e5eb" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="194" y="138" width="38" height="38" fill="#d9e5eb" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="80" y="176" width="38" height="38" fill="#d9e5eb" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="176" width="38" height="38" fill="#d9e5eb" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="156" y="176" width="38" height="38" fill="#d9e5eb" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="194" y="176" width="38" height="38" fill="#d9e5eb" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="138" width="38" height="38" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="156" y="138" width="38" height="38" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="176" width="38" height="38" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="156" y="176" width="38" height="38" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 42 100 L 42 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 80 100 L 80 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 118 100 L 118 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 156 100 L 156 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 194 100 L 194 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 232 100 L 232 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 270 100 L 270 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 100 L 270 100" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 138 L 270 138" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 176 L 270 176" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 214 L 270 214" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 42 252 L 270 252" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="99.0" y="163.84" fill="#18344a" font-size="21.659999999999997" font-weight="700" text-anchor="middle">1</text>
+<text x="137.0" y="163.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">2</text>
+<text x="175.0" y="163.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">3</text>
+<text x="213.0" y="163.84" fill="#18344a" font-size="21.659999999999997" font-weight="700" text-anchor="middle">4</text>
+<text x="99.0" y="201.84" fill="#18344a" font-size="21.659999999999997" font-weight="700" text-anchor="middle">5</text>
+<text x="137.0" y="201.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">6</text>
+<text x="175.0" y="201.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">7</text>
+<text x="213.0" y="201.84" fill="#18344a" font-size="21.659999999999997" font-weight="700" text-anchor="middle">8</text>
+<rect x="80" y="138" width="114" height="76" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="118" y="138" width="114" height="76" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="5 4" opacity="1"/>
+<text x="64" y="87" fill="#11634b" font-size="22" font-weight="700" text-anchor="start">G · 정답</text>
+<text x="299" y="87" fill="#a24d12" font-size="22" font-weight="700" text-anchor="start">P · 예측</text>
+<text x="317" y="141" fill="#18344a" font-size="24" font-weight="700" text-anchor="start">합집합</text>
+<text x="317" y="180" fill="#18344a" font-size="26" font-weight="700" text-anchor="start">6 + 6 − 4 = 8</text>
+<text x="317" y="229" fill="#12639b" font-size="29" font-weight="700" text-anchor="start">IoU = 4/8 = 0.50</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "교집합",
+    "title": "교집합에는 두 상자가 함께 덮은 칸만 남습니다",
+    "body": "정답 G와 예측 P는 각각 3×2칸입니다. P가 한 칸 오른쪽에 있어 가운데 2×2만 겹칩니다.",
+    "takeaway": "두 외곽선 사이에서 겹친 네 칸을 찾습니다.",
+    "example": [
+      "G 6칸 · P 6칸",
+      "공통 2×2",
+      "교집합 4칸"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "교집합",
+      "description": "두 외곽선 사이에서 겹친 네 칸을 찾습니다.",
+      "figure": "figure-intersection-over-union-1"
+    },
+    "quiz": [
+      "두 상자가 너비 1칸, 높이 3칸만큼 겹칩니다. 교집합은?",
+      "3칸",
+      "4칸",
+      "겹친 직사각형의 폭과 높이를 곱합니다."
+    ]
+  },
+  {
+    "label": "합집합과 비율",
+    "title": "합집합은 겹친 칸을 한 번만 셉니다",
+    "body": "어느 쪽 상자에든 속한 칸은 8개입니다. 교집합 4를 합집합 8로 나누면 IoU는 0.50입니다.",
+    "takeaway": "번호가 붙은 합집합 8칸 중, 파란 4칸이 분자에 들어갑니다.",
+    "example": [
+      "G 6칸 · P 6칸",
+      "6 + 6 − 4 = 8",
+      "IoU 4/8"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "합집합과 비율",
+      "description": "번호가 붙은 합집합 8칸 중, 파란 4칸이 분자에 들어갑니다.",
+      "figure": "figure-intersection-over-union-2"
+    },
+    "quiz": [
+      "각각 8칸인 상자 둘이 4칸 겹칩니다. IoU는?",
+      "4/12",
+      "4/16",
+      "합집합에서는 겹친 4칸을 한 번만 셉니다."
+    ]
+  }
+];
+const slug = 'intersection-over-union';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

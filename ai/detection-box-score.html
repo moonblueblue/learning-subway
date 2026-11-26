@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="검출기의 위치와 점수를 각각 어떻게 읽을까요?">
+<title>검출기의 상자와 점수 · C11</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./detection-box-score.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C11</p><h1>검출기의 상자와 점수</h1><p>검출기의 위치와 점수를 각각 어떻게 읽을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">검출기의 상자와 점수</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-detection-box-score-1"><svg><g>
+<rect x="91" y="115" width="232" height="145" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="91" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="294" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="91" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="294" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="91" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="294" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="144" width="29" height="29" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="202" width="29" height="29" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="144" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="144" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="173" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="173" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="202" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 91 115 L 91 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 120 115 L 120 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 149 115 L 149 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 178 115 L 178 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 207 115 L 207 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 236 115 L 236 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 265 115 L 265 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 294 115 L 294 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 323 115 L 323 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 115 L 323 115" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 144 L 323 144" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 173 L 323 173" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 202 L 323 202" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 231 L 323 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 260 L 323 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="149" y="144" width="87" height="87" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="115" width="58" height="58" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<path d="M 149 231 L 77 231" fill="none" stroke="#12639b" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="22" y="238" fill="#12639b" font-size="24" font-weight="700" text-anchor="start">P</text>
+<path d="M 294 144 L 356 144" fill="none" stroke="#a24d12" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="366" y="152" fill="#a24d12" font-size="24" font-weight="700" text-anchor="start">Q</text>
+<text x="415" y="130" fill="#12639b" font-size="26" font-weight="700" text-anchor="start">P · 0.86</text>
+<text x="415" y="202" fill="#a24d12" font-size="26" font-weight="700" text-anchor="start">Q · 0.34</text>
+</g></svg></template>
+<template id="figure-detection-box-score-2"><svg><g>
+<rect x="91" y="115" width="232" height="145" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="115" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="91" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="294" y="144" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="91" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="294" y="173" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="91" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="294" y="202" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="231" width="29" height="29" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="265" y="144" width="29" height="29" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="120" y="202" width="29" height="29" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="149" y="144" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="144" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="178" y="173" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="173" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="207" y="202" width="29" height="29" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 91 115 L 91 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 120 115 L 120 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 149 115 L 149 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 178 115 L 178 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 207 115 L 207 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 236 115 L 236 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 265 115 L 265 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 294 115 L 294 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 323 115 L 323 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 115 L 323 115" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 144 L 323 144" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 173 L 323 173" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 202 L 323 202" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 231 L 323 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 91 260 L 323 260" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="149" y="144" width="87" height="87" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="236" y="115" width="58" height="58" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="5 4" opacity="1"/>
+<path d="M 149 231 L 77 231" fill="none" stroke="#12639b" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="22" y="238" fill="#12639b" font-size="24" font-weight="700" text-anchor="start">P</text>
+<path d="M 294 144 L 356 144" fill="none" stroke="#a24d12" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<text x="366" y="152" fill="#a24d12" font-size="24" font-weight="700" text-anchor="start">Q</text>
+<text x="398" y="95" fill="#18344a" font-size="23" font-weight="700" text-anchor="start">문턱 0.50</text>
+<text x="413" y="140" fill="#12639b" font-size="24" font-weight="700" text-anchor="start">0.86 ≥ 0.50</text>
+<text x="413" y="173" fill="#12639b" font-size="22" font-weight="700" text-anchor="start">P 유지</text>
+<text x="413" y="217" fill="#a24d12" font-size="24" font-weight="700" text-anchor="start">0.34 &lt; 0.50</text>
+<text x="413" y="250" fill="#a24d12" font-size="22" font-weight="700" text-anchor="start">Q 제외</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "후보 두 개",
+    "title": "각 후보는 영역과 점수를 가집니다",
+    "body": "검사기에서 같은 영상 위에 후보 P와 Q를 내놓습니다. 점수 0.86, 0.34는 각 후보를 불량으로 볼 정도입니다.",
+    "takeaway": "P와 Q의 선이 다른 위치를 가리키고 각각 점수가 붙습니다.",
+    "example": [
+      "부품 A 후보",
+      "상자별 점수",
+      "P 0.86 · Q 0.34"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "후보 두 개",
+      "description": "P와 Q의 선이 다른 위치를 가리키고 각각 점수가 붙습니다.",
+      "figure": "figure-detection-box-score-1"
+    },
+    "quiz": [
+      "검출기가 높은 점수를 냈습니다. 상자의 정확한 위치를 검증하려면?",
+      "정답 영역과 비교",
+      "점수만 읽기",
+      "위치 정확도는 정답과의 겹침으로 따로 평가합니다."
+    ]
+  },
+  {
+    "label": "점수 문턱",
+    "title": "점수 문턱은 상자 좌표를 옮기지 않습니다",
+    "body": "점수가 0.50 이상일 때만 결과로 내보냅니다. P는 좌표 그대로 통과하고 Q는 지워집니다.",
+    "takeaway": "같은 영상에서 P 실선은 유지되고, Q는 점선과 0.34\u003c0.50 표기로 남습니다.",
+    "example": [
+      "P 0.86 · Q 0.34",
+      "≥ 0.50",
+      "P만 유지"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "점수 문턱",
+      "description": "같은 영상에서 P 실선은 유지되고, Q는 점선과 0.34\u003c0.50 표기로 남습니다.",
+      "figure": "figure-detection-box-score-2"
+    },
+    "quiz": [
+      "문턱이 0.70이고 후보가 정확히 0.70입니다. 규칙이 ≥이면?",
+      "통과",
+      "제거",
+      "≥는 경계값을 포함합니다."
+    ]
+  }
+];
+const slug = 'detection-box-score';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

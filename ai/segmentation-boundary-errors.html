@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="어느 경계에서 예측이 빠지고 늘었을까요?">
+<title>픽셀별 분할과 경계 오류 · C14</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./segmentation-boundary-errors.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C14</p><h1>픽셀별 분할과 경계 오류</h1><p>어느 경계에서 예측이 빠지고 늘었을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">픽셀별 분할과 경계 오류</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-segmentation-boundary-errors-1"><svg><g>
+<text x="142" y="90" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">정답 마스크</text>
+<rect x="30" y="107" width="224" height="140" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="86" y="135" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="114" y="135" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="114" y="163" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="142" y="163" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="142" y="191" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 30 107 L 30 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 58 107 L 58 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 86 107 L 86 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 114 107 L 114 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 142 107 L 142 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 170 107 L 170 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 198 107 L 198 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 226 107 L 226 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 254 107 L 254 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 107 L 254 107" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 135 L 254 135" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 163 L 254 163" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 191 L 254 191" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 219 L 254 219" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 247 L 254 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="142" y="191" width="28" height="28" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="142" y="135" width="28" height="28" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="5 4" opacity="1"/>
+<text x="481" y="90" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">예측 마스크</text>
+<rect x="369" y="107" width="224" height="140" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="425" y="135" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="453" y="135" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="453" y="163" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="481" y="163" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="481" y="135" width="28" height="28" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 369 107 L 369 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 397 107 L 397 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 425 107 L 425 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 453 107 L 453 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 481 107 L 481 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 509 107 L 509 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 537 107 L 537 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 565 107 L 565 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 593 107 L 593 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 369 107 L 593 107" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 369 135 L 593 135" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 369 163 L 593 163" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 369 191 L 593 191" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 369 219 L 593 219" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 369 247 L 593 247" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="481" y="191" width="28" height="28" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="5 4" opacity="1"/>
+<rect x="481" y="135" width="28" height="28" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<path d="M 271 174 L 350 174" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="350,174 340.24,179.08 340.24,168.92" fill="#12639b" stroke="none" stroke-width="2"/>
+</g></svg></template>
+<template id="figure-segmentation-boundary-errors-2"><svg><g>
+<rect x="39" y="103" width="240" height="150" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="99" y="133" width="30" height="30" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="129" y="133" width="30" height="30" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="129" y="163" width="30" height="30" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="159" y="163" width="30" height="30" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="159" y="193" width="30" height="30" fill="#f5d8c5" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="159" y="133" width="30" height="30" fill="#cfe8df" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 39 103 L 39 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 69 103 L 69 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 99 103 L 99 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 129 103 L 129 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 159 103 L 159 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 189 103 L 189 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 219 103 L 219 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 249 103 L 249 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 279 103 L 279 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 39 103 L 279 103" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 39 133 L 279 133" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 39 163 L 279 163" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 39 193 L 279 193" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 39 223 L 279 223" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 39 253 L 279 253" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="114.0" y="153.4" fill="#fff" font-size="17.099999999999998" font-weight="700" text-anchor="middle">•</text>
+<text x="144.0" y="153.4" fill="#fff" font-size="17.099999999999998" font-weight="700" text-anchor="middle">•</text>
+<text x="144.0" y="183.4" fill="#fff" font-size="17.099999999999998" font-weight="700" text-anchor="middle">•</text>
+<text x="174.0" y="183.4" fill="#fff" font-size="17.099999999999998" font-weight="700" text-anchor="middle">•</text>
+<text x="174.0" y="213.4" fill="#a24d12" font-size="17.099999999999998" font-weight="700" text-anchor="middle">−</text>
+<text x="174.0" y="153.4" fill="#11634b" font-size="17.099999999999998" font-weight="700" text-anchor="middle">+</text>
+<text x="159" y="88" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">정답과 예측</text>
+<text x="320" y="115" fill="#12639b" font-size="24" font-weight="700" text-anchor="start">• 겹침 4</text>
+<text x="320" y="153" fill="#11634b" font-size="24" font-weight="700" text-anchor="start">+ 과검출 1</text>
+<text x="320" y="192" fill="#a24d12" font-size="24" font-weight="700" text-anchor="start">− 누락 1</text>
+<text x="320" y="239" fill="#18344a" font-size="25" font-weight="700" text-anchor="start">IoU = 4 / (4+1+1)</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "마스크 대조",
+    "title": "겹친 경계와 빠진 경계를 같은 격자에서 찾습니다",
+    "body": "정답 5픽셀 중 예측이 4픽셀을 맞혔습니다. 예측은 아래 끝 한 칸을 빼고 위쪽에 한 칸을 더 칠했습니다.",
+    "takeaway": "왼쪽 정답 격자와 오른쪽 예측 격자의 위·아래 모서리를 비교합니다.",
+    "example": [
+      "정답 5칸 · 예측 5칸",
+      "경계 대조",
+      "위 +1 · 아래 −1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "마스크 대조",
+      "description": "왼쪽 정답 격자와 오른쪽 예측 격자의 위·아래 모서리를 비교합니다.",
+      "figure": "figure-segmentation-boundary-errors-1"
+    },
+    "quiz": [
+      "실제 결함 픽셀을 예측이 0으로 냈다면 무엇인가요?",
+      "미검출 픽셀",
+      "과검출 픽셀",
+      "정답 양성인데 예측에서 빠졌습니다."
+    ]
+  },
+  {
+    "label": "위치로 오류 분리",
+    "title": "누락은 아래 하나, 과검출은 위 하나입니다",
+    "body": "정답과 예측을 한 장에 겹치면 오류의 위치를 함께 읽을 수 있습니다. 픽셀 IoU는 겹친 4를 합친 6으로 나눈 값입니다.",
+    "takeaway": "겹친 칸의 점, 빠진 칸의 −, 추가된 칸의 +를 셉니다.",
+    "example": [
+      "겹친 4칸",
+      "합집합 4+1+1",
+      "IoU 4/6"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "위치로 오류 분리",
+      "description": "겹친 칸의 점, 빠진 칸의 −, 추가된 칸의 +를 셉니다.",
+      "figure": "figure-segmentation-boundary-errors-2"
+    },
+    "quiz": [
+      "겹친 픽셀 9개, 빠진 2개, 더한 1개가 있습니다. 픽셀 IoU는?",
+      "9/12",
+      "9/10",
+      "합집합은 9+2+1입니다."
+    ]
+  }
+];
+const slug = 'segmentation-boundary-errors';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="가림 뒤의 부품은 어떻게 이전 ID와 연결될까요?">
+<title>가림과 객체 추적 · C22</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./occlusion-object-tracks.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C22</p><h1>가림과 객체 추적</h1><p>가림 뒤의 부품은 어떻게 이전 ID와 연결될까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">가림과 객체 추적</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-occlusion-object-tracks-1"><svg><g>
+<text x="91" y="94" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">t=0</text>
+<rect x="25" y="113" width="133" height="62" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 35 162 L 149 162" fill="none" stroke="#a4b7c5" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 37 159 L 37 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 61 159 L 61 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 85 159 L 85 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 109 159 L 109 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 133 159 L 133 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="40,133 46,127 74,127 81,133 81,153 40,153" fill="#c9d5db" stroke="#12639b" stroke-width="2"/>
+<circle cx="61" cy="140" r="4" fill="#12639b"/>
+<text x="91" y="207" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">x=2</text>
+<text x="91" y="241" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">ID 12</text>
+<text x="239" y="94" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">t=1</text>
+<rect x="173" y="113" width="133" height="62" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 183 162 L 297 162" fill="none" stroke="#a4b7c5" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 185 159 L 185 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 209 159 L 209 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 233 159 L 233 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 257 159 L 257 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 281 159 L 281 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="212,133 218,127 246,127 253,133 253,153 212,153" fill="#c9d5db" stroke="#12639b" stroke-width="2"/>
+<circle cx="233" cy="140" r="4" fill="#12639b"/>
+<text x="239" y="207" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">x=4</text>
+<text x="239" y="241" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">ID 12</text>
+<text x="348" y="143" fill="#18344a" font-size="26" font-weight="700" text-anchor="start">(4−2) / 1</text>
+<text x="348" y="190" fill="#12639b" font-size="27" font-weight="700" text-anchor="start">= +2 px/frame</text>
+</g></svg></template>
+<template id="figure-occlusion-object-tracks-2"><svg><g>
+<text x="91" y="94" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">t=0</text>
+<rect x="25" y="113" width="133" height="62" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 35 162 L 149 162" fill="none" stroke="#a4b7c5" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 37 159 L 37 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 61 159 L 61 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 85 159 L 85 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 109 159 L 109 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 133 159 L 133 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="40,133 46,127 74,127 81,133 81,153 40,153" fill="#c9d5db" stroke="#12639b" stroke-width="2"/>
+<circle cx="61" cy="140" r="4" fill="#12639b"/>
+<text x="91" y="207" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">x=2</text>
+<text x="91" y="241" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">ID 12</text>
+<text x="239" y="94" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">t=1</text>
+<rect x="173" y="113" width="133" height="62" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 183 162 L 297 162" fill="none" stroke="#a4b7c5" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 185 159 L 185 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 209 159 L 209 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 233 159 L 233 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 257 159 L 257 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 281 159 L 281 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="212,133 218,127 246,127 253,133 253,153 212,153" fill="#c9d5db" stroke="#12639b" stroke-width="2"/>
+<circle cx="233" cy="140" r="4" fill="#12639b"/>
+<text x="239" y="207" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">x=4</text>
+<text x="239" y="241" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">ID 12</text>
+<text x="387" y="94" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">t=2</text>
+<rect x="321" y="113" width="133" height="62" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 331 162 L 445 162" fill="none" stroke="#a4b7c5" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 333 159 L 333 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 357 159 L 357 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 381 159 L 381 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 405 159 L 405 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 429 159 L 429 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="379" y="121" width="52" height="37" fill="#8494a0" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="382" y="126" width="40" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="5 4" opacity="1"/>
+<text x="387" y="207" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">x=6</text>
+<text x="387" y="241" fill="#a24d12" font-size="21" font-weight="700" text-anchor="middle">예측</text>
+<text x="548" y="155" fill="#a24d12" font-size="22" font-weight="700" text-anchor="middle">4 + 2 = 6</text>
+</g></svg></template>
+<template id="figure-occlusion-object-tracks-3"><svg><g>
+<text x="91" y="94" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">t=0</text>
+<rect x="25" y="113" width="133" height="62" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 35 162 L 149 162" fill="none" stroke="#a4b7c5" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 37 159 L 37 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 61 159 L 61 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 85 159 L 85 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 109 159 L 109 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 133 159 L 133 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="40,133 46,127 74,127 81,133 81,153 40,153" fill="#c9d5db" stroke="#12639b" stroke-width="2"/>
+<circle cx="61" cy="140" r="4" fill="#12639b"/>
+<text x="91" y="207" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">x=2</text>
+<text x="91" y="241" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">ID 12</text>
+<text x="239" y="94" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">t=1</text>
+<rect x="173" y="113" width="133" height="62" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 183 162 L 297 162" fill="none" stroke="#a4b7c5" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 185 159 L 185 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 209 159 L 209 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 233 159 L 233 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 257 159 L 257 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 281 159 L 281 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="212,133 218,127 246,127 253,133 253,153 212,153" fill="#c9d5db" stroke="#12639b" stroke-width="2"/>
+<circle cx="233" cy="140" r="4" fill="#12639b"/>
+<text x="239" y="207" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">x=4</text>
+<text x="239" y="241" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">ID 12</text>
+<text x="387" y="94" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">t=2</text>
+<rect x="321" y="113" width="133" height="62" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 331 162 L 445 162" fill="none" stroke="#a4b7c5" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 333 159 L 333 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 357 159 L 357 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 381 159 L 381 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 405 159 L 405 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 429 159 L 429 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<rect x="379" y="121" width="52" height="37" fill="#8494a0" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="382" y="126" width="40" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="5 4" opacity="1"/>
+<text x="387" y="207" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">x=6</text>
+<text x="387" y="241" fill="#a24d12" font-size="21" font-weight="700" text-anchor="middle">예측</text>
+<text x="535" y="94" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">t=3</text>
+<rect x="469" y="113" width="133" height="62" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 479 162 L 593 162" fill="none" stroke="#a4b7c5" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 481 159 L 481 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 505 159 L 505 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 529 159 L 529 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 553 159 L 553 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 577 159 L 577 166" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="556,133 562,127 590,127 597,133 597,153 556,153" fill="#c9d5db" stroke="#12639b" stroke-width="2"/>
+<circle cx="577" cy="140" r="4" fill="#12639b"/>
+<rect x="553" y="124" width="46" height="33" fill="none" stroke="#a24d12" stroke-width="2" stroke-dasharray="5 4" opacity="1"/>
+<text x="535" y="207" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">x=8</text>
+<text x="535" y="241" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">ID 12</text>
+<text x="510" y="271" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">차이 0 ≤ 1 px</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "두 번 관측",
+    "title": "연속 검출로 이동 방향을 추정합니다",
+    "body": "프레임 0에서 부품의 중심 x는 2, 프레임 1에서는 4입니다. 추적기는 이 차이로 속도 +2 px/프레임을 계산합니다.",
+    "takeaway": "두 개의 실선 상자에 같은 ID 12가 있고 중심 경로가 오른쪽으로 향합니다.",
+    "example": [
+      "t=0 x=2 · t=1 x=4",
+      "위치 차이",
+      "+2 px/frame"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "두 번 관측",
+      "description": "두 개의 실선 상자에 같은 ID 12가 있고 중심 경로가 오른쪽으로 향합니다.",
+      "figure": "figure-occlusion-object-tracks-1"
+    },
+    "quiz": [
+      "중심 x가 5에서 8로 한 프레임 사이 바뀌었습니다. 속도는?",
+      "+3 px/frame",
+      "−3 px/frame",
+      "새 중심에서 이전 중심을 뺍니다."
+    ]
+  },
+  {
+    "label": "가려진 한 프레임",
+    "title": "검출이 없어도 추적기는 다음 위치를 예측합니다",
+    "body": "프레임 2의 차폐물 안에는 부품이 보이지 않습니다. 속도를 유지하면 x=4+2=6에 있을 것으로 추정합니다.",
+    "takeaway": "가림 막대 위 점선 상자는 검출이 아니라 ID 12의 예측입니다.",
+    "example": [
+      "t=1 x=4",
+      "가림 · +2",
+      "t=2 예측 x=6"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "가려진 한 프레임",
+      "description": "가림 막대 위 점선 상자는 검출이 아니라 ID 12의 예측입니다.",
+      "figure": "figure-occlusion-object-tracks-2"
+    },
+    "quiz": [
+      "가림이 다음 프레임까지 이어집니다. x=6에서 속도 +2로 한 번 더 예측하면?",
+      "x=8",
+      "x=6",
+      "가림 중에도 이전 속도 가정으로 이동합니다."
+    ]
+  },
+  {
+    "label": "다시 연결",
+    "title": "새 검출이 예측 근처에 나타나면 같은 ID에 붙입니다",
+    "body": "프레임 3의 예측 중심은 8이고 새 검출도 8입니다. 예측과 검출 사이의 거리가 허용 범위 1 px 안이므로 ID 12를 이어 붙입니다.",
+    "takeaway": "같은 프레임의 점선 예측과 실선 관측이 x=8에서 겹칩니다.",
+    "example": [
+      "t=3 예측 x=8",
+      "관측 x=8 · 간격 0",
+      "ID 12 유지"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "다시 연결",
+      "description": "같은 프레임의 점선 예측과 실선 관측이 x=8에서 겹칩니다.",
+      "figure": "figure-occlusion-object-tracks-3"
+    },
+    "quiz": [
+      "예측 x=8, 관측 x=11, 문턱 1 px라면 같은 ID로 붙일까요?",
+      "범위 밖",
+      "같은 ID",
+      "중심 차이는 3 px라서 허용 범위보다 큽니다."
+    ]
+  }
+];
+const slug = 'occlusion-object-tracks';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

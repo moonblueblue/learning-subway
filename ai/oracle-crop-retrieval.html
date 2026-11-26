@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="정답 위치로 다시 검색하면 어느 실패를 분리할 수 있을까요?">
+<title>정답 영역으로 검색 오류 분리 · C19</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./oracle-crop-retrieval.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C19</p><h1>정답 영역으로 검색 오류 분리</h1><p>정답 위치로 다시 검색하면 어느 실패를 분리할 수 있을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">정답 영역으로 검색 오류 분리</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-oracle-crop-retrieval-1"><svg><g>
+<rect x="30" y="111" width="216" height="135" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="30" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="219" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="30" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="219" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="30" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="219" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="138" width="27" height="27" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="192" width="27" height="27" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="138" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="138" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="165" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="165" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="192" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 30 111 L 30 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 57 111 L 57 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 84 111 L 84 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 111 111 L 111 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 138 111 L 138 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 165 111 L 165 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 192 111 L 192 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 219 111 L 219 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 246 111 L 246 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 111 L 246 111" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 138 L 246 138" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 165 L 246 165" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 192 L 246 192" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 219 L 246 219" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 246 L 246 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="138" y="92" fill="#11634b" font-size="23" font-weight="700" text-anchor="middle">정답 지침 S</text>
+<rect x="84" y="138" width="81" height="81" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="111" width="54" height="54" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="5 4" opacity="1"/>
+<text x="214" y="102" fill="#a24d12" font-size="22" font-weight="700" text-anchor="start">P</text>
+<text x="55" y="191" fill="#11634b" font-size="22" font-weight="700" text-anchor="start">G</text>
+<text x="460" y="82" fill="#18344a" font-size="22" font-weight="700" text-anchor="middle">같은 검색기</text>
+<rect x="270" y="117" width="110" height="40" fill="#f1f6f9" stroke="#a24d12" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="325" y="145" fill="#a24d12" font-size="19" font-weight="700" text-anchor="middle">P 잘라내기</text>
+<path d="M 385 138 L 455 138" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="455,138 445.24,143.08 445.24,132.92" fill="#a24d12" stroke="none" stroke-width="2"/>
+<text x="468" y="146" fill="#a24d12" font-size="24" font-weight="700" text-anchor="start">1위 B</text>
+<rect x="270" y="192" width="110" height="40" fill="#f1f6f9" stroke="#11634b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="325" y="220" fill="#11634b" font-size="19" font-weight="700" text-anchor="middle">G 잘라내기</text>
+<path d="M 385 213 L 455 213" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="455,213 445.24,218.08 445.24,207.92" fill="#11634b" stroke="none" stroke-width="2"/>
+<text x="468" y="221" fill="#11634b" font-size="24" font-weight="700" text-anchor="start">1위 S</text>
+<text x="426" y="264" fill="#12639b" font-size="24" font-weight="700" text-anchor="middle">상자 오류</text>
+</g></svg></template>
+<template id="figure-oracle-crop-retrieval-2"><svg><g>
+<rect x="30" y="111" width="216" height="135" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="111" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="30" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="219" y="138" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="30" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="219" y="165" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="30" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="219" y="192" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="138" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="165" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="219" width="27" height="27" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="192" y="138" width="27" height="27" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="57" y="192" width="27" height="27" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="165" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="192" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="165" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="111" y="192" width="27" height="27" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 30 111 L 30 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 57 111 L 57 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 84 111 L 84 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 111 111 L 111 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 138 111 L 138 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 165 111 L 165 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 192 111 L 192 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 219 111 L 219 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 246 111 L 246 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 111 L 246 111" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 138 L 246 138" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 165 L 246 165" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 192 L 246 192" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 219 L 246 219" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 30 246 L 246 246" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="138" y="92" fill="#11634b" font-size="23" font-weight="700" text-anchor="middle">정답 지침 D</text>
+<rect x="84" y="165" width="54" height="54" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="84" y="165" width="54" height="54" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="5 4" opacity="1"/>
+<text x="57" y="199" fill="#12639b" font-size="20" font-weight="700" text-anchor="start">P=G</text>
+<text x="460" y="82" fill="#18344a" font-size="22" font-weight="700" text-anchor="middle">같은 검색기</text>
+<rect x="270" y="117" width="110" height="40" fill="#f1f6f9" stroke="#a24d12" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="325" y="145" fill="#a24d12" font-size="19" font-weight="700" text-anchor="middle">P 잘라내기</text>
+<path d="M 385 138 L 455 138" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="455,138 445.24,143.08 445.24,132.92" fill="#a24d12" stroke="none" stroke-width="2"/>
+<text x="468" y="146" fill="#a24d12" font-size="24" font-weight="700" text-anchor="start">1위 S</text>
+<rect x="270" y="192" width="110" height="40" fill="#f1f6f9" stroke="#11634b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="325" y="220" fill="#11634b" font-size="19" font-weight="700" text-anchor="middle">G 잘라내기</text>
+<path d="M 385 213 L 455 213" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="455,213 445.24,218.08 445.24,207.92" fill="#11634b" stroke="none" stroke-width="2"/>
+<text x="468" y="221" fill="#a24d12" font-size="24" font-weight="700" text-anchor="start">1위 S</text>
+<text x="426" y="264" fill="#12639b" font-size="24" font-weight="700" text-anchor="middle">검색 오류</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "상자가 빗나감",
+    "title": "정답 상자에서 지침을 찾으면 위치 오류를 식별합니다",
+    "body": "흠집 S의 검출 상자 P가 정상 표면을 잡아 B를 검색했습니다. 같은 검색기에 정답 G를 넣으면 흠집용 S가 1위가 됩니다.",
+    "takeaway": "같은 부품의 P와 G에서 나오는 지침이 B에서 S로 바뀝니다. 이 예의 최초 오류는 상자입니다.",
+    "example": [
+      "흠집 · 기대 S",
+      "P를 G로 교체",
+      "B → S · 위치 오류"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "상자가 빗나감",
+      "description": "같은 부품의 P와 G에서 나오는 지침이 B에서 S로 바뀝니다. 이 예의 최초 오류는 상자입니다.",
+      "figure": "figure-oracle-crop-retrieval-1"
+    },
+    "quiz": [
+      "예측 상자가 없지만 정답 상자에서 지침 1위가 맞았습니다. 최초 실패는?",
+      "검출",
+      "검색",
+      "정답 영역이 주어지면 검색기가 지침을 맞혔습니다."
+    ]
+  },
+  {
+    "label": "올바른 위치의 검색 오류",
+    "title": "정답 위치에서도 틀리면 검색 실패가 남습니다",
+    "body": "찍힘 D에서는 P와 G가 겹칩니다. 두 위치에서 모두 흠집 지침 S가 나옵니다. 올바른 지침은 D입니다.",
+    "takeaway": "두 경로에서 같은 잘라내기를 읽으므로 S가 그대로 1위입니다.",
+    "example": [
+      "찍힘 · 기대 D",
+      "P와 G 일치",
+      "S → S · 검색 오류"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "올바른 위치의 검색 오류",
+      "description": "두 경로에서 같은 잘라내기를 읽으므로 S가 그대로 1위입니다.",
+      "figure": "figure-oracle-crop-retrieval-2"
+    },
+    "quiz": [
+      "예측 상자와 정답 상자에서 모두 첫 문서가 틀렸습니다. 검색기 오류를 셀 근거는 어느 실행인가요?",
+      "정답 상자 재검색",
+      "예측 상자 검색만",
+      "정답 위치로 입력을 고정해도 틀린 결과를 셉니다."
+    ]
+  }
+];
+const slug = 'oracle-crop-retrieval';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

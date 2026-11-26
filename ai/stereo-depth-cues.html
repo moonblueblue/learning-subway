@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 부품의 두 시점 좌표 차이가 깊이와 어떻게 이어질까요?">
+<title>여러 시점의 깊이 단서 · C24</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./stereo-depth-cues.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C24</p><h1>여러 시점의 깊이 단서</h1><p>같은 부품의 두 시점 좌표 차이가 깊이와 어떻게 이어질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">여러 시점의 깊이 단서</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-stereo-depth-cues-1"><svg><g>
+<text x="140" y="83" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">왼쪽 xL (px)</text>
+<rect x="28" y="95" width="240" height="133" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 28 100 L 28 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="30" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0</text>
+<path d="M 88 100 L 88 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="90" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">20</text>
+<path d="M 148 100 L 148 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="150" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">40</text>
+<path d="M 208 100 L 208 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="210" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">60</text>
+<path d="M 268 100 L 268 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="270" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">80</text>
+<path d="M 28 130 L 268 130" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="208" cy="130" r="6" fill="#12639b"/>
+<text x="208" y="117" fill="#12639b" font-size="20" font-weight="700" text-anchor="middle">N 60</text>
+<path d="M 28 191 L 268 191" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="172" cy="191" r="6" fill="#a24d12"/>
+<text x="172" y="178" fill="#a24d12" font-size="20" font-weight="700" text-anchor="middle">F 48</text>
+<text x="446" y="83" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">오른쪽 xR (px)</text>
+<rect x="334" y="95" width="240" height="133" fill="#f1f6f9" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 334 100 L 334 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="336" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">0</text>
+<path d="M 394 100 L 394 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="396" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">20</text>
+<path d="M 454 100 L 454 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="456" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">40</text>
+<path d="M 514 100 L 514 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="516" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">60</text>
+<path d="M 574 100 L 574 228" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="576" y="255" fill="#4e6478" font-size="18" font-weight="700" text-anchor="middle">80</text>
+<path d="M 334 130 L 574 130" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="454" cy="130" r="6" fill="#12639b"/>
+<text x="454" y="117" fill="#12639b" font-size="20" font-weight="700" text-anchor="middle">N 40</text>
+<path d="M 334 191 L 574 191" fill="none" stroke="#bdcbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<circle cx="454" cy="191" r="6" fill="#a24d12"/>
+<text x="454" y="178" fill="#a24d12" font-size="20" font-weight="700" text-anchor="middle">F 40</text>
+<path d="M 276 130 L 324 130" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<polygon points="324,130 314.24,135.08 314.24,124.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<text x="300" y="115" fill="#12639b" font-size="17" font-weight="700" text-anchor="middle">d=20</text>
+<path d="M 276 191 L 324 191" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<polygon points="324,191 314.24,196.08 314.24,185.92" fill="#a24d12" stroke="none" stroke-width="2"/>
+<text x="300" y="176" fill="#a24d12" font-size="17" font-weight="700" text-anchor="middle">d=8</text>
+</g></svg></template>
+<template id="figure-stereo-depth-cues-2"><svg><g>
+<text x="309" y="78" fill="#18344a" font-size="24" font-weight="700" text-anchor="middle">Z = fB/d · fB = 80 px × 0.1 m = 8 px·m</text>
+<path d="M 67 168 L 548 168" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 67.0 162 L 67.0 176" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="67.0" y="195" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">0.0</text>
+<path d="M 155.0 162 L 155.0 176" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="155.0" y="195" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">0.2</text>
+<path d="M 243.0 162 L 243.0 176" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="243.0" y="195" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">0.4</text>
+<path d="M 331.0 162 L 331.0 176" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="331.0" y="195" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">0.6</text>
+<path d="M 419.0 162 L 419.0 176" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="419.0" y="195" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">0.8</text>
+<path d="M 507.0 162 L 507.0 176" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="507.0" y="195" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">1.0</text>
+<text x="558" y="176" fill="#18344a" font-size="21" font-weight="700" text-anchor="start">m</text>
+<circle cx="243.0" cy="168" r="6" fill="#12639b"/>
+<text x="243.0" y="131" fill="#12639b" font-size="25" font-weight="700" text-anchor="middle">N</text>
+<text x="243.0" y="246" fill="#12639b" font-size="23" font-weight="700" text-anchor="middle">8/20 = 0.40 m</text>
+<circle cx="507" cy="168" r="6" fill="#a24d12"/>
+<text x="507" y="131" fill="#a24d12" font-size="25" font-weight="700" text-anchor="middle">F</text>
+<text x="507" y="246" fill="#a24d12" font-size="23" font-weight="700" text-anchor="middle">8/8 = 1.00 m</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "대응 위치",
+    "title": "같은 점은 두 영상에서 같은 높이의 다른 x에 찍힙니다",
+    "body": "평행하게 보정한 두 영상에서 가까운 부품 N은 x가 60과 40 px, 먼 부품 F는 48과 40 px입니다. 두 영상에서 같은 부품의 특징끼리 연결합니다.",
+    "takeaway": "행별 같은 높이에서 N의 시차 20 px가 F의 8 px보다 큽니다.",
+    "example": [
+      "N (60,40) · F (48,40)",
+      "왼쪽 x − 오른쪽 x",
+      "N 20 px · F 8 px"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "대응 위치",
+      "description": "행별 같은 높이에서 N의 시차 20 px가 F의 8 px보다 큽니다.",
+      "figure": "figure-stereo-depth-cues-1"
+    },
+    "quiz": [
+      "왼쪽 x=55, 오른쪽 x=45 px인 대응 점의 시차는?",
+      "10 px",
+      "100 px",
+      "왼쪽 x에서 오른쪽 x를 뺍니다."
+    ]
+  },
+  {
+    "label": "시차에서 깊이",
+    "title": "기준선과 초점이 같으면 시차가 큰 점이 더 가깝습니다",
+    "body": "정렬된 한 쌍에서는 깊이 Z=fB/d입니다. 분자인 fB가 8 px·m일 때 20 px는 0.40 m, 8 px는 1.00 m를 뜻합니다.",
+    "takeaway": "같은 카메라 기준에서 N이 0.40 m, F가 1.00 m에 배치됩니다.",
+    "example": [
+      "N 20 px · F 8 px",
+      "Z = 8 px·m / d",
+      "N 0.40 m · F 1.00 m"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "시차에서 깊이",
+      "description": "같은 카메라 기준에서 N이 0.40 m, F가 1.00 m에 배치됩니다.",
+      "figure": "figure-stereo-depth-cues-2"
+    },
+    "quiz": [
+      "fB=8 px·m에서 시차가 4 px이면 깊이는?",
+      "2 m",
+      "32 m",
+      "8 px·m를 4 px로 나눕니다."
+    ]
+  }
+];
+const slug = 'stereo-depth-cues';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="그림과 글을 같은 거리로 비교하려면 무엇이 필요할까요?">
+<title>이미지·문장을 한 공간에 놓기 · C16</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./image-text-shared-space.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C16</p><h1>이미지·문장을 한 공간에 놓기</h1><p>그림과 글을 같은 거리로 비교하려면 무엇이 필요할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">이미지·문장을 한 공간에 놓기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-image-text-shared-space-1"><svg><g>
+<rect x="47" y="69" width="84" height="56" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="61" y="69" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="75" y="69" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="89" y="69" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="103" y="69" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="47" y="83" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="61" y="83" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="75" y="83" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="89" y="83" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="103" y="83" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="117" y="83" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="47" y="97" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="61" y="97" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="75" y="97" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="89" y="97" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="103" y="97" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="117" y="97" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="61" y="111" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="75" y="111" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="89" y="111" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="103" y="111" width="14" height="14" fill="#c9d5db" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="103" y="83" width="14" height="14" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="61" y="97" width="14" height="14" fill="#7f929b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="75" y="83" width="14" height="14" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="89" y="83" width="14" height="14" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="89" y="97" width="14" height="14" fill="#394a54" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 47 69 L 47 125" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 61 69 L 61 125" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 75 69 L 75 125" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 89 69 L 89 125" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 103 69 L 103 125" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 117 69 L 117 125" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 131 69 L 131 125" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 47 69 L 131 69" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 47 83 L 131 83" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 47 97 L 131 97" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 47 111 L 131 111" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 47 125 L 131 125" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 173 97 L 214 97" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="214,97 204.24,102.08 204.24,91.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<rect x="221" y="76" width="162" height="42" fill="#dcebf2" stroke="#12639b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="302" y="105" fill="#12639b" font-size="20" font-weight="700" text-anchor="middle">영상 인코더</text>
+<path d="M 391 97 L 431 97" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="431,97 421.24,102.08 421.24,91.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<text x="445" y="105" fill="#12639b" font-size="25" font-weight="700" text-anchor="start">I = (3,1)</text>
+<rect x="34" y="152" width="129" height="36" fill="#f1f6f9" stroke="#11634b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="98" y="177" fill="#11634b" font-size="18" font-weight="700" text-anchor="middle">흠집 지침</text>
+<path d="M 173 170 L 214 170" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="214,170 204.24,175.08 204.24,164.92" fill="#11634b" stroke="none" stroke-width="2"/>
+<rect x="221" y="149" width="162" height="42" fill="#dcebf2" stroke="#11634b" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="302" y="178" fill="#11634b" font-size="20" font-weight="700" text-anchor="middle">텍스트 인코더</text>
+<path d="M 391 170 L 431 170" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="431,170 421.24,175.08 421.24,164.92" fill="#11634b" stroke="none" stroke-width="2"/>
+<text x="445" y="178" fill="#11634b" font-size="25" font-weight="700" text-anchor="start">S = (4,1)</text>
+<rect x="34" y="213" width="129" height="36" fill="#f1f6f9" stroke="#a24d12" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="98" y="238" fill="#a24d12" font-size="18" font-weight="700" text-anchor="middle">찍힘 지침</text>
+<path d="M 173 231 L 214 231" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="214,231 204.24,236.08 204.24,225.92" fill="#a24d12" stroke="none" stroke-width="2"/>
+<rect x="221" y="210" width="162" height="42" fill="#dcebf2" stroke="#a24d12" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="302" y="239" fill="#a24d12" font-size="20" font-weight="700" text-anchor="middle">텍스트 인코더</text>
+<path d="M 391 231 L 431 231" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="431,231 421.24,236.08 421.24,225.92" fill="#a24d12" stroke="none" stroke-width="2"/>
+<text x="445" y="239" fill="#a24d12" font-size="25" font-weight="700" text-anchor="start">D = (1,3)</text>
+</g></svg></template>
+<template id="figure-image-text-shared-space-2"><svg><g>
+<path d="M 134 229 L 134 61" fill="none" stroke="#bccbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 176 229 L 176 61" fill="none" stroke="#bccbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 218 229 L 218 61" fill="none" stroke="#bccbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 260 229 L 260 61" fill="none" stroke="#bccbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 302 229 L 302 61" fill="none" stroke="#bccbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 92 187 L 302 187" fill="none" stroke="#bccbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 92 145 L 302 145" fill="none" stroke="#bccbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 92 103 L 302 103" fill="none" stroke="#bccbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 92 61 L 302 61" fill="none" stroke="#bccbd3" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 92 229 L 314 229" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="314,229 304.24,234.08 304.24,223.92" fill="#4e6478" stroke="none" stroke-width="2"/>
+<path d="M 92 229 L 92 54" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="92,54 97.08,63.76 86.92,63.76" fill="#4e6478" stroke="none" stroke-width="2"/>
+<text x="321" y="235" fill="#18344a" font-size="21" font-weight="700" text-anchor="start">z₁</text>
+<text x="37" y="66" fill="#18344a" font-size="21" font-weight="700" text-anchor="start">z₂</text>
+<text x="63" y="248" fill="#18344a" font-size="20" font-weight="700" text-anchor="start">0</text>
+<text x="134" y="257" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">1</text>
+<text x="176" y="257" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">2</text>
+<text x="218" y="257" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">3</text>
+<text x="260" y="257" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">4</text>
+<text x="302" y="257" fill="#4e6478" font-size="19" font-weight="700" text-anchor="middle">5</text>
+<text x="67" y="194" fill="#4e6478" font-size="19" font-weight="700" text-anchor="start">1</text>
+<text x="67" y="152" fill="#4e6478" font-size="19" font-weight="700" text-anchor="start">2</text>
+<text x="67" y="110" fill="#4e6478" font-size="19" font-weight="700" text-anchor="start">3</text>
+<text x="67" y="68" fill="#4e6478" font-size="19" font-weight="700" text-anchor="start">4</text>
+<path d="M 218 187 L 260 187" fill="none" stroke="#11634b" stroke-width="4" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 218 187 L 134 103" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<circle cx="218" cy="187" r="5" fill="#12639b"/>
+<circle cx="260" cy="187" r="5" fill="#11634b"/>
+<circle cx="134" cy="103" r="5" fill="#a24d12"/>
+<text x="134" y="92" fill="#a24d12" font-size="21" font-weight="700" text-anchor="middle">D (1,3)</text>
+<text x="198" y="172" fill="#12639b" font-size="21" font-weight="700" text-anchor="middle">I (3,1)</text>
+<text x="268" y="177" fill="#11634b" font-size="21" font-weight="700" text-anchor="start">S (4,1)</text>
+<text x="370" y="120" fill="#a24d12" font-size="22" font-weight="700" text-anchor="start">I–D = √(2²+2²) = √8</text>
+<text x="370" y="171" fill="#11634b" font-size="26" font-weight="700" text-anchor="start">I–S = 1</text>
+<text x="370" y="218" fill="#12639b" font-size="26" font-weight="700" text-anchor="start">1 &lt; √8 → S</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "두 인코더",
+    "title": "이미지와 문장을 각각 벡터로 바꿉니다",
+    "body": "영상 인코더는 픽셀을, 텍스트 인코더는 문장을 읽습니다. 두 출력은 같은 두 축을 쓰도록 학습합니다.",
+    "takeaway": "부품에서 I=(3,1), 지침 S에서 (4,1), 지침 D에서 (1,3)이 나옵니다.",
+    "example": [
+      "영상 I · 지침 S,D",
+      "두 인코더",
+      "I(3,1) · S(4,1) · D(1,3)"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "두 인코더",
+      "description": "부품에서 I=(3,1), 지침 S에서 (4,1), 지침 D에서 (1,3)이 나옵니다.",
+      "figure": "figure-image-text-shared-space-1"
+    },
+    "quiz": [
+      "새 지침 문장을 같은 자료에 추가합니다. 어느 인코더에 넣을까요?",
+      "텍스트 인코더",
+      "영상 인코더",
+      "이 지침의 입력 형식은 문장입니다."
+    ]
+  },
+  {
+    "label": "같은 좌표계",
+    "title": "가까운 지침을 같은 좌표계에서 찾습니다",
+    "body": "시각과 언어 벡터를 하나의 평면에 놓습니다. 이 예는 눈금 한 칸을 단위로 유클리드 거리를 비교합니다.",
+    "takeaway": "I–S는 1, I–D는 √8입니다. 짧은 선이 흠집 지침 S로 이어집니다.",
+    "example": [
+      "공유 좌표계",
+      "I–S=1 · I–D=√8",
+      "S가 더 가까움"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "같은 좌표계",
+      "description": "I–S는 1, I–D는 √8입니다. 짧은 선이 흠집 지침 S로 이어집니다.",
+      "figure": "figure-image-text-shared-space-2"
+    },
+    "quiz": [
+      "I=(1,1)입니다. S=(4,1)와 D=(1,2) 중 더 가까운 문서는?",
+      "D",
+      "S",
+      "I에서 D까지 1칸, S까지 3칸입니다."
+    ]
+  }
+];
+const slug = 'image-text-shared-space';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

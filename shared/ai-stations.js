@@ -479,28 +479,124 @@ const aiStationMap = {
   "4": {
     "stations": [
       {
+        "id": "4.6",
+        "ref": "computing-basics/media"
+      },
+      {
+        "id": "4.7",
+        "ref": "graphics/transforms"
+      },
+      {
+        "id": "4.8",
+        "ref": "ai/resize-padding-coordinates"
+      },
+      {
+        "id": "4.9",
+        "ref": "ai/box-mask-annotation"
+      },
+      {
+        "id": "4.10",
+        "ref": "ai/camera-time-split"
+      },
+      {
         "id": "4.1",
         "ref": "ai/cnn"
       },
       {
         "id": "4.2",
-        "title": "특징 지도",
-        "titleEn": "Feature maps"
+        "ref": "ai/feature-receptive-field"
+      },
+      {
+        "id": "4.11",
+        "ref": "ai/stride-downsampling"
+      },
+      {
+        "id": "4.12",
+        "ref": "ai/augmentation-labels"
+      },
+      {
+        "id": "4.13",
+        "ref": "ai/pretrained-vision-transfer"
       },
       {
         "id": "4.3",
-        "title": "검출과 분할",
-        "titleEn": "Detection and masks"
+        "ref": "ai/detection-box-score"
       },
       {
         "id": "4.4",
-        "title": "겹침과 미검출",
-        "titleEn": "Overlap and misses"
+        "ref": "ai/intersection-over-union"
+      },
+      {
+        "id": "4.14",
+        "ref": "ai/nonmaximum-suppression"
+      },
+      {
+        "id": "4.15",
+        "ref": "ai/segmentation-boundary-errors"
+      },
+      {
+        "id": "4.16",
+        "ref": "ai/threshold-defect-misses"
       },
       {
         "id": "4.5",
-        "title": "영상·언어 검색",
-        "titleEn": "Image–text retrieval"
+        "ref": "ai/image-text-shared-space"
+      },
+      {
+        "id": "4.17",
+        "ref": "ai/contrastive-hard-negatives"
+      },
+      {
+        "id": "4.18",
+        "ref": "ai/image-instruction-ranking"
+      },
+      {
+        "id": "4.19",
+        "ref": "ai/oracle-crop-retrieval"
+      },
+      {
+        "id": "4.20",
+        "ref": "ai/lighting-pair-first-failure"
+      },
+      {
+        "id": "4.21",
+        "ref": "ai/visual-patch-tokens"
+      },
+      {
+        "id": "4.22",
+        "ref": "ai/occlusion-object-tracks"
+      },
+      {
+        "id": "4.23",
+        "ref": "ai/camera-motion-optical-flow"
+      },
+      {
+        "id": "4.24",
+        "ref": "ai/stereo-depth-cues"
+      },
+      {
+        "id": "4.25",
+        "ref": "ai/video-split-track-evaluation"
+      },
+      {
+        "id": "4.26",
+        "ref": "ai/samples-to-spectrogram"
+      },
+      {
+        "id": "4.27",
+        "ref": "ai/speech-segment-alignment"
+      },
+      {
+        "id": "4.28",
+        "ref": "ai/ctc-collapse-alignment"
+      },
+      {
+        "id": "4.29",
+        "ref": "ai/early-late-multimodal-fusion"
+      },
+      {
+        "id": "4.30",
+        "ref": "ai/missing-modality-performance"
       }
     ],
     "transfer": {

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="겉모양이 비슷한 오답을 학습에 넣으면 무엇을 고칠까요?">
+<title>대조 학습과 헷갈리는 비대응 쌍 · C17</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./contrastive-hard-negatives.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C17</p><h1>대조 학습과 헷갈리는 비대응 쌍</h1><p>겉모양이 비슷한 오답을 학습에 넣으면 무엇을 고칠까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">대조 학습과 헷갈리는 비대응 쌍</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-contrastive-hard-negatives-1"><svg><g>
+<text x="29" y="97" fill="#11634b" font-size="19" font-weight="700" text-anchor="start">S · 정답</text>
+<rect x="154" y="82" width="410" height="18" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="154" y="82" width="336.2" height="18" fill="#11634b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="500.2" y="98" fill="#11634b" font-size="21" font-weight="700" text-anchor="start">0.82</text>
+<text x="29" y="144" fill="#a24d12" font-size="19" font-weight="700" text-anchor="start">D · 어려운 오답</text>
+<rect x="154" y="129" width="410" height="18" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="154" y="129" width="319.8" height="18" fill="#a24d12" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="483.8" y="145" fill="#a24d12" font-size="21" font-weight="700" text-anchor="start">0.78</text>
+<text x="29" y="191" fill="#4e6478" font-size="19" font-weight="700" text-anchor="start">X · 쉬운 오답</text>
+<rect x="154" y="176" width="410" height="18" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="154" y="176" width="41.0" height="18" fill="#4e6478" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="205.0" y="192" fill="#4e6478" font-size="21" font-weight="700" text-anchor="start">0.10</text>
+<path d="M 154 199 L 564 199" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="154" y="219" fill="#4e6478" font-size="17" font-weight="700" text-anchor="start">0</text>
+<text x="564" y="219" fill="#4e6478" font-size="17" font-weight="700" text-anchor="end">1</text>
+<text x="311" y="267" fill="#12639b" font-size="25" font-weight="700" text-anchor="middle">S − D = 0.82 − 0.78 = 0.04</text>
+</g></svg></template>
+<template id="figure-contrastive-hard-negatives-2"><svg><g>
+<text x="29" y="97" fill="#11634b" font-size="19" font-weight="700" text-anchor="start">S · 정답</text>
+<rect x="154" y="82" width="410" height="18" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="154" y="82" width="360.8" height="18" fill="#11634b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 490.2 71 L 490.2 108" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<path d="M 490.2 109 L 514.8 109" fill="none" stroke="#11634b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="514.8,109 505.04,114.08 505.04,103.92" fill="#11634b" stroke="none" stroke-width="2"/>
+<text x="524.8" y="98" fill="#11634b" font-size="21" font-weight="700" text-anchor="start">0.88</text>
+<text x="29" y="144" fill="#a24d12" font-size="19" font-weight="700" text-anchor="start">D · 어려운 오답</text>
+<rect x="154" y="129" width="410" height="18" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="154" y="129" width="241.89999999999998" height="18" fill="#a24d12" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 473.8 118 L 473.8 155" fill="none" stroke="#4e6478" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"/>
+<path d="M 473.8 156 L 395.9 156" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="395.9,156 405.66,150.92 405.66,161.08" fill="#a24d12" stroke="none" stroke-width="2"/>
+<text x="405.9" y="145" fill="#a24d12" font-size="21" font-weight="700" text-anchor="start">0.59</text>
+<text x="29" y="191" fill="#4e6478" font-size="19" font-weight="700" text-anchor="start">X · 쉬운 오답</text>
+<rect x="154" y="176" width="410" height="18" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="154" y="176" width="41.0" height="18" fill="#4e6478" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<text x="205.0" y="192" fill="#4e6478" font-size="21" font-weight="700" text-anchor="start">0.10</text>
+<path d="M 154 199 L 564 199" fill="none" stroke="#4e6478" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="154" y="219" fill="#4e6478" font-size="17" font-weight="700" text-anchor="start">0</text>
+<text x="564" y="219" fill="#4e6478" font-size="17" font-weight="700" text-anchor="end">1</text>
+<text x="333" y="227" fill="#12639b" font-size="20" font-weight="700" text-anchor="middle">S ↑ 일치 · D ↓ 불일치</text>
+<text x="311" y="267" fill="#12639b" font-size="25" font-weight="700" text-anchor="middle">S − D = 0.88 − 0.59 = 0.29</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "가까운 오답 찾기",
+    "title": "가장 헷갈리는 지침은 점수가 높은 오답입니다",
+    "body": "흠집 영상 I에 대해 정답 S는 0.82, 찍힘 지침 D는 0.78, 포장 지침 X는 0.10입니다. 현재는 S와 D의 차이가 0.04뿐입니다.",
+    "takeaway": "S 바로 아래에 짧은 간격으로 D가 있고, X는 축의 아래쪽에 떨어져 있습니다.",
+    "example": [
+      "흠집 영상 I",
+      "S 0.82 · D 0.78",
+      "정답−오답 0.04"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "가까운 오답 찾기",
+      "description": "S 바로 아래에 짧은 간격으로 D가 있고, X는 축의 아래쪽에 떨어져 있습니다.",
+      "figure": "figure-contrastive-hard-negatives-1"
+    },
+    "quiz": [
+      "정답=0.90, 오답 A=0.85, 오답 B=0.20입니다. 어려운 음성 쌍은?",
+      "A",
+      "B",
+      "정답에 더 가까운 0.85가 더 헷갈립니다."
+    ]
+  },
+  {
+    "label": "간격 벌리기",
+    "title": "가까운 오답의 점수를 낮추면 구분 간격이 벌어집니다",
+    "body": "학습 후 예시 점수는 S=0.88, D=0.59입니다. 대조 학습은 정답 쌍의 유사도를 올리고 비대응 쌍의 유사도를 낮추는 신호를 줍니다.",
+    "takeaway": "같은 축에서 S는 올라가고 D는 내려가 S−D가 0.29가 됩니다.",
+    "example": [
+      "같은 영상 I",
+      "S 0.88 · D 0.59",
+      "정답−오답 0.29"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "간격 벌리기",
+      "description": "같은 축에서 S는 올라가고 D는 내려가 S−D가 0.29가 됩니다.",
+      "figure": "figure-contrastive-hard-negatives-2"
+    },
+    "quiz": [
+      "학습 후 정답이 0.83, 어려운 오답이 0.56이면 정답−오답 간격은?",
+      "0.27",
+      "0.39",
+      "0.83에서 0.56을 뺍니다."
+    ]
+  }
+];
+const slug = 'contrastive-hard-negatives';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="간격을 늘리면 어떤 반응을 건너뛸까요?">
+<title>스트라이드와 다운샘플링 · C08</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./stride-downsampling.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">비전·멀티모달 인식 · C08</p><h1>스트라이드와 다운샘플링</h1><p>간격을 늘리면 어떤 반응을 건너뛸까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">스트라이드와 다운샘플링</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-stride-downsampling-1"><svg><g>
+<rect x="72" y="105" width="152" height="152" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="110" y="143" width="38" height="38" fill="#415560" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 72 105 L 72 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 110 105 L 110 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 148 105 L 148 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 186 105 L 186 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 224 105 L 224 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 105 L 224 105" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 143 L 224 143" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 181 L 224 181" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 219 L 224 219" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 257 L 224 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="91.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="167.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="91.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="168.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">1</text>
+<text x="167.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="91.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="167.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="91.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="167.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="148" y="87" fill="#18344a" font-size="24" font-weight="700" text-anchor="middle">원본 4×4</text>
+<rect x="110" y="143" width="38" height="38" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<text x="311" y="158" fill="#18344a" font-size="19" font-weight="700" text-anchor="middle">1×1</text>
+<path d="M 253 180 L 358 180" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="358,180 348.24,185.08 348.24,174.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<rect x="386" y="105" width="152" height="152" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="424" y="143" width="38" height="38" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 386 105 L 386 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 424 105 L 424 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 462 105 L 462 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 500 105 L 500 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 538 105 L 538 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 386 105 L 538 105" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 386 143 L 538 143" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 386 181 L 538 181" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 386 219 L 538 219" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 386 257 L 538 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="405.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="443.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="481.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="519.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="405.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="443.0" y="168.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">1</text>
+<text x="481.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="519.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="405.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="443.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="481.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="519.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="405.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="443.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="481.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="519.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="462.0" y="87" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">출력 4×4</text>
+</g></svg></template>
+<template id="figure-stride-downsampling-2"><svg><g>
+<rect x="72" y="105" width="152" height="152" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="110" y="143" width="38" height="38" fill="#415560" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 72 105 L 72 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 110 105 L 110 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 148 105 L 148 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 186 105 L 186 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 224 105 L 224 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 105 L 224 105" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 143 L 224 143" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 181 L 224 181" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 219 L 224 219" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 257 L 224 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="91.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="167.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="91.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="168.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">1</text>
+<text x="167.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="91.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="167.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="91.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="167.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="148" y="87" fill="#18344a" font-size="24" font-weight="700" text-anchor="middle">원본 4×4</text>
+<rect x="72" y="105" width="38" height="38" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="105" width="38" height="38" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="72" y="181" width="38" height="38" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="181" width="38" height="38" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="110" y="143" width="38" height="38" fill="none" stroke="#a24d12" stroke-width="3" stroke-dasharray="5 4" opacity="1"/>
+<text x="311" y="158" fill="#18344a" font-size="19" font-weight="700" text-anchor="middle">1×1</text>
+<path d="M 253 180 L 358 180" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="358,180 348.24,185.08 348.24,174.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<rect x="399" y="105" width="126" height="126" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 399 105 L 399 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 462 105 L 462 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 525 105 L 525 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 399 105 L 525 105" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 399 168 L 525 168" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 399 231 L 525 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="430.5" y="147.84" fill="#4e6478" font-size="24" font-weight="700" text-anchor="middle">0</text>
+<text x="493.5" y="147.84" fill="#4e6478" font-size="24" font-weight="700" text-anchor="middle">0</text>
+<text x="430.5" y="210.84" fill="#4e6478" font-size="24" font-weight="700" text-anchor="middle">0</text>
+<text x="493.5" y="210.84" fill="#4e6478" font-size="24" font-weight="700" text-anchor="middle">0</text>
+<text x="462.0" y="87" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">출력 2×2</text>
+</g></svg></template>
+<template id="figure-stride-downsampling-3"><svg><g>
+<rect x="72" y="105" width="152" height="152" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="110" y="143" width="38" height="38" fill="#415560" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 72 105 L 72 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 110 105 L 110 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 148 105 L 148 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 186 105 L 186 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 224 105 L 224 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 105 L 224 105" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 143 L 224 143" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 181 L 224 181" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 219 L 224 219" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 72 257 L 224 257" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="91.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="167.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="130.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="91.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="168.84" fill="#fff" font-size="21.659999999999997" font-weight="700" text-anchor="middle">1</text>
+<text x="167.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="168.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="91.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="167.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="206.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="91.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="129.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="167.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="205.0" y="244.84" fill="#4e6478" font-size="21.659999999999997" font-weight="700" text-anchor="middle">0</text>
+<text x="148" y="87" fill="#18344a" font-size="24" font-weight="700" text-anchor="middle">원본 4×4</text>
+<rect x="72" y="105" width="76" height="76" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="105" width="76" height="76" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="72" y="181" width="76" height="76" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<rect x="148" y="181" width="76" height="76" fill="none" stroke="#4e6478" stroke-width="3" stroke-dasharray="none" opacity="1"/>
+<text x="311" y="158" fill="#18344a" font-size="19" font-weight="700" text-anchor="middle">max 2×2</text>
+<path d="M 253 180 L 358 180" fill="none" stroke="#12639b" stroke-width="3" stroke-dasharray="none" stroke-linejoin="round"/>
+<polygon points="358,180 348.24,185.08 348.24,174.92" fill="#12639b" stroke="none" stroke-width="2"/>
+<rect x="399" y="105" width="126" height="126" fill="#f1f6f9" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<rect x="399" y="105" width="63" height="63" fill="#12639b" stroke="none" stroke-width="2" stroke-dasharray="none" opacity="1"/>
+<path d="M 399 105 L 399 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 462 105 L 462 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 525 105 L 525 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 399 105 L 525 105" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 399 168 L 525 168" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<path d="M 399 231 L 525 231" fill="none" stroke="#849ba8" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round"/>
+<text x="430.5" y="147.84" fill="#fff" font-size="24" font-weight="700" text-anchor="middle">1</text>
+<text x="493.5" y="147.84" fill="#4e6478" font-size="24" font-weight="700" text-anchor="middle">0</text>
+<text x="430.5" y="210.84" fill="#4e6478" font-size="24" font-weight="700" text-anchor="middle">0</text>
+<text x="493.5" y="210.84" fill="#4e6478" font-size="24" font-weight="700" text-anchor="middle">0</text>
+<text x="462.0" y="87" fill="#18344a" font-size="23" font-weight="700" text-anchor="middle">출력 2×2</text>
+<text x="462.0" y="261" fill="#12639b" font-size="22" font-weight="700" text-anchor="middle">max(0,0,0,1) = 1</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "간격 1",
+    "title": "한 칸씩 읽으면 모든 위치를 표본으로 얻습니다",
+    "body": "1×1 필터로 결함을 놓치는 원인만 분리해 봅니다. 스트라이드 1에서는 모든 행과 열에 필터를 놓습니다.",
+    "takeaway": "좌표 (1,1)의 결함이 4×4 출력에도 1로 남습니다.",
+    "example": [
+      "4×4 입력",
+      "창 1×1 · 간격 1",
+      "4×4 · 결함 1칸"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "간격 1",
+      "description": "좌표 (1,1)의 결함이 4×4 출력에도 1로 남습니다.",
+      "figure": "figure-stride-downsampling-1"
+    },
+    "quiz": [
+      "가로 6칸에 1×1 필터를 두고 간격 1로 시작합니다. 출력 열은?",
+      "6",
+      "5",
+      "모든 원본 열에서 한 번 읽습니다."
+    ]
+  },
+  {
+    "label": "간격 2",
+    "title": "결함이 표본 위치 사이에 놓일 수 있습니다",
+    "body": "좌상단 (0,0)에서 매 두 칸마다 읽으면 x와 y는 각각 0, 2를 방문합니다.",
+    "takeaway": "파란 네 칸 중 (1,1)은 없습니다. 2×2 출력은 전부 0입니다.",
+    "example": [
+      "같은 입력",
+      "창 1×1 · 간격 2",
+      "2×2 · 모두 0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "간격 2",
+      "description": "파란 네 칸 중 (1,1)은 없습니다. 2×2 출력은 전부 0입니다.",
+      "figure": "figure-stride-downsampling-2"
+    },
+    "quiz": [
+      "간격 2로 x=0부터 읽습니다. 결함 x=3을 읽을까요?",
+      "건너뜁니다",
+      "읽습니다",
+      "x=0,2,4처럼 짝수 열만 방문합니다."
+    ]
+  },
+  {
+    "label": "최댓값 풀링",
+    "title": "표본 하나 대신 2×2 창의 값을 모읍니다",
+    "body": "간격을 2로 유지하고 창을 2×2로 바꿉니다. 첫 창 안의 최댓값은 1입니다.",
+    "takeaway": "원본 좌상단 2×2 안의 결함과 출력 좌상단의 1을 비교합니다.",
+    "example": [
+      "같은 입력",
+      "창 2×2 · 최댓값",
+      "2×2 · 첫 값 1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "최댓값 풀링",
+      "description": "원본 좌상단 2×2 안의 결함과 출력 좌상단의 1을 비교합니다.",
+      "figure": "figure-stride-downsampling-3"
+    },
+    "quiz": [
+      "한 창에서 0,1,1,0을 읽으면 최댓값 풀링 출력은?",
+      "1",
+      "2",
+      "최댓값을 고르고 합계는 계산하지 않습니다."
+    ]
+  }
+];
+const slug = 'stride-downsampling';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

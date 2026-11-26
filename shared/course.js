@@ -402,6 +402,13 @@
     const group = drawSvg(scene, 'g', {class: 'course-diagram'});
     drawSvg(group, 'desc', {id: 'course-diagram-desc'}, diagram.description);
     drawSvg(group, 'text', {x: 28, y: 34, class: 'course-diagram-title'}, diagram.title);
+    if (diagram.figure) {
+      const source = document.getElementById(diagram.figure);
+      const drawing = source?.content?.querySelector('svg > g');
+      if (!drawing) throw new Error('Missing SVG reading figure: ' + diagram.figure);
+      group.append(document.importNode(drawing, true));
+      return true;
+    }
     const nodes = new Map(diagram.nodes.map(([id, ...node]) => [id, node]));
     const defs = drawSvg(group, 'defs', {});
     for (const tone of ['plain', 'active', 'blocked', 'muted']) {

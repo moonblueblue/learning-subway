@@ -1012,13 +1012,130 @@ const courseCatalog = {
           "titleEn": "Vision and multimodal perception",
           "lessons": [
             {
+              "id": "4.6",
+              "ref": "computing-basics/media"
+            },
+            {
+              "id": "4.7",
+              "ref": "graphics/transforms"
+            },
+            {
+              "id": "4.8",
+              "ref": "ai/resize-padding-coordinates"
+            },
+            {
+              "id": "4.9",
+              "ref": "ai/box-mask-annotation"
+            },
+            {
+              "id": "4.10",
+              "ref": "ai/camera-time-split"
+            },
+            {
               "id": "4.1",
               "ref": "ai/cnn"
+            },
+            {
+              "id": "4.2",
+              "ref": "ai/feature-receptive-field"
+            },
+            {
+              "id": "4.11",
+              "ref": "ai/stride-downsampling"
+            },
+            {
+              "id": "4.12",
+              "ref": "ai/augmentation-labels"
+            },
+            {
+              "id": "4.13",
+              "ref": "ai/pretrained-vision-transfer"
+            },
+            {
+              "id": "4.3",
+              "ref": "ai/detection-box-score"
+            },
+            {
+              "id": "4.4",
+              "ref": "ai/intersection-over-union"
+            },
+            {
+              "id": "4.14",
+              "ref": "ai/nonmaximum-suppression"
+            },
+            {
+              "id": "4.15",
+              "ref": "ai/segmentation-boundary-errors"
+            },
+            {
+              "id": "4.16",
+              "ref": "ai/threshold-defect-misses"
+            },
+            {
+              "id": "4.5",
+              "ref": "ai/image-text-shared-space"
+            },
+            {
+              "id": "4.17",
+              "ref": "ai/contrastive-hard-negatives"
+            },
+            {
+              "id": "4.18",
+              "ref": "ai/image-instruction-ranking"
+            },
+            {
+              "id": "4.19",
+              "ref": "ai/oracle-crop-retrieval"
+            },
+            {
+              "id": "4.20",
+              "ref": "ai/lighting-pair-first-failure"
+            },
+            {
+              "id": "4.21",
+              "ref": "ai/visual-patch-tokens"
+            },
+            {
+              "id": "4.22",
+              "ref": "ai/occlusion-object-tracks"
+            },
+            {
+              "id": "4.23",
+              "ref": "ai/camera-motion-optical-flow"
+            },
+            {
+              "id": "4.24",
+              "ref": "ai/stereo-depth-cues"
+            },
+            {
+              "id": "4.25",
+              "ref": "ai/video-split-track-evaluation"
+            },
+            {
+              "id": "4.26",
+              "ref": "ai/samples-to-spectrogram"
+            },
+            {
+              "id": "4.27",
+              "ref": "ai/speech-segment-alignment"
+            },
+            {
+              "id": "4.28",
+              "ref": "ai/ctc-collapse-alignment"
+            },
+            {
+              "id": "4.29",
+              "ref": "ai/early-late-multimodal-fusion"
+            },
+            {
+              "id": "4.30",
+              "ref": "ai/missing-modality-performance"
             }
           ],
           "tracks": [],
           "destination": "불량 검사와 지침 검색",
-          "destinationEn": "Defect detection and manual retrieval"
+          "destinationEn": "Defect inspection and manual retrieval",
+          "projectRef": "projects/defect-inspection-retrieval"
         },
         {
           "id": "5",
@@ -4078,6 +4195,303 @@ const courseCatalog = {
             "ai/pca-demand-patterns"
           ],
           "page": "ai/anomaly-review-budget.html"
+        },
+        {
+          "id": "resize-padding-coordinates",
+          "title": "리사이즈·패딩 뒤의 정답 좌표",
+          "titleEn": "Ground-truth coordinates after resize and padding",
+          "question": "패딩 뒤에도 같은 결함을 가리키려면?",
+          "format": "실험",
+          "requires": [
+            "graphics/transforms"
+          ],
+          "page": "ai/resize-padding-coordinates.html"
+        },
+        {
+          "id": "box-mask-annotation",
+          "title": "상자와 마스크로 불량 표시",
+          "titleEn": "Annotating defects with boxes and masks",
+          "question": "상자와 마스크는 어떤 픽셀을 결함으로 표시할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/resize-padding-coordinates"
+          ],
+          "page": "ai/box-mask-annotation.html"
+        },
+        {
+          "id": "camera-time-split",
+          "title": "촬영 장치·시간별 시험 분리",
+          "titleEn": "Splitting tests by camera and time",
+          "question": "인접 촬영을 섞으면 시험이 무엇을 놓칠까요?",
+          "format": "실험",
+          "requires": [
+            "ai/box-mask-annotation"
+          ],
+          "page": "ai/camera-time-split.html"
+        },
+        {
+          "id": "feature-receptive-field",
+          "title": "특징 지도와 수용 영역",
+          "titleEn": "Feature maps and receptive fields",
+          "question": "특징 지도 한 칸은 원본의 어디를 볼까요?",
+          "format": "실험",
+          "requires": [
+            "ai/cnn"
+          ],
+          "page": "ai/feature-receptive-field.html"
+        },
+        {
+          "id": "stride-downsampling",
+          "title": "스트라이드와 다운샘플링",
+          "titleEn": "Stride and downsampling",
+          "question": "간격을 늘리면 어떤 반응을 건너뛸까요?",
+          "format": "실험",
+          "requires": [
+            "ai/feature-receptive-field"
+          ],
+          "page": "ai/stride-downsampling.html"
+        },
+        {
+          "id": "augmentation-labels",
+          "title": "증강 뒤 레이블 보존",
+          "titleEn": "Keeping labels correct after augmentation",
+          "question": "영상 증강 뒤 어느 레이블을 바꿔야 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/stride-downsampling"
+          ],
+          "page": "ai/augmentation-labels.html"
+        },
+        {
+          "id": "pretrained-vision-transfer",
+          "title": "사전학습 인코더의 전이 학습",
+          "titleEn": "Transfer learning with a pretrained encoder",
+          "question": "적은 부품 레이블로 무엇을 먼저 학습할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/augmentation-labels"
+          ],
+          "page": "ai/pretrained-vision-transfer.html"
+        },
+        {
+          "id": "detection-box-score",
+          "title": "검출기의 상자와 점수",
+          "titleEn": "Detector boxes and scores",
+          "question": "검출기의 위치와 점수를 각각 어떻게 읽을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/pretrained-vision-transfer"
+          ],
+          "page": "ai/detection-box-score.html"
+        },
+        {
+          "id": "intersection-over-union",
+          "title": "겹침 비율 IoU 계산",
+          "titleEn": "Calculating intersection over union",
+          "question": "상자 두 개에서 겹친 칸은 전체의 몇 분의 몇일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/detection-box-score"
+          ],
+          "page": "ai/intersection-over-union.html"
+        },
+        {
+          "id": "nonmaximum-suppression",
+          "title": "중복 상자 제거",
+          "titleEn": "Suppressing duplicate boxes",
+          "question": "점수가 높은 불량 상자를 남기면 어떤 후보를 지울까요?",
+          "format": "실험",
+          "requires": [
+            "ai/intersection-over-union"
+          ],
+          "page": "ai/nonmaximum-suppression.html"
+        },
+        {
+          "id": "segmentation-boundary-errors",
+          "title": "픽셀별 분할과 경계 오류",
+          "titleEn": "Pixel segmentation and boundary errors",
+          "question": "어느 경계에서 예측이 빠지고 늘었을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/nonmaximum-suppression"
+          ],
+          "page": "ai/segmentation-boundary-errors.html"
+        },
+        {
+          "id": "threshold-defect-misses",
+          "title": "검출 임계값과 결함별 미검출",
+          "titleEn": "Detection thresholds and misses by defect",
+          "question": "같은 문턱 변경이 흠집과 찍힘에 다르게 작용할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/segmentation-boundary-errors"
+          ],
+          "page": "ai/threshold-defect-misses.html"
+        },
+        {
+          "id": "image-text-shared-space",
+          "title": "이미지·문장을 한 공간에 놓기",
+          "titleEn": "Placing images and text in a shared space",
+          "question": "그림과 글을 같은 거리로 비교하려면 무엇이 필요할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/threshold-defect-misses"
+          ],
+          "page": "ai/image-text-shared-space.html"
+        },
+        {
+          "id": "contrastive-hard-negatives",
+          "title": "대조 학습과 헷갈리는 비대응 쌍",
+          "titleEn": "Contrastive learning with hard negatives",
+          "question": "겉모양이 비슷한 오답을 학습에 넣으면 무엇을 고칠까요?",
+          "format": "실험",
+          "requires": [
+            "ai/image-text-shared-space"
+          ],
+          "page": "ai/contrastive-hard-negatives.html"
+        },
+        {
+          "id": "image-instruction-ranking",
+          "title": "이미지에서 지침 후보 순위 매기기",
+          "titleEn": "Ranking manuals from an image",
+          "question": "부품 영상으로 작업 지침의 순위를 어떻게 계산할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/contrastive-hard-negatives"
+          ],
+          "page": "ai/image-instruction-ranking.html"
+        },
+        {
+          "id": "oracle-crop-retrieval",
+          "title": "정답 영역으로 검색 오류 분리",
+          "titleEn": "Isolating retrieval errors with truth crops",
+          "question": "정답 위치로 다시 검색하면 어느 실패를 분리할 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/image-instruction-ranking"
+          ],
+          "page": "ai/oracle-crop-retrieval.html"
+        },
+        {
+          "id": "lighting-pair-first-failure",
+          "title": "조명만 바꾼 쌍으로 최초 실패 찾기",
+          "titleEn": "Finding the first failure in a lighting pair",
+          "question": "조명만 바뀌면 검사 파이프라인의 어느 출력이 먼저 달라질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/oracle-crop-retrieval"
+          ],
+          "page": "ai/lighting-pair-first-failure.html"
+        },
+        {
+          "id": "visual-patch-tokens",
+          "title": "시각 토큰과 비전 트랜스포머",
+          "titleEn": "Visual tokens and vision transformers",
+          "question": "비전 트랜스포머는 픽셀 격자를 어떤 순서로 읽을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/lighting-pair-first-failure"
+          ],
+          "page": "ai/visual-patch-tokens.html"
+        },
+        {
+          "id": "occlusion-object-tracks",
+          "title": "가림과 객체 추적",
+          "titleEn": "Occlusion and object tracking",
+          "question": "가림 뒤의 부품은 어떻게 이전 ID와 연결될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/visual-patch-tokens"
+          ],
+          "page": "ai/occlusion-object-tracks.html"
+        },
+        {
+          "id": "camera-motion-optical-flow",
+          "title": "카메라 흔들림과 광류",
+          "titleEn": "Camera shake and optical flow",
+          "question": "영상 속 움직임에서 카메라 흔들림을 어떻게 덜어 낼까요?",
+          "format": "실험",
+          "requires": [
+            "ai/occlusion-object-tracks"
+          ],
+          "page": "ai/camera-motion-optical-flow.html"
+        },
+        {
+          "id": "stereo-depth-cues",
+          "title": "여러 시점의 깊이 단서",
+          "titleEn": "Depth cues from multiple viewpoints",
+          "question": "같은 부품의 두 시점 좌표 차이가 깊이와 어떻게 이어질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/camera-motion-optical-flow"
+          ],
+          "page": "ai/stereo-depth-cues.html"
+        },
+        {
+          "id": "video-split-track-evaluation",
+          "title": "영상 단위 분할과 평가",
+          "titleEn": "Video-level splits and track evaluation",
+          "question": "검출이 모두 맞아도 객체 추적은 왜 실패할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/stereo-depth-cues"
+          ],
+          "page": "ai/video-split-track-evaluation.html"
+        },
+        {
+          "id": "samples-to-spectrogram",
+          "title": "샘플에서 스펙트로그램으로",
+          "titleEn": "From samples to a spectrogram",
+          "question": "시간에 따라 소리의 주파수가 바뀌는 것을 어떻게 표시할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/video-split-track-evaluation"
+          ],
+          "page": "ai/samples-to-spectrogram.html"
+        },
+        {
+          "id": "speech-segment-alignment",
+          "title": "음성 구간과 시간 정렬",
+          "titleEn": "Speech segments and time alignment",
+          "question": "말한 구간과 영상 사건을 어떻게 같은 시간에서 비교할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/samples-to-spectrogram"
+          ],
+          "page": "ai/speech-segment-alignment.html"
+        },
+        {
+          "id": "ctc-collapse-alignment",
+          "title": "CTC로 음성 프레임과 문장 잇기",
+          "titleEn": "Aligning speech frames with CTC",
+          "question": "프레임마다 나온 문자와 공백을 어떻게 문장으로 만들까요?",
+          "format": "실험",
+          "requires": [
+            "ai/speech-segment-alignment"
+          ],
+          "page": "ai/ctc-collapse-alignment.html"
+        },
+        {
+          "id": "early-late-multimodal-fusion",
+          "title": "조기 융합과 후기 융합",
+          "titleEn": "Early and late multimodal fusion",
+          "question": "영상과 음성을 합치는 시점은 무엇을 바꿀까요?",
+          "format": "실험",
+          "requires": [
+            "ai/ctc-collapse-alignment"
+          ],
+          "page": "ai/early-late-multimodal-fusion.html"
+        },
+        {
+          "id": "missing-modality-performance",
+          "title": "한 모달리티가 사라졌을 때의 성능",
+          "titleEn": "Performance when a modality is missing",
+          "question": "음성이나 영상이 사라지면 어느 사례가 먼저 틀릴까요?",
+          "format": "실험",
+          "requires": [
+            "ai/early-late-multimodal-fusion"
+          ],
+          "page": "ai/missing-modality-performance.html"
         }
       ]
     },
@@ -4154,6 +4568,17 @@ const courseCatalog = {
             "ai/demand-experiment-interference"
           ],
           "page": "projects/item-demand-forecast.html"
+        },
+        {
+          "id": "defect-inspection-retrieval",
+          "title": "불량 검사와 지침 검색",
+          "titleEn": "Defect inspection and manual retrieval",
+          "question": "촬영 조건을 분리하고 어느 단계에서 위치나 지침이 틀렸는지 어떻게 확인할까요?",
+          "format": "프로젝트",
+          "requires": [
+            "ai/lighting-pair-first-failure"
+          ],
+          "page": "projects/defect-inspection-retrieval.html"
         }
       ]
     }

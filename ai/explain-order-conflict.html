@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="불가능한 주문에서 실패 메시지에 어느 조항을 묶어 보여 줄까요?">
+<title>제약 위반의 설명 만들기 · A15</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./explain-order-conflict.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A15</p><h1>제약 위반의 설명 만들기</h1><p>불가능한 주문에서 실패 메시지에 어느 조항을 묶어 보여 줄까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">제약 위반의 설명 만들기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "충돌 닫히기",
+    "title": "역방향 조항 하나가 엄격한 선후 순환을 만듭니다",
+    "body": "집기 P는 검사 I보다, I는 발송 H보다 앞서야 합니다. 새 규칙 H\u003cP가 들어오면 P\u003cI\u003cH\u003cP를 강제합니다. 같은 P가 자신보다 먼저 올 수 없으므로 슬롯을 늘려도 해결되지 않습니다.",
+    "takeaway": "P→I→H의 경로에 H→P가 붙어 닫힌 순환을 만들고 P\u003cP가 거짓입니다.",
+    "example": [
+      "P\u003cI, I\u003cH",
+      "H\u003cP 추가",
+      "P\u003cI\u003cH\u003cP 모순"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          105,
+          182,
+          95,
+          37,
+          [
+            "P"
+          ],
+          "plain"
+        ],
+        [
+          "i",
+          310,
+          69,
+          95,
+          37,
+          [
+            "I"
+          ],
+          "plain"
+        ],
+        [
+          "h",
+          515,
+          182,
+          95,
+          37,
+          [
+            "H"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "i",
+          "active",
+          "P\u003cI",
+          0
+        ],
+        [
+          "i",
+          "h",
+          "active",
+          "I\u003cH",
+          0
+        ],
+        [
+          "h",
+          "p",
+          "blocked",
+          "H\u003cP",
+          22
+        ]
+      ],
+      "labels": [
+        [
+          113,
+          250,
+          "P \u003c I \u003c H \u003c P → P \u003c P ×"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "충돌 닫히기",
+      "description": "P→I→H의 경로에 H→P가 붙어 닫힌 순환을 만들고 P\u003cP가 거짓입니다."
+    },
+    "quiz": [
+      "새 조항이 H\u003cP 대신 P\u003cH라면 이 세 조건으로 순환이 생길까요?",
+      "순환 없음",
+      "순환 발생",
+      "P\u003cH는 기존 P→I→H 순서를 한 번 더 요구합니다."
+    ]
+  },
+  {
+    "label": "사유 확인",
+    "title": "순환에서 한 조항을 빼면 나머지 조항을 만족시킬 수 있습니다",
+    "body": "이 예에서 H\u003cP를 빼면 P=1,I=2,H=3이 가능합니다. 대신 P\u003cI만 빼면 I=1,H=2,P=3이 가능하고 I\u003cH만 빼면 H=1,P=2,I=3이 가능합니다. 세 조항으로 이 순환의 충돌을 구체적으로 설명합니다.",
+    "takeaway": "H→P를 지운 그림에서 1→2→3의 시간 배정이 두 나머지 간선에서 모두 통과합니다.",
+    "example": [
+      "P\u003cI\u003cH\u003cP",
+      "H\u003cP 제거",
+      "P=1, I=2, H=3"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          105,
+          182,
+          99,
+          37,
+          [
+            "P=1"
+          ],
+          "active"
+        ],
+        [
+          "i",
+          310,
+          69,
+          99,
+          37,
+          [
+            "I=2"
+          ],
+          "active"
+        ],
+        [
+          "h",
+          515,
+          182,
+          99,
+          37,
+          [
+            "H=3"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "i",
+          "active",
+          "1\u003c2 ✓",
+          0
+        ],
+        [
+          "i",
+          "h",
+          "active",
+          "2\u003c3 ✓",
+          0
+        ],
+        [
+          "h",
+          "p",
+          "muted",
+          "H\u003cP 제거",
+          22
+        ]
+      ],
+      "labels": [
+        [
+          112,
+          250,
+          "충돌 조항: P\u003cI, I\u003cH, H\u003cP"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "사유 확인",
+      "description": "H→P를 지운 그림에서 1→2→3의 시간 배정이 두 나머지 간선에서 모두 통과합니다."
+    },
+    "quiz": [
+      "순환 밖의 담당자 이름을 바꾸면 이 주문의 충돌도 해소되나요?",
+      "순환이 남음",
+      "순환이 해소됨",
+      "사유에 있는 세 작업 간 조항이 그대로면 여전히 P\u003cP를 강제합니다."
+    ]
+  }
+];
+const slug = 'explain-order-conflict';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

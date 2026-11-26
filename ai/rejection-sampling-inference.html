@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="두 경보가 있는 표본만 남겨 고장 확률을 어떻게 근사할까요?">
+<title>표본 추출로 근사 추론 · A23</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rejection-sampling-inference.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A23</p><h1>표본 추출로 근사 추론</h1><p>두 경보가 있는 표본만 남겨 고장 확률을 어떻게 근사할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">표본 추출로 근사 추론</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "증거가 맞는 표본",
+    "title": "두 경보가 관측된 표본만 분모에 들어갑니다",
+    "body": "전체를 균등 난수 u로 뽑아 u\u003c.12는 고장과 동시 경보, .12≤u\u003c.14는 정상과 동시 경보, 나머지는 버립니다. 시드 7의 첫 32회에서 6개가 남고 그중 5개가 고장이라 5/6≈.833입니다.",
+    "takeaway": "32개가 5·1·26으로 나뉘고 경보가 맞는 위 두 종류만 분모 6으로 들어갑니다.",
+    "example": [
+      "32회 추출",
+      "5 고장 + 1 정상, 26 제외",
+      "5/6 ≈ .833"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "f",
+          118,
+          69,
+          171,
+          59,
+          [
+            "u \u003c .12",
+            "고장 5"
+          ],
+          "active"
+        ],
+        [
+          "n",
+          118,
+          140,
+          171,
+          59,
+          [
+            ".12 ≤ u \u003c .14",
+            "정상 1"
+          ],
+          "plain"
+        ],
+        [
+          "x",
+          118,
+          217,
+          171,
+          59,
+          [
+            "u ≥ .14",
+            "제외 26"
+          ],
+          "blocked"
+        ],
+        [
+          "ok",
+          344,
+          99,
+          128,
+          59,
+          [
+            "유지",
+            "5+1=6"
+          ],
+          "active"
+        ],
+        [
+          "post",
+          521,
+          99,
+          150,
+          59,
+          [
+            "고장 비율",
+            "5/6≈.833"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "f",
+          "ok",
+          "active",
+          "",
+          0
+        ],
+        [
+          "n",
+          "ok",
+          "active",
+          "",
+          0
+        ],
+        [
+          "ok",
+          "post",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "증거가 맞는 표본",
+      "description": "32개가 5·1·26으로 나뉘고 경보가 맞는 위 두 종류만 분모 6으로 들어갑니다."
+    },
+    "quiz": [
+      "동시 경보 표본이 10개고 그중 고장이 8개면 전체 70개 중 무엇을 분모로 하나요?",
+      "10",
+      "70",
+      "관측에 맞는 표본만 사후 확률의 분모에 넣습니다."
+    ]
+  },
+  {
+    "label": "표본 수 늘리기",
+    "title": "같은 난수열을 이어 추정값을 다시 계산합니다",
+    "body": "같은 시드로 256개까지 이어서 뽑으면 35개가 증거와 맞고 그중 31개가 고장입니다. 31/35≈.886이며 정확값은 .857입니다. 표본을 늘리면 평균적으로 안정되지만 오차가 매번 줄지는 않습니다.",
+    "takeaway": "두 행에 5/6과 31/35가 표시되고 정확값 .857에 대한 오차의 부호와 크기가 달라집니다.",
+    "example": [
+      "시드 7 · 32회",
+      "256회까지 같은 열 추가",
+      "31/35 ≈ .886"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m88_0",
+          130.0,
+          88,
+          173,
+          37,
+          [
+            "32회"
+          ],
+          "plain"
+        ],
+        [
+          "m88_1",
+          310.0,
+          88,
+          173,
+          37,
+          [
+            "5/6≈.833"
+          ],
+          "plain"
+        ],
+        [
+          "m88_2",
+          490.0,
+          88,
+          173,
+          37,
+          [
+            "−.024"
+          ],
+          "plain"
+        ],
+        [
+          "m161_0",
+          130.0,
+          161,
+          173,
+          37,
+          [
+            "256회"
+          ],
+          "plain"
+        ],
+        [
+          "m161_1",
+          310.0,
+          161,
+          173,
+          37,
+          [
+            "31/35≈.886"
+          ],
+          "active"
+        ],
+        [
+          "m161_2",
+          490.0,
+          161,
+          173,
+          37,
+          [
+            "+.029"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          97,
+          237,
+          "오차 = 추정 − 정확값 .857"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "표본 수 늘리기",
+      "description": "두 행에 5/6과 31/35가 표시되고 정확값 .857에 대한 오차의 부호와 크기가 달라집니다."
+    },
+    "quiz": [
+      "동시 경보가 한 번도 나오지 않았다면 고장률을 0으로 보고할까요?",
+      "추정 불가 · 분모 0",
+      "0으로 추정",
+      "표본이 하나도 남지 않아 비율을 계산할 수 없습니다."
+    ]
+  }
+];
+const slug = 'rejection-sampling-inference';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

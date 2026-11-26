@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="논리적으로 가능한 작업 순서도 포장대가 하나일 때 왜 충돌하나요?">
+<title>여러 작업의 순서와 자원 경합 · A18</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./warehouse-resource-conflicts.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A18</p><h1>여러 작업의 순서와 자원 경합</h1><p>논리적으로 가능한 작업 순서도 포장대가 하나일 때 왜 충돌하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">여러 작업의 순서와 자원 경합</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "작업 겹침",
+    "title": "선후 조항을 지켜도 같은 포장대를 동시에 쓸 수 없습니다",
+    "body": "P는 0–1분에 끝나고 그 다음에 K가 시작합니다. 두 주문을 따로 계획하면 K가 1–3분, L이 1–2분에 같은 포장대를 씁니다. 1–2분에는 수요가 2대이고 포장대는 1대입니다.",
+    "takeaway": "같은 시간 눈금에서 K와 L의 막대가 1–2분에 포개지고 수요 2 > 용량 1이 나타납니다.",
+    "example": [
+      "K[1,3), L[1,2)",
+      "1–2분에 포장대 수요 2",
+      "2 > 1 · 충돌"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          115,
+          62,
+          "0"
+        ],
+        [
+          220,
+          62,
+          "1"
+        ],
+        [
+          325,
+          62,
+          "2"
+        ],
+        [
+          430,
+          62,
+          "3"
+        ],
+        [
+          535,
+          62,
+          "4 min"
+        ],
+        [
+          30,
+          110,
+          "K"
+        ],
+        [
+          30,
+          158,
+          "L"
+        ],
+        [
+          28,
+          252,
+          "같은 포장대, 용량 1"
+        ]
+      ],
+      "bars": [
+        [
+          220,
+          95,
+          210,
+          24,
+          "포장대 K 1–3",
+          "active"
+        ],
+        [
+          220,
+          143,
+          105,
+          24,
+          "L 1–2",
+          "blocked"
+        ],
+        [
+          220,
+          192,
+          105,
+          24,
+          "2 > 1",
+          "blocked"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "작업 겹침",
+      "description": "같은 시간 눈금에서 K와 L의 막대가 1–2분에 포개지고 수요 2 > 용량 1이 나타납니다."
+    },
+    "quiz": [
+      "L이 [3,4)로 옮겨 K[1,3) 바로 뒤에 붙으면 포장대가 겹치나요?",
+      "겹치지 않음",
+      "3분에 중복",
+      "반열린 구간이므로 K는 3분부터 포장대를 점유하지 않습니다."
+    ]
+  },
+  {
+    "label": "자원별 일정",
+    "title": "L은 포장대에서 대기하지만 별도 발송대의 H는 동시에 실행됩니다",
+    "body": "K를 1–3분에 그대로 두고 L을 3–4분에 배치합니다. 선후 조건 K\u003cH를 지킨 발송 H는 다른 자원을 쓰므로 3–4분에 L과 동시 실행할 수 있습니다. 전체 작업은 4분에 끝납니다.",
+    "takeaway": "K와 L은 3분 경계에서 겹치지 않고, 별도 줄의 H만 L과 같은 시간에 실행됩니다.",
+    "example": [
+      "K[1,3), L[1,2)",
+      "L을 [3,4)로 이동",
+      "포장 충돌 0 · 종료 4분"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          115,
+          62,
+          "0"
+        ],
+        [
+          220,
+          62,
+          "1"
+        ],
+        [
+          325,
+          62,
+          "2"
+        ],
+        [
+          430,
+          62,
+          "3"
+        ],
+        [
+          535,
+          62,
+          "4 min"
+        ],
+        [
+          28,
+          111,
+          "포장대"
+        ],
+        [
+          28,
+          173,
+          "발송대"
+        ],
+        [
+          291,
+          113,
+          "K 1–3"
+        ],
+        [
+          457,
+          113,
+          "L 3–4"
+        ],
+        [
+          457,
+          175,
+          "H 3–4"
+        ],
+        [
+          28,
+          239,
+          "K → H · 3분에 자원 분리"
+        ]
+      ],
+      "bars": [
+        [
+          220,
+          96,
+          210,
+          24,
+          "",
+          "active"
+        ],
+        [
+          430,
+          96,
+          105,
+          24,
+          "",
+          "active"
+        ],
+        [
+          430,
+          158,
+          105,
+          24,
+          "",
+          "active"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "자원별 일정",
+      "description": "K와 L은 3분 경계에서 겹치지 않고, 별도 줄의 H만 L과 같은 시간에 실행됩니다."
+    },
+    "quiz": [
+      "H도 포장대를 써야 한다면 L과 H를 함께 [3,4)에 두어도 될까요?",
+      "둘 중 하나를 미뤄야 함",
+      "동시에 가능",
+      "같은 포장대의 용량은 1입니다."
+    ]
+  }
+];
+const slug = 'warehouse-resource-conflicts';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+window.lessonText = {
+  "변수 제거로 사후확률 계산": "Posterior inference by variable elimination",
+  "모르는 보정 상태를 먼저 합치고 두 경보 뒤 고장 확률을 어떻게 정규화할까요?": "How do you sum out unknown calibration and normalize fault probability after two alarms?",
+  "탐색·추론·계획": "Search, reasoning and planning",
+  "변수 제거로 사후확률 계산 · A22": "Posterior inference by variable elimination · A22",
+  "계산과 판단": "Worked example",
+  "다른 입력으로 확인": "Check with a new input",
+  "숨은 보정 합산": "Sum out calibration",
+  "고장과 정상 각각에서 C의 두 가중항이 결합되어 .75와 .25가 됩니다.": "Two weighted C terms combine within each fault state to produce .75 and .25.",
+  "보정 두 상태를 합산해 열 우도 하나를 남깁니다": "Summing both calibration states leaves one heat likelihood",
+  "C는 두 값이 각각 .5이고 F와 독립입니다. 고장일 때 열 경보율은 보정 상태별 .90과 .60, 정상일 때는 .40과 .10입니다. C를 합하면 F=1에서 .75, F=0에서 .25의 열 우도를 얻습니다.": "C has two equally probable states and is independent of F. Heat alarm probabilities across calibration states are .90 and .60 if faulty, .40 and .10 otherwise. Summing out C leaves heat likelihood .75 for F=1 and .25 for F=0.",
+  "C가 두 값에서 같은 열 경보율 .60을 갖고 가중치 합이 1이라면 합산 결과는?": "If both C states have heat alarm probability .60 and their weights sum to 1, what is the result?",
+  "가중치 .5를 각 항에 곱한 뒤 합합니다.": "Multiply each term by its .5 weight before adding.",
+  "증거로 나누기": "Normalize by the evidence",
+  "위의 .12와 아래의 .02가 분모 .14에서 만나 .12/.14가 됩니다.": "The upper .12 and lower .02 combine as denominator .14, yielding .12/.14.",
+  "두 경우의 점수를 더해 고장 확률을 정규화합니다": "Normalize the fault score by the sum of both scores",
+  "진동 우도는 고장일 때 .80, 정상일 때 .10이며 F를 알면 열과 독립입니다. 고장 점수는 .2×.75×.80=.12고 정상 점수는 .8×.25×.10=.02입니다. 관측의 확률 .14로 나누면 사후 고장 확률은 6/7≈.857입니다.": "The vibration likelihood is .80 if faulty and .10 if normal, independent of heat given F. The fault score is .2×.75×.80=.12 and the normal score is .8×.25×.10=.02. Dividing by evidence probability .14 gives fault posterior 6/7≈.857.",
+  "고장 점수 .09와 정상 점수 .01이 주어지면 정규화된 고장 확률은?": "Given fault score .09 and normal score .01, what is the normalized fault probability?",
+  ".09를 두 점수의 합 .10으로 나눕니다.": "Divide .09 by the total .10.",
+  "탐색·추론·계획 · A22": "Search, reasoning and planning · A22",
+  "✓ 맞았습니다.": "✓ Correct.",
+  "✗ 다시 생각해 보세요.": "✗ Think again."
+};

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 고장에 반응하는 두 센서의 관측을 언제 곱할 수 있을까요?">
+<title>조건부 독립과 베이지안 네트워크 · A21</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./bayes-network-conditional-independence.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A21</p><h1>조건부 독립과 베이지안 네트워크</h1><p>같은 고장에 반응하는 두 센서의 관측을 언제 곱할 수 있을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">조건부 독립과 베이지안 네트워크</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "고장을 알고 곱하기",
+    "title": "같은 고장 상태 안에서는 두 우도를 곱합니다",
+    "body": "고장 F=1이면 열 H와 진동 V의 경보 확률을 각각 .75와 .80으로 둡니다. F를 조건으로 두 센서가 독립이라는 모델이므로 두 경보가 동시에 날 확률은 .75×.80=.60입니다.",
+    "takeaway": "F에서 H와 V로 두 간선이 나가고 F=1일 때 .75와 .80을 곱해 .60을 얻습니다.",
+    "example": [
+      "F=1",
+      "P(H=1∣F) × P(V=1∣F)",
+      ".75 × .80 = .60"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "f",
+          310,
+          61,
+          156,
+          37,
+          [
+            "고장 F=1"
+          ],
+          "active"
+        ],
+        [
+          "h",
+          133,
+          166,
+          165,
+          59,
+          [
+            "H 경보",
+            ".75"
+          ],
+          "plain"
+        ],
+        [
+          "v",
+          487,
+          166,
+          165,
+          59,
+          [
+            "V 경보",
+            ".80"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "f",
+          "h",
+          "active",
+          "",
+          0
+        ],
+        [
+          "f",
+          "v",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          86,
+          248,
+          "P(H=1,V=1 ∣ F=1) = .75 × .80 = .60"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "고장을 알고 곱하기",
+      "description": "F에서 H와 V로 두 간선이 나가고 F=1일 때 .75와 .80을 곱해 .60을 얻습니다."
+    },
+    "quiz": [
+      "F=0일 때 두 조건부 경보율이 .25와 .10이면 이 모델에서 동시 경보율은?",
+      ".025",
+      ".35",
+      "조건부 독립에서 .25×.10=.025입니다."
+    ]
+  },
+  {
+    "label": "고장을 모르고 섞기",
+    "title": "고장을 모르면 두 센서는 같은 원인을 공유합니다",
+    "body": "F=1은 .2이고 F=0은 .8입니다. 두 경보의 실제 결합확률은 .2×.60+.8×.025=.14입니다. 주변 확률끼리 곱하면 P(H)=.35와 P(V)=.24의 곱 .084로 달라집니다.",
+    "takeaway": "고장 있음과 없음의 경로를 가중합하면 .14이고 가운데 원인을 무시한 곱 .084와 다릅니다.",
+    "example": [
+      "P(F)=.2",
+      ".2×.60 + .8×.025",
+      ".14 ≠ .35×.24"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "fault",
+          124,
+          80,
+          174,
+          59,
+          [
+            "F=1 · .2",
+            "H,V: .60"
+          ],
+          "plain"
+        ],
+        [
+          "normal",
+          124,
+          196,
+          174,
+          59,
+          [
+            "F=0 · .8",
+            "H,V: .025"
+          ],
+          "plain"
+        ],
+        [
+          "sum",
+          475,
+          138,
+          174,
+          59,
+          [
+            "두 경보",
+            ".12+.02=.14"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "fault",
+          "sum",
+          "active",
+          ".2×.60",
+          0
+        ],
+        [
+          "normal",
+          "sum",
+          "active",
+          ".8×.025",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          74,
+          254,
+          "P(H)×P(V)=.35×.24=.084 ≠ .14"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "고장을 모르고 섞기",
+      "description": "고장 있음과 없음의 경로를 가중합하면 .14이고 가운데 원인을 무시한 곱 .084와 다릅니다."
+    },
+    "quiz": [
+      "두 센서가 고장을 알 때만 독립이라면 아무 조건 없이 두 주변확률만 곱해도 되나요?",
+      "고장 상태별 곱을 가중합",
+      "주변확률을 바로 곱함",
+      "두 센서가 공유하는 원인 F를 합산에 포함합니다."
+    ]
+  }
+];
+const slug = 'bayes-network-conditional-independence';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

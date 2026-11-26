@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="센서 한 번을 더 읽는 비용이 판단 개선으로 줄이는 손실보다 작을까요?">
+<title>관측의 가치와 기대 효용 · A25</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./observation-value-utility.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A25</p><h1>관측의 가치와 기대 효용</h1><p>센서 한 번을 더 읽는 비용이 판단 개선으로 줄이는 손실보다 작을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">관측의 가치와 기대 효용</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "관측 없이 선택",
+    "title": "현재 확률에서는 미점검의 기대 손실이 더 작습니다",
+    "body": "점검이 고장 손실을 막는다고 가정하고 점검 비용을 3점으로 둡니다. 미점검의 기대 손실은 고장 확률 .2에 10점을 곱한 2점입니다. 관측이 없을 때는 미점검을 고릅니다.",
+    "takeaway": "같은 눈금의 2점 막대가 3점 막대보다 짧아서 미점검이 선택됩니다.",
+    "example": [
+      "고장 확률 .2",
+      "min(.2×10,3)",
+      "미점검 · 2점"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          46,
+          79,
+          "점검"
+        ],
+        [
+          46,
+          151,
+          "미점검"
+        ],
+        [
+          50,
+          228,
+          "min(3, .2×10) = 2 pts"
+        ]
+      ],
+      "bars": [
+        [
+          195,
+          62,
+          270,
+          24,
+          "3 pts",
+          "plain"
+        ],
+        [
+          195,
+          134,
+          180,
+          24,
+          "2 pts",
+          "active"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "관측 없이 선택",
+      "description": "같은 눈금의 2점 막대가 3점 막대보다 짧아서 미점검이 선택됩니다."
+    },
+    "quiz": [
+      "사전확률이 .4로 오르면 검사 전 최선의 결정은?",
+      "점검 · 3점",
+      "미점검 · 4점",
+      "미점검의 기대 손실 4가 점검 3보다 커집니다."
+    ]
+  },
+  {
+    "label": "검사 뒤 갈라지는 결정",
+    "title": "양성이면 점검하고 음성이면 미점검합니다",
+    "body": "양성 확률은 .2×.8+.8×.1=.24입니다. 양성의 고장률 .16/.24≈.667에서 미점검은 약 6.67점이라 점검 3점을 선택합니다. 음성의 고장률 .04/.76≈.053에서 미점검은 약 .526점이라 미점검을 선택합니다.",
+    "takeaway": "양성과 음성 가지에서 분모가 각각 .24와 .76이며 선택이 점검과 미점검으로 갈립니다.",
+    "example": [
+      "양성 .24 · 음성 .76",
+      ".16/.24×10 · .04/.76×10",
+      "점검 3 · 미점검 .526"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "pos",
+          121,
+          85,
+          190,
+          59,
+          [
+            "양성",
+            ".16/.24 × 10 ≈ 6.67"
+          ],
+          "plain"
+        ],
+        [
+          "neg",
+          121,
+          199,
+          190,
+          59,
+          [
+            "음성",
+            ".04/.76 × 10 ≈ .526"
+          ],
+          "plain"
+        ],
+        [
+          "insp",
+          480,
+          85,
+          170,
+          59,
+          [
+            "점검",
+            "min(3,6.67)=3"
+          ],
+          "active"
+        ],
+        [
+          "skip",
+          480,
+          199,
+          170,
+          59,
+          [
+            "미점검",
+            "min(3,.526)=.526"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "pos",
+          "insp",
+          "active",
+          ".24",
+          0
+        ],
+        [
+          "neg",
+          "skip",
+          "active",
+          ".76",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "검사 뒤 갈라지는 결정",
+      "description": "양성과 음성 가지에서 분모가 각각 .24와 .76이며 선택이 점검과 미점검으로 갈립니다."
+    },
+    "quiz": [
+      "양성에서 점검이 7점으로 오르면 어느 쪽의 기대 손실이 작나요?",
+      "미점검 · 약 6.67점",
+      "점검 · 7점",
+      "양성의 미점검 기대 손실이 약 6.67점입니다."
+    ]
+  },
+  {
+    "label": "비용 포함",
+    "title": "검사비 .50은 결정 손실 감소 .88보다 작습니다",
+    "body": "검사 결과별 손실을 결과 확률로 가중합니다. 양성 점검은 .24×3=.72점, 음성 미점검 고장은 .04×10=.40점입니다. 결정 손실 1.12점에 검사비 .50을 더해 1.62점이면 검사 없는 2점보다 .38점 적습니다.",
+    "takeaway": "양성 점검 .72와 음성 미탐 .40이 합쳐지고 검사비 .50을 붙인 1.62와 기준 2가 함께 보입니다.",
+    "example": [
+      "검사 없이 2점",
+      ".72+.40+.50",
+      "검사 1.62점 · 절감 .38점"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          108,
+          90,
+          162,
+          59,
+          [
+            "양성 점검",
+            ".24×3=.72"
+          ],
+          "plain"
+        ],
+        [
+          "n",
+          108,
+          198,
+          162,
+          59,
+          [
+            "음성 고장",
+            ".04×10=.40"
+          ],
+          "plain"
+        ],
+        [
+          "loss",
+          315,
+          144,
+          140,
+          59,
+          [
+            "결정 손실",
+            "1.12 pts"
+          ],
+          "plain"
+        ],
+        [
+          "total",
+          511,
+          144,
+          160,
+          59,
+          [
+            "검사 포함",
+            "1.62 pts"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "loss",
+          "active",
+          "",
+          0
+        ],
+        [
+          "n",
+          "loss",
+          "active",
+          "",
+          0
+        ],
+        [
+          "loss",
+          "total",
+          "active",
+          "+.50",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          62,
+          250,
+          "검사 없음 2.00 − 검사 포함 1.62 = .38점 절감"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "비용 포함",
+      "description": "양성 점검 .72와 음성 미탐 .40이 합쳐지고 검사비 .50을 붙인 1.62와 기준 2가 함께 보입니다."
+    },
+    "quiz": [
+      "검사비가 .90점이면 검사하는 것이 이득인가요?",
+      "이득 없음 · 2.02점",
+      "이득 · 1.12점",
+      "검사비까지 더하면 기대 손실 2.02가 기준 2를 넘습니다."
+    ]
+  }
+];
+const slug = 'observation-value-utility';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

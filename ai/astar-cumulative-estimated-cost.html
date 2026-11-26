@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 지도에서 g+h의 순서로 꺼내면 확장 상태와 최적 비용이 어떻게 달라질까요?">
+<title>A*의 누적 비용과 예상 비용 · A07</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./astar-cumulative-estimated-cost.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A07</p><h1>A*의 누적 비용과 예상 비용</h1><p>같은 지도에서 g+h의 순서로 꺼내면 확장 상태와 최적 비용이 어떻게 달라질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">A*의 누적 비용과 예상 비용</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "누적과 남은 값",
+    "title": "h를 더하면 낮은 g의 B보다 A를 먼저 확장합니다",
+    "body": "W1의 목표는 G=(3,0)입니다. S를 확장한 뒤 A는 g=2, 맨해튼 하한 h=2이고 B는 g=1, h=4입니다. A*에서 f=4인 A가 f=5인 B보다 먼저입니다.",
+    "takeaway": "S에서 A와 B에 붙은 g 및 h의 합이 4와 5여서 위쪽 A를 선택합니다.",
+    "example": [
+      "A(g=2), B(g=1)",
+      "2+2 \u003c 1+4",
+      "A 먼저"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          72,
+          132,
+          67,
+          59,
+          [
+            "S",
+            "g=0"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          226,
+          66,
+          115,
+          59,
+          [
+            "A · 다음",
+            "2+2=4"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          225,
+          199,
+          115,
+          59,
+          [
+            "B · 대기",
+            "1+4=5"
+          ],
+          "plain"
+        ],
+        [
+          "c",
+          389,
+          199,
+          56,
+          37,
+          [
+            "C"
+          ],
+          "muted"
+        ],
+        [
+          "d",
+          390,
+          66,
+          56,
+          37,
+          [
+            "D"
+          ],
+          "muted"
+        ],
+        [
+          "g",
+          535,
+          66,
+          56,
+          37,
+          [
+            "G"
+          ],
+          "muted"
+        ],
+        [
+          "x",
+          475,
+          248,
+          56,
+          37,
+          [
+            "X"
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "d",
+          "undirected",
+          "2",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "b",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "undirected",
+          "3",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "undirected",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "x",
+          "undirected",
+          "1",
+          18
+        ]
+      ],
+      "labels": [
+        [
+          44,
+          248,
+          "f = g + h (min)"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "누적과 남은 값",
+      "description": "S에서 A와 B에 붙은 g 및 h의 합이 4와 5여서 위쪽 A를 선택합니다."
+    },
+    "quiz": [
+      "후보 L은 g=4, h=1이고 M은 g=1, h=3이면 어느 쪽을 먼저 꺼낼까요?",
+      "M · f=4",
+      "L · f=5",
+      "A*는 f가 가장 작은 후보를 먼저 선택합니다."
+    ]
+  },
+  {
+    "label": "동률과 목표",
+    "title": "작은 h부터 꺼내면 X를 확장하지 않고 G에 도착합니다",
+    "body": "A에서 D는 g=4,h=1이라 B와 f=5로 동률입니다. 낮은 h의 D를 먼저 꺼낸 뒤 B, 그리고 B가 g=2로 고친 C를 확장합니다. X의 f=2+5=7이라 G의 f=6보다 뒤입니다.",
+    "takeaway": "D와 B의 f=5가 동률이고 h=1\u003c4라 D가 먼저입니다. S–A–D–G가 6분이고 X는 아직 대기합니다.",
+    "example": [
+      "D(f=5, h=1) · B(f=5, h=4)",
+      "D → B → C → G",
+      "6분 · 확장 5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          72,
+          132,
+          66,
+          59,
+          [
+            "S",
+            "#1"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          226,
+          66,
+          66,
+          59,
+          [
+            "A",
+            "#2"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          225,
+          199,
+          110,
+          59,
+          [
+            "B · #4",
+            "f=5, h=4"
+          ],
+          "muted"
+        ],
+        [
+          "c",
+          389,
+          199,
+          86,
+          59,
+          [
+            "C",
+            "#5"
+          ],
+          "muted"
+        ],
+        [
+          "d",
+          390,
+          66,
+          110,
+          59,
+          [
+            "D · #3",
+            "f=5, h=1"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          535,
+          66,
+          88,
+          59,
+          [
+            "G",
+            "f=6"
+          ],
+          "active"
+        ],
+        [
+          "x",
+          475,
+          248,
+          120,
+          59,
+          [
+            "X · 대기",
+            "2+5=7"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "muted",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "d",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "b",
+          "c",
+          "muted",
+          "1",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "undirected",
+          "3",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "x",
+          "undirected",
+          "1",
+          37
+        ]
+      ],
+      "labels": [
+        [
+          44,
+          231,
+          "f 동률: h(D)=1 \u003c h(B)=4"
+        ],
+        [
+          44,
+          260,
+          "UCS 6회 · A* 5회"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "동률과 목표",
+      "description": "D와 B의 f=5가 동률이고 h=1\u003c4라 D가 먼저입니다. S–A–D–G가 6분이고 X는 아직 대기합니다."
+    },
+    "quiz": [
+      "두 후보의 f가 모두 8이고 h가 2와 3이면 이 지도에서 쓰는 규칙으로 어느 후보가 먼저인가요?",
+      "h=2",
+      "h=3",
+      "f가 같아서 작은 h가 먼저이고 h도 같으면 ID를 비교합니다."
+    ]
+  }
+];
+const slug = 'astar-cumulative-estimated-cost';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

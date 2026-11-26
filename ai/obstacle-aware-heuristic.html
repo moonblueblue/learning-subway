@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="폐쇄된 통로를 하한 지도에도 반영하면 같은 최적 비용에 도달하는 확장 수가 어떻게 바뀔까요?">
+<title>장애물 지도에서 휴리스틱 비교 · A09</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./obstacle-aware-heuristic.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A09</p><h1>장애물 지도에서 휴리스틱 비교</h1><p>폐쇄된 통로를 하한 지도에도 반영하면 같은 최적 비용에 도달하는 확장 수가 어떻게 바뀔까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">장애물 지도에서 휴리스틱 비교</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "장애물 무시",
+    "title": "맨해튼 하한에서는 막힌 쪽의 A도 먼저 확장됩니다",
+    "body": "A–D가 폐쇄되어도 격자 거리만 쓰면 A의 h는 2, B의 h는 4입니다. S에서 A는 2+2=4, B는 1+4=5이므로 A가 먼저입니다. 실제 G 경로는 B–C–D를 거치며 최저 7분입니다.",
+    "takeaway": "차단된 A–D 선과 A의 낮은 f=4가 같이 남고, 최저 경로 S–B–C–D–G의 확장 순서는 S·A·B·C·D입니다.",
+    "example": [
+      "A–D 폐쇄",
+      "A: f=4 \u003c B: f=5",
+      "7분 · 확장 5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          75,
+          133,
+          72,
+          59,
+          [
+            "S",
+            "#1"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          224,
+          65,
+          90,
+          59,
+          [
+            "A",
+            "#2 · f=4"
+          ],
+          "blocked"
+        ],
+        [
+          "b",
+          224,
+          195,
+          90,
+          59,
+          [
+            "B",
+            "#3 · f=5"
+          ],
+          "active"
+        ],
+        [
+          "c",
+          382,
+          195,
+          73,
+          59,
+          [
+            "C",
+            "#4"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          382,
+          65,
+          73,
+          59,
+          [
+            "D",
+            "#5"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          525,
+          65,
+          79,
+          59,
+          [
+            "G",
+            "g=7"
+          ],
+          "active"
+        ],
+        [
+          "x",
+          485,
+          248,
+          60,
+          37,
+          [
+            "X"
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "muted",
+          "2",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "active",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "b",
+          "c",
+          "active",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "d",
+          "blocked",
+          "폐쇄",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "active",
+          "3",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "x",
+          "undirected",
+          "1",
+          19
+        ]
+      ],
+      "labels": [
+        [
+          45,
+          246,
+          "최적 7분 · 확장 5회"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "장애물 무시",
+      "description": "차단된 A–D 선과 A의 낮은 f=4가 같이 남고, 최저 경로 S–B–C–D–G의 확장 순서는 S·A·B·C·D입니다."
+    },
+    "quiz": [
+      "이 장면에서 A의 낮은 h=2가 유효한 하한으로 남을까요?",
+      "하한은 유효하며 느슨해짐",
+      "폐쇄만으로 하한 위반",
+      "폐쇄는 남은 실제 최소 시간을 낮추지 않습니다."
+    ]
+  },
+  {
+    "label": "폐쇄 반영",
+    "title": "목적지부터 거꾸로 계산한 거리가 A의 우선순위를 내립니다",
+    "body": "목표 G에서 역방향 최단 거리를 한 번 계산합니다. 양방향 통로이므로 B에서 X로도, X에서 B로도 1분입니다. G에서 B까지의 6분에 그 1분을 더해 X의 하한 7분을 얻습니다.",
+    "takeaway": "G→D→C의 0·2·5가 A와 B에서 6이 됩니다. 양방향 B↔X의 1분을 더해 X에는 6+1=7이 붙습니다.",
+    "example": [
+      "G(0)",
+      "D=2, C=2+3=5",
+      "A=B=5+1=6"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          75,
+          133,
+          72,
+          59,
+          [
+            "S",
+            "h=7"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          224,
+          65,
+          90,
+          59,
+          [
+            "A",
+            "h=6"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          224,
+          195,
+          90,
+          59,
+          [
+            "B",
+            "h=6"
+          ],
+          "active"
+        ],
+        [
+          "c",
+          382,
+          195,
+          73,
+          59,
+          [
+            "C",
+            "h=5"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          382,
+          65,
+          73,
+          59,
+          [
+            "D",
+            "h=2"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          525,
+          65,
+          79,
+          59,
+          [
+            "G",
+            "h=0"
+          ],
+          "active"
+        ],
+        [
+          "x",
+          493,
+          248,
+          108,
+          59,
+          [
+            "X",
+            "h=6+1=7"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "s",
+          "undirected",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "s",
+          "active",
+          "1",
+          0
+        ],
+        [
+          "c",
+          "a",
+          "active",
+          "1",
+          0
+        ],
+        [
+          "c",
+          "b",
+          "active",
+          "1",
+          0
+        ],
+        [
+          "d",
+          "a",
+          "blocked",
+          "폐쇄",
+          0
+        ],
+        [
+          "d",
+          "c",
+          "active",
+          "3",
+          0
+        ],
+        [
+          "g",
+          "d",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "x",
+          "undirected",
+          "↔ 1 min",
+          21
+        ]
+      ],
+      "labels": [
+        [
+          42,
+          246,
+          "양방향 통로 · G부터 역계산"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "폐쇄 반영",
+      "description": "G→D→C의 0·2·5가 A와 B에서 6이 됩니다. 양방향 B↔X의 1분을 더해 X에는 6+1=7이 붙습니다."
+    },
+    "quiz": [
+      "목표 직전 D→G가 2분에서 4분으로 늘면 C의 새 h는?",
+      "7 min",
+      "5 min",
+      "C에서 G까지는 이제 3+4=7분입니다."
+    ]
+  },
+  {
+    "label": "비용과 확장 비교",
+    "title": "같은 최저 7분 경로에서 A 확장이 줄어듭니다",
+    "body": "S를 확장하면 A는 f=2+6=8, B는 f=1+6=7입니다. B–C–D–G에서 f=7이 이어지므로 A와 X를 대기 상태에 둔 채 7분 경로를 찾습니다. 하한 표를 만드는 시간은 별도로 셉니다.",
+    "takeaway": "A의 번호가 대기 f=8로 바뀌고 S·B·C·D 네 상태만 확장됩니다.",
+    "example": [
+      "A: 2+6=8, B: 1+6=7",
+      "f=7 후보가 G까지 먼저",
+      "같은 7분 · 5→4회"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          75,
+          133,
+          72,
+          59,
+          [
+            "S",
+            "#1"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          224,
+          65,
+          102,
+          59,
+          [
+            "A · 대기",
+            "2+6=8"
+          ],
+          "plain"
+        ],
+        [
+          "b",
+          224,
+          195,
+          90,
+          59,
+          [
+            "B",
+            "#2 · f=7"
+          ],
+          "active"
+        ],
+        [
+          "c",
+          382,
+          195,
+          73,
+          59,
+          [
+            "C",
+            "#3"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          382,
+          65,
+          73,
+          59,
+          [
+            "D",
+            "#4"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          525,
+          65,
+          79,
+          59,
+          [
+            "G",
+            "g=7"
+          ],
+          "active"
+        ],
+        [
+          "x",
+          485,
+          248,
+          87,
+          59,
+          [
+            "X",
+            "f=9"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "muted",
+          "2",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "active",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "b",
+          "c",
+          "active",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "d",
+          "blocked",
+          "폐쇄",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "active",
+          "3",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "x",
+          "undirected",
+          "1",
+          19
+        ]
+      ],
+      "labels": [
+        [
+          45,
+          246,
+          "최적 7분 · 확장 5 → 4회"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "비용과 확장 비교",
+      "description": "A의 번호가 대기 f=8로 바뀌고 S·B·C·D 네 상태만 확장됩니다."
+    },
+    "quiz": [
+      "지도에 지름길을 열어 실제 비용이 이전 하한 표의 값보다 작아지면 어떻게 해야 할까요?",
+      "하한 표 갱신",
+      "이전 값을 그대로 사용",
+      "지름길이 열린 뒤에는 예전 값이 새 최적비용을 넘을 수 있습니다."
+    ]
+  }
+];
+const slug = 'obstacle-aware-heuristic';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

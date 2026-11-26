@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="통로 비용과 작업 선후관계를 만족하고 폐쇄와 불가능한 주문을 처리하는 계획기를 어떻게 검증할까요?">
+<title>창고 배송 계획기 · 졸업 과제</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<script src="./warehouse-planner/fixtures.js"></script>
+<script src="./warehouse-planner/planner.js"></script>
+<style>
+  dialog.warehouse-dialog {
+    width: min(780px, calc(100% - 24px));
+    max-height: 94dvh;
+    padding: 16px;
+    margin: auto;
+    color: #142620;
+    background: #fff;
+    border: 1px solid #aebeb5;
+    border-radius: 12px;
+    text-align: start;
+  }
+  dialog.warehouse-dialog::backdrop { background: #081c19b8; }
+  .warehouse-dialog header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .warehouse-dialog h2, .warehouse-dialog h3 { margin-block: .35em; }
+  .warehouse-dialog label, .warehouse-dialog select, .warehouse-dialog textarea { display: block; }
+  .warehouse-dialog select, .warehouse-dialog textarea {
+    min-height: 44px;
+    max-width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #8da99e;
+    border-radius: 6px;
+    padding: .5rem;
+    color: inherit;
+    background: #f7faf8;
+  }
+  .warehouse-dialog textarea { width: 100%; margin-block: .35em .75em; height: min(32dvh, 14rem); resize: none; }
+  .warehouse-dialog p { margin-block: .35em; overflow-wrap: anywhere; }
+  .warehouse-dialog .result-picker, .warehouse-dialog .result-tabs, .warehouse-dialog .result-pager {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-block: .4rem;
+  }
+  .warehouse-dialog .result-tabs { gap: 4px; }
+  .warehouse-dialog .result-tabs .action { flex: 1 1 0; padding-inline: 4px; min-width: 0; }
+  .warehouse-dialog .result-compare { width: 100%; border-collapse: collapse; }
+  .warehouse-dialog .result-compare th, .warehouse-dialog .result-compare td {
+    padding: 4px;
+    text-align: start;
+    border-block-end: 1px solid #cbd9d0;
+  }
+  .warehouse-dialog .result-map { display: block; width: 100%; height: min(32dvh, 230px); background: #f4f8f5; }
+  .result-map line { stroke: #879c92; stroke-width: 2.5; }
+  .result-map .selected { stroke: #0b6e5f; stroke-width: 6; }
+  .result-map .closed { stroke: #a33328; stroke-dasharray: 7 5; stroke-width: 4; }
+  .result-map circle { fill: #fff; stroke: #849b8f; stroke-width: 2; }
+  .result-map .expanded { stroke: #0b6e5f; stroke-width: 5; stroke-dasharray: 3 2; }
+  .result-map text { text-anchor: middle; font: 700 18px system-ui; fill: #172821;
+    stroke: #f4f8f5; stroke-width: 5; paint-order: stroke; }
+  .warehouse-dialog .result-legend { color: #3f5348; font-size: .85rem; }
+  #edit-feedback:not(:empty) { margin-block-start: .35rem; overflow-wrap: anywhere; }
+  @media (max-width: 640px) {
+    .course-shell .timeline .steps { display: grid; }
+    .course-shell .timeline .steps button { width: 100%; min-width: 0; }
+  }
+  @media (max-height: 440px), (max-width: 380px) {
+    dialog.warehouse-dialog { padding: 10px; font-size: .875rem; line-height: 1.35; }
+    .warehouse-dialog .result-compare th, .warehouse-dialog .result-compare td { padding: 2px 4px; }
+    .warehouse-dialog .result-map { height: min(26dvh, 160px); }
+    .warehouse-dialog textarea { height: min(24dvh, 14rem); margin-block-end: .45em; }
+  }
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./warehouse-planner.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · 졸업 과제</p><h1>창고 배송 계획기</h1><p>통로 비용과 작업 선후관계를 만족하고 폐쇄와 불가능한 주문을 처리하는 계획기를 어떻게 검증할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">창고 배송 계획기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>계획기 실행과 자료 받기</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<dialog id="case-editor" class="warehouse-dialog" aria-labelledby="case-editor-heading">
+  <header><h2 id="case-editor-heading">사례 입력 편집</h2><form method="dialog"><button class="action">닫기</button></form></header>
+  <label for="case-picker">사례</label>
+  <select id="case-picker"></select>
+  <label for="case-json">사례 JSON</label>
+  <p>사례 ID는 그대로 두고 비용, 차단 통로 또는 작업 조항을 바꿉니다.</p>
+  <textarea id="case-json" spellcheck="false" rows="12"></textarea>
+  <button id="apply-case" class="action primary" type="button">입력 적용</button>
+  <div id="edit-feedback" role="status"></div>
+</dialog>
+<dialog id="plan-results" class="warehouse-dialog" aria-labelledby="result-heading">
+  <header><h2 id="result-heading">계획 실행 결과</h2><form method="dialog"><button class="action">닫기</button></form></header>
+  <p id="plan-status" role="status"></p>
+  <div class="result-picker"><label for="result-picker">사례</label><select id="result-picker"></select></div>
+  <nav class="result-tabs" aria-label="결과 보기">
+    <button class="action" data-result-view="comparison" type="button">비교</button>
+    <button class="action" data-result-view="map" type="button">지도</button>
+    <button class="action" data-result-view="trace" type="button">기록</button>
+    <button class="action" data-result-view="reasons" type="button">사유</button>
+  </nav>
+  <div id="active-result" aria-live="polite"></div>
+</dialog>
+<script>
+const lesson = [
+  {
+    "label": "같은 최적 비용",
+    "title": "같은 지도에서 확장 수를 비교합니다",
+    "body": "지도 W1의 S에서 G까지 최적 경로는 S→A→D→G이고 비용은 6분입니다. 두 탐색 모두 목표에서 이웃을 만들기 전에 멈춥니다. UCS는 6회, A*는 5회 확장합니다.",
+    "takeaway": "S·A·B·C·D는 두 탐색 모두 확장합니다. A*는 f=6인 G에서 멈춰 f=7인 X를 확장하지 않습니다.",
+    "example": [
+      "W1 · S→G",
+      "UCS 6회 · A* 5회",
+      "S→A→D→G · 6 min"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          72,
+          120,
+          100,
+          59,
+          [
+            "S",
+            "공통 확장"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          224,
+          70,
+          100,
+          59,
+          [
+            "A",
+            "공통 확장"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          224,
+          183,
+          100,
+          59,
+          [
+            "B",
+            "공통 확장"
+          ],
+          "muted"
+        ],
+        [
+          "c",
+          385,
+          183,
+          100,
+          59,
+          [
+            "C",
+            "공통 확장"
+          ],
+          "muted"
+        ],
+        [
+          "d",
+          385,
+          70,
+          100,
+          59,
+          [
+            "D",
+            "공통 확장"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          532,
+          70,
+          81,
+          59,
+          [
+            "G",
+            "g=f=6"
+          ],
+          "active"
+        ],
+        [
+          "x",
+          506,
+          235,
+          133,
+          59,
+          [
+            "X · f=2+5=7",
+            "UCS만 확장"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "b",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "d",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "undirected",
+          "3",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "x",
+          "undirected",
+          "1",
+          35
+        ]
+      ],
+      "labels": [
+        [
+          43,
+          246,
+          "최적 6분 · UCS 6회 · A* 5회"
+        ],
+        [
+          43,
+          268,
+          "공통 5개 + X 1개 = UCS 6회"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "같은 최적 비용",
+      "description": "S·A·B·C·D는 두 탐색 모두 확장합니다. A*는 f=6인 G에서 멈춰 f=7인 X를 확장하지 않습니다."
+    },
+    "quiz": [
+      "순서와 비용을 계산하세요.",
+      "6 min",
+      "8 min",
+      "두 탐색을 실행해 비교합니다."
+    ]
+  },
+  {
+    "label": "더 싼 경로로 재개방",
+    "title": "이미 확장한 A의 비용을 낮추고 다시 확장합니다",
+    "body": "W2에서 이미 확장한 A에 B를 통해 3분으로 오면 이전 5분 기록을 고칩니다. 새 A를 확장하면 G의 비용은 10분에서 8분으로 내려갑니다. 추가 실습에서 W1의 3회 한도와 D–G 폐쇄 후 후보 소진을 비교합니다.",
+    "takeaway": "W2의 A는 5→3으로 다시 열리고 G 비용은 10→8로 내려갑니다.",
+    "example": [
+      "W2 · A(g=5)",
+      "S→B→A: 2+1 \u003c 5",
+      "G: 10→8 min"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          76,
+          133,
+          65,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          267,
+          73,
+          148,
+          59,
+          [
+            "A 재개방",
+            "g: 5→3"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          267,
+          206,
+          113,
+          59,
+          [
+            "B",
+            "g=2"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          520,
+          73,
+          142,
+          59,
+          [
+            "G",
+            "g: 10→8"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "muted",
+          "5",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "a",
+          "active",
+          "1",
+          28
+        ],
+        [
+          "a",
+          "g",
+          "active",
+          "5",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          54,
+          251,
+          "확장 S, A, B, A · 4회"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "더 싼 경로로 재개방",
+      "description": "W2의 A는 5→3으로 다시 열리고 G 비용은 10→8로 내려갑니다."
+    },
+    "quiz": [
+      "다음 사례를 실행하세요.",
+      "8 min",
+      "10 min",
+      "재개방 뒤의 비용을 확인합니다."
+    ]
+  },
+  {
+    "label": "주문 실행과 검증",
+    "title": "위치와 선후를 모두 맞춰 11분 계획을 만듭니다",
+    "body": "P는 S에서 1분, I는 A에서 2분, K는 D와 H는 G에서 각각 1분입니다. 이동 6분에 작업 5분을 더합니다. 검증기는 선후를 따로 검사하며 검사 없이 포장하는 제출에는 K가 기다리는 I를 반환합니다.",
+    "takeaway": "위치 S→A→D→G에서 네 작업과 각 이동 시간이 함께 표시됩니다.",
+    "example": [
+      "S · P→I→K→H",
+      "이동 2+2+2, 작업 1+2+1+1",
+      "11 min"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          77,
+          131,
+          108,
+          59,
+          [
+            "S",
+            "P +1"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          231,
+          131,
+          108,
+          59,
+          [
+            "A",
+            "I +2"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          385,
+          131,
+          108,
+          59,
+          [
+            "D",
+            "K +1"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          539,
+          131,
+          108,
+          59,
+          [
+            "G",
+            "H +1"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "a",
+          "d",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "active",
+          "2",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          64,
+          223,
+          "P \u003c I \u003c K \u003c H · 6 + 5 = 11 min"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "주문 실행과 검증",
+      "description": "위치 S→A→D→G에서 네 작업과 각 이동 시간이 함께 표시됩니다."
+    },
+    "quiz": [
+      "브라우저에서 주문을 실행하세요.",
+      "11 min",
+      "6 min",
+      "이동과 작업 비용을 모두 더합니다."
+    ]
+  },
+  {
+    "label": "통로 폐쇄 수리",
+    "title": "검사까지 5분을 보존하고 8분 구간만 다시 구합니다",
+    "body": "P·S→A·I를 끝낸 뒤 A–D를 닫습니다. 새 구간은 A→C→D·K→G·H입니다. 기존 제출의 첫 이동 A→D는 같은 지도에서 폐쇄 위반으로 판정됩니다.",
+    "takeaway": "A–D가 막히고 A→C→D로 우회합니다. 아래에 5+8=13분이 남습니다.",
+    "example": [
+      "A · 완료 {P,I}",
+      "A–D 폐쇄 → A→C→D→G",
+      "5+8=13 min"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "a",
+          103,
+          92,
+          119,
+          59,
+          [
+            "A",
+            "{P,I}"
+          ],
+          "active"
+        ],
+        [
+          "c",
+          235,
+          200,
+          108,
+          37,
+          [
+            "C"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          365,
+          92,
+          119,
+          59,
+          [
+            "D",
+            "K +1"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          528,
+          92,
+          119,
+          59,
+          [
+            "G",
+            "H +1"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "d",
+          "blocked",
+          "폐쇄",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "active",
+          "1",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "active",
+          "3",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "active",
+          "2",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          65,
+          253,
+          "완료 5분 + 우회와 작업 8분 = 13분"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "통로 폐쇄 수리",
+      "description": "A–D가 막히고 A→C→D로 우회합니다. 아래에 5+8=13분이 남습니다."
+    },
+    "quiz": [
+      "바뀐 지도에서 다시 실행하세요.",
+      "13 min",
+      "11 min",
+      "이전 5분과 새 8분을 더합니다."
+    ]
+  },
+  {
+    "label": "실패 사유와 제출",
+    "title": "순환 조항 또는 고립 위치를 자료로 남깁니다",
+    "body": "P\u003cI\u003cK\u003cH에 H\u003cP를 추가하면 엄격한 선후 순환이 생깁니다. 다른 사례에서 G로 들어가는 D–G까지 닫으면 H와 목표 G가 고립됩니다. 데이터를 내려받아 코드로 다시 실행하고 보고서를 저장합니다.",
+    "takeaway": "네 조항이 P를 돌아오는 순환을 만들고 H\u003cP가 그 고리를 닫습니다.",
+    "example": [
+      "P\u003cI\u003cK\u003cH",
+      "H\u003cP 추가",
+      "P\u003cI\u003cK\u003cH\u003cP · 불가능"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          139,
+          82,
+          92,
+          37,
+          [
+            "P"
+          ],
+          "plain"
+        ],
+        [
+          "i",
+          476,
+          82,
+          92,
+          37,
+          [
+            "I"
+          ],
+          "plain"
+        ],
+        [
+          "k",
+          476,
+          194,
+          92,
+          37,
+          [
+            "K"
+          ],
+          "plain"
+        ],
+        [
+          "h",
+          139,
+          194,
+          92,
+          37,
+          [
+            "H"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "i",
+          "active",
+          "P\u003cI",
+          0
+        ],
+        [
+          "i",
+          "k",
+          "active",
+          "I\u003cK",
+          34
+        ],
+        [
+          "k",
+          "h",
+          "active",
+          "K\u003cH",
+          0
+        ],
+        [
+          "h",
+          "p",
+          "blocked",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          61,
+          133,
+          "H\u003cP"
+        ],
+        [
+          116,
+          249,
+          "P \u003c I \u003c K \u003c H \u003c P → P \u003c P ×"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "실패 사유와 제출",
+      "description": "네 조항이 P를 돌아오는 순환을 만들고 H\u003cP가 그 고리를 닫습니다."
+    },
+    "quiz": [
+      "불가능한 주문의 사유를 확인하세요.",
+      "P\u003cI\u003cK\u003cH\u003cP",
+      "P\u003cI\u003cK\u003cH",
+      "실패 보고서에서 네 조항을 확인합니다."
+    ]
+  }
+];
+const slug = 'warehouse-planner';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+<script src="./warehouse-planner/workbench.js"></script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="상대가 내 점수를 가장 낮추는 응수를 고르면 첫 행동을 어떻게 정할까요?">
+<title>게임 트리와 미니맥스 · A26</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./game-tree-minimax.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A26</p><h1>게임 트리와 미니맥스</h1><p>상대가 내 점수를 가장 낮추는 응수를 고르면 첫 행동을 어떻게 정할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">게임 트리와 미니맥스</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "상대 응수",
+    "title": "MIN은 각 갈래의 두 점수 중 작은 것을 남깁니다",
+    "body": "MAX가 왼쪽 L을 고르면 MIN은 2와 7에서 2를 고릅니다. 오른쪽 R에서는 4와 5에서 4를 고릅니다. 두 숫자를 각 갈래에서 보장되는 점수로 올립니다.",
+    "takeaway": "MIN 왼쪽에서 2가, 오른쪽에서 4가 선택되고 7과 5 선은 흐려집니다.",
+    "example": [
+      "L: {2,7}, R: {4,5}",
+      "min(2,7), min(4,5)",
+      "L=2 · R=4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "max",
+          310,
+          51,
+          89,
+          37,
+          [
+            "MAX"
+          ],
+          "plain"
+        ],
+        [
+          "l",
+          162,
+          123,
+          134,
+          59,
+          [
+            "MIN L",
+            "min(2,7)=2"
+          ],
+          "active"
+        ],
+        [
+          "r",
+          455,
+          123,
+          134,
+          59,
+          [
+            "MIN R",
+            "min(4,5)=4"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          77,
+          223,
+          68,
+          37,
+          [
+            "2"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          235,
+          223,
+          68,
+          37,
+          [
+            "7"
+          ],
+          "plain"
+        ],
+        [
+          "c",
+          376,
+          223,
+          68,
+          37,
+          [
+            "4"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          535,
+          223,
+          68,
+          37,
+          [
+            "5"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "max",
+          "l",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "max",
+          "r",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "l",
+          "a",
+          "active",
+          "",
+          0
+        ],
+        [
+          "l",
+          "b",
+          "muted",
+          "",
+          0
+        ],
+        [
+          "r",
+          "c",
+          "active",
+          "",
+          0
+        ],
+        [
+          "r",
+          "d",
+          "muted",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "상대 응수",
+      "description": "MIN 왼쪽에서 2가, 오른쪽에서 4가 선택되고 7과 5 선은 흐려집니다."
+    },
+    "quiz": [
+      "MIN의 새 갈래에 점수 1과 6이 있으면 부모에 올릴 값은?",
+      "1",
+      "6",
+      "상대는 MAX 점수를 가장 작게 만드는 응수를 고릅니다."
+    ]
+  },
+  {
+    "label": "내 선택",
+    "title": "MAX는 보장 점수가 4인 오른쪽을 선택합니다",
+    "body": "MAX는 자식의 값 2와 4를 비교합니다. 7이 가능한 L에도 상대가 2를 고르므로 보장 점수는 2입니다. 따라서 R을 선택하고 결과 4를 보장합니다.",
+    "takeaway": "MAX에서 R→4로 선택 경로가 이어지고 가장 큰 개별 잎 7은 선택되지 않습니다.",
+    "example": [
+      "L=2, R=4",
+      "max(2,4)=4",
+      "R → 4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "max",
+          310,
+          51,
+          132,
+          59,
+          [
+            "MAX",
+            "max(2,4)=4"
+          ],
+          "active"
+        ],
+        [
+          "l",
+          162,
+          123,
+          134,
+          59,
+          [
+            "MIN L",
+            "min(2,7)=2"
+          ],
+          "muted"
+        ],
+        [
+          "r",
+          455,
+          123,
+          134,
+          59,
+          [
+            "MIN R",
+            "min(4,5)=4"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          77,
+          223,
+          68,
+          37,
+          [
+            "2"
+          ],
+          "plain"
+        ],
+        [
+          "b",
+          235,
+          223,
+          68,
+          37,
+          [
+            "7"
+          ],
+          "plain"
+        ],
+        [
+          "c",
+          376,
+          223,
+          68,
+          37,
+          [
+            "4"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          535,
+          223,
+          68,
+          37,
+          [
+            "5"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "max",
+          "l",
+          "muted",
+          "L",
+          0
+        ],
+        [
+          "max",
+          "r",
+          "active",
+          "R",
+          0
+        ],
+        [
+          "l",
+          "a",
+          "muted",
+          "",
+          0
+        ],
+        [
+          "l",
+          "b",
+          "muted",
+          "",
+          0
+        ],
+        [
+          "r",
+          "c",
+          "active",
+          "",
+          0
+        ],
+        [
+          "r",
+          "d",
+          "muted",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "내 선택",
+      "description": "MAX에서 R→4로 선택 경로가 이어지고 가장 큰 개별 잎 7은 선택되지 않습니다."
+    },
+    "quiz": [
+      "R의 잎 4가 0으로 내려가고 다른 잎은 그대로라면 MAX는?",
+      "L · 보장 2",
+      "R · 보장 5",
+      "R은 최악의 응수에서 0을 보장하므로 MAX는 L을 고릅니다."
+    ]
+  }
+];
+const slug = 'game-tree-minimax';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

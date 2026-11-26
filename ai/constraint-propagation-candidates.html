@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="아직 시간을 하나도 배정하지 않아도 제약으로 어떤 후보를 지울 수 있을까요?">
+<title>제약 전파로 후보 지우기 · A13</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./constraint-propagation-candidates.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A13</p><h1>제약 전파로 후보 지우기</h1><p>아직 시간을 하나도 배정하지 않아도 제약으로 어떤 후보를 지울 수 있을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">제약 전파로 후보 지우기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "지지 후보 제거",
+    "title": "I=3을 뒷받침할 H가 없습니다",
+    "body": "검사에는 I=2와 I=3이 후보입니다. 발송은 H=3 하나라 I=2와는 짝을 이루지만 I=3과는 엄격한 선후 조건을 만족하지 못합니다. 그래서 I=3을 지웁니다.",
+    "takeaway": "I=2의 선은 H=3과 연결되고 I=3에서 H=3으로 가는 선은 3\u003c3에 막힙니다.",
+    "example": [
+      "I={2,3}, H={3}",
+      "지지 검사 I\u003cH",
+      "I={2}"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "i2",
+          127,
+          81,
+          147,
+          37,
+          [
+            "I=2"
+          ],
+          "active"
+        ],
+        [
+          "i3",
+          127,
+          207,
+          147,
+          37,
+          [
+            "I=3 제거"
+          ],
+          "blocked"
+        ],
+        [
+          "h",
+          493,
+          143,
+          146,
+          37,
+          [
+            "H=3"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "i2",
+          "h",
+          "active",
+          "2\u003c3 ✓",
+          0
+        ],
+        [
+          "i3",
+          "h",
+          "blocked",
+          "3\u003c3 ×",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          77,
+          251,
+          "I: {2,3} → {2}"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "지지 후보 제거",
+      "description": "I=2의 선은 H=3과 연결되고 I=3에서 H=3으로 가는 선은 3\u003c3에 막힙니다."
+    },
+    "quiz": [
+      "새 주문에서 H={3,4}라면 I=3은 지울까요?",
+      "유지 · 3\u003c4",
+      "제거 · 3\u003c3",
+      "후보 하나라도 조건을 만족하는 짝이 있으면 지지됩니다."
+    ]
+  },
+  {
+    "label": "이웃으로 전파",
+    "title": "I의 도메인이 작아지면 P=2도 지지를 잃습니다",
+    "body": "이제 I=2밖에 남지 않아 P=2는 P\u003cI를 만족할 짝이 없습니다. P=1만 남습니다. 지우는 일이 멈출 때까지 바뀐 도메인의 이웃을 다시 검사합니다.",
+    "takeaway": "P=2→I=2가 차단되고 P=1→I=2→H=3의 지지 경로만 남습니다.",
+    "example": [
+      "P={1,2}, I={2}",
+      "지지 검사 P\u003cI",
+      "P={1}"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p1",
+          110,
+          81,
+          139,
+          37,
+          [
+            "P=1"
+          ],
+          "active"
+        ],
+        [
+          "p2",
+          110,
+          207,
+          139,
+          37,
+          [
+            "P=2 제거"
+          ],
+          "blocked"
+        ],
+        [
+          "i",
+          318,
+          118,
+          116,
+          37,
+          [
+            "I=2"
+          ],
+          "active"
+        ],
+        [
+          "h",
+          518,
+          118,
+          110,
+          37,
+          [
+            "H=3"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p1",
+          "i",
+          "active",
+          "1\u003c2 ✓",
+          0
+        ],
+        [
+          "p2",
+          "i",
+          "blocked",
+          "2\u003c2 ×",
+          0
+        ],
+        [
+          "i",
+          "h",
+          "active",
+          "2\u003c3 ✓",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          77,
+          251,
+          "P: {1,2} → {1}"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "이웃으로 전파",
+      "description": "P=2→I=2가 차단되고 P=1→I=2→H=3의 지지 경로만 남습니다."
+    },
+    "quiz": [
+      "전파 과정에서 어떤 변수의 후보가 모두 지워졌다면 무엇을 알 수 있나요?",
+      "현재 조건의 해 없음",
+      "아무 값 선택 가능",
+      "모든 변수에 가능한 값 하나씩이 필요하므로 빈 도메인은 모순입니다."
+    ]
+  }
+];
+const slug = 'constraint-propagation-candidates';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

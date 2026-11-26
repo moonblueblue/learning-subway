@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="어느 변수부터 고르면 막힌 가지를 더 일찍 만나고 되돌아갈 수 있을까요?">
+<title>백트래킹과 변수 선택 · A12</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./warehouse-backtracking-order.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A12</p><h1>백트래킹과 변수 선택</h1><p>어느 변수부터 고르면 막힌 가지를 더 일찍 만나고 되돌아갈 수 있을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">백트래킹과 변수 선택</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "막힌 첫 선택",
+    "title": "P=2부터 시작하면 두 검사 가지가 모두 막힙니다",
+    "body": "후보 2를 먼저 시도합니다. I=2는 P\u003cI를 즉시 위반합니다. I=3은 P\u003cI를 만족하지만 H=3에서 I\u003cH가 깨집니다. I에 남은 후보가 없어 P로 되돌아갑니다.",
+    "takeaway": "P=2에서 갈라진 위쪽은 2\u003c2, 아래쪽은 H=3에서 3\u003c3 때문에 막힙니다.",
+    "example": [
+      "P=2",
+      "I=2 또는 I=3",
+      "P까지 되돌림"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          95,
+          144,
+          117,
+          37,
+          [
+            "P=2"
+          ],
+          "plain"
+        ],
+        [
+          "i2",
+          304,
+          75,
+          155,
+          59,
+          [
+            "I=2",
+            "2\u003c2 ×"
+          ],
+          "blocked"
+        ],
+        [
+          "i3",
+          304,
+          205,
+          155,
+          59,
+          [
+            "I=3",
+            "2\u003c3 ✓"
+          ],
+          "plain"
+        ],
+        [
+          "h",
+          525,
+          205,
+          130,
+          59,
+          [
+            "H=3",
+            "3\u003c3 ×"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "i2",
+          "blocked",
+          "",
+          0
+        ],
+        [
+          "p",
+          "i3",
+          "active",
+          "",
+          0
+        ],
+        [
+          "i3",
+          "h",
+          "blocked",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          91,
+          250,
+          "I 후보 모두 실패 → P 재선택"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "막힌 첫 선택",
+      "description": "P=2에서 갈라진 위쪽은 2\u003c2, 아래쪽은 H=3에서 3\u003c3 때문에 막힙니다."
+    },
+    "quiz": [
+      "P=1에서 I=2가 통과하면 곧바로 완료인가요?",
+      "H도 대입해 확인",
+      "곧바로 완료",
+      "세 변수가 모두 대입되고 모든 선후 제약을 통과해야 합니다."
+    ]
+  },
+  {
+    "label": "작은 도메인 우선",
+    "title": "H=3을 먼저 정하면 I=3이 바로 잘립니다",
+    "body": "도메인 크기가 1인 H부터 배정합니다. I=3은 바로 I\u003cH에 걸리고 I=2만 진행합니다. 이 분기 아래에서는 P=2가 탈락하고 P=1로 완성합니다.",
+    "takeaway": "아래 후보 수 P=2, I=2, H=1에서 H를 먼저 잡고, H=3→I=2→P=1만 끝까지 이어집니다.",
+    "example": [
+      "H=3",
+      "I=3 제거, I=2 진행",
+      "(P,I,H)=(1,2,3)"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "h",
+          89,
+          143,
+          100,
+          37,
+          [
+            "H=3"
+          ],
+          "active"
+        ],
+        [
+          "i3",
+          299,
+          74,
+          142,
+          59,
+          [
+            "I=3",
+            "3\u003c3 ×"
+          ],
+          "blocked"
+        ],
+        [
+          "i2",
+          299,
+          204,
+          142,
+          59,
+          [
+            "I=2",
+            "2\u003c3 ✓"
+          ],
+          "active"
+        ],
+        [
+          "p2",
+          510,
+          104,
+          140,
+          59,
+          [
+            "P=2",
+            "2\u003c2 ×"
+          ],
+          "blocked"
+        ],
+        [
+          "p",
+          510,
+          204,
+          140,
+          59,
+          [
+            "P=1",
+            "1\u003c2 ✓"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "h",
+          "i3",
+          "blocked",
+          "",
+          0
+        ],
+        [
+          "h",
+          "i2",
+          "active",
+          "",
+          0
+        ],
+        [
+          "i2",
+          "p2",
+          "blocked",
+          "",
+          0
+        ],
+        [
+          "i2",
+          "p",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          66,
+          253,
+          "후보 수: P 2개 · I 2개 · H 1개 → H"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "작은 도메인 우선",
+      "description": "아래 후보 수 P=2, I=2, H=1에서 H를 먼저 잡고, H=3→I=2→P=1만 끝까지 이어집니다."
+    },
+    "quiz": [
+      "새 주문에서 후보 수가 P=3개, I=1개, H=2개라면 최소 도메인 규칙은 무엇부터 검사하나요?",
+      "I",
+      "P",
+      "남아 있는 후보가 가장 적은 변수부터 고릅니다."
+    ]
+  }
+];
+const slug = 'warehouse-backtracking-order';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

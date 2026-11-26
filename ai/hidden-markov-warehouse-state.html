@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="시간에 따라 바뀌는 고장 상태를 새 센서 관측으로 어떻게 갱신할까요?">
+<title>은닉 마르코프 모형과 상태 추정 · A24</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./hidden-markov-warehouse-state.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A24</p><h1>은닉 마르코프 모형과 상태 추정</h1><p>시간에 따라 바뀌는 고장 상태를 새 센서 관측으로 어떻게 갱신할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">은닉 마르코프 모형과 상태 추정</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "전이로 예측",
+    "title": "이전 상태가 두 갈래로 다음 고장 확률에 기여합니다",
+    "body": "t=0에 고장 확률은 .2입니다. 고장이 다음 시점에도 지속될 확률은 .8, 정상에서 고장으로 갈 확률은 .1입니다. 관측 전 t=1 고장 확률은 .2×.8+.8×.1=.24입니다.",
+    "takeaway": "이전 고장 .2와 정상 .8에서 전이 .8과 .1이 새 F=1 노드에 합쳐집니다.",
+    "example": [
+      "P(F₀=1)=.2",
+      ".2×.8 + .8×.1",
+      "P(F₁=1)=.24"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "f",
+          124,
+          84,
+          177,
+          59,
+          [
+            "t=0 · F=1",
+            ".2"
+          ],
+          "plain"
+        ],
+        [
+          "n",
+          124,
+          196,
+          177,
+          59,
+          [
+            "t=0 · F=0",
+            ".8"
+          ],
+          "plain"
+        ],
+        [
+          "next",
+          493,
+          140,
+          176,
+          59,
+          [
+            "t=1 · F=1",
+            ".16+.08=.24"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "f",
+          "next",
+          "active",
+          "×.8",
+          0
+        ],
+        [
+          "n",
+          "next",
+          "active",
+          "×.1",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          64,
+          247,
+          "센서를 읽기 전 전이만 적용"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "전이로 예측",
+      "description": "이전 고장 .2와 정상 .8에서 전이 .8과 .1이 새 F=1 노드에 합쳐집니다."
+    },
+    "quiz": [
+      "직전 고장 확률이 0이면 같은 전이에서 다음 고장 확률은?",
+      ".10",
+      "0",
+      "이전에 정상이더라도 확률 .1로 고장으로 바뀔 수 있습니다."
+    ]
+  },
+  {
+    "label": "경보로 갱신",
+    "title": "새 경보가 고장 확률을 .24에서 약 .716으로 올립니다",
+    "body": "t=1에 경보가 울렸습니다. 관측 우도는 고장 .8, 정상 .1입니다. 사전 질량에 각각 곱해 .192와 .076을 얻고, 합 .268으로 정규화합니다.",
+    "takeaway": "고장과 정상의 경로에 서로 다른 경보 우도가 붙고 둘의 합으로 .192를 나눕니다.",
+    "example": [
+      "P(F₁=1)=.24, P(F₁=0)=.76",
+      ".192/(.192+.076)",
+      "P(F₁=1∣경보)≈.716"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "f",
+          121,
+          77,
+          182,
+          59,
+          [
+            "F₁=1 · .24",
+            ".24×.8=.192"
+          ],
+          "plain"
+        ],
+        [
+          "n",
+          121,
+          195,
+          182,
+          59,
+          [
+            "F₁=0 · .76",
+            ".76×.1=.076"
+          ],
+          "plain"
+        ],
+        [
+          "norm",
+          340,
+          134,
+          113,
+          59,
+          [
+            ".192+.076",
+            ".268"
+          ],
+          "plain"
+        ],
+        [
+          "post",
+          521,
+          134,
+          147,
+          59,
+          [
+            "고장 사후",
+            ".192/.268≈.716"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "f",
+          "norm",
+          "active",
+          "",
+          0
+        ],
+        [
+          "n",
+          "norm",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "norm",
+          "post",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "경보로 갱신",
+      "description": "고장과 정상의 경로에 서로 다른 경보 우도가 붙고 둘의 합으로 .192를 나눕니다."
+    },
+    "quiz": [
+      "모든 상태에 경보 우도가 .4로 같으면 갱신 뒤 고장 확률은?",
+      ".24",
+      ".40",
+      "분자와 분모에서 같은 우도 계수가 소거됩니다."
+    ]
+  },
+  {
+    "label": "다음 시점",
+    "title": "직전 사후에 새 전이를 적용한 뒤 무경보를 반영합니다",
+    "body": ".7164가 t=2의 입력입니다. 전이 후 .7164×.8+.2836×.1≈.6015로 예측합니다. 경보가 없었으므로 고장 우도 .2와 정상 우도 .9를 곱해 .1203과 .3587을 얻습니다. 사후는 약 .251입니다.",
+    "takeaway": "t=1 사후 .716이 전이 상자에서 .602로, 무경보 정규화 상자에서 .251로 이어집니다.",
+    "example": [
+      "t=1 사후 .7164",
+      ".6015 → .1203/(.1203+.3587)",
+      "t=2 사후 .251"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "old",
+          89,
+          140,
+          121,
+          59,
+          [
+            "t=1 사후",
+            ".7164"
+          ],
+          "plain"
+        ],
+        [
+          "pred",
+          293,
+          140,
+          177,
+          59,
+          [
+            "전이 예측",
+            ".1+.7×.7164≈.602"
+          ],
+          "plain"
+        ],
+        [
+          "new",
+          509,
+          140,
+          178,
+          59,
+          [
+            "무경보 갱신",
+            ".1203/.4790≈.251"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "old",
+          "pred",
+          "active",
+          "",
+          0
+        ],
+        [
+          "pred",
+          "new",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          56,
+          237,
+          "고장 .6015×.2 · 정상 .3985×.9"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "다음 시점",
+      "description": "t=1 사후 .716이 전이 상자에서 .602로, 무경보 정규화 상자에서 .251로 이어집니다."
+    },
+    "quiz": [
+      "t=2에 센서 보고가 누락되면 무경보 우도를 곱할까요?",
+      "전이 예측값 유지",
+      "무경보 갱신 적용",
+      "누락은 센서가 경보를 내지 않았다는 관측과 다릅니다."
+    ]
+  }
+];
+const slug = 'hidden-markov-warehouse-state';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

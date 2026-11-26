@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="모르는 보정 상태를 먼저 합치고 두 경보 뒤 고장 확률을 어떻게 정규화할까요?">
+<title>변수 제거로 사후확률 계산 · A22</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./bayes-variable-elimination.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A22</p><h1>변수 제거로 사후확률 계산</h1><p>모르는 보정 상태를 먼저 합치고 두 경보 뒤 고장 확률을 어떻게 정규화할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">변수 제거로 사후확률 계산</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "숨은 보정 합산",
+    "title": "보정 두 상태를 합산해 열 우도 하나를 남깁니다",
+    "body": "C는 두 값이 각각 .5이고 F와 독립입니다. 고장일 때 열 경보율은 보정 상태별 .90과 .60, 정상일 때는 .40과 .10입니다. C를 합하면 F=1에서 .75, F=0에서 .25의 열 우도를 얻습니다.",
+    "takeaway": "고장과 정상 각각에서 C의 두 가중항이 결합되어 .75와 .25가 됩니다.",
+    "example": [
+      "C∈{0,1}",
+      "ΣC .5 × P(H=1∣F,C)",
+      "F=1: .75 · F=0: .25"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "f",
+          130,
+          88,
+          202,
+          59,
+          [
+            "F=1",
+            ".5×.90 + .5×.60"
+          ],
+          "plain"
+        ],
+        [
+          "n",
+          130,
+          202,
+          202,
+          59,
+          [
+            "F=0",
+            ".5×.40 + .5×.10"
+          ],
+          "plain"
+        ],
+        [
+          "fh",
+          475,
+          88,
+          177,
+          59,
+          [
+            "P(H=1∣F=1)",
+            ".75"
+          ],
+          "active"
+        ],
+        [
+          "nh",
+          475,
+          202,
+          177,
+          59,
+          [
+            "P(H=1∣F=0)",
+            ".25"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "f",
+          "fh",
+          "active",
+          "ΣC",
+          0
+        ],
+        [
+          "n",
+          "nh",
+          "active",
+          "ΣC",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "숨은 보정 합산",
+      "description": "고장과 정상 각각에서 C의 두 가중항이 결합되어 .75와 .25가 됩니다."
+    },
+    "quiz": [
+      "C가 두 값에서 같은 열 경보율 .60을 갖고 가중치 합이 1이라면 합산 결과는?",
+      ".60",
+      "1.20",
+      "가중치 .5를 각 항에 곱한 뒤 합합니다."
+    ]
+  },
+  {
+    "label": "증거로 나누기",
+    "title": "두 경우의 점수를 더해 고장 확률을 정규화합니다",
+    "body": "진동 우도는 고장일 때 .80, 정상일 때 .10이며 F를 알면 열과 독립입니다. 고장 점수는 .2×.75×.80=.12고 정상 점수는 .8×.25×.10=.02입니다. 관측의 확률 .14로 나누면 사후 고장 확률은 6/7≈.857입니다.",
+    "takeaway": "위의 .12와 아래의 .02가 분모 .14에서 만나 .12/.14가 됩니다.",
+    "example": [
+      "F=1: .12 · F=0: .02",
+      ".12/(.12+.02)",
+      "6/7 ≈ .857"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "f",
+          123,
+          82,
+          200,
+          59,
+          [
+            "F=1",
+            ".2×.75×.80=.12"
+          ],
+          "plain"
+        ],
+        [
+          "n",
+          123,
+          196,
+          200,
+          59,
+          [
+            "F=0",
+            ".8×.25×.10=.02"
+          ],
+          "plain"
+        ],
+        [
+          "sum",
+          342,
+          138,
+          112,
+          59,
+          [
+            ".12+.02",
+            ".14"
+          ],
+          "plain"
+        ],
+        [
+          "out",
+          520,
+          138,
+          149,
+          59,
+          [
+            "P(F=1∣H,V)",
+            ".12/.14≈.857"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "f",
+          "sum",
+          "active",
+          "",
+          0
+        ],
+        [
+          "n",
+          "sum",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "sum",
+          "out",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "증거로 나누기",
+      "description": "위의 .12와 아래의 .02가 분모 .14에서 만나 .12/.14가 됩니다."
+    },
+    "quiz": [
+      "고장 점수 .09와 정상 점수 .01이 주어지면 정규화된 고장 확률은?",
+      ".90",
+      ".09",
+      ".09를 두 점수의 합 .10으로 나눕니다."
+    ]
+  }
+];
+const slug = 'bayes-variable-elimination';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

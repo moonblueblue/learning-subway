@@ -740,10 +740,132 @@ const courseCatalog = {
           "id": "2",
           "title": "탐색·추론·계획",
           "titleEn": "Search, reasoning and planning",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "2.1",
+              "ref": "ai/warehouse-state-identity"
+            },
+            {
+              "id": "2.6",
+              "ref": "ai/warehouse-cost-objectives"
+            },
+            {
+              "id": "2.7",
+              "ref": "algorithms/complexity"
+            },
+            {
+              "id": "2.2",
+              "ref": "ai/uniform-cost-expansion"
+            },
+            {
+              "id": "2.8",
+              "ref": "ai/reopen-cheaper-states"
+            },
+            {
+              "id": "2.3",
+              "ref": "ai/warehouse-distance-lower-bound"
+            },
+            {
+              "id": "2.9",
+              "ref": "ai/astar-cumulative-estimated-cost"
+            },
+            {
+              "id": "2.10",
+              "ref": "ai/heuristic-admissible-consistent"
+            },
+            {
+              "id": "2.11",
+              "ref": "ai/obstacle-aware-heuristic"
+            },
+            {
+              "id": "2.12",
+              "ref": "ai/search-budget-vs-unreachable"
+            },
+            {
+              "id": "2.4",
+              "ref": "ai/order-variables-domains-constraints"
+            },
+            {
+              "id": "2.13",
+              "ref": "ai/warehouse-backtracking-order"
+            },
+            {
+              "id": "2.14",
+              "ref": "ai/constraint-propagation-candidates"
+            },
+            {
+              "id": "2.15",
+              "ref": "ai/precedence-predicates"
+            },
+            {
+              "id": "2.16",
+              "ref": "ai/explain-order-conflict"
+            },
+            {
+              "id": "2.5",
+              "ref": "ai/warehouse-action-preconditions"
+            },
+            {
+              "id": "2.17",
+              "ref": "ai/regress-delivery-subgoals"
+            },
+            {
+              "id": "2.18",
+              "ref": "ai/warehouse-resource-conflicts"
+            },
+            {
+              "id": "2.19",
+              "ref": "ai/repair-warehouse-plan"
+            },
+            {
+              "id": "2.20",
+              "ref": "ai/verify-warehouse-plan"
+            },
+            {
+              "id": "2.21",
+              "ref": "ai/bayes-network-conditional-independence"
+            },
+            {
+              "id": "2.22",
+              "ref": "ai/bayes-variable-elimination"
+            },
+            {
+              "id": "2.23",
+              "ref": "ai/rejection-sampling-inference"
+            },
+            {
+              "id": "2.24",
+              "ref": "ai/hidden-markov-warehouse-state"
+            },
+            {
+              "id": "2.25",
+              "ref": "ai/observation-value-utility"
+            },
+            {
+              "id": "2.26",
+              "ref": "ai/game-tree-minimax"
+            },
+            {
+              "id": "2.27",
+              "ref": "ai/alpha-beta-branch-pruning"
+            },
+            {
+              "id": "2.28",
+              "ref": "ai/stochastic-opponent-expectimax"
+            },
+            {
+              "id": "2.29",
+              "ref": "ai/monte-carlo-tree-iteration"
+            },
+            {
+              "id": "2.30",
+              "ref": "ai/local-search-random-restarts"
+            }
+          ],
           "tracks": [],
           "destination": "창고 배송 계획기",
-          "destinationEn": "Warehouse delivery planner"
+          "destinationEn": "Warehouse delivery planner",
+          "projectRef": "projects/warehouse-planner"
         },
         {
           "id": "3",
@@ -3166,6 +3288,325 @@ const courseCatalog = {
             "ai/prediction-vs-route-errors"
           ],
           "page": "ai/inspection-release-report.html"
+        },
+        {
+          "id": "warehouse-state-identity",
+          "title": "창고의 상태 공간과 중복 상태",
+          "titleEn": "Warehouse states and duplicate states",
+          "question": "다른 길로 같은 창고 위치에 왔을 때 두 경로를 언제 하나의 상태로 합칠까요?",
+          "format": "실험",
+          "requires": [
+            "math/graph"
+          ],
+          "page": "ai/warehouse-state-identity.html"
+        },
+        {
+          "id": "warehouse-cost-objectives",
+          "title": "행동 비용과 최적화 목표",
+          "titleEn": "Action costs and optimization objectives",
+          "question": "같은 두 경로에서 이동량과 배송 시간을 최소화하면 어떤 길이 선택될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/warehouse-state-identity"
+          ],
+          "page": "ai/warehouse-cost-objectives.html"
+        },
+        {
+          "id": "uniform-cost-expansion",
+          "title": "균일비용 탐색의 확장 순서",
+          "titleEn": "Uniform-cost search expansion order",
+          "question": "균일비용 탐색은 어떤 우선순위로 창고 상태를 확장하나요?",
+          "format": "실험",
+          "requires": [
+            "algorithms/complexity"
+          ],
+          "page": "ai/uniform-cost-expansion.html"
+        },
+        {
+          "id": "reopen-cheaper-states",
+          "title": "방문 상태를 다시 열어야 할 조건",
+          "titleEn": "When to reopen a visited state",
+          "question": "이미 확장한 창고 상태로 더 싼 경로가 발견되면 어떤 기록을 다시 처리할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/uniform-cost-expansion"
+          ],
+          "page": "ai/reopen-cheaper-states.html"
+        },
+        {
+          "id": "warehouse-distance-lower-bound",
+          "title": "남은 거리의 하한 설계",
+          "titleEn": "Designing a lower bound on distance",
+          "question": "통로와 회전 제약을 잠시 풀었을 때 남은 최소 통행 시간을 어떻게 계산할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/reopen-cheaper-states"
+          ],
+          "page": "ai/warehouse-distance-lower-bound.html"
+        },
+        {
+          "id": "astar-cumulative-estimated-cost",
+          "title": "A*의 누적 비용과 예상 비용",
+          "titleEn": "A* cumulative and estimated cost",
+          "question": "같은 지도에서 g+h의 순서로 꺼내면 확장 상태와 최적 비용이 어떻게 달라질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/warehouse-distance-lower-bound"
+          ],
+          "page": "ai/astar-cumulative-estimated-cost.html"
+        },
+        {
+          "id": "heuristic-admissible-consistent",
+          "title": "허용성과 일관성의 차이",
+          "titleEn": "Admissibility versus consistency",
+          "question": "남은 값을 넘지 않는 휴리스틱이 왜 간선 하나에서는 문제를 일으킬까요?",
+          "format": "실험",
+          "requires": [
+            "ai/astar-cumulative-estimated-cost"
+          ],
+          "page": "ai/heuristic-admissible-consistent.html"
+        },
+        {
+          "id": "obstacle-aware-heuristic",
+          "title": "장애물 지도에서 휴리스틱 비교",
+          "titleEn": "Comparing heuristics on an obstructed map",
+          "question": "폐쇄된 통로를 하한 지도에도 반영하면 같은 최적 비용에 도달하는 확장 수가 어떻게 바뀔까요?",
+          "format": "실험",
+          "requires": [
+            "ai/heuristic-admissible-consistent"
+          ],
+          "page": "ai/obstacle-aware-heuristic.html"
+        },
+        {
+          "id": "search-budget-vs-unreachable",
+          "title": "탐색 한도와 해 없음 구분",
+          "titleEn": "Search limits versus no solution",
+          "question": "예산이 부족한 탐색과 정말 막다른 주문을 어떻게 구별할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/obstacle-aware-heuristic"
+          ],
+          "page": "ai/search-budget-vs-unreachable.html"
+        },
+        {
+          "id": "order-variables-domains-constraints",
+          "title": "변수·도메인·제약으로 주문 표현",
+          "titleEn": "Orders as variables, domains and constraints",
+          "question": "역할이 다른 작업과 시간 선택지, 주문 조건을 어떻게 구분해 적을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/search-budget-vs-unreachable"
+          ],
+          "page": "ai/order-variables-domains-constraints.html"
+        },
+        {
+          "id": "warehouse-backtracking-order",
+          "title": "백트래킹과 변수 선택",
+          "titleEn": "Backtracking and variable selection",
+          "question": "어느 변수부터 고르면 막힌 가지를 더 일찍 만나고 되돌아갈 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/order-variables-domains-constraints"
+          ],
+          "page": "ai/warehouse-backtracking-order.html"
+        },
+        {
+          "id": "constraint-propagation-candidates",
+          "title": "제약 전파로 후보 지우기",
+          "titleEn": "Eliminating candidates through propagation",
+          "question": "아직 시간을 하나도 배정하지 않아도 제약으로 어떤 후보를 지울 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/warehouse-backtracking-order"
+          ],
+          "page": "ai/constraint-propagation-candidates.html"
+        },
+        {
+          "id": "precedence-predicates",
+          "title": "선후관계를 술어로 표현하기",
+          "titleEn": "Expressing precedence with predicates",
+          "question": "주문마다 다르게 적용되는 선후 규칙을 어떤 술어와 인자로 기록할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/constraint-propagation-candidates"
+          ],
+          "page": "ai/precedence-predicates.html"
+        },
+        {
+          "id": "explain-order-conflict",
+          "title": "제약 위반의 설명 만들기",
+          "titleEn": "Explaining constraint violations",
+          "question": "불가능한 주문에서 실패 메시지에 어느 조항을 묶어 보여 줄까요?",
+          "format": "실험",
+          "requires": [
+            "ai/precedence-predicates"
+          ],
+          "page": "ai/explain-order-conflict.html"
+        },
+        {
+          "id": "warehouse-action-preconditions",
+          "title": "행동의 전제와 효과",
+          "titleEn": "Action preconditions and effects",
+          "question": "어떤 행동이 지금 가능하고 성공하면 상태의 어느 부분이 달라질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/explain-order-conflict"
+          ],
+          "page": "ai/warehouse-action-preconditions.html"
+        },
+        {
+          "id": "regress-delivery-subgoals",
+          "title": "목표에서 거꾸로 부분목표 찾기",
+          "titleEn": "Finding subgoals by working backward",
+          "question": "마지막 목표가 충족되려면 바로 전에 필요한 사실은 무엇일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/warehouse-action-preconditions"
+          ],
+          "page": "ai/regress-delivery-subgoals.html"
+        },
+        {
+          "id": "warehouse-resource-conflicts",
+          "title": "여러 작업의 순서와 자원 경합",
+          "titleEn": "Scheduling jobs that compete for a resource",
+          "question": "논리적으로 가능한 작업 순서도 포장대가 하나일 때 왜 충돌하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/regress-delivery-subgoals"
+          ],
+          "page": "ai/warehouse-resource-conflicts.html"
+        },
+        {
+          "id": "repair-warehouse-plan",
+          "title": "변경된 지도에서 계획 수리",
+          "titleEn": "Repairing a plan after a map change",
+          "question": "통로 폐쇄 뒤 이미 마친 일과 새로 구할 경로를 어디에서 나눌까요?",
+          "format": "실험",
+          "requires": [
+            "ai/warehouse-resource-conflicts"
+          ],
+          "page": "ai/repair-warehouse-plan.html"
+        },
+        {
+          "id": "verify-warehouse-plan",
+          "title": "경로 유효성·비용 자동 판정",
+          "titleEn": "Automatically checking route validity and cost",
+          "question": "제출한 경로에서 비용과 위반 사유를 어떻게 독립적으로 계산할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/repair-warehouse-plan"
+          ],
+          "page": "ai/verify-warehouse-plan.html"
+        },
+        {
+          "id": "bayes-network-conditional-independence",
+          "title": "조건부 독립과 베이지안 네트워크",
+          "titleEn": "Conditional independence and Bayesian networks",
+          "question": "같은 고장에 반응하는 두 센서의 관측을 언제 곱할 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/verify-warehouse-plan"
+          ],
+          "page": "ai/bayes-network-conditional-independence.html"
+        },
+        {
+          "id": "bayes-variable-elimination",
+          "title": "변수 제거로 사후확률 계산",
+          "titleEn": "Posterior inference by variable elimination",
+          "question": "모르는 보정 상태를 먼저 합치고 두 경보 뒤 고장 확률을 어떻게 정규화할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/bayes-network-conditional-independence"
+          ],
+          "page": "ai/bayes-variable-elimination.html"
+        },
+        {
+          "id": "rejection-sampling-inference",
+          "title": "표본 추출로 근사 추론",
+          "titleEn": "Approximate inference by rejection sampling",
+          "question": "두 경보가 있는 표본만 남겨 고장 확률을 어떻게 근사할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/bayes-variable-elimination"
+          ],
+          "page": "ai/rejection-sampling-inference.html"
+        },
+        {
+          "id": "hidden-markov-warehouse-state",
+          "title": "은닉 마르코프 모형과 상태 추정",
+          "titleEn": "Hidden Markov models and state estimation",
+          "question": "시간에 따라 바뀌는 고장 상태를 새 센서 관측으로 어떻게 갱신할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/rejection-sampling-inference"
+          ],
+          "page": "ai/hidden-markov-warehouse-state.html"
+        },
+        {
+          "id": "observation-value-utility",
+          "title": "관측의 가치와 기대 효용",
+          "titleEn": "Value of observation and expected utility",
+          "question": "센서 한 번을 더 읽는 비용이 판단 개선으로 줄이는 손실보다 작을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/hidden-markov-warehouse-state"
+          ],
+          "page": "ai/observation-value-utility.html"
+        },
+        {
+          "id": "game-tree-minimax",
+          "title": "게임 트리와 미니맥스",
+          "titleEn": "Game trees and minimax",
+          "question": "상대가 내 점수를 가장 낮추는 응수를 고르면 첫 행동을 어떻게 정할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/observation-value-utility"
+          ],
+          "page": "ai/game-tree-minimax.html"
+        },
+        {
+          "id": "alpha-beta-branch-pruning",
+          "title": "알파베타 가지치기",
+          "titleEn": "Alpha–beta pruning",
+          "question": "오른쪽의 보장값을 먼저 알면 왼쪽의 어느 잎을 계산하지 않아도 될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/game-tree-minimax"
+          ],
+          "page": "ai/alpha-beta-branch-pruning.html"
+        },
+        {
+          "id": "stochastic-opponent-expectimax",
+          "title": "확률적 상대와 기댓값 탐색",
+          "titleEn": "Expected-value search against a stochastic opponent",
+          "question": "상대 행동의 확률이 알려지면 최악의 점수 대신 무엇을 비교할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/alpha-beta-branch-pruning"
+          ],
+          "page": "ai/stochastic-opponent-expectimax.html"
+        },
+        {
+          "id": "monte-carlo-tree-iteration",
+          "title": "몬테카를로 트리 탐색",
+          "titleEn": "Monte Carlo tree search",
+          "question": "정해진 시뮬레이션 한 번을 어느 가지에 쓰고 결과를 어디까지 반영할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/stochastic-opponent-expectimax"
+          ],
+          "page": "ai/monte-carlo-tree-iteration.html"
+        },
+        {
+          "id": "local-search-random-restarts",
+          "title": "국소 탐색과 무작위 재시작",
+          "titleEn": "Local search with random restarts",
+          "question": "이웃만 개선하는 규칙이 막혔을 때 새 시작점이 어떤 값을 찾게 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/monte-carlo-tree-iteration"
+          ],
+          "page": "ai/local-search-random-restarts.html"
         }
       ]
     },
@@ -3220,6 +3661,17 @@ const courseCatalog = {
             "ai/inspection-release-report"
           ],
           "page": "projects/fault-inspection.html"
+        },
+        {
+          "id": "warehouse-planner",
+          "title": "창고 배송 계획기",
+          "titleEn": "Warehouse delivery planner",
+          "question": "통로 비용과 작업 선후관계를 만족하고 폐쇄와 불가능한 주문을 처리하는 계획기를 어떻게 검증할까요?",
+          "format": "프로젝트",
+          "requires": [
+            "ai/verify-warehouse-plan"
+          ],
+          "page": "projects/warehouse-planner.html"
         }
       ]
     }

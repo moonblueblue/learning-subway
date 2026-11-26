@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="역할이 다른 작업과 시간 선택지, 주문 조건을 어떻게 구분해 적을까요?">
+<title>변수·도메인·제약으로 주문 표현 · A11</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./order-variables-domains-constraints.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A11</p><h1>변수·도메인·제약으로 주문 표현</h1><p>역할이 다른 작업과 시간 선택지, 주문 조건을 어떻게 구분해 적을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">변수·도메인·제약으로 주문 표현</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "후보 배치",
+    "title": "작업 변수마다 허용 시작 슬롯을 정합니다",
+    "body": "집기 P는 슬롯 1 또는 2, 검사 I는 2 또는 3, 발송 H는 슬롯 3에만 시작할 수 있습니다. 각 작업은 한 슬롯을 쓰며, 슬롯 숫자는 시작 순서입니다.",
+    "takeaway": "P·I·H가 서로 다른 슬롯 후보를 갖고 H는 3 하나에 연결됩니다.",
+    "example": [
+      "P, I, H",
+      "가능한 슬롯 연결",
+      "P={1,2}, I={2,3}, H={3}"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          108,
+          72,
+          121,
+          37,
+          [
+            "집기 P"
+          ],
+          "plain"
+        ],
+        [
+          "i",
+          310,
+          72,
+          121,
+          37,
+          [
+            "검사 I"
+          ],
+          "plain"
+        ],
+        [
+          "h",
+          512,
+          72,
+          121,
+          37,
+          [
+            "발송 H"
+          ],
+          "plain"
+        ],
+        [
+          "one",
+          108,
+          198,
+          72,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "two",
+          310,
+          198,
+          72,
+          37,
+          [
+            "2"
+          ],
+          "plain"
+        ],
+        [
+          "three",
+          512,
+          198,
+          72,
+          37,
+          [
+            "3"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "one",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "p",
+          "two",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "i",
+          "two",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "i",
+          "three",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "h",
+          "three",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "후보 배치",
+      "description": "P·I·H가 서로 다른 슬롯 후보를 갖고 H는 3 하나에 연결됩니다."
+    },
+    "quiz": [
+      "발송 담당이 4번 슬롯에도 근무하게 되면 어느 도메인이 달라지나요?",
+      "H={3,4}",
+      "I={2,3,4}",
+      "발송에 사용할 수 있는 슬롯이 추가된 것이므로 H의 후봅니다."
+    ]
+  },
+  {
+    "label": "유효한 조합",
+    "title": "선후 제약이 각 도메인에서 함께 고를 값을 좁힙니다",
+    "body": "발송 전에 검사하고 검사 전에 집어야 합니다. P\u003cI\u003cH이고 H=3이므로 I는 2여야 합니다. 이제 P의 2도 I 앞에 올 수 없어 1만 남습니다.",
+    "takeaway": "P→I→H의 두 ‹ 간선 아래에 1\u003c2\u003c3이 남고 다른 후보에는 제외 표시가 붙습니다.",
+    "example": [
+      "P={1,2}, I={2,3}, H={3}",
+      "P \u003c I \u003c H",
+      "P=1, I=2, H=3"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          108,
+          119,
+          117,
+          59,
+          [
+            "P",
+            "슬롯 1"
+          ],
+          "active"
+        ],
+        [
+          "i",
+          310,
+          119,
+          117,
+          59,
+          [
+            "I",
+            "슬롯 2"
+          ],
+          "active"
+        ],
+        [
+          "h",
+          512,
+          119,
+          117,
+          59,
+          [
+            "H",
+            "슬롯 3"
+          ],
+          "active"
+        ],
+        [
+          "dropP",
+          108,
+          210,
+          117,
+          37,
+          [
+            "2 제외"
+          ],
+          "blocked"
+        ],
+        [
+          "dropI",
+          310,
+          210,
+          117,
+          37,
+          [
+            "3 제외"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "i",
+          "active",
+          "1 \u003c 2",
+          0
+        ],
+        [
+          "i",
+          "h",
+          "active",
+          "2 \u003c 3",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "유효한 조합",
+      "description": "P→I→H의 두 ‹ 간선 아래에 1\u003c2\u003c3이 남고 다른 후보에는 제외 표시가 붙습니다."
+    },
+    "quiz": [
+      "제약이 P\u003cI인데 P=2, I=2라면 실패 이유는 무엇인가요?",
+      "2\u003c2가 거짓",
+      "2는 도메인 밖",
+      "각 값은 도메인 안이지만 두 값의 조합이 엄격한 선후 제약을 어깁니다."
+    ]
+  }
+];
+const slug = 'order-variables-domains-constraints';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="예산이 부족한 탐색과 정말 막다른 주문을 어떻게 구별할까요?">
+<title>탐색 한도와 해 없음 구분 · A10</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./search-budget-vs-unreachable.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A10</p><h1>탐색 한도와 해 없음 구분</h1><p>예산이 부족한 탐색과 정말 막다른 주문을 어떻게 구별할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">탐색 한도와 해 없음 구분</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "예산 소진",
+    "title": "후보가 남은 채 예산만 끝나면 결과는 미정입니다",
+    "body": "W1에서 A*의 확장을 3회로 제한합니다. S, A, D를 확장한 뒤 G(g=6)를 찾아 큐에 넣지만 f=5의 B가 먼저입니다. B를 더 확장할 수 없어 한도 도달을 반환합니다.",
+    "takeaway": "S·A·D에 1–3번이 있고 B·C·G가 큐에 남아 한도 도달을 보여 줍니다.",
+    "example": [
+      "한도 3회",
+      "확장 3회 · 큐 비어 있지 않음",
+      "한도 도달"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          75,
+          133,
+          72,
+          59,
+          [
+            "S",
+            "#1"
+          ],
+          "muted"
+        ],
+        [
+          "a",
+          224,
+          65,
+          75,
+          59,
+          [
+            "A",
+            "#2"
+          ],
+          "muted"
+        ],
+        [
+          "b",
+          224,
+          195,
+          90,
+          59,
+          [
+            "B · 다음",
+            "f=5"
+          ],
+          "active"
+        ],
+        [
+          "c",
+          382,
+          195,
+          87,
+          59,
+          [
+            "C · 대기",
+            "f=6"
+          ],
+          "plain"
+        ],
+        [
+          "d",
+          382,
+          65,
+          73,
+          59,
+          [
+            "D",
+            "#3"
+          ],
+          "muted"
+        ],
+        [
+          "g",
+          525,
+          65,
+          89,
+          59,
+          [
+            "G · 대기",
+            "f=6"
+          ],
+          "plain"
+        ],
+        [
+          "x",
+          485,
+          248,
+          60,
+          37,
+          [
+            "X"
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "muted",
+          "2",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "active",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "b",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "d",
+          "muted",
+          "2",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "undirected",
+          "3",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "undirected",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "x",
+          "undirected",
+          "1",
+          19
+        ]
+      ],
+      "labels": [
+        [
+          44,
+          246,
+          "3/3회 · 한도 도달"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "예산 소진",
+      "description": "S·A·D에 1–3번이 있고 B·C·G가 큐에 남아 한도 도달을 보여 줍니다."
+    },
+    "quiz": [
+      "예산 1회 뒤 큐에 비용 2인 후보가 남아 있으면 반환할 상태는?",
+      "한도 도달",
+      "도달 불가",
+      "큐가 남았으므로 탐색이 후보를 소진하지 않았습니다."
+    ]
+  },
+  {
+    "label": "후보 소진",
+    "title": "G로 들어가는 유일한 간선을 닫으면 도달 불가입니다",
+    "body": "D–G를 폐쇄하고 확장 한도를 12회로 올립니다. S에서 도달 가능한 S·A·B·C·D·X는 모두 확장됩니다. G가 발견되지 않고 큐가 비었으므로 이 지도에선 해가 없습니다.",
+    "takeaway": "G만 확장 집합 밖에 있고 D–G가 차단됩니다. 아래에 빈 큐와 6/12가 남습니다.",
+    "example": [
+      "D–G 폐쇄",
+      "도달 집합 6개 · 큐 ∅",
+      "도달 불가"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          75,
+          133,
+          66,
+          59,
+          [
+            "S",
+            "#1"
+          ],
+          "muted"
+        ],
+        [
+          "a",
+          224,
+          65,
+          65,
+          59,
+          [
+            "A",
+            "#2"
+          ],
+          "muted"
+        ],
+        [
+          "b",
+          224,
+          195,
+          65,
+          59,
+          [
+            "B",
+            "#4"
+          ],
+          "muted"
+        ],
+        [
+          "c",
+          382,
+          195,
+          65,
+          59,
+          [
+            "C",
+            "#5"
+          ],
+          "muted"
+        ],
+        [
+          "d",
+          382,
+          65,
+          65,
+          59,
+          [
+            "D",
+            "#3"
+          ],
+          "muted"
+        ],
+        [
+          "g",
+          525,
+          65,
+          88,
+          59,
+          [
+            "G",
+            "미도달"
+          ],
+          "blocked"
+        ],
+        [
+          "x",
+          485,
+          248,
+          65,
+          59,
+          [
+            "X",
+            "#6"
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "muted",
+          "2",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "muted",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "undirected",
+          "1",
+          0
+        ],
+        [
+          "b",
+          "c",
+          "muted",
+          "1",
+          0
+        ],
+        [
+          "a",
+          "d",
+          "muted",
+          "2",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "undirected",
+          "3",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "blocked",
+          "폐쇄",
+          0
+        ],
+        [
+          "b",
+          "x",
+          "muted",
+          "1",
+          19
+        ]
+      ],
+      "labels": [
+        [
+          44,
+          246,
+          "6/12회 · 큐 ∅ · 도달 불가"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "후보 소진",
+      "description": "G만 확장 집합 밖에 있고 D–G가 차단됩니다. 아래에 빈 큐와 6/12가 남습니다."
+    },
+    "quiz": [
+      "폐쇄 지도를 100회까지 탐색하도록 늘리면 G로 가는 길이 생길까요?",
+      "여전히 도달 불가",
+      "100회 안에 도달",
+      "유일한 입구가 막혔고 도달 가능한 상태를 이미 소진했습니다."
+    ]
+  }
+];
+const slug = 'search-budget-vs-unreachable';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

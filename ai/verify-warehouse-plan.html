@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="제출한 경로에서 비용과 위반 사유를 어떻게 독립적으로 계산할까요?">
+<title>경로 유효성·비용 자동 판정 · A20</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./verify-warehouse-plan.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A20</p><h1>경로 유효성·비용 자동 판정</h1><p>제출한 경로에서 비용과 위반 사유를 어떻게 독립적으로 계산할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">경로 유효성·비용 자동 판정</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "최신 간선 점검",
+    "title": "합계가 맞더라도 막힌 간선을 쓰면 경로는 실패합니다",
+    "body": "예전 계획은 A→D→G에 2+2분, 포장·발송에 1+1분으로 수리 구간 6분을 주장합니다. 검증기는 첫 행동 A→D를 최신 차단 목록에서 찾고 그 지점의 실패 사유를 반환합니다.",
+    "takeaway": "첫 간선 A→D에서 차단 표시가 나고 뒤의 D→G는 아직 검증하지 않았습니다.",
+    "example": [
+      "제출 A→D→G",
+      "A–D ∈ 차단 목록",
+      "행동 1 실패 · A–D 폐쇄"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "a",
+          103,
+          93,
+          121,
+          59,
+          [
+            "A",
+            "{P,I}"
+          ],
+          "plain"
+        ],
+        [
+          "c",
+          235,
+          198,
+          112,
+          37,
+          [
+            "C"
+          ],
+          "plain"
+        ],
+        [
+          "d",
+          365,
+          93,
+          118,
+          59,
+          [
+            "D",
+            "K"
+          ],
+          "muted"
+        ],
+        [
+          "g",
+          528,
+          93,
+          121,
+          59,
+          [
+            "G",
+            "H"
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "d",
+          "blocked",
+          "폐쇄",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "undirected",
+          "1 min",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "undirected",
+          "3 min",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "muted",
+          "2 min",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          59,
+          251,
+          "행동 1 · A→D · EDGE_BLOCKED"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "최신 간선 점검",
+      "description": "첫 간선 A→D에서 차단 표시가 나고 뒤의 D→G는 아직 검증하지 않았습니다."
+    },
+    "quiz": [
+      "열린 첫 간선을 주장했지만 지도에서 A와 B가 이웃이 아니라면 어떤 이유인가요?",
+      "간선이 없음",
+      "기존 간선 폐쇄",
+      "계획의 각 이동은 먼저 실제 간선과 일치해야 합니다."
+    ]
+  },
+  {
+    "label": "상태 재현과 합계",
+    "title": "이동과 작업을 재현해 8분과 완료 집합을 확인합니다",
+    "body": "A→C와 C→D를 재현하고 D의 포장을 실행합니다. 이어 D→G와 발송을 실행합니다. 이동비 6분과 작업비 2분으로 8분이며, 완료 집합은 {P,I,K,H}이고 현재 위치가 G인지 확인합니다.",
+    "takeaway": "이동 1·3·2와 작업 K·H의 1·1이 실제 위치에 붙고 마지막 G에 완료 집합이 있습니다.",
+    "example": [
+      "A→C→D·K→G·H",
+      "1+3+1+2+1=8 min",
+      "G · {P,I,K,H}"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "a",
+          103,
+          87,
+          121,
+          59,
+          [
+            "A",
+            "{P,I}"
+          ],
+          "plain"
+        ],
+        [
+          "c",
+          235,
+          190,
+          112,
+          37,
+          [
+            "C"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          365,
+          87,
+          118,
+          59,
+          [
+            "D",
+            "K: +1 min"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          530,
+          87,
+          139,
+          59,
+          [
+            "G",
+            "H: +1 min"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "d",
+          "blocked",
+          "폐쇄",
+          0
+        ],
+        [
+          "a",
+          "c",
+          "active",
+          "1 min",
+          0
+        ],
+        [
+          "c",
+          "d",
+          "active",
+          "3 min",
+          0
+        ],
+        [
+          "d",
+          "g",
+          "active",
+          "2 min",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          57,
+          246,
+          "8분 검증 · G · {P,I,K,H}"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "상태 재현과 합계",
+      "description": "이동 1·3·2와 작업 K·H의 1·1이 실제 위치에 붙고 마지막 G에 완료 집합이 있습니다."
+    },
+    "quiz": [
+      "같은 경로에서 제출자가 7분을 썼다고 입력하면 어떤 값으로 검증하나요?",
+      "계산된 8분, 비용 불일치",
+      "제출한 7분, 통과",
+      "검증기는 지도와 작업 정의에서 각 비용을 직접 더합니다."
+    ]
+  }
+];
+const slug = 'verify-warehouse-plan';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

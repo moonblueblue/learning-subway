@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="어떤 행동이 지금 가능하고 성공하면 상태의 어느 부분이 달라질까요?">
+<title>행동의 전제와 효과 · A16</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./warehouse-action-preconditions.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A16</p><h1>행동의 전제와 효과</h1><p>어떤 행동이 지금 가능하고 성공하면 상태의 어느 부분이 달라질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">행동의 전제와 효과</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "실행 차단",
+    "title": "검사대에 있어도 집기 기록이 없으면 검사할 수 없습니다",
+    "body": "검사 I는 현재 위치 A와 집기 P 완료를 모두 요구합니다. 빈손으로 A에 도착하면 위치 조건만 맞으므로 검사 간선은 막히고 완료 집합은 비어 있습니다.",
+    "takeaway": "A에서 위치 조건에는 체크가 있지만 P∈완료에는 실패가 붙어서 I로 이어지는 선이 차단됩니다.",
+    "example": [
+      "(A, 완료 ∅)",
+      "at(A) ∧ done(P)",
+      "I 실행 불가"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "a",
+          113,
+          135,
+          170,
+          59,
+          [
+            "A",
+            "완료 ∅"
+          ],
+          "plain"
+        ],
+        [
+          "test",
+          324,
+          135,
+          151,
+          59,
+          [
+            "위치 A ✓",
+            "집기 P ×"
+          ],
+          "plain"
+        ],
+        [
+          "i",
+          518,
+          135,
+          111,
+          37,
+          [
+            "검사 I"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "test",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "test",
+          "i",
+          "blocked",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          101,
+          221,
+          "전제 실패 → 완료 집합은 ∅"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "실행 차단",
+      "description": "A에서 위치 조건에는 체크가 있지만 P∈완료에는 실패가 붙어서 I로 이어지는 선이 차단됩니다."
+    },
+    "quiz": [
+      "집기 P를 마쳤지만 아직 S에 있다면 검사 I가 가능한가요?",
+      "불가 · 위치가 A여야 함",
+      "가능 · P만 완료하면 됨",
+      "검사에는 두 전제가 모두 필요합니다."
+    ]
+  },
+  {
+    "label": "상태 갱신",
+    "title": "집기로 완료 집합을 바꾸고 이동으로 위치를 바꿉니다",
+    "body": "S에서 집기 P를 1분에 수행하면 위치는 S, 완료 집합은 {P}가 됩니다. A로 2분 이동하면 완료 집합은 유지되고 위치만 A로 바뀝니다. 이제 검사 전제 두 개가 참입니다.",
+    "takeaway": "세 상태의 위치와 완료 집합이 따로 바뀌고 A에서 검사 I가 열립니다.",
+    "example": [
+      "(S,∅)",
+      "집기 +1분 → 이동 +2분",
+      "(A,{P}) · 검사 가능"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          76,
+          137,
+          100,
+          59,
+          [
+            "S",
+            "∅"
+          ],
+          "plain"
+        ],
+        [
+          "p",
+          247,
+          137,
+          113,
+          59,
+          [
+            "S",
+            "{P}"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          425,
+          137,
+          113,
+          59,
+          [
+            "A",
+            "{P}"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "p",
+          "active",
+          "P · +1 min",
+          0
+        ],
+        [
+          "p",
+          "a",
+          "active",
+          "이동 +2",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          99,
+          228,
+          "A ✓ ∧ P∈{P} ✓ → 검사 I 열림"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "상태 갱신",
+      "description": "세 상태의 위치와 완료 집합이 따로 바뀌고 A에서 검사 I가 열립니다."
+    },
+    "quiz": [
+      "A에서 검사 I를 실행한 직후 완료 집합은?",
+      "{P,I}",
+      "{I}",
+      "I를 추가하고 앞서 완료한 P는 보존합니다."
+    ]
+  }
+];
+const slug = 'warehouse-action-preconditions';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

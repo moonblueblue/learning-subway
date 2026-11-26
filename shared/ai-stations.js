@@ -208,28 +208,123 @@ const aiStationMap = {
     "stations": [
       {
         "id": "2.1",
-        "title": "상태와 비용",
-        "titleEn": "States and costs"
+        "ref": "ai/warehouse-state-identity"
+      },
+      {
+        "id": "2.6",
+        "ref": "ai/warehouse-cost-objectives"
+      },
+      {
+        "id": "2.7",
+        "ref": "algorithms/complexity"
       },
       {
         "id": "2.2",
-        "title": "균일비용 탐색",
-        "titleEn": "Uniform-cost search"
+        "ref": "ai/uniform-cost-expansion"
+      },
+      {
+        "id": "2.8",
+        "ref": "ai/reopen-cheaper-states"
       },
       {
         "id": "2.3",
-        "title": "휴리스틱과 A*",
-        "titleEn": "Heuristics and A*"
+        "ref": "ai/warehouse-distance-lower-bound"
+      },
+      {
+        "id": "2.9",
+        "ref": "ai/astar-cumulative-estimated-cost"
+      },
+      {
+        "id": "2.10",
+        "ref": "ai/heuristic-admissible-consistent"
+      },
+      {
+        "id": "2.11",
+        "ref": "ai/obstacle-aware-heuristic"
+      },
+      {
+        "id": "2.12",
+        "ref": "ai/search-budget-vs-unreachable"
       },
       {
         "id": "2.4",
-        "title": "제약 만족",
-        "titleEn": "Constraints"
+        "ref": "ai/order-variables-domains-constraints"
+      },
+      {
+        "id": "2.13",
+        "ref": "ai/warehouse-backtracking-order"
+      },
+      {
+        "id": "2.14",
+        "ref": "ai/constraint-propagation-candidates"
+      },
+      {
+        "id": "2.15",
+        "ref": "ai/precedence-predicates"
+      },
+      {
+        "id": "2.16",
+        "ref": "ai/explain-order-conflict"
       },
       {
         "id": "2.5",
-        "title": "행동과 재계획",
-        "titleEn": "Actions and replanning"
+        "ref": "ai/warehouse-action-preconditions"
+      },
+      {
+        "id": "2.17",
+        "ref": "ai/regress-delivery-subgoals"
+      },
+      {
+        "id": "2.18",
+        "ref": "ai/warehouse-resource-conflicts"
+      },
+      {
+        "id": "2.19",
+        "ref": "ai/repair-warehouse-plan"
+      },
+      {
+        "id": "2.20",
+        "ref": "ai/verify-warehouse-plan"
+      },
+      {
+        "id": "2.21",
+        "ref": "ai/bayes-network-conditional-independence"
+      },
+      {
+        "id": "2.22",
+        "ref": "ai/bayes-variable-elimination"
+      },
+      {
+        "id": "2.23",
+        "ref": "ai/rejection-sampling-inference"
+      },
+      {
+        "id": "2.24",
+        "ref": "ai/hidden-markov-warehouse-state"
+      },
+      {
+        "id": "2.25",
+        "ref": "ai/observation-value-utility"
+      },
+      {
+        "id": "2.26",
+        "ref": "ai/game-tree-minimax"
+      },
+      {
+        "id": "2.27",
+        "ref": "ai/alpha-beta-branch-pruning"
+      },
+      {
+        "id": "2.28",
+        "ref": "ai/stochastic-opponent-expectimax"
+      },
+      {
+        "id": "2.29",
+        "ref": "ai/monte-carlo-tree-iteration"
+      },
+      {
+        "id": "2.30",
+        "ref": "ai/local-search-random-restarts"
       }
     ],
     "transfer": {

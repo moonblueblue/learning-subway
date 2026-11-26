@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="남은 값을 넘지 않는 휴리스틱이 왜 간선 하나에서는 문제를 일으킬까요?">
+<title>허용성과 일관성의 차이 · A08</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./heuristic-admissible-consistent.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A08</p><h1>허용성과 일관성의 차이</h1><p>남은 값을 넘지 않는 휴리스틱이 왜 간선 하나에서는 문제를 일으킬까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">허용성과 일관성의 차이</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "목표까지 대조",
+    "title": "목표까지의 최적비용보다 작으면 허용됩니다",
+    "body": "A에서 G까지 5분, B에서 A를 지나 G까지 최저 1+5=6분입니다. S의 최저 나머지는 2+1+5=8분이고 h(S)=0입니다. 모든 상태에서 h가 최적 나머지를 넘지 않으므로 허용적입니다.",
+    "takeaway": "B와 A의 하한 검사가 각각 4≤6과 0≤5로 표시되고 두 노드는 1분 간선으로 연결됩니다.",
+    "example": [
+      "W2: h(B)=4, h(A)=0",
+      "h(B) ≤ 1+5, h(A) ≤ 5",
+      "모두 목표까지 하한"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "b",
+          104,
+          142,
+          167,
+          59,
+          [
+            "B",
+            "h=4 ≤ 6"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          310,
+          142,
+          143,
+          59,
+          [
+            "A",
+            "h=0 ≤ 5"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          524,
+          142,
+          128,
+          59,
+          [
+            "G",
+            "h=0 ≤ 0"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "b",
+          "a",
+          "active",
+          "1 min",
+          0
+        ],
+        [
+          "a",
+          "g",
+          "active",
+          "5 min",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          102,
+          231,
+          "실제 남은 최적비용은 B 6분, A 5분"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "목표까지 대조",
+      "description": "B와 A의 하한 검사가 각각 4≤6과 0≤5로 표시되고 두 노드는 1분 간선으로 연결됩니다."
+    },
+    "quiz": [
+      "B의 h를 7분으로 높였는데 실제 최적비용이 6분이면 허용되나요?",
+      "허용되지 않음",
+      "허용됨",
+      "목표까지 실제 최적비용을 초과합니다."
+    ]
+  },
+  {
+    "label": "이웃에서 대조",
+    "title": "B→A 한 간선에서 일관성 조건이 깨집니다",
+    "body": "간선 비용이 c일 때 일관성은 h(B)≤c(B,A)+h(A)를 요구합니다. 여기서는 4≤1+0이 거짓입니다. B에 2분에 왔다면 B의 f는 6인데, B에서 A를 거치면 f가 3으로 내려갑니다.",
+    "takeaway": "B에서 A로 1분 이동하는데 h는 4분 떨어져 f가 6에서 3으로 떨어집니다.",
+    "example": [
+      "B: g=2, h=4",
+      "4 > 1 + 0",
+      "f: 6 → 3"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "b",
+          104,
+          142,
+          167,
+          59,
+          [
+            "B",
+            "f=2+4=6"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          310,
+          142,
+          143,
+          59,
+          [
+            "A",
+            "f=3+0=3"
+          ],
+          "blocked"
+        ],
+        [
+          "g",
+          524,
+          142,
+          128,
+          59,
+          [
+            "G",
+            "h=0"
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "b",
+          "a",
+          "blocked",
+          "+1 min",
+          0
+        ],
+        [
+          "a",
+          "g",
+          "undirected",
+          "5 min",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          105,
+          231,
+          "4 > 1+0 · 간선 일관성 위반"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "이웃에서 대조",
+      "description": "B에서 A로 1분 이동하는데 h는 4분 떨어져 f가 6에서 3으로 떨어집니다."
+    },
+    "quiz": [
+      "이 간선만 보면 h(B)=1, h(A)=0, 비용 1분일 때 조건을 통과할까요?",
+      "통과 · 1≤1",
+      "위반 · 1>0",
+      "일관성은 이웃 h에 간선 비용을 더해 비교합니다."
+    ]
+  }
+];
+const slug = 'heuristic-admissible-consistent';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

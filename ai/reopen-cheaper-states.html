@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="이미 확장한 창고 상태로 더 싼 경로가 발견되면 어떤 기록을 다시 처리할까요?">
+<title>방문 상태를 다시 열어야 할 조건 · A05</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./reopen-cheaper-states.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A05</p><h1>방문 상태를 다시 열어야 할 조건</h1><p>이미 확장한 창고 상태로 더 싼 경로가 발견되면 어떤 기록을 다시 처리할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">방문 상태를 다시 열어야 할 조건</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "먼저 닫힌 상태",
+    "title": "예상값을 더하면 비싼 A가 먼저 닫힐 수 있습니다",
+    "body": "S에서 A까지 5분, B까지 2분이고 h(A)=0, h(B)=4입니다. g+h는 A가 5, B가 6이므로 A가 먼저 확장되어 10분의 G를 제안합니다.",
+    "takeaway": "누적 이동비용과 남은 예상비용의 합 5 \u003c 6 때문에 A가 먼저 확장되고 G에 g=10 후보가 생깁니다.",
+    "example": [
+      "S → A 또는 B",
+      "f(A)=5 \u003c f(B)=6",
+      "A 닫힘 · G(10)"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          71,
+          133,
+          62,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          270,
+          72,
+          156,
+          59,
+          [
+            "A · 확장 완료",
+            "5+0=5"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          270,
+          202,
+          145,
+          59,
+          [
+            "B · 대기",
+            "2+4=6"
+          ],
+          "plain"
+        ],
+        [
+          "g",
+          516,
+          72,
+          130,
+          59,
+          [
+            "G · 대기",
+            "5+5=10"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "active",
+          "5",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "undirected",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "a",
+          "undirected",
+          "1",
+          21
+        ],
+        [
+          "a",
+          "g",
+          "active",
+          "5",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          46,
+          250,
+          "f = 누적 이동비용 + 남은 예상비용 (분)"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "먼저 닫힌 상태",
+      "description": "누적 이동비용과 남은 예상비용의 합 5 \u003c 6 때문에 A가 먼저 확장되고 G에 g=10 후보가 생깁니다."
+    },
+    "quiz": [
+      "h(B)를 1로 낮추면 첫 번째로 확장할 이웃은?",
+      "B",
+      "A",
+      "B의 f=2+1=3이 A의 5보다 작습니다."
+    ]
+  },
+  {
+    "label": "더 싼 재발견",
+    "title": "B가 A에 더 싼 3분 기록을 줍니다",
+    "body": "B의 f=6이 G의 f=10보다 작아 B를 다음으로 확장합니다. B→A의 1분을 더한 3분은 A의 기존 5분보다 작으므로 비용과 부모를 함께 교체하고 A를 큐에 다시 넣습니다.",
+    "takeaway": "B→A의 간선에서 2+1이 생기고 A의 값이 5에서 3으로 내려갑니다.",
+    "example": [
+      "B(g=2)",
+      "2+1 \u003c 5",
+      "A 재개방 · g=3"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          71,
+          133,
+          62,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          270,
+          72,
+          156,
+          59,
+          [
+            "A · 다시 대기",
+            "g: 5 → 3"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          270,
+          202,
+          145,
+          59,
+          [
+            "B · 확장 완료",
+            "g=2"
+          ],
+          "muted"
+        ],
+        [
+          "g",
+          516,
+          72,
+          130,
+          59,
+          [
+            "G · 대기",
+            "g=10"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "muted",
+          "5",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "a",
+          "active",
+          "+1",
+          23
+        ],
+        [
+          "a",
+          "g",
+          "muted",
+          "5",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          46,
+          250,
+          "새 부모: A ← B"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "더 싼 재발견",
+      "description": "B→A의 간선에서 2+1이 생기고 A의 값이 5에서 3으로 내려갑니다."
+    },
+    "quiz": [
+      "다른 후보가 A에 똑같이 3분으로 도착하면 어떤 처리가 필요한가요?",
+      "기존 기록 유지",
+      "A를 다시 열기",
+      "이 규칙은 엄격히 더 작은 g에서만 재개방합니다."
+    ]
+  },
+  {
+    "label": "결과 전파",
+    "title": "A를 다시 확장하면 G의 비용이 8분으로 줄어듭니다",
+    "body": "새 A에서 G까지 5분을 더해 8분을 얻습니다. 이전 G=10 항목은 오래된 값이므로 무시합니다. 재확장 횟수는 A의 첫 확장과 두 번째 확장을 따로 셉니다.",
+    "takeaway": "S–B–A–G 경로에서 2+1+5가 G=8로 연결되고 이전 S→A 간선은 흐려집니다.",
+    "example": [
+      "A(g=3)",
+      "3+5 \u003c 10",
+      "S → B → A → G · 8 min"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          71,
+          133,
+          62,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          270,
+          72,
+          156,
+          59,
+          [
+            "A · 재확장",
+            "g=3"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          270,
+          202,
+          145,
+          59,
+          [
+            "B",
+            "g=2"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          516,
+          72,
+          130,
+          59,
+          [
+            "G",
+            "g: 10 → 8"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "muted",
+          "5",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "active",
+          "2",
+          0
+        ],
+        [
+          "b",
+          "a",
+          "active",
+          "1",
+          23
+        ],
+        [
+          "a",
+          "g",
+          "active",
+          "5",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          46,
+          250,
+          "확장 순서: S, A, B, A"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "결과 전파",
+      "description": "S–B–A–G 경로에서 2+1+5가 G=8로 연결되고 이전 S→A 간선은 흐려집니다."
+    },
+    "quiz": [
+      "새 A가 4분이고 A→G가 5분이면 기존 G=10을 무엇으로 바꾸나요?",
+      "G=9",
+      "G=10",
+      "4+5=9가 기존 10보다 낮습니다."
+    ]
+  }
+];
+const slug = 'reopen-cheaper-states';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

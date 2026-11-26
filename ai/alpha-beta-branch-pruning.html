@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="오른쪽의 보장값을 먼저 알면 왼쪽의 어느 잎을 계산하지 않아도 될까요?">
+<title>알파베타 가지치기 · A27</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./alpha-beta-branch-pruning.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A27</p><h1>알파베타 가지치기</h1><p>오른쪽의 보장값을 먼저 알면 왼쪽의 어느 잎을 계산하지 않아도 될까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">알파베타 가지치기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "기존 보장 확보",
+    "title": "오른쪽을 먼저 끝내면 루트의 알파가 4가 됩니다",
+    "body": "오른쪽 MIN은 4와 5를 보고 최소값 4를 올립니다. MAX는 이 선택을 확보했으므로 다른 가지에서 최소 4보다 더 좋아질 가능성만 살핍니다.",
+    "takeaway": "오른쪽 두 잎이 계산되고 루트에 현재 하한 α=4가 나타납니다.",
+    "example": [
+      "R의 잎 4,5",
+      "min(4,5)=4",
+      "MAX α=4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "max",
+          310,
+          51,
+          134,
+          59,
+          [
+            "MAX",
+            "α=4"
+          ],
+          "active"
+        ],
+        [
+          "l",
+          162,
+          123,
+          134,
+          59,
+          [
+            "MIN L",
+            "미평가"
+          ],
+          "muted"
+        ],
+        [
+          "r",
+          455,
+          123,
+          134,
+          59,
+          [
+            "MIN R",
+            "min(4,5)=4"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          77,
+          223,
+          68,
+          37,
+          [
+            "?"
+          ],
+          "muted"
+        ],
+        [
+          "b",
+          235,
+          223,
+          68,
+          37,
+          [
+            "?"
+          ],
+          "muted"
+        ],
+        [
+          "c",
+          376,
+          223,
+          68,
+          37,
+          [
+            "4"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          535,
+          223,
+          68,
+          37,
+          [
+            "5"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "max",
+          "l",
+          "muted",
+          "",
+          0
+        ],
+        [
+          "max",
+          "r",
+          "active",
+          "",
+          0
+        ],
+        [
+          "l",
+          "a",
+          "muted",
+          "",
+          0
+        ],
+        [
+          "l",
+          "b",
+          "muted",
+          "",
+          0
+        ],
+        [
+          "r",
+          "c",
+          "active",
+          "",
+          0
+        ],
+        [
+          "r",
+          "d",
+          "plain",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "기존 보장 확보",
+      "description": "오른쪽 두 잎이 계산되고 루트에 현재 하한 α=4가 나타납니다."
+    },
+    "quiz": [
+      "R의 두 잎이 6과 5일 때 먼저 평가하면 루트 α는?",
+      "5",
+      "6",
+      "R은 MIN이므로 둘 중 작은 5를 보장합니다."
+    ]
+  },
+  {
+    "label": "더 좋아질 수 없는 가지",
+    "title": "왼쪽의 상한 2가 루트의 하한 4에 못 미칩니다",
+    "body": "왼쪽 MIN이 첫 잎 2를 보면 그 가지 값은 최대 2입니다. β=2≤α=4이므로 두 번째 잎이 무엇이든 MAX는 R을 유지합니다. 잎 세 개만 평가하고 같은 선택을 얻습니다.",
+    "takeaway": "L의 첫 잎 2가 β=2를 만들고 두 번째 잎은 β≤α 때문에 끊깁니다.",
+    "example": [
+      "MAX α=4 · L 첫 잎 2",
+      "β=2≤α=4",
+      "R 유지 · 평가 3/4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "max",
+          310,
+          51,
+          134,
+          59,
+          [
+            "MAX",
+            "α=4"
+          ],
+          "active"
+        ],
+        [
+          "l",
+          162,
+          123,
+          142,
+          59,
+          [
+            "MIN L",
+            "β=2 ≤ α=4"
+          ],
+          "blocked"
+        ],
+        [
+          "r",
+          455,
+          123,
+          134,
+          59,
+          [
+            "MIN R",
+            "min(4,5)=4"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          77,
+          223,
+          68,
+          37,
+          [
+            "2"
+          ],
+          "plain"
+        ],
+        [
+          "b",
+          235,
+          223,
+          102,
+          37,
+          [
+            "가지치기"
+          ],
+          "blocked"
+        ],
+        [
+          "c",
+          376,
+          223,
+          68,
+          37,
+          [
+            "4"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          535,
+          223,
+          68,
+          37,
+          [
+            "5"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "max",
+          "l",
+          "muted",
+          "",
+          0
+        ],
+        [
+          "max",
+          "r",
+          "active",
+          "",
+          0
+        ],
+        [
+          "l",
+          "a",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "l",
+          "b",
+          "blocked",
+          "",
+          0
+        ],
+        [
+          "r",
+          "c",
+          "active",
+          "",
+          0
+        ],
+        [
+          "r",
+          "d",
+          "plain",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "더 좋아질 수 없는 가지",
+      "description": "L의 첫 잎 2가 β=2를 만들고 두 번째 잎은 β≤α 때문에 끊깁니다."
+    },
+    "quiz": [
+      "L의 첫 잎이 7이면 α=4에서 곧바로 다른 L 잎을 건너뛸까요?",
+      "추가 평가 필요",
+      "바로 가지치기",
+      "β=7>α=4라 왼쪽이 더 좋은지 아직 결정하지 못합니다."
+    ]
+  }
+];
+const slug = 'alpha-beta-branch-pruning';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

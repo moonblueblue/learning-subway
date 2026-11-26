@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="마지막 목표가 충족되려면 바로 전에 필요한 사실은 무엇일까요?">
+<title>목표에서 거꾸로 부분목표 찾기 · A17</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./regress-delivery-subgoals.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">탐색·추론·계획 · A17</p><h1>목표에서 거꾸로 부분목표 찾기</h1><p>마지막 목표가 충족되려면 바로 전에 필요한 사실은 무엇일까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">목표에서 거꾸로 부분목표 찾기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "목표의 직전",
+    "title": "발송 완료를 요구하면 포장과 위치 G가 역으로 나타납니다",
+    "body": "목표는 H 완료입니다. 이 효과를 내는 행동은 G에서 발송하기이고 전제는 포장 K 완료와 G 도착입니다. 발송을 계획 앞에서 실행하는 대신 두 전제를 새 부분목표로 등록합니다.",
+    "takeaway": "H 목표에서 역으로 발송 행동을 고르면 포장 K와 위치 G 두 전제에 동시에 연결됩니다.",
+    "example": [
+      "H 완료",
+      "발송의 두 전제 추출",
+      "{done(K), at(G)}"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "goal",
+          94,
+          139,
+          123,
+          37,
+          [
+            "H 완료"
+          ],
+          "active"
+        ],
+        [
+          "ship",
+          307,
+          139,
+          147,
+          37,
+          [
+            "발송 행동"
+          ],
+          "plain"
+        ],
+        [
+          "k",
+          523,
+          79,
+          144,
+          37,
+          [
+            "포장 K 완료"
+          ],
+          "active"
+        ],
+        [
+          "g",
+          523,
+          201,
+          144,
+          37,
+          [
+            "G 도착"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "goal",
+          "ship",
+          "active",
+          "효과",
+          0
+        ],
+        [
+          "ship",
+          "k",
+          "active",
+          "전제",
+          0
+        ],
+        [
+          "ship",
+          "g",
+          "active",
+          "전제",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "목표의 직전",
+      "description": "H 목표에서 역으로 발송 행동을 고르면 포장 K와 위치 G 두 전제에 동시에 연결됩니다."
+    },
+    "quiz": [
+      "다른 발송 방식에도 G 도착이 전제라면 계획에서 생략할 수 있나요?",
+      "G 도착 필요",
+      "생략 가능",
+      "선택한 행동의 모든 전제가 실행 시 참이어야 합니다."
+    ]
+  },
+  {
+    "label": "역방향과 실행 순서",
+    "title": "발송에서 집기까지 거슬러 찾고 집기부터 실행합니다",
+    "body": "포장 K에는 검사 I, 검사 I에는 집기 P가 필요합니다. 뒤로 H→K→I→P를 따라 선후를 구성합니다. 실제로는 P→I→K→H 순이며 각 위치까지의 이동을 작업 사이에 삽입합니다.",
+    "takeaway": "위에는 H에서 P까지의 부분목표, 아래에는 반대 방향인 P에서 H로 가는 실행 순서가 있습니다.",
+    "example": [
+      "H 완료",
+      "H 필요 K 필요 I 필요 P",
+      "P→I→K→H"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p83_0",
+          77,
+          83,
+          125,
+          37,
+          [
+            "H"
+          ],
+          "active"
+        ],
+        [
+          "p83_1",
+          232,
+          83,
+          125,
+          37,
+          [
+            "K"
+          ],
+          "plain"
+        ],
+        [
+          "p83_2",
+          387,
+          83,
+          125,
+          37,
+          [
+            "I"
+          ],
+          "plain"
+        ],
+        [
+          "p83_3",
+          542,
+          83,
+          125,
+          37,
+          [
+            "P"
+          ],
+          "plain"
+        ],
+        [
+          "p200_0",
+          77,
+          200,
+          125,
+          37,
+          [
+            "P"
+          ],
+          "active"
+        ],
+        [
+          "p200_1",
+          232,
+          200,
+          125,
+          37,
+          [
+            "I"
+          ],
+          "plain"
+        ],
+        [
+          "p200_2",
+          387,
+          200,
+          125,
+          37,
+          [
+            "K"
+          ],
+          "plain"
+        ],
+        [
+          "p200_3",
+          542,
+          200,
+          125,
+          37,
+          [
+            "H"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p83_0",
+          "p83_1",
+          "active",
+          ""
+        ],
+        [
+          "p83_1",
+          "p83_2",
+          "active",
+          ""
+        ],
+        [
+          "p83_2",
+          "p83_3",
+          "active",
+          ""
+        ],
+        [
+          "p200_0",
+          "p200_1",
+          "active",
+          ""
+        ],
+        [
+          "p200_1",
+          "p200_2",
+          "active",
+          ""
+        ],
+        [
+          "p200_2",
+          "p200_3",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          22,
+          55,
+          "부분목표 찾기"
+        ],
+        [
+          22,
+          169,
+          "실행 순서"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "역방향과 실행 순서",
+      "description": "위에는 H에서 P까지의 부분목표, 아래에는 반대 방향인 P에서 H로 가는 실행 순서가 있습니다."
+    },
+    "quiz": [
+      "검사 I가 이미 끝났다면 K 이전에 I를 다시 할 필요가 있나요?",
+      "기존 완료 사실 사용",
+      "반드시 다시 검사",
+      "검사가 계속 유효하면 done(I)가 이미 참이라 부분목표를 만족합니다."
+    ]
+  }
+];
+const slug = 'regress-delivery-subgoals';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

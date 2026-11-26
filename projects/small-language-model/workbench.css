@@ -1,0 +1,55 @@
+#lm-dialog {
+  box-sizing: border-box;
+  width: min(640px, calc(100vw - 16px));
+  max-height: calc(100dvh - 12px);
+  margin: auto;
+  padding: 12px;
+  border: 1px solid #9baeaf;
+  border-radius: 10px;
+  background: #fff;
+  color: #17354b;
+  font: 15px/1.28 system-ui, sans-serif;
+  overflow: clip;
+}
+#lm-dialog::backdrop { background: #142938bf; }
+#lm-dialog [hidden] { display: none !important; }
+.lm-header, .lm-actions { display: flex; align-items: center; gap: 6px; }
+.lm-header { justify-content: space-between; margin-bottom: 5px; }
+#lm-heading { margin: 0; font-size: 1.22em; }
+#lm-dialog p { margin: 6px 0; overflow-wrap: anywhere; }
+#lm-dialog .action { min-height: 44px; padding: 5px 9px; }
+.lm-actions { flex-wrap: wrap; margin: 6px 0 0; }
+.lm-fields, .lm-file-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+.lm-fields { margin: 6px 0; }
+#lm-dialog label { display: block; min-width: 0; font-weight: 650; }
+#lm-dialog select, #lm-dialog textarea, #lm-dialog input {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 5px;
+  border: 1px solid #9baeaf;
+  border-radius: 5px;
+  background: #f1f6f9;
+  color: inherit;
+  font: inherit;
+}
+#lm-dialog textarea { height: clamp(100px, 36dvh, 280px); resize: none; font-family: ui-monospace,monospace; }
+#lm-dialog input[type="file"] { padding-top: 10px; }
+#lm-dialog table { width: 100%; border-collapse: collapse; }
+#lm-dialog th, #lm-dialog td { text-align: left; border-bottom: 1px solid #d4dfe4; padding: 4px; }
+.lm-content-line { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.lm-command { display: block; margin: 8px 0; overflow-wrap: anywhere; font-size: .93em; }
+#lm-error { color: #a34123; }
+@media (max-width: 420px) { .lm-restore { grid-template-columns: 1fr; } }
+@media (max-width: 370px), (max-height: 440px) {
+  #lm-dialog { padding: 7px; font-size: 13px; }
+  #lm-dialog .action { padding-inline: 7px; }
+  #lm-dialog textarea { height: clamp(88px, 30dvh, 150px); }
+}
+
+@media (max-width: 640px) and (min-height: 550px) {
+  .course-shell .timeline .steps > li { flex: 1 1 0; min-width: 0; }
+  .course-shell .timeline .steps button { width: 100%; }
+}

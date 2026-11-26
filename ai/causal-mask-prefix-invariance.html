@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="뒤쪽 fox를 bird로 바꿔도 red의 예측이 같으려면 어떤 칸을 막을까요?">
+<title>인과 마스크와 미래 토큰 불변성 · E10</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./causal-mask-prefix-invariance.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E10</p><h1>인과 마스크와 미래 토큰 불변성</h1><p>뒤쪽 fox를 bird로 바꿔도 red의 예측이 같으려면 어떤 칸을 막을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">인과 마스크와 미래 토큰 불변성</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-causal-mask-prefix-invariance-1"><svg><g>
+<text x="266" y="78" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<text x="324" y="78" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<text x="382" y="78" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<text x="197" y="113" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<text x="197" y="171" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<text x="197" y="229" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="238" y="85" width="56" height="56" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.2"/>
+<text x="266.0" y="120.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">✓</text>
+<rect x="296" y="85" width="56" height="56" fill="#f6dacb" stroke="#566d7c" stroke-width="1.2"/>
+<text x="324.0" y="120.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">×</text>
+<rect x="354" y="85" width="56" height="56" fill="#f6dacb" stroke="#566d7c" stroke-width="1.2"/>
+<text x="382.0" y="120.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">×</text>
+<rect x="238" y="143" width="56" height="56" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.2"/>
+<text x="266.0" y="178.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">.50</text>
+<rect x="296" y="143" width="56" height="56" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.2"/>
+<text x="324.0" y="178.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">.50</text>
+<rect x="354" y="143" width="56" height="56" fill="#f6dacb" stroke="#566d7c" stroke-width="1.2"/>
+<text x="382.0" y="178.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<rect x="238" y="201" width="56" height="56" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.2"/>
+<text x="266.0" y="236.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">✓</text>
+<rect x="296" y="201" width="56" height="56" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.2"/>
+<text x="324.0" y="236.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">✓</text>
+<rect x="354" y="201" width="56" height="56" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.2"/>
+<text x="382.0" y="236.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">✓</text>
+<text x="91" y="167" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">예측 행</text>
+<text x="503" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">읽는 열</text>
+<text x="503" y="166" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">j &gt; i → 0</text>
+</g></svg></template>
+<template id="figure-causal-mask-prefix-invariance-2"><svg><g>
+<text x="25" y="111" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="46" y="84" width="73" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="82.5" y="111" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="123" y="84" width="73" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="159.5" y="111" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="200" y="84" width="73" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="236.5" y="111" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<text x="25" y="213" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="46" y="186" width="73" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="82.5" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="123" y="186" width="73" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="159.5" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="200" y="186" width="73" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="236.5" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">bird</text>
+<line x1="195" y1="89" x2="195" y2="126" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="195" y1="191" x2="195" y2="228" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="160" y1="85" x2="160" y2="72" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="160.0" y1="72.0" x2="323.0" y2="72.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="323.0,72.0 311.40961225346075,77.88752170992788 311.40961225346075,66.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="323.0" y1="72.0" x2="339.0" y2="102.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="339.0,102.0 328.3508277869863,94.54378573419612 338.7405719809767,89.00258883073457" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="160" y1="186" x2="160" y2="172" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="160.0" y1="172.0" x2="323.0" y2="172.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="323.0,172.0 311.40961225346075,177.88752170992788 311.40961225346075,166.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="323.0" y1="172.0" x2="339.0" y2="204.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="339.0,204.0 328.5506615176697,196.26622179774395 339.08258052759334,191.0002622927821" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="464" y="76" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">fox · bird · EOS</text>
+<rect x="340" y="84" width="78" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="379.0" y="111" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.60</text>
+<rect x="422" y="84" width="78" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="461.0" y="111" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.30</text>
+<rect x="504" y="84" width="78" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="543.0" y="111" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.10</text>
+<rect x="340" y="186" width="78" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="379.0" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.60</text>
+<rect x="422" y="186" width="78" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="461.0" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.30</text>
+<rect x="504" y="186" width="78" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="543.0" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.10</text>
+<text x="459" y="156" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">Δmax = 0</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "허용 격자",
+    "title": "red는 BOS와 red만 읽고 fox 자리의 열을 가립니다",
+    "body": "행은 예측 위치, 열은 읽으려는 위치입니다. 미래 열 j>i를 −∞ 처리하면 그 칸의 어텐션 가중치는 0이 됩니다. red 행의 두 유효 점수가 0이면 두 칸에 0.50씩 배정됩니다.",
+    "takeaway": "red 행의 마지막 슬롯은 ×이며 처음 두 슬롯의 가중치 합이 1입니다.",
+    "example": [
+      "BOS red fox",
+      "j > i → 차단",
+      "red 행 0.50, 0.50, 0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "허용 격자",
+      "description": "red 행의 마지막 슬롯은 ×이며 처음 두 슬롯의 가중치 합이 1입니다.",
+      "figure": "figure-causal-mask-prefix-invariance-1"
+    },
+    "quiz": [
+      "fox 행에서 red 열은 미래에 해당하나요?",
+      "아니요 · 왼쪽 열",
+      "예 · 미래 열",
+      "fox보다 red가 앞에 있으므로 이 칸은 읽을 수 있습니다."
+    ]
+  },
+  {
+    "label": "접미부 교체",
+    "title": "같은 red 앞부분에서 다음 토큰 분포 전체가 일치합니다",
+    "body": "이 장난감 모델의 출력 후보는 fox, bird, EOS입니다. 뒤쪽 입력만 바뀌어도 red에서의 값은 [0.60,0.30,0.10]으로 같습니다. 막히지 않은 모델이라면 바뀐 미래 토큰을 읽어 이 분포가 달라질 수 있습니다.",
+    "takeaway": "두 red 셀에서 같은 후보 확률로 이어집니다. 바뀐 접미부 셀 앞에는 차단선이 놓입니다.",
+    "example": [
+      "BOS red fox · BOS red bird",
+      "red에서 미래 간선 차단",
+      "두 분포 (0.60, 0.30, 0.10)"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "접미부 교체",
+      "description": "두 red 셀에서 같은 후보 확률로 이어집니다. 바뀐 접미부 셀 앞에는 차단선이 놓입니다.",
+      "figure": "figure-causal-mask-prefix-invariance-2"
+    },
+    "quiz": [
+      "두 분포의 최빈 토큰은 같지만 bird 확률이 다릅니다. 분포 불변인가요?",
+      "아니요 · 전체가 같아야 함",
+      "예 · 1등만 같으면 됨",
+      "한 후보라도 확률이 달라지면 전체 분포는 달라집니다."
+    ]
+  }
+];
+const slug = 'causal-mask-prefix-invariance';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

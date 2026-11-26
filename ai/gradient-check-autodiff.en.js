@@ -1,0 +1,23 @@
+window.lessonText = {
+  "연산 그래프 되감기": "Backpropagate through the graph",
+  "위의 순방향은 w→u→L, 아래의 역방향 라벨은 2와 1입니다.": "The top arrows run w→u→L. Below, the reverse arrows carry 2 and 1.",
+  "출력에서 되감은 두 기울기를 곱합니다": "Multiply the two local derivatives on the reverse path",
+  "w=2일 때 u=w−1=1, L=u²=1입니다. 역방향에서 dL/du=2u=2, du/dw=1을 곱해 dL/dw=2입니다.": "At w=2, u=w−1=1 and L=u²=1. Backpropagate with dL/du=2u=2 and du/dw=1, giving dL/dw=2.",
+  "w=3이면 u=w−1과 dL/du=2u는?": "For w=3, what are u=w−1 and dL/du=2u?",
+  "먼저 u를 구하고 그 자리에서 2u를 계산합니다.": "First find u, then evaluate 2u there.",
+  "양쪽 교란": "Perturb both sides",
+  "곡선 위 두 점과 그 차이를 나타내는 할선이 강조됩니다.": "Two points and their secant stand out on the loss curve.",
+  "가중치 좌우의 손실 차이를 가중치 간격으로 나눕니다": "Divide the two sides' loss difference by the weight gap",
+  "ε=0.1을 더한 2.1과 뺀 1.9에서 손실은 1.21과 0.81입니다. (1.21−0.81)/(2.1−1.9)=2로 자동미분과 같습니다. 여러 매개변수라면 비교하는 좌표만 움직입니다.": "At 2.1 and 1.9 the losses are 1.21 and 0.81. The ratio (1.21−0.81)/(2.1−1.9)=2 matches autodiff. In a multiweight model perturb only the checked coordinate.",
+  "2 = 자동미분": "2 = autodiff",
+  "좌우 교란이 각각 0.01이면 분모의 거리 Δw는?": "What weight gap goes below the fraction with perturbations of ±0.01?",
+  "한 점이 기준 왼쪽, 다른 점이 같은 거리만큼 오른쪽입니다.": "The two points lie on opposite sides of the base weight.",
+  "자동미분과 수치 기울기 검사": "Autodiff and numerical gradient checks",
+  "가중치 한 자리를 움직여 자동미분의 값을 어떻게 확인할까요?": "How can one perturbed weight check an automatic derivative?",
+  "생성 모델·언어 모델 · E14": "Generative and language models · E14",
+  "자동미분과 수치 기울기 검사 · E14": "Autodiff and numerical gradient checks · E14",
+  "계산과 판단": "Worked example",
+  "다른 입력으로 확인": "Check with a new input",
+  "✓ 맞았습니다.": "✓ Correct.",
+  "✗ 다시 생각해 보세요.": "✗ Think again."
+};

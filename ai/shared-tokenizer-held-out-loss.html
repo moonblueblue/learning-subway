@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 시험 위치 두 개에서 어느 모델의 손실이 낮을까요?">
+<title>같은 토크나이저로 시험 손실 비교 · E18</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./shared-tokenizer-held-out-loss.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E18</p><h1>같은 토크나이저로 시험 손실 비교</h1><p>같은 시험 위치 두 개에서 어느 모델의 손실이 낮을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">같은 토크나이저로 시험 손실 비교</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-shared-tokenizer-held-out-loss-1"><svg><g>
+<rect x="53" y="144" width="115" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="110.5" y="171" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS · 0</text>
+<rect x="172" y="144" width="115" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="229.5" y="171" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red · 3</text>
+<rect x="291" y="144" width="115" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="348.5" y="171" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS · 1</text>
+<line x1="410.0" y1="155.0" x2="445.0" y2="109.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="445.0,109.0 442.6672258865441,121.78898607926328 433.29630845850386,114.65894021010223" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="410.0" y1="170.0" x2="445.0" y2="218.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="445.0,218.0 433.41410436976173,212.10364329053726 442.92842812163,205.1661155548" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="526" y="94" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">바이그램</text>
+<text x="526" y="124" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">3, 1</text>
+<text x="526" y="206" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">신경 모델</text>
+<text x="526" y="236" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">3, 1</text>
+<text x="232" y="253" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">정답 2개</text>
+</g></svg></template>
+<template id="figure-shared-tokenizer-held-out-loss-2"><svg><g>
+<text x="204" y="84" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<text x="294" y="84" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+<text x="508" y="83" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">nat/token</text>
+<text x="70" y="133" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">바이그램</text>
+<text x="70" y="207" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">신경 모델</text>
+<rect x="160" y="106" width="86" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="203.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.50</text>
+<rect x="250" y="106" width="86" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="293.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.25</text>
+<rect x="160" y="180" width="86" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="203.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.50</text>
+<rect x="250" y="180" width="86" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="293.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.50</text>
+<line x1="343.0" y1="125.0" x2="435.0" y2="125.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="435.0,125.0 423.40961225346075,130.88752170992788 423.40961225346075,119.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="343.0" y1="199.0" x2="435.0" y2="199.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="435.0,199.0 423.40961225346075,204.88752170992788 423.40961225346075,193.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="509" y="133" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1.040</text>
+<text x="509" y="207" font-size="24" font-weight="650" fill="#11664f" text-anchor="middle">0.693</text>
+<text x="310" y="264" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">두 모델 모두 Σ(−ln p) ÷ 2</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "평가 위치 고정",
+    "title": "두 모델 모두 같은 토큰 ID의 확률을 냅니다",
+    "body": "시험 문서 red는 이미 고정한 [BOS,red,EOS]로 바꿉니다. 바이그램과 신경 모델에 BOS→red와 red→EOS를 동일하게 적용합니다.",
+    "takeaway": "원본 토큰 줄에서 두 모델의 같은 정답 ID로 갈라집니다.",
+    "example": [
+      "시험 red · 어휘 동결",
+      "정답 ID 3과 1 사용",
+      "공통 분모 2"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "평가 위치 고정",
+      "description": "원본 토큰 줄에서 두 모델의 같은 정답 ID로 갈라집니다.",
+      "figure": "figure-shared-tokenizer-held-out-loss-1"
+    },
+    "quiz": [
+      "시험 어휘에 처음 나온 단어의 ID를 새로 등록하나요?",
+      "아니요 · 훈련 어휘로 인코딩",
+      "예 · 시험으로 다시 훈련",
+      "두 모델과 시험 모두에 고정 어휘를 씁니다."
+    ]
+  },
+  {
+    "label": "측정 비교",
+    "title": "확률에 자연로그를 취한 뒤 같은 두 정답으로 나눕니다",
+    "body": "바이그램의 red·EOS 확률을 0.5·0.25, 신경 모델은 0.5·0.5로 둡니다. −ln p 평균은 각각 약 1.040과 0.693 nat/토큰입니다. 이 그림은 예시이며 실제 보고서는 모든 시험 위치를 셉니다.",
+    "takeaway": "같은 헤더 red 및 EOS 아래 두 행의 관측 확률과 마지막 손실 값이 이어집니다.",
+    "example": [
+      "정답 red·EOS",
+      "Σ(−ln p) ÷ 2",
+      "1.040 · 0.693 nat/token"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "측정 비교",
+      "description": "같은 헤더 red 및 EOS 아래 두 행의 관측 확률과 마지막 손실 값이 이어집니다.",
+      "figure": "figure-shared-tokenizer-held-out-loss-2"
+    },
+    "quiz": [
+      "세 문서가 각각 2·3·4개 정답이면 전체 손실의 분모는?",
+      "9",
+      "3",
+      "문서 수 대신 실제 점수를 매긴 정답 수를 합칩니다."
+    ]
+  }
+];
+const slug = 'shared-tokenizer-held-out-loss';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

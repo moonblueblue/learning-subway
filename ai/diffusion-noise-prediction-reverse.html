@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="예측한 잡음을 빼고 나면 왜 다음 시각에도 잡음이 남을까요?">
+<title>잡음 예측과 역방향 샘플링 · E37</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./diffusion-noise-prediction-reverse.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E37</p><h1>잡음 예측과 역방향 샘플링</h1><p>예측한 잡음을 빼고 나면 왜 다음 시각에도 잡음이 남을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">잡음 예측과 역방향 샘플링</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-diffusion-noise-prediction-reverse-1"><svg><g>
+<text x="303" y="83" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">현재 잡음 기여 .8 × .25 = .2</text>
+<rect x="68" y="129" width="240" height="42" fill="#c9e8f6" stroke="#566d7c" stroke-width="2"/>
+<rect x="248" y="129" width="60" height="42" fill="#f6dacb" stroke="#566d7c" stroke-width="2"/>
+<text x="165" y="155" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">신호 .6</text>
+<text x="277" y="155" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">.2</text>
+<text x="187" y="204" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">xₜ = .8</text>
+<line x1="309.0" y1="150.0" x2="380.0" y2="150.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="380.0,150.0 368.40961225346075,155.88752170992788 368.40961225346075,144.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="411" y="128" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">÷ .6</text>
+<text x="512" y="157" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">x̂₀ = 1</text>
+<text x="315" y="263" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">(.8 − .2) ÷ .6 = 1</text>
+</g></svg></template>
+<template id="figure-diffusion-noise-prediction-reverse-2"><svg><g>
+<text x="311" y="78" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">이전 시각 t−1</text>
+<text x="472" y="106" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">새 잡음 없음</text>
+<text x="99" y="131" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">x̂₀ = 1</text>
+<text x="99" y="218" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">ε̂ = .25</text>
+<line x1="165.0" y1="122.0" x2="254.0" y2="122.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="254.0,122.0 242.40961225346072,127.88752170992788 242.40961225346072,116.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="165.0" y1="210.0" x2="254.0" y2="210.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="254.0,210.0 242.40961225346072,215.88752170992788 242.40961225346072,204.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="319" y="130" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.8 × 1 = .8</text>
+<text x="320" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.6 × .25 = .15</text>
+<line x1="403.0" y1="125.0" x2="450.0" y2="161.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="450.0,161.0 437.2185786450524,158.62612802634837 444.3787102836222,149.27817838710448" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="423.0" y1="213.0" x2="458.0" y2="178.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="458.0,178.0 453.96746475331366,190.35874829763242 445.6412517023676,182.03253524668636" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="493" y="173" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.95</text>
+<text x="312" y="264" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.80 + .15 = .95</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "깨끗한 값 추정",
+    "title": "현재 값에서 예상 잡음을 빼고 신호 배율로 나눕니다",
+    "body": "이 픽셀은 xₜ=.8입니다. 예측 잡음 .25에 .8을 곱해 .2를 빼면 신호 성분은 .6입니다. 현재 신호 배율 .6을 되돌리면 깨끗한 값의 추정치 x̂₀=1입니다.",
+    "takeaway": "관측 .8에서 잡음 조각 .2가 갈라지고 남은 .6에 역배율이 붙습니다.",
+    "example": [
+      "xₜ=.8 · ε̂=.25",
+      "(.8 − .8×.25)/.6",
+      "x̂₀=1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "깨끗한 값 추정",
+      "description": "관측 .8에서 잡음 조각 .2가 갈라지고 남은 .6에 역배율이 붙습니다.",
+      "figure": "figure-diffusion-noise-prediction-reverse-1"
+    },
+    "quiz": [
+      "현재 신호 배율을 되돌리는 계산은 무엇인가요?",
+      "남은 신호를 .6으로 나눔",
+      ".6을 한 번 더 곱함",
+      "원래 신호에는 .6이 곱해져 들어왔습니다."
+    ]
+  },
+  {
+    "label": "이전 시각에 재혼합",
+    "title": "이전 시각의 배율로 추정 신호와 잡음을 다시 합칩니다",
+    "body": "결정론 DDIM 한 단계 예에서 이전 신호 배율 .8과 잡음 배율 .6을 씁니다. x̂₀=1에 .8을 곱하고 ε̂=.25에 .6을 곱해 xₜ₋₁=.95를 얻습니다. 마지막 시각의 잡음 배율까지 0이 된 뒤 깨끗한 결과가 나옵니다.",
+    "takeaway": "추정 1의 신호 경로 .8과 잡음 경로 .15가 더해져 .95가 됩니다.",
+    "example": [
+      "x̂₀=1 · ε̂=.25",
+      ".8×1 + .6×.25",
+      "xₜ₋₁=.95"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "이전 시각에 재혼합",
+      "description": "추정 1의 신호 경로 .8과 잡음 경로 .15가 더해져 .95가 됩니다.",
+      "figure": "figure-diffusion-noise-prediction-reverse-2"
+    },
+    "quiz": [
+      "마지막 시각의 잡음 배율이 0이면 ε̂ 경로 기여는?",
+      "0",
+      ".25",
+      "예측값이 있어도 그 시각에서는 배율 0을 곱합니다."
+    ]
+  }
+];
+const slug = 'diffusion-noise-prediction-reverse';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="어느 정답의 확률을 로그로 바꾸고 무엇으로 평균할까요?">
+<title>토큰별 교차 엔트로피와 패딩 제외 · E13</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./masked-token-cross-entropy.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E13</p><h1>토큰별 교차 엔트로피와 패딩 제외</h1><p>어느 정답의 확률을 로그로 바꾸고 무엇으로 평균할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">토큰별 교차 엔트로피와 패딩 제외</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-masked-token-cross-entropy-1"><svg><g>
+<text x="59" y="108" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">정답</text>
+<rect x="157" y="81" width="130" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="222.0" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="291" y="81" width="130" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="356.0" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="425" y="81" width="130" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="490.0" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+<text x="64" y="170" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">확률 p</text>
+<rect x="157" y="143" width="130" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="222.0" y="170" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.50</text>
+<rect x="291" y="143" width="130" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="356.0" y="170" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.25</text>
+<rect x="425" y="143" width="130" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="490.0" y="170" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.50</text>
+<text x="59" y="234" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">−ln p</text>
+<rect x="157" y="207" width="130" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="222.0" y="234" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.693</text>
+<rect x="291" y="207" width="130" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="356.0" y="234" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1.386</text>
+<rect x="425" y="207" width="130" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="490.0" y="234" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.693</text>
+<text x="60" y="260" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">nat</text>
+</g></svg></template>
+<template id="figure-masked-token-cross-entropy-2"><svg><g>
+<text x="78" y="108" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="130" y="80" width="115" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="187.5" y="107" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red .50</text>
+<rect x="249" y="80" width="115" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="306.5" y="107" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox .25</text>
+<rect x="368" y="80" width="115" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="425.5" y="107" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS .50</text>
+<text x="524" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">3개</text>
+<text x="78" y="175" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="130" y="147" width="115" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="187.5" y="174" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red .50</text>
+<rect x="249" y="147" width="115" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="306.5" y="174" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS .50</text>
+<rect x="368" y="147" width="115" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="425.5" y="174" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">PAD</text>
+<text x="524" y="175" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2개</text>
+<text x="411" y="207" font-size="18" font-weight="650" fill="#a34123" text-anchor="middle">PAD 제외</text>
+<text x="310" y="257" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">(4+2) ln 2 ÷ 5 ≈ 0.832 nat/token</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "정답 칸 선택",
+    "title": "예측 1위와 관계없이 관측 정답의 확률을 읽습니다",
+    "body": "A의 세 관측 정답 red, fox, EOS 확률은 각각 0.5, 0.25, 0.5입니다. 각 정답에 −ln p를 적용하면 약 0.693, 1.386, 0.693 nat입니다.",
+    "takeaway": "정답 셀, 해당 확률, 로그 손실을 같은 열로 읽습니다.",
+    "example": [
+      "A 정답 red·fox·EOS",
+      "−ln(각 정답 확률)",
+      "0.693 · 1.386 · 0.693 nat"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "정답 칸 선택",
+      "description": "정답 셀, 해당 확률, 로그 손실을 같은 열로 읽습니다.",
+      "figure": "figure-masked-token-cross-entropy-1"
+    },
+    "quiz": [
+      "정답 확률이 0.25에서 0.5로 오르면 해당 손실은?",
+      "작아짐",
+      "커짐",
+      "−ln p는 p가 증가하면 감소합니다."
+    ]
+  },
+  {
+    "label": "패딩과 분모",
+    "title": "EOS는 정답을 세고 PAD는 분자와 분모에서 뺍니다",
+    "body": "B가 red 하나인 문서라면 정답 red, EOS 뒤에 묶음 길이를 맞추는 PAD가 있습니다. A의 확률은 그대로 두고 B의 두 정답 확률을 각각 0.5로 둡니다. A의 4ln 2와 B의 2ln 2를 합해 정답 수 5로 나눕니다.",
+    "takeaway": "A에 유효 표시 셋, B에 둘이 있고 PAD는 바깥에 표시됩니다.",
+    "example": [
+      "A 3개 · B 2개 · PAD 1개",
+      "(4+2)ln 2 ÷ (3+2)",
+      "0.832 nat/토큰"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "패딩과 분모",
+      "description": "A에 유효 표시 셋, B에 둘이 있고 PAD는 바깥에 표시됩니다.",
+      "figure": "figure-masked-token-cross-entropy-2"
+    },
+    "quiz": [
+      "유효 정답 7개와 PAD 2개라면 분모는?",
+      "7",
+      "9",
+      "PAD는 모양만 맞추고 평균에 기여하지 않습니다."
+    ]
+  }
+];
+const slug = 'masked-token-cross-entropy';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

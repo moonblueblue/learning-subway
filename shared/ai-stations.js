@@ -751,37 +751,156 @@ const aiStationMap = {
   "6": {
     "stations": [
       {
+        "id": "6.2",
+        "ref": "ai/llm"
+      },
+      {
+        "id": "6.8",
+        "ref": "ai/corpus-provenance-deduplication"
+      },
+      {
         "id": "6.3",
-        "title": "토큰화",
-        "titleEn": "Tokenization"
+        "ref": "ai/utf8-byte-fallback"
+      },
+      {
+        "id": "6.9",
+        "ref": "ai/bpe-train-decode"
+      },
+      {
+        "id": "6.10",
+        "ref": "ai/ngram-add-one-smoothing"
+      },
+      {
+        "id": "6.11",
+        "ref": "ai/shift-next-token-targets"
       },
       {
         "id": "6.4",
-        "title": "임베딩",
-        "titleEn": "Embeddings"
+        "ref": "ai/embedding-vocabulary-projection"
       },
       {
         "id": "6.1",
         "ref": "ai/attention"
       },
       {
+        "id": "6.12",
+        "ref": "ai/position-token-order"
+      },
+      {
         "id": "6.5",
-        "title": "인과 마스크",
-        "titleEn": "Causal masks"
+        "ref": "ai/causal-mask-prefix-invariance"
+      },
+      {
+        "id": "6.13",
+        "ref": "ai/residual-norm-feedforward"
+      },
+      {
+        "id": "6.14",
+        "ref": "ai/stable-softmax-logits"
       },
       {
         "id": "6.6",
-        "title": "손실과 학습",
-        "titleEn": "Loss and training"
+        "ref": "ai/masked-token-cross-entropy"
       },
       {
-        "id": "6.2",
-        "ref": "ai/llm"
+        "id": "6.15",
+        "ref": "ai/gradient-check-autodiff"
+      },
+      {
+        "id": "6.16",
+        "ref": "ai/adamw-learning-rate-schedule"
+      },
+      {
+        "id": "6.17",
+        "ref": "ai/gradient-norm-clipping"
+      },
+      {
+        "id": "6.18",
+        "ref": "ai/training-checkpoint-rng"
+      },
+      {
+        "id": "6.19",
+        "ref": "ai/shared-tokenizer-held-out-loss"
       },
       {
         "id": "6.7",
-        "title": "샘플링과 평가",
-        "titleEn": "Sampling"
+        "ref": "ai/autoregressive-decoding-eos"
+      },
+      {
+        "id": "6.20",
+        "ref": "ai/temperature-distribution"
+      },
+      {
+        "id": "6.21",
+        "ref": "ai/top-k-nucleus-sampling"
+      },
+      {
+        "id": "6.22",
+        "ref": "ai/generation-repetition-memorization"
+      },
+      {
+        "id": "6.23",
+        "ref": "ai/training-token-compute-budget"
+      },
+      {
+        "id": "6.24",
+        "ref": "ai/domain-evaluation-baseline"
+      },
+      {
+        "id": "6.25",
+        "ref": "ai/supervised-chat-target-mask"
+      },
+      {
+        "id": "6.26",
+        "ref": "ai/full-tuning-memory-ledger"
+      },
+      {
+        "id": "6.27",
+        "ref": "ai/lora-low-rank-update"
+      },
+      {
+        "id": "6.28",
+        "ref": "ai/qlora-lora-memory-quality"
+      },
+      {
+        "id": "6.29",
+        "ref": "ai/preference-pair-disagreement"
+      },
+      {
+        "id": "6.30",
+        "ref": "ai/reward-model-score-limits"
+      },
+      {
+        "id": "6.31",
+        "ref": "ai/dpo-preference-log-ratio"
+      },
+      {
+        "id": "6.32",
+        "ref": "ai/domain-adaptation-general-regression"
+      },
+      {
+        "id": "6.33",
+        "ref": "ai/adapter-merge-equivalence"
+      },
+      {
+        "id": "6.34",
+        "ref": "ai/vae-latent-sampling"
+      },
+      {
+        "id": "6.35",
+        "ref": "ai/gan-discriminator-mode-collapse"
+      },
+      {
+        "id": "6.36",
+        "ref": "ai/diffusion-forward-noising"
+      },
+      {
+        "id": "6.37",
+        "ref": "ai/diffusion-noise-prediction-reverse"
+      },
+      {
+        "id": "6.38",
+        "ref": "ai/conditional-generation-quality-diversity"
       }
     ],
     "transfer": {

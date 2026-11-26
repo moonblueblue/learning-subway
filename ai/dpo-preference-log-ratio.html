@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="선호 답의 상대 확률이 기준 모델보다 오르면 손실은 어떻게 달라질까요?">
+<title>DPO로 선호 쌍 학습 · E31</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./dpo-preference-log-ratio.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E31</p><h1>DPO로 선호 쌍 학습</h1><p>선호 답의 상대 확률이 기준 모델보다 오르면 손실은 어떻게 달라질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">DPO로 선호 쌍 학습</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-dpo-preference-log-ratio-1"><svg><g>
+<text x="120" y="93" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">정책 / 기준</text>
+<text x="113" y="137" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A · 선호</text>
+<text x="113" y="219" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B · 비선호</text>
+<text x="303" y="137" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.40 / .20 = 2</text>
+<text x="303" y="219" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.20 / .20 = 1</text>
+<line x1="390.0" y1="134.0" x2="442.0" y2="159.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="442.0,159.0 429.0031045501689,159.28409270698086 434.10516533432,148.6718062759465" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="390.0" y1="212.0" x2="442.0" y2="177.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="442.0,177.0 435.6722093276971,188.35601449486202 429.09730334292857,178.58758274606305" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="514" y="173" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">Δ = ln 2</text>
+</g></svg></template>
+<template id="figure-dpo-preference-log-ratio-2"><svg><g>
+<line x1="84.0" y1="233.0" x2="552.0" y2="233.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="552.0,233.0 540.4096122534608,238.88752170992788 540.4096122534608,227.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="101.0" y1="235.0" x2="101.0" y2="75.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="101.0,75.0 106.88752170992788,86.59038774653928 95.11247829007212,86.59038774653928" fill="#566d7c" stroke="none" stroke-width="1"/>
+<text x="97" y="67" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">nat</text>
+<text x="557" y="258" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">Δ</text>
+<text x="505" y="86" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">β = 1</text>
+<polyline points="129,91 170,109 216,131 262,150 308,166 354,179 401,190 446,199 487,206" fill="none" stroke="#12649c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="216" cy="131" r="6" fill="#12649c"/>
+<circle cx="354" cy="179" r="6" fill="#11664f"/>
+<text x="223" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">(0, .693)</text>
+<text x="410" y="167" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">(ln 2, .405)</text>
+<line x1="216" y1="137" x2="216" y2="233" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="354" y1="185" x2="354" y2="233" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="216" y="258" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<text x="354" y="258" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">ln 2</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "기준 대비 로그비",
+    "title": "두 답 각각의 정책 확률을 기준 확률과 비교합니다",
+    "body": "고정 기준이 A와 B에 .20씩, 학습할 정책이 A .40과 B .20을 줍니다. A의 비는 2, B의 비는 1이므로 로그비 차이는 ln 2입니다.",
+    "takeaway": "선호 A와 비선호 B가 각자의 정책/기준 분수에서 같은 비교점으로 모입니다.",
+    "example": [
+      "기준 .20,.20 · 정책 .40,.20",
+      "ln(.40/.20) − ln(.20/.20)",
+      "Δ = ln 2"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "기준 대비 로그비",
+      "description": "선호 A와 비선호 B가 각자의 정책/기준 분수에서 같은 비교점으로 모입니다.",
+      "figure": "figure-dpo-preference-log-ratio-1"
+    },
+    "quiz": [
+      "정책이 두 답 모두 기준과 같은 확률을 주면 Δ는?",
+      "0",
+      "ln 2",
+      "두 로그비가 모두 ln 1 = 0입니다."
+    ]
+  },
+  {
+    "label": "시그모이드 손실",
+    "title": "선호 마진이 커지면 이 쌍의 손실이 작아집니다",
+    "body": "β=1에서 정책과 기준이 같으면 Δ=0, 시그모이드는 .50, 손실은 −ln .50≈.693입니다. 위 예시의 Δ=ln 2에서는 시그모이드가 2/3라 손실은 약 .405 nat입니다.",
+    "takeaway": "그래프에서 마진이 0에서 ln 2로 갈 때 손실 점이 내려갑니다.",
+    "example": [
+      "β=1 · Δ=0 또는 ln 2",
+      "−ln σ(Δ)",
+      ".693 → .405 nat"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "시그모이드 손실",
+      "description": "그래프에서 마진이 0에서 ln 2로 갈 때 손실 점이 내려갑니다.",
+      "figure": "figure-dpo-preference-log-ratio-2"
+    },
+    "quiz": [
+      "Δ가 큰 양수로 더 커지면 손실은 어느 쪽으로 가나요?",
+      "0에 가까워짐",
+      "무한히 증가",
+      "시그모이드가 1에 접근하므로 −ln이 0에 접근합니다."
+    ]
+  }
+];
+const slug = 'dpo-preference-log-ratio';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="가중치 한 자리를 움직여 자동미분의 값을 어떻게 확인할까요?">
+<title>자동미분과 수치 기울기 검사 · E14</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./gradient-check-autodiff.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E14</p><h1>자동미분과 수치 기울기 검사</h1><p>가중치 한 자리를 움직여 자동미분의 값을 어떻게 확인할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">자동미분과 수치 기울기 검사</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-gradient-check-autodiff-1"><svg><g>
+<text x="103" y="126" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">w = 2</text>
+<text x="307" y="126" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">u = 1</text>
+<text x="522" y="126" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">L = 1</text>
+<line x1="152.0" y1="117.0" x2="243.0" y2="117.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="243.0,117.0 231.40961225346072,122.88752170992788 231.40961225346072,111.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="361.0" y1="117.0" x2="464.0" y2="117.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="464.0,117.0 452.40961225346075,122.88752170992788 452.40961225346075,111.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="198" y="100" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">−1</text>
+<text x="410" y="100" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">×u</text>
+<line x1="464.0" y1="179.0" x2="361.0" y2="179.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="361.0,179.0 372.59038774653925,173.11247829007212 372.59038774653925,184.88752170992788" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="243.0" y1="179.0" x2="152.0" y2="179.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="152.0,179.0 163.59038774653928,173.11247829007212 163.59038774653928,184.88752170992788" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="409" y="205" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">dL/du = 2</text>
+<text x="198" y="205" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">du/dw = 1</text>
+<text x="308" y="255" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">dL/dw = 2 × 1 = 2</text>
+</g></svg></template>
+<template id="figure-gradient-check-autodiff-2"><svg><g>
+<line x1="95.0" y1="231.0" x2="431.0" y2="231.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="431.0,231.0 419.40961225346075,236.88752170992788 419.40961225346075,225.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="108.0" y1="243.0" x2="108.0" y2="80.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="108.0,80.0 113.88752170992788,91.59038774653928 102.11247829007212,91.59038774653928" fill="#566d7c" stroke="none" stroke-width="1"/>
+<polyline points="135,211 164,204 194,196 224,187 254,177 284,166 314,154 344,141 374,127 402,113" fill="none" stroke="#12649c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="194" cy="196" r="6" fill="#11664f"/>
+<circle cx="374" cy="127" r="6" fill="#11664f"/>
+<line x1="169" y1="206" x2="398" y2="118" stroke="#11664f" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/>
+<text x="183" y="176" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">(1.9, .81)</text>
+<text x="401" y="103" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">(2.1, 1.21)</text>
+<text x="441" y="239" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">w</text>
+<text x="108" y="71" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">L</text>
+<text x="479" y="168" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">ΔL / Δw</text>
+<text x="492" y="199" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">.40 / .20 = 2</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "연산 그래프 되감기",
+    "title": "출력에서 되감은 두 기울기를 곱합니다",
+    "body": "w=2일 때 u=w−1=1, L=u²=1입니다. 역방향에서 dL/du=2u=2, du/dw=1을 곱해 dL/dw=2입니다.",
+    "takeaway": "위의 순방향은 w→u→L, 아래의 역방향 라벨은 2와 1입니다.",
+    "example": [
+      "w=2 · u=1 · L=1",
+      "dL/du × du/dw",
+      "2×1=2"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "연산 그래프 되감기",
+      "description": "위의 순방향은 w→u→L, 아래의 역방향 라벨은 2와 1입니다.",
+      "figure": "figure-gradient-check-autodiff-1"
+    },
+    "quiz": [
+      "w=3이면 u=w−1과 dL/du=2u는?",
+      "u=2, dL/du=4",
+      "u=3, dL/du=6",
+      "먼저 u를 구하고 그 자리에서 2u를 계산합니다."
+    ]
+  },
+  {
+    "label": "양쪽 교란",
+    "title": "가중치 좌우의 손실 차이를 가중치 간격으로 나눕니다",
+    "body": "ε=0.1을 더한 2.1과 뺀 1.9에서 손실은 1.21과 0.81입니다. (1.21−0.81)/(2.1−1.9)=2로 자동미분과 같습니다. 여러 매개변수라면 비교하는 좌표만 움직입니다.",
+    "takeaway": "곡선 위 두 점과 그 차이를 나타내는 할선이 강조됩니다.",
+    "example": [
+      "w−ε=1.9 · w+ε=2.1",
+      "(1.21−0.81)/(2ε)",
+      "2 = 자동미분"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "양쪽 교란",
+      "description": "곡선 위 두 점과 그 차이를 나타내는 할선이 강조됩니다.",
+      "figure": "figure-gradient-check-autodiff-2"
+    },
+    "quiz": [
+      "좌우 교란이 각각 0.01이면 분모의 거리 Δw는?",
+      "0.02",
+      "0.01",
+      "한 점이 기준 왼쪽, 다른 점이 같은 거리만큼 오른쪽입니다."
+    ]
+  }
+];
+const slug = 'gradient-check-autodiff';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

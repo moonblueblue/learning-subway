@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="조건을 자주 충족시키는 생성기가 다양성까지 높을까요?">
+<title>조건부 생성과 품질·다양성 평가 · E38</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./conditional-generation-quality-diversity.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E38</p><h1>조건부 생성과 품질·다양성 평가</h1><p>조건을 자주 충족시키는 생성기가 다양성까지 높을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">조건부 생성과 품질·다양성 평가</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-conditional-generation-quality-diversity-1"><svg><g>
+<text x="310" y="82" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">조건 = 세로 막대</text>
+<text x="79" y="134" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="151" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="97" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="151" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="114" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="151" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="131" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="97" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="114" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="131" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="97" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="114" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="131" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="468" y="97" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="485" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="468" y="114" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="485" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="468" y="131" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="485" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="79" y="228" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="151" y="191" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="151" y="208" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="151" y="225" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="191" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="208" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="225" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="191" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="208" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="225" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="468" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="485" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="208" width="17" height="17" fill="#f6dacb" stroke="#78909c" stroke-width="1"/>
+<rect x="468" y="208" width="17" height="17" fill="#f6dacb" stroke="#78909c" stroke-width="1"/>
+<rect x="485" y="208" width="17" height="17" fill="#f6dacb" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="468" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="485" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="528" y="228" font-size="26" font-weight="650" fill="#a34123" text-anchor="middle">×</text>
+</g></svg></template>
+<template id="figure-conditional-generation-quality-diversity-2"><svg><g>
+<text x="310" y="81" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">서로 다른 모양 / 조건에 맞는 표본</text>
+<text x="79" y="134" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="151" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="97" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="151" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="114" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="151" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="131" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="97" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="114" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="131" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="97" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="114" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="131" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="468" y="97" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="485" y="97" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="468" y="114" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="485" y="114" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="468" y="131" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="485" y="131" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="555" y="133" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1/4</text>
+<text x="79" y="228" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="151" y="191" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="151" y="208" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="151" y="225" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="168" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="185" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="191" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="208" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="251" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="268" y="225" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="285" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="191" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="191" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="208" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="208" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="351" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="368" y="225" width="17" height="17" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="385" y="225" width="17" height="17" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="451" y="191" width="51" height="51" fill="#f6dacb" stroke="#566d7c" stroke-width="2"/>
+<text x="476" y="228" font-size="26" font-weight="650" fill="#a34123" text-anchor="middle">×</text>
+<text x="555" y="228" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">3/3</text>
+<text x="310" y="268" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">조건 일치 A 4/4 · B 3/4</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "같은 조건의 두 묶음",
+    "title": "조건 충족 수와 서로 다른 이미지 수를 따로 셉니다",
+    "body": "조건을 세로 막대로 고정합니다. 설정 A는 네 번 모두 가운데 세로 막대를 출력합니다. 설정 B는 왼쪽·가운데·오른쪽 세로 막대와 가로 막대를 한 번씩 냅니다.",
+    "takeaway": "두 줄에 같은 개수의 출력 격자가 있고 B의 마지막 막대만 방향이 다릅니다.",
+    "example": [
+      "조건 세로 막대 · 각 4회",
+      "모양 일치와 중복을 별개로 셈",
+      "A 일치 4 · 고유 1, B 일치 3 · 고유 4"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "같은 조건의 두 묶음",
+      "description": "두 줄에 같은 개수의 출력 격자가 있고 B의 마지막 막대만 방향이 다릅니다.",
+      "figure": "figure-conditional-generation-quality-diversity-1"
+    },
+    "quiz": [
+      "가로 막대 한 장이 새 모습이어도 이 조건에는 맞나요?",
+      "새롭지만 조건 불일치",
+      "새로우면 일치",
+      "다양성과 조건 정확성은 서로 다른 기준입니다."
+    ]
+  },
+  {
+    "label": "충족 표본의 다양성",
+    "title": "조건에 맞는 결과만 남겨도 다양성 차이가 있습니다",
+    "body": "일치를 요구하면 A의 네 장은 모두 남고 B의 가로 막대는 제외됩니다. 조건을 충족한 이미지 내 고유 수는 A가 1/4, B가 3/3입니다. 일치율도 옆에 남겨 선택 비용을 봅니다.",
+    "takeaway": "B 마지막 격자에 차단 표시가 생겨도 왼쪽·가운데·오른쪽 세 장이 서로 다릅니다.",
+    "example": [
+      "A 일치 4/4 · B 3/4",
+      "일치한 그림만 고유 개수 계산",
+      "A 1/4 · B 3/3"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "충족 표본의 다양성",
+      "description": "B 마지막 격자에 차단 표시가 생겨도 왼쪽·가운데·오른쪽 세 장이 서로 다릅니다.",
+      "figure": "figure-conditional-generation-quality-diversity-2"
+    },
+    "quiz": [
+      "조건에 맞는 네 장 중 두 장씩 같은 모양이라면 고유 수/충족 수는?",
+      "2/4",
+      "4/4",
+      "고유한 이미지는 모양별로 한 번씩만 셉니다."
+    ]
+  }
+];
+const slug = 'conditional-generation-quality-diversity';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

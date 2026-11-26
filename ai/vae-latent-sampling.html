@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="한 입력에서 얻은 잠재 분포에서 다른 그림을 어떻게 표본추출할까요?">
+<title>변분 오토인코더와 잠재 표본 · E34</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./vae-latent-sampling.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E34</p><h1>변분 오토인코더와 잠재 표본</h1><p>한 입력에서 얻은 잠재 분포에서 다른 그림을 어떻게 표본추출할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">변분 오토인코더와 잠재 표본</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-vae-latent-sampling-1"><svg><g>
+<rect x="66" y="117" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="102" y="117" width="36" height="36" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="138" y="117" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="66" y="153" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="102" y="153" width="36" height="36" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="138" y="153" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="66" y="189" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="102" y="189" width="36" height="36" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="138" y="189" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<line x1="174.0" y1="168.0" x2="270.0" y2="168.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="270.0,168.0 258.40961225346075,173.88752170992788 258.40961225346075,162.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="216" y="140" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">인코더</text>
+<line x1="279.0" y1="219.0" x2="573.0" y2="219.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="573.0,219.0 561.4096122534608,224.88752170992788 561.4096122534608,213.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<polyline points="289,212 310,207 332,194 354,172 376,141 398,109 420,97 442,109 464,141 486,172 508,194 530,207 552,212" fill="none" stroke="#12649c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="420" y1="98" x2="420" y2="219" stroke="#11664f" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="372" y1="148" x2="372" y2="219" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="468" y1="148" x2="468" y2="219" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="369" y="248" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.5</text>
+<text x="421" y="248" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<text x="472" y="248" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1.5</text>
+<text x="571" y="248" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">z</text>
+<text x="421" y="79" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">μ=1 · σ=.5</text>
+</g></svg></template>
+<template id="figure-vae-latent-sampling-2"><svg><g>
+<text x="306" y="78" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">z = 1 + .5 ε</text>
+<text x="101" y="124" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">ε = −1</text>
+<text x="101" y="218" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">ε = +1</text>
+<line x1="159.0" y1="118.0" x2="240.0" y2="118.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="240.0,118.0 228.40961225346072,123.88752170992788 228.40961225346072,112.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="159.0" y1="212.0" x2="240.0" y2="212.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="240.0,212.0 228.40961225346072,217.88752170992788 228.40961225346072,206.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="290" y="125" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">z=.5</text>
+<text x="290" y="219" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">z=1.5</text>
+<line x1="347.0" y1="117.0" x2="452.0" y2="117.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="452.0,117.0 440.40961225346075,122.88752170992788 440.40961225346075,111.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="347.0" y1="211.0" x2="452.0" y2="211.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="452.0,211.0 440.40961225346075,216.88752170992788 440.40961225346075,205.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="463" y="90" width="23" height="23" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="486" y="90" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="509" y="90" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="113" width="23" height="23" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="486" y="113" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="509" y="113" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="136" width="23" height="23" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="486" y="136" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="509" y="136" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="185" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="486" y="185" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="509" y="185" width="23" height="23" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="208" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="486" y="208" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="509" y="208" width="23" height="23" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="231" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="486" y="231" width="23" height="23" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="509" y="231" width="23" height="23" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<text x="510" y="83" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">디코더</text>
+</g></svg></template>
+<template id="figure-vae-latent-sampling-3"><svg><g>
+<text x="305" y="83" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">사전 N(0,1) · 복원 + KL</text>
+<text x="95" y="138" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">A · N(1,.25)</text>
+<text x="95" y="215" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">B · N(0,1)</text>
+<rect x="178" y="111" width="84" height="34" fill="#c9e8f6" stroke="#566d7c" stroke-width="2"/>
+<rect x="262" y="111" width="229" height="34" fill="#f6dacb" stroke="#566d7c" stroke-width="2"/>
+<rect x="178" y="188" width="266" height="34" fill="#c9e8f6" stroke="#566d7c" stroke-width="2"/>
+<text x="218" y="134" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">.300</text>
+<text x="379" y="134" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">.818</text>
+<text x="309" y="212" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">.950 + 0</text>
+<text x="541" y="136" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1.118</text>
+<text x="504" y="213" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">.950</text>
+<text x="306" y="261" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">합이 작은 B (nat)</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "분포를 인코딩",
+    "title": "인코더는 입력마다 잠재 평균과 폭을 출력합니다",
+    "body": "이 작은 VAE는 입력 도형을 정규분포 평균 1과 표준편차 .5로 매핑합니다. 한 점을 출력하는 대신 위치 1을 중심으로 한 분포를 얻습니다.",
+    "takeaway": "입력 도형의 화살표가 μ와 σ를 가진 종 모양 곡선으로 연결됩니다.",
+    "example": [
+      "세로 막대 도형",
+      "인코더 → μ=1 · σ=.5",
+      "z ∼ N(1, .25)"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "분포를 인코딩",
+      "description": "입력 도형의 화살표가 μ와 σ를 가진 종 모양 곡선으로 연결됩니다.",
+      "figure": "figure-vae-latent-sampling-1"
+    },
+    "quiz": [
+      "σ가 커지고 μ가 같으면 중심은 어떻게 변하나요?",
+      "중심 그대로 · 폭 증가",
+      "중심도 같은 양만큼 이동",
+      "μ가 중심, σ는 분포의 폭입니다."
+    ]
+  },
+  {
+    "label": "표본과 복원",
+    "title": "같은 분포에 다른 잡음 표본을 넣어 다른 z를 만듭니다",
+    "body": "z=μ+σε를 적용합니다. ε=−1은 z=.5, ε=+1은 z=1.5가 됩니다. 예시 디코더는 이 두 z에서 왼쪽 및 오른쪽 변형을 그립니다.",
+    "takeaway": "같은 μ·σ에서 두 표본 경로가 서로 다른 z와 픽셀 위치로 이어집니다.",
+    "example": [
+      "μ=1, σ=.5 · ε −1 또는 +1",
+      "z=μ+σε",
+      "z .5 · 1.5"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "표본과 복원",
+      "description": "같은 μ·σ에서 두 표본 경로가 서로 다른 z와 픽셀 위치로 이어집니다.",
+      "figure": "figure-vae-latent-sampling-2"
+    },
+    "quiz": [
+      "μ=1, σ=.5에 ε=0이면 z는?",
+      "1",
+      "0",
+      "잡음 효과가 0이고 평균은 그대로입니다."
+    ]
+  },
+  {
+    "label": "학습 목적",
+    "title": "잘 복원하면서 잠재 분포를 사전분포에 가깝게 맞춥니다",
+    "body": "앞의 인코딩 A는 평균 1, 표준편차 .5이고 기준 사전분포는 N(0,1)입니다. A는 복원 손실 .30에 KL 약 .818을 더해 1.118입니다. 사전분포와 같은 후보 B는 복원이 .95로 나빠도 KL이 0이라 이 예시 목적의 합 .95가 더 작습니다.",
+    "takeaway": "A의 복원 막대는 짧지만 KL을 더하면 B의 합보다 길어집니다.",
+    "example": [
+      "A N(1,.25) · B N(0,1)",
+      "복원 손실 + KL(q ∥ N(0,1))",
+      "A 1.118 · B .950 nat"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "학습 목적",
+      "description": "A의 복원 막대는 짧지만 KL을 더하면 B의 합보다 길어집니다.",
+      "figure": "figure-vae-latent-sampling-3"
+    },
+    "quiz": [
+      "복원 손실이 같고 KL만 다른 두 인코딩 중 어떤 목적값이 더 낮나요?",
+      "KL이 더 작은 쪽",
+      "KL이 더 큰 쪽",
+      "복원 손실이 고정됐으므로 합은 KL을 따라갑니다."
+    ]
+  }
+];
+const slug = 'vae-latent-sampling';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

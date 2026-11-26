@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 적응 기울기에서도 학습률이 줄면 얼마를 움직일까요?">
+<title>AdamW와 학습률 일정 · E15</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./adamw-learning-rate-schedule.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E15</p><h1>AdamW와 학습률 일정</h1><p>같은 적응 기울기에서도 학습률이 줄면 얼마를 움직일까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">AdamW와 학습률 일정</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-adamw-learning-rate-schedule-1"><svg><g>
+<text x="310" y="82" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">w = 1 · η = .10 · λ = .10</text>
+<text x="310" y="106" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">m̂/√v̂ = .25/√.25 = .50</text>
+<text x="235" y="130" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">감쇠 −.01</text>
+<text x="391" y="130" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">적응 −.05</text>
+<line x1="118" y1="204" x2="544" y2="204" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="499.0" y1="153.0" x2="285.0" y2="153.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="285.0,153.0 296.59038774653925,147.11247829007212 296.59038774653925,158.88752170992788" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="284.0" y1="175.0" x2="241.0" y2="175.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="241.0,175.0 252.59038774653928,169.11247829007212 252.59038774653928,180.88752170992788" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="499" y1="193" x2="499" y2="215" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="285" y1="193" x2="285" y2="215" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="241" y1="193" x2="241" y2="215" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="499" y="247" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1.00</text>
+<text x="298" y="247" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">.95</text>
+<text x="223" y="247" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">.94</text>
+<text x="105" y="213" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">w</text>
+</g></svg></template>
+<template id="figure-adamw-learning-rate-schedule-2"><svg><g>
+<text x="315" y="85" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">같은 시작 w = 1</text>
+<text x="194.0" y="128.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">η=.10</text>
+<rect x="206.0" y="109.0" width="259.2" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="473.2" y="128.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">0.06</text>
+<text x="194.0" y="169.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">η=.05</text>
+<rect x="206.0" y="150.0" width="129.6" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="343.6" y="169.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">0.03</text>
+<text x="312" y="212" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">이동량 = η × (.5 + .1)</text>
+<text x="309" y="254" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">각각 w′ = .94, .97</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "두 갱신 항",
+    "title": "AdamW는 적응 기울기와 별도 가중치 감쇠를 적용합니다",
+    "body": "보정 모멘트 m̂=.25와 v̂=.25를 사용해 적응 방향을 .25/√.25=.5로 둡니다. ε는 예시에서 생략합니다. η=0.1이면 적응 항 이동은 0.05, 독립 감쇠는 ηλw=0.01이라 새 w는 0.94입니다.",
+    "takeaway": "w=1에서 적응 항과 감쇠를 뺀 두 이동이 같은 수직선에 이어집니다.",
+    "example": [
+      "w=1 · η=.10 · λ=.10",
+      "−η·.5 − ηλw",
+      "w′=.94"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "두 갱신 항",
+      "description": "w=1에서 적응 항과 감쇠를 뺀 두 이동이 같은 수직선에 이어집니다.",
+      "figure": "figure-adamw-learning-rate-schedule-1"
+    },
+    "quiz": [
+      "η=0.1, λ=0.1, 기준 w=2이면 독립 감쇠량은?",
+      "0.02",
+      "0.2",
+      "이 항은 ηλw입니다."
+    ]
+  },
+  {
+    "label": "일정과 이동",
+    "title": "학습률을 반으로 줄이면 같은 조건의 이동도 반이 됩니다",
+    "body": "동일한 w=1과 적응 방향을 고정하고 일정에서 η만 0.10에서 0.05로 바꿉니다. 다시 비교하면 합쳐서 0.03만 줄어 0.97입니다. 실제 학습에서는 모멘트와 가중치도 시간에 따라 달라집니다.",
+    "takeaway": "두 막대의 이동 길이가 같은 척도에서 0.06과 0.03입니다.",
+    "example": [
+      "w=1 · η .10 또는 .05",
+      ".10×(.5+.1) · .05×(.5+.1)",
+      ".94 · .97"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "일정과 이동",
+      "description": "두 막대의 이동 길이가 같은 척도에서 0.06과 0.03입니다.",
+      "figure": "figure-adamw-learning-rate-schedule-2"
+    },
+    "quiz": [
+      "다른 항을 고정하고 η를 0으로 두면 w는 어떻게 되나요?",
+      "이동 없음",
+      "감쇠만 적용",
+      "적응 항과 감쇠 항 모두 η를 곱합니다."
+    ]
+  }
+];
+const slug = 'adamw-learning-rate-schedule';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

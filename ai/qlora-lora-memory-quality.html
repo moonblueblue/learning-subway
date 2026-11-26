@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="고정 기반 가중치를 줄이면 같은 시험에서 어떤 모델을 고를까요?">
+<title>QLoRA와 LoRA의 품질·최대 메모리 비교 · E28</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./qlora-lora-memory-quality.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E28</p><h1>QLoRA와 LoRA의 품질·최대 메모리 비교</h1><p>고정 기반 가중치를 줄이면 같은 시험에서 어떤 모델을 고를까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">QLoRA와 LoRA의 품질·최대 메모리 비교</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-qlora-lora-memory-quality-1"><svg><g>
+<text x="94" y="129" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">LoRA</text>
+<text x="94" y="208" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">QLoRA</text>
+<rect x="169" y="103" width="296" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="2"/>
+<rect x="465" y="103" width="111" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="2"/>
+<rect x="169" y="182" width="78.44" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="2"/>
+<rect x="247.44" y="182" width="111" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="2"/>
+<text x="318" y="91" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">FP16 · 400×2 B</text>
+<text x="319" y="129" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">800 B</text>
+<text x="520" y="129" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">300 B</text>
+<text x="207" y="208" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">212 B</text>
+<text x="301" y="208" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">300 B</text>
+<text x="474" y="210" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">512 B</text>
+<text x="290" y="157" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4비트 기반 + 스케일</text>
+<text x="489" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">어댑터·활성 공통 300 B</text>
+<text x="183" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">212 B = 200 + 12</text>
+</g></svg></template>
+<template id="figure-qlora-lora-memory-quality-2"><svg><g>
+<text x="310" y="81" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">5번 공통 어댑터 −.42 · 정답 1</text>
+<line x1="114.0" y1="172.0" x2="544.0" y2="172.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="544.0,172.0 532.4096122534608,177.88752170992788 532.4096122534608,166.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="314" y1="125" x2="314" y2="208" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<circle cx="232" cy="172" r="7" fill="#a34123"/>
+<circle cx="396" cy="172" r="7" fill="#11664f"/>
+<text x="232" y="137" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">4비트 .40</text>
+<text x="396" y="137" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">FP16 ≈.44</text>
+<text x="314" y="229" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<text x="215" y="220" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">−.02 → 0</text>
+<text x="420" y="220" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">+.02 → 1</text>
+<text x="309" y="267" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">점수 = 기반 + 어댑터</text>
+</g></svg></template>
+<template id="figure-qlora-lora-memory-quality-3"><svg><g>
+<rect x="102" y="88" width="228" height="111" fill="#cbe7d9" stroke="none" stroke-width="2"/>
+<line x1="102.0" y1="231.0" x2="557.0" y2="231.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="557.0,231.0 545.4096122534608,236.88752170992788 545.4096122534608,225.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="102.0" y1="239.0" x2="102.0" y2="77.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="102.0,77.0 107.88752170992788,88.59038774653928 96.11247829007212,88.59038774653928" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="104" y1="199" x2="556" y2="199" stroke="#a34123" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round"/>
+<line x1="330" y1="89" x2="330" y2="232" stroke="#a34123" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round"/>
+<circle cx="297" cy="199" r="7" fill="#11664f"/>
+<circle cx="520" cy="131" r="7" fill="#12649c"/>
+<text x="226" y="177" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">QLoRA · 8/10</text>
+<text x="490" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">LoRA · 9/10</text>
+<text x="297" y="256" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">512 B</text>
+<text x="512" y="256" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">1100 B</text>
+<text x="342" y="82" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">한도 600 B</text>
+<text x="58" y="203" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">8/10</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "저장량",
+    "title": "어댑터의 학습 경로를 유지하면서 기반 가중치 저장만 양자화합니다",
+    "body": "LoRA의 기반은 FP16 400×2 B=800 B입니다. 이 장난감 QLoRA는 4비트 200 B에 스케일 12 B를 더합니다. 어댑터·활성 등 공통 최고 상태는 300 B로 잡아 각각 1100 B, 512 B입니다.",
+    "takeaway": "고정 블록 길이는 800에서 212로 줄고 오른쪽 학습 관련 블록 폭은 양쪽 300 B입니다.",
+    "example": [
+      "400개 기반 · 공통 300 B",
+      "FP16 또는 4비트+스케일",
+      "1100 B · 512 B"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "저장량",
+      "description": "고정 블록 길이는 800에서 212로 줄고 오른쪽 학습 관련 블록 폭은 양쪽 300 B입니다.",
+      "figure": "figure-qlora-lora-memory-quality-1"
+    },
+    "quiz": [
+      "4비트 400값의 저장 200 B에 메타데이터 20 B라면 기반 저장량은?",
+      "220 B",
+      "200 B",
+      "양자화 코드에 스케일 등 메타데이터를 더합니다."
+    ]
+  },
+  {
+    "label": "판정 변화",
+    "title": "같은 어댑터 보정에서 기반 가중치만 바꾸면 0 경계를 건널 수 있습니다",
+    "body": "같은 열 개 입력에서 첫 기준 가중치를 조회하고 어댑터 보정을 더합니다. 결과가 0보다 크면 1입니다. 5번 입력의 보정은 −.42입니다. FP16의 w≈.44에서는 +.02, 균일 4비트의 w=.40에서는 −.02로 분류가 바뀝니다. 이 도식은 균일 양자화로 원리를 보여 줍니다.",
+    "takeaway": "5번만 두 점이 0의 서로 다른 쪽에 놓입니다.",
+    "example": [
+      "5번 공통 보정 −.42 · 정답 1",
+      "w + (−.42), 양수 → 1",
+      "FP16 +.02 → 1 · 4비트 −.02 → 0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "판정 변화",
+      "description": "5번만 두 점이 0의 서로 다른 쪽에 놓입니다.",
+      "figure": "figure-qlora-lora-memory-quality-2"
+    },
+    "quiz": [
+      "보정이 −.35이면 양자화된 기반 .40에서도 어떤 라벨인가요?",
+      "1 · 점수 +.05",
+      "0 · 점수 −.05",
+      ".40−.35가 0보다 큽니다."
+    ]
+  },
+  {
+    "label": "모델 선택",
+    "title": "같은 시험 정답과 메모리 한도를 함께 만족하는 모델을 고릅니다",
+    "body": "앞의 점수 규칙을 가이드의 같은 10개 보정·정답에 계산하면 FP16 쪽은 9개, 균일 4비트 쪽은 8개가 맞습니다. 이 메모리 장부에서 600 B와 최소 8/10 기준을 함께 적용하면 512 B의 4비트 기반만 남습니다.",
+    "takeaway": "공통 좌표계에 품질 최소선과 메모리 한도선이 보이고 QLoRA만 교집합에 놓입니다.",
+    "example": [
+      "공통 10개 정답 · 최고 600 B",
+      "≥8/10, ≤600 B",
+      "QLoRA 8/10 · 512 B"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "모델 선택",
+      "description": "공통 좌표계에 품질 최소선과 메모리 한도선이 보이고 QLoRA만 교집합에 놓입니다.",
+      "figure": "figure-qlora-lora-memory-quality-3"
+    },
+    "quiz": [
+      "한도가 1200 B이고 최고 정확도를 원하면 어느 쪽을 택하나요?",
+      "LoRA",
+      "QLoRA",
+      "둘 다 한도에 들며 이 같은 시험 사례에서 LoRA의 9/10이 더 높습니다."
+    ]
+  }
+];
+const slug = 'qlora-lora-memory-quality';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

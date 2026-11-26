@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="똑같은 토큰 반복과 훈련 문장 재현을 어떻게 구별할까요?">
+<title>반복·암기와 실패 예시 분석 · E22</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./generation-repetition-memorization.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E22</p><h1>반복·암기와 실패 예시 분석</h1><p>똑같은 토큰 반복과 훈련 문장 재현을 어떻게 구별할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">반복·암기와 실패 예시 분석</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-generation-repetition-memorization-1"><svg><g>
+<rect x="46" y="106" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="95.5" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="149" y="106" width="99" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="198.5" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="252" y="106" width="99" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="301.5" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="355" y="106" width="99" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="404.5" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="458" y="106" width="99" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="507.5" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<text x="97" y="89" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">프롬프트</text>
+<text x="348" y="89" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">생성 4개</text>
+<line x1="197" y1="156" x2="197" y2="164" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="197" y1="164" x2="300" y2="164" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="300" y1="156" x2="300" y2="164" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="300" y1="182" x2="300" y2="190" stroke="#11664f" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="300" y1="190" x2="403" y2="190" stroke="#11664f" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="403" y1="182" x2="403" y2="190" stroke="#11664f" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="403" y1="208" x2="403" y2="216" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="403" y1="216" x2="506" y2="216" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="506" y1="208" x2="506" y2="216" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="311" y="265" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">fox→fox × 3</text>
+</g></svg></template>
+<template id="figure-generation-repetition-memorization-2"><svg><g>
+<text x="70" y="108" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">생성</text>
+<rect x="140" y="81" width="68" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="174.0" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">a</text>
+<rect x="212" y="81" width="68" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="246.0" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="284" y="81" width="68" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="318.0" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">can</text>
+<rect x="356" y="81" width="68" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="390.0" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">nap</text>
+<rect x="428" y="81" width="68" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="462.0" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">near</text>
+<rect x="500" y="81" width="68" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="534.0" y="108" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">moss</text>
+<text x="67" y="207" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">훈련 A</text>
+<rect x="140" y="180" width="68" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="174.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">a</text>
+<rect x="212" y="180" width="68" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="246.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="284" y="180" width="68" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="318.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">can</text>
+<rect x="356" y="180" width="68" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="390.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">nap</text>
+<rect x="428" y="180" width="68" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="462.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">near</text>
+<rect x="500" y="180" width="68" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="534.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">moss</text>
+<line x1="173" y1="124" x2="173" y2="178" stroke="#12649c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="532" y1="124" x2="532" y2="178" stroke="#12649c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="346" y="159" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">같은 연속 6칸</text>
+<text x="356" y="266" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">한 문서 내 6/6 일치</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "생성 자체의 반복",
+    "title": "출력에 같은 이웃 쌍이 계속 나타납니다",
+    "body": "red 뒤에 fox fox fox fox가 생성되면 fox→fox 쌍이 세 번 나타납니다. 이 검사에는 생성된 텍스트만 필요합니다.",
+    "takeaway": "네 생성 칸 아래에 겹치는 세 쌍의 괄호가 놓입니다.",
+    "example": [
+      "red → fox fox fox fox",
+      "생성 부분 이웃 쌍 세기",
+      "fox→fox 3회"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "생성 자체의 반복",
+      "description": "네 생성 칸 아래에 겹치는 세 쌍의 괄호가 놓입니다.",
+      "figure": "figure-generation-repetition-memorization-1"
+    },
+    "quiz": [
+      "생성한 cat cat cat에 cat→cat은 몇 번 나오나요?",
+      "2번",
+      "3번",
+      "연속 토큰 셋에서 이웃이 맞닿은 자리는 두 곳입니다."
+    ]
+  },
+  {
+    "label": "말뭉치 대조",
+    "title": "훈련 문서와 맞닿은 구간을 따로 찾아봅니다",
+    "body": "새 출력 a fox can nap near moss가 한 훈련 문서에 그대로 연속해서 있습니다. 반복 토큰 없이도 일치할 수 있습니다. 짧고 흔한 일치만으로 모델이 해당 문장을 암기했다고 단정하기는 어렵습니다.",
+    "takeaway": "생성 줄 전체가 한 훈련 문서 안의 여섯 연속 칸에 맞습니다.",
+    "example": [
+      "출력 a fox can nap near moss",
+      "문서 안 연속 일치 검사",
+      "6/6 토큰 일치"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "말뭉치 대조",
+      "description": "생성 줄 전체가 한 훈련 문서 안의 여섯 연속 칸에 맞습니다.",
+      "figure": "figure-generation-repetition-memorization-2"
+    },
+    "quiz": [
+      "마지막 두 줄을 다른 훈련 문서에 걸쳐서만 찾을 수 있으면 한 문서 연속 일치인가요?",
+      "아니요 · 경계를 넘음",
+      "예 · 파일을 이어 검사",
+      "한 문서 안이라는 검색 조건에 맞아야 합니다."
+    ]
+  }
+];
+const slug = 'generation-repetition-memorization';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

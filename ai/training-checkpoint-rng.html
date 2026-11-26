@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="가중치 외에 무엇을 저장해야 다음 배치를 똑같이 뽑을까요?">
+<title>학습 루프·체크포인트·난수 상태 · E17</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./training-checkpoint-rng.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E17</p><h1>학습 루프·체크포인트·난수 상태</h1><p>가중치 외에 무엇을 저장해야 다음 배치를 똑같이 뽑을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">학습 루프·체크포인트·난수 상태</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-training-checkpoint-rng-1"><svg><g>
+<rect x="46" y="86" width="88" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="90.0" y="113" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="138" y="86" width="88" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="182.0" y="113" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">C</text>
+<text x="137" y="156" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">완료 2</text>
+<line x1="231.0" y1="107.0" x2="288.0" y2="107.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="288.0,107.0 276.40961225346075,112.88752170992788 276.40961225346075,101.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="294" y="86" width="152" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="370.0" y="113" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">W₂ · step 2</text>
+<line x1="452" y1="107" x2="510" y2="107" stroke="#566d7c" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="542" y="115" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<text x="534" y="153" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">다음</text>
+<rect x="241" y="181" width="267" height="61" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<text x="374" y="208" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">커서 · 난수 · 모멘텀</text>
+<text x="374" y="232" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">재개 상태</text>
+</g></svg></template>
+<template id="figure-training-checkpoint-rng-2"><svg><g>
+<text x="86" y="118" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">연속</text>
+<text x="86" y="213" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">복원</text>
+<rect x="158" y="91" width="86" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="201.0" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">W₂</text>
+<rect x="158" y="186" width="86" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="201.0" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">W₂</text>
+<line x1="250.0" y1="109.0" x2="309.0" y2="109.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="309.0,109.0 297.40961225346075,114.88752170992788 297.40961225346075,103.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="250.0" y1="205.0" x2="309.0" y2="205.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="309.0,205.0 297.40961225346075,210.88752170992788 297.40961225346075,199.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="314" y="91" width="63" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="345.5" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="314" y="186" width="63" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="345.5" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<line x1="387.0" y1="109.0" x2="453.0" y2="152.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="453.0,152.0 440.0749591145111,150.60597054965098 446.50272543753397,140.7400966584996" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="387.0" y1="205.0" x2="453.0" y2="170.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="453.0,170.0 445.51865108225957,180.63152944646367 440.00201227305007,170.2287248348115" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="456" y="140" width="121" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="516.5" y="167" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">W₃</text>
+<text x="310" y="266" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">커서 2와 RNG 상태 복원</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "중단 지점",
+    "title": "두 번째 갱신 직후 다음 배치에 필요한 상태를 보존합니다",
+    "body": "배치 A, C를 처리한 뒤 가중치 W₂, 업데이트 번호 2, 배치 순서의 커서, 다음 난수 상태를 함께 저장합니다. 모멘텀을 쓰면 그 버퍼도 포함합니다.",
+    "takeaway": "A와 C 뒤의 저장 상자에서 다음 B 쪽이 점선입니다.",
+    "example": [
+      "A → C · 완료 2",
+      "W₂, step, cursor, RNG · 필요 시 모멘텀",
+      "두 번째 갱신 직후 저장"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "중단 지점",
+      "description": "A와 C 뒤의 저장 상자에서 다음 B 쪽이 점선입니다.",
+      "figure": "figure-training-checkpoint-rng-1"
+    },
+    "quiz": [
+      "SGD에 모멘텀을 켜면 재개 파일에 버퍼가 필요한가요?",
+      "예 · 다음 이동에 사용",
+      "아니요 · 필요 없음",
+      "과거 기울기의 누적 항이 다음 갱신에 들어갑니다."
+    ]
+  },
+  {
+    "label": "같은 다음 갱신",
+    "title": "커서와 난수를 복원하면 중단하지 않은 경로와 이어집니다",
+    "body": "이 예에서 세 번째 배치는 B입니다. 연속 실행과 정확히 복원한 실행이 둘 다 W₂에 B를 적용하고 같은 W₃를 얻습니다. 다시 시드만 설정하면 난수열 처음으로 돌아갈 수 있습니다.",
+    "takeaway": "두 경로는 같은 W₂에서 시작해 B를 거쳐 같은 W₃에 모입니다.",
+    "example": [
+      "W₂ · 커서 2 · 난수 상태",
+      "양쪽 다음 B",
+      "W₃ 동일"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "같은 다음 갱신",
+      "description": "두 경로는 같은 W₂에서 시작해 B를 거쳐 같은 W₃에 모입니다.",
+      "figure": "figure-training-checkpoint-rng-2"
+    },
+    "quiz": [
+      "복원 뒤 다음 배치가 A로 바뀌어도 같은 W₃를 보장할까요?",
+      "아니요 · 다음 갱신 입력이 다름",
+      "예 · W₂만 같으면 됨",
+      "같은 매개변수에서 출발해도 배치가 달라지면 기울기가 달라질 수 있습니다."
+    ]
+  }
+];
+const slug = 'training-checkpoint-rng';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

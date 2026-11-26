@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="입력 red 위치는 어떤 토큰을 정답으로 가질까요?">
+<title>다음 토큰 입력·정답 한 칸 이동 · E06</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./shift-next-token-targets.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E06</p><h1>다음 토큰 입력·정답 한 칸 이동</h1><p>입력 red 위치는 어떤 토큰을 정답으로 가질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">다음 토큰 입력·정답 한 칸 이동</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-shift-next-token-targets-1"><svg><g>
+<text x="70" y="100" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">원본</text>
+<rect x="143" y="73" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="192.5" y="100" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="246" y="73" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="295.5" y="100" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="349" y="73" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="398.5" y="100" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="452" y="73" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="501.5" y="100" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+<text x="70" y="164" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">입력</text>
+<rect x="143" y="137" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="192.5" y="164" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="246" y="137" width="99" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="295.5" y="164" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="349" y="137" width="99" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="398.5" y="164" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<line x1="193.0" y1="177.0" x2="193.0" y2="217.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="193.0,217.0 187.11247829007212,205.40961225346072 198.88752170992788,205.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="296.0" y1="177.0" x2="296.0" y2="217.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="296.0,217.0 290.1124782900721,205.40961225346072 301.8875217099279,205.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="399.0" y1="177.0" x2="399.0" y2="217.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="399.0,217.0 393.1124782900721,205.40961225346072 404.8875217099279,205.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="71" y="247" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">정답</text>
+<rect x="143" y="220" width="99" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="192.5" y="247" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="246" y="220" width="99" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="295.5" y="247" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="349" y="220" width="99" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="398.5" y="247" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+</g></svg></template>
+<template id="figure-shift-next-token-targets-2"><svg><g>
+<text x="39" y="112" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="88" y="85" width="108" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="142.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="200" y="85" width="108" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="254.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="312" y="85" width="108" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="366.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="424" y="85" width="108" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="478.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+<text x="39" y="207" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="88" y="180" width="108" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="142.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="200" y="180" width="108" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="254.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">blue</text>
+<rect x="312" y="180" width="108" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="366.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">bird</text>
+<rect x="424" y="180" width="108" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="478.0" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+<line x1="526" y1="125" x2="526" y2="151" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="526" y1="151" x2="139" y2="151" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="139" y1="151" x2="139" y2="179" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<rect x="313" y="137" width="39" height="28" fill="#f6dacb" stroke="none" stroke-width="2"/>
+<text x="334" y="158" font-size="25" font-weight="650" fill="#a34123" text-anchor="middle">×</text>
+<line x1="335.0" y1="130.0" x2="488.0" y2="130.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="488.0,130.0 476.40961225346075,135.88752170992788 476.40961225346075,124.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="111.0" y1="225.0" x2="276.0" y2="225.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="276.0,225.0 264.40961225346075,230.88752170992788 264.40961225346075,219.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="324" y="268" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">문서 각각 3개 정답 · EOS 포함</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "한 줄 밀기",
+    "title": "입력 위치 오른쪽의 원본 토큰이 정답입니다",
+    "body": "A를 BOS red fox EOS로 표시합니다. 처음 세 위치가 입력이고, 끝 세 토큰을 한 칸 당겨 각각 red, fox, EOS를 정답에 놓습니다.",
+    "takeaway": "입력 BOS·red·fox에서 각각 다음 정답 red·fox·EOS로 화살표가 내려갑니다.",
+    "example": [
+      "BOS red fox EOS",
+      "정답 j = 원본 j+1",
+      "red fox EOS"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "한 줄 밀기",
+      "description": "입력 BOS·red·fox에서 각각 다음 정답 red·fox·EOS로 화살표가 내려갑니다.",
+      "figure": "figure-shift-next-token-targets-1"
+    },
+    "quiz": [
+      "원본이 BOS blue bird EOS일 때 blue 위치의 정답은?",
+      "bird",
+      "blue",
+      "현재 입력의 바로 오른쪽 토큰을 정답으로 둡니다."
+    ]
+  },
+  {
+    "label": "문서 경계",
+    "title": "EOS 뒤에서 쌍을 끊고 새 BOS에서 시작합니다",
+    "body": "A의 마지막 정답은 EOS입니다. B의 첫 정답 blue는 B의 BOS에 붙고, A의 EOS에는 B에서 오는 정답이 생기지 않습니다.",
+    "takeaway": "A의 EOS 후 화살표가 끊기며 B는 자기 BOS에서 blue로 출발합니다.",
+    "example": [
+      "A red fox · B blue bird",
+      "독립 문서에서 이동",
+      "A fox→EOS · B BOS→blue"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "문서 경계",
+      "description": "A의 EOS 후 화살표가 끊기며 B는 자기 BOS에서 blue로 출발합니다.",
+      "figure": "figure-shift-next-token-targets-2"
+    },
+    "quiz": [
+      "한 단어 문서 두 개에서 EOS를 정답에 포함하면 정답은 총 몇 개인가요?",
+      "4",
+      "3",
+      "각 문서에서 BOS→단어, 단어→EOS 두 쌍을 만듭니다."
+    ]
+  }
+];
+const slug = 'shift-next-token-targets';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

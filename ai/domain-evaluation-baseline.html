@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="튜닝하기 전에 별도 도메인 시험에서 무엇을 기록해야 할까요?">
+<title>도메인 평가셋과 원본 기준값 · E24</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./domain-evaluation-baseline.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E24</p><h1>도메인 평가셋과 원본 기준값</h1><p>튜닝하기 전에 별도 도메인 시험에서 무엇을 기록해야 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">도메인 평가셋과 원본 기준값</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-domain-evaluation-baseline-1"><svg><g>
+<rect x="45" y="100" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="79.5" y="127" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="118" y="100" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="152.5" y="127" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<line x1="192.0" y1="120.0" x2="371.0" y2="120.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="371.0,120.0 359.40961225346075,125.88752170992788 359.40961225346075,114.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="474" y="127" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">튜닝</text>
+<rect x="45" y="185" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="79.5" y="212" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">C</text>
+<rect x="118" y="185" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="152.5" y="212" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">D</text>
+<rect x="191" y="185" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="225.5" y="212" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">E</text>
+<rect x="264" y="185" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="298.5" y="212" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">F</text>
+<line x1="339.0" y1="204.0" x2="390.0" y2="204.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="390.0,204.0 378.40961225346075,209.88752170992788 378.40961225346075,198.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="397" y="182" width="181" height="47" fill="#cbe7d9" stroke="#11664f" stroke-width="2"/>
+<text x="489" y="213" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">시험 봉인</text>
+<text x="456" y="260" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">정답 = 정책 ID</text>
+</g></svg></template>
+<template id="figure-domain-evaluation-baseline-2"><svg><g>
+<text x="198" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">C</text>
+<text x="273" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">D</text>
+<text x="348" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">E</text>
+<text x="423" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">F</text>
+<text x="77" y="131" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">원본</text>
+<rect x="162" y="104" width="71" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="197.5" y="131" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">✓</text>
+<rect x="237" y="104" width="71" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="272.5" y="131" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">×</text>
+<rect x="312" y="104" width="71" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="347.5" y="131" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">✓</text>
+<rect x="387" y="104" width="71" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="422.5" y="131" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">×</text>
+<text x="77" y="217" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">튜닝본</text>
+<rect x="162" y="190" width="71" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="197.5" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">✓</text>
+<rect x="237" y="190" width="71" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="272.5" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">✓</text>
+<rect x="312" y="190" width="71" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="347.5" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">✓</text>
+<rect x="387" y="190" width="71" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="422.5" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">×</text>
+<line x1="273.0" y1="145.0" x2="273.0" y2="186.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="273.0,186.0 267.1124782900721,174.40961225346072 278.8875217099279,174.40961225346072" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="530" y="132" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2/4</text>
+<text x="530" y="218" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">3/4</text>
+<text x="313" y="262" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">D · × → ✓</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "별도 사례 봉인",
+    "title": "튜닝 문서와 시험 사례를 처음부터 분리합니다",
+    "body": "어댑터가 배울 안내 문서 A와 B를 훈련에 둡니다. 겹치지 않는 네 문의 C–F와 정답 정책은 고정 시험 봉투에 둡니다.",
+    "takeaway": "A·B 가지는 훈련으로, C–F 가지는 시험 봉투로 갑니다.",
+    "example": [
+      "안내 A·B · 문의 C–F",
+      "시험 ID 및 기준 고정",
+      "시험 C,D,E,F · 4개"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "별도 사례 봉인",
+      "description": "A·B 가지는 훈련으로, C–F 가지는 시험 봉투로 갑니다.",
+      "figure": "figure-domain-evaluation-baseline-1"
+    },
+    "quiz": [
+      "튜닝 예제에 시험 문의 C의 정답을 추가해도 되나요?",
+      "아니요 · 평가가 오염됨",
+      "예 · 정답만은 가능",
+      "시험은 튜닝에 없는 사례를 평가합니다."
+    ]
+  },
+  {
+    "label": "원본 기록",
+    "title": "원본과 튜닝본을 같은 시험으로 비교합니다",
+    "body": "원본은 C와 E에서 맞아 2/4, 튜닝본은 C·D·E에서 맞아 3/4입니다. 바뀐 문의 D에 표시를 두면 점수 1개 증가의 출처가 남습니다.",
+    "takeaway": "같은 헤더 C–F 아래 D 셀만 ×에서 ✓로 바뀝니다.",
+    "example": [
+      "공통 정답 C–F",
+      "같은 정책 ID와 일치하는지 비교",
+      "원본 2/4 · 튜닝 3/4"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "원본 기록",
+      "description": "같은 헤더 C–F 아래 D 셀만 ×에서 ✓로 바뀝니다.",
+      "figure": "figure-domain-evaluation-baseline-2"
+    },
+    "quiz": [
+      "튜닝본을 다른 문의 다섯 개로 시험해 4/5라면 2/4 원본보다 개선을 증명하나요?",
+      "같은 문의로 다시 비교",
+      "그대로 개선 판정",
+      "예제 난이도가 다를 수 있으므로 같은 ID와 기준으로 평가합니다."
+    ]
+  }
+];
+const slug = 'domain-evaluation-baseline';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

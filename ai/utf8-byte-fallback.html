@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="새 문자가 들어오면 어떤 기호로 보존할 수 있을까요?">
+<title>문자·바이트와 어휘 밖 입력 · E03</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./utf8-byte-fallback.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E03</p><h1>문자·바이트와 어휘 밖 입력</h1><p>새 문자가 들어오면 어떤 기호로 보존할 수 있을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">문자·바이트와 어휘 밖 입력</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-utf8-byte-fallback-1"><svg><g>
+<text x="70" y="107" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">입력</text>
+<rect x="157" y="80" width="74" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="194.0" y="107" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">r</text>
+<rect x="235" y="80" width="74" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="272.0" y="107" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">e</text>
+<rect x="313" y="80" width="74" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="350.0" y="107" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">d</text>
+<rect x="391" y="80" width="74" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="428.0" y="107" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">␠</text>
+<rect x="469" y="80" width="74" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="506.0" y="107" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">🐈</text>
+<line x1="507.0" y1="121.0" x2="507.0" y2="185.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="507.0,185.0 501.1124782900721,173.40961225346072 512.8875217099279,173.40961225346072" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="416" y="162" font-size="19" font-weight="650" fill="#a34123" text-anchor="middle">어휘 밖</text>
+<text x="70" y="220" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">토큰</text>
+<rect x="157" y="194" width="74" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="194.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">r</text>
+<rect x="235" y="194" width="74" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="272.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">e</text>
+<rect x="313" y="194" width="74" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="350.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">d</text>
+<rect x="391" y="194" width="74" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="428.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">␠</text>
+<rect x="469" y="194" width="74" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="506.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">UNK</text>
+</g></svg></template>
+<template id="figure-utf8-byte-fallback-2"><svg><g>
+<rect x="81" y="75" width="55" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="108.5" y="102" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">r</text>
+<rect x="140" y="75" width="55" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="167.5" y="102" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">e</text>
+<rect x="199" y="75" width="55" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="226.5" y="102" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">d</text>
+<rect x="258" y="75" width="55" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="285.5" y="102" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">␠</text>
+<rect x="340" y="75" width="237" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="458.5" y="102" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">🐈</text>
+<line x1="463.0" y1="116.0" x2="463.0" y2="154.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="463.0,154.0 457.1124782900721,142.40961225346072 468.8875217099279,142.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="81" y="158" width="55" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="108.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">72</text>
+<rect x="140" y="158" width="55" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="167.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">65</text>
+<rect x="199" y="158" width="55" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="226.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">64</text>
+<rect x="258" y="158" width="55" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="285.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">20</text>
+<rect x="340" y="158" width="55" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="367.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">F0</text>
+<rect x="399" y="158" width="55" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="426.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">9F</text>
+<rect x="458" y="158" width="55" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="485.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">90</text>
+<rect x="517" y="158" width="55" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="544.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">88</text>
+<line x1="463.0" y1="200.0" x2="463.0" y2="232.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="463.0,232.0 457.1124782900721,220.40961225346072 468.8875217099279,220.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="463" y="259" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">🐈 복원</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "문자 단위",
+    "title": "훈련에서 본 문자만 있는 어휘는 새 문자를 잃습니다",
+    "body": "문자 토크나이저의 등록 기호는 r, e, d와 공백입니다. 🐈에 해당하는 항목이 없어 하나의 UNK 기호로 바뀝니다.",
+    "takeaway": "첫 네 칸은 보존되고 다섯째 칸 🐈만 UNK로 이어집니다.",
+    "example": [
+      "red 🐈",
+      "r · e · d · ␠ 등록",
+      "r e d ␠ UNK"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "문자 단위",
+      "description": "첫 네 칸은 보존되고 다섯째 칸 🐈만 UNK로 이어집니다.",
+      "figure": "figure-utf8-byte-fallback-1"
+    },
+    "quiz": [
+      "문자 어휘에 🐈도 등록하면 이 문자에서 무엇이 나오나요?",
+      "🐈에 해당하는 ID",
+      "항상 UNK",
+      "등록된 문자는 자신에게 할당된 ID를 얻습니다."
+    ]
+  },
+  {
+    "label": "바이트 대체",
+    "title": "바이트 네 개를 모아 원래 문자를 복원합니다",
+    "body": "바이트 어휘는 00–FF를 모두 가지고 있습니다. 🐈의 UTF-8 바이트 F0 9F 90 88을 순서대로 디코딩합니다.",
+    "takeaway": "고양이 한 글자에서 네 칸으로 열렸다가 같은 글자로 닫힙니다.",
+    "example": [
+      "red 🐈",
+      "UTF-8",
+      "72 65 64 20 F0 9F 90 88"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "바이트 대체",
+      "description": "고양이 한 글자에서 네 칸으로 열렸다가 같은 글자로 닫힙니다.",
+      "figure": "figure-utf8-byte-fallback-2"
+    },
+    "quiz": [
+      "입력 마지막 문자를 A로 바꿉니다. 그 문자의 UTF-8 표기는?",
+      "41 한 바이트",
+      "F0 9F 90 88 네 바이트",
+      "ASCII에 속하는 A는 UTF-8에서 16진수 41 한 바이트로 표현됩니다."
+    ]
+  }
+];
+const slug = 'utf8-byte-fallback';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

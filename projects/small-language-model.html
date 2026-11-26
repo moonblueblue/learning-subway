@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 말뭉치로 학습하고 중간 상태를 복원하면 같은 예측을 얻을까요?">
+<title>소형 언어 모델 · 졸업 과제</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="stylesheet" href="./small-language-model/workbench.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./small-language-model.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · 졸업 과제</p><h1>소형 언어 모델</h1><p>같은 말뭉치로 학습하고 중간 상태를 복원하면 같은 예측을 얻을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">소형 언어 모델</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <div class="lm-actions"><button id="lm-open-report" type="button" class="action primary">시험 결과</button>
+        <button id="lm-open-input" type="button" class="action">입력 편집</button></div>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-small-language-model-1"><svg><g>
+<text x="40" y="111" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<rect x="62" y="85" width="72" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="98.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="138" y="85" width="72" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="174.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="214" y="85" width="72" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="250.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="290" y="85" width="72" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="326.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">trots</text>
+<rect x="366" y="85" width="72" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="402.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">home</text>
+<rect x="442" y="85" width="72" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="478.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+<text x="40" y="220" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<rect x="62" y="194" width="72" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="98.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="138" y="194" width="72" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="174.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">blue</text>
+<rect x="214" y="194" width="72" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="250.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">bird</text>
+<rect x="290" y="194" width="72" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="326.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">sings</text>
+<rect x="366" y="194" width="72" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="402.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">softly</text>
+<rect x="442" y="194" width="72" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="478.0" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+<line x1="406.0" y1="128.0" x2="473.0" y2="128.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="473.0,128.0 461.40961225346075,133.88752170992788 461.40961225346075,122.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="95.0" y1="239.0" x2="170.0" y2="239.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="170.0,239.0 158.40961225346072,244.88752170992788 158.40961225346072,233.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="478" y1="132" x2="478" y2="163" stroke="#a34123" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="478" y1="163" x2="101" y2="163" stroke="#a34123" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="101" y1="163" x2="101" y2="192" stroke="#a34123" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<rect x="270" y="150" width="42" height="27" fill="#f6dacb" stroke="none" stroke-width="2"/>
+<text x="291" y="171" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">×</text>
+<text x="559" y="112" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">5개</text>
+<text x="559" y="222" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">5개</text>
+</g></svg></template>
+<template id="figure-small-language-model-2"><svg><g>
+<text x="307" y="81" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">고정 시험 20개 정답</text>
+<rect x="43" y="140" width="88" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="87.0" y="167" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="135" y="140" width="88" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="179.0" y="167" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<line x1="227.0" y1="151.0" x2="268.0" y2="111.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="268.0,111.0 263.81520651598873,123.3080259788553 255.5924128366808,114.87966245756468" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="227.0" y1="171.0" x2="268.0" y2="222.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="268.0,222.0 256.1493712646164,216.65560119600906 265.3265536287396,209.27786635426295" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="340" y="104" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">바이그램</text>
+<text x="339" y="134" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">p = 0.1316</text>
+<text x="337" y="217" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">인과 신경망</text>
+<text x="339" y="246" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">p = 0.3436</text>
+<text x="522" y="77" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">Σ(−ln p) ÷ 20</text>
+<line x1="417.0" y1="123.0" x2="449.0" y2="123.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="449.0,123.0 437.40961225346075,128.88752170992788 437.40961225346075,117.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="417.0" y1="231.0" x2="449.0" y2="231.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="449.0,231.0 437.40961225346075,236.88752170992788 437.40961225346075,225.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="520" y="131" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2.75512</text>
+<text x="520" y="239" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">1.92335</text>
+<text x="525" y="267" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">nat/token</text>
+</g></svg></template>
+<template id="figure-small-language-model-3"><svg><g>
+<text x="25" y="121" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="43" y="93" width="71" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="78.5" y="120" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="118" y="93" width="71" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="153.5" y="120" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="193" y="93" width="71" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="228.5" y="120" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<text x="25" y="215" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="43" y="186" width="71" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="78.5" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="118" y="186" width="71" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="153.5" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="193" y="186" width="71" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="228.5" y="213" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">bird</text>
+<line x1="191" y1="92" x2="191" y2="135" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="191" y1="186" x2="191" y2="230" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="154" y1="92" x2="154" y2="77" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="154" y1="77" x2="296" y2="77" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="296.0" y1="77.0" x2="335.0" y2="111.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="335.0,111.0 322.39458402869764,107.82140153677206 330.1323795465051,98.94569491340468" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="154" y1="186" x2="154" y2="167" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="154" y1="167" x2="296" y2="167" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="296.0" y1="167.0" x2="335.0" y2="205.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="335.0,205.0 322.5899276275783,201.12829446997128 330.8073150881344,192.6946599709795" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="384" y="91" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<text x="470" y="91" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">frog</text>
+<text x="557" y="91" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">bird</text>
+<rect x="342" y="96" width="82" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="383.0" y="123" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.707</text>
+<rect x="428" y="96" width="82" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="469.0" y="123" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.123</text>
+<rect x="514" y="96" width="82" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="555.0" y="123" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.092</text>
+<rect x="342" y="190" width="82" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="383.0" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.707</text>
+<rect x="428" y="190" width="82" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="469.0" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.123</text>
+<rect x="514" y="190" width="82" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="555.0" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.092</text>
+<text x="461" y="265" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">26개 후보 max ∣Δp∣ = 0</text>
+</g></svg></template>
+<template id="figure-small-language-model-4"><svg><g>
+<text x="300" y="84" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">시드 412 · 갱신당 정답 8개</text>
+<text x="76" y="132" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">연속</text>
+<text x="76" y="223" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">복원</text>
+<rect x="139" y="107" width="71" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="174.5" y="134" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">150</text>
+<rect x="139" y="198" width="71" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="174.5" y="225" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">150</text>
+<line x1="214.0" y1="126.0" x2="244.0" y2="126.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="244.0,126.0 232.40961225346072,131.88752170992788 232.40961225346072,120.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="214.0" y1="217.0" x2="244.0" y2="217.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="244.0,217.0 232.40961225346072,222.88752170992788 232.40961225346072,211.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="342" y="115" font-size="16" font-weight="650" fill="#17354b" text-anchor="middle">151 · [19,57,52,11,36,32,2,44]</text>
+<text x="342" y="210" font-size="16" font-weight="650" fill="#17354b" text-anchor="middle">151 · [19,57,52,11,36,32,2,44]</text>
+<line x1="449.0" y1="126.0" x2="497.0" y2="152.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="497.0,152.0 484.00453778831525,151.65654417362055 489.61279254252827,141.30284308891967" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="449.0" y1="217.0" x2="497.0" y2="171.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="497.0,171.0 492.70548460154953,183.27017267573981 484.55826890701906,174.76873021188194" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="552" y="167" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">300</text>
+<text x="540" y="198" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">max ∣ΔW∣=0</text>
+<text x="321" y="266" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">가중치·난수·이력 복원</text>
+</g></svg></template>
+<template id="figure-small-language-model-5"><svg><g>
+<text x="368" y="81" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">탐욕 첫 토큰</text>
+<rect x="54" y="99" width="111" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="109.5" y="126" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="54" y="156" width="111" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="109.5" y="183" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">blue</text>
+<rect x="54" y="213" width="111" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="109.5" y="240" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">amber</text>
+<line x1="169.0" y1="119.0" x2="331.0" y2="119.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="331.0,119.0 319.40961225346075,124.88752170992788 319.40961225346075,113.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="169.0" y1="176.0" x2="331.0" y2="176.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="331.0,176.0 319.40961225346075,181.88752170992788 319.40961225346075,170.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="169.0" y1="233.0" x2="214.0" y2="233.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="214.0,233.0 202.40961225346072,238.88752170992788 202.40961225346072,227.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="219" y="213" width="86" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="262.0" y="240" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">UNK</text>
+<line x1="309.0" y1="233.0" x2="331.0" y2="233.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="331.0,233.0 319.40961225346075,238.88752170992788 319.40961225346075,227.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="337" y="99" width="88" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="381.0" y="126" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="337" y="156" width="88" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="381.0" y="183" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">bird</text>
+<rect x="337" y="213" width="88" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="381.0" y="240" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">frog</text>
+<text x="507" y="127" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">✓ fox</text>
+<text x="507" y="184" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">✓ bird</text>
+<text x="506" y="241" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">× bird</text>
+<text x="504" y="81" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">기대</text>
+</g></svg></template>
+<dialog id="lm-dialog" role="dialog" aria-labelledby="lm-heading">
+  <header class="lm-header">
+    <h2 id="lm-heading">시험 결과</h2>
+    <form method="dialog"><button class="action">닫기</button></form>
+  </header>
+  <section id="lm-report" data-lm-panel="report">
+    <div class="lm-fields">
+      <label>보기<select id="lm-view">
+        <option value="summary">같은 시험 데이터</option>
+        <option value="prediction">정답 확률</option>
+        <option value="causality">앞 위치 분포</option>
+        <option value="checkpoint">체크포인트</option>
+        <option value="generation">생성 사례</option>
+      </select></label>
+      <label data-lm-filter="prediction" hidden>시험 위치<select id="lm-prediction"></select></label>
+      <label data-lm-filter="causality" hidden>예측 후보<select id="lm-candidate"></select></label>
+      <label data-lm-filter="generation" hidden>프롬프트<select id="lm-probe"></select></label>
+    </div>
+    <section data-lm-view="summary">
+      <p id="lm-budget"></p>
+      <table><thead><tr><th scope="col">모델</th><th scope="col">정답 수</th><th scope="col">nat/token</th><th scope="col">PPL</th></tr></thead><tbody id="lm-scores"></tbody></table>
+    </section>
+    <section data-lm-view="prediction" hidden>
+      <p id="lm-position" class="lm-content-line"></p>
+      <table><thead><tr><th scope="col">모델</th><th scope="col">p(정답)</th><th scope="col">−ln p</th></tr></thead><tbody id="lm-probabilities"></tbody></table>
+    </section>
+    <section data-lm-view="causality" hidden>
+      <p id="lm-prefix" class="lm-content-line"></p>
+      <p id="lm-difference"></p>
+      <p id="lm-distribution"></p>
+    </section>
+    <section data-lm-view="checkpoint" hidden>
+      <p id="lm-replay-state"></p>
+      <p id="lm-replay-batch"></p>
+      <p id="lm-replay-equality"></p>
+    </section>
+    <section data-lm-view="generation" hidden>
+      <div class="lm-fields">
+        <label>선택 방식<select id="lm-policy"><option value="greedy">최대 확률</option><option value="sample">난수 표본</option></select></label>
+        <label>생성 위치<select id="lm-sample-step"></select></label>
+      </div>
+      <p id="lm-text" class="lm-content-line"></p>
+      <p id="lm-generated-token"></p>
+      <p id="lm-probe-check"></p>
+    </section>
+    <div class="lm-actions">
+      <button id="lm-edit-from-report" class="action" type="button">입력 편집</button>
+      <button id="lm-open-downloads" class="action" type="button">파일 받기</button>
+    </div>
+  </section>
+  <form id="lm-edit-form" data-lm-panel="input" hidden>
+    <label>말뭉치·예산 JSON<textarea id="lm-input" spellcheck="false"></textarea></label>
+    <div class="lm-fields lm-restore">
+      <label>복원할 체크포인트 (선택)<input id="lm-checkpoint-input" type="file" accept=".json,application/json"></label>
+      <div class="lm-actions">
+        <button id="lm-run" class="action primary" type="submit">학습·시험</button>
+        <button id="lm-reset" class="action" type="button">기본 입력</button>
+      </div>
+    </div>
+    <p id="lm-error" role="alert"></p>
+  </form>
+  <section data-lm-panel="downloads" hidden>
+    <div class="lm-file-actions">
+      <button id="lm-download-input" class="action" type="button">입력 JSON</button>
+      <button id="lm-download-report" class="action" type="button">보고서 JSON</button>
+      <button id="lm-download-checkpoint" class="action" type="button">중간 체크포인트</button>
+      <button id="lm-download-runner" class="action" type="button">Node 실행 코드</button>
+      <button id="lm-download-model" class="action" type="button">최종 모델</button>
+    </div>
+    <code class="lm-command">node small-language-model-runner.js input.json [checkpoint.json]</code>
+    <button id="lm-back" class="action" type="button">시험 결과</button>
+  </section>
+</dialog>
+
+<script>
+const lesson = [
+  {
+    "label": "문서 경계",
+    "title": "문서 안에서만 다음 정답을 만듭니다",
+    "body": "기본 자료는 이 과제에서 작성해 CC0로 배포한 12개 훈련 문장과 별도 4개 시험 문장입니다. 훈련에서만 어휘를 만들며 BOS는 문맥, EOS는 정답입니다. 문서 사이를 이어 붙이지 않습니다.",
+    "takeaway": "home→EOS와 BOS→blue가 서로 다른 줄에 있어 경계의 예측 짝을 구별할 수 있습니다.",
+    "example": [
+      "훈련 문서 1·5",
+      "문서마다 다음 위치",
+      "문서마다 5개 정답"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "문서 경계",
+      "description": "home→EOS와 BOS→blue가 서로 다른 줄에 있어 경계의 예측 짝을 구별할 수 있습니다.",
+      "figure": "figure-small-language-model-1"
+    },
+    "quiz": [
+      "시험에만 나오는 amber에는 어느 ID를 사용할까요?",
+      "UNK",
+      "새 어휘 ID",
+      "어휘는 분할 후 훈련 문서에서만 만듭니다."
+    ]
+  },
+  {
+    "label": "동일 시험 비교",
+    "title": "같은 20개 정답의 확률을 비교합니다",
+    "body": "바이그램은 마지막 토큰 다음의 관측 수에 1씩 더해 확률을 계산합니다. 인과 신경망은 최근 2개 토큰과 은닉층으로 점수를 만듭니다. 두 모델 모두 같은 고정 어휘와 정답 위치 20개에서 점수를 냅니다.",
+    "takeaway": "시험 정답 red의 두 확률이 갈라지고 손실 평균은 같은 분모 20을 사용합니다.",
+    "example": [
+      "첫 시험 BOS→red",
+      "Σ(−ln p) ÷ 20",
+      "바이그램 2.75512 · 신경망 1.92335 nat/token"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "동일 시험 비교",
+      "description": "시험 정답 red의 두 확률이 갈라지고 손실 평균은 같은 분모 20을 사용합니다.",
+      "figure": "figure-small-language-model-2"
+    },
+    "quiz": [
+      "길이가 다른 두 시험 문서에서 정답이 3개와 6개면 분모는?",
+      "9",
+      "2",
+      "점수를 계산한 다음 위치 수를 합합니다."
+    ]
+  },
+  {
+    "label": "접미부 교체",
+    "title": "red가 읽는 접두사를 같게 두면 전체 분포가 같습니다",
+    "body": "red 위치에서 사용하는 두 토큰은 BOS와 red입니다. 뒤의 fox 또는 bird는 모델에 들어가기 전 문맥 창에서 제외합니다. 비교 화면은 26개 후보를 모두 조회할 수 있습니다.",
+    "takeaway": "red에서 같은 분포로 가는 두 선과 차단된 접미부가 보입니다.",
+    "example": [
+      "BOS red fox ↔ BOS red bird",
+      "red 위치까지 가져오기",
+      "26개 후보 최대 확률 차이 0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "접미부 교체",
+      "description": "red에서 같은 분포로 가는 두 선과 차단된 접미부가 보입니다.",
+      "figure": "figure-small-language-model-3"
+    },
+    "quiz": [
+      "가장 큰 확률이 같아도 다른 후보 하나라도 달라지면 최대 차이는?",
+      "0보다 큼",
+      "여전히 0",
+      "전체 후보의 대응 차이 중 최댓값을 봅니다."
+    ]
+  },
+  {
+    "label": "중단과 복원",
+    "title": "150회차에 저장한 상태로 다음 배치를 재현합니다",
+    "body": "시드 412에서 8개 정답을 복원추출해 300번 갱신합니다. 150회차의 가중치·난수 상태·이력을 복원하면 151회차 배치와 최종 가중치가 연속 실행과 일치합니다.",
+    "takeaway": "연속과 복원 줄에서 같은 배치가 보이고 최종 가중치 차이는 0입니다.",
+    "example": [
+      "시드 412 · 체크포인트 150",
+      "배치 151의 정답 인덱스 비교",
+      "300회 · max ∣ΔW∣=0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "중단과 복원",
+      "description": "연속과 복원 줄에서 같은 배치가 보이고 최종 가중치 차이는 0입니다.",
+      "figure": "figure-small-language-model-4"
+    },
+    "quiz": [
+      "저장할 때 배치 순서에 쓰인 난수 상태를 빼면 같은 다음 묶음임을 보장할까요?",
+      "아니요 · 다음 묶음이 달라질 수 있음",
+      "예 · 가중치만 필요",
+      "시드의 초기 상태와 중간 추첨 상태는 다릅니다."
+    ]
+  },
+  {
+    "label": "생성과 한계",
+    "title": "훈련에서 본 문맥을 바꾸면 첫 토큰 선택이 달라집니다",
+    "body": "탐욕 생성은 red 뒤에서 fox, blue 뒤에서 bird를 고릅니다. amber는 훈련에 없어 UNK가 되고 bird가 필요한 사례에서 frog를 고릅니다. 표본 모드의 고정 난수도 따로 살펴볼 수 있습니다.",
+    "takeaway": "red와 blue는 기대 토큰으로, amber는 UNK를 거쳐 다른 토큰으로 이어집니다.",
+    "example": [
+      "red · blue · amber",
+      "탐욕 첫 토큰",
+      "fox ✓ · bird ✓ · frog ×"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "생성과 한계",
+      "description": "red와 blue는 기대 토큰으로, amber는 UNK를 거쳐 다른 토큰으로 이어집니다.",
+      "figure": "figure-small-language-model-5"
+    },
+    "quiz": [
+      "정답 기준을 제공하지 않은 프롬프트는 어떻게 보고하나요?",
+      "관찰 결과만 보고",
+      "항상 합격 처리",
+      "기대 출력이 있어야 맞고 틀림을 판정합니다."
+    ]
+  }
+];
+const slug = 'small-language-model';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+<script src="./small-language-model/corpus.js"></script>
+<script src="./small-language-model/engine.js"></script>
+<script src="./small-language-model/workbench.js"></script>
+</body>
+</html>

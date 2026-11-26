@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="선택한 토큰은 다음 단계에서 어디로 되돌아올까요?">
+<title>자기회귀 디코딩과 종료 토큰 · E19</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./autoregressive-decoding-eos.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E19</p><h1>자기회귀 디코딩과 종료 토큰</h1><p>선택한 토큰은 다음 단계에서 어디로 되돌아올까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">자기회귀 디코딩과 종료 토큰</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-autoregressive-decoding-eos-1"><svg><g>
+<rect x="37" y="134" width="81" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="77.5" y="161" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="122" y="134" width="81" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="162.5" y="161" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<line x1="207.0" y1="152.0" x2="249.0" y2="152.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="249.0,152.0 237.40961225346072,157.88752170992788 237.40961225346072,146.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="317.0" y="117.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">fox</text>
+<rect x="329.0" y="98.0" width="138.0" height="22" fill="#cbe7d9" stroke="#12649c" stroke-width="1"/>
+<text x="475.0" y="117.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">.60</text>
+<text x="317.0" y="158.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">bird</text>
+<rect x="329.0" y="139.0" width="69.0" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="406.0" y="158.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">.30</text>
+<text x="317.0" y="199.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">EOS</text>
+<rect x="329.0" y="180.0" width="23.0" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="360.0" y="199.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">.10</text>
+<line x1="512.0" y1="109.0" x2="543.0" y2="109.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="543.0,109.0 531.4096122534608,114.88752170992788 531.4096122534608,103.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="573" y="116" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<text x="310" y="251" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">선택한 fox를 입력 뒤에 추가</text>
+</g></svg></template>
+<template id="figure-autoregressive-decoding-eos-2"><svg><g>
+<rect x="31" y="134" width="61" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="61.5" y="161" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">BOS</text>
+<rect x="96" y="134" width="61" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="126.5" y="161" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="161" y="134" width="61" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="191.5" y="161" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<line x1="226.0" y1="152.0" x2="263.0" y2="152.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="263.0,152.0 251.40961225346072,157.88752170992788 251.40961225346072,146.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="323.0" y="117.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">fox</text>
+<rect x="335.0" y="98.0" width="18.0" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="361.0" y="117.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">.10</text>
+<text x="323.0" y="158.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">bird</text>
+<rect x="335.0" y="139.0" width="18.0" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="361.0" y="158.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">.10</text>
+<text x="323.0" y="199.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">EOS</text>
+<rect x="335.0" y="180.0" width="144.0" height="22" fill="#cbe7d9" stroke="#12649c" stroke-width="1"/>
+<text x="487.0" y="199.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">.80</text>
+<line x1="525.0" y1="192.0" x2="547.0" y2="192.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="547.0,192.0 535.4096122534608,197.88752170992788 535.4096122534608,186.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="577" y="199" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">정지</text>
+<text x="318" y="257" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS 뒤에는 다음 호출 없음</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "한 토큰 선택",
+    "title": "red 뒤에서는 확률이 가장 높은 fox를 붙입니다",
+    "body": "이 예시는 확률 표본추출 대신 argmax를 씁니다. red에서 fox, bird, EOS의 확률은 각각 0.60, 0.30, 0.10이므로 fox가 선택됩니다.",
+    "takeaway": "red에서 세 후보로 이어지고 가장 긴 fox 막대가 새 토큰이 됩니다.",
+    "example": [
+      "BOS red",
+      "argmax(.60,.30,.10)",
+      "BOS red fox"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "한 토큰 선택",
+      "description": "red에서 세 후보로 이어지고 가장 긴 fox 막대가 새 토큰이 됩니다.",
+      "figure": "figure-autoregressive-decoding-eos-1"
+    },
+    "quiz": [
+      "분포 fox .2·bird .7·EOS .1에서 탐욕 선택은?",
+      "bird",
+      "fox",
+      "가장 큰 확률 하나를 고릅니다."
+    ]
+  },
+  {
+    "label": "추가한 입력에서 멈춤",
+    "title": "새 입력에 fox가 들어가고 EOS를 고르면 종료합니다",
+    "body": "다음 입력은 BOS red fox 전체입니다. 이제 EOS 확률이 0.80으로 가장 높습니다. EOS를 선택한 다음 생성 루프는 끝나고 보이는 글은 red fox입니다.",
+    "takeaway": "fox가 입력 세 번째 칸으로 옮겨졌고 EOS의 길어진 막대가 종료 표시에 닿습니다.",
+    "example": [
+      "BOS red fox",
+      "argmax(.10,.10,.80)",
+      "EOS · 종료"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "추가한 입력에서 멈춤",
+      "description": "fox가 입력 세 번째 칸으로 옮겨졌고 EOS의 길어진 막대가 종료 표시에 닿습니다.",
+      "figure": "figure-autoregressive-decoding-eos-2"
+    },
+    "quiz": [
+      "EOS가 나오지 않고 최대 4개를 모두 생성하면?",
+      "길이 예산에서 정지",
+      "EOS까지 무한 반복",
+      "별도 최대 길이를 두어 반드시 종료하도록 합니다."
+    ]
+  }
+];
+const slug = 'autoregressive-decoding-eos';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

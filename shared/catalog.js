@@ -1282,17 +1282,162 @@ const courseCatalog = {
           "titleEn": "Generative and language models",
           "lessons": [
             {
+              "id": "6.2",
+              "ref": "ai/llm"
+            },
+            {
+              "id": "6.8",
+              "ref": "ai/corpus-provenance-deduplication"
+            },
+            {
+              "id": "6.3",
+              "ref": "ai/utf8-byte-fallback"
+            },
+            {
+              "id": "6.9",
+              "ref": "ai/bpe-train-decode"
+            },
+            {
+              "id": "6.10",
+              "ref": "ai/ngram-add-one-smoothing"
+            },
+            {
+              "id": "6.11",
+              "ref": "ai/shift-next-token-targets"
+            },
+            {
+              "id": "6.4",
+              "ref": "ai/embedding-vocabulary-projection"
+            },
+            {
               "id": "6.1",
               "ref": "ai/attention"
             },
             {
-              "id": "6.2",
-              "ref": "ai/llm"
+              "id": "6.12",
+              "ref": "ai/position-token-order"
+            },
+            {
+              "id": "6.5",
+              "ref": "ai/causal-mask-prefix-invariance"
+            },
+            {
+              "id": "6.13",
+              "ref": "ai/residual-norm-feedforward"
+            },
+            {
+              "id": "6.14",
+              "ref": "ai/stable-softmax-logits"
+            },
+            {
+              "id": "6.6",
+              "ref": "ai/masked-token-cross-entropy"
+            },
+            {
+              "id": "6.15",
+              "ref": "ai/gradient-check-autodiff"
+            },
+            {
+              "id": "6.16",
+              "ref": "ai/adamw-learning-rate-schedule"
+            },
+            {
+              "id": "6.17",
+              "ref": "ai/gradient-norm-clipping"
+            },
+            {
+              "id": "6.18",
+              "ref": "ai/training-checkpoint-rng"
+            },
+            {
+              "id": "6.19",
+              "ref": "ai/shared-tokenizer-held-out-loss"
+            },
+            {
+              "id": "6.7",
+              "ref": "ai/autoregressive-decoding-eos"
+            },
+            {
+              "id": "6.20",
+              "ref": "ai/temperature-distribution"
+            },
+            {
+              "id": "6.21",
+              "ref": "ai/top-k-nucleus-sampling"
+            },
+            {
+              "id": "6.22",
+              "ref": "ai/generation-repetition-memorization"
+            },
+            {
+              "id": "6.23",
+              "ref": "ai/training-token-compute-budget"
+            },
+            {
+              "id": "6.24",
+              "ref": "ai/domain-evaluation-baseline"
+            },
+            {
+              "id": "6.25",
+              "ref": "ai/supervised-chat-target-mask"
+            },
+            {
+              "id": "6.26",
+              "ref": "ai/full-tuning-memory-ledger"
+            },
+            {
+              "id": "6.27",
+              "ref": "ai/lora-low-rank-update"
+            },
+            {
+              "id": "6.28",
+              "ref": "ai/qlora-lora-memory-quality"
+            },
+            {
+              "id": "6.29",
+              "ref": "ai/preference-pair-disagreement"
+            },
+            {
+              "id": "6.30",
+              "ref": "ai/reward-model-score-limits"
+            },
+            {
+              "id": "6.31",
+              "ref": "ai/dpo-preference-log-ratio"
+            },
+            {
+              "id": "6.32",
+              "ref": "ai/domain-adaptation-general-regression"
+            },
+            {
+              "id": "6.33",
+              "ref": "ai/adapter-merge-equivalence"
+            },
+            {
+              "id": "6.34",
+              "ref": "ai/vae-latent-sampling"
+            },
+            {
+              "id": "6.35",
+              "ref": "ai/gan-discriminator-mode-collapse"
+            },
+            {
+              "id": "6.36",
+              "ref": "ai/diffusion-forward-noising"
+            },
+            {
+              "id": "6.37",
+              "ref": "ai/diffusion-noise-prediction-reverse"
+            },
+            {
+              "id": "6.38",
+              "ref": "ai/conditional-generation-quality-diversity"
             }
           ],
           "tracks": [],
           "destination": "소형 언어 모델",
-          "destinationEn": "A small language model"
+          "destinationEn": "A small language model",
+          "projectRef": "projects/small-language-model"
         },
         {
           "id": "7",
@@ -4963,6 +5108,402 @@ const courseCatalog = {
             "ai/independent-stop-handover"
           ],
           "page": "ai/replay-physical-simulation-gap.html"
+        },
+        {
+          "id": "corpus-provenance-deduplication",
+          "title": "말뭉치 권리·출처·중복 관리",
+          "titleEn": "Corpus rights, provenance, and deduplication",
+          "question": "같은 문장이 두 문서에 있으면 어떻게 시험 누수를 막을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/llm"
+          ],
+          "page": "ai/corpus-provenance-deduplication.html"
+        },
+        {
+          "id": "utf8-byte-fallback",
+          "title": "문자·바이트와 어휘 밖 입력",
+          "titleEn": "Characters, bytes, and input outside the vocabulary",
+          "question": "새 문자가 들어오면 어떤 기호로 보존할 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/corpus-provenance-deduplication"
+          ],
+          "page": "ai/utf8-byte-fallback.html"
+        },
+        {
+          "id": "bpe-train-decode",
+          "title": "BPE 토크나이저 학습·복원",
+          "titleEn": "Train and decode with BPE",
+          "question": "어떤 글자쌍이 합쳐지고 처음 보는 단어는 어떻게 복원할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/utf8-byte-fallback"
+          ],
+          "page": "ai/bpe-train-decode.html"
+        },
+        {
+          "id": "ngram-add-one-smoothing",
+          "title": "n-gram과 평활 기준선",
+          "titleEn": "N-grams and a smoothed baseline",
+          "question": "0번 본 이웃에게도 어떻게 다음 토큰 확률을 줄까요?",
+          "format": "실험",
+          "requires": [
+            "ai/bpe-train-decode"
+          ],
+          "page": "ai/ngram-add-one-smoothing.html"
+        },
+        {
+          "id": "shift-next-token-targets",
+          "title": "다음 토큰 입력·정답 한 칸 이동",
+          "titleEn": "Shift inputs and next-token targets",
+          "question": "입력 red 위치는 어떤 토큰을 정답으로 가질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/ngram-add-one-smoothing"
+          ],
+          "page": "ai/shift-next-token-targets.html"
+        },
+        {
+          "id": "embedding-vocabulary-projection",
+          "title": "임베딩 조회와 어휘 투영",
+          "titleEn": "Embedding lookup and vocabulary projection",
+          "question": "red의 ID를 받고 어떻게 fox와 bird의 다음 위치 점수를 얻을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/shift-next-token-targets"
+          ],
+          "page": "ai/embedding-vocabulary-projection.html"
+        },
+        {
+          "id": "position-token-order",
+          "title": "위치 정보와 토큰 순서",
+          "titleEn": "Positional information and token order",
+          "question": "같은 단어를 바꾸어 놓으면 위치를 어떻게 전달할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/attention"
+          ],
+          "page": "ai/position-token-order.html"
+        },
+        {
+          "id": "causal-mask-prefix-invariance",
+          "title": "인과 마스크와 미래 토큰 불변성",
+          "titleEn": "Causal masks and prefix invariance",
+          "question": "뒤쪽 fox를 bird로 바꿔도 red의 예측이 같으려면 어떤 칸을 막을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/position-token-order"
+          ],
+          "page": "ai/causal-mask-prefix-invariance.html"
+        },
+        {
+          "id": "residual-norm-feedforward",
+          "title": "잔차 연결·정규화·피드포워드 블록",
+          "titleEn": "Residual connections, normalization, and feedforward blocks",
+          "question": "입력과 블록의 변화량이 어느 경로에서 다시 만날까요?",
+          "format": "실험",
+          "requires": [
+            "ai/causal-mask-prefix-invariance"
+          ],
+          "page": "ai/residual-norm-feedforward.html"
+        },
+        {
+          "id": "stable-softmax-logits",
+          "title": "로짓·소프트맥스와 수치 안정성",
+          "titleEn": "Logits and numerically stable softmax",
+          "question": "세 후보의 큰 점수는 어떻게 안전하게 확률이 될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/residual-norm-feedforward"
+          ],
+          "page": "ai/stable-softmax-logits.html"
+        },
+        {
+          "id": "masked-token-cross-entropy",
+          "title": "토큰별 교차 엔트로피와 패딩 제외",
+          "titleEn": "Token cross-entropy and masking padding",
+          "question": "어느 정답의 확률을 로그로 바꾸고 무엇으로 평균할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/stable-softmax-logits"
+          ],
+          "page": "ai/masked-token-cross-entropy.html"
+        },
+        {
+          "id": "gradient-check-autodiff",
+          "title": "자동미분과 수치 기울기 검사",
+          "titleEn": "Autodiff and numerical gradient checks",
+          "question": "가중치 한 자리를 움직여 자동미분의 값을 어떻게 확인할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/masked-token-cross-entropy"
+          ],
+          "page": "ai/gradient-check-autodiff.html"
+        },
+        {
+          "id": "adamw-learning-rate-schedule",
+          "title": "AdamW와 학습률 일정",
+          "titleEn": "AdamW and learning-rate schedules",
+          "question": "같은 적응 기울기에서도 학습률이 줄면 얼마를 움직일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/gradient-check-autodiff"
+          ],
+          "page": "ai/adamw-learning-rate-schedule.html"
+        },
+        {
+          "id": "gradient-norm-clipping",
+          "title": "기울기 클리핑과 학습 불안정",
+          "titleEn": "Gradient clipping and training instability",
+          "question": "큰 기울기가 들어오면 방향을 보존하면서 어떻게 이동을 줄일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/adamw-learning-rate-schedule"
+          ],
+          "page": "ai/gradient-norm-clipping.html"
+        },
+        {
+          "id": "training-checkpoint-rng",
+          "title": "학습 루프·체크포인트·난수 상태",
+          "titleEn": "Training loops, checkpoints, and random state",
+          "question": "가중치 외에 무엇을 저장해야 다음 배치를 똑같이 뽑을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/gradient-norm-clipping"
+          ],
+          "page": "ai/training-checkpoint-rng.html"
+        },
+        {
+          "id": "shared-tokenizer-held-out-loss",
+          "title": "같은 토크나이저로 시험 손실 비교",
+          "titleEn": "Held-out loss with the same tokenizer",
+          "question": "같은 시험 위치 두 개에서 어느 모델의 손실이 낮을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/training-checkpoint-rng"
+          ],
+          "page": "ai/shared-tokenizer-held-out-loss.html"
+        },
+        {
+          "id": "autoregressive-decoding-eos",
+          "title": "자기회귀 디코딩과 종료 토큰",
+          "titleEn": "Autoregressive decoding and the end token",
+          "question": "선택한 토큰은 다음 단계에서 어디로 되돌아올까요?",
+          "format": "실험",
+          "requires": [
+            "ai/shared-tokenizer-held-out-loss"
+          ],
+          "page": "ai/autoregressive-decoding-eos.html"
+        },
+        {
+          "id": "temperature-distribution",
+          "title": "온도와 확률 재분배",
+          "titleEn": "Temperature and probability redistribution",
+          "question": "같은 로짓에서 온도만 바꾸면 후보 막대는 어떻게 달라질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/autoregressive-decoding-eos"
+          ],
+          "page": "ai/temperature-distribution.html"
+        },
+        {
+          "id": "top-k-nucleus-sampling",
+          "title": "top-k와 nucleus 샘플링",
+          "titleEn": "Top-k and nucleus sampling",
+          "question": "같은 후보 분포에서 고정 개수와 누적 확률은 어떤 후보를 남길까요?",
+          "format": "실험",
+          "requires": [
+            "ai/temperature-distribution"
+          ],
+          "page": "ai/top-k-nucleus-sampling.html"
+        },
+        {
+          "id": "generation-repetition-memorization",
+          "title": "반복·암기와 실패 예시 분석",
+          "titleEn": "Repetition, memorization, and failure examples",
+          "question": "똑같은 토큰 반복과 훈련 문장 재현을 어떻게 구별할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/top-k-nucleus-sampling"
+          ],
+          "page": "ai/generation-repetition-memorization.html"
+        },
+        {
+          "id": "training-token-compute-budget",
+          "title": "학습 토큰·연산 예산과 품질 보고",
+          "titleEn": "Training token and compute budgets",
+          "question": "훈련량을 늘려 얻은 시험 손실 개선이 비용과 함께 보일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/generation-repetition-memorization"
+          ],
+          "page": "ai/training-token-compute-budget.html"
+        },
+        {
+          "id": "domain-evaluation-baseline",
+          "title": "도메인 평가셋과 원본 기준값",
+          "titleEn": "Domain evaluation data and the original baseline",
+          "question": "튜닝하기 전에 별도 도메인 시험에서 무엇을 기록해야 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/training-token-compute-budget"
+          ],
+          "page": "ai/domain-evaluation-baseline.html"
+        },
+        {
+          "id": "supervised-chat-target-mask",
+          "title": "지도 미세조정 데이터와 채팅 형식",
+          "titleEn": "Supervised fine-tuning data and chat format",
+          "question": "대화 역할 태그 중 어느 위치에 모델이 배울 정답을 둘까요?",
+          "format": "실험",
+          "requires": [
+            "ai/domain-evaluation-baseline"
+          ],
+          "page": "ai/supervised-chat-target-mask.html"
+        },
+        {
+          "id": "full-tuning-memory-ledger",
+          "title": "전체 미세조정의 메모리 장부",
+          "titleEn": "The full fine-tuning memory ledger",
+          "question": "가중치 외에 무엇이 최고 메모리를 차지할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/supervised-chat-target-mask"
+          ],
+          "page": "ai/full-tuning-memory-ledger.html"
+        },
+        {
+          "id": "lora-low-rank-update",
+          "title": "LoRA의 저랭크 갱신",
+          "titleEn": "LoRA and low-rank updates",
+          "question": "작은 두 행렬이 어떻게 원래 가중치를 건드리지 않고 출력을 바꿀까요?",
+          "format": "실험",
+          "requires": [
+            "ai/full-tuning-memory-ledger"
+          ],
+          "page": "ai/lora-low-rank-update.html"
+        },
+        {
+          "id": "qlora-lora-memory-quality",
+          "title": "QLoRA와 LoRA의 품질·최대 메모리 비교",
+          "titleEn": "QLoRA vs. LoRA on quality and peak memory",
+          "question": "고정 기반 가중치를 줄이면 같은 시험에서 어떤 모델을 고를까요?",
+          "format": "실험",
+          "requires": [
+            "ai/lora-low-rank-update"
+          ],
+          "page": "ai/qlora-lora-memory-quality.html"
+        },
+        {
+          "id": "preference-pair-disagreement",
+          "title": "선호 쌍 수집과 평가자 불일치",
+          "titleEn": "Preference pairs and rater disagreement",
+          "question": "같은 후보 두 개에서 평가자들이 갈리면 무엇을 저장할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/qlora-lora-memory-quality"
+          ],
+          "page": "ai/preference-pair-disagreement.html"
+        },
+        {
+          "id": "reward-model-score-limits",
+          "title": "보상 모델의 점수와 한계",
+          "titleEn": "Reward model scores and their limits",
+          "question": "예측 선호 점수가 올라도 실제 요청에는 실패할 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/preference-pair-disagreement"
+          ],
+          "page": "ai/reward-model-score-limits.html"
+        },
+        {
+          "id": "dpo-preference-log-ratio",
+          "title": "DPO로 선호 쌍 학습",
+          "titleEn": "DPO on preference pairs",
+          "question": "선호 답의 상대 확률이 기준 모델보다 오르면 손실은 어떻게 달라질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/reward-model-score-limits"
+          ],
+          "page": "ai/dpo-preference-log-ratio.html"
+        },
+        {
+          "id": "domain-adaptation-general-regression",
+          "title": "도메인 적응 뒤 일반 능력 회귀",
+          "titleEn": "General capability regression after domain adaptation",
+          "question": "도메인 점수가 오르면 일반 시험을 생략해도 될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/dpo-preference-log-ratio"
+          ],
+          "page": "ai/domain-adaptation-general-regression.html"
+        },
+        {
+          "id": "adapter-merge-equivalence",
+          "title": "병합한 어댑터의 출력 동등성 검사",
+          "titleEn": "Output equivalence after merging an adapter",
+          "question": "두 계산 경로를 합친 가중치로 바꾸어도 같은 출력을 얻을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/domain-adaptation-general-regression"
+          ],
+          "page": "ai/adapter-merge-equivalence.html"
+        },
+        {
+          "id": "vae-latent-sampling",
+          "title": "변분 오토인코더와 잠재 표본",
+          "titleEn": "Variational autoencoders and latent samples",
+          "question": "한 입력에서 얻은 잠재 분포에서 다른 그림을 어떻게 표본추출할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/adapter-merge-equivalence"
+          ],
+          "page": "ai/vae-latent-sampling.html"
+        },
+        {
+          "id": "gan-discriminator-mode-collapse",
+          "title": "GAN의 판별기와 모드 붕괴",
+          "titleEn": "GAN discriminators and mode collapse",
+          "question": "생성 이미지가 그럴듯해도 어떻게 다양성 손실을 알 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/vae-latent-sampling"
+          ],
+          "page": "ai/gan-discriminator-mode-collapse.html"
+        },
+        {
+          "id": "diffusion-forward-noising",
+          "title": "확산의 순방향 잡음 과정",
+          "titleEn": "The diffusion forward-noise process",
+          "question": "잡음량을 높이면 원본의 어떤 구조가 사라질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/gan-discriminator-mode-collapse"
+          ],
+          "page": "ai/diffusion-forward-noising.html"
+        },
+        {
+          "id": "diffusion-noise-prediction-reverse",
+          "title": "잡음 예측과 역방향 샘플링",
+          "titleEn": "Noise prediction and reverse sampling",
+          "question": "예측한 잡음을 빼고 나면 왜 다음 시각에도 잡음이 남을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/diffusion-forward-noising"
+          ],
+          "page": "ai/diffusion-noise-prediction-reverse.html"
+        },
+        {
+          "id": "conditional-generation-quality-diversity",
+          "title": "조건부 생성과 품질·다양성 평가",
+          "titleEn": "Conditional generation quality and diversity",
+          "question": "조건을 자주 충족시키는 생성기가 다양성까지 높을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/diffusion-noise-prediction-reverse"
+          ],
+          "page": "ai/conditional-generation-quality-diversity.html"
         }
       ]
     },
@@ -5061,6 +5602,17 @@ const courseCatalog = {
             "ai/observation-dropout-safe-stop"
           ],
           "page": "projects/motion-policy-evaluation.html"
+        },
+        {
+          "id": "small-language-model",
+          "title": "소형 언어 모델",
+          "titleEn": "A small language model",
+          "question": "같은 말뭉치로 학습하고 중간 상태를 복원하면 같은 예측을 얻을까요?",
+          "format": "프로젝트",
+          "requires": [
+            "ai/training-token-compute-budget"
+          ],
+          "page": "projects/small-language-model.html"
         }
       ]
     }

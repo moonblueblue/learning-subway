@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="0번 본 이웃에게도 어떻게 다음 토큰 확률을 줄까요?">
+<title>n-gram과 평활 기준선 · E05</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./ngram-add-one-smoothing.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E05</p><h1>n-gram과 평활 기준선</h1><p>0번 본 이웃에게도 어떻게 다음 토큰 확률을 줄까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">n-gram과 평활 기준선</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-ngram-add-one-smoothing-1"><svg><g>
+<text x="39" y="116" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="68" y="89" width="87" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="111.5" y="116" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="159" y="89" width="87" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="202.5" y="116" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="250" y="89" width="87" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="293.5" y="116" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+<text x="39" y="203" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="68" y="176" width="87" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="111.5" y="203" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red</text>
+<rect x="159" y="176" width="87" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="202.5" y="203" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">fox</text>
+<rect x="250" y="176" width="87" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="293.5" y="203" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">EOS</text>
+<line x1="143.0" y1="141.0" x2="176.0" y2="141.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="176.0,141.0 164.40961225346072,146.88752170992788 164.40961225346072,135.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="143.0" y1="229.0" x2="176.0" y2="229.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="176.0,229.0 164.40961225346072,234.88752170992788 164.40961225346072,223.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="398" y="114" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">fox</text>
+<rect x="410" y="95" width="104.0" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="522.0" y="114" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">2</text>
+<text x="398" y="155" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">bird</text>
+<rect x="410" y="136" width="1" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="418.0" y="155" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">0</text>
+<text x="398" y="196" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">EOS</text>
+<rect x="410" y="177" width="1" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="418.0" y="196" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">0</text>
+<text x="311" y="267" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">red 뒤 관측 합 = 2</text>
+</g></svg></template>
+<template id="figure-ngram-add-one-smoothing-2"><svg><g>
+<text x="296" y="82" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">분모 2 + 3 = 5</text>
+<text x="117" y="130" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">fox · 2</text>
+<text x="117" y="186" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">bird · 0</text>
+<text x="117" y="242" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">EOS · 0</text>
+<line x1="180.0" y1="124.0" x2="359.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="359.0,124.0 347.40961225346075,129.88752170992788 347.40961225346075,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="180.0" y1="180.0" x2="359.0" y2="180.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="359.0,180.0 347.40961225346075,185.88752170992788 347.40961225346075,174.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="180.0" y1="236.0" x2="359.0" y2="236.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="359.0,236.0 347.40961225346075,241.88752170992788 347.40961225346075,230.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="269" y="113" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">+1</text>
+<text x="269" y="169" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">+1</text>
+<text x="269" y="225" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">+1</text>
+<text x="464" y="130" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">3/5 = 0.60</text>
+<text x="464" y="186" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1/5 = 0.20</text>
+<text x="464" y="242" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1/5 = 0.20</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "문서 안에서 세기",
+    "title": "바이그램은 red 뒤의 실제 이웃을 셉니다",
+    "body": "두 훈련 문서에 red fox가 한 번씩 나옵니다. red의 다음 위치는 둘 다 fox이므로 red 뒤의 관측 수는 2입니다.",
+    "takeaway": "각 red 셀이 fox에 연결되고 문서 마지막 EOS 다음에는 선이 없습니다.",
+    "example": [
+      "A red fox · B red fox",
+      "red 바로 뒤 두 위치",
+      "fox 2 · bird 0 · EOS 0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "문서 안에서 세기",
+      "description": "각 red 셀이 fox에 연결되고 문서 마지막 EOS 다음에는 선이 없습니다.",
+      "figure": "figure-ngram-add-one-smoothing-1"
+    },
+    "quiz": [
+      "다음 문서 첫 단어 bird를 red의 바로 뒤로 세나요?",
+      "문서 안의 이웃만 셈",
+      "문서 사이도 이어서 셈",
+      "문서 경계가 끝난 뒤에는 다음 위치 쌍을 만들지 않습니다."
+    ]
+  },
+  {
+    "label": "가상 카운트",
+    "title": "세 후보 모두에 1을 더하고 분모도 3만큼 늘립니다",
+    "body": "출력 어휘 fox, bird, EOS에 각각 1을 더해 3, 1, 1을 얻습니다. 전체 5로 나누어 0.60, 0.20, 0.20입니다.",
+    "takeaway": "세 화살표의 출발은 2·0·0, 끝에는 3/5·1/5·1/5입니다.",
+    "example": [
+      "2, 0, 0 · 후보 3개",
+      "각각 +1 · 분모 2+3",
+      "fox 0.60 · bird 0.20 · EOS 0.20"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "가상 카운트",
+      "description": "세 화살표의 출발은 2·0·0, 끝에는 3/5·1/5·1/5입니다.",
+      "figure": "figure-ngram-add-one-smoothing-2"
+    },
+    "quiz": [
+      "관측이 4, 0이고 후보가 둘이라면 두 번째 후보의 add-one 확률은?",
+      "1/6",
+      "1/4",
+      "분자는 0+1, 분모는 전체 4+2입니다."
+    ]
+  }
+];
+const slug = 'ngram-add-one-smoothing';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

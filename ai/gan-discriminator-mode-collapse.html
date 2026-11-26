@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="생성 이미지가 그럴듯해도 어떻게 다양성 손실을 알 수 있을까요?">
+<title>GAN의 판별기와 모드 붕괴 · E35</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./gan-discriminator-mode-collapse.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E35</p><h1>GAN의 판별기와 모드 붕괴</h1><p>생성 이미지가 그럴듯해도 어떻게 다양성 손실을 알 수 있을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">GAN의 판별기와 모드 붕괴</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-gan-discriminator-mode-collapse-1"><svg><g>
+<text x="87" y="102" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">실제</text>
+<rect x="151" y="76" width="59" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="180.5" y="103" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">●</text>
+<rect x="214" y="76" width="59" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="243.5" y="103" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">●</text>
+<rect x="277" y="76" width="59" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="306.5" y="103" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">◆</text>
+<rect x="340" y="76" width="59" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="369.5" y="103" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">◆</text>
+<text x="92" y="214" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">잡음 z</text>
+<line x1="142.0" y1="208.0" x2="174.0" y2="208.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="174.0,208.0 162.40961225346072,213.88752170992788 162.40961225346072,202.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="178" y="188" width="124" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="240.0" y="215" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">생성기 G</text>
+<line x1="305.0" y1="208.0" x2="338.0" y2="208.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="338.0,208.0 326.40961225346075,213.88752170992788 326.40961225346075,202.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="375" y="216" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">●</text>
+<line x1="402.0" y1="207.0" x2="480.0" y2="158.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="480.0,158.0 473.3173971243283,169.1509111199966 467.0536722460397,159.18008376272093" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="403.0" y1="96.0" x2="480.0" y2="145.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="480.0,145.0 467.06077011454727,143.74448019872 473.3825023461781,133.8103295490143" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="480" y="132" width="105" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="532.5" y="159" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">D(x)</text>
+</g></svg></template>
+<template id="figure-gan-discriminator-mode-collapse-2"><svg><g>
+<text x="313" y="83" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">한 표본의 진짜 점수</text>
+<rect x="64" y="117" width="147" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.5" y="144" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">실제 ◆ · .85</text>
+<rect x="64" y="211" width="147" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.5" y="238" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">생성 ● · .80</text>
+<line x1="215.0" y1="136.0" x2="313.0" y2="136.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="313.0,136.0 301.40961225346075,141.88752170992788 301.40961225346075,130.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="395" y="145" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">D ↑ .85</text>
+<line x1="215.0" y1="224.0" x2="313.0" y2="192.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="313.0,192.0 303.8096113939194,201.19438726991763 300.15461693666776,190.00096674458453" fill="#a34123" stroke="none" stroke-width="1"/>
+<line x1="215.0" y1="239.0" x2="313.0" y2="251.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="313.0,251.0 300.7799624856435,255.4351643879027 302.2111152805227,243.74741656305645" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="395" y="199" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">D ↓ .80</text>
+<text x="395" y="259" font-size="22" font-weight="650" fill="#11664f" text-anchor="middle">G ↑ .80</text>
+<text x="491" y="116" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">학습 방향</text>
+</g></svg></template>
+<template id="figure-gan-discriminator-mode-collapse-3"><svg><g>
+<text x="169" y="87" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">서로 다른 잡음</text>
+<rect x="53" y="101" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="87.5" y="128" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">z₁</text>
+<rect x="126" y="101" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="160.5" y="128" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">z₂</text>
+<rect x="199" y="101" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="233.5" y="128" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">z₃</text>
+<line x1="87.0" y1="142.0" x2="87.0" y2="173.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="87.0,173.0 81.11247829007212,161.40961225346072 92.88752170992788,161.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="160.0" y1="142.0" x2="160.0" y2="173.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="160.0,173.0 154.11247829007212,161.40961225346072 165.88752170992788,161.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="233.0" y1="142.0" x2="233.0" y2="173.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="233.0,173.0 227.11247829007212,161.40961225346072 238.88752170992788,161.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="53" y="175" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="87.5" y="202" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">●</text>
+<rect x="126" y="175" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="160.5" y="202" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">●</text>
+<rect x="199" y="175" width="69" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="233.5" y="202" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">●</text>
+<text x="440" y="90" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">●    ◆</text>
+<text x="340" y="135" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">실제</text>
+<rect x="391" y="107" width="62" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="422.0" y="134" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<rect x="457" y="107" width="62" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="488.0" y="134" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<text x="340" y="209" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">생성</text>
+<rect x="391" y="181" width="62" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="422.0" y="208" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">3</text>
+<rect x="457" y="181" width="62" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="488.0" y="208" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<text x="442" y="262" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">◆ 2/4 → 0/3</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "판별기 입력",
+    "title": "판별기는 실제 표본과 생성 표본을 같은 입력으로 받습니다",
+    "body": "진짜 말뭉치에는 원과 마름모가 각각 두 개 있습니다. 생성기는 잡음 z를 그림으로 바꾸고 판별기는 진짜와 생성 표본을 구별하는 점수를 냅니다. 생성기는 그 점수가 높아지도록 학습합니다.",
+    "takeaway": "실제 모양 두 종류와 생성 경로가 같은 판별기 입력으로 모입니다.",
+    "example": [
+      "실제 ● ● ◆ ◆",
+      "잡음 z → 생성기 → 판별기",
+      "진짜 점수 D(x)"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "판별기 입력",
+      "description": "실제 모양 두 종류와 생성 경로가 같은 판별기 입력으로 모입니다.",
+      "figure": "figure-gan-discriminator-mode-collapse-1"
+    },
+    "quiz": [
+      "생성기가 판별기의 어떤 점수를 높이려 하나요?",
+      "생성한 표본의 진짜 점수",
+      "실제 표본의 개수",
+      "생성기는 자기 출력이 실제처럼 보이도록 학습합니다."
+    ]
+  },
+  {
+    "label": "서로 다른 학습 신호",
+    "title": "생성기가 높이려는 가짜 점수를 판별기는 낮추려 합니다",
+    "body": "예시 점수 D(실제 ◆)=.85, D(생성 ●)=.80으로 둡니다. 판별기는 실제 ◆ 점수를 높이고 생성 ● 점수를 낮추며, 생성기는 판별기를 고정한 채 자기 ●의 점수를 높입니다. 높은 .80은 지금 그 표본 하나가 진짜 같다는 신호입니다.",
+    "takeaway": "실제의 위쪽 화살표와 생성의 반대 방향 두 화살표가 각각 D와 G로 표시됩니다.",
+    "example": [
+      "실제 ◆ .85 · 생성 ● .80",
+      "D 실제↑·생성↓, G 생성↑",
+      "생성 ● 1개의 점수"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "서로 다른 학습 신호",
+      "description": "실제의 위쪽 화살표와 생성의 반대 방향 두 화살표가 각각 D와 G로 표시됩니다.",
+      "figure": "figure-gan-discriminator-mode-collapse-2"
+    },
+    "quiz": [
+      "생성한 원 하나가 .8이면 마름모도 생성한다고 결론 내릴 수 있나요?",
+      "여러 잡음의 출력을 비교해야 함",
+      "높은 점수면 두 모양 모두 나온다",
+      "한 표본의 점수는 다른 입력의 출력 종류를 말해 주지 않습니다."
+    ]
+  },
+  {
+    "label": "모드 붕괴 검사",
+    "title": "서로 다른 잡음에서 모두 원만 나오면 한 모드가 사라집니다",
+    "body": "세 잡음 z₁·z₂·z₃에서 원이 나옵니다. 실제에는 ●와 ◆ 두 종류가 있지만 생성 표본에서는 ◆가 0/3입니다. 개별 표본이 진짜처럼 보여도 이 붕괴는 드러납니다.",
+    "takeaway": "세 잡음선이 같은 원으로 이어지고 실제 막대 두 종류 중 생성 ◆는 길이 0입니다.",
+    "example": [
+      "잡음 z₁·z₂·z₃",
+      "모양별 실제·생성 카운트",
+      "◆: 실제 2/4 · 생성 0/3"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "모드 붕괴 검사",
+      "description": "세 잡음선이 같은 원으로 이어지고 실제 막대 두 종류 중 생성 ◆는 길이 0입니다.",
+      "figure": "figure-gan-discriminator-mode-collapse-3"
+    },
+    "quiz": [
+      "생성 10개가 모두 ◆이고 실제에는 ●도 있으면 무엇을 의심하나요?",
+      "● 모드 붕괴",
+      "입력 잡음이 반드시 동일",
+      "잡음이 달라도 생성기가 특정 모드에 몰릴 수 있습니다."
+    ]
+  }
+];
+const slug = 'gan-discriminator-mode-collapse';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

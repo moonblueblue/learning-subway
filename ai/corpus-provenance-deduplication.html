@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 문장이 두 문서에 있으면 어떻게 시험 누수를 막을까요?">
+<title>말뭉치 권리·출처·중복 관리 · E02</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./corpus-provenance-deduplication.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E02</p><h1>말뭉치 권리·출처·중복 관리</h1><p>같은 문장이 두 문서에 있으면 어떻게 시험 누수를 막을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">말뭉치 권리·출처·중복 관리</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-corpus-provenance-deduplication-1"><svg><g>
+<rect x="35" y="74" width="165" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="117.5" y="101" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A · 자체 공개</text>
+<rect x="35" y="123" width="165" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="117.5" y="150" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B · 미확인</text>
+<rect x="35" y="172" width="165" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="117.5" y="199" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">C · 공개 허락</text>
+<rect x="35" y="221" width="165" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="117.5" y="248" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">D · 공개 허락</text>
+<line x1="204.0" y1="94.0" x2="413.0" y2="94.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="413.0,94.0 401.40961225346075,99.88752170992788 401.40961225346075,88.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="204" y1="143" x2="366" y2="143" stroke="#a34123" stroke-width="3" stroke-dasharray="7 5" stroke-linecap="round"/>
+<text x="384" y="150" font-size="23" font-weight="650" fill="#a34123" text-anchor="middle">×</text>
+<line x1="204.0" y1="192.0" x2="413.0" y2="192.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="413.0,192.0 401.40961225346075,197.88752170992788 401.40961225346075,186.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="204.0" y1="241.0" x2="413.0" y2="241.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="413.0,241.0 401.40961225346075,246.88752170992788 401.40961225346075,235.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="498" y="100" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">후보 A</text>
+<text x="498" y="198" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">후보 C</text>
+<text x="498" y="247" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">후보 D</text>
+</g></svg></template>
+<template id="figure-corpus-provenance-deduplication-2"><svg><g>
+<rect x="34" y="72" width="141" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="104.5" y="99" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A · red fox</text>
+<rect x="34" y="125" width="141" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="104.5" y="152" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">C · red  fox</text>
+<rect x="34" y="214" width="141" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="104.5" y="241" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">D · blue fox</text>
+<line x1="179.0" y1="90.0" x2="238.0" y2="118.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="238.0,118.0 225.00470228806205,118.34962462456208 230.05318683011876,107.71174648237117" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="179.0" y1="144.0" x2="238.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="238.0,124.0 228.91326497361044,133.29684067628273 225.13301349849692,122.14509882469781" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="179.0" y1="233.0" x2="237.0" y2="233.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="237.0,233.0 225.40961225346072,238.88752170992788 225.40961225346072,227.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="242" y="100" width="138" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="311.0" y="127" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">red fox</text>
+<rect x="242" y="214" width="138" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="311.0" y="241" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">blue fox</text>
+<line x1="385.0" y1="119.0" x2="433.0" y2="119.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="433.0,119.0 421.40961225346075,124.88752170992788 421.40961225346075,113.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="385.0" y1="233.0" x2="433.0" y2="233.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="433.0,233.0 421.40961225346075,238.88752170992788 421.40961225346075,227.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="515" y="126" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A → 훈련</text>
+<text x="515" y="239" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">D → 시험</text>
+<text x="314" y="173" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">A = C · 공백 정리</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "원문 대장",
+    "title": "출처와 허락을 문서 ID에 붙입니다",
+    "body": "A는 직접 작성해 공개했고 B는 허락을 확인하지 못했습니다. C와 D는 공개 라이선스로 받았습니다. 허락 근거가 있는 A·C·D가 분할 전 후보입니다.",
+    "takeaway": "B의 점선은 후보 대장에 도달하지 않습니다.",
+    "example": [
+      "A·B·C·D 문서",
+      "허락 검사",
+      "후보 A·C·D"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "원문 대장",
+      "description": "B의 점선은 후보 대장에 도달하지 않습니다.",
+      "figure": "figure-corpus-provenance-deduplication-1"
+    },
+    "quiz": [
+      "새 문서 E의 작성자는 알지만 재사용 허락은 모릅니다. 다음 행동은?",
+      "허락 확인까지 제외",
+      "바로 훈련에 포함",
+      "작성자를 안다고 재사용 허락이 생기는 것은 아닙니다."
+    ]
+  },
+  {
+    "label": "분할 전 중복",
+    "title": "같은 텍스트의 문서 묶음은 한쪽에만 둡니다",
+    "body": "공백을 정리한 A와 C의 텍스트는 모두 red fox입니다. 동일 내용 묶음에서 A를 남겨 훈련에 쓰고 후보 문서 D를 시험에 둡니다. C의 출처는 중복 기록에 남깁니다.",
+    "takeaway": "A와 C가 한 묶음으로 합쳐져 훈련 쪽에 놓이고 D는 독립된 시험 가지에 갑니다.",
+    "example": [
+      "A: red fox · C: red  fox · D: blue fox",
+      "공백 정리, 묶음 분할",
+      "훈련 A · 시험 D"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "분할 전 중복",
+      "description": "A와 C가 한 묶음으로 합쳐져 훈련 쪽에 놓이고 D는 독립된 시험 가지에 갑니다.",
+      "figure": "figure-corpus-provenance-deduplication-2"
+    },
+    "quiz": [
+      "재배포 가능한 두 문서가 공백 정리 뒤 같은 문장이 됩니다. 서로 다른 분할에 두나요?",
+      "같은 쪽에 묶음",
+      "파일명이 다르면 분할",
+      "다른 파일 이름이어도 같은 문장이 시험에 들어가면 누수가 생깁니다."
+    ]
+  }
+];
+const slug = 'corpus-provenance-deduplication';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

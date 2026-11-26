@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="작은 두 행렬이 어떻게 원래 가중치를 건드리지 않고 출력을 바꿀까요?">
+<title>LoRA의 저랭크 갱신 · E27</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./lora-low-rank-update.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E27</p><h1>LoRA의 저랭크 갱신</h1><p>작은 두 행렬이 어떻게 원래 가중치를 건드리지 않고 출력을 바꿀까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">LoRA의 저랭크 갱신</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-lora-low-rank-update-1"><svg><g>
+<text x="89" y="173" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">x=[1,2]</text>
+<line x1="147.0" y1="156.0" x2="248.0" y2="103.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="248.0,103.0 240.4725576770491,113.59894391317586 235.00114164598665,103.17228317473608" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="147.0" y1="176.0" x2="211.0" y2="225.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="211.0,225.0 198.21808146720002,222.62880649864584 205.376254032078,213.27935661798887" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="361" y="108" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">W=I → Wx=[1,2]</text>
+<text x="258" y="212" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">A=[1,0]</text>
+<line x1="288.0" y1="228.0" x2="336.0" y2="228.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="336.0,228.0 324.40961225346075,233.88752170992788 324.40961225346075,222.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="365" y="237" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<line x1="389.0" y1="228.0" x2="441.0" y2="228.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="441.0,228.0 429.40961225346075,233.88752170992788 429.40961225346075,222.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="484" y="210" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">B=[0,2]ᵀ</text>
+<text x="505" y="263" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">Δ=[0,2]</text>
+</g></svg></template>
+<template id="figure-lora-low-rank-update-2"><svg><g>
+<text x="172" y="102" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">고정 Wx</text>
+<rect x="115" y="116" width="56" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="143.0" y="143" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<rect x="175" y="116" width="56" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="203.0" y="143" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<text x="172" y="197" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">학습 BAx</text>
+<rect x="115" y="209" width="56" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="143.0" y="236" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<rect x="175" y="209" width="56" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="203.0" y="236" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<line x1="238.0" y1="135.0" x2="334.0" y2="165.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="334.0,165.0 321.18110646064923,167.16239876683076 324.6933074558822,155.9233555820853" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="238.0" y1="229.0" x2="334.0" y2="185.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="334.0,185.0 325.9166498694887,195.18132853156027 321.0105225623437,184.47705077051657" fill="#11664f" stroke="none" stroke-width="1"/>
+<rect x="340" y="155" width="59" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="369.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">+</text>
+<line x1="403.0" y1="176.0" x2="438.0" y2="176.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="438.0,176.0 426.40961225346075,181.88752170992788 426.40961225346075,170.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="442" y="155" width="61" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="472.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<rect x="507" y="155" width="61" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="537.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<text x="504" y="237" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">출력</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "분기 계산",
+    "title": "입력은 고정 W와 학습 가능한 A·B 양쪽으로 흐릅니다",
+    "body": "기준 W는 항등이어서 Wx=[1,2]입니다. 아래 분기에서 A는 첫 좌표를 골라 Ax=1 스칼라로 줄이고 B가 다시 [0,2] 벡터를 만듭니다.",
+    "takeaway": "파란 경로 Wx는 기본 벡터를 유지하고 아래 초록 경로는 2→1→2 차원입니다.",
+    "example": [
+      "[1,2]",
+      "고정 Wx · 학습 BAx",
+      "[1,2] · [0,2]"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "분기 계산",
+      "description": "파란 경로 Wx는 기본 벡터를 유지하고 아래 초록 경로는 2→1→2 차원입니다.",
+      "figure": "figure-lora-low-rank-update-1"
+    },
+    "quiz": [
+      "입력이 [3,5]이면 같은 A=[1,0]의 Ax는?",
+      "3",
+      "5",
+      "A가 첫 좌표에만 1을 곱합니다."
+    ]
+  },
+  {
+    "label": "합쳐서 출력",
+    "title": "원래 출력과 저랭크 경로의 출력을 같은 좌표끼리 더합니다",
+    "body": "스케일이 1인 이 예에서 [1,2]+[0,2]=[1,4]입니다. 실제 큰 d×d 행렬에 랭크 r을 쓰면 고정 d²와 별도로 학습 매개변수 2dr개만 추가합니다. 2×2 예는 매개변수 절약을 위한 크기가 아닙니다.",
+    "takeaway": "두 경로의 벡터가 하나의 더하기 점에 들어가고 끝 벡터의 둘째 값만 바뀝니다.",
+    "example": [
+      "[1,2] · [0,2]",
+      "좌표별 합",
+      "[1,4]"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "합쳐서 출력",
+      "description": "두 경로의 벡터가 하나의 더하기 점에 들어가고 끝 벡터의 둘째 값만 바뀝니다.",
+      "figure": "figure-lora-low-rank-update-2"
+    },
+    "quiz": [
+      "어댑터 두 번째 좌표가 3이고 기준이 [1,2]라면 두 번째 좌표 출력은?",
+      "5",
+      "3",
+      "어댑터가 기준값 2를 덮는 대신 더합니다."
+    ]
+  }
+];
+const slug = 'lora-low-rank-update';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

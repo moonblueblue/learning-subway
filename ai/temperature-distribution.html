@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 로짓에서 온도만 바꾸면 후보 막대는 어떻게 달라질까요?">
+<title>온도와 확률 재분배 · E20</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./temperature-distribution.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">생성 모델·언어 모델 · E20</p><h1>온도와 확률 재분배</h1><p>같은 로짓에서 온도만 바꾸면 후보 막대는 어떻게 달라질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">온도와 확률 재분배</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-temperature-distribution-1"><svg><g>
+<text x="143" y="77" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">exp(z)</text>
+<text x="384" y="77" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">T = 1 · p = exp(z) / 7</text>
+<text x="143" y="117" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">fox · 4</text>
+<text x="143" y="158" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">bird · 2</text>
+<text x="143" y="199" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">EOS · 1</text>
+<rect x="266.0" y="96.0" width="188.42999999999998" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="462.42999999999995" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">.571</text>
+<rect x="266.0" y="137.0" width="94.38" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="368.38" y="156.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">.286</text>
+<rect x="266.0" y="178.0" width="47.19" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="321.19" y="197.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">.143</text>
+<text x="309" y="262" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">분모 4 + 2 + 1 = 7</text>
+</g></svg></template>
+<template id="figure-temperature-distribution-2"><svg><g>
+<text x="316" y="80" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">u = .50</text>
+<text x="81" y="127" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">T = 1</text>
+<text x="81" y="224" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">T = 2</text>
+<rect x="155" y="109" width="231" height="34" fill="#c9e8f6" stroke="#566d7c" stroke-width="2"/>
+<rect x="386" y="109" width="115" height="34" fill="#cbe7d9" stroke="#566d7c" stroke-width="2"/>
+<rect x="501" y="109" width="58" height="34" fill="#f6dacb" stroke="#566d7c" stroke-width="2"/>
+<rect x="155" y="206" width="183" height="34" fill="#c9e8f6" stroke="#566d7c" stroke-width="2"/>
+<rect x="338" y="206" width="129" height="34" fill="#cbe7d9" stroke="#566d7c" stroke-width="2"/>
+<rect x="467" y="206" width="92" height="34" fill="#f6dacb" stroke="#566d7c" stroke-width="2"/>
+<line x1="357" y1="87" x2="357" y2="244" stroke="#a34123" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="265" y="103" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">fox .571</text>
+<text x="443" y="103" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">bird .286</text>
+<text x="530" y="165" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">EOS .143</text>
+<text x="246" y="200" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">fox .453</text>
+<text x="404" y="200" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">bird .320</text>
+<text x="512" y="264" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">EOS .227</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "온도 1",
+    "title": "원래 지수 가중치 4·2·1로 확률을 구합니다",
+    "body": "T=1에서는 로짓을 바꾸지 않아 지수가 4,2,1입니다. 합 7을 써서 각 확률은 약 .571,.286,.143입니다.",
+    "takeaway": "후보 세 개의 막대 길이는 4 대 2 대 1입니다.",
+    "example": [
+      "ln 4 · ln 2 · 0",
+      "exp(z/1) ÷ 7",
+      ".571 · .286 · .143"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "온도 1",
+      "description": "후보 세 개의 막대 길이는 4 대 2 대 1입니다.",
+      "figure": "figure-temperature-distribution-1"
+    },
+    "quiz": [
+      "두 지수 가중치가 3,1이면 첫 확률은?",
+      "0.75",
+      "3",
+      "가중치 3을 합 4로 나눕니다."
+    ]
+  },
+  {
+    "label": "온도 2",
+    "title": "온도를 올리면 큰 확률은 내려가고 작은 확률은 올라갑니다",
+    "body": "T=2의 지수는 원래 가중치의 제곱근인 2,√2,1입니다. 합 약 4.414로 나누면 .453,.320,.227로 간격이 좁아집니다. 같은 난수 u=.5라면 T=1에서는 fox, T=2에서는 bird가 선택됩니다.",
+    "takeaway": "동일 축에서 u=.5의 세로선이 윗줄 fox 구간에서 아래줄 bird 구간으로 옮겨갑니다.",
+    "example": [
+      "같은 로짓 · u=.5",
+      "exp(z/2) ÷ (2+√2+1)",
+      ".453 · .320 · .227 · bird"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "온도 2",
+      "description": "동일 축에서 u=.5의 세로선이 윗줄 fox 구간에서 아래줄 bird 구간으로 옮겨갑니다.",
+      "figure": "figure-temperature-distribution-2"
+    },
+    "quiz": [
+      "가장 큰 로짓 후보는 양의 온도를 올리면 순위가 바뀌나요?",
+      "순위 유지 · 확률 간격 변화",
+      "무조건 꼴찌로 이동",
+      "모든 로짓을 같은 양수로 나누고 증가 함수인 지수를 취합니다."
+    ]
+  }
+];
+const slug = 'temperature-distribution';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

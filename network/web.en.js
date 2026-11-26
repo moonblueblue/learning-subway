@@ -1,6 +1,22 @@
 // English for 5.11 The journey of a web request. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // Data in the page: the products 연필, 공책, 지우개 → pencil, notebook, eraser.
 window.lessonText = {
+  // Chapter 5 reading diagrams
+  "상품 데이터가 HTML 응답으로 돌아온다": "Product data comes back as an HTML response",
+  "브라우저": "Browser",
+  "상품 목록 생성": "Build product list",
+  "DB · 상품 3행": "DB · 3 product rows",
+  "연필 · 공책 · 지우개": "Pencil · notebook · eraser",
+  "브라우저 · HTTP 200": "Browser · HTTP 200",
+  "연필 / pencil.jpg": "Pencil / pencil.jpg",
+  "응답 HTML": "Response HTML",
+  "상품 3개와 이미지 URL": "3 products and image URLs",
+  "상품 3행": "3 rows",
+  "HTML의 두 참조가 추가 요청을 만든다": "Two HTML references trigger two more requests",
+  "받은 HTML": "Received HTML",
+  "완성된 상품 행": "Rendered product row",
+  "스타일 + ✎ 연필": "Styles + ✎ pencil",
+  "같은 서버와의 연결을 사용할 수 있다.": "The browser can reuse its connection to the server.",
   // Page
   '웹 요청의 여정 · 레슨 5.11': 'The journey of a web request · Lesson 5.11',
   '주소를 입력한 뒤 DNS, TCP, TLS, HTTP 요청과 데이터베이스 조회, 추가 파일 요청을 거쳐 화면이 뜨기까지를 한 단계씩 따라가 보세요.':

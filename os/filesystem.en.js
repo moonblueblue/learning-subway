@@ -4,6 +4,31 @@ window.lessonText = (() => {
 const t = (text) => window.courseI18n?.translate(text) ?? text;
 const blocks = (list) => `${list.includes(',') ? 'blocks' : 'block'} ${list}`;
 return {
+  "아이노드 한 장에서 두 블록을 찾는다": "One inode points to both blocks",
+  "디렉터리": "Directory",
+  "메모.txt → 3": "note.txt → 3",
+  "아이노드 3": "Inode 3",
+  "순서: 2, 7": "Order: 2, 7",
+  "첫째 · 블록 2": "First · block 2",
+  "둘째 · 블록 7": "Second · block 7",
+  "같은 파일의 이름 2개": "Two names for one file",
+  "마지막 이름까지 삭제": "Delete the last name",
+  "블록 2·7 재사용 가능": "Blocks 2 and 7 can be reused",
+  "메모-사본.txt 지우기": "Delete notes-copy.txt",
+  "마지막 이름을 지울 때 블록을 돌려준다": "Deleting the last name releases the blocks",
+  "이름 2개": "2 names",
+  "블록 2·7 사용 중": "Blocks 2 and 7 in use",
+  "이름 1개": "1 name",
+  "블록 2·7 읽기 가능": "Blocks 2 and 7 readable",
+  "이름 0개": "0 names",
+  "아이노드 해제": "Inode released",
+  "이 예시에는 파일을 열고 있는 프로그램이 없다.": "In this example no program still has the file open.",
+  "이름 하나를 지워도 다른 이름이 같은 아이노드를 가리키면 블록은 계속 쓰입니다. 마지막 이름도 지워지고 열려 있는 파일 참조가 없으면 아이노드와 블록을 다시 쓸 수 있습니다. 논리적 삭제가 블록의 내용을 즉시 덮어쓰는 것은 아닙니다.": "Removing one name keeps the blocks in use as long as another name points to the inode. Once the last name is gone and there are no open references, the inode and blocks can be reused. Logical deletion does not immediately overwrite the block contents.",
+  "메모.txt를 지운 뒤 메모-사본.txt로 읽으면 블록 2와 7이 남습니다. 마지막 이름도 지우면 두 블록을 다시 쓸 수 있습니다. 이 실습의 열기는 읽고 닫는 동작입니다.": "Remove notes.txt and read via notes-copy.txt: blocks 2 and 7 remain. Removing the last name makes both reusable. An open action in this exercise reads and closes the file.",
+  "메모.txt를 지운 뒤 남은 메모-사본.txt를 열어 보세요.": "Remove notes.txt, then open the remaining notes-copy.txt.",
+  "이름 하나가 남아 블록 2와 7을 계속 읽습니다.": "One name remains, so you can still read blocks 2 and 7.",
+  "이제 마지막 이름을 지워 보세요.": "Now remove the last name.",
+  "열린 참조가 없어 블록 2와 7을 다시 쓸 수 있습니다.": "With no open references, blocks 2 and 7 can now be reused.",
   // Page
   '파일 시스템 · 레슨 5.5': 'File systems · Lesson 5.5',
   '파일 이름이 디렉터리와 아이노드를 거쳐 디스크 블록으로 이어지는 길을 따라가며, 파일을 만들고, 덧붙이고, 지우고, 이름을 하나 더 붙여 보세요.':

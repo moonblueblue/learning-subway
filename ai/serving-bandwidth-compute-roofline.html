@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 장비에서 어느 쪽이 처리 시간의 하한을 정하나요?">
+<title>대역폭 병목과 연산 병목 · G05</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-bandwidth-compute-roofline.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G05</p><h1>대역폭 병목과 연산 병목</h1><p>같은 장비에서 어느 쪽이 처리 시간의 하한을 정하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">대역폭 병목과 연산 병목</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-bandwidth-compute-roofline-1"><svg><g>
+<text x="309" y="84" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">같은 GPU · 100 GFLOP/s · 10 GB/s</text>
+<text x="189.0" y="132.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">1 GFLOP</text>
+<rect x="201.0" y="113.0" width="27.0" height="22" fill="#cbe7d9" stroke="#12649c" stroke-width="1"/>
+<text x="236.0" y="132.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">10</text>
+<text x="189.0" y="173.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">1 GB</text>
+<rect x="201.0" y="154.0" width="270.0" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="479.0" y="173.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">100</text>
+<text x="547" y="131" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="547" y="173" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="309" y="242" font-size="25" font-weight="650" fill="#12649c" text-anchor="middle">max(10, 100) = 100 ms</text>
+</g></svg></template>
+<template id="figure-serving-bandwidth-compute-roofline-2"><svg><g>
+<text x="309" y="84" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">같은 GPU · 100 GFLOP/s · 10 GB/s</text>
+<text x="189.0" y="132.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">1 GFLOP</text>
+<rect x="201.0" y="113.0" width="27.0" height="22" fill="#cbe7d9" stroke="#12649c" stroke-width="1"/>
+<text x="236.0" y="132.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">10</text>
+<text x="189.0" y="173.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">0.05 GB</text>
+<rect x="201.0" y="154.0" width="13.5" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="222.5" y="173.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">5</text>
+<text x="547" y="131" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="547" y="173" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="309" y="242" font-size="25" font-weight="650" fill="#11664f" text-anchor="middle">max(10, 5) = 10 ms</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "대역폭 제한",
+    "title": "1 GFLOP에 1 GB를 읽으면 메모리가 오래 걸립니다",
+    "body": "연산은 10 ms지만 이동은 100 ms입니다. 완전히 겹친다고 가정해도 느린 쪽인 100 ms보다 빨라질 수 없습니다.",
+    "takeaway": "1 GB÷10 GB/s 막대가 1 GFLOP÷100 GFLOP/s보다 깁니다.",
+    "example": [
+      "1 GFLOP · 1 GB",
+      "max(FLOP÷연산률, B÷대역폭)",
+      "100 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "대역폭 제한",
+      "description": "1 GB÷10 GB/s 막대가 1 GFLOP÷100 GFLOP/s보다 깁니다.",
+      "figure": "figure-serving-bandwidth-compute-roofline-1"
+    },
+    "quiz": [
+      "이동만 200 ms이고 연산이 20 ms이면 겹침 하한은?",
+      "200 ms",
+      "220 ms",
+      "완전 겹침 하한은 두 시간의 최댓값입니다."
+    ]
+  },
+  {
+    "label": "연산 제한",
+    "title": "재사용으로 0.05 GB만 읽으면 병목이 연산으로 옮겨갑니다",
+    "body": "연산량과 장비는 그대로 둡니다. 이동은 5 ms로 줄어들지만 연산은 10 ms여서 하한이 10 ms입니다.",
+    "takeaway": "이동 막대가 줄어 연산 막대가 가장 길어집니다.",
+    "example": [
+      "1 GFLOP · 0.05 GB",
+      "max(10, 0.05÷10×1000) ms",
+      "10 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "연산 제한",
+      "description": "이동 막대가 줄어 연산 막대가 가장 길어집니다.",
+      "figure": "figure-serving-bandwidth-compute-roofline-2"
+    },
+    "quiz": [
+      "연산 10 ms, 전송 5 ms에서 전송이 2 ms가 되면 하한은?",
+      "10 ms",
+      "2 ms",
+      "연산이 여전히 더 깁니다."
+    ]
+  }
+];
+const slug = 'serving-bandwidth-compute-roofline';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

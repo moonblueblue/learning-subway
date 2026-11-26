@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 요청에서 서빙 후보의 개선과 복귀를 어떻게 입증하나요?">
+<title>추론 서비스 운영 · 졸업 과제</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="stylesheet" href="./inference-service-operations/workbench.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./inference-service-operations.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · 졸업 과제</p><h1>추론 서비스 운영</h1><p>같은 요청에서 서빙 후보의 개선과 복귀를 어떻게 입증하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">추론 서비스 운영</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <div class="serving-actions">
+        <button id="open-results" class="action primary" type="button">실행 결과</button>
+        <button id="open-editor" class="action" type="button">입력 편집</button>
+        </div>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-inference-service-operations-1"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="147.91666666666666" y1="230" x2="147.91666666666666" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="147.91666666666666" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<line x1="299.58333333333337" y1="230" x2="299.58333333333337" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="299.58333333333337" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<line x1="413.3333333333333" y1="230" x2="413.3333333333333" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="413.3333333333333" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">12</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R03</text>
+<rect x="147.91666666666666" y="95.0" width="151.6666666666667" height="26" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.6"/>
+<rect x="299.58333333333337" y="95.0" width="113.74999999999994" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<rect x="413.3333333333333" y="95.0" width="151.66666666666669" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">후보 v2 · 모의 GPU 시계</text>
+<text x="234" y="159" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">대기 4 ms</text>
+<text x="410" y="153" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">hold</text>
+<text x="553" y="153" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">cool</text>
+<text x="309" y="206" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">도착 1 · 완료 12 → 11 ms</text>
+</g></svg></template>
+<template id="figure-inference-service-operations-2"><svg><g>
+<text x="306" y="77" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">모의 전체 지연 p95 · 같은 8건</text>
+<text x="170.0" y="128.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">후보</text>
+<rect x="182.0" y="109.0" width="108.0" height="22" fill="#cbe7d9" stroke="#12649c" stroke-width="1"/>
+<text x="298.0" y="128.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">12</text>
+<text x="170.0" y="169.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">제거</text>
+<rect x="182.0" y="150.0" width="252.0" height="22" fill="#f6dacb" stroke="#12649c" stroke-width="1"/>
+<text x="442.0" y="169.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">28</text>
+<text x="501" y="170" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="501" y="129" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="305" y="218" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">R03 프리필 3→5 ms · 정답 8∕8</text>
+<text x="305" y="257" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">접두사 재사용만 끔 · 배치 상한 3</text>
+</g></svg></template>
+<template id="figure-inference-service-operations-3"><svg><g>
+<text x="305" y="78" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">R01 · 동일 입력 · 완료 10 ms</text>
+<text x="125" y="129" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">후보 v2</text>
+<rect x="229" y="105" width="157" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="307.5" y="132" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">ready</text>
+<rect x="390" y="105" width="157" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="468.5" y="132" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">warm</text>
+<text x="125" y="187" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">불량 v-bad</text>
+<rect x="229" y="163" width="157" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="307.5" y="190" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">warm</text>
+<rect x="390" y="163" width="157" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="468.5" y="190" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">cool</text>
+<text x="310" y="248" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">R01–R03 · 0/3 &lt; 3/3 → 경보</text>
+</g></svg></template>
+<template id="figure-inference-service-operations-4"><svg><g>
+<text x="305" y="77" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">같은 모델 · 같은 입력 8건</text>
+<text x="150.0" y="129.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">기준</text>
+<rect x="162.0" y="110.0" width="304.0" height="22" fill="#c9e8f6" stroke="#12649c" stroke-width="1"/>
+<text x="474.0" y="129.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">38</text>
+<text x="150.0" y="170.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="end">복귀</text>
+<rect x="162.0" y="151.0" width="304.0" height="22" fill="#cbe7d9" stroke="#12649c" stroke-width="1"/>
+<text x="474.0" y="170.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="start">38</text>
+<line x1="282" y1="93" x2="282" y2="186" stroke="#a34123" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="282" y="215" font-size="18" font-weight="650" fill="#a34123" text-anchor="middle">한도 15 ms</text>
+<text x="541" y="171" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="541" y="130" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="305" y="257" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">회복 ✓ · p95 38 &gt; 15 → 보류</text>
+</g></svg></template>
+<dialog id="project-dialog" aria-labelledby="project-dialog-title">
+  <div class="serving-dialog-header">
+    <h2 id="project-dialog-title">실행 결과</h2>
+    <button id="project-close" class="action" type="button">닫기</button>
+  </div>
+  <div id="project-results">
+    <div class="serving-fields">
+      <label>부하 <select id="project-scenario">
+        <option value="regular">기본 부하</option><option value="burst">버스트</option><option value="edited" disabled>편집 입력</option>
+      </select></label>
+      <label>보기 <select id="project-result-view">
+        <option value="summary">판별 비교</option><option value="checks">예산 검사</option><option value="requests">요청 기록</option>
+        <option value="memory">메모리 장부</option><option value="kernels">커널 시간</option><option value="rollback">복귀</option>
+        <option value="downloads">파일 받기</option>
+      </select></label>
+      <label id="project-run-field" hidden>실행판 <select id="project-run">
+        <option value="baseline">기준판</option><option value="candidate" selected>후보판</option><option value="ablation">제거판</option>
+        <option value="fault">불량판</option><option value="rollback">복귀판</option>
+      </select></label>
+      <label id="project-record-field" hidden>기록 <select id="project-record"></select></label>
+    </div>
+    <section id="project-summary" class="serving-result" aria-label="판별 비교">
+      <p id="project-mixture"></p>
+      <table><thead><tr><th scope="col">판</th><th scope="col">정확</th><th scope="col">요청/s</th><th scope="col">p95 ms</th><th scope="col">피크 B</th><th scope="col">µ$/완료</th></tr></thead><tbody id="project-metrics"></tbody></table>
+      <p id="project-summary-status" role="status"></p>
+      <p class="serving-subtle">토큰은 JS에서 생성합니다. 시간과 GPU 메모리 예약은 모의 값입니다.</p>
+    </section>
+    <section id="project-checks" class="serving-result" aria-label="예산 검사" hidden>
+      <table><thead><tr><th scope="col">조건</th><th scope="col">관측값</th><th scope="col">예산</th></tr></thead><tbody id="project-budget-rows"></tbody></table>
+      <p id="project-budget-status" role="status"></p>
+    </section>
+    <section id="project-requests" class="serving-result" aria-label="요청 기록" hidden>
+      <dl id="project-request-detail"></dl>
+    </section>
+    <section id="project-memory" class="serving-result" aria-label="메모리 장부" hidden>
+      <dl id="project-memory-detail"></dl>
+      <p class="serving-subtle">접두사 상태는 JS 호스트에 둡니다. 캐시 적중 때도 GPU에는 전체 문맥을 예약합니다.</p>
+    </section>
+    <section id="project-kernels" class="serving-result" aria-label="커널 시간" hidden>
+      <dl id="project-kernel-detail"></dl>
+    </section>
+    <section id="project-rollback" class="serving-result" aria-label="복귀" hidden>
+      <dl id="project-rollback-detail"></dl>
+    </section>
+    <section id="project-downloads" class="serving-result" aria-label="파일 받기" hidden>
+      <div class="serving-actions">
+        <button id="download-workload" class="action" type="button">입력 JSON</button>
+        <button id="download-runner" class="action" type="button">실행기 JS</button>
+        <button id="download-report" class="action" type="button">보고서 JSON</button>
+      </div>
+      <p><code>node runner.js workload.json replay.json</code></p>
+      <p class="serving-subtle">같은 폴더에 저장하고 실행해 브라우저 보고서와 대조합니다.</p>
+    </section>
+  </div>
+  <form id="project-editor" hidden>
+    <label for="project-input">부하 JSON</label>
+    <textarea id="project-input" spellcheck="false" autocapitalize="off"></textarea>
+    <p id="project-error" role="alert" hidden></p>
+    <div class="serving-actions">
+      <button class="action primary" id="project-execute" type="submit">이 입력으로 실행</button>
+      <button class="action" id="project-reset" type="button">기본 입력 복원</button>
+    </div>
+    <p class="serving-subtle">기대 토큰이 없는 요청은 expectedTokens를 null로 둡니다.</p>
+  </form>
+</dialog>
+
+<script>
+const lesson = [
+  {
+    "label": "요청 시간",
+    "title": "실제 토큰에 모의 시간을 연결합니다",
+    "body": "R03은 1 ms에 도착해 5 ms에 시작합니다. 후보는 앞 2개 입력의 JS 상태를 재사용해 나머지 2개를 프리필합니다. 8 ms에 hold, 12 ms에 cool을 냅니다. 시각은 모의 GPU 시계입니다.",
+    "takeaway": "R03의 첫 토큰 지연은 8−1=7 ms이며 전체 지연은 12−1=11 ms입니다.",
+    "example": [
+      "R03 · 입력 4 · 출력 2",
+      "도착 1 → 시작 5 → 첫 토큰 8 → 완료 12 ms",
+      "TTFT 7 ms · 전체 11 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "요청 시간",
+      "description": "R03의 첫 토큰 지연은 8−1=7 ms이며 전체 지연은 12−1=11 ms입니다.",
+      "figure": "figure-inference-service-operations-1"
+    },
+    "quiz": [
+      "도착 2 ms, 첫 토큰 8 ms면 TTFT는?",
+      "6 ms",
+      "8 ms",
+      "첫 토큰 시각에서 도착을 뺍니다."
+    ]
+  },
+  {
+    "label": "한 스위치 비교",
+    "title": "같은 배칭에서 접두사 재사용만 꺼도 더 오래 걸립니다",
+    "body": "후보와 제거판 모두 8건이 정확합니다. 재사용을 끄면 R03의 프리필이 3→5 ms, 실행 창은 31→44 ms, p95는 12→28 ms가 됩니다.",
+    "takeaway": "두 행의 배치 상한과 8/8 정답을 유지합니다.",
+    "example": [
+      "후보: 3슬롯 · 재사용 켬",
+      "3슬롯 고정 · 재사용만 끔",
+      "p95 12→28 ms · 정확 8/8"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "한 스위치 비교",
+      "description": "두 행의 배치 상한과 8/8 정답을 유지합니다.",
+      "figure": "figure-inference-service-operations-2"
+    },
+    "quiz": [
+      "제거판에서 바꾼 항목은?",
+      "접두사 재사용",
+      "모델 가중치",
+      "배칭과 모델, 요청과 장비는 공유합니다."
+    ]
+  },
+  {
+    "label": "품질 경보",
+    "title": "같은 시간이라도 불량판의 실제 출력은 달라집니다",
+    "body": "불량판은 가중치 출력 열을 돌립니다. R01 정상 ready warm이 warm cool로 바뀌며, 도착순 표본 R01–R03은 0/3이라 하한 100%를 어깁니다.",
+    "takeaway": "두 행의 R01은 같은 입력과 10 ms 완료시각, 다른 실제 토큰입니다.",
+    "example": [
+      "R01 · 같은 입력 · 10 ms 완료",
+      "출력과 기대 토큰 대조",
+      "표본 0/3 \u003c 3/3 → 경보"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "품질 경보",
+      "description": "두 행의 R01은 같은 입력과 10 ms 완료시각, 다른 실제 토큰입니다.",
+      "figure": "figure-inference-service-operations-3"
+    },
+    "quiz": [
+      "불량판 p95가 후보와 같으면 품질 검사를 생략할까요?",
+      "토큰 대조 필요",
+      "지연만 기준",
+      "지연과 출력은 별도 지표입니다."
+    ]
+  },
+  {
+    "label": "복귀 검증",
+    "title": "기준과 같다는 증거와 배포 예산은 별도입니다",
+    "body": "v1 복귀 뒤 같은 8건의 모델과 요청 지문, 출력·시각·비용이 기준판과 같았습니다. 정상 예산 p95 상한은 15 ms여서 복귀판의 38 ms는 보류입니다.",
+    "takeaway": "v1 기준과 복귀의 두 p95가 같고 둘 다 예산선을 넘습니다.",
+    "example": [
+      "기준 v1과 복귀 v1",
+      "지문·출력·시간·비용 일치 검사",
+      "회복 확인 · 예산 p95 38 > 15 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "복귀 검증",
+      "description": "v1 기준과 복귀의 두 p95가 같고 둘 다 예산선을 넘습니다.",
+      "figure": "figure-inference-service-operations-4"
+    },
+    "quiz": [
+      "복귀판이 기준과 같아도 서비스 예산 밖이면 판단은?",
+      "회복 확인 · 승인 보류",
+      "자동 승인",
+      "복원 검증과 서비스 조건을 각각 확인합니다."
+    ]
+  }
+];
+const slug = 'inference-service-operations';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+<script type="application/json" id="project-regular-input">
+{
+  "schemaVersion": 1,
+  "hardware": {
+    "capacityBytes": 4608,
+    "weightsBytes": 1024,
+    "workspaceBytes": 512,
+    "kvBytesPerToken": 128,
+    "maxContextTokens": 16,
+    "maxBatch": 3,
+    "prefixTokens": 2,
+    "prefillBaseMs": 1,
+    "prefillMsPerToken": 1,
+    "decodeMs": 2,
+    "extraBatchDecodeMs": 0,
+    "usdPerHour": 3.6
+  },
+  "budgets": {
+    "minQuality": 1,
+    "minCompletionRate": 1,
+    "minRequestsPerSecond": 180,
+    "maxP95Ms": 15,
+    "maxPeakBytes": 4352,
+    "maxUsdPerCompletion": 6e-06
+  },
+  "model": {
+    "vocabulary": [
+      "cool",
+      "ready",
+      "warm",
+      "hold"
+    ],
+    "weights": [
+      [
+        0,
+        4,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        4
+      ],
+      [
+        4,
+        1,
+        0,
+        0
+      ]
+    ]
+  },
+  "requests": [
+    {
+      "id": "R01",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "warm",
+        "cool"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "ready",
+        "warm"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R02",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "hold",
+        "ready"
+      ],
+      "outputTokens": 3,
+      "expectedTokens": [
+        "warm",
+        "hold",
+        "cool"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R03",
+      "arrivalMs": 1,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "ready",
+        "warm"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "hold",
+        "cool"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R04",
+      "arrivalMs": 12,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "cool",
+        "hold"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "cool",
+        "ready"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R05",
+      "arrivalMs": 12,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "warm",
+        "warm"
+      ],
+      "outputTokens": 3,
+      "expectedTokens": [
+        "hold",
+        "cool",
+        "ready"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R06",
+      "arrivalMs": 18,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "hold",
+        "cool"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "ready",
+        "warm"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R07",
+      "arrivalMs": 23,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "ready",
+        "hold"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "cool",
+        "ready"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R08",
+      "arrivalMs": 24,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "cool",
+        "ready"
+      ],
+      "outputTokens": 3,
+      "expectedTokens": [
+        "warm",
+        "hold",
+        "cool"
+      ],
+      "deadlineMs": 50
+    }
+  ]
+}
+</script>
+<script src="./inference-service-operations/runner.js"></script>
+<script src="./inference-service-operations/workbench.js"></script>
+</body>
+</html>

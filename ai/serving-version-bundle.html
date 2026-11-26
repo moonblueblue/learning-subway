@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 모델 파일인데 출력 단어가 달라지는 이유는 무엇인가요?">
+<title>모델·토크나이저·런타임을 한 버전으로 묶기 · G25</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-version-bundle.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G25</p><h1>모델·토크나이저·런타임을 한 버전으로 묶기</h1><p>같은 모델 파일인데 출력 단어가 달라지는 이유는 무엇인가요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">모델·토크나이저·런타임을 한 버전으로 묶기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-version-bundle-1"><svg><g>
+<rect x="45" y="135" width="186" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="138.0" y="162" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">M7 · R3 → id 1</text>
+<line x1="245.0" y1="148.0" x2="372.0" y2="114.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="372.0,114.0 362.3264623605237,122.68462259039705 359.2813260187129,111.31014272539788" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="245.0" y1="162.0" x2="372.0" y2="208.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="372.0,208.0 359.09740920692553,209.58844289367607 363.10744653254915,198.51725288597618" fill="#a34123" stroke="none" stroke-width="1"/>
+<rect x="380" y="95" width="181" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="470.5" y="122" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">T1 → ready</text>
+<rect x="380" y="189" width="181" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="470.5" y="216" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">T2 → hold</text>
+<text x="306" y="258" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">같은 가중치 M7</text>
+</g></svg></template>
+<template id="figure-serving-version-bundle-2"><svg><g>
+<text x="306" y="80" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">묶음 지문 입력</text>
+<text x="80" y="132" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">V1</text>
+<rect x="112" y="105" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="161.5" y="132" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">M7</text>
+<rect x="215" y="105" width="99" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="264.5" y="132" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">T1</text>
+<rect x="318" y="105" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="367.5" y="132" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">R3</text>
+<line x1="426.0" y1="124.0" x2="458.0" y2="124.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="458.0,124.0 446.40961225346075,129.88752170992788 446.40961225346075,118.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="512" y="132" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">ready</text>
+<text x="80" y="206" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">V2</text>
+<rect x="112" y="179" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="161.5" y="206" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">M7</text>
+<rect x="215" y="179" width="99" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="264.5" y="206" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">T2</text>
+<rect x="318" y="179" width="99" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="367.5" y="206" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">R3</text>
+<line x1="426.0" y1="198.0" x2="458.0" y2="198.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="458.0,198.0 446.40961225346075,203.88752170992788 446.40961225346075,192.11247829007212" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="512" y="206" font-size="23" font-weight="650" fill="#a34123" text-anchor="middle">hold</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "구성 섞임",
+    "title": "같은 토큰 ID 1이 토크나이저 버전에 따라 바뀝니다",
+    "body": "모델 M7과 런타임 R3에서 토큰 ID 1이 나옵니다. 매핑 T1은 ready이고 T2는 hold라서 토크나이저만 바꿔도 응답이 달라집니다.",
+    "takeaway": "같은 ID 상자에서 T1과 T2의 두 단어로 갈라집니다.",
+    "example": [
+      "M7 · R3 · id 1",
+      "T1[1] vs T2[1]",
+      "ready vs hold"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "구성 섞임",
+      "description": "같은 ID 상자에서 T1과 T2의 두 단어로 갈라집니다.",
+      "figure": "figure-serving-version-bundle-1"
+    },
+    "quiz": [
+      "T2로 바뀌어도 모델 파일 해시는 달라지나요?",
+      "모델 해시 동일",
+      "반드시 달라짐",
+      "토크나이저는 별도 구성물입니다."
+    ]
+  },
+  {
+    "label": "버전 묶기",
+    "title": "묶음 서명에 토크나이저와 런타임도 포함합니다",
+    "body": "V1=[M7,T1,R3]을 고정하면 ID 1→ready가 재현됩니다. T2를 쓰는 V2는 묶음 지문이 달라서 별도 검증을 거칩니다.",
+    "takeaway": "두 묶음의 가운데 T1/T2만 다르고 출력도 연결해 볼 수 있습니다.",
+    "example": [
+      "V1 M7/T1/R3 · V2 M7/T2/R3",
+      "각 묶음의 지문과 id 1 재실행",
+      "V1 ready · V2 hold"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "버전 묶기",
+      "description": "두 묶음의 가운데 T1/T2만 다르고 출력도 연결해 볼 수 있습니다.",
+      "figure": "figure-serving-version-bundle-2"
+    },
+    "quiz": [
+      "R3만 R4로 바꾸면 묶음 지문은 어떻게 되나요?",
+      "새 묶음 지문",
+      "같은 묶음 지문",
+      "런타임도 지문 입력의 일부입니다."
+    ]
+  }
+];
+const slug = 'serving-version-bundle';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

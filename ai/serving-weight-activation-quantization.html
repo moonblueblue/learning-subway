@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="어떤 텐서를 줄여야 피크 메모리가 줄어드나요?">
+<title>가중치 전용·활성값 양자화 비교 · G15</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-weight-activation-quantization.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G15</p><h1>가중치 전용·활성값 양자화 비교</h1><p>어떤 텐서를 줄여야 피크 메모리가 줄어드나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">가중치 전용·활성값 양자화 비교</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-weight-activation-quantization-1"><svg><g>
+<text x="306" y="76" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">파랑 W · 초록 A · 1 MiB = 2²⁰ B</text>
+<text x="107" y="119.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">FP16</text>
+<line x1="120" y1="131.0" x2="565" y2="131.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="94.0" x2="565" y2="136.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="98.0" width="296.6666666666667" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="268.33333333333337" y="118.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="416.6666666666667" y="98.0" width="148.33333333333334" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="490.83333333333337" y="118.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<text x="565" y="156.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">6 MiB</text>
+<text x="107" y="204.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">W8 A16</text>
+<line x1="120" y1="216.0" x2="565" y2="216.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="179.0" x2="565" y2="221.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="183.0" width="148.33333333333334" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="194.16666666666669" y="203.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<rect x="268.33333333333337" y="183.0" width="148.33333333333334" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="342.50000000000006" y="203.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<text x="565" y="241.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">6 MiB</text>
+</g></svg></template>
+<template id="figure-serving-weight-activation-quantization-2"><svg><g>
+<text x="309" y="76" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">파랑 W · 초록 A · 1 MiB = 2²⁰ B</text>
+<text x="107" y="119.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">W8 A16</text>
+<line x1="120" y1="131.0" x2="565" y2="131.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="94.0" x2="565" y2="136.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="98.0" width="148.33333333333334" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="194.16666666666669" y="118.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<rect x="268.33333333333337" y="98.0" width="148.33333333333334" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="342.50000000000006" y="118.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<text x="565" y="156.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">6 MiB</text>
+<text x="107" y="204.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">W8 A8</text>
+<line x1="120" y1="216.0" x2="565" y2="216.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="179.0" x2="565" y2="221.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="183.0" width="148.33333333333334" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="194.16666666666669" y="203.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<rect x="268.33333333333337" y="183.0" width="74.16666666666667" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="305.4166666666667" y="203.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<text x="565" y="241.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">6 MiB</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "가중치 전용",
+    "title": "가중치만 INT8로 바꾸면 활성값은 그대로입니다",
+    "body": "가중치 4→2 MiB, 활성값 2 MiB 그대로여서 합계는 6→4 MiB입니다. 실제 구현에서는 스케일과 변환 공간도 잽니다.",
+    "takeaway": "두 번째 막대에서 파란 가중치만 절반입니다.",
+    "example": [
+      "W 2×2²⁰ elements · A 2²⁰ elements",
+      "W: 2→1 B/element · A: 2 B/element",
+      "6→4 MiB"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "가중치 전용",
+      "description": "두 번째 막대에서 파란 가중치만 절반입니다.",
+      "figure": "figure-serving-weight-activation-quantization-1"
+    },
+    "quiz": [
+      "가중치 1 MiB, FP16 활성값 4 MiB이면 합계는?",
+      "5 MiB",
+      "3 MiB",
+      "두 구획을 그대로 더합니다."
+    ]
+  },
+  {
+    "label": "가중치와 활성값",
+    "title": "활성값도 INT8로 바꾸면 1 MiB가 더 줄어듭니다",
+    "body": "활성값은 2→1 MiB가 되므로 합계는 4→3 MiB입니다. 활성값도 반올림되므로 실제 조합의 출력과 커널 호환성을 평가합니다.",
+    "takeaway": "기준 W8 A16의 W가 그대로이고 A만 작아집니다.",
+    "example": [
+      "W8 A16 · W 2 MiB · A 2 MiB",
+      "A: 2→1 B/element",
+      "4→3 MiB"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "가중치와 활성값",
+      "description": "기준 W8 A16의 W가 그대로이고 A만 작아집니다.",
+      "figure": "figure-serving-weight-activation-quantization-2"
+    },
+    "quiz": [
+      "W8 A8이 가능해도 품질을 따로 재야 하나요?",
+      "실제 출력 대조",
+      "메모리만 확인",
+      "활성값 반올림이 출력에 영향을 줄 수 있습니다."
+    ]
+  }
+];
+const slug = 'serving-weight-activation-quantization';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

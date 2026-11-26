@@ -1060,31 +1060,147 @@ const aiStationMap = {
     "stations": [
       {
         "id": "8.3",
-        "title": "요청과 GPU",
-        "titleEn": "Requests and GPUs"
+        "ref": "ai/serving-request-lifecycle"
+      },
+      {
+        "id": "8.7",
+        "ref": "system-design/parallel"
+      },
+      {
+        "id": "8.8",
+        "ref": "ai/serving-gpu-kernel-blocks"
+      },
+      {
+        "id": "8.9",
+        "ref": "ai/serving-device-host-transfer"
+      },
+      {
+        "id": "8.10",
+        "ref": "ai/serving-bandwidth-compute-roofline"
+      },
+      {
+        "id": "8.11",
+        "ref": "ai/serving-inference-memory-budget"
       },
       {
         "id": "8.1",
         "ref": "system-design/queue"
       },
       {
+        "id": "8.12",
+        "ref": "ai/serving-static-batching-delay"
+      },
+      {
+        "id": "8.13",
+        "ref": "ai/serving-prefill-token-decode"
+      },
+      {
         "id": "8.2",
         "ref": "system-design/cache"
       },
       {
+        "id": "8.14",
+        "ref": "ai/serving-kv-cache-scope"
+      },
+      {
+        "id": "8.15",
+        "ref": "ai/serving-continuous-batching"
+      },
+      {
         "id": "8.4",
-        "title": "양자화",
-        "titleEn": "Quantization"
+        "ref": "ai/serving-float-format-ranges"
+      },
+      {
+        "id": "8.16",
+        "ref": "ai/serving-integer-quantization-scale"
+      },
+      {
+        "id": "8.17",
+        "ref": "ai/serving-weight-activation-quantization"
+      },
+      {
+        "id": "8.18",
+        "ref": "ai/serving-quantization-calibration"
+      },
+      {
+        "id": "8.19",
+        "ref": "ai/serving-context-memory-limit"
       },
       {
         "id": "8.5",
-        "title": "부하와 품질",
-        "titleEn": "Load and quality"
+        "ref": "ai/serving-single-optimization-ablation"
+      },
+      {
+        "id": "8.20",
+        "ref": "ai/serving-reproducible-workload-shape"
+      },
+      {
+        "id": "8.21",
+        "ref": "ai/serving-ttft-inter-token-p95"
+      },
+      {
+        "id": "8.22",
+        "ref": "ai/serving-throughput-quality-cost"
+      },
+      {
+        "id": "8.23",
+        "ref": "system-design/loadbalancing"
+      },
+      {
+        "id": "8.24",
+        "ref": "ai/serving-admission-backpressure"
+      },
+      {
+        "id": "8.25",
+        "ref": "ai/serving-cancellation-resource-reclaim"
       },
       {
         "id": "8.6",
-        "title": "배포와 롤백",
-        "titleEn": "Rollout and rollback"
+        "ref": "ai/serving-version-bundle"
+      },
+      {
+        "id": "8.26",
+        "ref": "ai/serving-hardware-startup-checks"
+      },
+      {
+        "id": "8.27",
+        "ref": "ai/serving-observability-trace-ids"
+      },
+      {
+        "id": "8.28",
+        "ref": "ai/serving-shadow-canary-rollout"
+      },
+      {
+        "id": "8.29",
+        "ref": "ai/serving-quality-alert-rollback"
+      },
+      {
+        "id": "8.30",
+        "ref": "ai/serving-release-budget-decision"
+      },
+      {
+        "id": "8.31",
+        "ref": "ai/serving-training-memory-ledger"
+      },
+      {
+        "id": "8.32",
+        "ref": "ai/serving-data-parallel-gradients"
+      },
+      {
+        "id": "8.33",
+        "ref": "ai/serving-tensor-parallel-collectives"
+      },
+      {
+        "id": "8.34",
+        "ref": "ai/serving-pipeline-idle-bubbles"
+      },
+      {
+        "id": "8.35",
+        "ref": "ai/serving-optimizer-sharding-recomputation"
+      },
+      {
+        "id": "8.36",
+        "ref": "ai/serving-distributed-checkpoint-resume"
       }
     ],
     "transfer": {

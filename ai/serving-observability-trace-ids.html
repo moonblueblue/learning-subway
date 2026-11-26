@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="느린 p95를 만든 한 요청의 대기와 실행을 어떻게 찾나요?">
+<title>관측 지표·로그·추적 ID 연결 · G27</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-observability-trace-ids.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G27</p><h1>관측 지표·로그·추적 ID 연결</h1><p>느린 p95를 만든 한 요청의 대기와 실행을 어떻게 찾나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">관측 지표·로그·추적 ID 연결</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-observability-trace-ids-1"><svg><g>
+<text x="309" y="78" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">4 requests · ceil(.95×4)=4</text>
+<line x1="66" y1="204" x2="554" y2="204" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="193" cy="204" r="6" fill="#12649c"/>
+<circle cx="219" cy="204" r="6" fill="#12649c"/>
+<circle cx="500" cy="204" r="6" fill="#a34123"/>
+<circle cx="270" cy="204" r="6" fill="#12649c"/>
+<text x="162" y="238" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">A 6</text>
+<text x="220" y="183" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">B 7</text>
+<text x="283" y="238" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">D 9</text>
+<text x="500" y="238" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">C 18 ms</text>
+<line x1="500.0" y1="195.0" x2="500.0" y2="145.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="500.0,145.0 505.8875217099279,156.59038774653928 494.1124782900721,156.59038774653928" fill="#a34123" stroke="none" stroke-width="1"/>
+<rect x="429" y="100" width="146" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="502.0" y="127" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">trace c7</text>
+</g></svg></template>
+<template id="figure-serving-observability-trace-ids-2"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="155.5" y1="230" x2="155.5" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="155.5" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<line x1="428.5" y1="230" x2="428.5" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="428.5" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">14</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">20</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">C · c7</text>
+<rect x="155.5" y="95.0" width="273.0" height="26" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.6"/>
+<rect x="428.5" y="95.0" width="136.5" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">같은 추적 c7 · 20−2=18 ms</text>
+<text x="273" y="169" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">대기 14−2=12 ms</text>
+<text x="435" y="204" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">실행 20−14=6 ms</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "지표에서 표본",
+    "title": "지표 집계는 느린 요청의 추적 ID로 이어집니다",
+    "body": "A–D 지연은 6,7,18,9 ms라 p95는 18 ms입니다. 그 지점에 C의 예시 추적 링크 c7이 달려 있어 시간을 설명할 표본으로 갑니다.",
+    "takeaway": "네 점 중 C=18 ms에만 c7 링크가 이어집니다.",
+    "example": [
+      "A 6 · B 7 · C 18 · D 9 ms",
+      "ceil(.95×4)=4 · 18 ms 표본 열기",
+      "C → trace c7"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "지표에서 표본",
+      "description": "네 점 중 C=18 ms에만 c7 링크가 이어집니다.",
+      "figure": "figure-serving-observability-trace-ids-1"
+    },
+    "quiz": [
+      "표본 링크가 없어도 집계 지표로 C의 도착 시각을 알 수 있나요?",
+      "개별 기록 필요",
+      "백분위에서 직접 계산",
+      "백분위는 요청별 시각을 보존하지 않습니다."
+    ]
+  },
+  {
+    "label": "추적과 로그",
+    "title": "로그 ID로 같은 C의 대기 12 ms를 확인합니다",
+    "body": "c7의 로그는 2 ms 도착, 14 ms GPU 시작, 20 ms 종료입니다. 차이를 구하면 대기 12 ms, 실행 6 ms로 긴 구간은 대기입니다.",
+    "takeaway": "c7의 회색 12 ms가 파란 6 ms보다 큽니다.",
+    "example": [
+      "C · trace c7 · 2/14/20 ms",
+      "14−2 · 20−14",
+      "12 ms 대기 · 6 ms 실행"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "추적과 로그",
+      "description": "c7의 회색 12 ms가 파란 6 ms보다 큽니다.",
+      "figure": "figure-serving-observability-trace-ids-2"
+    },
+    "quiz": [
+      "로그에 trace b2인 요청의 종료를 c7에 합쳐도 되나요?",
+      "같은 c7만 연결",
+      "합쳐도 됨",
+      "서로 다른 추적을 합치면 시간 구간이 틀어집니다."
+    ]
+  }
+];
+const slug = 'serving-observability-trace-ids';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

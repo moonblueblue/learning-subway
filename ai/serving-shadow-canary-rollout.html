@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="그림자 실행과 사용자에게 보내는 소량 배포의 차이는 무엇인가요?">
+<title>그림자 트래픽과 점진 배포 · G28</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-shadow-canary-rollout.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G28</p><h1>그림자 트래픽과 점진 배포</h1><p>그림자 실행과 사용자에게 보내는 소량 배포의 차이는 무엇인가요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">그림자 트래픽과 점진 배포</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-shadow-canary-rollout-1"><svg><g>
+<rect x="42" y="135" width="121" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="102.5" y="162" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">R1–R4</text>
+<line x1="169.0" y1="145.0" x2="243.0" y2="115.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="243.0,115.0 234.47070452557963,124.81076544975122 230.0467605571137,113.89837032753526" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="169.0" y1="165.0" x2="243.0" y2="202.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="243.0,202.0 230.0002622927821,202.08258052759334 235.26622179774395,191.55066151766968" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="246" y="96" width="90" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="291.0" y="123" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">v1</text>
+<rect x="246" y="184" width="90" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="291.0" y="211" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">v2</text>
+<line x1="343.0" y1="116.0" x2="397.0" y2="116.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="397.0,116.0 385.40961225346075,121.88752170992788 385.40961225346075,110.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="343.0" y1="204.0" x2="397.0" y2="204.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="397.0,204.0 385.40961225346075,209.88752170992788 385.40961225346075,198.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="402" y="96" width="171" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="487.5" y="123" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">사용자 4∕4</text>
+<rect x="402" y="184" width="171" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="487.5" y="211" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">비교 장부 4∕4</text>
+<text x="309" y="263" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">그림자 v2 → 사용자 0/4</text>
+</g></svg></template>
+<template id="figure-serving-shadow-canary-rollout-2"><svg><g>
+<rect x="42" y="96" width="121" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="102.5" y="123" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">R1–R3</text>
+<rect x="42" y="184" width="121" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="102.5" y="211" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">R4</text>
+<line x1="169.0" y1="116.0" x2="242.0" y2="116.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="242.0,116.0 230.40961225346072,121.88752170992788 230.40961225346072,110.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="169.0" y1="204.0" x2="242.0" y2="204.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="242.0,204.0 230.40961225346072,209.88752170992788 230.40961225346072,198.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<rect x="246" y="96" width="90" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="291.0" y="123" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">v1</text>
+<rect x="246" y="184" width="90" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="291.0" y="211" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">v2</text>
+<line x1="343.0" y1="116.0" x2="397.0" y2="116.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="397.0,116.0 385.40961225346075,121.88752170992788 385.40961225346075,110.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="343.0" y1="204.0" x2="397.0" y2="204.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="397.0,204.0 385.40961225346075,209.88752170992788 385.40961225346075,198.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<rect x="402" y="96" width="171" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="487.5" y="123" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">사용자 3건</text>
+<rect x="402" y="184" width="171" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="487.5" y="211" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">사용자 1건</text>
+<text x="309" y="263" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">v2 → 1/4 = 25%</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "그림자 복제",
+    "title": "복사본도 실행하지만 사용자 응답은 v1만 보냅니다",
+    "body": "R1–R4 각각을 v1과 그림자 v2에 보냅니다. v2의 결과는 비교 장부로 가고 사용자 네 응답은 모두 v1에서 갑니다.",
+    "takeaway": "v2의 경로는 장부에서 끝납니다.",
+    "example": [
+      "R1–R4 · 복사 4/4",
+      "v1 응답 · v2 비교만",
+      "사용자 v1 4/4 · v2 0/4"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "그림자 복제",
+      "description": "v2의 경로는 장부에서 끝납니다.",
+      "figure": "figure-serving-shadow-canary-rollout-1"
+    },
+    "quiz": [
+      "그림자에서 v2 출력이 틀리면 어느 곳에서 확인하나요?",
+      "비교 장부",
+      "사용자 응답 화면",
+      "그림자 출력은 비교 경로에만 전달합니다."
+    ]
+  },
+  {
+    "label": "점진 배포",
+    "title": "R4만 v2 응답을 실제로 받습니다",
+    "body": "R1–R3은 기존 v1에, R4는 v2에 보냅니다. v2 노출은 1/4=25%이고 두 판의 결과와 지연을 구분해 기록합니다.",
+    "takeaway": "사용자 도착점으로 v2의 R4 경로가 열립니다.",
+    "example": [
+      "같은 R1–R4 · 대상 R4",
+      "실시간 경로 분할",
+      "v2 노출 1/4 = 25%"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "점진 배포",
+      "description": "사용자 도착점으로 v2의 R4 경로가 열립니다.",
+      "figure": "figure-serving-shadow-canary-rollout-2"
+    },
+    "quiz": [
+      "같은 네 건 중 v2에 두 건을 직접 보내면 노출률은?",
+      "50%",
+      "25%",
+      "2÷4=0.5입니다."
+    ]
+  }
+];
+const slug = 'serving-shadow-canary-rollout';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="짧은 요청이 끝났을 때 새 요청을 언제 받아들일까요?">
+<title>연속 배칭과 요청 간 간섭 · G12</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-continuous-batching.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G12</p><h1>연속 배칭과 요청 간 간섭</h1><p>짧은 요청이 끝났을 때 새 요청을 언제 받아들일까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">연속 배칭과 요청 간 간섭</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-continuous-batching-1"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="261.66666666666663" y1="230" x2="261.66666666666663" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="261.66666666666663" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<line x1="413.3333333333333" y1="230" x2="413.3333333333333" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="413.3333333333333" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">A</text>
+<rect x="110.0" y="95.0" width="303.3333333333333" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="90" y="163.5" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">B</text>
+<rect x="110.0" y="143.5" width="151.66666666666663" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="90" y="212.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">C</text>
+<rect x="261.66666666666663" y="192.0" width="151.66666666666669" height="26" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.6"/>
+<rect x="413.3333333333333" y="192.0" width="151.66666666666669" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">고정 배치 · C 2→4 ms 대기</text>
+</g></svg></template>
+<template id="figure-serving-continuous-batching-2"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="261.66666666666663" y1="230" x2="261.66666666666663" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="261.66666666666663" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<line x1="413.3333333333333" y1="230" x2="413.3333333333333" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="413.3333333333333" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">A</text>
+<rect x="110.0" y="95.0" width="303.3333333333333" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="90" y="163.5" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">B</text>
+<rect x="110.0" y="143.5" width="151.66666666666663" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="90" y="212.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">C</text>
+<rect x="261.66666666666663" y="192.0" width="151.66666666666669" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">연속 배칭 · B 종료 = C 시작</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "배치 경계",
+    "title": "고정 배치에서는 B가 끝나도 C가 A를 기다립니다",
+    "body": "A와 B는 0 ms에 시작합니다. B는 2 ms에 끝나도 배치 경계는 A가 끝나는 4 ms입니다. C는 2 ms에 도착해 4 ms에 시작합니다.",
+    "takeaway": "빈 B 자리와 C의 2–4 ms 대기가 같은 시간에 보입니다.",
+    "example": [
+      "A 4턴 · B 2턴 · C 2턴",
+      "첫 배치 경계 4 ms",
+      "C 대기 2 ms · 완료 6 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "배치 경계",
+      "description": "빈 B 자리와 C의 2–4 ms 대기가 같은 시간에 보입니다.",
+      "figure": "figure-serving-continuous-batching-1"
+    },
+    "quiz": [
+      "A가 5 ms에 끝나면 고정 배치의 C 대기는?",
+      "3 ms",
+      "2 ms",
+      "5−2=3 ms입니다."
+    ]
+  },
+  {
+    "label": "턴 경계",
+    "title": "연속 배칭은 B가 떠난 턴 경계에 C를 넣습니다",
+    "body": "2 ms에 B가 떠난 자리에 C가 올라갑니다. 같은 1 ms/턴이라면 A는 그대로 4 ms, C는 6에서 4 ms로 당겨집니다. 실제 GPU에서는 새 프리필이 턴을 더 길게 할 수 있어 A의 토큰 간격도 비교합니다.",
+    "takeaway": "B 끝과 C 시작이 2 ms에 맞춰집니다.",
+    "example": [
+      "같은 A·B·C · 1 ms/턴",
+      "빈 슬롯을 2 ms에 채움",
+      "A 4 ms · C 6→4 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "턴 경계",
+      "description": "B 끝과 C 시작이 2 ms에 맞춰집니다.",
+      "figure": "figure-serving-continuous-batching-2"
+    },
+    "quiz": [
+      "C 투입 때문에 2–4 ms의 두 턴이 각각 2 ms가 되면 A 완료는?",
+      "6 ms",
+      "4 ms",
+      "앞선 2 ms와 뒤의 4 ms를 더합니다."
+    ]
+  }
+];
+const slug = 'serving-continuous-batching';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

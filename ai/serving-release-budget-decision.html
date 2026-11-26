@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="한 항목을 개선한 후보가 왜 배포 승인에 실패할까요?">
+<title>서비스 예산을 근거로 배포 승인하기 · G30</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-release-budget-decision.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G30</p><h1>서비스 예산을 근거로 배포 승인하기</h1><p>한 항목을 개선한 후보가 왜 배포 승인에 실패할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">서비스 예산을 근거로 배포 승인하기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-release-budget-decision-1"><svg><g>
+<text x="306" y="78" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">후보 X · 동일 시험 4건</text>
+<text x="140" y="123" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">품질</text>
+<text x="388" y="123" font-size="25" font-weight="650" fill="#a34123" text-anchor="middle">2/4 &lt; 3/4 ×</text>
+<text x="140" y="162" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">p95</text>
+<text x="388" y="162" font-size="25" font-weight="650" fill="#11664f" text-anchor="middle">9 ≤ 12 ms ✓</text>
+<text x="140" y="201" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">$/완료</text>
+<text x="388" y="201" font-size="24" font-weight="650" fill="#11664f" text-anchor="middle">$0.04 ≤ $0.06 ✓</text>
+<text x="306" y="260" font-size="25" font-weight="650" fill="#a34123" text-anchor="middle">보류</text>
+</g></svg></template>
+<template id="figure-serving-release-budget-decision-2"><svg><g>
+<text x="306" y="78" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">후보 Y · 동일 시험 4건</text>
+<text x="140" y="123" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">품질</text>
+<text x="388" y="123" font-size="25" font-weight="650" fill="#11664f" text-anchor="middle">3/4 ≥ 3/4 ✓</text>
+<text x="140" y="162" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">p95</text>
+<text x="388" y="162" font-size="25" font-weight="650" fill="#11664f" text-anchor="middle">11 ≤ 12 ms ✓</text>
+<text x="140" y="201" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">$/완료</text>
+<text x="388" y="201" font-size="24" font-weight="650" fill="#11664f" text-anchor="middle">$0.05 ≤ $0.06 ✓</text>
+<text x="306" y="260" font-size="25" font-weight="650" fill="#11664f" text-anchor="middle">승인</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "후보 X",
+    "title": "빠른 후보 X도 정확도 하한을 지키지 못합니다",
+    "body": "후보 X는 세 조건 중 p95 9 ms와 비용 $0.04를 지킵니다. 두 건만 맞아 2/4\u003c3/4라 배포를 보류합니다.",
+    "takeaway": "세 조건 중 품질 행만 붉고 결론은 보류입니다.",
+    "example": [
+      "후보 X · 2/4, 9 ms, $0.04",
+      "각 항목을 합의한 경계와 비교",
+      "보류"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "후보 X",
+      "description": "세 조건 중 품질 행만 붉고 결론은 보류입니다.",
+      "figure": "figure-serving-release-budget-decision-1"
+    },
+    "quiz": [
+      "X에서 지연만 7 ms로 줄이면 품질을 통과하나요?",
+      "그대로 실패",
+      "통과",
+      "품질 2/4는 바뀌지 않았습니다."
+    ]
+  },
+  {
+    "label": "후보 Y",
+    "title": "세 상한과 하한을 모두 지킨 후보 Y를 승인합니다",
+    "body": "후보 Y는 3/4, 11 ms, $0.05입니다. X보다 느리지만 모든 예산의 비교를 통과하므로 같은 시험의 배포 기준에 맞습니다.",
+    "takeaway": "품질의 등호까지 통과로 표시되고 남은 조건도 초록입니다.",
+    "example": [
+      "후보 Y · 3/4, 11 ms, $0.05",
+      "기존 경계로 모두 대조",
+      "승인"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "후보 Y",
+      "description": "품질의 등호까지 통과로 표시되고 남은 조건도 초록입니다.",
+      "figure": "figure-serving-release-budget-decision-2"
+    },
+    "quiz": [
+      "Y의 p95가 13 ms가 되면 최종 결정은?",
+      "보류",
+      "승인",
+      "13은 합의한 상한 12를 넘습니다."
+    ]
+  }
+];
+const slug = 'serving-release-budget-decision';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

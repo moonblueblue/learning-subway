@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="정수 반올림과 범위 제한이 복원값을 어떻게 바꾸나요?">
+<title>정수 양자화와 스케일 · G14</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-integer-quantization-scale.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G14</p><h1>정수 양자화와 스케일</h1><p>정수 반올림과 범위 제한이 복원값을 어떻게 바꾸나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">정수 양자화와 스케일</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-integer-quantization-scale-1"><svg><g>
+<text x="308" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">x=.26 · s=.1</text>
+<line x1="115" y1="173" x2="502" y2="173" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="151" cy="173" r="6" fill="#566d7c"/>
+<circle cx="343" cy="173" r="6" fill="#12649c"/>
+<circle cx="471" cy="173" r="6" fill="#11664f"/>
+<line x1="343.0" y1="137.0" x2="471.0" y2="137.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="471.0,137.0 459.40961225346075,142.88752170992788 459.40961225346075,131.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="151" y="206" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<text x="343" y="206" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2.6</text>
+<text x="471" y="206" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">3</text>
+<text x="307" y="252" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">3×.1=.30 · .30−.26=+.04</text>
+</g></svg></template>
+<template id="figure-serving-integer-quantization-scale-2"><svg><g>
+<text x="305" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">x=13.0 · q: −127…127</text>
+<line x1="114" y1="175" x2="399" y2="175" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="399" y1="175" x2="537" y2="175" stroke="#a34123" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>
+<line x1="399" y1="161" x2="399" y2="192" stroke="#a34123" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="399" cy="175" r="6" fill="#11664f"/>
+<circle cx="522" cy="175" r="6" fill="#a34123"/>
+<line x1="522.0" y1="137.0" x2="399.0" y2="137.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="399.0,137.0 410.59038774653925,131.11247829007212 410.59038774653925,142.88752170992788" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="183" y="208" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">120</text>
+<text x="399" y="208" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">127</text>
+<text x="522" y="208" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">130</text>
+<text x="306" y="257" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">127×.1=12.7 · 12.7−13=−.3</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "반올림",
+    "title": "스케일로 나눈 실수를 정수 격자에 놓습니다",
+    "body": "x=0.26을 0.1로 나누면 2.6입니다. 가장 가까운 정수 3을 저장하고 복원하면 0.30이어서 복원−원본=+0.04입니다.",
+    "takeaway": "좌표 2.6에서 3으로 화살표가 움직입니다.",
+    "example": [
+      "x=.26 · s=.1",
+      "q=round(.26÷.1)=3 · x̂=3×.1",
+      "x̂=.30 · x̂−x=+.04"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "반올림",
+      "description": "좌표 2.6에서 3으로 화살표가 움직입니다.",
+      "figure": "figure-serving-integer-quantization-scale-1"
+    },
+    "quiz": [
+      "x=0.34, s=0.1에서 저장하는 q는?",
+      "3",
+      "34",
+      "3.4를 정수 3으로 반올림합니다."
+    ]
+  },
+  {
+    "label": "클리핑",
+    "title": "범위를 넘은 130은 127로 잘립니다",
+    "body": "x=13.0이면 같은 스케일에서 반올림한 q는 130입니다. q를 127로 제한해 복원값은 12.7이고 변화는 −0.3입니다.",
+    "takeaway": "127 오른쪽의 130이 한도 127로 되돌아옵니다.",
+    "example": [
+      "x=13.0 · s=.1",
+      "clip(round(13÷.1), −127,127)",
+      "q=127 · x̂=12.7"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "클리핑",
+      "description": "127 오른쪽의 130이 한도 127로 되돌아옵니다.",
+      "figure": "figure-serving-integer-quantization-scale-2"
+    },
+    "quiz": [
+      "같은 스케일에서 x=−13.0의 복원값은?",
+      "−12.7",
+      "−13.0",
+      "대칭 범위의 하한 −127에 걸립니다."
+    ]
+  }
+];
+const slug = 'serving-integer-quantization-scale';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

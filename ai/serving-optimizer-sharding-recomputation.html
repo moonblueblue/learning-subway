@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="옵티마이저 상태 분할과 활성값 재계산은 어떤 메모리를 줄이나요?">
+<title>옵티마이저 상태 분할과 재계산 · G35</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-optimizer-sharding-recomputation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G35</p><h1>옵티마이저 상태 분할과 재계산</h1><p>옵티마이저 상태 분할과 활성값 재계산은 어떤 메모리를 줄이나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">옵티마이저 상태 분할과 재계산</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-optimizer-sharding-recomputation-1"><svg><g>
+<text x="309" y="77" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">W/G/Adam/활성 (MiB)</text>
+<text x="107" y="120.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R0</text>
+<line x1="120" y1="132.0" x2="565" y2="132.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="95.0" x2="565" y2="137.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="99.0" width="55.625" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="147.8125" y="119.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="175.625" y="99.0" width="55.625" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="203.4375" y="119.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="231.25" y="99.0" width="222.5" height="27" fill="#f6dacb" stroke="#566d7c" stroke-width="1"/>
+<text x="342.5" y="119.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">16</text>
+<rect x="453.75" y="99.0" width="83.4375" height="27" fill="#ebf4f7" stroke="#566d7c" stroke-width="1"/>
+<text x="495.46875" y="119.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<text x="565" y="157.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">32 MiB</text>
+<text x="107" y="206.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R1</text>
+<line x1="120" y1="218.0" x2="565" y2="218.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="181.0" x2="565" y2="223.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="185.0" width="55.625" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="147.8125" y="205.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="175.625" y="185.0" width="55.625" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="203.4375" y="205.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="231.25" y="185.0" width="222.5" height="27" fill="#f6dacb" stroke="#566d7c" stroke-width="1"/>
+<text x="342.5" y="205.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">16</text>
+<rect x="453.75" y="185.0" width="83.4375" height="27" fill="#ebf4f7" stroke="#566d7c" stroke-width="1"/>
+<text x="495.46875" y="205.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<text x="565" y="243.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">32 MiB</text>
+</g></svg></template>
+<template id="figure-serving-optimizer-sharding-recomputation-2"><svg><g>
+<text x="305" y="77" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">Adam 16 → 8 MiB/rank</text>
+<text x="107" y="121.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R0</text>
+<line x1="120" y1="133.0" x2="565" y2="133.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="96.0" x2="565" y2="138.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="100.0" width="55.625" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="147.8125" y="120.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="175.625" y="100.0" width="55.625" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="203.4375" y="120.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="231.25" y="100.0" width="111.25" height="27" fill="#f6dacb" stroke="#566d7c" stroke-width="1"/>
+<text x="286.875" y="120.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<rect x="342.5" y="100.0" width="83.4375" height="27" fill="#ebf4f7" stroke="#566d7c" stroke-width="1"/>
+<text x="384.21875" y="120.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<text x="565" y="158.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">32 MiB</text>
+<text x="107" y="206.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R1</text>
+<line x1="120" y1="218.0" x2="565" y2="218.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="181.0" x2="565" y2="223.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="185.0" width="55.625" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="147.8125" y="205.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="175.625" y="185.0" width="55.625" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="203.4375" y="205.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="231.25" y="185.0" width="111.25" height="27" fill="#f6dacb" stroke="#566d7c" stroke-width="1"/>
+<text x="286.875" y="205.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<rect x="342.5" y="185.0" width="83.4375" height="27" fill="#ebf4f7" stroke="#566d7c" stroke-width="1"/>
+<text x="384.21875" y="205.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<text x="565" y="243.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">32 MiB</text>
+<text x="289" y="96" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">A0</text>
+<text x="289" y="180" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">A1</text>
+<text x="494" y="176" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">갱신 조각 교환</text>
+</g></svg></template>
+<template id="figure-serving-optimizer-sharding-recomputation-3"><svg><g>
+<text x="305" y="75" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">R0 · Adam 8 유지 · 활성 6→2</text>
+<text x="107" y="126.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R0</text>
+<line x1="120" y1="138.0" x2="565" y2="138.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="101.0" x2="565" y2="143.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="105.0" width="55.625" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="147.8125" y="125.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="175.625" y="105.0" width="55.625" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="203.4375" y="125.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="231.25" y="105.0" width="111.25" height="27" fill="#f6dacb" stroke="#566d7c" stroke-width="1"/>
+<text x="286.875" y="125.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<rect x="342.5" y="105.0" width="27.8125" height="27" fill="#ebf4f7" stroke="#566d7c" stroke-width="1"/>
+<text x="565" y="163.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">32 MiB</text>
+<rect x="44.0" y="196.0" width="149.66666666666666" height="42" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.3"/>
+<text x="118.83333333333333" y="224.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">저장 2 MiB</text>
+<line x1="198.66666666666666" y1="217.0" x2="216.66666666666666" y2="217.0" stroke="#12649c" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="216.66666666666666,217.0 205.07627892012738,222.88752170992788 205.07627892012738,211.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="220.66666666666666" y="196.0" width="149.66666666666666" height="42" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.3"/>
+<text x="295.5" y="224.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">재계산</text>
+<line x1="375.3333333333333" y1="217.0" x2="393.3333333333333" y2="217.0" stroke="#12649c" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="393.3333333333333,217.0 381.74294558679406,222.88752170992788 381.74294558679406,211.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="397.3333333333333" y="196.0" width="149.66666666666666" height="42" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.3"/>
+<text x="472.16666666666663" y="224.0" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">역전파</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "복제 장부",
+    "title": "두 복제본이 동일한 Adam 16 MiB를 각각 보유합니다",
+    "body": "각 rank의 메모리는 W4+G4+Adam16+활성6=30 MiB입니다. 각각의 그래디언트와 업데이트를 동기화하는 복제 조건입니다.",
+    "takeaway": "두 장부의 구획 크기가 모두 같습니다.",
+    "example": [
+      "W4 · G4 · Adam16 · A6 MiB",
+      "각 rank에 동일 할당",
+      "rank당 30 MiB"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "복제 장부",
+      "description": "두 장부의 구획 크기가 모두 같습니다.",
+      "figure": "figure-serving-optimizer-sharding-recomputation-1"
+    },
+    "quiz": [
+      "두 rank의 Adam 메모리를 합하면?",
+      "32 MiB",
+      "16 MiB",
+      "각 rank가 16 MiB를 복제합니다."
+    ]
+  },
+  {
+    "label": "옵티마이저 분할",
+    "title": "Adam만 반으로 나누면 rank당 8 MiB를 절약합니다",
+    "body": "rank 0과 1이 서로 다른 8 MiB의 Adam 조각을 담당합니다. W,G,활성은 그대로여서 각 22 MiB입니다. 업데이트된 파라미터 조각을 교환해 복제 가중치를 맞춥니다.",
+    "takeaway": "두 붉은 8 MiB 조각이 A0와 A1로 구분됩니다.",
+    "example": [
+      "Adam A0+A1=16 MiB",
+      "R0 A0=8 · R1 A1=8",
+      "30→22 MiB/rank"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "옵티마이저 분할",
+      "description": "두 붉은 8 MiB 조각이 A0와 A1로 구분됩니다.",
+      "figure": "figure-serving-optimizer-sharding-recomputation-2"
+    },
+    "quiz": [
+      "Adam 전체 상태는 몇 MiB인가요?",
+      "16 MiB",
+      "8 MiB",
+      "두 고유 조각이 각각 8 MiB입니다."
+    ]
+  },
+  {
+    "label": "활성값 재계산",
+    "title": "순전파 중간값을 다시 만들면 활성값 4 MiB를 줄입니다",
+    "body": "Adam을 분할한 상태에서 활성값 일부 4 MiB를 저장하지 않습니다. 역전파 전에 그 구간 순전파를 한 번 더 실행하므로, 모의 피크는 22→18 MiB이고 연산은 늘어납니다.",
+    "takeaway": "Adam 8은 같고 활성 구획만 6→2로 줄어듭니다.",
+    "example": [
+      "Adam 분할 8 · 활성값 6 MiB",
+      "활성 중 4 MiB 저장 생략 → 재계산",
+      "22→18 MiB/rank · 순전파 1구간 추가"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "활성값 재계산",
+      "description": "Adam 8은 같고 활성 구획만 6→2로 줄어듭니다.",
+      "figure": "figure-serving-optimizer-sharding-recomputation-3"
+    },
+    "quiz": [
+      "활성값을 다시 계산해도 optimizer 상태의 크기는?",
+      "8 MiB로 동일",
+      "4 MiB로 감소",
+      "활성값과 Adam 모멘트는 다른 할당입니다."
+    ]
+  }
+];
+const slug = 'serving-optimizer-sharding-recomputation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

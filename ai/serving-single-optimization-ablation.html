@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="후보판이 좋아졌다는 이유를 어떻게 한 가지씩 확인하나요?">
+<title>한 최적화를 끄는 비교 실험 · G18</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-single-optimization-ablation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G18</p><h1>한 최적화를 끄는 비교 실험</h1><p>후보판이 좋아졌다는 이유를 어떻게 한 가지씩 확인하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">한 최적화를 끄는 비교 실험</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-single-optimization-ablation-1"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="337.5" y1="230" x2="337.5" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="337.5" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<line x1="394.375" y1="230" x2="394.375" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="394.375" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">기준</text>
+<rect x="110.0" y="95.0" width="227.5" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<rect x="337.5" y="95.0" width="227.5" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="90" y="212.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">후보</text>
+<rect x="110.0" y="192.0" width="227.5" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">R1·R2 @0 · 두 최적화</text>
+<text x="224" y="115" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">R1</text>
+<text x="452" y="115" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">R2</text>
+<text x="224" y="212" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">R1+R2</text>
+<text x="313" y="157" font-size="22" font-weight="650" fill="#11664f" text-anchor="middle">완료 8→4 ms</text>
+</g></svg></template>
+<template id="figure-serving-single-optimization-ablation-2"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="337.5" y1="230" x2="337.5" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="337.5" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<line x1="394.375" y1="230" x2="394.375" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="394.375" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">후보</text>
+<rect x="110.0" y="95.0" width="227.5" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="90" y="212.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">제거</text>
+<rect x="110.0" y="192.0" width="227.5" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<rect x="337.5" y="192.0" width="56.875" height="26" fill="#f6dacb" stroke="#a34123" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">같은 배치 R1+R2 · 캐시만 off</text>
+<text x="312" y="156" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">제거 5 − 후보 4 = 1 ms</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "기준과 후보",
+    "title": "배칭과 캐시를 함께 켜면 전체 시간이 줄어듭니다",
+    "body": "두 요청은 함께 도착합니다. 기준은 단독으로 4+4=8 ms, 후보는 배치 5 ms에서 캐시로 1 ms를 절감해 4 ms에 끝납니다.",
+    "takeaway": "같은 두 요청에서 막대가 8→4 ms로 줄어듭니다.",
+    "example": [
+      "R1/R2 @0 · 기준 꺼짐/꺼짐",
+      "후보 배칭 켜기 + 캐시 켜기",
+      "완료 8→4 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "기준과 후보",
+      "description": "같은 두 요청에서 막대가 8→4 ms로 줄어듭니다.",
+      "figure": "figure-serving-single-optimization-ablation-1"
+    },
+    "quiz": [
+      "두 최적화가 동시에 바뀐 비교로 캐시 단독 효과를 알 수 있나요?",
+      "추가 실험 필요",
+      "4 ms 전부 캐시",
+      "배칭을 그대로 둔 캐시 제거와 비교합니다."
+    ]
+  },
+  {
+    "label": "캐시만 제거",
+    "title": "후보에서 캐시만 끄면 1 ms가 돌아옵니다",
+    "body": "후보와 같은 배칭에서 캐시를 끕니다. 4→5 ms라 이 배치 조건의 캐시 기여는 1 ms입니다. 기준과 나머지 차이는 이 배치 조건에서 비교합니다.",
+    "takeaway": "후보와 제거판은 같이 묶인 R1+R2를 유지합니다.",
+    "example": [
+      "후보 배칭 on, 캐시 on",
+      "배칭 유지 · 캐시 off",
+      "5−4=1 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "캐시만 제거",
+      "description": "후보와 제거판은 같이 묶인 R1+R2를 유지합니다.",
+      "figure": "figure-serving-single-optimization-ablation-2"
+    },
+    "quiz": [
+      "처리량을 비교할 때 분자에 몇 요청이 들어가나요?",
+      "2",
+      "1",
+      "한 배치 안에서 두 응답이 완료됩니다."
+    ]
+  }
+];
+const slug = 'serving-single-optimization-ablation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

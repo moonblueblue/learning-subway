@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="교정에서 보지 못한 이상값이 결정에 어떤 영향을 주나요?">
+<title>교정 데이터와 품질 손실 · G16</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-quantization-calibration.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G16</p><h1>교정 데이터와 품질 손실</h1><p>교정에서 보지 못한 이상값이 결정에 어떤 영향을 주나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">교정 데이터와 품질 손실</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-quantization-calibration-1"><svg><g>
+<text x="307" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">s=1/127 · 229 → 127</text>
+<line x1="89" y1="179" x2="566" y2="179" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="399" y1="131" x2="399" y2="199" stroke="#a34123" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>
+<circle cx="258" cy="179" r="6" fill="#12649c"/>
+<circle cx="484" cy="179" r="6" fill="#a34123"/>
+<line x1="484.0" y1="138.0" x2="258.0" y2="138.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="258.0,138.0 269.59038774653925,132.11247829007212 269.59038774653925,143.88752170992788" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="258" y="218" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">복원 1.0</text>
+<text x="399" y="218" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">문턱 1.5</text>
+<text x="501" y="250" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">입력 1.8</text>
+</g></svg></template>
+<template id="figure-serving-quantization-calibration-2"><svg><g>
+<text x="306" y="82" font-size="25" font-weight="650" fill="#17354b" text-anchor="middle">s=2/127 · 입력 1.8 → 114</text>
+<line x1="89" y1="179" x2="566" y2="179" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="399" y1="129" x2="399" y2="199" stroke="#a34123" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>
+<circle cx="483" cy="179" r="6" fill="#11664f"/>
+<text x="399" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">문턱 1.5</text>
+<text x="490" y="155" font-size="21" font-weight="650" fill="#11664f" text-anchor="middle">114×2/127</text>
+<text x="484" y="252" font-size="25" font-weight="650" fill="#11664f" text-anchor="middle">1.795 ≥ 1.5</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "작은 범위",
+    "title": "작은 범위로 교정하면 큰 값에서 상한이 잘립니다",
+    "body": "교정 최댓값이 1이면 s=1/127입니다. 시험 입력 1.8은 정수 229에서 127로 잘리고 복원값 1은 경보 문턱 1.5보다 작습니다.",
+    "takeaway": "같은 입력 1.8에서 복원점이 1.5 왼쪽입니다.",
+    "example": [
+      "교정 max=1 · 시험 1.8",
+      "q=clip(round(1.8×127),−127,127)",
+      "127×(1/127)=1 · 경보 누락"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "작은 범위",
+      "description": "같은 입력 1.8에서 복원점이 1.5 왼쪽입니다.",
+      "figure": "figure-serving-quantization-calibration-1"
+    },
+    "quiz": [
+      "같은 교정에서 1.2의 복원값은?",
+      "1.0",
+      "1.2",
+      "복원 가능한 최댓값이 1입니다."
+    ]
+  },
+  {
+    "label": "범위 넓히기",
+    "title": "대표 큰 값을 포함하면 같은 시험에서 경보가 돌아옵니다",
+    "body": "최댓값 2로 교정하면 s=2/127입니다. 1.8은 정수 114로 저장되어 약 1.795로 복원됩니다. 시험은 교정 자료와 분리해 품질을 확인합니다.",
+    "takeaway": "두 번째 복원점은 같은 1.5 문턱 오른쪽에 있습니다.",
+    "example": [
+      "교정 max=2 · 같은 시험 1.8",
+      "q=round(1.8×127÷2)=114",
+      "114×(2/127)≈1.795 · 경보"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "범위 넓히기",
+      "description": "두 번째 복원점은 같은 1.5 문턱 오른쪽에 있습니다.",
+      "figure": "figure-serving-quantization-calibration-2"
+    },
+    "quiz": [
+      "교정 max를 늘리면 작은 값 사이 격자 간격은?",
+      "더 커짐",
+      "더 작아짐",
+      "같은 정수 개수로 넓은 실수 범위를 덮습니다."
+    ]
+  }
+];
+const slug = 'serving-quantization-calibration';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

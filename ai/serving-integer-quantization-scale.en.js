@@ -1,0 +1,22 @@
+window.lessonText = {
+  "반올림": "Round",
+  "좌표 2.6에서 3으로 화살표가 움직입니다.": "An arrow snaps scaled coordinate 2.6 to 3.",
+  "스케일로 나눈 실수를 정수 격자에 놓습니다": "Scaling and rounding move a real value onto the integer grid",
+  "x=0.26을 0.1로 나누면 2.6입니다. 가장 가까운 정수 3을 저장하고 복원하면 0.30이어서 복원−원본=+0.04입니다.": "Dividing x=0.26 by 0.1 gives 2.6. Store nearest integer 3 and recover 0.30, giving recovered minus original +0.04.",
+  "x=0.34, s=0.1에서 저장하는 q는?": "What q is stored for x=0.34 and s=0.1?",
+  "3.4를 정수 3으로 반올림합니다.": "Round 3.4 to integer 3.",
+  "클리핑": "Clip",
+  "127 오른쪽의 130이 한도 127로 되돌아옵니다.": "130 to the right of the limit returns to 127.",
+  "범위를 넘은 130은 127로 잘립니다": "A scaled integer of 130 clips to 127",
+  "x=13.0이면 같은 스케일에서 반올림한 q는 130입니다. q를 127로 제한해 복원값은 12.7이고 변화는 −0.3입니다.": "With x=13.0 and the same scale, the rounded integer is 130. Clipping it to 127 gives a recovered value of 12.7 and an error of −0.3.",
+  "같은 스케일에서 x=−13.0의 복원값은?": "What is the recovered value for x=−13.0 at this scale?",
+  "대칭 범위의 하한 −127에 걸립니다.": "The symmetric lower limit is −127.",
+  "정수 양자화와 스케일": "Integer quantization and scale",
+  "정수 반올림과 범위 제한이 복원값을 어떻게 바꾸나요?": "How do integer rounding and clipping change the recovered value?",
+  "AI 시스템·서빙 · G14": "AI systems and serving · G14",
+  "정수 양자화와 스케일 · G14": "Integer quantization and scale · G14",
+  "계산과 판단": "Worked example",
+  "다른 입력으로 확인": "Check with a new input",
+  "✓ 맞았습니다.": "✓ Correct.",
+  "✗ 다시 생각해 보세요.": "✗ Think again."
+};

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="큐를 제한하면 어떤 요청을 언제 다시 보낼 수 있나요?">
+<title>과부하 시 진입 제한과 배압 · G23</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-admission-backpressure.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G23</p><h1>과부하 시 진입 제한과 배압</h1><p>큐를 제한하면 어떤 요청을 언제 다시 보낼 수 있나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">과부하 시 진입 제한과 배압</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-admission-backpressure-1"><svg><g>
+<text x="308" y="82" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">1 ms · 큐 상한 1</text>
+<rect x="47" y="118" width="150" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="122.0" y="145" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">도착 C</text>
+<rect x="239" y="118" width="141" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="309.5" y="145" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">대기 B</text>
+<rect x="419" y="118" width="150" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="494.0" y="145" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">실행 A</text>
+<line x1="200.0" y1="131.0" x2="232.0" y2="131.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="232.0,131.0 220.40961225346072,136.88752170992788 220.40961225346072,125.11247829007212" fill="#a34123" stroke="none" stroke-width="1"/>
+<line x1="224" y1="121" x2="224" y2="145" stroke="#a34123" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="231.0" y1="173.0" x2="135.0" y2="205.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="135.0,205.0 144.133809435365,195.74940406252458 147.85740511077728,206.92019108876133" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="325" y="236" font-size="25" font-weight="650" fill="#a34123" text-anchor="middle">429 · retry ≥4 ms</text>
+</g></svg></template>
+<template id="figure-serving-admission-backpressure-2"><svg><g>
+<text x="308" y="82" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">4 ms · A 완료</text>
+<rect x="47" y="118" width="150" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="122.0" y="145" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">재시도 C</text>
+<rect x="239" y="118" width="141" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="309.5" y="145" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">대기 C</text>
+<rect x="419" y="118" width="150" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="494.0" y="145" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">실행 B</text>
+<line x1="200.0" y1="139.0" x2="234.0" y2="139.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="234.0,139.0 222.40961225346072,144.88752170992788 222.40961225346072,133.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="365.0" y1="189.0" x2="470.0" y2="189.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="470.0,189.0 458.40961225346075,194.88752170992788 458.40961225346075,183.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="424" y="222" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B 이동</text>
+<text x="161" y="247" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">큐 0/1→1/1</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "진입 거절",
+    "title": "큐가 가득 차면 C는 GPU에 들어가기 전에 거절됩니다",
+    "body": "A가 실행 중이고 B가 유일한 대기 자리를 차지합니다. 1 ms에 들어온 C는 429와 최소 재시도 시각 4 ms를 받습니다.",
+    "takeaway": "C 화살표가 찬 큐 직전에 돌아갑니다.",
+    "example": [
+      "1 ms · A 실행 · 큐 1/1 B",
+      "C의 진입 제어",
+      "429 · retry ≥4 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "진입 거절",
+      "description": "C 화살표가 찬 큐 직전에 돌아갑니다.",
+      "figure": "figure-serving-admission-backpressure-1"
+    },
+    "quiz": [
+      "429 때 즉시 무한 반복하면 큐 문제가 개선되나요?",
+      "부하가 늘어남",
+      "부하가 줄어듦",
+      "서버가 준 지연과 제한된 재시도 횟수를 사용합니다."
+    ]
+  },
+  {
+    "label": "대기 자리 반환",
+    "title": "4 ms에 B가 시작하면 C의 재시도가 대기 칸을 받습니다",
+    "body": "A가 완료하고 B가 GPU로 옮겨 갑니다. 큐가 0/1이 된 뒤 C가 다시 도착해 1/1이 됩니다.",
+    "takeaway": "GPU의 A→B, 큐의 B→C가 같은 시각에 그려집니다.",
+    "example": [
+      "같은 A,B,C · 4 ms 재시도",
+      "A 완료 → B 시작 → C 대기",
+      "큐 0/1→1/1 · GPU B"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "대기 자리 반환",
+      "description": "GPU의 A→B, 큐의 B→C가 같은 시각에 그려집니다.",
+      "figure": "figure-serving-admission-backpressure-2"
+    },
+    "quiz": [
+      "대기 빈칸이 나도 이미 만료한 C라면 무엇을 해야 하나요?",
+      "재시도 종료",
+      "반드시 재시도",
+      "요청 기한을 재시도 정책에 적용합니다."
+    ]
+  }
+];
+const slug = 'serving-admission-backpressure';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

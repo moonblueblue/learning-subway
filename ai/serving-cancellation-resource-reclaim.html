@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="취소 시각과 실제 GPU 메모리 반환 시각은 왜 다른가요?">
+<title>시간 초과·취소 때 GPU 자원 회수 · G24</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-cancellation-resource-reclaim.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G24</p><h1>시간 초과·취소 때 GPU 자원 회수</h1><p>취소 시각과 실제 GPU 메모리 반환 시각은 왜 다른가요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">시간 초과·취소 때 GPU 자원 회수</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-cancellation-resource-reclaim-1"><svg><g>
+<text x="306" y="80" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">1 ms · R7 실행 · R8 도착</text>
+<text x="107" y="138.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">KV</text>
+<line x1="120" y1="150.0" x2="565" y2="150.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="113.0" x2="565" y2="155.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="117.0" width="333.75" height="27" fill="#c9e8f6" stroke="#566d7c" stroke-width="1"/>
+<text x="286.875" y="137.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<rect x="453.75" y="117.0" width="111.25" height="27" fill="#ebf4f7" stroke="#566d7c" stroke-width="1"/>
+<text x="509.375" y="137.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<text x="565" y="175.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">8 MiB</text>
+<text x="310" y="244" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">R7 6 · 여유 2 &lt; R8 필요 4 MiB</text>
+</g></svg></template>
+<template id="figure-serving-cancellation-resource-reclaim-2"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="185.83333333333331" y1="230" x2="185.83333333333331" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="185.83333333333331" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<line x1="261.66666666666663" y1="230" x2="261.66666666666663" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="261.66666666666663" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<line x1="413.3333333333333" y1="230" x2="413.3333333333333" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="413.3333333333333" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R7</text>
+<rect x="110.0" y="95.0" width="151.66666666666663" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<rect x="261.66666666666663" y="95.0" width="151.66666666666669" height="26" fill="#f6dacb" stroke="#a34123" stroke-width="1.6"/>
+<text x="90" y="212.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R8</text>
+<rect x="185.83333333333331" y="192.0" width="227.5" height="26" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">R7 취소 2 ms · 반환 경계 4 ms</text>
+<text x="333" y="159" font-size="21" font-weight="650" fill="#a34123" text-anchor="middle">R7 KV 6 MiB 유지</text>
+</g></svg></template>
+<template id="figure-serving-cancellation-resource-reclaim-3"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="185.83333333333331" y1="230" x2="185.83333333333331" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="185.83333333333331" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<line x1="261.66666666666663" y1="230" x2="261.66666666666663" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="261.66666666666663" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<line x1="413.3333333333333" y1="230" x2="413.3333333333333" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="413.3333333333333" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R7</text>
+<rect x="110.0" y="95.0" width="151.66666666666663" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<rect x="261.66666666666663" y="95.0" width="151.66666666666669" height="26" fill="#f6dacb" stroke="#a34123" stroke-width="1.6"/>
+<text x="90" y="212.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">R8</text>
+<rect x="185.83333333333331" y="192.0" width="227.5" height="26" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.6"/>
+<rect x="413.3333333333333" y="192.0" width="151.66666666666669" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4 ms · R7 −6 MiB → R8 +4 MiB</text>
+<text x="378" y="159" font-size="21" font-weight="650" fill="#11664f" text-anchor="middle">R8 대기 4−1=3 ms</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "실행과 대기",
+    "title": "R7의 6 MiB 때문에 R8은 실행을 기다립니다",
+    "body": "R7은 0 ms에 시작합니다. 1 ms에 온 R8은 4 MiB가 필요한데 2 MiB만 남아 기다립니다.",
+    "takeaway": "R7 상주 6, 여유 2, R8 필요 4라는 자원 비교입니다.",
+    "example": [
+      "R7 @0 · R8 @1 ms",
+      "8−6=2 \u003c 4 MiB",
+      "R8 대기"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "실행과 대기",
+      "description": "R7 상주 6, 여유 2, R8 필요 4라는 자원 비교입니다.",
+      "figure": "figure-serving-cancellation-resource-reclaim-1"
+    },
+    "quiz": [
+      "R8 대신 2 MiB가 필요한 요청이면 자원 관점에서 들어가나요?",
+      "들어감",
+      "부족",
+      "8−6=2 MiB가 남아 있습니다."
+    ]
+  },
+  {
+    "label": "취소 표시",
+    "title": "2 ms에 취소해도 실행 중인 커널이 끝날 때까지 점유합니다",
+    "body": "R7 기한은 2 ms입니다. 스케줄러는 추가 생성을 막고 4 ms 커널 안전 경계를 기다립니다. R8은 여전히 큐에 있습니다.",
+    "takeaway": "2 ms의 논리 취소와 4 ms까지의 점유가 같은 시간축에 있습니다.",
+    "example": [
+      "같은 R7 · 취소 2 ms",
+      "추가 토큰 금지 · 경계까지 KV 보존",
+      "R7 취소 · KV 6 MiB 유지"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "취소 표시",
+      "description": "2 ms의 논리 취소와 4 ms까지의 점유가 같은 시간축에 있습니다.",
+      "figure": "figure-serving-cancellation-resource-reclaim-2"
+    },
+    "quiz": [
+      "취소 직후 R7에 새 디코드 커널을 예약하나요?",
+      "예약 중지",
+      "계속 예약",
+      "이미 실행 중인 커널의 안전 종료만 기다립니다."
+    ]
+  },
+  {
+    "label": "안전 경계 반환",
+    "title": "4 ms에 R7을 해제한 뒤 R8을 실행합니다",
+    "body": "4 ms 경계에서 R7 KV 6 MiB를 되돌립니다. R8의 4 MiB를 새로 예약하고 시작합니다. 취소 2와 반환 4를 추적 기록에 남깁니다.",
+    "takeaway": "두 막대가 4 ms에서 종료와 시작으로 맞물립니다.",
+    "example": [
+      "같은 R7 취소 · R8 대기",
+      "4 ms에 6 MiB 반환 후 4 MiB 예약",
+      "R8 시작 · 여유 4 MiB"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "안전 경계 반환",
+      "description": "두 막대가 4 ms에서 종료와 시작으로 맞물립니다.",
+      "figure": "figure-serving-cancellation-resource-reclaim-3"
+    },
+    "quiz": [
+      "R8이 메모리를 받은 뒤 남은 여유는?",
+      "4 MiB",
+      "2 MiB",
+      "R7의 6 MiB를 반환하고 R8의 4 MiB만 사용합니다."
+    ]
+  }
+];
+const slug = 'serving-cancellation-resource-reclaim';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 요청에서 품질이 떨어진 판을 어떻게 되돌리고 확인하나요?">
+<title>품질 악화 경보와 롤백 연습 · G29</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-quality-alert-rollback.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G29</p><h1>품질 악화 경보와 롤백 연습</h1><p>같은 요청에서 품질이 떨어진 판을 어떻게 되돌리고 확인하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">품질 악화 경보와 롤백 연습</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-quality-alert-rollback-1"><svg><g>
+<text x="308" y="78" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">기준 B17 · 하한 2/2</text>
+<text x="103" y="135" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">R1</text>
+<rect x="160" y="107" width="168" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="244.0" y="134" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">ready ✓</text>
+<text x="423" y="136" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">7 ms</text>
+<text x="103" y="194" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">R2</text>
+<rect x="160" y="166" width="168" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="244.0" y="193" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">warm ✓</text>
+<text x="423" y="195" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">9 ms</text>
+<text x="306" y="259" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">2/2 · p95=max(7,9)=9 ms</text>
+</g></svg></template>
+<template id="figure-serving-quality-alert-rollback-2"><svg><g>
+<text x="308" y="78" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">후보 C19 · 같은 R1/R2</text>
+<text x="103" y="135" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">R1</text>
+<rect x="160" y="107" width="349" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="334.5" y="134" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">실제 hold ≠ 기대 ready</text>
+<text x="103" y="194" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">R2</text>
+<rect x="160" y="166" width="349" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="334.5" y="193" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">실제 warm = 기대 warm</text>
+<text x="306" y="259" font-size="24" font-weight="650" fill="#a34123" text-anchor="middle">1/2 &lt; 2/2 → 경보</text>
+</g></svg></template>
+<template id="figure-serving-quality-alert-rollback-3"><svg><g>
+<text x="308" y="78" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">C19 → B17 · 재검증</text>
+<text x="103" y="135" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">R1</text>
+<rect x="160" y="107" width="168" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="244.0" y="134" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">ready ✓</text>
+<text x="423" y="136" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">7 ms</text>
+<text x="103" y="194" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">R2</text>
+<rect x="160" y="166" width="168" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="244.0" y="193" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">warm ✓</text>
+<text x="423" y="195" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">9 ms</text>
+<text x="306" y="259" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">2/2 · p95=max(7,9)=9 ms</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "기준 재생",
+    "title": "기준판 B17에서 두 기대 응답을 저장합니다",
+    "body": "고정 묶음 B17에서 R1은 ready, R2는 warm입니다. 두 정답과 지연을 기록해 비교 기준으로 씁니다.",
+    "takeaway": "기준 묶음 B17과 각 ID의 기대 출력이 대응합니다.",
+    "example": [
+      "B17 · R1 ready · R2 warm",
+      "실제 = 기대",
+      "2/2 · p95 9 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "기준 재생",
+      "description": "기준 묶음 B17과 각 ID의 기대 출력이 대응합니다.",
+      "figure": "figure-serving-quality-alert-rollback-1"
+    },
+    "quiz": [
+      "기준판 재실행에 저장할 항목은?",
+      "묶음 ID와 요청 입력",
+      "판 이름만",
+      "같은 입력과 실행 묶음이 필요합니다."
+    ]
+  },
+  {
+    "label": "경보",
+    "title": "새 판 C19에서 R1이 틀려 하한을 위반합니다",
+    "body": "같은 R1이 hold를 내고 R2는 warm입니다. 정확도 1/2가 하한 2/2보다 작아서 C19의 추가 노출을 멈춥니다.",
+    "takeaway": "붉은 R1 hold가 기준 ready와 다르며 경보선 아래입니다.",
+    "example": [
+      "C19 · 같은 R1/R2",
+      "R1 hold≠ready · R2 warm=warm",
+      "1/2 \u003c 2/2 → 경보"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "경보",
+      "description": "붉은 R1 hold가 기준 ready와 다르며 경보선 아래입니다.",
+      "figure": "figure-serving-quality-alert-rollback-2"
+    },
+    "quiz": [
+      "지연이 개선되어도 정의된 품질 하한을 어겼다면?",
+      "확대 중지",
+      "광범위 배포",
+      "두 지표는 각각 자체 조건을 충족해야 합니다."
+    ]
+  },
+  {
+    "label": "복원 검증",
+    "title": "B17 복귀 뒤 같은 R1/R2 출력을 다시 확인합니다",
+    "body": "트래픽을 B17으로 복귀합니다. R1 ready·R2 warm과 지연 7·9 ms가 저장한 기준과 같으므로 이 두 시험에서 회복을 확인합니다.",
+    "takeaway": "다시 B17이며 R1 hold가 ready로 바뀝니다.",
+    "example": [
+      "복귀 B17 · 같은 R1/R2",
+      "출력·시간 기준과 대조",
+      "2/2 · p95 9 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "복원 검증",
+      "description": "다시 B17이며 R1 hold가 ready로 바뀝니다.",
+      "figure": "figure-serving-quality-alert-rollback-3"
+    },
+    "quiz": [
+      "복원 후 새로운 요청만 시험해도 동일 입력 회복을 입증하나요?",
+      "R1/R2 다시 실행",
+      "새 요청만 실행",
+      "비교 가능한 원래 입력 결과도 확인해야 합니다."
+    ]
+  }
+];
+const slug = 'serving-quality-alert-rollback';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

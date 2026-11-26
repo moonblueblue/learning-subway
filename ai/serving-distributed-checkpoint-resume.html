@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="모델 가중치만 복구하면 다음 학습 스텝도 같을까요?">
+<title>분산 체크포인트 재시작과 손실 검증 · G36</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-distributed-checkpoint-resume.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G36</p><h1>분산 체크포인트 재시작과 손실 검증</h1><p>모델 가중치만 복구하면 다음 학습 스텝도 같을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">분산 체크포인트 재시작과 손실 검증</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-distributed-checkpoint-resume-1"><svg><g>
+<text x="306" y="78" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">step 40 · 저장 완료</text>
+<rect x="48" y="104" width="179" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.5" y="131" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">R0 · w=2</text>
+<rect x="48" y="184" width="179" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.5" y="211" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">R1 · v=1</text>
+<line x1="233.0" y1="126.0" x2="338.0" y2="153.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="338.0,153.0 325.30855685287156,155.8155409503693 328.2410259099676,144.41149461721793" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="233.0" y1="204.0" x2="338.0" y2="174.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="338.0,174.0 328.47299122393144,182.84511751084813 325.23813801458806,171.5231312781463" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="343" y="144" width="232" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="459.0" y="171" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">manifest 40</text>
+<text x="462" y="231" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">cursor=2 · seed=5</text>
+</g></svg></template>
+<template id="figure-serving-distributed-checkpoint-resume-2"><svg><g>
+<text x="307" y="80" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">중단 → manifest 40 읽기</text>
+<text x="306" y="127" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">cursor=2 · row [1,3]</text>
+<rect x="153" y="149" width="150" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="228.0" y="176" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0 → 1</text>
+<rect x="307" y="149" width="150" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="382.0" y="176" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1 → 3</text>
+<text x="306" y="238" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">(3×5+1) mod 8=0 → x=1</text>
+</g></svg></template>
+<template id="figure-serving-distributed-checkpoint-resume-3"><svg><g>
+<text x="309" y="78" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">step 41 · x=1 · w=2 · L=(w⁺−1)²/2</text>
+<text x="125" y="127" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">연속 v=1</text>
+<text x="357" y="127" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">v⁺=1.5 → w⁺=1.625</text>
+<text x="533" y="127" font-size="18" font-weight="650" fill="#11664f" text-anchor="middle">.1953125</text>
+<text x="125" y="178" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">복구 v=1</text>
+<text x="357" y="178" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">v⁺=1.5 → w⁺=1.625</text>
+<text x="533" y="178" font-size="18" font-weight="650" fill="#11664f" text-anchor="middle">.1953125</text>
+<text x="125" y="229" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">초기화 v=0</text>
+<text x="357" y="229" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">v⁺=1 → w⁺=1.75</text>
+<text x="533" y="229" font-size="18" font-weight="650" fill="#a34123" text-anchor="middle">.28125</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "원자적 저장",
+    "title": "40번 스텝의 두 상태 조각과 진행 위치를 한 매니페스트에 묶습니다",
+    "body": "장난감에서 rank 0은 w=2, rank 1은 v=1을 씁니다. 두 파일 완료 뒤 manifest 40에 step=40, cursor=2, seed=5와 두 조각 이름을 기록합니다.",
+    "takeaway": "두 조각 경로가 하나의 확정 매니페스트로 이어집니다.",
+    "example": [
+      "w=2 · v=1 · step 40 · cursor 2 · seed 5",
+      "두 rank 완료 후 manifest 게시",
+      "ckpt40 완결"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "원자적 저장",
+      "description": "두 조각 경로가 하나의 확정 매니페스트로 이어집니다.",
+      "figure": "figure-serving-distributed-checkpoint-resume-1"
+    },
+    "quiz": [
+      "rank 1 쓰기가 실패했을 때 manifest 40을 게시하나요?",
+      "이전 완결판 유지",
+      "step 40 게시",
+      "필수 조각 두 개를 모두 저장해야 합니다."
+    ]
+  },
+  {
+    "label": "중단과 입력 재선택",
+    "title": "복구한 cursor와 seed가 이전과 같은 x를 고릅니다",
+    "body": "스텝 40 뒤에 작업이 중단됩니다. 같은 manifest에서 cursor=2와 seed=5를 복구합니다. 행 2 후보 [1,3] 중 난수 갱신 (3×5+1) mod 8=0이 인덱스 0인 x=1을 선택합니다.",
+    "takeaway": "행 2의 인덱스 0에 있는 1이 표시됩니다.",
+    "example": [
+      "복구 cursor=2 · seed=5",
+      "row[2]=[1,3] · (3×5+1) mod 8=0",
+      "step 41 · x=1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "중단과 입력 재선택",
+      "description": "행 2의 인덱스 0에 있는 1이 표시됩니다.",
+      "figure": "figure-serving-distributed-checkpoint-resume-2"
+    },
+    "quiz": [
+      "seed가 0이면 난수 갱신으로 고르는 인덱스는?",
+      "1",
+      "0",
+      "(3×0+1) mod 8=1입니다."
+    ]
+  },
+  {
+    "label": "스텝 41 대조",
+    "title": "모멘텀까지 복구하면 다음 가중치와 손실이 모두 재현됩니다",
+    "body": "연속 실행과 복구 모두 x=1,w=2,v=1에서 v⁺=1.5,w⁺=1.625를 얻습니다. 같은 x의 갱신 후 손실은 .1953125입니다. v를 0으로 초기화하면 w⁺=1.75, 손실 .28125가 되어 어긋납니다.",
+    "takeaway": "두 정상 경로의 v⁺, w⁺와 손실이 같고 v=0 행은 다릅니다.",
+    "example": [
+      "같은 step 41 · x=1 · w=2",
+      "v⁺=.5v+1 · w⁺=2−.25v⁺ · L=(w⁺−1)²/2",
+      "연속 = 복구 .1953125 · 초기화 .28125"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "스텝 41 대조",
+      "description": "두 정상 경로의 v⁺, w⁺와 손실이 같고 v=0 행은 다릅니다.",
+      "figure": "figure-serving-distributed-checkpoint-resume-3"
+    },
+    "quiz": [
+      "가중치와 seed만 저장하고 모멘텀을 빠뜨리면 복원 손실은?",
+      ".28125",
+      ".1953125",
+      "v=0의 갱신 후 w⁺=1.75를 손실식에 넣습니다."
+    ]
+  }
+];
+const slug = 'serving-distributed-checkpoint-resume';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "hardware": {
+    "capacityBytes": 4608,
+    "weightsBytes": 1024,
+    "workspaceBytes": 512,
+    "kvBytesPerToken": 128,
+    "maxContextTokens": 16,
+    "maxBatch": 3,
+    "prefixTokens": 2,
+    "prefillBaseMs": 1,
+    "prefillMsPerToken": 1,
+    "decodeMs": 2,
+    "extraBatchDecodeMs": 0,
+    "usdPerHour": 3.6
+  },
+  "budgets": {
+    "minQuality": 1,
+    "minCompletionRate": 1,
+    "minRequestsPerSecond": 180,
+    "maxP95Ms": 15,
+    "maxPeakBytes": 4352,
+    "maxUsdPerCompletion": 6e-06
+  },
+  "model": {
+    "vocabulary": [
+      "cool",
+      "ready",
+      "warm",
+      "hold"
+    ],
+    "weights": [
+      [
+        0,
+        4,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        4
+      ],
+      [
+        4,
+        1,
+        0,
+        0
+      ]
+    ]
+  },
+  "requests": [
+    {
+      "id": "R01",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "warm",
+        "cool"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "ready",
+        "warm"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R02",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "hold",
+        "ready"
+      ],
+      "outputTokens": 3,
+      "expectedTokens": [
+        "warm",
+        "hold",
+        "cool"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R03",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "ready",
+        "warm"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "hold",
+        "cool"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R04",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "cool",
+        "hold"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "cool",
+        "ready"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R05",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "warm",
+        "warm"
+      ],
+      "outputTokens": 3,
+      "expectedTokens": [
+        "hold",
+        "cool",
+        "ready"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R06",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "hold",
+        "cool"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "ready",
+        "warm"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R07",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "ready",
+        "hold"
+      ],
+      "outputTokens": 2,
+      "expectedTokens": [
+        "cool",
+        "ready"
+      ],
+      "deadlineMs": 50
+    },
+    {
+      "id": "R08",
+      "arrivalMs": 0,
+      "inputTokens": [
+        "cool",
+        "ready",
+        "cool",
+        "ready"
+      ],
+      "outputTokens": 3,
+      "expectedTokens": [
+        "warm",
+        "hold",
+        "cool"
+      ],
+      "deadlineMs": 50
+    }
+  ]
+}

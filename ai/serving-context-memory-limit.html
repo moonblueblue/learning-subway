@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="요청을 시작하기 전에 길이 한도와 실제 공간을 어떻게 따로 확인하나요?">
+<title>최대 문맥 길이와 메모리 부족 처리 · G17</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-context-memory-limit.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G17</p><h1>최대 문맥 길이와 메모리 부족 처리</h1><p>요청을 시작하기 전에 길이 한도와 실제 공간을 어떻게 따로 확인하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">최대 문맥 길이와 메모리 부족 처리</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-context-memory-limit-1"><svg><g>
+<text x="306" y="80" font-size="25" font-weight="650" fill="#17354b" text-anchor="middle">B · 5 + 2 = 7 ≤ 8 tokens</text>
+<rect x="109" y="129" width="204" height="29" fill="#c9e8f6" stroke="#12649c" stroke-width="2"/>
+<rect x="313" y="129" width="204" height="29" fill="#cbe7d9" stroke="#11664f" stroke-width="2"/>
+<rect x="517" y="129" width="34" height="29" fill="#f6dacb" stroke="#a34123" stroke-width="2"/>
+<text x="211" y="150" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A 6</text>
+<text x="415" y="150" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B 6</text>
+<text x="534" y="150" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<line x1="517" y1="116" x2="517" y2="178" stroke="#a34123" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="517" y="207" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">12 MiB</text>
+<text x="305" y="257" font-size="25" font-weight="650" fill="#a34123" text-anchor="middle">6 + 7 = 13 &gt; 12 MiB</text>
+</g></svg></template>
+<template id="figure-serving-context-memory-limit-2"><svg><g>
+<text x="305" y="82" font-size="25" font-weight="650" fill="#17354b" text-anchor="middle">A 완료 · 6 MiB 반환</text>
+<text x="107" y="142.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">KV</text>
+<line x1="120" y1="154.0" x2="565" y2="154.0" stroke="#566d7c" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="565" y1="117.0" x2="565" y2="159.0" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<rect x="120" y="121.0" width="259.5833333333333" height="27" fill="#cbe7d9" stroke="#566d7c" stroke-width="1"/>
+<text x="249.79166666666666" y="141.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">7</text>
+<rect x="379.5833333333333" y="121.0" width="185.41666666666666" height="27" fill="#ebf4f7" stroke="#566d7c" stroke-width="1"/>
+<text x="472.29166666666663" y="141.0" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<text x="565" y="179.0" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">12 MiB</text>
+<text x="304" y="248" font-size="24" font-weight="650" fill="#11664f" text-anchor="middle">B 7 · 여유 5 MiB</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "두 가지 검사",
+    "title": "문맥을 지켜도 동시 요청의 KV는 넘칠 수 있습니다",
+    "body": "A가 6칸을 차지합니다. B는 입력 5와 최대 출력 2로 7칸을 예약합니다. 7≤8이지만 6+7=13>12여서 현재 슬롯에는 올리지 않습니다.",
+    "takeaway": "B의 마지막 1 MiB가 장치 경계를 넘습니다.",
+    "example": [
+      "A 6 · B 5입력+2출력",
+      "B 7≤8 · A+B 13>12",
+      "문맥 통과 · KV 대기"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "두 가지 검사",
+      "description": "B의 마지막 1 MiB가 장치 경계를 넘습니다.",
+      "figure": "figure-serving-context-memory-limit-1"
+    },
+    "quiz": [
+      "활성 요청이 없으면 B의 7칸은 들어가나요?",
+      "들어감",
+      "들어가지 않음",
+      "문맥 8과 장치 12 모두 이내입니다."
+    ]
+  },
+  {
+    "label": "재검사",
+    "title": "A를 끝낸 뒤 같은 B를 넣을 수 있습니다",
+    "body": "A 종료로 6 MiB를 돌려받습니다. B 요청이나 모델은 자르지 않고 7칸을 넣습니다. 실패를 숨기는 대신 재시도·거절 정책을 설정합니다.",
+    "takeaway": "A 반환 뒤 B가 경계 안에 있고 5 MiB가 남습니다.",
+    "example": [
+      "A 완료·반환 6 MiB · B 그대로",
+      "0+7≤12",
+      "여유 5 MiB"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "재검사",
+      "description": "A 반환 뒤 B가 경계 안에 있고 5 MiB가 남습니다.",
+      "figure": "figure-serving-context-memory-limit-2"
+    },
+    "quiz": [
+      "다른 요청 없이 입력 8과 출력 한 토큰 예약이면 어디에서 거절되나요?",
+      "문맥 상한 8",
+      "장치 12 MiB",
+      "요청 하나의 예약 9는 8을 넘습니다."
+    ]
+  }
+];
+const slug = 'serving-context-memory-limit';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

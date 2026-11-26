@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 커널에서도 블록이 한 번에 모두 실행될까요?">
+<title>GPU 커널·스레드 블록과 병렬성 · G03</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-gpu-kernel-blocks.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G03</p><h1>GPU 커널·스레드 블록과 병렬성</h1><p>같은 커널에서도 블록이 한 번에 모두 실행될까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">GPU 커널·스레드 블록과 병렬성</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-gpu-kernel-blocks-1"><svg><g>
+<rect x="48" y="91" width="126" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="111.0" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B0</text>
+<rect x="178" y="91" width="126" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="241.0" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B1</text>
+<rect x="308" y="91" width="126" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="371.0" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B2</text>
+<rect x="438" y="91" width="126" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="501.0" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B3</text>
+<rect x="48" y="155" width="61" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="78.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<rect x="113" y="155" width="61" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="143.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<rect x="178" y="155" width="61" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="208.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<rect x="243" y="155" width="61" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="273.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">3</text>
+<rect x="308" y="155" width="61" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="338.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="373" y="155" width="61" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="403.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<rect x="438" y="155" width="61" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="468.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<rect x="503" y="155" width="61" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="533.5" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">7</text>
+<line x1="369.0" y1="131.0" x2="371.0" y2="153.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="371.0,153.0 364.0873127245967,141.99024275324487 375.8139984722933,140.92418041254518" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="380.0" y1="131.0" x2="429.0" y2="153.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="429.0,153.0 416.0149699875392,153.62369509817887 420.8379147652639,142.88168172961025" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="307" y="246" font-size="26" font-weight="650" fill="#17354b" text-anchor="middle">B2 t1 → 2×2+1 = 5</text>
+</g></svg></template>
+<template id="figure-serving-gpu-kernel-blocks-2"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="337.5" y1="230" x2="337.5" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="337.5" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">3</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">SM0</text>
+<rect x="110.0" y="95.0" width="227.5" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<rect x="337.5" y="95.0" width="227.5" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="90" y="212.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">SM1</text>
+<rect x="110.0" y="192.0" width="227.5" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<rect x="337.5" y="192.0" width="227.5" height="26" fill="#cbe7d9" stroke="#11664f" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4블록 · 2 SM × 1블록</text>
+<text x="223" y="115" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B0</text>
+<text x="451" y="115" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B2</text>
+<text x="223" y="212" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B1</text>
+<text x="451" y="212" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B3</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "그리드 나누기",
+    "title": "블록과 스레드가 원소의 처리 위치를 정합니다",
+    "body": "이 장난감 커널은 스레드마다 원소 하나를 두 배로 바꿉니다. blockIdx×2+threadIdx로 인덱스를 구하므로 B2의 t1은 x[5]를 읽습니다.",
+    "takeaway": "B2는 입력 인덱스 4와 5에 연결됩니다.",
+    "example": [
+      "x[0…7] · 스레드 2개/블록",
+      "i=2×blockIdx+threadIdx",
+      "B2 t1 → x[5]"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "그리드 나누기",
+      "description": "B2는 입력 인덱스 4와 5에 연결됩니다.",
+      "figure": "figure-serving-gpu-kernel-blocks-1"
+    },
+    "quiz": [
+      "B3의 t0 원소는?",
+      "x[6]",
+      "x[3]",
+      "2×3+0=6입니다."
+    ]
+  },
+  {
+    "label": "두 웨이브",
+    "title": "블록 네 개가 용량 두 개를 번갈아 사용합니다",
+    "body": "SM은 스레드 블록을 실행하는 GPU 장치입니다. 여기서는 SM당 블록 한 개만 올라갑니다. 한 블록이 3 ms이면 앞의 두 블록 뒤에 나머지 두 블록이 실행됩니다.",
+    "takeaway": "두 SM 각각 0–3 ms와 3–6 ms에 다른 블록을 실행합니다.",
+    "example": [
+      "B0–B3 · 각각 3 ms",
+      "2 SM × 1 블록 동시",
+      "2 웨이브 · 6 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "두 웨이브",
+      "description": "두 SM 각각 0–3 ms와 3–6 ms에 다른 블록을 실행합니다.",
+      "figure": "figure-serving-gpu-kernel-blocks-2"
+    },
+    "quiz": [
+      "같은 조건에서 블록 6개면 몇 웨이브인가요?",
+      "3",
+      "6",
+      "동시에 올라가는 블록은 두 개입니다."
+    ]
+  }
+];
+const slug = 'serving-gpu-kernel-blocks';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

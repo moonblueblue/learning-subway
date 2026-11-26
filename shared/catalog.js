@@ -1588,17 +1588,154 @@ const courseCatalog = {
           "titleEn": "AI systems and serving",
           "lessons": [
             {
+              "id": "8.3",
+              "ref": "ai/serving-request-lifecycle"
+            },
+            {
+              "id": "8.7",
+              "ref": "system-design/parallel"
+            },
+            {
+              "id": "8.8",
+              "ref": "ai/serving-gpu-kernel-blocks"
+            },
+            {
+              "id": "8.9",
+              "ref": "ai/serving-device-host-transfer"
+            },
+            {
+              "id": "8.10",
+              "ref": "ai/serving-bandwidth-compute-roofline"
+            },
+            {
+              "id": "8.11",
+              "ref": "ai/serving-inference-memory-budget"
+            },
+            {
               "id": "8.1",
               "ref": "system-design/queue"
             },
             {
+              "id": "8.12",
+              "ref": "ai/serving-static-batching-delay"
+            },
+            {
+              "id": "8.13",
+              "ref": "ai/serving-prefill-token-decode"
+            },
+            {
               "id": "8.2",
               "ref": "system-design/cache"
+            },
+            {
+              "id": "8.14",
+              "ref": "ai/serving-kv-cache-scope"
+            },
+            {
+              "id": "8.15",
+              "ref": "ai/serving-continuous-batching"
+            },
+            {
+              "id": "8.4",
+              "ref": "ai/serving-float-format-ranges"
+            },
+            {
+              "id": "8.16",
+              "ref": "ai/serving-integer-quantization-scale"
+            },
+            {
+              "id": "8.17",
+              "ref": "ai/serving-weight-activation-quantization"
+            },
+            {
+              "id": "8.18",
+              "ref": "ai/serving-quantization-calibration"
+            },
+            {
+              "id": "8.19",
+              "ref": "ai/serving-context-memory-limit"
+            },
+            {
+              "id": "8.5",
+              "ref": "ai/serving-single-optimization-ablation"
+            },
+            {
+              "id": "8.20",
+              "ref": "ai/serving-reproducible-workload-shape"
+            },
+            {
+              "id": "8.21",
+              "ref": "ai/serving-ttft-inter-token-p95"
+            },
+            {
+              "id": "8.22",
+              "ref": "ai/serving-throughput-quality-cost"
+            },
+            {
+              "id": "8.23",
+              "ref": "system-design/loadbalancing"
+            },
+            {
+              "id": "8.24",
+              "ref": "ai/serving-admission-backpressure"
+            },
+            {
+              "id": "8.25",
+              "ref": "ai/serving-cancellation-resource-reclaim"
+            },
+            {
+              "id": "8.6",
+              "ref": "ai/serving-version-bundle"
+            },
+            {
+              "id": "8.26",
+              "ref": "ai/serving-hardware-startup-checks"
+            },
+            {
+              "id": "8.27",
+              "ref": "ai/serving-observability-trace-ids"
+            },
+            {
+              "id": "8.28",
+              "ref": "ai/serving-shadow-canary-rollout"
+            },
+            {
+              "id": "8.29",
+              "ref": "ai/serving-quality-alert-rollback"
+            },
+            {
+              "id": "8.30",
+              "ref": "ai/serving-release-budget-decision"
+            },
+            {
+              "id": "8.31",
+              "ref": "ai/serving-training-memory-ledger"
+            },
+            {
+              "id": "8.32",
+              "ref": "ai/serving-data-parallel-gradients"
+            },
+            {
+              "id": "8.33",
+              "ref": "ai/serving-tensor-parallel-collectives"
+            },
+            {
+              "id": "8.34",
+              "ref": "ai/serving-pipeline-idle-bubbles"
+            },
+            {
+              "id": "8.35",
+              "ref": "ai/serving-optimizer-sharding-recomputation"
+            },
+            {
+              "id": "8.36",
+              "ref": "ai/serving-distributed-checkpoint-resume"
             }
           ],
           "tracks": [],
           "destination": "추론 서비스 운영",
-          "destinationEn": "Operating an inference service"
+          "destinationEn": "Operating an inference service",
+          "projectRef": "projects/inference-service-operations"
         }
       ],
       "branch": {
@@ -5974,6 +6111,358 @@ const courseCatalog = {
             "ai/rec-personalization-diversity"
           ],
           "page": "ai/rec-exposure-log-offline-evaluation.html"
+        },
+        {
+          "id": "serving-request-lifecycle",
+          "title": "추론 요청의 수명과 측정 경계",
+          "titleEn": "The inference request lifecycle and measurement boundaries",
+          "question": "요청의 지연을 재려면 어디에서 시계를 시작하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/llm"
+          ],
+          "page": "ai/serving-request-lifecycle.html"
+        },
+        {
+          "id": "serving-gpu-kernel-blocks",
+          "title": "GPU 커널·스레드 블록과 병렬성",
+          "titleEn": "GPU kernels, thread blocks and parallelism",
+          "question": "같은 커널에서도 블록이 한 번에 모두 실행될까요?",
+          "format": "실험",
+          "requires": [
+            "system-design/parallel"
+          ],
+          "page": "ai/serving-gpu-kernel-blocks.html"
+        },
+        {
+          "id": "serving-device-host-transfer",
+          "title": "장치 메모리와 호스트 전송",
+          "titleEn": "Device memory and host transfers",
+          "question": "입력과 가중치를 복사하는 비용은 언제 발생하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-gpu-kernel-blocks"
+          ],
+          "page": "ai/serving-device-host-transfer.html"
+        },
+        {
+          "id": "serving-bandwidth-compute-roofline",
+          "title": "대역폭 병목과 연산 병목",
+          "titleEn": "Bandwidth and compute bottlenecks",
+          "question": "같은 장비에서 어느 쪽이 처리 시간의 하한을 정하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-device-host-transfer"
+          ],
+          "page": "ai/serving-bandwidth-compute-roofline.html"
+        },
+        {
+          "id": "serving-inference-memory-budget",
+          "title": "가중치·활성값·작업 공간의 메모리 예산",
+          "titleEn": "Memory budgets for weights, activations and workspace",
+          "question": "가중치가 장치에 들어가도 실행이 실패하는 이유는 무엇인가요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-bandwidth-compute-roofline"
+          ],
+          "page": "ai/serving-inference-memory-budget.html"
+        },
+        {
+          "id": "serving-static-batching-delay",
+          "title": "정적 배칭과 대기 시간",
+          "titleEn": "Static batching and wait time",
+          "question": "배치가 두 요청을 함께 처리하면 첫 요청의 대기 시간은 어떻게 바뀌나요?",
+          "format": "실험",
+          "requires": [
+            "system-design/queue"
+          ],
+          "page": "ai/serving-static-batching-delay.html"
+        },
+        {
+          "id": "serving-prefill-token-decode",
+          "title": "프리필과 토큰별 디코드",
+          "titleEn": "Prefill and token-by-token decoding",
+          "question": "입력이 길어질 때와 출력이 길어질 때 어느 구간을 늘리나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-static-batching-delay"
+          ],
+          "page": "ai/serving-prefill-token-decode.html"
+        },
+        {
+          "id": "serving-kv-cache-scope",
+          "title": "KV 캐시의 길이·메모리·재사용 범위",
+          "titleEn": "KV cache length, memory and reuse boundaries",
+          "question": "어떤 토큰 상태를 저장하며 언제 다른 요청이 공유할 수 있나요?",
+          "format": "실험",
+          "requires": [
+            "system-design/cache"
+          ],
+          "page": "ai/serving-kv-cache-scope.html"
+        },
+        {
+          "id": "serving-continuous-batching",
+          "title": "연속 배칭과 요청 간 간섭",
+          "titleEn": "Continuous batching and request interference",
+          "question": "짧은 요청이 끝났을 때 새 요청을 언제 받아들일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-kv-cache-scope"
+          ],
+          "page": "ai/serving-continuous-batching.html"
+        },
+        {
+          "id": "serving-float-format-ranges",
+          "title": "FP32·BF16·FP16의 표현 범위",
+          "titleEn": "Representation ranges of FP32, BF16 and FP16",
+          "question": "16비트 두 형식이 왜 같은 수를 다르게 표현하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-continuous-batching"
+          ],
+          "page": "ai/serving-float-format-ranges.html"
+        },
+        {
+          "id": "serving-integer-quantization-scale",
+          "title": "정수 양자화와 스케일",
+          "titleEn": "Integer quantization and scale",
+          "question": "정수 반올림과 범위 제한이 복원값을 어떻게 바꾸나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-float-format-ranges"
+          ],
+          "page": "ai/serving-integer-quantization-scale.html"
+        },
+        {
+          "id": "serving-weight-activation-quantization",
+          "title": "가중치 전용·활성값 양자화 비교",
+          "titleEn": "Weight-only versus activation quantization",
+          "question": "어떤 텐서를 줄여야 피크 메모리가 줄어드나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-integer-quantization-scale"
+          ],
+          "page": "ai/serving-weight-activation-quantization.html"
+        },
+        {
+          "id": "serving-quantization-calibration",
+          "title": "교정 데이터와 품질 손실",
+          "titleEn": "Calibration data and quality loss",
+          "question": "교정에서 보지 못한 이상값이 결정에 어떤 영향을 주나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-weight-activation-quantization"
+          ],
+          "page": "ai/serving-quantization-calibration.html"
+        },
+        {
+          "id": "serving-context-memory-limit",
+          "title": "최대 문맥 길이와 메모리 부족 처리",
+          "titleEn": "Context limits and out-of-memory handling",
+          "question": "요청을 시작하기 전에 길이 한도와 실제 공간을 어떻게 따로 확인하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-quantization-calibration"
+          ],
+          "page": "ai/serving-context-memory-limit.html"
+        },
+        {
+          "id": "serving-single-optimization-ablation",
+          "title": "한 최적화를 끄는 비교 실험",
+          "titleEn": "A single-optimization ablation",
+          "question": "후보판이 좋아졌다는 이유를 어떻게 한 가지씩 확인하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-context-memory-limit"
+          ],
+          "page": "ai/serving-single-optimization-ablation.html"
+        },
+        {
+          "id": "serving-reproducible-workload-shape",
+          "title": "재현할 입력 길이·도착률·동시성",
+          "titleEn": "Reproducible prompt lengths, arrival rates and concurrency",
+          "question": "도착률이 같아도 왜 최대 대기 요청 수가 달라지나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-single-optimization-ablation"
+          ],
+          "page": "ai/serving-reproducible-workload-shape.html"
+        },
+        {
+          "id": "serving-ttft-inter-token-p95",
+          "title": "첫 토큰 지연·토큰 간 지연·p95",
+          "titleEn": "First-token latency, token gaps and p95",
+          "question": "지연 백분위를 계산할 때 토큰과 요청을 어떻게 구분하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-reproducible-workload-shape"
+          ],
+          "page": "ai/serving-ttft-inter-token-p95.html"
+        },
+        {
+          "id": "serving-throughput-quality-cost",
+          "title": "처리량·응답 품질·요청당 비용",
+          "titleEn": "Throughput, response quality and cost per request",
+          "question": "실패와 오답이 있을 때 처리량과 비용의 분모는 어떻게 달라지나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-ttft-inter-token-p95"
+          ],
+          "page": "ai/serving-throughput-quality-cost.html"
+        },
+        {
+          "id": "serving-admission-backpressure",
+          "title": "과부하 시 진입 제한과 배압",
+          "titleEn": "Admission limits and backpressure under overload",
+          "question": "큐를 제한하면 어떤 요청을 언제 다시 보낼 수 있나요?",
+          "format": "실험",
+          "requires": [
+            "system-design/loadbalancing"
+          ],
+          "page": "ai/serving-admission-backpressure.html"
+        },
+        {
+          "id": "serving-cancellation-resource-reclaim",
+          "title": "시간 초과·취소 때 GPU 자원 회수",
+          "titleEn": "Reclaiming GPU resources after timeout or cancellation",
+          "question": "취소 시각과 실제 GPU 메모리 반환 시각은 왜 다른가요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-admission-backpressure"
+          ],
+          "page": "ai/serving-cancellation-resource-reclaim.html"
+        },
+        {
+          "id": "serving-version-bundle",
+          "title": "모델·토크나이저·런타임을 한 버전으로 묶기",
+          "titleEn": "Bundling the model, tokenizer and runtime",
+          "question": "같은 모델 파일인데 출력 단어가 달라지는 이유는 무엇인가요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-cancellation-resource-reclaim"
+          ],
+          "page": "ai/serving-version-bundle.html"
+        },
+        {
+          "id": "serving-hardware-startup-checks",
+          "title": "하드웨어 호환성과 기동 시험",
+          "titleEn": "Hardware compatibility and startup checks",
+          "question": "가중치 파일을 읽었으면 배포를 열어도 될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-version-bundle"
+          ],
+          "page": "ai/serving-hardware-startup-checks.html"
+        },
+        {
+          "id": "serving-observability-trace-ids",
+          "title": "관측 지표·로그·추적 ID 연결",
+          "titleEn": "Connecting metrics, logs and trace IDs",
+          "question": "느린 p95를 만든 한 요청의 대기와 실행을 어떻게 찾나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-hardware-startup-checks"
+          ],
+          "page": "ai/serving-observability-trace-ids.html"
+        },
+        {
+          "id": "serving-shadow-canary-rollout",
+          "title": "그림자 트래픽과 점진 배포",
+          "titleEn": "Shadow traffic and progressive rollout",
+          "question": "그림자 실행과 사용자에게 보내는 소량 배포의 차이는 무엇인가요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-observability-trace-ids"
+          ],
+          "page": "ai/serving-shadow-canary-rollout.html"
+        },
+        {
+          "id": "serving-quality-alert-rollback",
+          "title": "품질 악화 경보와 롤백 연습",
+          "titleEn": "Quality alerts and a rollback drill",
+          "question": "같은 요청에서 품질이 떨어진 판을 어떻게 되돌리고 확인하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-shadow-canary-rollout"
+          ],
+          "page": "ai/serving-quality-alert-rollback.html"
+        },
+        {
+          "id": "serving-release-budget-decision",
+          "title": "서비스 예산을 근거로 배포 승인하기",
+          "titleEn": "Approving a release against service budgets",
+          "question": "한 항목을 개선한 후보가 왜 배포 승인에 실패할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-quality-alert-rollback"
+          ],
+          "page": "ai/serving-release-budget-decision.html"
+        },
+        {
+          "id": "serving-training-memory-ledger",
+          "title": "학습 상태별 GPU 메모리 장부",
+          "titleEn": "GPU memory ledger by training state",
+          "question": "같은 가중치로 학습할 때 추론보다 어떤 상태가 더 남나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-release-budget-decision"
+          ],
+          "page": "ai/serving-training-memory-ledger.html"
+        },
+        {
+          "id": "serving-data-parallel-gradients",
+          "title": "데이터 병렬과 그래디언트 동기화",
+          "titleEn": "Data parallelism and gradient synchronization",
+          "question": "서로 다른 미니배치를 처리하는 두 복제본이 어떻게 같은 가중치를 유지하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-training-memory-ledger"
+          ],
+          "page": "ai/serving-data-parallel-gradients.html"
+        },
+        {
+          "id": "serving-tensor-parallel-collectives",
+          "title": "텐서 병렬과 통신 경계",
+          "titleEn": "Tensor parallelism and communication boundaries",
+          "question": "출력 채널을 나눴을 때 다음 층은 언제 결과를 합치나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-data-parallel-gradients"
+          ],
+          "page": "ai/serving-tensor-parallel-collectives.html"
+        },
+        {
+          "id": "serving-pipeline-idle-bubbles",
+          "title": "파이프라인 병렬과 유휴 시간",
+          "titleEn": "Pipeline parallelism and idle bubbles",
+          "question": "층을 두 장치에 나누면 빈 시간이 어디에 남나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-tensor-parallel-collectives"
+          ],
+          "page": "ai/serving-pipeline-idle-bubbles.html"
+        },
+        {
+          "id": "serving-optimizer-sharding-recomputation",
+          "title": "옵티마이저 상태 분할과 재계산",
+          "titleEn": "Optimizer state sharding and recomputation",
+          "question": "옵티마이저 상태 분할과 활성값 재계산은 어떤 메모리를 줄이나요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-pipeline-idle-bubbles"
+          ],
+          "page": "ai/serving-optimizer-sharding-recomputation.html"
+        },
+        {
+          "id": "serving-distributed-checkpoint-resume",
+          "title": "분산 체크포인트 재시작과 손실 검증",
+          "titleEn": "Distributed checkpoint restart and loss verification",
+          "question": "모델 가중치만 복구하면 다음 학습 스텝도 같을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/serving-optimizer-sharding-recomputation"
+          ],
+          "page": "ai/serving-distributed-checkpoint-resume.html"
         }
       ]
     },
@@ -6094,6 +6583,17 @@ const courseCatalog = {
             "ai/rag-trace-blocked-tool"
           ],
           "page": "projects/document-support-agent.html"
+        },
+        {
+          "id": "inference-service-operations",
+          "title": "추론 서비스 운영",
+          "titleEn": "Operating an inference service",
+          "question": "같은 요청에서 서빙 후보의 개선과 복귀를 어떻게 입증하나요?",
+          "format": "프로젝트",
+          "requires": [
+            "ai/serving-release-budget-decision"
+          ],
+          "page": "projects/inference-service-operations.html"
         }
       ]
     }

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="도착률이 같아도 왜 최대 대기 요청 수가 달라지나요?">
+<title>재현할 입력 길이·도착률·동시성 · G19</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./serving-reproducible-workload-shape.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 시스템·서빙 · G19</p><h1>재현할 입력 길이·도착률·동시성</h1><p>도착률이 같아도 왜 최대 대기 요청 수가 달라지나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">재현할 입력 길이·도착률·동시성</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-serving-reproducible-workload-shape-1"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="223.75" y1="230" x2="223.75" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="223.75" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<line x1="337.5" y1="230" x2="337.5" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="337.5" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<line x1="451.25" y1="230" x2="451.25" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="451.25" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">A</text>
+<rect x="110.0" y="95.0" width="113.75" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="90" y="147.33333333333334" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">B</text>
+<rect x="223.75" y="127.33333333333334" width="113.75" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="90" y="179.66666666666669" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">C</text>
+<rect x="337.5" y="159.66666666666669" width="113.75" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="90" y="212.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">D</text>
+<rect x="451.25" y="192.0" width="113.75" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4÷8 ms · 입력 4 → 출력 2</text>
+<text x="484" y="119" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">최대 대기 0</text>
+</g></svg></template>
+<template id="figure-serving-reproducible-workload-shape-2"><svg><g>
+<line x1="110" y1="235" x2="565" y2="235" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="230" x2="110.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="110.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<line x1="223.75" y1="230" x2="223.75" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="223.75" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<line x1="337.5" y1="230" x2="337.5" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="337.5" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<line x1="451.25" y1="230" x2="451.25" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="451.25" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<line x1="565.0" y1="230" x2="565.0" y2="241" stroke="#17354b" stroke-width="1.5" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="565.0" y="260" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<text x="68" y="260" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">ms</text>
+<text x="90" y="115.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">A</text>
+<rect x="110.0" y="95.0" width="113.75" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="90" y="147.33333333333334" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">B</text>
+<rect x="110.0" y="127.33333333333334" width="113.75" height="26" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.6"/>
+<rect x="223.75" y="127.33333333333334" width="113.75" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="90" y="179.66666666666669" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">C</text>
+<rect x="110.0" y="159.66666666666669" width="227.5" height="26" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.6"/>
+<rect x="337.5" y="159.66666666666669" width="113.75" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="90" y="212.0" font-size="20" font-weight="650" fill="#17354b" text-anchor="end">D</text>
+<rect x="110.0" y="192.0" width="341.25" height="26" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.6"/>
+<rect x="451.25" y="192.0" width="113.75" height="26" fill="#c9e8f6" stroke="#12649c" stroke-width="1.6"/>
+<text x="309" y="72" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">4÷8 ms · 입력 4 → 출력 2</text>
+<text x="482" y="119" font-size="21" font-weight="650" fill="#a34123" text-anchor="middle">최대 대기 3</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "고른 도착",
+    "title": "2 ms마다 한 건이면 앞 요청이 끝나면서 다음이 시작됩니다",
+    "body": "A,B,C,D가 0,2,4,6 ms에 옵니다. 각 2 ms를 쓰므로 기다리는 요청은 없습니다. 도착률은 4/8 ms=500/s입니다.",
+    "takeaway": "인접 실행 막대가 이어지고 대기 막대는 없습니다.",
+    "example": [
+      "A,B,C,D @0,2,4,6 ms",
+      "한 슬롯 × 2 ms · 길이 4→2",
+      "4/8 ms · 최대 대기 0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "고른 도착",
+      "description": "인접 실행 막대가 이어지고 대기 막대는 없습니다.",
+      "figure": "figure-serving-reproducible-workload-shape-1"
+    },
+    "quiz": [
+      "같은 8 ms 창에 요청이 8개면 도착률은?",
+      "1000/s",
+      "500/s",
+      "8 요청÷0.008 s입니다."
+    ]
+  },
+  {
+    "label": "몰린 도착",
+    "title": "같은 네 건을 동시에 보내면 세 건이 즉시 기다립니다",
+    "body": "도착 시각만 모두 0 ms로 바꿉니다. A가 실행 중인 순간 B,C,D가 기다립니다. 같은 총 작업과 평균 도착률에서도 D는 6 ms를 기다립니다.",
+    "takeaway": "네 행은 0에 모이고 D의 대기는 6 ms까지 갑니다.",
+    "example": [
+      "A,B,C,D @0,0,0,0 ms",
+      "동일 슬롯 · 2 ms/요청",
+      "4/8 ms · 최대 대기 3"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "몰린 도착",
+      "description": "네 행은 0에 모이고 D의 대기는 6 ms까지 갑니다.",
+      "figure": "figure-serving-reproducible-workload-shape-2"
+    },
+    "quiz": [
+      "같은 버스트를 재현할 입력 로그에 꼭 필요한 값은?",
+      "요청별 도착 시각",
+      "평균 500/s만",
+      "평균으로는 도착 배치를 알 수 없습니다."
+    ]
+  }
+];
+const slug = 'serving-reproducible-workload-shape';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -233,7 +233,7 @@
   menu.setAttribute('aria-controls', 'course-drawer');
   menu.setAttribute('aria-haspopup', 'dialog');
   menu.setAttribute('aria-expanded', 'false');
-  const brand = element('a', 'course-brand', 'How It Runs');
+  const brand = element('a', 'course-brand', 'Learning Subway');
   brand.href = '../index.html';
   bar.append(menu, brand);
   // Language switch (Korean default, English second); CSS keeps it at the right end of the bar.

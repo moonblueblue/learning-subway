@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="컴퓨터와 시스템이 실제로 어떻게 돌아가는지, 개념 하나하나를 단계별 도식과 직접 조작하는 데모로 들여다봅니다.">
-<title>How It Runs</title>
+<title>Learning Subway</title>
+<link rel="icon" href="./shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="./shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="./shared/apple-touch-icon.png">
 <style>
 :root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--rule:#dfe8e1;--paper:#f4f7ef;--panel:#fcfdfb;--scene:#eaf3eb;--accent:#12634b;--accent-press:#0d4f3b;--on-accent:#f4fbf6;--response:#5362a0;--active:#d9eee1;--focus:#a24c14;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}
@@ -34,7 +37,6 @@ h1,h2{text-wrap:balance}
 .maps{margin:0;padding:0;list-style:none;display:grid;gap:12px}
 .map{background:var(--scene);border:1px solid var(--border);border-radius:14px;padding:12px 16px}
 .map svg{display:block;width:100%;height:auto;overflow:visible}
-.line-name{margin:0 0 4px;font-size:.875rem;letter-spacing:-.01em}
 .map a{text-decoration:none}
 .map a:hover .name,.map a:focus-visible .name{text-decoration:underline}
 .map a:active .name{opacity:.7}
@@ -63,7 +65,7 @@ h1,h2{text-wrap:balance}
 <body>
 <main class="shell">
 <header class="masthead">
-<h1>How It Runs</h1>
+<h1>Learning Subway</h1>
 <div class="meta"><p id="summary"></p><div data-lang-switch></div></div>
 </header>
 <section aria-labelledby="maps-title">
@@ -151,45 +153,114 @@ addEventListener('DOMContentLoaded', () => {
     svg.append(link);
   }
 
-  function drawMap(holder, roadmap, color) {
-    const stations = stationsOf(roadmap);
+  // The first roadmap is the trunk line. Every other roadmap branches off the trunk station (chapter) whose lessons
+  // it shares most, drops below the trunk and runs on its own row, as a branch line does on a metro map.
+  // Line names are not written beside the lines; a line index (colour bar + name) sits in empty space.
+  const trunk = courseCatalog.roadmaps[0];
+  const branches = courseCatalog.roadmaps.slice(1).map((roadmap) => {
+    const shared = trunk.chapters.map((chapter) => refsOf(chapter).filter((ref) => (lines.get(ref) || new Set()).has(roadmap.id)).length);
+    const junction = shared.indexOf(Math.max(...shared));
+    return { roadmap, junction };
+  });
+  const colorOf = new Map(courseCatalog.roadmaps.map((roadmap, index) => [roadmap.id, LINE_COLORS[index % LINE_COLORS.length]]));
+  // On a branch, the interchange shape marks a chapter that also shares lessons with a trunk station other than the
+  // junction; sharing with the junction is what the branch itself shows.
+  function branchStations({ roadmap, junction }) {
+    const junctionRefs = new Set(refsOf(trunk.chapters[junction]));
+    return stationsOf(roadmap).map((s, i) => {
+      const refs = refsOf(roadmap.chapters[i]);
+      const elsewhere = refs.some((ref) => [...(lines.get(ref) || [])].some((id) => id !== roadmap.id) && !junctionRefs.has(ref));
+      return { ...s, transfer: elsewhere ? s.transfer : [] };
+    });
+  }
+
+  function lineIndex(svg, x, y) {
+    const rows = courseCatalog.roadmaps.map((roadmap) => tr(roadmap.title));
+    measure.font = '700 13px system-ui, sans-serif';
+    const w = 44 + Math.max(...rows.map((row) => measure.measureText(row).width)) + 16;
+    const group = make('svg:g', { class: 'line-index' });
+    group.append(make('svg:rect', { x, y, width: w, height: 16 + rows.length * 24, rx: 8, fill: '#fcfdfb', stroke: '#cbd9d0' }));
+    courseCatalog.roadmaps.forEach((roadmap, i) => {
+      const ry = y + 20 + i * 24;
+      group.append(make('svg:rect', { x: x + 12, y: ry - 4, width: 24, height: 8, rx: 4, fill: colorOf.get(roadmap.id) }));
+      group.append(make('svg:text', { x: x + 44, y: ry + 4.5, 'font-size': 13, 'font-weight': 700, fill: '#142620' }, rows[i]));
+    });
+    svg.append(group);
+    return w;
+  }
+
+  function drawNetwork(holder) {
     const width = holder.clientWidth;
-    const svg = make('svg:svg', { role: 'group', 'aria-label': tr(roadmap.title + ' 노선') });
+    const svg = make('svg:svg', { role: 'group', 'aria-label': tr('노선도') });
     if (width >= 720) {
-      // Horizontal: the line runs on an upper tier, bends 45 degrees once in the middle, and finishes on a
-      // lower tier, as a route map does. Names alternate above and below so neighbours never collide; each
-      // name wraps to the gap between the two stations on its side.
-      const pad = 70, step = (width - pad * 2) / Math.max(1, stations.length - 1);
+      const pad = 70, trunkStations = stationsOf(trunk), n = trunkStations.length;
+      const step = (width - pad * 2) / Math.max(1, n - 1);
       const max = Math.min(2 * step - 16, 220);
-      const rowsOf = (s) => wrap(tr(s.label), '700 13px system-ui, sans-serif', max).length + 1;
-      const above = stations.map((s, i) => (i % 2 === 0 ? rowsOf(s) : 0));
-      const upper = 40 + Math.max(2, ...above) * 16, lower = upper + 58;
-      const below = Math.max(2, ...stations.map((s, i) => (i % 2 ? rowsOf(s) : 0)));
-      const bend = Math.ceil(stations.length / 2);   // first station on the lower tier
-      const at = (i) => [pad + step * i, i < bend ? upper : lower];
-      svg.setAttribute('viewBox', `0 0 ${width} ${lower + 30 + below * 16}`);
-      const [x0, y0] = at(0), [xa] = at(bend - 1), [xb, yb] = at(bend), [xn] = at(stations.length - 1);
-      const d = bend < stations.length
-        ? `M${x0} ${y0}H${xa + (step - (lower - upper)) / 2}L${xb - (step - (lower - upper)) / 2} ${yb}H${xn}`
-        : `M${x0} ${y0}H${xn}`;
-      svg.append(make('svg:path', { d, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none' }));
-      stations.forEach((s, i) => {
-        const [x, y] = at(i), isAbove = i % 2 === 0;
-        station(svg, s, x, y, color, i === stations.length - 1,
-          { x, y: isAbove ? y - 44 : y + 34, anchor: 'middle', above: isAbove, max });
+      const rowsOf = (s, m = max) => wrap(tr(s.label), '700 13px system-ui, sans-serif', m).length + 1;
+      const junctions = new Set(branches.map((branch) => branch.junction));
+      const above = trunkStations.map((s, i) => (i % 2 === 0 ? rowsOf(s) : 0));
+      const y0 = 40 + Math.max(2, ...above) * 16;
+      const xOf = (i) => pad + step * i;
+      // Trunk: one straight row. A junction's name sits below and to the right of the station, clear of the branch.
+      svg.append(make('svg:path', { d: `M${xOf(0)} ${y0}H${xOf(n - 1)}`, stroke: colorOf.get(trunk.id), 'stroke-width': 8, 'stroke-linecap': 'round', fill: 'none' }));
+      let bottom = y0 + 34 + 2 * 16;
+      let rowY = y0 + 210;
+      for (const branch of branches) {
+        const stations = branchStations(branch), bx = xOf(branch.junction), color = colorOf.get(branch.roadmap.id);
+        const firstY = y0 + 118, x1 = bx + 60, last = width - pad;
+        const bstep = (last - x1) / Math.max(1, stations.length - 2);
+        const bmax = Math.min(2 * bstep - 12, 200);
+        svg.append(make('svg:path', { d: `M${bx} ${y0}V${rowY - 40}Q${bx} ${rowY} ${bx + 40} ${rowY}H${last}`, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none' }));
+        stations.forEach((s, i) => {
+          if (i === 0) {
+            station(svg, s, bx, firstY, color, stations.length === 1, { x: bx - 18, y: firstY - 3, anchor: 'end', above: false, max: Math.min(bx - pad - 30, 220) });
+            return;
+          }
+          const x = x1 + bstep * (i - 1), isAbove = i % 2 === 1;
+          station(svg, s, x, rowY, color, i === stations.length - 1, { x, y: isAbove ? rowY - 44 : rowY + 34, anchor: 'middle', above: isAbove, max: bmax });
+        });
+        bottom = Math.max(bottom, rowY + 34 + 3 * 16);
+        rowY += 200;
+      }
+      trunkStations.forEach((s, i) => {
+        const x = xOf(i), isAbove = i % 2 === 0;
+        if (junctions.has(i)) {
+          station(svg, s, x, y0, colorOf.get(trunk.id), i === n - 1, { x: x + 16, y: y0 + 34, anchor: 'start', above: false, max: Math.max(80, step * 2 - 16 - 60) });
+          return;
+        }
+        station(svg, s, x, y0, colorOf.get(trunk.id), i === n - 1, { x, y: isAbove ? y0 - 44 : y0 + 34, anchor: 'middle', above: isAbove, max });
       });
-    } else {
-      // Vertical: the line runs down the left edge and names sit to its right.
-      const x = 22, top = 16, max = width - x - 32;
-      const heights = stations.map((s) => (wrap(tr(s.label), '700 13px system-ui, sans-serif', max).length + 1) * 16 + 18);
-      const ys = heights.reduce((list, h, i) => [...list, i ? list[i - 1] + heights[i - 1] : top], []);
-      svg.setAttribute('viewBox', `0 0 ${width} ${ys.at(-1) + heights.at(-1)}`);
-      svg.append(make('svg:path', { d: `M${x} ${top}V${ys.at(-1)}`, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round', fill: 'none' }));
-      stations.forEach((s, i) => station(svg, s, x, ys[i], color, i === stations.length - 1, { x: x + 24, y: ys[i] - 3, anchor: 'start', above: false, max }));
+      // The line index fills the empty corner under the start of the trunk.
+      if (branches.length) lineIndex(svg, pad - 20, y0 + 104);
+      else lineIndex(svg, pad - 20, bottom + 8), bottom += 40 + 24;
+      svg.setAttribute('viewBox', `0 0 ${width} ${bottom + 16}`);
+      holder.replaceChildren(svg);
+      return;
     }
-    const name = make('h3', { class: 'line-name' }, tr(roadmap.title + ' 노선'));
-    name.style.color = color;
-    holder.replaceChildren(name, svg);
+    // Narrow screens: each line runs down on its own, one after another, with the index at the top.
+    const x = 22, top = 16, maxw = width - x - 32;
+    let y = 16 + courseCatalog.roadmaps.length * 24 + 24;
+    const parts = [];
+    for (const roadmap of courseCatalog.roadmaps) {
+      const branch = branches.find((item) => item.roadmap === roadmap);
+      const stations = branch ? branchStations(branch).map((s, i) => (i === 0 ? { ...s, from: trunk.chapters[branch.junction] } : s)) : stationsOf(roadmap);
+      const heights = stations.map((s) => (wrap(tr(s.label), '700 13px system-ui, sans-serif', maxw).length + 1) * 16 + 18);
+      const ys = heights.reduce((list, h, i) => [...list, i ? list[i - 1] + heights[i - 1] : y + top], []);
+      parts.push({ roadmap, stations, ys, branch });
+      y = ys.at(-1) + heights.at(-1) + 28;
+    }
+    svg.setAttribute('viewBox', `0 0 ${width} ${y}`);
+    lineIndex(svg, 0, 0);
+    for (const { roadmap, stations, ys, branch } of parts) {
+      const color = colorOf.get(roadmap.id);
+      if (branch) {
+        const from = trunk.chapters[branch.junction];
+        svg.append(make('svg:text', { x, y: ys[0] - 22, 'font-size': 12, fill: '#43574f' }, tr(`${trunk.title} ${from.id}장에서 갈아타기`)));
+      }
+      svg.append(make('svg:path', { d: `M${x} ${ys[0]}V${ys.at(-1)}`, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round', fill: 'none' }));
+      stations.forEach((s, i) => station(svg, s, x, ys[i], color, i === stations.length - 1, { x: x + 24, y: ys[i] - 3, anchor: 'start', above: false, max: maxw }));
+    }
+    holder.replaceChildren(svg);
   }
 
   const total = courseCatalog.topics.reduce((sum, topic) => sum + topic.lessons.length, 0);
@@ -202,18 +273,16 @@ addEventListener('DOMContentLoaded', () => {
   start.href = './' + firstRef + '.html?roadmap=' + encodeURIComponent(first.id);
   start.append(`${first.chapters[0].lessons[0].id} ${titles.get(firstRef)}부터 타기`, make('span', {}, `${first.title} 노선의 첫 역`));
 
-  const maps = courseCatalog.roadmaps.map((roadmap, index) => {
-    const item = make('li', { class: 'map' });
-    document.getElementById('roadmaps').append(item);
-    return () => drawMap(item, roadmap, LINE_COLORS[index % LINE_COLORS.length]);
-  });
-  maps.forEach((draw) => draw());
+  const network = make('li', { class: 'map' });
+  document.getElementById('roadmaps').append(network);
+  const draw = () => drawNetwork(network);
+  draw();
   let lastWidth = 0;
   new ResizeObserver(() => {
     const width = document.getElementById('roadmaps').clientWidth;
-    if (width !== lastWidth) { lastWidth = width; maps.forEach((draw) => draw()); }
+    if (width !== lastWidth) { lastWidth = width; draw(); }
   }).observe(document.getElementById('roadmaps'));
-  addEventListener('course:lang', () => maps.forEach((draw) => draw()));
+  addEventListener('course:lang', draw);
 
   const legend = document.getElementById('legend');
   const hasTransfer = [...lines.values()].some((set) => set.size > 1);

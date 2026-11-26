@@ -6,10 +6,12 @@
 <meta name="theme-color" content="#f4f7ef">
 <title>AI 노선도</title>
 <link rel="icon" href="./shared/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="./shared/ai-map.css">
+<link rel="stylesheet" href="./shared/ai-map.css?v=2">
 <script defer src="./shared/catalog.js"></script>
+<script defer src="./shared/ai-stations.js"></script>
+<script>window.lessonText = {"역 선택":"Station"};</script>
 <script defer src="./shared/i18n.js"></script>
-<script defer src="./shared/ai-map.js"></script>
+<script defer src="./shared/ai-map.js?v=2"></script>
 </head>
 <body>
 <header>
@@ -18,19 +20,14 @@
   <div data-lang-switch></div>
 </header>
 <main>
-  <nav class="network" aria-label="AI 노선도">
-    <svg class="rails" aria-hidden="true"></svg>
-    <div id="trunk"></div>
-    <div id="branches" role="group" aria-label="심화 노선"></div>
-  </nav>
+  <div class="sheet">
+    <svg class="network" role="group" aria-label="AI 노선도"></svg>
+    <nav class="legend" aria-label="노선"><div id="trunk"></div><div id="branches"></div></nav>
+  </div>
   <section class="stop" aria-label="선택한 노선">
-    <h2 id="line-name"></h2>
-    <div class="destination"><span>졸업 과제</span><strong id="destination"></strong></div>
-    <div class="boarding">
-      <label for="lessons" id="available">공개 레슨</label>
-      <select id="lessons" aria-labelledby="available line-name"></select>
-      <a id="enter">레슨 열기</a>
-      <p id="planned" hidden>공개된 레슨이 아직 없습니다.</p>
+    <div class="summary"><h2 id="line-name"></h2><span>졸업 과제</span> <strong id="destination"></strong></div>
+    <div class="boarding"><label for="lessons">역 선택</label><select id="lessons"></select>
+      <a id="enter">레슨 열기</a><span id="planned" hidden>준비 중</span>
     </div>
   </section>
 </main>

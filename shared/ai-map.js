@@ -1,105 +1,199 @@
-// Chapter order and published station IDs come from roadmaps/ai.md via sync-course.py.
+// The roadmap owns station order, transfer points, terminal projects and both languages.
 (() => {
-  const lines = courseCatalog.roadmaps.find(roadmap => roadmap.id === 'ai').chapters;
-  const titles = new Map(courseCatalog.topics.flatMap(topic =>
-    topic.lessons.map(lesson => [topic.id + '/' + lesson.id, lesson])));
-  const byId = id => document.getElementById(id);
-  const network = document.querySelector('.network');
-  const svg = network.querySelector('.rails');
+  const chapters = courseCatalog.roadmaps.find(roadmap => roadmap.id === 'ai').chapters.map(chapter =>
+    ({...chapter, ...aiStationMap[chapter.id]}));
+  const lessons = new Map(courseCatalog.topics.flatMap(topic => topic.lessons.map(lesson => [topic.id + '/' + lesson.id, lesson])));
+  const lines = chapters.map((chapter, index) => ({
+    ...chapter, code: index ? String.fromCharCode(64 + index) : 'AI',
+    color: chapter.transfer?.color || '#009184',
+    stops: [...chapter.stations.map(s => ({...lessons.get(s.ref), ...s})),
+      {id:'end', title:chapter.destination, titleEn:chapter.destinationEn, terminal:true}]
+  }));
+  const trunk = lines[0], network = document.querySelector('.network');
+  const get = id => document.getElementById(id);
+  const select = get('lessons'), enter = get('enter');
   const params = new URLSearchParams(location.search);
+  const t = (record, key) => record[courseI18n.lang === 'en' ? key + 'En' : key];
   let here;
   try { here = JSON.parse(localStorage.getItem('learning-subway:here')); } catch {}
   const last = here?.roadmap === 'ai' ? here : {};
-  let selected = lines.find(line => line.id === (params.get('line') || last.line)) || lines[0];
-  const lessonSelect = byId('lessons');
-  const enter = byId('enter');
-  const buttons = new Map();
-  const localized = (record, field) => courseI18n.lang === 'en' ? record[field + 'En'] : record[field];
+  let line = lines.find(item => item.id === (params.get('line') || last.line)) || trunk;
+  const initial = params.get('lesson') || params.get('stop') || (last.line === line.id && last.ref);
+  const value = stop => stop.ref || stop.id;
+  let stop = line.stops.find(s => value(s) === initial) || line.stops[0];
+  const legend = new Map();
+  const lessonURL = (route, station) => './' + station.ref + '.html?' + new URLSearchParams({roadmap:'ai', line:route.id});
 
-  function drawRails() {
-    const bounds = svg.getBoundingClientRect();
-    const centers = [...buttons.values()].map(button => {
-      const r = button.firstElementChild.getBoundingClientRect();
-      return {x: r.x + r.width / 2 - bounds.x, y: r.y + r.height / 2 - bounds.y};
-    });
-    const [start, ...stops] = centers;
-    if (!stops.length) return;
-    const upright = matchMedia('(max-width:680px) and (min-height:481px)').matches;
-    const junction = upright ? start.x : (start.x + stops[0].x) / 2;
-    const d = [`M${start.x} ${start.y}H${junction}`, `M${junction} ${Math.min(start.y, stops[0].y)}V${Math.max(start.y, stops.at(-1).y)}`];
-    for (const stop of stops) d.push(`M${junction} ${stop.y}H${stop.x}`);
-    const rail = document.createElementNS(svg.namespaceURI, 'path');
-    for (const [name, value] of Object.entries({d: d.join(' '), stroke: '#aa5a91', 'stroke-width': 5, 'stroke-linecap': 'round', fill: 'none'}))
-      rail.setAttribute(name, value);
-    svg.replaceChildren(rail);
-  }
-
-  function remember() {
+  function selectStation(route, station) {
+    line = route;
+    stop = station;
     const url = new URL(location.href);
-    url.searchParams.set('line', selected.id);
-    if (lessonSelect.value) url.searchParams.set('lesson', lessonSelect.value);
-    else url.searchParams.delete('lesson');
+    url.searchParams.delete('stop');
+    url.searchParams.delete('lesson');
+    url.searchParams.set('line', line.id);
+    url.searchParams.set(stop.ref ? 'lesson' : 'stop', value(stop));
     history.replaceState(null, '', url);
-    if (lessonSelect.value) enter.href = './' + lessonSelect.value + '.html?' + new URLSearchParams({roadmap: 'ai', line: selected.id});
+    get('line-name').textContent = t(line, 'title');
+    get('destination').textContent = t(line, 'destination');
+    select.replaceChildren(...line.stops.map(s => {
+      const option = new Option(t(s,'title') + (s.ref ? '' : ' · ' + courseI18n.translate('준비 중')), value(s));
+      if (s.ref) option.dataset.published = '';
+      return option;
+    }));
+    select.value = value(stop);
+    enter.hidden = !stop.ref;
+    get('planned').hidden = !!stop.ref;
+    if (stop.ref) enter.href = lessonURL(line, stop);
     else enter.removeAttribute('href');
-  }
-  function showLine(ref) {
-    for (const line of lines) {
-      const button = buttons.get(line.id);
-      button.querySelector('.route-name').textContent = localized(line, 'title');
-      const count = line.lessons.length;
-      const status = count ? (courseI18n.lang === 'en' ? count + (count === 1 ? ' lesson' : ' lessons') : '레슨 ' + count + '개') : courseI18n.translate('준비 중');
-      button.setAttribute('aria-description', status);
-      const goal = button.parentElement.querySelector('.terminus');
-      if (goal) {
-        goal.firstElementChild.textContent = localized(line, 'destination');
-        goal.lastElementChild.textContent = status;
-      }
-      button.setAttribute('aria-pressed', String(line === selected));
-    }
-    byId('line-name').textContent = localized(selected, 'title');
-    byId('destination').textContent = localized(selected, 'destination');
-    lessonSelect.replaceChildren(...selected.lessons.map(({id, ref}) =>
-      new Option(id + ' ' + localized(titles.get(ref), 'title'), ref)));
-    if (selected.lessons.some(lesson => lesson.ref === ref)) lessonSelect.value = ref;
-    const planned = !selected.lessons.length;
-    lessonSelect.hidden = enter.hidden = byId('available').hidden = planned;
-    byId('planned').hidden = !planned;
-    remember();
-    requestAnimationFrame(drawRails);
+    draw();
   }
 
-  lines.forEach((line, index) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'route';
-    button.dataset.line = line.id;
-    button.dataset.planned = String(!line.lessons.length);
-    const marker = document.createElement('span');
-    marker.className = 'marker';
-    marker.setAttribute('aria-hidden', 'true');
-    marker.textContent = index ? String.fromCharCode(64 + index) : 'AI';
-    const name = document.createElement('span');
-    name.className = 'route-name';
-    button.append(marker, name);
-    buttons.set(line.id, button);
-    if (index) {
-      const row = document.createElement('div');
-      row.className = 'branch-row';
-      const goal = document.createElement('div');
-      goal.className = 'terminus';
-      goal.append(document.createElement('strong'), document.createElement('small'));
-      row.append(button, goal);
-      byId('branches').append(row);
-    } else byId('trunk').append(button);
-    button.addEventListener('click', () => {
-      if (line === selected) return;
-      selected = line;
-      showLine(last.line === line.id ? last.ref : null);
-    });
-  });
-  lessonSelect.addEventListener('change', remember);
-  addEventListener('course:lang', () => showLine(lessonSelect.value));
-  new ResizeObserver(drawRails).observe(network);
-  showLine(params.get('lesson') || (last.line === selected.id ? last.ref : null));
+  function svg(tag, attrs = {}, text) {
+    const node = document.createElementNS(network.namespaceURI, tag);
+    for (const [key,val] of Object.entries(attrs)) node.setAttribute(key, val);
+    if (text) node.textContent = text;
+    return node;
+  }
+  const measure = document.createElement('canvas').getContext('2d');
+  function wrap(name, width) {
+    const rows = [];
+    for (const word of name.split(' ')) {
+      const tail = rows.at(-1);
+      if (tail && measure.measureText(tail + ' ' + word).width <= width) rows[rows.length-1] += ' ' + word;
+      else rows.push(word);
+    }
+    return rows;
+  }
+
+  function draw() {
+    const w = network.clientWidth, h = network.clientHeight;
+    if (!w || !h) return;
+    const compact = w < 735 || h < 340;
+    network.closest('.sheet').classList.toggle('compact', compact);
+    const activeKey = network.contains(document.activeElement) ? document.activeElement.dataset.key : null;
+    const fragment = document.createDocumentFragment();
+    const ink = '#142620', muted = '#51695f', paper = '#fcfdfb';
+    const size = compact ? 11 : w < 1050 ? 12 : 13;
+    measure.font = '650 ' + size + 'px system-ui,sans-serif';
+    const top = compact ? 19 : 33, bottom = compact ? 16 : 34;
+    const gap = (h - top - bottom) / 7, mid = top + 4 * gap;
+    const left = compact ? Math.min(119, w * .31) : Math.max(44,w*.046);
+    const right = w - (compact ? 16 : Math.max(52,w*.05));
+    const trunkX = trunk.stops.map((_,i) => left + (right - left) * i/(trunk.stops.length-1));
+    const places = new Map([[trunk, trunkX.map(x=>({x,y:mid}))]]);
+    const risers = [];
+    const interchanges = new Set(lines.slice(1).map(r=>r.transfer.ref));
+    // Real rails are painted first, then all interchange and station markers sit on top.
+    function rail(d, color, finished) {
+      fragment.append(svg('path',{d, fill:'none', stroke:color, 'stroke-width':compact ? 4 : 7,
+        opacity:finished ? 1 : .53, 'stroke-linecap':'round','stroke-linejoin':'round'}));
+    }
+    for (const route of lines.slice(1)) {
+      const hint = route.transfer, dir = hint.direction, sign = Math.sign(hint.row);
+      const transfer = trunk.stops.findIndex(s=>s.ref===hint.ref), x = trunkX[transfer];
+      const y = mid + hint.row*gap, end = dir > 0 ? right : left;
+      const bend = Math.min(compact ? 9 : 24, Math.abs(y-mid)*.45, Math.abs(end-x)*.16);
+      const first = x + dir * Math.min(Math.abs(end-x)*.20,compact ? 20 : Math.max(48,w*.048));
+      const pts = route.stops.map((s,i)=>({x:first+(end-first)*i/(route.stops.length-1),y}));
+      places.set(route,pts);
+      risers.push({l:x-2,r:x+2,t:Math.min(y,mid)+6,b:Math.max(y,mid)-6});
+      rail(`M${x} ${mid}V${y-sign*bend}Q${x} ${y} ${x+dir*bend} ${y}H${end}`,route.color,route.lessons.length);
+    }
+    rail(`M${left} ${mid}H${right}`,trunk.color,true);
+    const currentLine = lines.find(r=>r.id===last.line && r.stops.some(s=>s.ref===last.ref)) || trunk;
+    const currentStop = (last.ref && currentLine.stops.find(s=>s.ref===last.ref)) || currentLine.stops[0];
+    const positions = [...risers];
+    const collision = (a,b) => a.l<b.r+2 && a.r>b.l-2 && a.t<b.b+2 && a.b>b.t-2;
+    const labels = [], pins = [];
+    const activate = (anchor, action) => anchor.addEventListener('click', event => {event.preventDefault(); action();});
+    for (const route of lines) {
+      const points = places.get(route), button = legend.get(route);
+      const title = t(route,'title'), short = route.transfer ? t(route.transfer,'short') : title;
+      button.textContent = (route===trunk ? '' : route.code+' ') + (compact ? short : title);
+      button.title = title;
+      button.setAttribute('aria-pressed',String(route===line));
+      const y = points[0].y;
+      if (compact) {
+        const link = svg('a',{href:'?line='+route.id,'aria-label':title,'data-key':'line'+route.id,class:'line-link','data-line':route.id,'aria-pressed':String(route===line)});
+        link.append(svg('rect',{x:1,y:y-Math.min(gap/2,19),width:left-6,height:Math.min(gap,38),fill:'transparent'}));
+        link.append(svg('text',{x:5,y:y+4,fill:ink,'font-size':size},(route===trunk?'':route.code+' ')+short));
+        activate(link,()=>selectStation(route,route.stops.find(s=>s.ref) || route.stops[0]));
+        fragment.append(link);
+      }
+      route.stops.forEach((station,i)=>{
+        const {x,y}=points[i], isTransfer=route===trunk && interchanges.has(station.ref);
+        const radius=compact ? 3.7 : 6.4;
+        const key=route.id+':'+station.id;
+        const accessible = t(station,'title')+(station.ref ? '' : ', '+courseI18n.translate('준비 중'));
+        const marker = compact ? svg('g') : svg('a',{href:station.ref ? lessonURL(route,station) : '?line='+route.id+'&stop='+station.id,
+          'aria-label':accessible,'data-key':key,'data-ref':station.ref || '', 'data-line':route.id});
+        marker.append(svg('title',{},accessible));
+        if (!compact && !station.ref) activate(marker,()=>selectStation(route,station));
+        marker.append(svg('circle',{cx:x,cy:y,r:compact?4:12,fill:'transparent'}));
+        if (isTransfer) {
+          const rx=compact?5.5:11, ry=compact?3.8:7;
+          marker.append(svg('rect',{x:x-rx,y:y-ry,width:2*rx,height:2*ry,rx:ry,fill:paper,stroke:ink,'stroke-width':compact?1.8:2.5}));
+        } else {
+          marker.append(svg('circle',{cx:x,cy:y,r:radius,fill:station.terminal && station.ref ? route.color : paper,stroke:route.color,
+            'stroke-width':compact?1.8:2.8,...(station.ref ? {} : {'stroke-dasharray':compact?'2 1.8':'3.5 2.6'})}));
+        }
+        fragment.append(marker);
+        positions.push({l:x-radius-1,r:x+radius+1,t:y-radius-1,b:y+radius+1});
+        if (station===currentStop && route===currentLine) pins.push({x,y});
+        const compactLabel = i === 0 || i === points.length-1 || (route === trunk && i === Math.floor(points.length/2));
+        if (!compact || (compactLabel && gap > 39)) {
+          const spacing=Math.abs(points[1].x-points[0].x);
+          labels.push({marker,x,y,rows:wrap(t(station,'title'),compact ? Math.max(50, Math.min(88,Math.abs(points.at(-1).x-points[0].x)*.52)) : Math.max(41,spacing*1.85-8)),below:i%2===1,
+            color:station.ref ? ink : muted});
+        }
+      });
+    }
+    // Place the location marker before the labels so text can use the other side of its station.
+    for (const {x,y} of pins) {
+      const a=compact?.63:.90;
+      const mark=svg('g',{transform:`translate(${x} ${y-(compact?4:8)}) scale(${a})`, 'aria-label':courseI18n.translate('현재 위치')});
+      mark.append(svg('title',{},courseI18n.translate('현재 위치')),
+        svg('path',{d:'M0 0C-2 -4 -11 -14 -11 -21a11 11 0 1 1 22 0C11 -14 2 -4 0 0Z',fill:'#d92d20',stroke:'#fff','stroke-width':2}),
+        svg('circle',{cx:0,cy:-21,r:4,fill:'#fff'}));
+      fragment.append(mark);
+      const hereLabel=courseI18n.translate('현재 위치'), labelWidth=measure.measureText(hereLabel).width;
+      const candidate={l:x+13,r:x+13+labelWidth,t:y-34,b:y-18};
+      if (!compact && candidate.r<w-5 && candidate.t>0 && !positions.some(other=>collision(candidate,other))) {
+        fragment.append(svg('text',{x:candidate.l,y:y-21,fill:'#b42318','font-size':size},hereLabel));
+        positions.push(candidate);
+      }
+      positions.push({l:x-12*a,r:x+12*a,t:y-34*a-8,b:y-4});
+    }
+    for (const item of labels) {
+      const {marker,x,y,rows,color}=item;
+      const width=Math.max(...rows.map(s=>measure.measureText(s).width));
+      const cx=Math.max((compact ? left-12 : 5)+width/2,Math.min(w-5-width/2,x));
+      for (const below of [item.below,!item.below]) {
+        const ty=below ? y+size+11 : y-17-(rows.length-1)*(size+1);
+        const box={l:cx-width/2,r:cx+width/2,t:ty-size,b:ty+3+(rows.length-1)*(size+1)};
+        if (box.t<0 || box.b>h || positions.some(other=>collision(box,other))) continue;
+        const label=svg('text',{x:cx,y:ty,'text-anchor':'middle','font-size':size,fill:color});
+        rows.forEach((s,i)=>label.append(svg('tspan',{x:cx,dy:i?size+1:0},s)));
+        marker.append(label);
+        positions.push(box);
+        break;
+      }
+    }
+    network.setAttribute('viewBox',`0 0 ${w} ${h}`);
+    network.replaceChildren(fragment);
+    if (activeKey) [...network.querySelectorAll('a')].find(a=>a.dataset.key===activeKey)?.focus({preventScroll:true});
+  }
+
+  for (const route of lines) {
+    const button=document.createElement('button');
+    button.type='button'; button.className='route'; button.dataset.line=route.id;
+    button.style.setProperty('--route',route.color);
+    button.addEventListener('click',()=>selectStation(route,route.stops.find(s=>s.ref===last.ref && route.id===last.line) || route.stops.find(s=>s.ref) || route.stops[0]));
+    legend.set(route,button);
+    get(route===trunk?'trunk':'branches').append(button);
+  }
+  select.addEventListener('change',()=>selectStation(line,line.stops.find(s=>value(s)===select.value)));
+  addEventListener('course:lang',()=>selectStation(line,stop));
+  new ResizeObserver(draw).observe(network);
+  selectStation(line,stop);
 })();

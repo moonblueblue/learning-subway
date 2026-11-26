@@ -13,6 +13,7 @@ return {
   '디렉터리의 파일 이름이 아이노드를 거쳐 디스크 블록으로 이어지는 장면': 'File names in a directory leading through inodes to disk blocks',
   '이름, 아이노드, 블록': 'Names, inodes, blocks', '디렉터리와 아이노드': 'Directory and inodes', '디렉터리 (이름)': 'Directory (names)', '아이노드': 'Inodes', '디스크 블록': 'Disk blocks', '빈 블록': 'Free block', '지워졌지만 내용 남음': 'Deleted, contents remain', '방금 따라간 길': 'Path just followed',
   '파일 조작': 'File actions', '이름': 'Name', '블록 목록': 'Block list', '빈칸': 'free', '옛 내용': 'old contents',
+  '{0} → #{1}': (name, ino) => `${t(name)} → #${ino}`, '{0}: 빈칸': (n) => `${n}: free`, '{0}: 옛 내용': (n) => `${n}: old`,
   // Files and readouts
   '메모.txt': 'notes.txt', '사진.jpg': 'photo.jpg', '할일.txt': 'todo.txt', '메모-사본.txt': 'notes-copy.txt', '새 메모.txt': 'new-note.txt',
   '이름 {#0}개': '{0} {0|name|names}', '블록 {#0}': 'Block {0}', '아이노드 {#0}': 'Inode {0}', '빈 블록 {#0}': 'Free block {0}', '빈 아이노드 {#0}': 'Free inode {0}', '블록 2·7': 'Blocks 2·7',
@@ -52,7 +53,7 @@ return {
   '"메모.txt에 덧붙이기"를 눌러 보세요.': 'Press "Append to notes.txt".', '메모.txt의 블록이 셋이 됐고, 서로 떨어져 있습니다.': 'notes.txt now has three blocks, apart from each other.',
   // Step 3
   '지우기': 'Deleting', '파일 삭제': 'Delete a file', '블록을 빈칸으로 표시': 'Mark the blocks free', '다음 쓰기에서 덮어씀': 'Overwritten on the next write',
-  '삭제 전': 'Before deleting', '이름 제거': 'Remove the name', '삭제 후': 'After deleting', '빈 것': 'free', '블록 재사용 가능': 'Blocks can be reused',
+  '삭제 전': 'Before deleting', '이름 제거': 'Remove the name', '삭제 후': 'After deleting', '빈 것': 'free',
   '지워도 내용은 바로 사라지지 않는다': 'Deleting does not make the contents vanish at once',
   '파일을 지우면 파일 시스템은 디렉터리에서 이름을 빼고, 아이노드와 블록을 "빈 것"으로 표시합니다. 블록의 내용을 0으로 덮어쓰지는 않습니다. 그래서 다른 파일이 그 블록을 다시 쓰기 전까지는 복구 프로그램으로 되살릴 수도 있습니다. 중요한 파일을 확실히 지우려면 덮어쓰기가 필요합니다.':
     'Deleting a file has the file system remove its name from the directory and mark its inode and blocks "free". It does not overwrite the blocks\' contents with 0. So until another file reuses those blocks, a recovery program may bring the file back. Deleting an important file for sure takes overwriting.',
@@ -64,7 +65,7 @@ return {
   '빈 것으로 표시만 했을 뿐 내용은 그대로라, 덮어쓰기 전에는 복구할 수 있습니다.': 'They were only marked free and the contents are unchanged, so it can be recovered before being overwritten.',
   // Step 4
   '이름 두 개': 'Two names', '같은 파일에 이름 추가': 'Add a name to the same file', '두 이름 → 한 아이노드': 'Two names → one inode', '데이터 블록은 한 벌': 'One set of data blocks',
-  '기존 이름': 'Existing name', '추가한 이름': 'Added name', '참조 0개': '0 references', '아이노드 3 · 참조 1개': 'Inode 3 · 1 reference', '아이노드 3 · 참조 2개': 'Inode 3 · 2 references', '블록 2·7 (복사 안 함)': 'Blocks 2·7 (not copied)',
+  '기존 이름': 'Existing name', '추가한 이름': 'Added name', '아이노드 3 · 이름 2개': 'Inode 3 · 2 names', '아이노드 5 · 이름 1개': 'Inode 5 · 1 name', '이름 0개 → 아이노드 해제': '0 names → inode freed', '블록 0·1·4·5': 'Blocks 0·1·4·5', '블록: 옛 내용 남음': 'Blocks: old contents stay', '블록 2·7 (복사 안 함)': 'Blocks 2·7 (not copied)',
   '한 파일에 이름이 여러 개일 수 있다': 'One file can have several names',
   '이름과 내용이 따로 있으므로, 디렉터리에 같은 아이노드를 가리키는 이름을 하나 더 만들 수 있습니다(하드 링크). 두 이름은 같은 파일이라 한쪽으로 고치면 다른 쪽에도 보입니다. 아이노드는 자기를 가리키는 이름 수를 세다가, 0이 될 때 비로소 블록을 놓아줍니다.':
     'Since names and contents are kept apart, the directory can have another name pointing to the same inode (a hard link). The two names are the same file, so a change through one shows through the other. An inode counts the names pointing to it, and only lets go of its blocks when that count reaches 0.',

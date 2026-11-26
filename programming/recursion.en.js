@@ -13,7 +13,7 @@ window.lessonText = {
   'fib(3)은 fib(1)을 두 번 계산한다': 'fib(3) computes fib(1) twice',
   'fib(3)은 fib(2)와 fib(1)을 부르고, fib(2)는 다시 fib(1)과 fib(0)을 부릅니다. fib(1)이 두 번 계산되어 호출은 5번이고 결과는 1 + 1 = 2입니다.':
     'fib(3) calls fib(2) and fib(1), and fib(2) calls fib(1) and fib(0). fib(1) is computed twice, so there are 5 calls and the result is 1 + 1 = 2.',
-  '다시 계산': 'computed again', '결과 2': 'result 2', '1 반환': 'returns 1',
+  '다시 계산': 'computed again', '상자 5개 = 호출 5번 · 결과 2': '5 boxes = 5 calls · result 2', '1 반환': 'returns 1',
   // Page
   '재귀 · 레슨 1.5': 'Recursion · Lesson 1.5',
   '자기 자신을 부르는 함수가 호출 스택에서 어떻게 내려가고 다시 올라오는지, 팩토리얼과 피보나치로 살펴보세요.':

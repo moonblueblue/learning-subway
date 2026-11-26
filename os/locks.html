@@ -387,6 +387,9 @@ function drawBox(node, h, H, cls) {
 function text(parent, x, y, value, cls) { const t = svg('text', { x, y, class: cls }, parent); t.textContent = value; return t; }
 const threadU = { 1: 0, 2: 16 };
 const cellU = 8;
+// A wire runs between the facing edges of a thread and the count cell, never under a box: a finished thread fades,
+// and a wire under it would show through its top.
+const edgeU = (u, toward) => u + Math.sign(toward - u) * (u === cellU ? 2.9 : 2.5);
 
 // ---------- Scene ----------
 function paint() {
@@ -395,7 +398,7 @@ function paint() {
   svg('polygon', { class: 'zone', points: [[5, -4], [11, -4], [11, 4], [5, 4]].map(([u, v]) => flat(u, v).join(',')).join(' ') }, byId('casings'));
   text(byId('casings'), 14 * 8, flat(0, 4)[1] + 20, '공유 메모리', 'zone-label');
   for (const t of [1, 2]) {
-    const d = `M${flat(threadU[t], 0, 4).join(' ')}L${flat(cellU, 0, 4).join(' ')}`;
+    const d = `M${flat(edgeU(threadU[t], cellU), 0, 4).join(' ')}L${flat(edgeU(cellU, threadU[t]), 0, 4).join(' ')}`;
     svg('path', { class: 'wire t' + t + (state.last?.t === t ? ' hot' : ''), d }, byId('links'));
   }
   const cell = svg('g', { class: 'node', transform: `translate(${flat(cellU, 0).join(' ')})` }, byId('nodes'));
@@ -429,10 +432,13 @@ function floatValue(value, fromU, toU) {
   svg('circle', { class: 'packet', r: 4.6 }, g);
   text(g, 0, -10, value, 'packet-label');
   const start = performance.now();
+  // Placed on the wire at once, so the dot is never drawn at the world's origin before its first frame.
+  g.setAttribute('transform', `translate(${flat(edgeU(fromU, toU), 0, 4).join(' ')})`);
   const step = (now) => {
     const k = Math.min((now - start) / 500, 1);
-    const [x0, y0] = flat(fromU, 0, 30), [x1, y1] = flat(toU, 0, 30);
-    g.setAttribute('transform', `translate(${mix(x0, x1, k)} ${mix(y0, y1, k) - Math.sin(Math.PI * k) * 20})`);
+    // The value rides the wire itself, from one edge to the other.
+    const [x0, y0] = flat(edgeU(fromU, toU), 0, 4), [x1, y1] = flat(edgeU(toU, fromU), 0, 4);
+    g.setAttribute('transform', `translate(${mix(x0, x1, k)} ${mix(y0, y1, k)})`);
     if (k < 1) requestAnimationFrame(step); else g.remove();
   };
   requestAnimationFrame(step);

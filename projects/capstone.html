@@ -174,6 +174,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
 .bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
 .station .face{stroke-width:.8;transition:fill .2s}
+@media(prefers-reduced-motion:reduce){.station .face{transition:none}}
 .station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
 .sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
 .station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
@@ -187,6 +188,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
 .tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
 .tag.empty{display:none}
+.packet-tag rect{fill:#fff;fill-opacity:.94;stroke:#9fbfae;stroke-width:.7}.packet-tag .packet-label{font-size:10.5px;stroke:none;dominant-baseline:central}
+@media(max-width:600px){.packet-tag .packet-label{font-size:13px}}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
@@ -203,9 +206,10 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .station.app .left{fill:#bfe2cb;stroke:#4f8f6b}.station.app .right{fill:#9fcfb1;stroke:#4f8f6b}.station.app .top{fill:#e2f5e8;stroke:#4f8f6b}
 .station.layer .left{fill:#dfe4f2;stroke:#5362a0}.station.layer .right{fill:#c4cbe3;stroke:#5362a0}.station.layer .top{fill:#eef1fb;stroke:#5362a0}
 .station.wire .left{fill:#d7dfdb;stroke:#8c9d96}.station.wire .right{fill:#b8c6c0;stroke:#8c9d96}.station.wire .top{fill:#eef1ef;stroke:#8c9d96}
-.station.router .left{fill:#f6dfc8;stroke:#c26a1e}.station.router .right{fill:#ecc8a4;stroke:#c26a1e}.station.router .top{fill:#fdf2e7;stroke:#c26a1e}
+/* The order queue is a normal part here, so it is teal: orange is kept for overload (넘침). */
+.station.router .left{fill:#c6e3e8;stroke:#3f8593}.station.router .right{fill:#a6d0d8;stroke:#3f8593}.station.router .top{fill:#e6f4f6;stroke:#3f8593}
 .work li{white-space:pre-wrap}
-.dot.ssddot{background:#eaeef9;border-color:#7a87b5}.dot.ramdot{background:#dcf1e2;border-color:#5f9474}.dot.wiredot{background:#eef1ef;border-color:#8c9d96}.dot.appdot{background:#e2f5e8;border-color:#4f8f6b}.dot.layerdot{background:#eef1fb;border-color:#5362a0}.dot.routerdot{background:#fdf2e7;border-color:#c26a1e}
+.dot.ssddot{background:#eaeef9;border-color:#7a87b5}.dot.ramdot{background:#dcf1e2;border-color:#5f9474}.dot.wiredot{background:#eef1ef;border-color:#8c9d96}.dot.appdot{background:#e2f5e8;border-color:#4f8f6b}.dot.layerdot{background:#eef1fb;border-color:#5362a0}.dot.routerdot{background:#e6f4f6;border-color:#3f8593}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -370,7 +374,7 @@ const kinds = { app: '응용', layer: '계층', wire: '전선', router: '라우�
 // Each layer adds (or removes) its own header; the work panel shows the nested envelopes.
 // A shop under growing load. Each step adds one piece from chapter 7 and finds the next bottleneck.
 // Capacities: app server 500 req/s each, DB 1,000 queries/s, each page needs 2 DB queries.
-// Stations may sit off the row: [id, name, kind, [u, v]].
+// Stations may sit off the row: [id, name, kind, [u, v]], plus 'left' or 'right' (and a distance) to put the station's plates beside it.
 const lesson = [
   {
     label: '부하 걸기',
@@ -399,7 +403,7 @@ const lesson = [
     body: '앱 서버가 병목이니 7.3처럼 로드밸런서 뒤에 앱 서버를 두 대 둡니다. 이제 1초에 1,000개까지 페이지를 만들 수 있습니다. 그런데 페이지마다 DB 질의 2번이 필요하므로, 앱 서버가 처리량을 늘린 만큼 DB에 가는 질의도 늘어납니다.',
     takeaway: '앱 서버는 800 / 1,000 = 80%로 여유가 생겼지만, DB가 1,600 / 1,000 = 160%로 넘쳤습니다. 한 병목을 고치면 다음으로 좁은 곳이 병목이 됩니다. 한계 찾기는 이 과정을 되풀이하는 일입니다.',
     description: '왼쪽부터 사용자들, 로드밸런서, 위아래 앱 서버 두 대, 오른쪽에 DB가 있습니다.',
-    stations: [['users', '사용자들', 'wire', [0, 0]], ['lb', '로드밸런서', 'tool', [8, 0]], ['a1', '앱 서버 1', 'app', [17, -13]], ['a2', '앱 서버 2', 'app', [17, 13]], ['db', 'DB', 'ssd', [27, 0]]],
+    stations: [['users', '사용자들', 'wire', [0, 0]], ['lb', '로드밸런서', 'tool', [6, 0]], ['a1', '앱 서버 1', 'app', [18, -13]], ['a2', '앱 서버 2', 'app', [18, 13]], ['db', 'DB', 'ssd', [28, 0], 'right']],
     links: [['users', 'lb'], ['lb', 'a1'], ['lb', 'a2'], ['a1', 'db'], ['a2', 'db']],
     start: { title: '부하', lines: ['1초에 800개 · 앱 서버 2대 (각 500/초)'], holds: { lb: '800/초' } },
     stages: [
@@ -417,7 +421,7 @@ const lesson = [
     body: '상품 목록과 상품 정보는 자주 읽히고 잘 바뀌지 않습니다. 7.2처럼 앱 서버와 DB 사이에 캐시를 두면, 캐시에 있는 질의는 DB까지 가지 않습니다. 질의의 90%가 캐시에서 끝난다면(적중률 90%) DB에는 10%만 갑니다.',
     takeaway: 'DB 질의가 1,600에서 160으로 줄어 DB 사용률이 16%가 됐습니다. 이제 다시 앱 서버 두 대의 1,000 페이지/초가 한계입니다. 캐시는 싸게 DB를 몇 배 버티게 하지만, 상품 가격이 바뀌면 캐시를 비워야 하는 일이 생깁니다.',
     description: '왼쪽부터 사용자들, 로드밸런서, 위아래 앱 서버 두 대, 오른쪽 위 캐시, 오른쪽 아래 DB가 있습니다.',
-    stations: [['users', '사용자들', 'wire', [0, 0]], ['lb', '로드밸런서', 'tool', [8, 0]], ['a1', '앱 서버 1', 'app', [17, -13]], ['a2', '앱 서버 2', 'app', [17, 13]], ['cache', '캐시', 'ram', [27, -13]], ['db', 'DB', 'ssd', [27, 13]]],
+    stations: [['users', '사용자들', 'wire', [0, 0]], ['lb', '로드밸런서', 'tool', [6, 0]], ['a1', '앱 서버 1', 'app', [18, -13]], ['a2', '앱 서버 2', 'app', [18, 13]], ['cache', '캐시', 'ram', [28, 0], 'right'], ['db', 'DB', 'ssd', [44, 0], 'right']],
     links: [['users', 'lb'], ['lb', 'a1'], ['lb', 'a2'], ['a1', 'cache'], ['a2', 'cache'], ['cache', 'db']],
     start: { title: '부하', lines: ['1초에 800 페이지 → 질의 1,600/초', '캐시 적중률 90%'], holds: { lb: '800/초', a1: '80%', a2: '80%' } },
     stages: [
@@ -436,7 +440,7 @@ const lesson = [
     body: '반짝 세일에는 주문(쓰기)이 1초에 3,000개씩 10초 동안 몰립니다. 쓰기는 캐시로 줄일 수 없고, DB 한 대는 쓰기를 1초에 200개 정도만 안전하게 처리합니다. 7.6처럼 주문을 큐에 넣고 바로 "접수됨"이라고 답한 뒤, 일꾼이 DB가 감당할 속도로 꺼내 저장합니다. 7.7의 레이트 리미터로 한 사람이 너무 많이 보내는 것도 막습니다.',
     takeaway: '30,000개 주문이 큐에 쌓였고, 일꾼이 200/초로 150초 동안 저장했습니다. 사용자는 0.1초 만에 접수 답을 받았고 DB는 넘치지 않았습니다. 한계 찾기의 결론은 "어디가 먼저 꽉 차는지 재고, 그 곳에 맞는 도구(서버 늘리기, 캐시, 큐, 제한)를 고른다"입니다.',
     description: '왼쪽부터 사용자들, 로드밸런서, 앱 서버들, 위로 캐시, 아래로 주문 큐와 일꾼, 오른쪽에 DB가 있습니다.',
-    stations: [['users', '사용자들', 'wire', [0, 0]], ['lb', '로드밸런서 + 리미터', 'tool', [8, 0]], ['app', '앱 서버 3대', 'app', [17, 0]], ['cache', '캐시', 'ram', [27, -13]], ['q', '주문 큐', 'router', [17, 15]], ['wk', '일꾼', 'app', [27, 15]], ['db', 'DB', 'ssd', [36, 0]]],
+    stations: [['users', '사용자들', 'wire', [0, 0]], ['lb', '로드밸런서 + 리미터', 'tool', [8, 0]], ['app', '앱 서버 3대', 'app', [17, 0], 'right'], ['cache', '캐시', 'ram', [27, -13]], ['q', '주문 큐', 'router', [17, 15], 'left'], ['wk', '일꾼', 'app', [27, 15], 'right'], ['db', 'DB', 'ssd', [36, 0], 'right']],
     links: [['users', 'lb'], ['lb', 'app'], ['app', 'cache'], ['cache', 'db'], ['app', 'q'], ['q', 'wk'], ['wk', 'db']],
     start: { title: '반짝 세일 10초', lines: ['주문 3,000/초 × 10초 = 30,000개', 'DB 안전한 쓰기: 200/초'], holds: { db: '쓰기 200/초', q: '비어 있음' } },
     stages: [
@@ -475,6 +479,17 @@ byId('grid').setAttribute('d', gridLines.join(''));
 
 let plates = [];
 matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+// A plate beside its station grows away from the box: the holds plate just above the line height, the name plate
+// just below it, so a line along the station's own row runs between the two. Its centre follows the text width,
+// so the engine's sizePlate (after new text, a narrower screen or a translation) keeps the inner edge in place.
+function besidePlate(plate, side, edge) {
+  const size = () => parseFloat(getComputedStyle(plate.label).fontSize);
+  Object.defineProperties(plate, {
+    x: { get: () => (side === 'right' ? 1 : -1) * (edge + (plate.label.getComputedTextLength() + size() * plate.pad) / 2) },
+    y: { get: () => -laneHeight + (plate.group.classList.contains('holds') ? -1 : 1) * (6 + (size() + 8) / 2) },
+  });
+  sizePlate(plate);
+}
 
 // ---------- Scene: stations in a row ----------
 const shapeOf = { app: [1.1, 14], layer: [1.1, 10], wire: [1.2, 5], router: [1.1, 12], file: [.9, 7], tool: [1.15, 13], ssd: [1.3, 12], ram: [1.3, 10], cpu: [1.1, 8] };
@@ -498,7 +513,7 @@ function buildScene() {
     svg('path', { class: 'casing', d }, byId('casings'));
     svg('path', { class: 'bus', d }, byId('links'));
   }
-  stations.forEach(([id, name, kind]) => {
+  stations.forEach(([id, name, kind, , side, edge]) => {
     const [h, H] = shapeOf[kind];
     const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(...posOf(id)).join(' ')})` }, byId('nodes'));
     drawShadow(node, h);
@@ -514,13 +529,32 @@ function buildScene() {
       const mark = [[-.45, -.45, H], [.45, -.45, H], [.45, .45, H], [-.45, .45, H]];
       svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, node);
     }
-    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    const tag = addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
     const holds = addPlate(node, 'tag holds', 0, -H - 14 * h - 14, '', { pad: 1.2 });
+    // A line that leaves a station steeply up or down, or passes just above or below it, would run through the
+    // plates there. Such a station names a `side` and keeps both plates beside the box on that side, `edge` from its centre.
+    if (side) for (const plate of [tag, holds]) besidePlate(plate, side, edge ?? 28 * h + 24);
     views[id] = { node, holds };
   });
   const spots = stations.map(([id]) => posOf(id));
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
-  const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
+  // Plates beside a station reach further out than the ones above and below it: as far as its widest badge in this
+  // step, measured on the plate itself (a fixed 150 cut "이름 보고 닫음" at the left edge on a narrow screen).
+  const step = lesson[state.index];
+  const outer = stations.map(([id, , , , side]) => {
+    if (!side) return 60;
+    const plate = views[id].holds, widths = [];
+    for (const text of [step.start.holds?.[id], ...step.stages.map((stage) => stage.holds?.[id])].filter(Boolean)) {
+      setPlate(plate, text);
+      widths.push(Math.abs(plate.x) + plate.rect.width.baseVal.value / 2);
+    }
+    setPlate(plate, '');
+    return Math.max(150, ...widths) + 12;
+  });
+  const reach = (k, toward) => 14 * us[k] + (stations[k][4] === toward ? outer[k] : 60) * (toward === 'right' ? 1 : -1);
+  const drawn = byId('nodes').getBBox();  // long station names reach further still
+  const left = Math.min(drawn.x - 8, ...us.map((_, k) => reach(k, 'left')));
+  const right = Math.max(drawn.x + drawn.width + 8, ...us.map((_, k) => reach(k, 'right')));
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
   // The top 32 units stay free for the example note on the still picture.
   const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
@@ -534,7 +568,10 @@ function travel(from, to, label, done) {
   const group = svg('g', { class: 'packet-group' }, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 8.5 }, group);
   svg('circle', { class: 'packet', r: 4.4 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  // The label rides on its own small plate: bare text was hard to read where it crossed a box face.
+  const tag = addPlate(group, 'packet-tag', 0, -16, '', { pad: .9 });
+  tag.label.setAttribute('class', 'packet-label');
+  setPlate(tag, label);
   // Screen points, pulled in a little from both stations so the dot starts and ends beside the boxes.
   const a = flat(...from, laneHeight), b = flat(...to, laneHeight);
   const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
@@ -553,6 +590,8 @@ function movePackets(now) {
     const ease = t * t * (3 - 2 * t);
     const x = mix(packet.from[0], packet.to[0], ease), y = mix(packet.from[1], packet.to[1], ease);
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    // The label shows only between 12–26% and 74–88% of the way, so it never sits on the start or end box and its plates.
+    packet.group.querySelector('.packet-tag')?.setAttribute('opacity', Math.max(0, Math.min(1, (t - .12) / .14, (.88 - t) / .14)).toFixed(2));
     return true;
   });
   finished.forEach((done) => done());

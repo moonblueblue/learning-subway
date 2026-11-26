@@ -373,14 +373,14 @@ viewport.addEventListener('keydown', (event) => {
   }
 });
 setCamera(0, 0, 1);
-// Frames on one shared Ethernet segment: three PCs on a hub. Each step is the same row of stations
-// (A, hub, B, C) and a list of stages. A stage carries a frame from one station to the next
+// Frames on one shared Ethernet segment: three PCs on a hub. Each step is the same star of stations
+// (A left of the hub, C right of it, B below it, each on its own cable) and a list of stages. A stage carries a frame from one station to the next
 // (`from` → `to`, `label` on the moving dot), then shows what the frame or check looks like now
 // (`title`, `lines`) and what each station decided (`holds`). The hub repeats a signal to every port,
-// so one trip from the hub to C also passes B, and both B and C decide.
+// so a trip that leaves the hub goes down every other cable at once, and both B and C decide.
 // `ask` is a prediction answered before the stage runs; `error` marks a station that failed.
 const kinds = { pc: '컴퓨터', hub: '허브' };
-const row = [['a', 'PC A · MAC aa', 'pc'], ['hub', '허브', 'hub'], ['b', 'PC B · MAC bb', 'pc'], ['c', 'PC C · MAC cc', 'pc']];
+const row = [['a', 'PC A · MAC aa', 'pc', [0, 0]], ['hub', '허브', 'hub', [8.5, 0]], ['c', 'PC C · MAC cc', 'pc', [17, 0]], ['b', 'PC B · MAC bb', 'pc', [8.5, 13]]];
 const frameLines = ['목적지 MAC  cc', '출발지 MAC  aa', '타입  0x0800 (IPv4)', '데이터  IP 패킷 46–1500바이트', 'FCS  CRC-32 검사값'];
 const lesson = [
   {
@@ -388,8 +388,8 @@ const lesson = [
     readingStage: 2,
     title: '랜카드는 목적지 MAC이 자기 주소인 프레임만 받는다',
     body: 'A가 C에게 보낼 데이터를 이더넷 프레임에 담습니다. 프레임 맨 앞에 받을 쪽의 MAC 주소, 그다음에 보낸 쪽의 MAC 주소가 붙습니다. MAC 주소는 랜카드마다 정해진 6바이트 주소이고, 그림에서는 aa:aa:aa:aa:aa:aa를 aa로 줄여 씁니다. 허브는 주소를 보지 않고 들어온 신호를 모든 포트로 그대로 내보냅니다. 그래서 B와 C가 같은 프레임을 받고, 각 랜카드가 목적지 MAC을 자기 주소와 비교해 C만 받고 B는 버립니다.',
-    takeaway: 'A에서 허브로 "cc ← aa" 프레임이 가고, 허브에서 같은 신호가 B를 지나 C까지 퍼집니다. B 이름표는 "cc ≠ bb → 버림", C 이름표는 "cc = 나 → 받음"이 됩니다.',
-    description: 'PC A, 허브, PC B, PC C가 한 줄로 이어져 있습니다. A가 목적지 MAC cc인 프레임을 보내고, 허브가 모든 포트로 복사하며, B는 버리고 C만 받습니다.',
+    takeaway: 'A에서 허브로 "cc ← aa" 프레임이 가고, 허브에서 같은 신호가 B와 C로 동시에 퍼집니다. B 이름표는 "cc ≠ bb → 버림", C 이름표는 "cc = 나 → 받음"이 됩니다.',
+    description: '허브 왼쪽에 PC A, 오른쪽에 PC C, 아래에 PC B가 각자 케이블로 이어져 있습니다. A가 목적지 MAC cc인 프레임을 보내고, 허브가 모든 포트로 복사하며, B는 버리고 C만 받습니다.',
     note: ['A: 목적지 cc · 출발지 aa', ' → ', '허브: 모든 포트로 복사', ' → ', 'B: cc ≠ bb → 버림', ' · ', 'C: cc = 나 → 받음'],
     stations: row,
     start: { title: 'PC A의 랜카드가 만든 프레임', lines: frameLines, holds: { a: '프레임 준비' } },
@@ -481,7 +481,8 @@ const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).jo
 const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
 const mix = (a, b, t) => a + (b - a) * t;
 const laneHeight = 4;
-const gap = 8.5;   // u between stations: badges such as "cc ≠ bb → 버림" on neighbouring PCs must not touch
+// Floor positions [u, v] come with each station. A and C sit 8.5 from the hub so badges such as "cc ≠ bb → 버림"
+// do not touch; B sits 13 below it, far enough that the hub's name (left of the cable) clears B's box.
 
 const gridLines = [];
 for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
@@ -489,25 +490,41 @@ byId('grid').setAttribute('d', gridLines.join(''));
 
 
 let plates = [];
+// Same as the engine's sizePlate, except that a plate with `end` set is right-aligned (right edge at x = end)
+// and one with `start` set is left-aligned (left edge at x = start).
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  const x = plate.end !== undefined ? plate.end - width / 2 : plate.start !== undefined ? plate.start + width / 2 : plate.x;
+  plate.label.setAttribute('x', x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
 matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
 
 // ---------- Scene: one cable segment with a hub ----------
 const shapeOf = { pc: [1.1, 12], hub: [1.45, 6] };
 let views = {};
-const stationU = (id) => lesson[state.index].stations.findIndex(([sid]) => sid === id) * gap;
+const stationAt = (id) => lesson[state.index].stations.find(([sid]) => sid === id)[3];
 function buildScene() {
   for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
   plates = [];
   packets = [];
   views = {};
   const stations = lesson[state.index].stations;
-  const far = (stations.length - 1) * gap;
-  const d = 'M' + [[0, 0], [far, 0]].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
-  svg('path', { class: 'casing', d }, byId('casings'));
-  svg('path', { class: 'bus', d }, byId('links'));
-  stations.forEach(([id, name, kind], k) => {
+  // One cable from the hub to each PC.
+  const hub = stationAt('hub');
+  for (const [id, , , at] of stations) {
+    if (id === 'hub') continue;
+    const d = 'M' + [hub, at].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
+    svg('path', { class: 'casing', d }, byId('casings'));
+    svg('path', { class: 'bus', d }, byId('links'));
+  }
+  stations.forEach(([id, name, kind, [u, v]], k) => {
     const [h, H] = shapeOf[kind];
-    const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(k * gap, 0).join(' ')})` }, byId('nodes'));
+    const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(u, v).join(' ')})` }, byId('nodes'));
     drawShadow(node, h);
     drawBox(node, h, H);
     if (kind === 'pc') {
@@ -519,27 +536,39 @@ function buildScene() {
       // Port lights along the front edge, one per cable.
       for (let p = 0; p < 4; p++) svg('circle', { class: 'port-light', r: 1.5, cx: project(h, -h + .45 + p * (2 * h - .9) / 3, H / 2)[0], cy: project(h, -h + .45 + p * (2 * h - .9) / 3, H / 2)[1] }, node);
     }
-    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
-    // Badges alternate between two heights, so neighbouring badges never sit side by side on a phone (14px text).
-    const lift = k % 2 ? 26 : 0;
-    if (lift) svg('path', { class: 'badge-leader', d: `M0 ${-H - 14 * h - 4}V${-H - 14 * h - 14 - lift + 8}` }, node);
-    const holds = addPlate(node, 'tag holds', 0, -H - 14 * h - 14 - lift, '', { pad: 1.2 });
+    // The cable down to B runs under the hub's centred name, so the hub's name sits on the back half of its top
+    // face (no cable runs there, and it reads as the hub's own name rather than B's).
+    const namePlate = addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    if (id === 'hub') { namePlate.y = -H - 10; sizePlate(namePlate); }
+    // Badges on the top row alternate between two heights, so neighbouring badges never sit side by side
+    // on a phone (14px text). B's badge would sit on the cable coming down into it, so it goes to B's right.
+    let holds;
+    if (id === 'b') {
+      holds = addPlate(node, 'tag holds', 0, -H / 2, '', { pad: 1.2 });
+      holds.start = 28 * h + 8;   // past the box's right corner (28h), so the badge does not cover B
+    } else {
+      const lift = k % 2 ? 32 : 0;
+      holds = addPlate(node, 'tag holds', 0, -H - 14 * h - 18 - lift - (id === 'hub' ? 8 : 0), '', { pad: 1.2 });
+      // The leader lives in the badge's group, so it hides with an empty badge instead of pointing at nothing.
+      if (lift) holds.group.insertBefore(svg('path', { class: 'badge-leader', d: `M0 ${-H - 14 * h - 4}V${-H - 14 * h - 18 - lift + 8}` }, holds.group), holds.rect);
+    }
     views[id] = { node, holds };
   });
-  const left = -84, right = 14 * far + 84, top = -120, bottom = 70;
+  const left = -84, right = 14 * 17 + 84, top = -152,   // room above the lifted hub badge for a two-line English board
+  bottom = 7 * 13 + 74;
   const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
   const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
 // ---------- The moving dot ----------
-function travel(fromU, toU, label, done) {
+function travel(from, to, label, done) {
   if (motion.matches) { done(); return; }
   const group = svg('g', { class: 'packet-group' }, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 8.5 }, group);
   svg('circle', { class: 'packet', r: 4.4 }, group);
   svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
-  packets.push({ group, fromU, toU, start: performance.now(), ms: 950, done });
+  packets.push({ group, from: flat(...from, laneHeight), to: flat(...to, laneHeight), start: performance.now(), ms: 950, done });
   kick();
 }
 // Callbacks run after the list is updated, so a callback that starts a new trip is not lost.
@@ -549,7 +578,10 @@ function movePackets(now) {
     const t = (now - packet.start) / packet.ms;
     if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
     const ease = t * t * (3 - 2 * t);
-    const [x, y] = flat(mix(packet.fromU + 1.3, packet.toU - 1.3, ease), 0, laneHeight);
+    const [x0, y0] = packet.from, [x1, y1] = packet.to;
+    const length = Math.hypot(x1 - x0, y1 - y0), trim = 18 / length;
+    const along = mix(trim, 1 - trim, ease);
+    const [x, y] = [mix(x0, x1, along), mix(y0, y1, along)];
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
     return true;
   });
@@ -592,7 +624,13 @@ function runStage(done) {
   if (!stage || state.busy) return;
   state.busy = true;
   views[stage.from].node.classList.add('active');
-  travel(stationU(stage.from), stationU(stage.to), stage.label, () => {
+  // The hub repeats a signal down every other cable, so a trip out of the hub also sends a copy to the PC
+  // the stage does not name (B when the stage goes to C). Only the named trip finishes the stage.
+  if (stage.from === 'hub') {
+    const copies = step.stations.filter(([id]) => id !== 'hub' && id !== stage.to && id !== 'a');
+    for (const [id] of copies) travel(stationAt('hub'), stationAt(id), stage.label, () => {});
+  }
+  travel(stationAt(stage.from), stationAt(stage.to), stage.label, () => {
     state.s++;
     state.busy = false;
     paint();

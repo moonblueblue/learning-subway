@@ -377,10 +377,10 @@ function buildScene() {
   const mode = lesson[state.index].mode;
   // RAM floor area.
   const ramLeft = mode === 'launch' ? 4 : 1;
-  const ramRight = { launch: 24, memory: 11, threads: 19, isolation: 30 }[mode];
+  const ramRight = { launch: 27.5, memory: 11, threads: 19, isolation: 30 }[mode];
   const area = [[ramLeft, -5], [ramRight, -5], [ramRight, 6.5], [ramLeft, 6.5]];
   svg('polygon', { class: 'ram-floor', points: area.map(([u, v]) => flat(u, v).join(',')).join(' ') }, byId('casings'));
-  const ramTag = svg('text', { class: 'area-tag', x: flat(ramLeft + 1.2, 6.5)[0], y: flat(ramLeft + 1.2, 6.5)[1] + 16 }, byId('casings'));
+  const ramTag = svg('text', { class: 'area-tag', x: flat(ramLeft + 1.2, 6.5)[0], y: flat(ramLeft + 1.2, 6.5)[1] + 16 }, svg('g', { class: 'area-name' }, byId('casings')));
   ramTag.textContent = 'RAM';
   if (mode === 'launch') {
     const ssd = svg('g', { class: 'node ssd', transform: `translate(${flat(-2.5, 1).join(' ')})` }, byId('nodes'));
@@ -392,7 +392,8 @@ function buildScene() {
     label(file, 0, -16, '메모장.exe', 'file-label');
   }
   // Towers.
-  const spots = mode === 'launch' ? [8, 14, 20] : mode === 'isolation' ? [4, 18.5] : [5];
+  // Towers stand a full width apart, so one tower never hides the next one's name plate.
+  const spots = mode === 'launch' ? [7.5, 15.5, 23.5] : mode === 'isolation' ? [4, 18.5] : [5];
   state.procs.forEach((proc, k) => drawProcess(proc, spots[k], mode));
   const left = mode === 'launch' ? 14 * -5 - 30 : 14 * -2 - 30, right = 14 * (ramRight + 1) + 10;
   const top = -towerH - 60, bottom = 7 * 6.5 + 34;
@@ -436,7 +437,8 @@ function drawProcess(proc, u, mode) {
   // Threads.
   if (mode === 'threads' || mode === 'isolation') {
     proc.threads.forEach((t, i) => {
-      const tu = u + 4.2 + i * 3.6, tv = 3.4;
+      // Threads stand clear of the tower's box and shadow, so the line between them touches neither.
+      const tu = u + 5.2 + i * 3.6, tv = 3.4;
       const tn = svg('g', { class: 'node thread' + (state.corrupted && proc.name === 'A' ? ' hurt' : '') + (proc.dead ? ' dead' : ''), transform: `translate(${flat(tu, tv).join(' ')})` }, byId('nodes'));
       drawShadow(tn, .6);
       for (let f = 0; f < t.frames; f++) drawBox(tn, .55, 6, f * 6.6, 'stack');
@@ -444,9 +446,11 @@ function drawProcess(proc, u, mode) {
       const pc = svg('g', { class: 'pc-tag', transform: `translate(0 ${-t.frames * 6.6 - 8})` }, tn);
       svg('rect', { x: -21, y: -8, width: 42, height: 16, rx: 8 }, pc);
       label(pc, 0, 1, `PC ${t.pc}`, 'pc-text');
-      // Line to the shared data/heap of the tower.
-      const from = flat(tu, tv, 8), to = flat(u + 1.8, 1.1, 36);
-      svg('path', { class: 'share' + (proc.dead ? ' dead' : ''), d: `M${from.join(' ')}L${to.join(' ')}` }, byId('links'));
+      // Line to the tower it shares code, data and heap with: on the floor, in a lane in front of the threads. It
+      // runs just in front of the threads' and the tower's shadows, so it never runs under a box or its names.
+      const lane = 6;
+      const d = [[tu, lane], [u + 1.2, lane]].map(([a, b], k) => (k ? 'L' : 'M') + flat(a, b).join(' ')).join('');
+      svg('path', { class: 'share' + (proc.dead ? ' dead' : ''), d }, byId('links'));
     });
   }
 }
@@ -570,7 +574,7 @@ const demoPlans = {
   launch: ['launch', 'launch', 'launch', 'reset'],
   memory: ['call', 'call', 'alloc', 'call', 'return', 'alloc', 'return', 'return', 'reset'],
   threads: ['thread', 'thread', 'reset'],
-  isolation: ['crash', 'corrupt', 'reset'],
+  isolation: ['corrupt', 'reset', 'crash', 'reset'],
 };
 function demoTick() {
   const plan = demoPlans[lesson[state.index].mode];

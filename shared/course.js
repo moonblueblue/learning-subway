@@ -14,18 +14,23 @@
     [chapter, ...chapter.tracks].some((group) => group.lessons.some((lesson) => lesson.ref === pageRef)));
   let storedRoadmap = null;
   try { storedRoadmap = sessionStorage.getItem('course-roadmap'); } catch { /* storage unavailable */ }
-  const wantedRoadmap = new URLSearchParams(location.search).get('roadmap') || storedRoadmap;
+  const params = new URLSearchParams(location.search);
+  const wantedRoadmap = params.get('roadmap') || storedRoadmap;
   const roadmap = courseCatalog.roadmaps.find((item) => item.id === wantedRoadmap && listsLesson(item)) ||
     courseCatalog.roadmaps.find(listsLesson);
+  const aiChapters = roadmap?.id === 'ai' ? roadmap.chapters.filter(chapter =>
+    chapter.lessons.some(lesson => lesson.ref === pageRef)) : [];
+  const aiLine = aiChapters.find(chapter => chapter.id === params.get('line')) || aiChapters[0];
+  if (aiLine) document.body.classList.add('ai-journey');
   try { if (roadmap) sessionStorage.setItem('course-roadmap', roadmap.id); } catch { /* storage unavailable */ }
   // The hub marks the last lesson opened ("현재 위치"), on the line it was opened through. It survives a reload.
-  try { localStorage.setItem('learning-subway:here', JSON.stringify({ ref: pageRef, roadmap: roadmap?.id })); } catch { /* storage unavailable */ }
-  const resolve = (lesson) => ({
-    id: lesson.id, ref: lesson.ref, title: lessonsByRef.get(lesson.ref).title, page: '../' + lesson.ref + '.html'
+  try { localStorage.setItem('learning-subway:here', JSON.stringify({ ref: pageRef, roadmap: roadmap?.id, line: aiLine?.id })); } catch { /* storage unavailable */ }
+  const resolve = (lesson, line) => ({
+    id: lesson.id, ref: lesson.ref, title: lessonsByRef.get(lesson.ref).title, page: '../' + lesson.ref + '.html' + (aiLine ? '?roadmap=ai&line=' + line : '')
   });
   const chapters = roadmap
     ? roadmap.chapters.map((chapter) => ({
-      ...chapter, lessons: chapter.lessons.map(resolve),
+      ...chapter, lessons: chapter.lessons.map(lesson => resolve(lesson, chapter.id)),
       tracks: chapter.tracks.map((track) => ({...track, lessons: track.lessons.map(resolve)}))
     }))
     : [{
@@ -116,7 +121,7 @@
 
   // Previous and next lesson in course order: a row of two cards under the timeline, shown where the sidebar is not
   // (phones). Step buttons stay in the timeline, so moving a step and moving a lesson are always separate.
-  const ordered = chapters.flatMap((chapter) => [...chapter.lessons, ...chapter.tracks.flatMap((track) => track.lessons)]);
+  const ordered = aiLine ? chapters.find(chapter => chapter.id === aiLine.id).lessons : chapters.flatMap((chapter) => [...chapter.lessons, ...chapter.tracks.flatMap((track) => track.lessons)]);
   const at = ordered.findIndex((lesson) => lesson.ref === pageRef);
   if (at >= 0 && ordered.length > 1) {
     const pager = element('nav', 'course-pager');
@@ -208,7 +213,7 @@
       const link = element('a', 'course-lesson');
       link.href = lesson.page;
       link.append(element('span', 'course-number', lesson.id), element('span', '', lesson.title));
-      if (lesson.ref === pageRef) link.setAttribute('aria-current', 'page');
+      if (lesson.ref === pageRef && (!aiLine || lesson.id.split('.')[0] === aiLine.id)) link.setAttribute('aria-current', 'page');
       item.append(link);
       list.append(item);
     }
@@ -235,8 +240,8 @@
   menu.setAttribute('aria-controls', 'course-drawer');
   menu.setAttribute('aria-haspopup', 'dialog');
   menu.setAttribute('aria-expanded', 'false');
-  const brand = element('a', 'course-brand', 'Learning Subway');
-  brand.href = '../index.html';
+  const brand = element('a', 'course-brand', aiLine ? 'AI 노선도' : 'Learning Subway');
+  brand.href = aiLine ? '../ai-map.html?' + new URLSearchParams({line: aiLine.id, lesson: pageRef}) : '../index.html';
   bar.append(menu, brand);
   // Language switch (Korean default, English second); CSS keeps it at the right end of the bar.
   const langSwitch = element('div');
@@ -496,7 +501,7 @@
     }
     const desktop = fitted.matches;
     const reading = hasScene && selectedView !== 'practice';
-    const summary = !desktop && hasScene && selectedView === 'canvas';
+    const summary = !aiLine && !desktop && hasScene && selectedView === 'canvas';
     workspace.classList.toggle('course-reading', reading);
     const hint = canvas.querySelector('.view-hint');
     if (hint) hint.setAttribute('aria-hidden', String(reading));

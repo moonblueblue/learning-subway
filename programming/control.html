@@ -134,12 +134,18 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 @keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
 .cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
 .cell.empty .cell-value{fill:#9aa8a2}
-.address{font:600 9px var(--mono);fill:#6b7d76;text-anchor:start}
+.address{font:600 10px var(--mono);fill:#6b7d76;text-anchor:middle}
+@media(max-width:600px){.address{font-size:12.5px}}
 .tag.name{transition:opacity .25s}
 .tag.name rect{stroke:var(--accent);stroke-width:1.1}
 .tag.name text{fill:var(--accent);font-weight:700}
 .bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.bus.active{stroke:#7fa891}
+.bus.live,.bus.held-read,.bus.held-write{stroke-width:3}
+.bus.held-read{stroke:var(--response)}
+.bus.held-write{stroke:var(--request)}
+.bus.write-lane:not(.live):not(.held-write){display:none}
+.bus.live.read{stroke:var(--response)}
+.bus.live.write{stroke:var(--request)}
 .packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
 .packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
 .packet-group.read .packet-label{fill:#3b4880}
@@ -329,6 +335,8 @@ const lesson = [
   {
     label: '갈림길 if',
     readingMemory: [["점수", 75], ["결과", "합격"]],
+    // The still picture lights the routes of the line that decided this step: reads purple, writes green.
+    readingRoutes: {read: ["점수"], write: ["결과"]},
     readingCpu: '75 >= 60 → 참 → "합격"',
     example: ["점수 75", "75 ≥ 60은 참", "결과 ‘합격’"],
     title: '조건이 참이면 그 아래 줄을 실행한다',
@@ -350,6 +358,8 @@ const lesson = [
   {
     label: 'else 쪽',
     readingMemory: [["점수", 45], ["결과", "다시"]],
+    // The still picture lights the routes of the line that decided this step: reads purple, writes green.
+    readingRoutes: {read: ["점수"], write: ["결과"]},
     readingCpu: '45 >= 60 → 거짓 → else "다시"',
     example: ["점수 45", "45 ≥ 60은 거짓", "else에서 ‘다시’"],
     title: '거짓이면 else 아래로 건너뛴다',
@@ -370,6 +380,8 @@ const lesson = [
   {
     label: '반복 while',
     readingMemory: [["합계", 6], ["i", 4]],
+    // The still picture lights the routes of the line that decided this step: reads purple, writes green.
+    readingRoutes: {read: ["i"]},
     readingCpu: '4 <= 3 → 거짓 → 3바퀴 뒤 끝',
     example: ["i = 1 · 합계 0", "1 + 2 + 3 누적", "i = 4에서 종료 · 합계 6"],
     title: '조건이 참인 동안 같은 줄을 되풀이한다',
@@ -391,6 +403,8 @@ const lesson = [
   {
     label: '끝나지 않는 반복',
     readingMemory: [["합계", 6], ["i", 1]],
+    // The still picture lights the routes of the line that decided this step: reads purple, writes green.
+    readingRoutes: {read: ["i"]},
     readingCpu: '1 <= 3 → 참 → 6바퀴째, i 그대로',
     example: ["i = 1", "반복 중 i가 그대로", "종료 조건에 도달하지 못함"],
     title: '조건이 바뀌지 않으면 영원히 반복한다',
@@ -453,7 +467,8 @@ function addPlate(node, className, x, y, text, { pad = 1.5, round = true } = {})
 matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
 
 // ---------- Memory cells in a row, the CPU at the end of the row ----------
-// Same arrangement as lesson 0.1: the row lies on the floor diagonal and V-shaped wires join each cell to the CPU.
+// The cells lie in a row across the screen with the CPU at the end. One shared bus runs just in front of the row:
+// each cell drops straight onto it, and it rises into the CPU (visual-language.md "메모리와 CPU").
 const spacing = 2.1;
 const cpuGap = 3.8;
 const cellHalf = .82, cellHeight = 14;
@@ -461,23 +476,28 @@ const start = -((cellCount - 1) * spacing + cpuGap) / 2 + 1.2;
 const cellAt = (k) => start + spacing * k;
 const cpuAt = start + spacing * (cellCount - 1) + cpuGap;
 const laneHeight = 3;
+const busFront = 2.1;   // how far in front of the row the shared bus runs (straight down on screen)
+const writeLane = .75;   // writes run on their own lane just below the bus, shown only while lit, so a read
+                         // and a write in one picture never share (and hide) a stretch of line
 const cells = [];
 let cpu;
 function buildScene() {
   for (let k = 0; k < cellCount; k++) {
     const c = cellAt(k);
-    const d = 'M' + [[c, c], [cpuAt, c], [cpuAt, cpuAt]].map(([x, y]) => project(x, y, laneHeight).join(' ')).join('L');
+    const d = 'M' + [[c, c], [c + busFront, c - busFront], [cpuAt + busFront, cpuAt - busFront], [cpuAt, cpuAt]].map(([x, y]) => project(x, y, laneHeight).join(' ')).join('L');
     svg('path', { class: 'casing', d }, byId('casings'));
     const wire = svg('path', { class: 'bus', d }, byId('links'));
+    const w = busFront + writeLane;
+    const writeWire = svg('path', { class: 'bus write-lane', d: 'M' + [[c, c], [c + w, c - w], [cpuAt + w, cpuAt - w], [cpuAt, cpuAt]].map(([x, y]) => project(x, y, laneHeight).join(' ')).join('L') }, byId('links'));
     const node = svg('g', { class: 'node cell empty', transform: `translate(${28 * c} 0)` }, byId('nodes'));
     drawShadow(node, cellHalf);
     drawFaces(node, cellHalf, cellHeight);
     const value = svg('text', { class: 'cell-value', x: 0, y: -cellHeight + .5 }, node);
-    const [ax, ay] = project(cellHalf, -cellHalf, 0);
-    const address = svg('text', { class: 'address', x: ax - 6, y: ay + 13 }, node);
+    // The address sits under both lanes, straight below its cell, so no wire crosses it.
+    const address = svg('text', { class: 'address', x: 0, y: project(busFront + writeLane, -busFront - writeLane, 0)[1] + 14, 'text-anchor': 'middle' }, node);
     address.textContent = `${firstAddress + k}번지`;
     const name = addPlate(node, 'tag name', 0, -cellHeight - 14 * cellHalf - 14, '');
-    cells.push({ node, value, name, wire });
+    cells.push({ node, value, name, wire, writeWire });
   }
   const node = svg('g', { class: 'node cpu', transform: `translate(${28 * cpuAt} 0)` }, byId('nodes'));
   const h = 1.6, H = 9;
@@ -491,7 +511,7 @@ function buildScene() {
   const mark = [[-.7, -.7, H], [.7, -.7, H], [.7, .7, H], [-.7, .7, H]];
   svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, node);
   const [cx, cy] = project(h, -h, 0);
-  addPlate(node, 'tag', cx, cy + 16, 'CPU');
+  addPlate(node, 'tag', cx + 30, cy + 6, 'CPU');   // right of the wires that rise into the chip
   const work = addPlate(node, 'total', 0, -H - 14 * h - 18, '대기', { pad: 1.1, round: false });
   cpu = { node, work };
   new MutationObserver(() => requestAnimationFrame(placeReadingCpu)).observe(work.label, { childList: true, characterData: true, subtree: true });
@@ -506,7 +526,11 @@ function sendPacket(k, kind, label, delay = 0) {
   svg('circle', { class: 'packet', r: 4.6 }, group);
   svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
   group.setAttribute('visibility', 'hidden');
-  packets.push({ group, wire: cells[k].wire, reverse: kind === 'write', start: performance.now() + delay, duration: 760 });
+  const route = kind === 'write' ? cells[k].writeWire : cells[k].wire;
+  packets.push({ group, wire: route, reverse: kind === 'write', start: performance.now() + delay, duration: 760 });
+  // The route lights in the legend's colour (read purple, write green) only while its packet travels.
+  setTimeout(() => { route.parentNode.append(route); route.classList.add('live', kind); }, delay);
+  setTimeout(() => route.classList.remove('live', kind), delay + 760);
   kick();
 }
 function movePackets(now) {
@@ -610,8 +634,14 @@ function paint(changed = -1) {
     cell.value.textContent = name ? String(preview ? preview[k][1] : state.cells[k]) : '–';
     setPlate(cell.name, name ?? '');
     cell.name.group.style.opacity = name ? 1 : 0;
-    cell.wire.classList.toggle('active', Boolean(name));
+    // In the still picture the routes that decided the step stay lit in the legend's colours (visual-language.md).
+    const routes = preview ? step().readingRoutes : null;
+    cell.wire.classList.toggle('held-read', Boolean(name && routes?.read?.includes(name)));
+    cell.writeWire.classList.toggle('held-write', Boolean(name && routes?.write?.includes(name)));
   });
+  // Lit routes share the bus with grey ones: draw them last, reads then writes, so no grey wire covers them.
+  for (const cell of cells) if (cell.wire.classList.contains('held-read')) cell.wire.parentNode.append(cell.wire);
+  for (const cell of cells) if (cell.writeWire.classList.contains('held-write')) cell.writeWire.parentNode.append(cell.writeWire);
   // The reading preview shows the step's deciding test on the CPU, so the still picture says why memory ended up so
   // (rules in references/visual-language.md, 1장 "정지 화면의 CPU 판").
   // It is longer than a running value, so it is set smaller and grows leftwards over the memory row from the chip.

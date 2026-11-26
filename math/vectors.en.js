@@ -53,7 +53,7 @@ window.lessonText = {
   '점 (1, 2)': 'Point (1, 2)', '행렬 곱하기': 'Multiply', '바뀐 점': 'New point', '더하기': 'Add',
   '점 (1, 2) → 행렬 곱하기': 'Point (1, 2) → matrix product', '행렬 곱하기 → 바뀐 점': 'Matrix product → changed point', '행렬 곱하기 · [−2, 1]': 'Matrix product · [−2, 1]',
   '점과 행렬': 'A point and matrices', '점 = [1, 2]': 'point = [1, 2]', '늘이기 A = [[2, 0], [0, 1]]': 'stretch A = [[2, 0], [0, 1]]', '돌리기 R = [[0, −1], [1, 0]]': 'turn R = [[0, −1], [1, 0]]',
-  '늘이기': 'Stretch', '돌리기': 'Turn', '돌리기 끝': 'Turn done',
+  '늘이기': 'Stretch', '늘이기 → [2, 2]': 'Stretch → [2, 2]', '돌리기': 'Turn', '돌리기 끝': 'Turn done',
   '첫 줄 [2, 0] · [1, 2] = 2': 'row 1 [2, 0] · [1, 2] = 2', '둘째 줄 [0, 1] · [1, 2] = 2': 'row 2 [0, 1] · [1, 2] = 2',
   '첫 줄 [0, −1] · [1, 2] = −2': 'row 1 [0, −1] · [1, 2] = −2', '둘째 줄 [1, 0] · [1, 2] = ?': 'row 2 [1, 0] · [1, 2] = ?',
   '행렬의 줄마다 내적을 구합니다.': 'Take a dot product for each row of the matrix.', '이번에는 돌리는 행렬입니다.': 'This time it is a turning matrix.',

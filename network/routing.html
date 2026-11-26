@@ -301,9 +301,11 @@ viewport.addEventListener('keydown', (event) => {
 setCamera(0, 0, 1);
 // IP routing on the 4.7 graph: every router keeps a table "destination → next router", and a packet
 // is forwarded one hop at a time. Link costs are delays in milliseconds.
-const places = {
+// The 4.7 graph spread 1.5 times, so each link shows at least a box's length between two boxes and its delay
+// sits on that visible part (closer, the boxes hid the links and the delays could not be traced).
+const places = Object.fromEntries(Object.entries({
   A: [0, 0], B: [4.2, -4.4], C: [4.2, 4.4], D: [8.6, -6.6], E: [8.6, 0], F: [8.6, 6.6], G: [13, -3.4], H: [13, 3.4], I: [17.4, 0],
-};
+}).map(([name, [u, v]]) => [name, [u * 1.5, v * 1.5]]));
 const roads = { AB: 4, AC: 2, BD: 5, BE: 1, CE: 8, CF: 3, DG: 2, EG: 7, EH: 2, FH: 4, GI: 3, HI: 5 };
 const names = Object.keys(places);
 const other = (road, p) => road[0] === p ? road[1] : road[0];
@@ -360,7 +362,7 @@ const lesson = [
       nodes: [],
       edges: [],
       labels: [
-        [28, 254, "B의 표: I → E       E의 표: I → H       H의 표: I → I"],
+        [28, 254, "B의 표: I → E   ·   E의 표: I → H   ·   H의 표: I → I"],
       ],
       keepWorld: true,
     },
@@ -451,24 +453,30 @@ function buildScene() {
     const [a, b] = road;
     const d = `M${flat(...places[a], 4).join(' ')}L${flat(...places[b], 4).join(' ')}`;
     svg('path', { class: 'casing', d }, byId('casings'));
-    const line = svg('path', { class: 'road', d }, byId('links'));
+    roadViews[road] = { line: svg('path', { class: 'road', d }, byId('links')) };
+  }
+  // Delays go after every line in the links group: above all the lines, and still shown in the still picture
+  // (the shared reading view hides the packets group, which is where they used to be).
+  for (const road of Object.keys(roads)) {
+    const [a, b] = road;
     const mid = flat((places[a][0] + places[b][0]) / 2, (places[a][1] + places[b][1]) / 2, 4);
-    const tag = svg('g', { class: 'weight', transform: `translate(${mid.join(' ')})` }, byId('packets'));
+    const tag = svg('g', { class: 'weight', transform: `translate(${mid.join(' ')})` }, byId('links'));
     svg('rect', { x: -8, y: -7, width: 16, height: 14, rx: 4 }, tag);
-    const text = svg('text', {}, tag);
-    roadViews[road] = { line, tag, text };
+    Object.assign(roadViews[road], { tag, text: svg('text', {}, tag) });
   }
   Object.entries(places).sort(([, p], [, q]) => p[1] - q[1]).forEach(([name, at]) => {
     const node = svg('g', { class: 'node place', transform: `translate(${flat(...at).join(' ')})` }, byId('nodes'));
     drawShadow(node, half);
     drawBox(node, half, H);
-    svg('text', { class: 'place-name', x: 0, y: -H + .5 }, node).textContent = name;
-    // Known time, written on the box's front face so it never covers the roads' minutes.
-    const badge = svg('g', { class: 'dist', transform: `translate(${-14 * half / 2 - 4} ${7 * half / 2 - H / 2 + 3})` }, node);
+    // In its own group, so the box faces beside it are not read as its plate (audit-motion).
+    svg('text', { class: 'place-name', x: 0, y: -H + .5 }, svg('g', {}, node)).textContent = name;
+    // The IP address (or TTL), centred just under the box: links leave the box slanting left and right,
+    // so nothing crosses there (on the front face, a link from the lower left ran through it).
+    const badge = svg('g', { class: 'dist', transform: `translate(0 ${14 * half + 9})` }, node);
     const text = svg('text', {}, badge);
     nodeViews[name] = { node, badge, text };
   });
-  const left = -30, right = 14 * 17.4 + 40, top = 7 * -6.6 - 50, bottom = 7 * 6.6 + 30;
+  const left = -30, right = 14 * 17.4 * 1.5 + 40, top = 7 * -6.6 * 1.5 - 50, bottom = 7 * 6.6 * 1.5 + 36;
   const scale = Math.min(1.7, 590 / (right - left), 268 / (bottom - top));
   const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);

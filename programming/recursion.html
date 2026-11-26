@@ -83,6 +83,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .total.max rect{fill:#fff6ef;stroke:#a24c14}
 .total.max text{fill:#a24c14}
 .total{transform-box:fill-box;transform-origin:center}
+.board{transition:transform .35s ease-out}
+@media(prefers-reduced-motion:reduce){.board{transition:none}}
 .total.bump{animation:bump .32s ease-out}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
 .note{animation:note 1.6s ease-out forwards}
@@ -160,13 +162,17 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 @media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
 .frame{transition:transform .35s ease-out,opacity .35s ease-out}
 .frame.entering,.frame.leaving{opacity:0;transform:translateY(-34px)}
+/* A frame's label shows once the frame has landed and goes at once when it leaves: in flight the faded label sat
+   across the labels of the frames below (1.3 4, 1.5 2 review). */
+.frame .frame-label{transition:opacity .2s ease-out .3s}
+.frame.entering .frame-label,.frame.leaving .frame-label{opacity:0;transition:none}
 .frame .face{stroke-width:.8}
 .frame.outer .left{fill:#e6ebe8}.frame.outer .right{fill:#cfd8d4}.frame.outer .top{fill:#f6f8f7}.frame.outer .face{stroke:#8c9d96}
 .frame.inner .left{fill:#c6e6cf}.frame.inner .right{fill:#9fcdae}.frame.inner .top{fill:#e3f6e8}.frame.inner .face{stroke:#5f9474}
 .frame.top .face{stroke:var(--accent);stroke-width:1.4}
 .frame-label text{font-family:var(--mono);font-size:11.5px}
 .frame.top .frame-label rect{stroke:var(--accent)}
-@media(prefers-reduced-motion:reduce){.frame{transition:none}}
+@media(prefers-reduced-motion:reduce){.frame,.frame .frame-label{transition:none}}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -416,16 +422,18 @@ const lesson = [
       title: "fib(3)은 fib(1)을 두 번 계산한다",
       description: "fib(3)은 fib(2)와 fib(1)을 부르고, fib(2)는 다시 fib(1)과 fib(0)을 부릅니다. fib(1)이 두 번 계산되어 호출은 5번이고 결과는 1 + 1 = 2입니다.",
       nodes: [
-        ["f3", 96, 160, 136, 46, ["fib(3)", "= 1 + 1 = 2"], "active"],
+        // Only the repeated call is coloured (warning); every other call is one plain box. The count sits in the
+        // label, not in a box that no line reached.
+        ["f3", 96, 160, 136, 46, ["fib(3)", "= 1 + 1 = 2"]],
         ["f2", 292, 108, 136, 46, ["fib(2)", "= 1 + 0 = 1"]],
         ["f1b", 292, 222, 136, 46, ["fib(1) = 1", "다시 계산"], "blocked"],
         ["f1a", 492, 80, 136, 30, ["fib(1) = 1"]],
         ["f0", 492, 136, 136, 30, ["fib(0) = 0"]],
-        ["sum", 492, 222, 136, 46, ["호출 5번", "결과 2"], "active"],
       ],
       edges: [
-        ["f3", "f2"], ["f3", "f1b"], ["f2", "f1a"], ["f2", "f0"],
+        ["f3", "f2"], ["f3", "f1b", "blocked"], ["f2", "f1a"], ["f2", "f0"],
       ],
+      labels: [[28, 52, "상자 5개 = 호출 5번 · 결과 2"]],
     },
     example: ["fib(3) 계산", "두 갈래에서 fib(1)을 다시 호출", "호출 5번 · 결과 2"],
     title: '재귀는 같은 계산을 여러 번 할 수도 있다',
@@ -491,7 +499,10 @@ matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach
 
 
 // ---------- The call stack: frames piled up as flat slabs ----------
-const slabHalf = 2.3, slabHeight = 15, slabGap = 1.5;
+// Frames are 23 apart and their labels 16.5 high, so a frame's label never touches the one below.
+const slabHalf = 2.3, slabHeight = 15, slabGap = 8;
+const worldX = 282, worldY = 236, worldScale = .92;
+const sceneRight = (620 - worldX) / worldScale - 14, sceneTop = -worldY / worldScale + 4;   // edges of the view, in world units
 const slabZ = (k) => 6 + k * (slabHeight + slabGap);
 const frameViews = [];
 let work;
@@ -501,7 +512,25 @@ function buildScene() {
   drawFaces(base, slabHalf + .4, 5, { top: '#e9eeeb', left: '#cfd8d3', right: '#b7c3bd', stroke: '#93a39b' });
   const [bx, by] = project(-slabHalf - .4, -slabHalf - .4, 0);
   addPlate(base, 'tag', bx - 30, by + 6, '호출 스택');
-  work = addPlate(byId('packets'), 'total', 190, -196, '대기', { pad: 1.1, round: false });
+  const holder = svg('g', { class: 'board' }, byId('packets'));
+  work = addPlate(svg('g', {}, holder), 'total', 0, 0, '대기', { pad: 1.1, round: false });
+  work.holder = holder;
+  placeBoard();
+}
+// The board says what the top frame is doing, so it stands just above that frame's label, starting where the
+// labels start, and moves with the top of the stack. Fixed at the top right, it floated far from a short stack.
+function placeBoard() {
+  if (!work?.holder) return;
+  const k = Math.max(frameViews.length - 1, 0), z1 = slabZ(k) + slabHeight;
+  const [labelX, labelY] = project(slabHalf, 0, slabZ(k) + slabHeight / 2);
+  const [cornerX, cornerY] = project(slabHalf, slabHalf, z1);   // right corner of the top face
+  const width = Number(work.rect.getAttribute('width')), height = Number(work.rect.getAttribute('height'));
+  const left = Math.min(labelX + 16, sceneRight - width);
+  // Clear the top label and the top face: its edge rises from the right corner to the back corner above x = 0.
+  const edgeY = cornerY - Math.min(Math.max(cornerX - left, 0), cornerX) / 2;
+  const y = Math.max(Math.min(labelY - 38, edgeY - height / 2 - 4), sceneTop + height / 2);
+  work.holder.style.transform = `translate(${left.toFixed(1)}px, ${y.toFixed(1)}px)`;
+  work.group.parentNode.setAttribute('transform', `translate(${(width / 2).toFixed(1)} 0)`);
 }
 function slabFaces(node, z0, fills) {
   const h = slabHalf, z1 = z0 + slabHeight;
@@ -525,28 +554,45 @@ function pushView(f, k) {
   slabFaces(node, slabZ(k));
   const [x, y] = project(slabHalf, 0, slabZ(k) + slabHeight / 2);
   const label = addPlate(node, 'tag frame-label', x + 16, y, frameLabel(f));
-  label.x = x + 16;
+  label.left = true;
+  sizePlate(label);
   frameViews.push({ node, label });
+  placeBoard();
   node.getBBox();
   requestAnimationFrame(() => node.classList.remove('entering'));
 }
 function popView() {
   const view = frameViews.pop();
+  placeBoard();
   view.node.classList.add('leaving');
   later(motion.matches ? 0 : 400, () => view.node.remove());
 }
 function syncViews() {
   frameViews.forEach((view, k) => {
     view.label.label.textContent = frameLabel(state.frames[k]);
-    sizePlateLeft(view.label);
+    sizePlate(view.label);
     view.node.classList.toggle('top', k === frameViews.length - 1);
   });
+}
+// i18n.js measures every plate again after it translates the text, through this function. Frame labels keep their
+// left edge, and the board, whose width just changed, is placed again. With the engine's sizePlate the frame
+// labels were centred again on every text change and the board kept its old half-width offset.
+function sizePlate(plate) {
+  if (plate.left) { sizePlateLeft(plate); return; }
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  plate.label.setAttribute('x', plate.x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: plate.x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+  if (plate === work) placeBoard();
 }
 // Frame labels grow to the right from their left edge.
 function sizePlateLeft(plate) {
   const size = parseFloat(getComputedStyle(plate.label).fontSize);
   const width = plate.label.getComputedTextLength() + size * 1.5;
-  const height = size + 8;
+  const height = size + 5;   // 16.5 against 23 between frames: a clear 6.5 gap, so neighbouring labels read apart
   plate.label.setAttribute('x', plate.x + width / 2);
   plate.label.setAttribute('y', plate.y);
   Object.entries({ x: plate.x, y: plate.y - height / 2, width, height, rx: height / 2 }).forEach(([key, value]) => plate.rect.setAttribute(key, value));
@@ -879,9 +925,7 @@ window.addEventListener('keydown', (event) => {
 });
 
 buildScene();
-byId('world').setAttribute('transform', 'translate(300 152) scale(1.02)');
-buildScene();
-byId('world').setAttribute('transform', 'translate(282 236) scale(.92)');
+byId('world').setAttribute('transform', `translate(${worldX} ${worldY}) scale(${worldScale})`);
 const initial = routeIndex();
 history.replaceState(null, '', `#/recursion/${initial + 1}`);
 state.index = initial;

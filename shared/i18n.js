@@ -14,6 +14,9 @@
   const ATTRS = ['aria-label', 'title', 'placeholder', 'alt', 'aria-description', 'aria-roledescription'];
 
   const SHARED = {
+    'AI 노선도': 'AI map', '전체 노선도': 'All lines', '졸업 과제': 'Capstone', '레슨 선택': 'Choose a lesson',
+    '레슨 열기': 'Open lesson', '공개 레슨': 'Available lessons', '공개된 레슨이 아직 없습니다.': 'Lessons are in preparation.',
+    '심화 노선': 'Specialist lines', '선택한 노선': 'Selected line',
     // Course shell (dist/shared/course.js, engine.js)
     '레슨 메뉴': 'Lessons', '목차': 'Contents', '코스 목차': 'Course contents', '닫기': 'Close',
     '레슨': 'Lesson', '실습': 'Practice', '직접 해 보기': 'Try it', '단계 설명': 'Step guide',

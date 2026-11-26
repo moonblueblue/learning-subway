@@ -391,7 +391,7 @@ setCamera(0, 0, 1);
 // (`from` → `to`, `label` on the moving dot), then shows the message (`title`, `lines`) and what each station holds
 // (`holds`). `ask` is a prediction answered before the stage runs.
 const kinds = { pc: '컴퓨터', switch: '스위치', router: '라우터', server: 'DHCP 서버' };
-const lan = [['a', 'PC A · MAC aa', 'pc', [0, 0]], ['sw', '스위치', 'switch', [8.5, 0]], ['srv', 'DHCP 서버 · 192.168.1.2', 'server', [17, 0]], ['b', 'PC B · 192.168.1.20', 'pc', [8.5, 11]]];
+const lan = [['a', 'PC A · MAC aa', 'pc', [0, 0]], ['sw', '스위치', 'switch', [8.5, 0]], ['srv', 'DHCP 서버 · 192.168.1.2', 'server', [17, 0]], ['b', 'PC B · 192.168.1.20', 'pc', [8.5, 14]]];
 const lanCables = [['sw', 'a'], ['sw', 'srv'], ['sw', 'b']];
 const lesson = [
   {
@@ -465,7 +465,7 @@ const lesson = [
     takeaway: 'A의 Discover가 아래 라우터에 닿자 라우터 이름표가 "giaddr .1.1 붙여 서버로"가 되고, 오른쪽 아래 서버 이름표가 "giaddr 보고 192.168.1.x 풀에서"가 됩니다. 답이 돌아와 A 이름표가 "192.168.1.50 받음"이 됩니다.',
     description: '왼쪽 PC A(주소 없음), 가운데 스위치, 오른쪽 PC B가 192.168.1.0 네트워크이고, 아래 라우터 너머 192.168.9.0 네트워크에 DHCP 서버(192.168.9.2)가 있습니다. 라우터의 릴레이가 Discover를 giaddr 192.168.1.1과 함께 서버에게 직접 보내고, 서버가 192.168.1.x 주소를 골라 릴레이를 거쳐 돌려줍니다.',
     note: ['A: Discover (브로드캐스트)', ' → ', '릴레이: 서버에게 직접 · giaddr .1.1', ' → ', '서버: 192.168.1.x 풀에서 .50', ' → ', '답은 릴레이 거쳐 A로'],
-    stations: [['a', 'PC A · MAC aa', 'pc', [0, 0]], ['sw', '스위치', 'switch', [8.5, 0]], ['b', 'PC B · 192.168.1.20', 'pc', [17, 0]], ['r', '라우터(릴레이) · 192.168.1.1', 'router', [8.5, 11]], ['srv', 'DHCP 서버 · 192.168.9.2', 'server', [25.5, 11]]],
+    stations: [['a', 'PC A · MAC aa', 'pc', [0, 0]], ['sw', '스위치', 'switch', [8.5, 0]], ['b', 'PC B · 192.168.1.20', 'pc', [17, 0]], ['r', '라우터(릴레이) · 192.168.1.1', 'router', [8.5, 14]], ['srv', 'DHCP 서버 · 192.168.9.2', 'server', [25.5, 14]]],
     cables: [['sw', 'a'], ['sw', 'b'], ['sw', 'r'], ['r', 'srv']],
     start: { title: '라우터의 설정', lines: ['192.168.1.0 쪽: 192.168.1.1', 'DHCP 릴레이 켜짐 → 서버 192.168.9.2'], holds: { a: '주소 없음', r: '릴레이 → 192.168.9.2' } },
     stages: [
@@ -509,6 +509,20 @@ byId('grid').setAttribute('d', gridLines.join(''));
 
 
 let plates = [];
+
+// Same as the engine's sizePlate, except that a plate with `end` set is right-aligned (right edge at x = end)
+// and one with `start` set is left-aligned (left edge at x = start).
+// Used for names that step aside from a cable running down from their station.
+function sizePlate(plate) {
+  const size = parseFloat(getComputedStyle(plate.label).fontSize);
+  const width = plate.label.getComputedTextLength() + size * plate.pad;
+  const height = size + 8;
+  const x = plate.end !== undefined ? plate.end - width / 2 : plate.start !== undefined ? plate.start + width / 2 : plate.x;
+  plate.label.setAttribute('x', x);
+  plate.label.setAttribute('y', plate.y);
+  Object.entries({ x: x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
+    .forEach(([key, value]) => plate.rect.setAttribute(key, value));
+}
 matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
 
 // ---------- Scene: a star of cables around one switch ----------
@@ -554,13 +568,29 @@ function buildScene() {
         svg('circle', { class: 'port-light', r: 1.6, cx, cy }, node);
       }
     }
-    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    // A cable that runs straight down from this station (to a station below it), or a floor-zone border under it,
+    // would pass through a centred name, so that name sits left of the line instead (right edge 20px left of it).
+    const under = stations.some(([, , , [ou, ov]]) => ou === u && ov > v);
+    const sidestep = under || (lesson[state.index].zones || []).some(([z0, z1]) => z0 === u || z1 === u);
+    const namePlate = addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    // With a station underneath it also drops one row, below the neighbours' names and above that station.
+    // A zone border alone (nothing below) keeps the row and steps right of the line, away from the zone's corner label.
+    // A short name (a switch, a hub, an AP) goes on the box instead, where it reads as that box's own name
+    // (dropped below, it sat next to the station underneath and read as that one's).
+    // It sits on the back half of the top face: there it reads as this box's name, and the cables, which end at the
+    // box's centre (y −4), stay clear of it even in a phone's larger text (centred on the face they ran under it;
+    // beside the box it read as the neighbour's name).
+    const onTop = (under || sidestep) && name.length <= 8;
+    if (onTop) { namePlate.y = -H - 10; sizePlate(namePlate); }
+    else if (under) { namePlate.end = -20; namePlate.y += 24; sizePlate(namePlate); }
+    else if (sidestep) { namePlate.start = 20; sizePlate(namePlate); }
     // The PC below the switch puts its badge under its name, so it does not crowd the switch's name.
     const below = v > 0;
-    const lift = topRow.indexOf(id) % 2 === 1 ? 26 : 0;
-    const holds = addPlate(node, 'tag holds', 0, below ? 14 * h + 42 : -H - 14 * h - 14 - lift, '', { pad: 1.2 });
+    const lift = topRow.indexOf(id) % 2 === 1 ? 32 : 0;
+    const holds = addPlate(node, 'tag holds', 0, below ? 14 * h + 42 : -H - 14 * h - 18 - lift - (onTop ? 8 : 0),   // 8px more over a name on the top face
+      '', { pad: 1.2 });
     // The leader lives in the badge group, so an empty (hidden) badge hides its leader too.
-    if (lift) holds.group.prepend(svg('path', { class: 'badge-leader', d: `M0 ${-H - 14 * h - 4}V${-H - 14 * h - 14 - lift + 8}` }));
+    if (lift) holds.group.prepend(svg('path', { class: 'badge-leader', d: `M0 ${-H - 14 * h - 4}V${-H - 14 * h - 18 - lift + 8}` }));
     views[id] = { node, holds };
   });
   const us = stations.map(([, , , [u]]) => u), vs = stations.map(([, , , [, v]]) => v);

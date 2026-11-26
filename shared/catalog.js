@@ -527,52 +527,136 @@ const courseCatalog = {
       "chapters": [
         {
           "id": "1",
-          "title": "AI를 위한 수학",
-          "titleEn": "Math for AI",
-          "lessons": [],
-          "tracks": []
+          "title": "공통 본선",
+          "titleEn": "Common line",
+          "lessons": [
+            {
+              "id": "1.1",
+              "ref": "math/logic"
+            },
+            {
+              "id": "1.2",
+              "ref": "math/vectors"
+            },
+            {
+              "id": "1.3",
+              "ref": "math/statistics"
+            },
+            {
+              "id": "1.4",
+              "ref": "ai/ml"
+            },
+            {
+              "id": "1.5",
+              "ref": "ai/gradient"
+            },
+            {
+              "id": "1.6",
+              "ref": "ai/neural"
+            },
+            {
+              "id": "1.7",
+              "ref": "math/graph"
+            },
+            {
+              "id": "1.8",
+              "ref": "algorithms/shortest"
+            }
+          ],
+          "tracks": [],
+          "destination": "설비 경보와 점검 경로",
+          "destinationEn": "Fault alerts and inspection routes"
         },
         {
           "id": "2",
-          "title": "머신러닝 기초",
-          "titleEn": "Machine learning basics",
+          "title": "탐색·추론·계획",
+          "titleEn": "Search, reasoning and planning",
           "lessons": [],
-          "tracks": []
+          "tracks": [],
+          "destination": "창고 배송 계획기",
+          "destinationEn": "Warehouse delivery planner"
         },
         {
           "id": "3",
-          "title": "신경망과 학습",
-          "titleEn": "Neural networks and training",
+          "title": "데이터·응용 머신러닝",
+          "titleEn": "Data and applied ML",
           "lessons": [],
-          "tracks": []
+          "tracks": [],
+          "destination": "품목별 수요 예측기",
+          "destinationEn": "Item-level demand forecasting"
         },
         {
           "id": "4",
-          "title": "컴퓨터 비전",
-          "titleEn": "Computer vision",
-          "lessons": [],
-          "tracks": []
+          "title": "비전·멀티모달 인식",
+          "titleEn": "Vision and multimodal perception",
+          "lessons": [
+            {
+              "id": "4.1",
+              "ref": "ai/cnn"
+            }
+          ],
+          "tracks": [],
+          "destination": "불량 검사와 지침 검색",
+          "destinationEn": "Defect detection and manual retrieval"
         },
         {
           "id": "5",
-          "title": "언어와 트랜스포머",
-          "titleEn": "Language and transformers",
+          "title": "강화학습·로봇",
+          "titleEn": "Reinforcement learning and robotics",
           "lessons": [],
-          "tracks": []
+          "tracks": [],
+          "destination": "이동 정책 평가",
+          "destinationEn": "Navigation policy evaluation"
         },
         {
           "id": "6",
-          "title": "LLM 활용",
-          "titleEn": "Using LLMs",
-          "lessons": [],
-          "tracks": []
+          "title": "생성 모델·언어 모델",
+          "titleEn": "Generative and language models",
+          "lessons": [
+            {
+              "id": "6.1",
+              "ref": "ai/attention"
+            },
+            {
+              "id": "6.2",
+              "ref": "ai/llm"
+            }
+          ],
+          "tracks": [],
+          "destination": "소형 언어 모델",
+          "destinationEn": "A small language model"
         },
         {
           "id": "7",
-          "title": "학습·추론 서빙",
-          "titleEn": "Training and inference serving",
-          "lessons": [],
-          "tracks": []
+          "title": "검색·RAG·AI 응용",
+          "titleEn": "Retrieval, RAG and AI apps",
+          "lessons": [
+            {
+              "id": "7.1",
+              "ref": "ai/llm"
+            }
+          ],
+          "tracks": [],
+          "destination": "문서 지원 에이전트",
+          "destinationEn": "A manual-based support agent"
+        },
+        {
+          "id": "8",
+          "title": "AI 시스템·서빙",
+          "titleEn": "AI systems and serving",
+          "lessons": [
+            {
+              "id": "8.1",
+              "ref": "system-design/queue"
+            },
+            {
+              "id": "8.2",
+              "ref": "system-design/cache"
+            }
+          ],
+          "tracks": [],
+          "destination": "추론 서비스 운영",
+          "destinationEn": "Operating an inference service"
         }
       ],
       "branch": {
@@ -762,6 +846,14 @@ const courseCatalog = {
             {
               "id": "2.3",
               "ref": "network/nat"
+            },
+            {
+              "id": "2.4",
+              "ref": "network/ipv6"
+            },
+            {
+              "id": "2.5",
+              "ref": "network/mtu"
             }
           ],
           "tracks": []
@@ -774,6 +866,18 @@ const courseCatalog = {
             {
               "id": "3.1",
               "ref": "network/routing"
+            },
+            {
+              "id": "3.2",
+              "ref": "network/forwarding"
+            },
+            {
+              "id": "3.3",
+              "ref": "network/link-state"
+            },
+            {
+              "id": "3.4",
+              "ref": "network/bgp"
             }
           ],
           "tracks": []
@@ -943,6 +1047,10 @@ const courseCatalog = {
             {
               "id": "3.6",
               "ref": "os/pagecache"
+            },
+            {
+              "id": "3.7",
+              "ref": "os/cow"
             }
           ],
           "tracks": []
@@ -955,6 +1063,18 @@ const courseCatalog = {
             {
               "id": "4.1",
               "ref": "os/locks"
+            },
+            {
+              "id": "4.2",
+              "ref": "os/condvar"
+            },
+            {
+              "id": "4.3",
+              "ref": "os/concbugs"
+            },
+            {
+              "id": "4.4",
+              "ref": "os/epoll"
             }
           ],
           "tracks": []
@@ -965,8 +1085,20 @@ const courseCatalog = {
           "titleEn": "Devices and files",
           "lessons": [
             {
+              "id": "5.1",
+              "ref": "os/devices"
+            },
+            {
               "id": "5.2",
               "ref": "os/filesystem"
+            },
+            {
+              "id": "5.3",
+              "ref": "os/fd"
+            },
+            {
+              "id": "5.4",
+              "ref": "os/vfs"
             }
           ],
           "tracks": []
@@ -1701,6 +1833,31 @@ const courseCatalog = {
           "page": "os/pagecache.html"
         },
         {
+          "id": "cow",
+          "title": "쓰기 시 복사와 mmap",
+          "titleEn": "Copy-on-write and mmap",
+          "question": "fork는 왜 메모리를 통째로 복사하지 않아도 될까?",
+          "format": "실험",
+          "requires": [
+            "os/exec",
+            "os/pagetable",
+            "os/pagecache"
+          ],
+          "page": "os/cow.html"
+        },
+        {
+          "id": "devices",
+          "title": "장치와 I/O",
+          "titleEn": "Devices and I/O",
+          "question": "디스크에서 4KiB를 읽을 때 CPU, 드라이버, 장치 컨트롤러, RAM은 각각 무엇을 할까?",
+          "format": "실험",
+          "requires": [
+            "os/interrupts",
+            "os/scheduling"
+          ],
+          "page": "os/devices.html"
+        },
+        {
           "id": "filesystem",
           "title": "파일 시스템",
           "titleEn": "File systems",
@@ -1710,6 +1867,31 @@ const courseCatalog = {
           "page": "os/filesystem.html"
         },
         {
+          "id": "fd",
+          "title": "파일 디스크립터",
+          "titleEn": "File descriptors",
+          "question": "프로그램이 받는 파일 번호 3, 1은 무엇을 가리킬까?",
+          "format": "실험",
+          "requires": [
+            "os/filesystem",
+            "os/exec"
+          ],
+          "page": "os/fd.html"
+        },
+        {
+          "id": "vfs",
+          "title": "VFS와 마운트",
+          "titleEn": "VFS and mounts",
+          "question": "디스크 파일, USB, /proc를 프로그램은 어떻게 모두 같은 read로 다룰까?",
+          "format": "실험",
+          "requires": [
+            "os/filesystem",
+            "os/fd",
+            "os/devices"
+          ],
+          "page": "os/vfs.html"
+        },
+        {
           "id": "locks",
           "title": "동시성과 락",
           "titleEn": "Concurrency and locks",
@@ -1717,6 +1899,43 @@ const courseCatalog = {
           "format": "실험",
           "requires": [],
           "page": "os/locks.html"
+        },
+        {
+          "id": "condvar",
+          "title": "조건 변수와 세마포어",
+          "titleEn": "Condition variables and semaphores",
+          "question": "스레드가 일이 생길 때까지 CPU를 쓰지 않고 기다리려면 무엇을 쓸까?",
+          "format": "실험",
+          "requires": [
+            "os/locks",
+            "os/scheduling"
+          ],
+          "page": "os/condvar.html"
+        },
+        {
+          "id": "concbugs",
+          "title": "동시성 버그",
+          "titleEn": "Concurrency bugs",
+          "question": "실제 프로그램에서 자주 나는 동시성 버그는 어떤 모양이고, 무엇으로 막을까?",
+          "format": "실험",
+          "requires": [
+            "os/locks",
+            "os/condvar"
+          ],
+          "page": "os/concbugs.html"
+        },
+        {
+          "id": "epoll",
+          "title": "이벤트 기반 I/O",
+          "titleEn": "Event-driven I/O",
+          "question": "연결 수만 개를 받는 서버는 스레드 하나로 어떻게 모든 연결을 돌볼까?",
+          "format": "실험",
+          "requires": [
+            "os/syscall",
+            "os/condvar",
+            "os/ipc"
+          ],
+          "page": "os/epoll.html"
         },
         {
           "id": "kernel",
@@ -1842,6 +2061,64 @@ const courseCatalog = {
             "network/subnets"
           ],
           "page": "network/nat.html"
+        },
+        {
+          "id": "ipv6",
+          "title": "IPv6",
+          "titleEn": "IPv6",
+          "question": "IPv6에서는 주소를 어디서 얻고 이웃을 어떻게 찾을까?",
+          "format": "실험",
+          "requires": [
+            "network/arp",
+            "network/nat"
+          ],
+          "page": "network/ipv6.html"
+        },
+        {
+          "id": "mtu",
+          "title": "MTU와 단편화",
+          "titleEn": "MTU and fragmentation",
+          "question": "길 중간의 MTU보다 큰 패킷은 어떻게 될까?",
+          "format": "실험",
+          "requires": [
+            "network/subnets"
+          ],
+          "page": "network/mtu.html"
+        },
+        {
+          "id": "forwarding",
+          "title": "라우팅 표",
+          "titleEn": "Routing tables",
+          "question": "목적지에 맞는 줄이 여럿이면 라우터는 어느 줄을 고를까?",
+          "format": "실험",
+          "requires": [
+            "network/routing",
+            "network/subnets"
+          ],
+          "page": "network/forwarding.html"
+        },
+        {
+          "id": "link-state",
+          "title": "링크 상태 라우팅",
+          "titleEn": "Link-state routing",
+          "question": "라우터들은 서로 무엇을 주고받아 길을 스스로 찾을까?",
+          "format": "실험",
+          "requires": [
+            "network/forwarding"
+          ],
+          "page": "network/link-state.html"
+        },
+        {
+          "id": "bgp",
+          "title": "BGP",
+          "titleEn": "BGP",
+          "question": "인터넷 전체의 길은 누가 어떻게 정할까?",
+          "format": "실험",
+          "requires": [
+            "network/forwarding",
+            "network/link-state"
+          ],
+          "page": "network/bgp.html"
         },
         {
           "id": "routing",

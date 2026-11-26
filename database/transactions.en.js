@@ -78,5 +78,5 @@ window.lessonText = {
   'BEGIN #41': 'BEGIN #41', '민지 −30,000 · 서준 +30,000 (임시)': '−30,000 · +30,000 (pending)', 'COMMIT 기록': 'COMMIT logged', '70,000 · 130,000 함께 확정': 'both final: 70,000 · 130,000',
   '새 이체 #42 (각 100,000): 로그에 먼저': '#42 (100,000 each): log first', '민지 −30,000': 'Minji −30,000', 'COMMIT 전에 꺼짐': 'off before COMMIT', '로그 보고 되돌림: 100,000 · 100,000': 'log undoes: 100,000 · 100,000',
   '새 이체 #43 (각 100,000): COMMIT · 완료 알림': '#43 (100,000 each): COMMIT, done sent', '서준에 쓰기 전에 꺼짐': 'off before writing Seojun', '로그대로 서준 반영: 70,000 · 130,000': 'log redoes Seojun: 70,000 · 130,000',
-  '#41': '#41', '#42': '#42', '#43': '#43', '#43 반영': '#43 redone',
+  '#43 반영': '#43 redone',
 };

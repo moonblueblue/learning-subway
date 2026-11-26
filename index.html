@@ -57,7 +57,12 @@ h1,h2{text-wrap:balance}
 .map a:hover .name,.map a:focus-visible .name{text-decoration:underline}
 .map a:active .name{opacity:.7}
 @media(min-width:720px) and (min-height:600px){.shell{height:100dvh}.map svg{width:100%;height:100%}}
-@media not ((min-width:720px) and (min-height:600px)){.map{overflow:visible;padding:12px 8px}}
+@media not ((min-width:720px) and (min-height:600px)){
+  .shell{height:100dvh;min-height:0;padding:8px 12px}
+  .map{display:flex;flex-direction:column;padding:6px 8px}
+  .line-pick{flex:none;margin-bottom:4px}
+  .map svg{flex:1;min-height:0;width:100%;height:0}
+}
 </style>
 <script defer src="./shared/catalog.js"></script>
 <script defer src="./shared/i18n.js"></script>
@@ -106,6 +111,7 @@ addEventListener('DOMContentLoaded', () => {
   // A station is an interchange when a line branches off it, or when it shares lessons with another line beyond the
   // junction it hangs from (sharing with the junction is what the branch itself already shows).
   function stationsOf(roadmap) {
+    if (roadmap.id === 'ai') return [{ label: 'AI 노선도', href: './ai-map.html', children: [], interchange: true }];
     const junction = roadmap.branch && byId.get(roadmap.branch.from).chapters.find((chapter) => chapter.id === roadmap.branch.chapter);
     const junctionRefs = new Set(junction ? refsOf(junction) : []);
     return roadmap.chapters.map((chapter) => {
@@ -129,6 +135,7 @@ addEventListener('DOMContentLoaded', () => {
     const through = (roadmap) => roadmap.chapters.findIndex((chapter) => refsOf(chapter).includes(here?.ref));
     const roadmap = [byId.get(here?.roadmap), ...roadmaps].find((item) => item && through(item) >= 0);
     if (!roadmap) return { roadmap: trunk, index: 0, href: stationsOf(trunk)[0].href };
+    if (roadmap.id === 'ai') return { roadmap, index: 0, href: './ai-map.html' };
     return { roadmap, index: through(roadmap), href: './' + here.ref + '.html?roadmap=' + encodeURIComponent(roadmap.id) };
   }
   const PIN = '#d92d20', PIN_TEXT = '#b42318';
@@ -220,6 +227,13 @@ addEventListener('DOMContentLoaded', () => {
   }
   const strokeOf = (roadmap) => ({ stroke: colorOf(roadmap.id), 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none', ...(built(roadmap) ? {} : { opacity: .45 }) });
 
+  function lineHref(roadmap) {
+    if (roadmap.id === 'ai') return './ai-map.html';
+    const first = roadmap.chapters.flatMap(refsOf)[0];
+    return first ? './' + first + '.html?roadmap=' + encodeURIComponent(roadmap.id) : null;
+  }
+  const lineTitle = (roadmap) => roadmap.id === 'ai' ? tr('AI 노선도') : tr(`${roadmap.title} 첫 레슨으로`);
+
   // The line index sits in the masthead, outside the map, so it never covers a station.
   function lineIndex() {
     const list = make('ul', { class: 'line-index', 'aria-label': tr('노선') });
@@ -227,8 +241,8 @@ addEventListener('DOMContentLoaded', () => {
       const item = make('li');
       item.style.setProperty('--line', colorOf(roadmap.id));
       // Each line's name leads to its first finished lesson; a line with none yet is not a link.
-      const first = roadmap.chapters.flatMap(refsOf)[0];
-      const target = first ? make('a', { href: './' + first + '.html?roadmap=' + encodeURIComponent(roadmap.id), title: tr(`${roadmap.title} 첫 레슨으로`) }) : make('span', { title: tr('준비 중') });
+      const href = lineHref(roadmap);
+      const target = href ? make('a', { href, title: lineTitle(roadmap) }) : make('span', { title: tr('준비 중') });
       target.append(make('span', { class: 'line-bar', 'aria-hidden': 'true' }), tr(roadmap.title));
       item.append(target);
       list.append(item);
@@ -252,12 +266,12 @@ addEventListener('DOMContentLoaded', () => {
       let x = x0 + 12;
       const y = y0 + 6 + 24 * r + 12;
       for (const { roadmap, name, w: itemWidth } of row) {
-        const first = roadmap.chapters.flatMap(refsOf)[0];
-        const target = first ? make('svg:a', { href: './' + first + '.html?roadmap=' + encodeURIComponent(roadmap.id), class: 'line-link' }) : make('svg:g', { role: 'img', 'aria-label': tr(roadmap.title) + ', ' + tr('준비 중') });
-        if (first) target.append(make('svg:title', {}, tr(`${roadmap.title} 첫 레슨으로`)));
+        const href = lineHref(roadmap);
+        const target = href ? make('svg:a', { href, class: 'line-link' }) : make('svg:g', { role: 'img', 'aria-label': tr(roadmap.title) + ', ' + tr('준비 중') });
+        if (href) target.append(make('svg:title', {}, lineTitle(roadmap)));
         target.append(make('svg:rect', { x: x - 4, y: y - 11, width: itemWidth + 8, height: 22, rx: 5, class: 'hit', fill: 'transparent' }));
         target.append(make('svg:rect', { x, y: y - 3, width: 18, height: 6, rx: 3, fill: colorOf(roadmap.id) }));
-        target.append(make('svg:text', { x: x + 24, y: y + 4.5, 'font-size': 13, 'font-weight': 600, fill: first ? '#142620' : '#43574f' }, name));
+        target.append(make('svg:text', { x: x + 24, y: y + 4.5, 'font-size': 13, 'font-weight': 600, fill: href ? '#142620' : '#43574f' }, name));
         group.append(target);
         x += itemWidth + 18;
       }
@@ -310,7 +324,14 @@ addEventListener('DOMContentLoaded', () => {
         placed = true;
       }
     }
-    for (const [roadmap, d] of paths) svg.append(make('svg:path', { d, ...strokeOf(roadmap) }));
+    for (const [roadmap, d] of paths) {
+      svg.append(make('svg:path', { d, ...strokeOf(roadmap) }));
+      if (roadmap.id === 'ai') {
+        const link = make('svg:a', { href: './ai-map.html', 'aria-label': tr('AI 노선도') });
+        link.append(make('svg:path', { d, stroke: 'transparent', 'stroke-width': 20, fill: 'none' }));
+        svg.append(link);
+      }
+    }
     const [[x0], [x1]] = [pos.get(trunk.id)[0], pos.get(trunk.id).at(-1)];
     svg.append(make('svg:path', { d: `M${x0} ${trunkY}H${x1}`, ...strokeOf(trunk) }));
     const spot = hereSpot();
@@ -341,9 +362,9 @@ addEventListener('DOMContentLoaded', () => {
   let shownLine = null;
   try { shownLine = sessionStorage.getItem('hub-line'); } catch {}
   function drawNarrow(holder) {
-    const width = holder.clientWidth, x = 22;
+    const width = holder.clientWidth - 16, x = 22;
     const spot = hereSpot();
-    const roadmap = byId.get(shownLine) || spot.roadmap;
+    const roadmap = byId.get(shownLine) || (spot.roadmap.id === 'ai' ? trunk : spot.roadmap);
     // The current line's name opens the list of lines, so the picker fits any width.
     const picker = make('label', { class: 'line-pick' });
     picker.style.setProperty('--line', colorOf(roadmap.id));
@@ -353,10 +374,23 @@ addEventListener('DOMContentLoaded', () => {
       option.selected = item === roadmap;
       select.append(option);
     }
-    select.addEventListener('change', () => { shownLine = select.value; try { sessionStorage.setItem('hub-line', shownLine); } catch {} draw(); document.querySelector('.line-pick select')?.focus(); });
+    select.addEventListener('change', () => {
+      if (select.value === 'ai') {
+        select.value = roadmap.id;
+        location.assign('./ai-map.html');
+        return;
+      }
+      shownLine = select.value;
+      try { sessionStorage.setItem('hub-line', shownLine); } catch {}
+      draw();
+      document.querySelector('.line-pick select')?.focus();
+    });
     picker.append(make('span', { class: 'line-bar', 'aria-hidden': 'true' }), select);
     let here = null;
-    const list = stationsOf(roadmap), top = roadmap.branch ? 44 : 18, step = 46;
+    // Room above the first station for the "현재 위치" pin (its head rises 33px above the station).
+    const list = stationsOf(roadmap), top = roadmap.branch ? 44 : 34;
+    const height = Math.max(1, holder.clientHeight - 12 - 44 - 4);
+    const step = (height - top - 24) / Math.max(1, list.length - 1);
     const svg = make('svg:svg', { role: 'group', 'aria-label': tr(roadmap.title), viewBox: `0 0 ${width} ${top + (list.length - 1) * step + 24}` });
     if (roadmap.branch) {
       const from = byId.get(roadmap.branch.from);

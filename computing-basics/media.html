@@ -149,7 +149,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .mode-group{transition:opacity .37s}
 .mode-group.hidden{opacity:0;pointer-events:none}
 .pixel{stroke:#14231f;stroke-width:.5;cursor:pointer;transition:fill .15s}
-.row-label{font:600 9.5px var(--mono);fill:#43574f;text-anchor:end;dominant-baseline:central}
+.row-label{font:600 10.5px var(--mono);fill:#43574f;text-anchor:end;dominant-baseline:central}
+@media(max-width:600px){.row-label{font-size:11.5px}}
 .wave{fill:none;stroke:var(--response);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .playhead{stroke:#a24c14;stroke-width:1.6;stroke-dasharray:3 3}
 .sample .face{stroke:#4f8f6b;stroke-width:.6}
@@ -461,7 +462,8 @@ function addPlate(node, className, x, y, text, { pad = 1.5, round = true } = {})
 matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
 
 // ---------- The monitor: an 8 × 8 pixel screen on the front-left face of a box ----------
-const monitor = { h: 3.4, H: 128, margin: .32, base: 10 };
+// h 4.0 makes a pixel row 14px tall, enough for a 10.5px row label leaning with the row without touching the next.
+const monitor = { h: 4, H: 132, margin: .32, base: 10 };
 const cell = (2 * monitor.h - 2 * monitor.margin) / size;   // pixel width in floor units
 const rowHeight = cell * 15.6;                              // pixel height in screen pixels, so pixels look square
 const pixelShades = {
@@ -493,7 +495,9 @@ function buildMonitor() {
   rowLabels = [];
   for (let r = 0; r < size; r++) {
     const [x, y] = project(-h, -h, base + (size - 1 - r) * rowHeight + rowHeight / 2);
-    rowLabels.push(svg('text', { class: 'row-label', x: x - 10, y }, group));
+    // The screen's rows run down to the right along the face (half as steep as they are wide), so each
+    // label leans the same way and sits on its row's line, 16px left of the screen.
+    rowLabels.push(svg('text', { class: 'row-label', transform: `translate(${x - 16} ${y - 8}) skewY(26.565)` }, group));
   }
   const [lx, ly] = project(h, -h, 0);
   addPlate(group, 'tag', lx, ly + 16, '화면');
@@ -507,7 +511,7 @@ const channelColors = [
   { top: '#b6f0c4', left: '#5fcf7d', right: '#329852', stroke: '#2a7b43', wire: '#2f9a50' },
   { top: '#b9cbff', left: '#6f8ff0', right: '#4361c4', stroke: '#3550a6', wire: '#4565d0' },
 ];
-const towerAt = [[-11.2, -5.2], [-9.4, -3.4], [-7.6, -1.6]];
+const towerAt = [[-11.8, -5.8], [-10, -4], [-8.2, -2.2]];   // clear of the 4.0-wide screen
 let towers = [];
 function buildTowers() {
   const group = svg('g', { class: 'mode-group', 'data-mode': 'color' }, byId('nodes'));
@@ -524,13 +528,16 @@ function buildTowers() {
     for (const name of ['left', 'right', 'top']) faces[name] = svg('polygon', { class: 'face', fill: c[name], stroke: c.stroke }, node);
     const highlight = svg('path', { class: 'highlight' }, node);
     const plate = addPlate(node, 'tag place', 0, 0, '0', { pad: 1.1 });
-    const [nx, ny] = project(.7, -.7, 0);
-    addPlate(node, 'tag', nx, ny + 14, channelNames[i]);
-    return { node, faces, highlight, plate, height: 6 };
+    // The colour's name sits on top of its value. Under the column it sat on the floor where the
+    // wire of the column to its left runs to the screen, and the wire went through it.
+    const name = addPlate(node, 'tag', 0, 0, channelNames[i]);
+    return { node, faces, highlight, plate, name, height: 6 };
   });
   groups.color = group;
   groups.colorWires = wires;
 }
+// Plates change height with the font size on narrow screens; restack the name over the value.
+matchMedia('(max-width: 600px)').addEventListener('change', () => towers.forEach((tower) => shapeTower(tower, tower.height)));
 function shapeTower(tower, H) {
   const h = .7;
   const faces = {
@@ -542,6 +549,9 @@ function shapeTower(tower, H) {
   tower.highlight.setAttribute('d', `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}`);
   tower.plate.y = -H - 14 * h - 13;
   sizePlate(tower.plate);
+  const tall = (plate) => plate.rect.height.baseVal.value;
+  tower.name.y = tower.plate.y - (tall(tower.plate) + tall(tower.name)) / 2 - 3;
+  sizePlate(tower.name);
 }
 
 // ---------- Sound: a wave and sample bars standing on the floor diagonal ----------
@@ -579,7 +589,8 @@ function drawSamples() {
       top: [[-w, -w, H], [w, -w, H], [w, w, H], [-w, w, H]],
     };
     for (const [name, corners] of Object.entries(faces)) svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
-    if (n <= 16) svg('text', { class: 'sample-value', x: 0, y: -H - 14 * w - 7 }, node).textContent = level;
+    // The value stands under the bar: the wave runs along the bar tops, and a value on top touched it.
+    if (n <= 16) svg('text', { class: 'sample-value', x: 0, y: 14 * w + 14 }, node).textContent = level;
   }
   if (state.playhead >= 0) {
     const t = (state.playhead + .5) / n, c = soundStart + soundSpan * t;
@@ -888,7 +899,7 @@ function showStep(index, announce = true) {
     if (i === index) button.setAttribute('aria-current', 'step');
     else button.removeAttribute('aria-current');
   });
-  byId('world').setAttribute('transform', s.mode === 'sound' ? 'translate(330 182) scale(1.02)' : s.mode === 'color' ? 'translate(372 166) scale(.9)' : 'translate(352 166) scale(.9)');
+  byId('world').setAttribute('transform', s.mode === 'sound' ? 'translate(330 182) scale(1.02)' : s.mode === 'color' ? 'translate(372 166) scale(.9)' : 'translate(366 158) scale(1.06)');
   try { localStorage.setItem(storageKey, String(index)); } catch {}
   state.solved = '';
   syncTask();

@@ -53,10 +53,10 @@ window.lessonText = {
   '랜카드는 목적지 MAC이 자기 주소인 프레임만 받는다': 'A network card takes only frames whose destination MAC is its own address',
   'A가 C에게 보낼 데이터를 이더넷 프레임에 담습니다. 프레임 맨 앞에 받을 쪽의 MAC 주소, 그다음에 보낸 쪽의 MAC 주소가 붙습니다. MAC 주소는 랜카드마다 정해진 6바이트 주소이고, 그림에서는 aa:aa:aa:aa:aa:aa를 aa로 줄여 씁니다. 허브는 주소를 보지 않고 들어온 신호를 모든 포트로 그대로 내보냅니다. 그래서 B와 C가 같은 프레임을 받고, 각 랜카드가 목적지 MAC을 자기 주소와 비교해 C만 받고 B는 버립니다.':
     'A puts the data for C in an Ethernet frame. At the very front goes the receiver\'s MAC address, then the sender\'s. A MAC address is a 6-byte address fixed for each network card; the picture shortens aa:aa:aa:aa:aa:aa to aa. The hub does not look at addresses and sends the incoming signal out of every port as it is. So B and C get the same frame, each card compares the destination MAC with its own address, and only C takes it while B drops it.',
-  'A에서 허브로 "cc ← aa" 프레임이 가고, 허브에서 같은 신호가 B를 지나 C까지 퍼집니다. B 이름표는 "cc ≠ bb → 버림", C 이름표는 "cc = 나 → 받음"이 됩니다.':
-    'The frame "cc ← aa" goes from A to the hub, and from the hub the same signal spreads past B to C. B\'s badge becomes "cc ≠ bb → drop" and C\'s becomes "cc = me → take".',
-  'PC A, 허브, PC B, PC C가 한 줄로 이어져 있습니다. A가 목적지 MAC cc인 프레임을 보내고, 허브가 모든 포트로 복사하며, B는 버리고 C만 받습니다.':
-    'PC A, a hub, PC B and PC C are joined in a row. A sends a frame with destination MAC cc, the hub copies it to every port, B drops it and only C takes it.',
+  'A에서 허브로 "cc ← aa" 프레임이 가고, 허브에서 같은 신호가 B와 C로 동시에 퍼집니다. B 이름표는 "cc ≠ bb → 버림", C 이름표는 "cc = 나 → 받음"이 됩니다.':
+    'The frame "cc ← aa" goes from A to the hub, and from the hub the same signal spreads to B and C at once. B\'s badge becomes "cc ≠ bb → drop" and C\'s becomes "cc = me → take".',
+  '허브 왼쪽에 PC A, 오른쪽에 PC C, 아래에 PC B가 각자 케이블로 이어져 있습니다. A가 목적지 MAC cc인 프레임을 보내고, 허브가 모든 포트로 복사하며, B는 버리고 C만 받습니다.':
+    'PC A sits left of a hub, PC C right of it and PC B below it, each on its own cable. A sends a frame with destination MAC cc, the hub copies it to every port, B drops it and only C takes it.',
   'A: 목적지 cc · 출발지 aa': 'A: destination cc · source aa', '허브: 모든 포트로 복사': 'Hub: copies to all', 'B: cc ≠ bb → 버림': 'B: cc ≠ bb → drop', 'C: cc = 나 → 받음': 'C: cc = me → take',
   'A가 프레임을 케이블로 내보냅니다. 맨 앞 목적지 칸에 C의 MAC cc가 있습니다.': 'A sends the frame onto the cable. The destination field at the front holds C\'s MAC, cc.',
   '허브가 같은 신호를 B와 C로 모두 보냅니다. 두 랜카드가 목적지 MAC을 자기 주소와 비교해, C만 받아 위 계층으로 넘기고 B는 버립니다.':

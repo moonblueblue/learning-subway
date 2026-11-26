@@ -98,6 +98,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 @media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .wire.idle{stroke:#a9b8b0;stroke-width:2;stroke-dasharray:4 4}
 .chevron.idle{stroke:#a9b8b0}
+.split{stroke:none}.split.signal{fill:var(--request)}.split.idle{fill:#a9b8b0}
 .gate .left{fill:#dfe4f2;stroke:#7d88b4}
 .gate .right{fill:#c4cbe3;stroke:#7d88b4}
 .gate .top{fill:#f1f3fa;stroke:#7d88b4}
@@ -299,14 +300,14 @@ const lesson = [
     takeaway: 'S가 0이면 NOT이 위쪽 AND에 1을 주어 D0만 통과시킵니다. S가 1이면 아래쪽 AND가 열려 D1만 통과합니다. 고르지 않은 쪽은 AND에서 막혀 0이 됩니다.',
     description: '입력 D0, D1과 선택 S가 있습니다. D0은 S를 뒤집은 값과 위쪽 AND로, D1은 S와 아래쪽 AND로 들어갑니다. 두 AND는 OR로 모여 출력 램프로 갑니다.',
     nodes: [
-      { id: 'D0', type: 'IN', u: 0, v: -6 },
-      { id: 'D1', type: 'IN', u: 0, v: 2 },
-      { id: 'S', type: 'IN', u: 0, v: 9, label: '선택 S' },
-      { id: 'n', type: 'NOT', in: ['S'], u: 6, v: 9 },
-      { id: 'a0', type: 'AND', in: ['D0', 'n'], u: 12, v: -5, mids: [6, 9.2] },
-      { id: 'a1', type: 'AND', in: ['D1', 'S'], u: 12, v: 3, mids: [6, 2.6] },
-      { id: 'o', type: 'OR', in: ['a0', 'a1'], u: 18, v: -1 },
-      { id: 'L', type: 'LAMP', in: ['o'], u: 24, v: -1, label: '출력' },
+      { id: 'D0', type: 'IN', u: 0, v: -9.9 },
+      { id: 'D1', type: 'IN', u: 0, v: 1.1 },
+      { id: 'S', type: 'IN', u: 0, v: 12, label: '선택 S' },
+      { id: 'n', type: 'NOT', in: ['S'], u: 6, v: 12, mids: [3.2] },
+      { id: 'a0', type: 'AND', in: ['D0', 'n'], u: 12, v: -9, mids: [6, 9.2] },
+      { id: 'a1', type: 'AND', in: ['D1', 'S'], u: 12, v: 2, mids: [6, 3.2] },
+      { id: 'o', type: 'OR', in: ['a0', 'a1'], u: 18, v: -4, mids: [14.8, 15.8] },
+      { id: 'L', type: 'LAMP', in: ['o'], u: 24, v: -4, label: '출력' },
     ],
     outs: [['L', '출력']],
     demo: [[1, 0, 0], [1, 0, 1], [0, 1, 1], [0, 1, 0]],
@@ -327,14 +328,14 @@ const lesson = [
     description: '스위치 A와 B가 AND, OR, XOR 게이트로 갈라져 들어가고, 세 결과가 선택기로 모입니다. 연산 다이얼에서 나온 주황 선이 선택기에 어떤 결과를 고를지 알려 줍니다.',
     ops: ['AND', 'OR', 'XOR'],
     nodes: [
-      { id: 'A', type: 'IN', u: 0, v: -5 },
-      { id: 'B', type: 'IN', u: 0, v: 5 },
-      { id: 'op', type: 'OP', u: 10, v: 17 },
-      { id: 'and', type: 'AND', in: ['A', 'B'], u: 8, v: -8, mids: [3, 4.6] },
-      { id: 'or', type: 'OR', in: ['A', 'B'], u: 8, v: 0, mids: [3, 4.6] },
-      { id: 'xor', type: 'XOR', in: ['A', 'B'], u: 8, v: 8, mids: [3, 4.6] },
-      { id: 'mux', type: 'MUX', in: ['and', 'or', 'xor', 'op'], u: 16, v: 0, mids: [12.4, 11.6, 12.4, 13.6] },
-      { id: 'L', type: 'LAMP', in: ['mux'], u: 22, v: 0, label: '출력' },
+      { id: 'A', type: 'IN', u: 0, v: -13 },
+      { id: 'B', type: 'IN', u: 0, v: 13 },
+      { id: 'op', type: 'OP', u: 11, v: 22 },
+      { id: 'and', type: 'AND', in: ['A', 'B'], u: 9, v: -11, mids: [3.2, 6.2] },
+      { id: 'or', type: 'OR', in: ['A', 'B'], u: 9, v: 0, mids: [3.2, 6.2] },
+      { id: 'xor', type: 'XOR', in: ['A', 'B'], u: 9, v: 11, mids: [3.2, 6.2] },
+      { id: 'mux', type: 'MUX', in: ['and', 'or', 'xor', 'op'], u: 18.5, v: .5, mids: [13.4, 14, 14.6, 15.8] },
+      { id: 'L', type: 'LAMP', in: ['mux'], u: 24.5, v: .5, label: '출력' },
     ],
     outs: [['and', 'AND'], ['or', 'OR'], ['xor', 'XOR'], ['L', '출력']],
     picked: (inputs) => ['and', 'or', 'xor'][inputs.op],
@@ -389,7 +390,7 @@ const lesson = [
       { id: 'op', type: 'OP', u: 3, v: 12 },
       { id: 'alu', type: 'ALU', in: ['A', 'B', 'op'], u: 11, v: 0, ports: [-1.7, 0, 1.7], mids: [6.5, 5.5, 7],
         outPorts: { r: 0, z: -1.6, c: 1.6 } },
-      { id: 'R', type: 'OUT', in: ['alu.r'], u: 20, v: 0, label: '결과' },
+      { id: 'R', type: 'OUT', in: ['alu.r'], u: 26, v: 0, label: '결과' },
       { id: 'Z', type: 'LAMP', in: ['alu.z'], u: 20, v: -11, label: 'Z 결과가 0', mids: [16.5] },
       { id: 'C', type: 'LAMP', in: ['alu.c'], u: 20, v: 10, label: 'C 올림·빌림', mids: [16.5] },
     ],
@@ -653,7 +654,37 @@ function createWire(from, to, port, mid) {
   const chevron = svg('path', { class: 'chevron idle', d: 'M-4.5 -5L2.5 0L-4.5 5', transform: `translate(${at.join(' ')})` }, group);
   const startLen = 14 * 2 * size[src.type][0] * .8;
   const endLen = 14 * (2 * size[dst.type][0] - Math.abs(pv - dst.v)) * .9;
-  return { from, to, port, kind, group, line, casing, chevron, startLen, endLen };
+  return { from, to, port, kind, group, line, casing, chevron, startLen, endLen, turn, sv, pv };
+}
+
+// One output that feeds several inputs splits on one column (all its wires share `mids`), and a dot
+// marks each split, so a crossing without a dot reads as two wires passing (visual-language.md 3장).
+// Packets from one output move at the pace of its longest wire, so they ride together on the shared
+// part and part at the dot instead of showing the same value twice.
+function markSplits() {
+  const groups = new Map();
+  for (const wire of wires) {
+    wire.dots = [];
+    wire.span = Math.max(wire.line.getTotalLength() - wire.startLen - wire.endLen, 0);
+    if (wire.turn === null) { wire.travel = wire.span; continue; }
+    const key = wire.from + '|' + wire.turn.toFixed(2);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(wire);
+  }
+  const round = (v) => Math.round(v * 1000) / 1000;
+  for (const group of groups.values()) {
+    const travel = Math.max(...group.map((wire) => wire.span));
+    group.forEach((wire) => { wire.travel = travel; });
+    if (group.length < 2) continue;
+    const sv = round(group[0].sv), ends = group.map((wire) => round(wire.pv));
+    const lo = Math.min(sv, ...ends), hi = Math.max(sv, ...ends);
+    for (const v of new Set([sv, ...ends])) {
+      const degree = (v > lo) + (v < hi) + (v === sv) + ends.includes(v);
+      if (degree < 3) continue;
+      const [x, y] = flat(group[0].turn, v, laneHeight);
+      group[0].dots.push(svg('circle', { class: 'split idle', cx: x, cy: y, r: 3.4 }, byId('links')));
+    }
+  }
 }
 
 // One ALU operation on 3-bit numbers: the result keeps 3 bits, and C is the carry out of ADD
@@ -705,6 +736,7 @@ function buildScene() {
   for (const spec of step.nodes) {
     (spec.in ?? []).forEach((from, port) => wires.push(createWire(from, spec.id, port, spec.mids?.[port])));
   }
+  markSplits();
   fitWorld(step.nodes);
 }
 
@@ -761,7 +793,7 @@ function showNode(id, send) {
   for (const wire of wires) {
     if (nodeOf(wire.from) !== id) continue;
     const lit = wire.kind !== 'bit' || state.values[wire.from] === 1;
-    for (const part of [wire.line, wire.chevron]) {
+    for (const part of [wire.line, wire.chevron, ...wire.dots]) {
       part.classList.toggle('signal', lit);
       part.classList.toggle('idle', !lit);
     }
@@ -787,8 +819,9 @@ function movePackets(now) {
     const { line, startLen, endLen, from, kind } = packet.wire;
     // A packet disappears on arrival, and when its bit turns back to 0 mid-flight.
     if (t >= 1 || !line.isConnected || (kind === 'bit' && state.shown[from] !== 1)) { packet.group.remove(); return false; }
-    const total = line.getTotalLength();
-    const at = line.getPointAtLength(mix(Math.min(startLen, total), Math.max(total - endLen, 0), Math.max(t, 0)));
+    const run = Math.max(t, 0) * packet.wire.travel;
+    if (run >= packet.wire.span) { packet.group.remove(); return false; }
+    const at = line.getPointAtLength(Math.min(startLen, line.getTotalLength()) + run);
     packet.group.setAttribute('transform', `translate(${at.x} ${at.y})`);
     return true;
   });

@@ -332,14 +332,16 @@ const lesson = [
       nodes: [
         ["sub", 105, 146, 123, 46, ["2번지 SUB", "A = 1 − 1 = 0"], "active"],
         ["jz", 300, 146, 110, 46, ["3번지 JZ 5", "0이라 점프"], "active"],
-        ["back", 504, 89, 154, 46, ["A ≠ 0", "JUMP 2로 반복"], "blocked"],
-        ["end", 504, 212, 154, 46, ["A = 0", "5번지 HALT"], "active"],
+        ["back", 300, 236, 154, 46, ["A ≠ 0", "JUMP 2로 반복"], "blocked"],
+        ["end", 504, 146, 154, 46, ["A = 0", "5번지 HALT"], "active"],
       ],
+      // The way back to SUB is a short straight arrow from below in the same tone as the A ≠ 0 branch, so
+      // its tip on SUB shows the direction (a long grey arc read the other way round).
       edges: [
         ["sub", "jz", "active"],
         ["jz", "back", "blocked"],
         ["jz", "end", "active"],
-        ["back", "sub", "muted", "", -86],
+        ["back", "sub", "blocked"],
       ],
     },
     example: ["A에서 1씩 빼기", "A = 0이면 JZ", "PC가 HALT로 이동"],
@@ -621,10 +623,10 @@ function buildScene() {
   plates = [];
   packets = [];
   // The CPU: an area marked on the floor, holding its parts.
-  const area = [[-5.4, -4.6], [15.4, -4.6], [15.4, 11.8], [-5.4, 11.8]];
+  const area = [[-5.4, -4.6], [15.4, -4.6], [15.4, 13.4], [-5.4, 13.4]];   // deep enough for the lower names
   svg('polygon', { class: 'cpu-area', points: area.map(([u, v]) => flat(u, v).join(',')).join(' ') }, byId('casings'));
   const areaNode = svg('g', {}, byId('nodes'));
-  addPlate(areaNode, 'tag board-tag', ...flat(-3.8, 11.8), 'CPU', { round: true });
+  addPlate(areaNode, 'tag board-tag', ...flat(-3.8, 13.4), 'CPU', { round: true });
   // Faint wires for every path this program uses, plus the bus and a stub to every cell.
   const drawn = new Set();
   const drawPath = (points, className) => {
@@ -658,7 +660,9 @@ function buildScene() {
     drawShadow(node, h);
     drawBox(node, h, H);
     partViews[name] = node;
-    partPlates[name] = addPlate(node, 'tag part-tag', 0, part.below ? 14 * h + 13 : -H - 14 * h - 12, part.name);
+    // Names of the lower row hang 26px under the box, below the A → ALU path that runs just under the boxes
+    // (at 13px the path crossed "A 3", most on a narrow screen where the names are 16px).
+    partPlates[name] = addPlate(node, 'tag part-tag', 0, part.below ? 14 * h + 26 : -H - 14 * h - 12, part.name);
   }
   fitWorld();
 }
@@ -666,7 +670,7 @@ const isOnBoard = () => false;
 
 // Scale and centre the scene: memory plates at the top, the CPU area's label at the bottom.
 function fitWorld() {
-  const left = 14 * -5.4 - 10, right = 14 * cellU(cellCount - 1) + 24, top = 7 * cellV - 26, bottom = 7 * 11.8 + 16;
+  const left = 14 * -5.4 - 10, right = 14 * cellU(cellCount - 1) + 24, top = 7 * cellV - 26, bottom = 7 * 13.4 + 16;
   const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
   const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
@@ -691,9 +695,32 @@ function paint(count, { flashCell = null } = {}) {
   setPlate(partPlates.A, `A ${m.a}`);
   setPlate(partPlates.B, `B ${m.b}`);
   setPlate(partPlates.ALU, m.alu ? `ALU ${m.alu}` : `ALU · Z ${m.z}`);
+  clearTopRow();
   const involved = new Set((last?.transfers ?? []).flatMap((move) => [move.from, move.to]));
   for (const [name, node] of Object.entries(partViews)) node.classList.toggle('busy', involved.has(name));
   paintPanel(count, m, last, next);
+}
+
+// The names on the top row grow with the instruction ("IR LOAD A, [4]", "제어: A ← 4번지"), and on a
+// narrow screen the font is larger too. Centred over their boxes they overlapped, so lay them out
+// left to right with an 8px gap, inside the scene's left and right edges (the same ones as fitWorld).
+function clearTopRow() {
+  const names = ['PC', 'IR', 'CU'];
+  const plates = names.map((name) => partPlates[name]);
+  const boxX = names.map((name) => 14 * parts[name].u);
+  const width = plates.map((plate) => plate.rect.width.baseVal.value);
+  const gap = 8, leftEdge = 14 * -5.4 - 10, rightEdge = 14 * cellU(cellCount - 1) + 24;
+  const at = [...boxX];
+  for (let k = 1; k < at.length; k++) at[k] = Math.max(at[k], at[k - 1] + (width[k - 1] + width[k]) / 2 + gap);
+  at[at.length - 1] = Math.min(at.at(-1), rightEdge - width.at(-1) / 2);
+  for (let k = at.length - 2; k >= 0; k--) at[k] = Math.min(at[k], at[k + 1] - (width[k] + width[k + 1]) / 2 - gap);
+  at[0] = Math.max(at[0], leftEdge + width[0] / 2);
+  plates.forEach((plate, k) => {
+    const x = at[k] - boxX[k];
+    if (plate.x === x) return;
+    plate.x = x;
+    sizePlate(plate);
+  });
 }
 
 // ---------- Packets ----------

@@ -116,6 +116,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .head-tag rect{stroke:#7a87b5}.head-tag text{fill:#3c4a85}
 .pointer path{fill:none;stroke:#7a87b5;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .null-mark{font:700 10px system-ui,sans-serif;fill:#7a87b5}
+.track{fill:none;stroke:var(--request);stroke-width:1.6;stroke-dasharray:4 3;stroke-linecap:round;opacity:.75}
+.lnode.ghost{opacity:.85}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
@@ -374,7 +376,8 @@ const lesson = [
       title: "위치 4: 배열은 바로, 리스트는 다섯 노드를 거쳐",
       description: "배열은 시작 주소에 4를 더해 4번 칸의 E로 바로 갑니다. 연결 리스트는 head에서 A, B, C, D를 거쳐 E에 닿습니다.",
       nodes: [
-        ["addr", 70, 104, 92, 46, ["시작 주소", "+ 4"], "active"],
+        // Straight above E: a curve from the left had to graze D's corner to reach E's side.
+        ["addr", 429, 61, 140, 24, ["시작 주소 + 4"], "active"],
         ["a0", 165, 104, 56, 30, ["A"]],
         ["a1", 231, 104, 56, 30, ["B"]],
         ["a2", 297, 104, 56, 30, ["C"]],
@@ -389,7 +392,7 @@ const lesson = [
         ["l4", 495, 214, 56, 30, ["E"], "active"],
       ],
       edges: [
-        ["addr", "a4", "active", "", -70],
+        ["addr", "a4", "active"],
         ["head", "l0"], ["l0", "l1"], ["l1", "l2"], ["l2", "l3"], ["l3", "l4"],
       ],
       labels: [[28, 72, "배열: 계산 한 번"], [28, 182, "연결 리스트: 링크 다섯 번"], [161, 140, "0"], [227, 140, "1"], [293, 140, "2"], [359, 140, "3"], [425, 140, "4"], [491, 140, "5"]],
@@ -488,18 +491,28 @@ function buildScene() {
     });
     if (pts.length) {
       const last = pts.at(-1);
-      const [lx, ly] = flat(last.u + 1.6, last.v, 6);
-      svg('text', { class: 'null-mark', x: lx + 8, y: ly + 3 }, byId('links')).textContent = '끝';
+      // The last node's pointer leads to "끝" (no next node), so the word does not float on its own.
+      arrow(flat(last.u, last.v, 6), flat(last.u + 3.6, last.v, 6), 'to-end');
+      const [lx, ly] = flat(last.u + 3.6, last.v, 6);
+      svg('text', { class: 'null-mark', x: lx - 14, y: ly + 3 }, byId('links')).textContent = '끝';
     }
   }
   const right = 14 * Math.max(cellU(capacity - 1), show('list') ? nodeAt(Math.max(state.values.length, 7)).u : 0) + 50, left = 14 * -2.6 - 40;
-  const top = 7 * Math.min(show('array') ? arrayV() : 99, show('list') ? listV() - 2 : 99) - 40;
+  const top = 7 * Math.min(show('array') ? arrayV() : 99, show('list') ? listV() - 4.6 : 99) - 48;
   const bottom = 7 * Math.max(show('array') ? arrayV() : -99, show('list') ? listV() + 2 : -99) + 40;
   const scale = Math.min(1.7, 590 / (right - left), 268 / (bottom - top));
   const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 const cellNode = (i) => byId('nodes').querySelector(`[data-cell="${i}"]`);
+// The arrow into node i (head's arrow for i = 0); the dot walking the list rides it.
+const arrowPath = (i) => byId('links').querySelector(`.pointer.${i === 0 ? 'from-head' : 'p' + (i - 1)} path`);
+function ghostNode(at, value) {
+  const node = svg('g', { class: 'node lnode fresh ghost', transform: `translate(${flat(at.u, at.v).join(' ')})` }, byId('nodes'));
+  drawShadow(node, .58);
+  drawBox(node, .58, 9);
+  svg('text', { class: 'cell-value', x: 0, y: -8.5 }, node).textContent = value;
+}
 const listNode = (i) => byId('nodes').querySelector(`[data-node="${i}"]`);
 function mark(node, cls, on = true) { node?.classList.toggle(cls, on); }
 
@@ -511,7 +524,15 @@ function cancelAll() {
   byId('packets').replaceChildren();
   state.busy = false;
 }
-function floatLabel(text, from, to, ms) {
+// A moving value always rides a drawn line: an arrow of the list, or a dashed track laid down for the move
+// (the jump from the start address, a shift to the next cell, a new arrow). Tracks stay until the scene is rebuilt,
+// so the shifts of one insert remain side by side.
+function track(points, lift = 0) {
+  const [a, b] = [points[0], points.at(-1)];
+  const d = lift ? `M${a.join(' ')}Q${(a[0] + b[0]) / 2} ${Math.min(a[1], b[1]) - lift} ${b.join(' ')}` : `M${points.map((p) => p.join(' ')).join('L')}`;
+  return svg('path', { class: 'track', d }, byId('links'));
+}
+function floatLabel(text, from, to, ms, path = null) {
   if (motion.matches) return;
   const g = svg('g', { class: 'mover' }, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 9 }, g);
@@ -521,7 +542,8 @@ function floatLabel(text, from, to, ms) {
   const step = (now) => {
     const t = Math.min((now - start) / ms, 1);
     const e = t * t * (3 - 2 * t);
-    g.setAttribute('transform', `translate(${mix(from[0], to[0], e)} ${mix(from[1], to[1], e)})`);
+    const at = path ? path.getPointAtLength(e * path.getTotalLength()) : { x: mix(from[0], to[0], e), y: mix(from[1], to[1], e) };
+    g.setAttribute('transform', `translate(${at.x} ${at.y})`);
     if (t < 1) requestAnimationFrame(step); else g.remove();
   };
   requestAnimationFrame(step);
@@ -530,7 +552,8 @@ function floatLabel(text, from, to, ms) {
 function arrayRead(k, pace) {
   const moves = [() => {
     mark(cellNode(k), 'hit');
-    floatLabel(`${baseAddress} + ${k}`, flat(-2.6, arrayV(), 20), flat(cellU(k), arrayV(), 20), pace * .9);
+    const from = flat(-2.6, arrayV(), 20), to = flat(cellU(k), arrayV(), 20);
+    floatLabel(`${baseAddress} + ${k}`, from, to, pace * .9, motion.matches ? null : track([from, to], 26));
   }];
   return { moves, steps: 1, text: `배열: ${baseAddress} + ${k} = ${baseAddress + k}번지로 바로 감 · 1번` };
 }
@@ -539,8 +562,8 @@ function listRead(k, pace) {
   for (let i = 0; i <= k; i++) moves.push(() => {
     mark(listNode(i - 1), 'walk', false);
     mark(listNode(i), i === k ? 'hit' : 'walk');
-    const from = i === 0 ? flat(-2.6, listV(), 6) : flat(nodeAt(i - 1).u, nodeAt(i - 1).v, 18);
-    floatLabel(i === 0 ? 'head' : '다음', from, flat(nodeAt(i).u, nodeAt(i).v, 18), pace * .9);
+    const from = i === 0 ? flat(-2.6, listV(), 6) : flat(nodeAt(i - 1).u, nodeAt(i - 1).v, 6);
+    floatLabel(i === 0 ? 'head' : '다음', from, flat(nodeAt(i).u, nodeAt(i).v, 6), pace * .9, arrowPath(i));
   });
   return { moves, steps: k + 1, text: `연결 리스트: head부터 노드 ${k + 1}개를 거침 · ${k + 1}번` };
 }
@@ -550,9 +573,14 @@ function arrayInsert(k, value, pace) {
   const moves = [];
   for (let i = n - 1; i >= k; i--) moves.push(() => {
     mark(cellNode(i + 1), 'shift');
-    floatLabel(state.values[i], flat(cellU(i), arrayV(), 16), flat(cellU(i + 1), arrayV(), 16), pace * .9);
+    const from = flat(cellU(i), arrayV(), 16), to = flat(cellU(i + 1), arrayV(), 16);
+    floatLabel(state.values[i], from, to, pace * .9, motion.matches ? null : track([from, to], 9));
   });
-  moves.push(() => { mark(cellNode(k), 'hit'); floatLabel(value, flat(cellU(k), arrayV(), 40), flat(cellU(k), arrayV(), 16), pace * .9); });
+  moves.push(() => {
+    mark(cellNode(k), 'hit');
+    const from = flat(cellU(k), arrayV(), 34), to = flat(cellU(k), arrayV(), 16);
+    floatLabel(value, from, to, pace * .9, motion.matches ? null : track([from, to]));
+  });
   return { moves, steps: n - k + 1, text: n === k ? '배열: 밀 값 없이 빈 칸에 바로 넣음 · 1번' : `배열: 뒤의 값 ${n - k}개를 한 칸씩 밀고 넣음 · ${n - k + 1}번` };
 }
 function listInsert(k, value, pace) {
@@ -560,12 +588,23 @@ function listInsert(k, value, pace) {
   for (let i = 0; i < k; i++) moves.push(() => {
     mark(listNode(i - 1), 'walk', false);
     mark(listNode(i), 'walk');
-    const from = i === 0 ? flat(-2.6, listV(), 6) : flat(nodeAt(i - 1).u, nodeAt(i - 1).v, 18);
-    floatLabel(i === 0 ? 'head' : '다음', from, flat(nodeAt(i).u, nodeAt(i).v, 18), pace * .9);
+    const from = i === 0 ? flat(-2.6, listV(), 6) : flat(nodeAt(i - 1).u, nodeAt(i - 1).v, 6);
+    floatLabel(i === 0 ? 'head' : '다음', from, flat(nodeAt(i).u, nodeAt(i).v, 6), pace * .9, arrowPath(i));
   });
   const prevName = k === 0 ? 'head' : `${state.values[k - 1]} 노드`;
-  moves.push(() => floatLabel(`새 ${value} → ${state.values[k] ?? '끝'}`, flat(nodeAt(k).u, listV() + 4.5, 10), flat(nodeAt(k).u, listV() + 2.5, 10), pace * .9));
-  moves.push(() => floatLabel(`${prevName} → 새 ${value}`, flat(k === 0 ? -2.6 : nodeAt(k - 1).u, listV(), 18), flat(nodeAt(k).u, listV() + 2.5, 18), pace * .9));
+  // The new node appears above the gap it goes into (below would put its arrows through the address labels);
+  // its two arrows are drawn as dashed tracks the dots ride.
+  const spot = { u: nodeAt(k).u - 1.65, v: listV() - 4.6 };
+  moves.push(() => {
+    if (!motion.matches) ghostNode(spot, value);
+    const from = flat(spot.u, spot.v, 6);
+    const to = k < state.values.length ? flat(nodeAt(k).u, nodeAt(k).v, 6) : flat(spot.u + 1.6, spot.v, 6);
+    floatLabel(`새 ${value} → ${state.values[k] ?? '끝'}`, from, to, pace * .9, motion.matches ? null : track([from, to]));
+  });
+  moves.push(() => {
+    const from = k === 0 ? flat(-2.6, listV(), 6) : flat(nodeAt(k - 1).u, nodeAt(k - 1).v, 6), to = flat(spot.u, spot.v, 6);
+    floatLabel(`${prevName} → 새 ${value}`, from, to, pace * .9, motion.matches ? null : track([from, to]));
+  });
   return { moves, steps: k + 2, text: `연결 리스트: ${k ? `노드 ${k}개를 걸어간 뒤 ` : ''}화살표 2개를 바꿈 · ${k + 2}번` };
 }
 

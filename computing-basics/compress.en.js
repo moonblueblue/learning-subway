@@ -35,13 +35,13 @@ window.lessonText = {
   // Step 1
   '반복 세기': 'Counting repeats',
   '같은 값이 이어지면 개수만 적는다': 'When a value repeats, write only the count',
-  '"0 0 0 0 0 1 1 1" 대신 "0이 5개, 1이 3개"라고 적어도 같은 정보입니다. 이렇게 반복을 세어 적는 방법을 런 길이 부호화(RLE)라고 합니다. 여기서는 묶음 하나를 4비트(값 1비트 + 개수 3비트)로 적습니다. 한 줄이 모두 같으면 8비트가 4비트로 줄어듭니다.':
-    'Writing "five 0s, three 1s" instead of "0 0 0 0 0 1 1 1" is the same information. Counting repeats like this is called run-length encoding (RLE). Here each run is written in 4 bits (1 bit for the value + 3 bits for the count). If a whole row is the same, 8 bits shrink to 4.',
+  '"0 0 0 0 0 1 1 1" 대신 "0이 5개, 1이 3개"라고 적어도 같은 정보입니다. 이렇게 반복을 세어 적는 방법을 런 길이 부호화(RLE)라고 합니다. 여기서는 묶음 하나를 4비트(값 1비트 + 개수 3비트)로 적습니다. 3비트는 0~7까지라서 개수에서 1을 뺀 값을 적고, 1~8개를 나타냅니다. 한 줄이 모두 같으면 8비트가 4비트로 줄어듭니다.':
+    'Writing "five 0s, three 1s" instead of "0 0 0 0 0 1 1 1" is the same information. Counting repeats like this is called run-length encoding (RLE). Here each run is written in 4 bits (1 bit for the value + 3 bits for the count). Three bits hold 0–7, so they store the count minus 1 and stand for 1–8. If a whole row is the same, 8 bits shrink to 4.',
   '화면 왼쪽에 줄마다 묶음("0×5 1×3")과 그 줄의 압축 크기가 나옵니다. 아래 줄에서 원본 64비트와 압축 결과를 비교해 보세요.':
     'To the left of the screen, each row shows its runs ("0×5 1×3") and that row\'s compressed size. Compare the original 64 bits with the compressed result on the line below.',
   '8 × 8 흑백 화면과, 줄마다 같은 값이 이어지는 묶음을 센 결과가 있습니다. 묶음이 적을수록 압축 결과가 작습니다.':
     'There is an 8 × 8 black-and-white screen and, for each row, the count of runs of the same value. The fewer the runs, the smaller the compressed result.',
-  '같은 값 8개를 묶으면 4비트': 'Eight equal values in one run take 4 bits', '묶음 하나 = 값 1비트 + 길이 3비트': 'One run = 1 bit value + 3 bit length',
+  '같은 값 8개를 묶으면 4비트': 'Eight equal values in one run take 4 bits', '묶음 하나 = 값 1비트 + (개수 − 1) 3비트 · 0~7이 1~8개': 'One run = 1 bit value + (count − 1) in 3 bits · 0–7 means 1–8',
   '압축 결과가 40비트 이하가 되게 그림을 바꿔 보세요.': 'Change the picture so the compressed result is 40 bits or less.',
   '맨 윗줄을 모두 켜서 한 묶음(1×8)으로 만들어 보세요.': 'Turn on the whole top row to make it one run (1×8).',
   '줄마다 같은 값으로 칠한 가로 줄무늬를 만들어 32비트로 줄여 보세요.': 'Paint horizontal stripes, one value per row, to shrink it to 32 bits.',

@@ -610,7 +610,10 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 .course-comparison .course-row-link { fill: none; stroke: #516e60; stroke-width: 1.8; }
 .course-static-comparison .course-canvas .controls { display: none; }
 
-.course-reading.course-diagram-open:not(.course-diagram-native) #scene #world { visibility: hidden; }
+/* The reading diagram hides the 2.5D world. A moving packet sets visibility="visible" on itself, which shows through a
+   hidden parent, so everything in the world is hidden with !important (a CSS rule outranks the attribute). */
+.course-reading.course-diagram-open:not(.course-diagram-native) #scene #world,
+.course-reading.course-diagram-open:not(.course-diagram-native) #scene #world * { visibility: hidden !important; }
 .course-diagram-open .course-canvas .controls > :not(.actions),
 .course-diagram-open .course-canvas .controls .actions > :not(.course-diagram-tools) {
   display: none;
@@ -727,18 +730,25 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 .example-note.bad text { fill: #a24c14; }
 @media (max-width: 600px) { .example-note text { font-size: 15px; } }
 
+/* The AI map is the return point, including on narrow screens. */
+.ai-journey .course-brand { display: inline-flex; align-items: center; min-height: 36px; white-space: nowrap; }
+.ai-journey .course-brand::before { content: '‹'; margin-inline-end: .3em; }
+@media (max-width: 959px), (max-height: 549px) {
+  .ai-journey .course-brand { font-size: .82rem; }
+}
+
 /* Phone portrait: the page scrolls instead of squeezing the scene. The lesson panel keeps a fixed share of the
    screen so the picture stays readable, the explanation shows in full below it, and the timeline (step and lesson
    buttons) stays pinned to the bottom of the screen. On a 375 × 667 phone the scene went from 63px to about 250px. */
 @media screen and (max-width: 640px) and (min-height: 550px) {
-  html:has(> body.course-shell) { overflow: auto; }
-  body.course-shell { height: auto; min-height: 100dvh; overflow: visible; }
-  .course-shell > main.shell { flex: 1 0 auto; }
-  .course-shell > main .workspace { flex: 1 0 auto; }
-  .course-shell > main .workspace.course-summary-open { grid-template-rows: auto auto; }
-  .course-shell .course-reading .course-lesson-panel { height: max(380px, 60dvh); }
-  .course-summary-open .explanation { max-height: none; }
-  .course-shell .timeline { position: sticky; bottom: 0; z-index: 5; }
+  html:has(> body.course-shell:not(.ai-journey)) { overflow: auto; }
+  body.course-shell:not(.ai-journey) { height: auto; min-height: 100dvh; overflow: visible; }
+  .course-shell:not(.ai-journey) > main.shell { flex: 1 0 auto; }
+  .course-shell:not(.ai-journey) > main .workspace { flex: 1 0 auto; }
+  .course-shell:not(.ai-journey) > main .workspace.course-summary-open { grid-template-rows: auto auto; }
+  .course-shell:not(.ai-journey) .course-reading .course-lesson-panel { height: max(380px, 60dvh); }
+  .course-shell:not(.ai-journey) .course-summary-open .explanation { max-height: none; }
+  .course-shell:not(.ai-journey) .timeline { position: sticky; bottom: 0; z-index: 5; }
 }
 
 /* Moving between lessons (DESIGN.md "레슨 사이 이동"). Lesson scripts are render-blocking, so a page is first painted

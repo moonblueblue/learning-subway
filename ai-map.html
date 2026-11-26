@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f7ef">
+<title>AI 노선도</title>
+<link rel="icon" href="./shared/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./shared/ai-map.css">
+<script defer src="./shared/catalog.js"></script>
+<script defer src="./shared/i18n.js"></script>
+<script defer src="./shared/ai-map.js"></script>
+</head>
+<body>
+<header>
+  <a href="./index.html" class="home"><span aria-hidden="true">←</span> <span>전체 노선도</span></a>
+  <h1>AI 노선도</h1>
+  <div data-lang-switch></div>
+</header>
+<main>
+  <nav class="network" aria-label="AI 노선도">
+    <svg class="rails" aria-hidden="true"></svg>
+    <div id="trunk"></div>
+    <div id="branches" role="group" aria-label="심화 노선"></div>
+  </nav>
+  <section class="stop" aria-label="선택한 노선">
+    <h2 id="line-name"></h2>
+    <div class="destination"><span>졸업 과제</span><strong id="destination"></strong></div>
+    <div class="boarding">
+      <label for="lessons" id="available">공개 레슨</label>
+      <select id="lessons" aria-labelledby="available line-name"></select>
+      <a id="enter">레슨 열기</a>
+      <p id="planned" hidden>공개된 레슨이 아직 없습니다.</p>
+    </div>
+  </section>
+</main>
+</body>
+</html>

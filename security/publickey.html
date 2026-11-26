@@ -174,6 +174,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
 .bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
 .station .face{stroke-width:.8;transition:fill .2s}
+@media(prefers-reduced-motion:reduce){.station .face{transition:none}}
 .station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
 .sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
 .station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
@@ -187,6 +188,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
 .tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
 .tag.empty{display:none}
+.packet-tag rect{fill:#fff;fill-opacity:.94;stroke:#9fbfae;stroke-width:.7}.packet-tag .packet-label{font-size:10.5px;stroke:none;dominant-baseline:central}
+@media(max-width:600px){.packet-tag .packet-label{font-size:13px}}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
@@ -533,7 +536,10 @@ function travel(from, to, label, done) {
   const group = svg('g', { class: 'packet-group' }, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 8.5 }, group);
   svg('circle', { class: 'packet', r: 4.4 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  // The label rides on its own small plate: bare text was hard to read where it crossed a box face.
+  const tag = addPlate(group, 'packet-tag', 0, -16, '', { pad: .9 });
+  tag.label.setAttribute('class', 'packet-label');
+  setPlate(tag, label);
   // Screen points, pulled in a little from both stations so the dot starts and ends beside the boxes.
   const a = flat(...from, laneHeight), b = flat(...to, laneHeight);
   const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
@@ -552,6 +558,8 @@ function movePackets(now) {
     const ease = t * t * (3 - 2 * t);
     const x = mix(packet.from[0], packet.to[0], ease), y = mix(packet.from[1], packet.to[1], ease);
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    // The label shows only between 12–26% and 74–88% of the way, so it never sits on the start or end box and its plates.
+    packet.group.querySelector('.packet-tag')?.setAttribute('opacity', Math.max(0, Math.min(1, (t - .12) / .14, (.88 - t) / .14)).toFixed(2));
     return true;
   });
   finished.forEach((done) => done());

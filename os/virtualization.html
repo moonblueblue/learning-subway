@@ -486,6 +486,10 @@ const posOf = (id) => {
   const k = stations.findIndex(([sid]) => sid === id);
   return stations[k][3] ?? [k * gap, 0];
 };
+// A link between stations on different rows runs along the first row, turns down (or up) halfway between them and
+// runs along the second row, so it never cuts diagonally through a name plate. Packets follow the same path.
+const route = (from, to) => from[1] === to[1] ? [from, to]
+  : [from, [(from[0] + to[0]) / 2, from[1]], [(from[0] + to[0]) / 2, to[1]], to];
 function buildScene() {
   for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
   plates = [];
@@ -495,7 +499,7 @@ function buildScene() {
   // Links: the step's own list, or each station to the next one in the row.
   const pairs = lesson[state.index].links ?? stations.slice(1).map(([id], k) => [stations[k][0], id]);
   for (const [a, b] of pairs) {
-    const d = 'M' + [posOf(a), posOf(b)].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
+    const d = 'M' + route(posOf(a), posOf(b)).map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
     svg('path', { class: 'casing', d }, byId('casings'));
     svg('path', { class: 'bus', d }, byId('links'));
   }
@@ -536,13 +540,12 @@ function travel(from, to, label, done) {
   svg('circle', { class: 'packet-halo', r: 8.5 }, group);
   svg('circle', { class: 'packet', r: 4.4 }, group);
   svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
-  // Screen points, pulled in a little from both stations so the dot starts and ends beside the boxes.
-  const a = flat(...from, laneHeight), b = flat(...to, laneHeight);
-  const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
-  const inset = length > 40 ? 18 / length : 0;
-  const start = [mix(a[0], b[0], inset), mix(a[1], b[1], inset)];
-  const end = [mix(b[0], a[0], inset), mix(b[1], a[1], inset)];
-  packets.push({ group, start: performance.now(), from: start, to: end, ms: 950, done });
+  // Screen points of the path, pulled in past the boxes' half-width at both ends so the dot starts beside the chip.
+  const pts = route(from, to).map(([u, v]) => flat(u, v, laneHeight));
+  const pull = (a, b) => { const len = Math.hypot(b[0] - a[0], b[1] - a[1]); const k = len > 60 ? 36 / len : .3; return [mix(a[0], b[0], k), mix(a[1], b[1], k)]; };
+  pts[0] = pull(pts[0], pts[1]);
+  pts[pts.length - 1] = pull(pts[pts.length - 1], pts[pts.length - 2]);
+  packets.push({ group, start: performance.now(), pts, ms: 950, done });
   kick();
 }
 // Callbacks run after the list is updated, so a callback that starts a new trip is not lost.
@@ -552,7 +555,12 @@ function movePackets(now) {
     const t = (now - packet.start) / packet.ms;
     if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
     const ease = t * t * (3 - 2 * t);
-    const x = mix(packet.from[0], packet.to[0], ease), y = mix(packet.from[1], packet.to[1], ease);
+    // Walk the given share of the path's length.
+    const lens = packet.pts.slice(1).map((p, i) => Math.hypot(p[0] - packet.pts[i][0], p[1] - packet.pts[i][1]));
+    let rest = ease * lens.reduce((a, b) => a + b, 0), i = 0;
+    while (i < lens.length - 1 && rest > lens[i]) rest -= lens[i++];
+    const k = lens[i] ? rest / lens[i] : 0;
+    const x = mix(packet.pts[i][0], packet.pts[i + 1][0], k), y = mix(packet.pts[i][1], packet.pts[i + 1][1], k);
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
     return true;
   });

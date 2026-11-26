@@ -107,7 +107,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .bar.sorted .left{fill:#bfe2cb;stroke:#4f8f6b}.bar.sorted .right{fill:#9fcfb1;stroke:#4f8f6b}.bar.sorted .top{fill:#e2f5e8;stroke:#4f8f6b}
 .bar.cmp .left{fill:#f2d98a;stroke:#c9940f}.bar.cmp .right{fill:#e3c56c;stroke:#c9940f}.bar.cmp .top{fill:#ffd34d;stroke:#c9940f}
 .bar.swap .left{fill:#f6c7a4;stroke:#a24c14}.bar.swap .right{fill:#eaa97d;stroke:#a24c14}.bar.swap .top{fill:#ffe0c9;stroke:#a24c14}
-.bar-value{font:800 11px var(--mono);fill:var(--ink);text-anchor:middle}
+.bar-value{font:800 11px var(--mono);fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
 .range-band{fill:#eadcf0;stroke:#9a77ad;stroke-dasharray:4 3;opacity:.85}
 .dot.hit{background:#ffd34d;border-color:#c9940f}.dot.shift{background:#ffe0c9;border-color:#a24c14}.dot.sorteddot{background:#e2f5e8;border-color:#4f8f6b}.dot.rangedot{background:#eadcf0;border-color:#9a77ad}
 .run-area{display:flex;gap:12px 18px;flex-wrap:wrap;align-items:flex-start}
@@ -499,7 +499,9 @@ const faceCorners = (h, H) => ({
 // ---------- Bars ----------
 const n = () => lesson[state.index].n;
 const spacing = () => n() === 8 ? 2.6 : 1.55;
-const half = () => n() === 8 ? .78 : .5;
+// A bar is 56·half px wide on screen; keeping it under the spacing (14·spacing px) leaves a gap, so no bar
+// hides its neighbour and each number sits over its own bar.
+const half = () => n() === 8 ? .6 : .36;
 const unit = () => n() === 8 ? 10 : 5.6;    // px of height per value
 const barX = (i) => flat(i * spacing(), 0);
 let bars = [];   // by slot: { node, faces, label, value }
@@ -511,8 +513,10 @@ function buildScene() {
     drawShadow(node, half());
     const faces = {};
     for (const name of ['left', 'right', 'top']) faces[name] = svg('polygon', { class: 'face ' + name }, node);
-    const label = svg('text', { class: 'bar-value' }, node);
-    const bar = { node, faces, label, value, x: barX(i)[0], y: barX(i)[1] };
+    // Values sit in a layer above every bar, so a taller neighbour's edge never runs through them (they follow their bar in placeBar).
+    const tag = svg('g', { class: 'bar-tag', transform: `translate(${barX(i).join(' ')})` }, byId('packets'));
+    const label = svg('text', { class: 'bar-value' }, tag);
+    const bar = { node, tag, faces, label, value, x: barX(i)[0], y: barX(i)[1] };
     shapeBar(bar, value);
     bars.push(bar);
   });
@@ -534,6 +538,7 @@ function shapeBar(bar, value) {
 function placeBar(bar, x, y) {
   bar.x = x; bar.y = y;
   bar.node.setAttribute('transform', `translate(${x} ${y})`);
+  bar.tag.setAttribute('transform', `translate(${x} ${y})`);
 }
 function paintMarks(ev) {
   bars.forEach((bar, i) => {

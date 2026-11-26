@@ -416,10 +416,10 @@ setCamera(0, 0, 1);
 // `ns` is a typical time to read once, `cycles` the same in clock ticks of a 3 GHz CPU, `human` that
 // time if one tick were stretched to one second, and `ms` how long the packet takes on screen each way.
 const levels = [
-  { id: 'reg', name: '레지스터', u: 5.6, h: .55, H: 8, size: '수백 B', ns: '0.3 ns', cycles: '1번', human: '1초', ms: 220, volatile: true },
-  { id: 'cache', name: 'L1 캐시', u: 10, h: .85, H: 10, size: '64 KB', ns: '1 ns', cycles: '4번', human: '4초', ms: 380, volatile: true },
-  { id: 'ram', name: 'RAM', u: 17.5, h: 1.45, H: 12, size: '16 GB', ns: '100 ns', cycles: '300번', human: '5분', ms: 900, volatile: true },
-  { id: 'ssd', name: 'SSD', u: 27, h: 2, H: 15, size: '1 TB', ns: '100 µs', cycles: '30만 번', human: '3일 반', ms: 2200, volatile: false },
+  { id: 'reg', name: '레지스터', u: 6.2, h: .55, H: 8, size: '수백 B', ns: '0.3 ns', cycles: '1번', human: '1초', ms: 220, volatile: true },
+  { id: 'cache', name: 'L1 캐시', u: 11.8, h: .85, H: 10, size: '64 KB', ns: '1 ns', cycles: '4번', human: '4초', ms: 380, volatile: true },
+  { id: 'ram', name: 'RAM', u: 18.8, h: 1.45, H: 12, size: '16 GB', ns: '100 ns', cycles: '300번', human: '5분', ms: 900, volatile: true },
+  { id: 'ssd', name: 'SSD', u: 28, h: 2, H: 15, size: '1 TB', ns: '100 µs', cycles: '30만 번', human: '3일 반', ms: 2200, volatile: false },
 ];
 const levelOf = (id) => levels.find((l) => l.id === id);
 const nsOf = { reg: .3, cache: 1, ram: 100, ssd: 100000 };
@@ -607,7 +607,8 @@ function readLevel(id, user) {
   flash(id, '읽는 중');
   travel([[1.4, edge(id), level.ms, '가지러'], [edge(id), 1.4, level.ms, '값']], () => {
     state.busy = false;
-    flash(id, `${level.ns}`);
+    // The badge on this step says how big the level is; the time is already the line under it.
+    flash(id, level.size);
     report(`${level.name}에서 읽기: ${level.ns} · 클럭 ${level.cycles} · 1클럭이 1초라면 ${level.human}`);
     if (user) afterUser({ read: id });
   });
@@ -623,6 +624,8 @@ function readAddress(address, user, done, speed = 1) {
   const outcome = { hit: 0, miss: 0, evicted: 0 };
   state.busy = true;
   state.lastAddress = address;
+  // A new read starts clean: "fetched from here" and RAM's highlight belong to the read that went to RAM.
+  if (views.ram) { setPlate(views.ram.badge, ''); views.ram.node.classList.remove('busy'); }
   if (at >= 0) {
     const [entry] = state.cache.splice(at, 1);
     state.cache.push(entry);   // most recently used goes to the end

@@ -174,6 +174,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
 .bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
 .station .face{stroke-width:.8;transition:fill .2s}
+@media(prefers-reduced-motion:reduce){.station .face{transition:none}}
 .station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
 .sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
 .station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
@@ -187,6 +188,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
 .tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
 .tag.empty{display:none}
+.packet-tag rect{fill:#fff;fill-opacity:.94;stroke:#9fbfae;stroke-width:.7}.packet-tag .packet-label{font-size:10.5px;stroke:none;dominant-baseline:central}
+@media(max-width:600px){.packet-tag .packet-label{font-size:13px}}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
@@ -387,9 +390,9 @@ const lesson = [
     title: '인덱스가 없으면 백만 행을 모두 본다',
     body: '회원 백만 명이 담긴 users 표에서 이메일 하나로 회원을 찾는다고 해 봅시다. 행은 가입한 순서로 쌓여 있어 이메일 순서와 관계가 없습니다. 6.4에서 본 것처럼 엔진은 첫 행부터 끝 행까지 하나씩 비교할 수밖에 없습니다. 4.1의 O(n)입니다.',
     takeaway: '찾는 회원이 73만 번째 줄에 있어도, 같은 이메일이 더 없다는 것을 확인하려면 백만 행을 끝까지 봐야 합니다. 로그인할 때마다 이렇게 하면 서버가 버티지 못합니다.',
-    description: '왼쪽부터 SQL 질의, DB 엔진, email 인덱스, users 표, 결과가 놓여 있습니다. 아직 인덱스가 비어 있어 엔진이 표로 바로 갑니다.',
-    stations: ST,
-    start: { title: '질의', lines: ["SELECT * FROM users WHERE email = 'jiu@example.com';", 'users: 1,000,000행 · 인덱스 없음'], holds: { idx: '없음', t: '100만 행' } },
+    description: '왼쪽부터 SQL 질의, DB 엔진, users 표, 결과가 놓여 있습니다. 아직 email 인덱스가 없어 엔진이 표로 바로 갑니다.',
+    stations: ST.filter(([id]) => id !== 'idx'),  // no index yet: the engine goes straight to the table
+    start: { title: '질의', lines: ["SELECT * FROM users WHERE email = 'jiu@example.com';", 'users: 1,000,000행 · 인덱스 없음'], holds: { t: '100만 행' } },
     stages: [
       { from: 'q', to: 'db', label: 'WHERE email = …', title: '엔진 · 계획 세우기', lines: ['email에 인덱스가 없음', '→ 전체 스캔으로 찾기로 함'], text: '엔진이 쓸 수 있는 인덱스가 없는 것을 확인합니다.', holds: { db: '전체 스캔' } },
       { from: 'db', to: 't', label: '한 행씩', title: '전체 스캔', lines: ['1행 minji@… ✗', '2행 seojun@… ✗', '…', '734,201행 jiu@example.com ✓', '…', '1,000,000행 yejun@… ✗'], text: '엔진이 백만 행을 처음부터 끝까지 비교합니다.', holds: { t: '100만 번 비교' },
@@ -585,7 +588,10 @@ function travel(fromU, toU, label, done) {
   const group = svg('g', { class: 'packet-group' }, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 8.5 }, group);
   svg('circle', { class: 'packet', r: 4.4 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  // The label rides on its own small plate: bare text was hard to read where it crossed a box face.
+  const tag = addPlate(group, 'packet-tag', 0, -16, '', { pad: .9 });
+  tag.label.setAttribute('class', 'packet-label');
+  setPlate(tag, label);
   packets.push({ group, fromU, toU, start: performance.now(), ms: 950, done });
   kick();
 }
@@ -598,6 +604,8 @@ function movePackets(now) {
     const ease = t * t * (3 - 2 * t);
     const [x, y] = flat(mix(packet.fromU + 1.3, packet.toU - 1.3, ease), 0, laneHeight);
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    // The label shows only between 12–26% and 74–88% of the way, so it never sits on the start or end box and its plates.
+    packet.group.querySelector('.packet-tag')?.setAttribute('opacity', Math.max(0, Math.min(1, (t - .12) / .14, (.88 - t) / .14)).toFixed(2));
     return true;
   });
   finished.forEach((done) => done());

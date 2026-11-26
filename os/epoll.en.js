@@ -1,0 +1,90 @@
+// English for OS 4.4 Event-driven I/O. Korean (the page) → English. Rules: DESIGN.md "두 언어".
+window.lessonText = {
+  // Page
+  '이벤트 기반 I/O · 레슨 4.4': 'Event-driven I/O · Lesson 4.4',
+  '운영체제 4장 동시성 · 레슨 4.4': 'Operating systems chapter 4 Concurrency · Lesson 4.4',
+  '이벤트 기반 I/O': 'Event-driven I/O',
+  '연결마다 스레드를 두는 서버, 한 소켓에서 막히는 read, 준비된 소켓만 알려 주는 epoll, 이벤트 루프를 막는 무거운 일을 한 정거장씩 따라가 보세요.':
+    'Follow, one station at a time, a server with a thread per connection, a read that blocks on one socket, epoll which reports only ready sockets, and heavy work that blocks the event loop.',
+  '연결 수만 개를 받는 서버는 스레드 하나로 어떻게 모든 연결을 돌볼까요? 네트워크에서 소켓과 epoll을 거쳐 서버까지 가는 길을 한 정거장씩 따라가 보세요.':
+    'How does a server taking tens of thousands of connections look after all of them with one thread? Follow, station by station, the road from the network through the sockets and epoll to the server.',
+  '연결 수만 개를 받는 서버는 스레드 하나로 어떻게 모든 연결을 돌볼까?': 'How does a server with tens of thousands of connections look after all of them with one thread?',
+  '서버, epoll, 소켓, 네트워크': 'Server, epoll, sockets, network',
+  '네트워크에서 데이터가 온 소켓만 epoll이 골라 서버에 알리고, 서버가 그 소켓만 읽는 장면': 'epoll picks only the sockets with data from the network and tells the server, which reads only those sockets',
+  '사용자 영역': 'User space', '커널 영역': 'Kernel space', '커널 영역 · 하드웨어': 'Kernel space · hardware',
+  '프로세스': 'Process', '커널': 'Kernel', '네트워크': 'Network',
+  '"다음 단계"를 누르면 신호가 한 정거장씩 움직입니다.': 'Press "Next step" and the signal moves one station at a time.',
+  '"다음 단계"를 눌러 신호를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the signal one station at a time. Prediction questions come up along the way.',
+  // Stations
+  '서버': 'Server', '소켓들': 'Sockets', 'epoll': 'epoll',
+  // Legs in the stage list and the example strip
+  '네트워크 → 소켓들': 'Network → sockets', '서버 → 커널': 'Server → kernel', '커널 → 서버': 'Kernel → server', '서버 → 소켓들': 'Server → sockets', '소켓들 → epoll': 'Sockets → epoll', 'epoll → 서버': 'epoll → server',
+  '커널 · 깨우기': 'Kernel · wake', '네트워크 · 42에 데이터': 'Network · data on 42', '서버 · read(42)': 'Server · read(42)', 'epoll · 해결': 'epoll · fix',
+  // Badges and moving labels
+  '연결 1만': '10k connections', '1만 · 조용': '10k · quiet', 'read ×1만': 'read ×10k', '스레드 1만': '10k threads', '깨우기': 'Wake', '교환 많음': 'Many switches',
+  '스레드 1개': '1 thread', 'read(7)': 'read(7)', '스레드1: 7에 멈춤': 'Thread 1: stuck on 7', '42에 데이터': 'Data on 42', '42로 요청': 'Request to 42', '42 안 읽힘': '42 unread',
+  'epoll_wait 잠듦': 'Asleep in epoll_wait', '1만 개 등록됨': '10k registered', '42만 데이터': 'Data on 42 only', '42 준비': '42 ready', '준비: 42': 'Ready: 42', '[42]': '[42]', '준비: [42]': 'Ready: [42]', 'read(42)': 'read(42)', '42만 읽음': 'Read only 42',
+  '42 처리 시작': 'Start handling 42', '7·99에 데이터': 'Data on 7·99', '7, 99 데이터': 'Data on 7, 99', '200ms 계산중': 'Computing 200 ms', '7·99 준비': '7·99 ready', '준비: 7, 99': 'Ready: 7, 99', '해결': 'Fix', '작업 스레드로': 'To worker threads',
+  // Step 1
+  '연결마다 스레드': 'A thread per connection',
+  '연결마다 스레드를 두면 연결 수만큼 스레드가 늘어난다': 'A thread per connection means as many threads as connections',
+  '가장 쉬운 서버는 연결이 하나 들어올 때마다 스레드를 하나 만들어, 그 스레드가 자기 소켓에서 read로 기다리게 합니다. 연결이 1만 개면 스레드도 1만 개입니다. 대부분은 데이터를 기다리며 잠들어 있지만, 스레드마다 스택 메모리와 커널 자료가 들고, 데이터가 올 때마다 스레드를 깨우는 문맥 교환이 늘어납니다. 연결이 더 많아지면 이 비용이 서버를 무겁게 만듭니다.':
+    'The simplest server makes a thread for each incoming connection and has it wait in read on its own socket. With 10,000 connections there are 10,000 threads. Most sleep waiting for data, but each thread costs stack memory and kernel data, and every arrival of data adds a context switch to wake its thread. With more connections this cost weighs the server down.',
+  '서버 이름표가 "스레드 1만", 소켓 이름표가 "1만 · 조용"이 되고, 커널 이름표가 "교환 많음"이 됩니다.': 'The server\'s label becomes "10k threads", the sockets\' "10k · quiet", and the kernel\'s "Many switches".',
+  '왼쪽 사용자 영역에 서버가, 경계 너머에 커널, 소켓들, 네트워크가 있습니다. 연결 1만 개마다 스레드가 하나씩 read에서 잠들어 있습니다.': 'The server is in user space on the left; across the boundary are the kernel, the sockets and the network. For each of 10,000 connections, a thread sleeps in read.',
+  '연결 1만 개': '10,000 connections', '스레드 1만 개가 각자 read에서 잠듦': '10,000 threads each asleep in read', '스택 메모리 1만 개 · 문맥 교환 많음': '10,000 stacks · many context switches',
+  '연결이 오면 스레드 하나': 'One thread per incoming connection', '그 스레드가 read(내 소켓)': 'That thread does read(my socket)', '소켓 1만 개가 생김': '10,000 sockets are made',
+  '데이터가 올 때마다 그 스레드를 깨움': 'Wake that thread each time data comes', '문맥 교환이 잦음': 'Frequent context switches',
+  '연결 1만 개가 들어와 소켓 1만 개가 생깁니다.': '10,000 connections come in and 10,000 sockets are made.',
+  '스레드 1만 개가 각자 자기 소켓의 read에서 잠듭니다.': '10,000 threads each sleep in read on their own socket.',
+  '데이터가 올 때마다 해당 스레드를 깨워야 해서 문맥 교환이 잦습니다.': 'Each time data comes its thread must be woken, so context switches are frequent.',
+  '연결이 10만 개로 늘면 스레드는?': 'If connections grow to 100,000, how many threads?',
+  '그대로 1만 개': 'Still 10,000', '10만 개': '100,000', '1개': '1',
+  '연결마다 스레드 하나이므로 연결 수만큼 늘어납니다. 스택과 문맥 교환 비용도 함께 늘어납니다.': 'One thread per connection, so they grow with the connections. Stack and context-switch costs grow too.',
+  // Step 2
+  '막히는 read': 'A blocking read',
+  '스레드 하나가 한 소켓에서 막히면 다른 소켓을 못 돌본다': 'When one thread blocks on one socket, it cannot look after the others',
+  '스레드를 아끼려고 한 스레드가 소켓 여러 개를 차례로 읽으면 다른 문제가 생깁니다. read는 데이터가 없으면 올 때까지 잠듭니다. 서버가 소켓 7을 읽다가 잠든 사이 소켓 42에 데이터가 와도, 그 스레드는 7에서 깨어날 때까지 42를 보지 못합니다. 조용한 연결 하나가 바쁜 연결 전부를 세워 둡니다.':
+    'To save threads, one thread could read several sockets in turn, but that brings another problem. read sleeps until data arrives. If the server sleeps reading socket 7 while data arrives on socket 42, that thread does not see 42 until it wakes from 7. One quiet connection holds up all the busy ones.',
+  '서버 이름표가 "스레드1: 7에 멈춤"이 되고, 네트워크에서 소켓으로 42의 데이터가 와 소켓 이름표가 "42 안 읽힘"이 됩니다.': 'The server\'s label becomes "Thread 1: stuck on 7", data for 42 comes from the network to the sockets, and the sockets\' label becomes "42 unread".',
+  '1단계와 같은 정거장입니다. 서버 스레드 하나가 소켓 7을 읽는 중에 소켓 42로 데이터가 옵니다.': 'The same stations as step 1. While one server thread reads socket 7, data comes to socket 42.',
+  '스레드 하나가 read(7)': 'One thread does read(7)', '7에 데이터 없음 → 잠듦': 'No data on 7 → sleeps', '그 사이 42에 데이터 도착': 'Meanwhile data arrives on 42', '42는 아무도 읽지 않음': 'Nobody reads 42',
+  'for 소켓 in 목록:': 'for socket in list:', '    read(소켓)   # 데이터가 없으면 잠듦': '    read(socket)   # sleeps if no data', '소켓 7에 데이터 없음': 'No data on socket 7', '서버 스레드가 잠듦': 'The server thread sleeps', '소켓 42에 데이터 도착': 'Data arrives on socket 42',
+  '서버가 소켓 7을 읽지만 데이터가 없어 잠듭니다.': 'The server reads socket 7, but there is no data, so it sleeps.',
+  '그 사이 소켓 42에 요청이 도착하지만, 아무도 읽지 않은 채 기다립니다.': 'Meanwhile a request arrives on socket 42, but it waits with nobody reading it.',
+  '서버는 소켓 42의 요청을 언제 읽을까요?': 'When does the server read the request on socket 42?',
+  '바로 읽는다': 'Right away', '7에서 깨어난 뒤에야': 'Only after waking from 7', '커널이 대신 답한다': 'The kernel answers instead',
+  '서버 스레드는 read(7)에 묶여 잠들어 있습니다. 7에 데이터가 오기 전에는 다른 소켓을 볼 수 없습니다.': 'The server thread is asleep, tied to read(7). Until data comes to 7 it cannot look at other sockets.',
+  // Step 3
+  'epoll은 데이터가 온 소켓만 골라 알려 준다': 'epoll reports only the sockets that have data',
+  'epoll은 "이 소켓들 가운데 준비된 것을 알려 줘"라고 커널에 맡기는 방법입니다. 서버는 소켓 1만 개를 epoll에 한 번 등록하고 epoll_wait에서 잠듭니다. 데이터가 온 소켓만 커널이 준비 목록에 올리고, epoll_wait는 그 목록(예: [42])을 들고 돌아옵니다. 서버는 준비된 소켓만 읽으니 read가 막히지 않고, 스레드 하나로 1만 개를 돌봅니다. nginx, Node.js, Redis가 이렇게 동작합니다.':
+    'epoll hands the kernel the job "tell me which of these sockets are ready". The server registers 10,000 sockets with epoll once and sleeps in epoll_wait. The kernel puts only sockets with data on the ready list, and epoll_wait returns with that list (for example [42]). The server reads only ready sockets, so read never blocks, and one thread looks after 10,000. nginx, Node.js and Redis work this way.',
+  '네트워크에서 소켓 42로 데이터가 오자 epoll 이름표가 "준비: 42"가 되고, 서버 이름표가 "42만 읽음"이 됩니다. 소켓 이름표는 "42만 데이터"입니다.': 'When data comes from the network to socket 42, epoll\'s label becomes "Ready: 42" and the server\'s "Read only 42". The sockets\' label reads "Data on 42 only".',
+  '왼쪽 사용자 영역에 서버가, 경계 너머에 epoll, 소켓들, 네트워크가 있습니다. 서버는 소켓 1만 개를 epoll에 등록하고 epoll_wait에서 기다립니다.': 'The server is in user space on the left; across the boundary are epoll, the sockets and the network. The server has registered 10,000 sockets with epoll and waits in epoll_wait.',
+  '소켓 1만 개를 epoll에 등록': 'Register 10,000 sockets with epoll', 'epoll_wait로 잠듦': 'Sleep in epoll_wait', '42에 데이터 → 준비 목록 [42]': 'Data on 42 → ready list [42]', '서버는 42만 read (막히지 않음)': 'The server reads only 42 (no blocking)',
+  'epoll_ctl(1만 개 등록)': 'epoll_ctl(register 10,000)', 'while: 준비 = epoll_wait()': 'while: ready = epoll_wait()', '    준비된 소켓만 read': '    read only ready sockets', '준비된 소켓만 read': 'read only ready sockets', 'read(소켓)   # 데이터가 없으면 잠듦': 'read(socket)   # sleeps if no data', '소켓들 · 7·99 준비': 'Sockets · 7·99 ready',
+  '소켓 7은 조용': 'Socket 7 is quiet', '준비 목록에 42를 올림': 'Put 42 on the ready list', 'epoll_wait가 [42]를 돌려줌': 'epoll_wait returns [42]', '42를 읽고 답을 씀': 'Read 42 and write the answer', '다시 epoll_wait': 'epoll_wait again',
+  '소켓 42에 데이터가 옵니다. 7은 여전히 조용합니다.': 'Data comes to socket 42. 7 is still quiet.',
+  '커널이 42를 epoll의 준비 목록에 올립니다.': 'The kernel puts 42 on epoll\'s ready list.',
+  'epoll_wait가 [42]를 들고 돌아옵니다.': 'epoll_wait returns with [42].',
+  '서버가 42만 읽어 처리하고 다시 epoll_wait로 돌아갑니다.': 'The server reads and handles only 42, then goes back to epoll_wait.',
+  '서버는 이제 어느 소켓을 읽을까요?': 'Which socket does the server read now?',
+  '1만 개 모두': 'All 10,000', '42만': 'Only 42', '7부터 차례로': 'In turn, from 7',
+  'epoll이 준비된 소켓만 알려 주므로 서버는 42만 읽습니다. 데이터가 있으니 read가 막히지 않습니다.': 'epoll reports only ready sockets, so the server reads only 42. There is data, so read does not block.',
+  // Step 4
+  '루프를 막는 일': 'Blocking the loop',
+  '이벤트 루프에서 오래 계산하면 모든 연결이 기다린다': 'A long computation in the event loop makes every connection wait',
+  '스레드 하나가 모든 연결을 돌보는 것은 각 처리가 짧을 때만 통합니다. 소켓 42의 요청이 200ms짜리 계산이라면, 그동안 루프는 epoll_wait로 돌아가지 못합니다. 그 사이 소켓 7과 99에 온 요청은 준비 목록에서 200ms를 기다립니다. 그래서 이벤트 루프에서는 오래 걸리는 계산이나 막히는 호출을 하지 않고, 작업 스레드 묶음에 넘긴 뒤 바로 루프로 돌아옵니다.':
+    'One thread looking after every connection only works when each piece of handling is short. If the request on socket 42 is a 200 ms computation, the loop cannot get back to epoll_wait in the meantime. Requests arriving on sockets 7 and 99 wait 200 ms on the ready list. So an event loop avoids long computations and blocking calls; it hands them to a pool of worker threads and goes straight back to the loop.',
+  '서버 이름표가 "200ms 계산중"이 되고, epoll 이름표가 "준비: 7, 99"가 되지만 꺼내 갈 루프가 없습니다. 마지막에 epoll 이름표에 해결 "작업 스레드로"가 남습니다.': 'The server\'s label becomes "Computing 200 ms" and epoll\'s "Ready: 7, 99", but no loop is there to take them. At the end, epoll\'s label shows the fix, "To worker threads".',
+  '3단계와 같은 정거장입니다. 서버가 소켓 42의 요청을 처리하는데, 그 요청이 200ms 동안 계산합니다.': 'The same stations as step 3. The server handles the request on socket 42, which computes for 200 ms.',
+  '42 요청 = 200ms 계산': 'Request on 42 = 200 ms computation', '루프가 epoll_wait로 못 돌아감': 'The loop cannot get back to epoll_wait', '7·99의 요청이 200ms 대기': 'Requests on 7·99 wait 200 ms', '해결: 무거운 일은 작업 스레드로': 'Fix: heavy work goes to worker threads',
+  '42 처리 = 200ms 계산': 'Handling 42 = 200 ms computation', '7과 99에 요청 도착': 'Requests arrive on 7 and 99', '준비 목록: 7, 99': 'Ready list: 7, 99', '꺼내 갈 루프가 없음': 'No loop to take them',
+  '무거운 계산은 작업 스레드로 넘김': 'Hand the heavy computation to worker threads', '루프는 바로 epoll_wait로': 'The loop goes straight back to epoll_wait',
+  '서버가 42를 계산하는 사이 7과 99에 요청이 옵니다.': 'While the server computes 42, requests come to 7 and 99.',
+  'epoll의 준비 목록에 7과 99가 올라가지만, 루프가 계산 중이라 꺼내 가지 못합니다.': '7 and 99 go on epoll\'s ready list, but the loop is busy computing and cannot take them.',
+  '해결은 무거운 계산을 작업 스레드 묶음에 넘기고 루프는 곧바로 epoll_wait로 돌아오는 것입니다.': 'The fix is to hand heavy computations to a pool of worker threads and have the loop go straight back to epoll_wait.',
+  '7과 99의 요청은 얼마나 기다릴까요?': 'How long do the requests on 7 and 99 wait?',
+  '바로 처리된다': 'They are handled at once', '42의 계산이 끝날 때까지(200ms)': 'Until 42\'s computation ends (200 ms)', '영원히': 'Forever',
+  '루프 스레드는 하나뿐이라 계산이 끝나야 epoll_wait로 돌아가 다음 소켓을 봅니다.': 'There is only one loop thread, so only when the computation ends does it return to epoll_wait and look at the next socket.',
+};

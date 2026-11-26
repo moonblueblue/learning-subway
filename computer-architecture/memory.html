@@ -98,6 +98,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 @media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .wire.idle{stroke:#a9b8b0;stroke-width:2;stroke-dasharray:4 4}
 .chevron.idle{stroke:#a9b8b0}
+.split{stroke:none}.split.signal{fill:var(--request)}.split.idle{fill:#a9b8b0}
 .gate .left{fill:#dfe4f2;stroke:#7d88b4}
 .gate .right{fill:#c4cbe3;stroke:#7d88b4}
 .gate .top{fill:#f1f3fa;stroke:#7d88b4}
@@ -339,9 +340,9 @@ const lesson = [
       { id: 'S', type: 'IN', u: 0, v: -4, label: 'S 켜기' },
       { id: 'R', type: 'IN', u: 0, v: 7, label: 'R 끄기' },
       { id: 'n', type: 'NOT', in: ['R'], u: 6, v: 7 },
-      { id: 'a', type: 'AND', in: ['Q', 'n'], u: 13, v: 6, mids: [null, 10.4], loops: [11, null], loopX: [8.8, null] },
-      { id: 'Q', type: 'OR', in: ['S', 'a'], u: 19, v: -3, mids: [9, 16] },
-      { id: 'L', type: 'LAMP', in: ['Q'], u: 26, v: -3, label: '출력 Q' },
+      { id: 'a', type: 'AND', in: ['Q', 'n'], u: 15, v: 6, mids: [null, 10.4], loops: [11, null], loopX: [11.8, null] },
+      { id: 'Q', type: 'OR', in: ['S', 'a'], u: 21, v: -3, mids: [9, 18] },
+      { id: 'L', type: 'LAMP', in: ['Q'], u: 28, v: -3, label: '출력 Q' },
     ],
     log: ['S', 'R'],
     demo: [[1, 0], [0, 0], [0, 1], [0, 0]],
@@ -361,13 +362,13 @@ const lesson = [
     takeaway: 'E를 끈 뒤에는 D를 아무리 바꿔도 램프가 그대로입니다. 메모리에 값을 쓰는 것은 E를 잠깐 켰다 끄는 일이고, 읽는 것은 Q를 보는 일입니다.',
     description: '스위치 D와 쓰기 E가 위쪽 AND(S 쪽)와, D를 뒤집은 NOT을 지나 아래쪽 AND(R 쪽)로 들어갑니다. 두 AND는 SR 래치 상자로 모이고, 상자의 출력 Q가 램프로 갑니다.',
     nodes: [
-      { id: 'D', type: 'IN', u: 0, v: -6, label: 'D 값' },
-      { id: 'E', type: 'IN', u: 0, v: 6, label: 'E 쓰기' },
-      { id: 'nd', type: 'NOT', in: ['D'], u: 6, v: 1, mids: [3] },
-      { id: 's', type: 'AND', in: ['D', 'E'], u: 12, v: -5, mids: [6, 4.4] },
-      { id: 'r', type: 'AND', in: ['nd', 'E'], u: 12, v: 5, mids: [9, 4.4] },
-      { id: 'Q', type: 'SR', in: ['s', 'r'], u: 19, v: 0, mids: [15.6, 15.6] },
-      { id: 'L', type: 'LAMP', in: ['Q'], u: 26, v: 0, label: '출력 Q' },
+      { id: 'D', type: 'IN', u: 0, v: -10, label: 'D 값' },
+      { id: 'E', type: 'IN', u: 0, v: 9, label: 'E 쓰기' },
+      { id: 'nd', type: 'NOT', in: ['D'], u: 7, v: 2.5, mids: [2] },
+      { id: 's', type: 'AND', in: ['D', 'E'], u: 13, v: -8, mids: [2, 4] },
+      { id: 'r', type: 'AND', in: ['nd', 'E'], u: 13, v: 6, mids: [10, 4] },
+      { id: 'Q', type: 'SR', in: ['s', 'r'], u: 20, v: -1, mids: [16, 17] },
+      { id: 'L', type: 'LAMP', in: ['Q'], u: 27, v: -1, label: '출력 Q' },
     ],
     log: ['D', 'E'],
     demo: [[1, 0], [1, 1], [1, 0], [0, 0], [0, 1], [0, 0]],
@@ -629,13 +630,13 @@ function createWire(from, to, port, spec) {
   const pv = dst.v + (n === 1 ? 0 : port ? .9 : -.9);
   const sv = src.v;
   const loop = dst.loops?.[port];
-  let route;
+  let route, turn = null;
   if (loop !== undefined && loop !== null) {
     const out = src.u + 2 * size[src.type][0] + 1.2;
     const back = dst.loopX?.[port] ?? dst.u - 2 * size[dst.type][0] - 1.4;
     route = [[src.u, sv], [out, sv], [out, loop], [back, loop], [back, pv], [dst.u, pv]];
   } else {
-    const turn = dst.mids?.[port] ?? (src.u + dst.u) / 2;
+    turn = dst.mids?.[port] ?? (src.u + dst.u) / 2;
     route = [[src.u, sv], [turn, sv], [turn, pv], [dst.u, pv]];
   }
   const screen = route.map(([u, v]) => flat(u, v, laneHeight));
@@ -649,7 +650,37 @@ function createWire(from, to, port, spec) {
   const chevron = svg('path', { class: 'chevron idle', d: 'M-4.5 -5L2.5 0L-4.5 5', transform: `translate(${at.join(' ')})` }, group);
   const startLen = 14 * 2 * size[src.type][0] * .8;
   const endLen = 14 * (2 * size[dst.type][0] - Math.abs(pv - dst.v)) * .9;
-  return { from, to, port, kind, group, line, casing, chevron, startLen, endLen };
+  return { from, to, port, kind, group, line, casing, chevron, startLen, endLen, turn, sv, pv };
+}
+
+// One output that feeds several inputs splits on one column (all its wires share `mids`), and a dot
+// marks each split, so a crossing without a dot reads as two wires passing (visual-language.md 3장).
+// Packets from one output move at the pace of its longest wire, so they ride together on the shared
+// part and part at the dot instead of showing the same value twice.
+function markSplits() {
+  const groups = new Map();
+  for (const wire of wires) {
+    wire.dots = [];
+    wire.span = Math.max(wire.line.getTotalLength() - wire.startLen - wire.endLen, 0);
+    if (wire.turn === null) { wire.travel = wire.span; continue; }
+    const key = wire.from + '|' + wire.turn.toFixed(2);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(wire);
+  }
+  const round = (v) => Math.round(v * 1000) / 1000;
+  for (const group of groups.values()) {
+    const travel = Math.max(...group.map((wire) => wire.span));
+    group.forEach((wire) => { wire.travel = travel; });
+    if (group.length < 2) continue;
+    const sv = round(group[0].sv), ends = group.map((wire) => round(wire.pv));
+    const lo = Math.min(sv, ...ends), hi = Math.max(sv, ...ends);
+    for (const v of new Set([sv, ...ends])) {
+      const degree = (v > lo) + (v < hi) + (v === sv) + ends.includes(v);
+      if (degree < 3) continue;
+      const [x, y] = flat(group[0].turn, v, laneHeight);
+      group[0].dots.push(svg('circle', { class: 'split idle', cx: x, cy: y, r: 3.4 }, byId('links')));
+    }
+  }
 }
 
 // A node's output from the current values of its inputs. Latches and registers also look at
@@ -705,6 +736,7 @@ function buildScene() {
   for (const spec of ordered) views.set(spec.id, createNode(spec));
   wires = [];
   for (const spec of step.nodes) (spec.in ?? []).forEach((from, port) => wires.push(createWire(from, spec.id, port, spec)));
+  markSplits();
   fitWorld(step.nodes);
 }
 
@@ -712,7 +744,8 @@ function buildScene() {
 function fitWorld(nodes) {
   const xs = nodes.map((n) => 14 * n.u);
   const ys = nodes.flatMap((n) => [7 * n.v, ...(n.loops ?? []).filter((v) => v != null).map((v) => 7 * v)]);
-  const left = Math.min(...xs) - 70, right = Math.max(...xs) + 90;
+  // Switch names sit left of the switches and grow to 16px on a narrow screen, so the left edge leaves room for them.
+  const left = Math.min(...xs) - 112, right = Math.max(...xs) + 90;
   const top = Math.min(...ys) - 58, bottom = Math.max(...ys) + 24;
   // A still picture keeps a strip at the bottom for the note on how it got here (`staticNote`).
   const strip = motion.matches && lesson[state.index].staticNote ? 30 : 0;
@@ -745,7 +778,7 @@ function showNode(id, send) {
   for (const wire of wires) {
     if (nodeOf(wire.from) !== id) continue;
     const lit = wire.kind === 'bus' || value === 1;
-    for (const part of [wire.line, wire.chevron]) {
+    for (const part of [wire.line, wire.chevron, ...wire.dots]) {
       part.classList.toggle('signal', lit);
       part.classList.toggle('idle', !lit);
     }
@@ -770,8 +803,9 @@ function movePackets(now) {
     const { line, startLen, endLen, from, kind } = packet.wire;
     // A packet disappears on arrival, and when its bit turns back to 0 mid-flight.
     if (t >= 1 || !line.isConnected || (kind === 'bit' && state.values[from] !== 1)) { packet.group.remove(); return false; }
-    const total = line.getTotalLength();
-    const at = line.getPointAtLength(mix(Math.min(startLen, total), Math.max(total - endLen, 0), Math.max(t, 0)));
+    const run = Math.max(t, 0) * packet.wire.travel;
+    if (run >= packet.wire.span) { packet.group.remove(); return false; }
+    const at = line.getPointAtLength(Math.min(startLen, line.getTotalLength()) + run);
     packet.group.setAttribute('transform', `translate(${at.x} ${at.y})`);
     return true;
   });

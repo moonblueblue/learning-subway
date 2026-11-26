@@ -71,7 +71,7 @@ window.lessonText = {
   '대화를 글로': 'Conversation as text', '사용자: 0.1 비트 레슨에서 1바이트는 몇 비트야?': 'User: In the 0.1 bits lesson, how many bits are in a byte?', '조수:': 'Assistant:', '대화 글': 'Chat text',
   '대화도 하나의 글': 'A conversation is text too', '"사용자: … 조수:"까지를 토큰으로': 'tokens up to "User: … Assistant:"', '대화 전체를 하나의 글로 넣습니다.': 'Put the whole conversation in as one text.',
   '토큰들': 'Tokens', '배운 대로 이어 쓰기': 'Continuing as learned', '사전 학습: 글 이어 쓰기': 'pre-training: continue text',
-  '지시 학습 · 사람의 선택: 질문에 도움이 되게 답하기': 'instruction tuning · human choices: answer questions helpfully', '학습 단계마다 배운 것이 함께 작동합니다.': 'What each training stage taught works together.', '답 쓰는 중': 'Writing answer',
+  '지시 학습 · 사람의 선택: 질문에 도움이 되게 답하기': 'instruction tuning · human choices: answer questions helpfully', '학습 단계마다 배운 것이 함께 작동합니다.': 'What each training stage taught works together.', '답 쓰는 중': 'Writing answer', '쓰기 멈춤': 'Stopped writing',
   '사전 학습만 한 모델에게 질문하면 생길 수 있는 일은?': 'What can happen if you ask a model that was only pre-trained?',
   '답 대신 비슷한 질문을 계속 이어 쓴다': 'It keeps writing similar questions instead of an answer', '언제나 완벽히 답한다': 'It always answers perfectly',
   '글을 그럴듯하게 이어 쓰는 것만 배웠기 때문입니다. 질문에 답하는 습관은 지시 학습으로 배웁니다.': 'Because it only learned to continue text plausibly. The habit of answering questions comes from instruction tuning.',
@@ -86,5 +86,5 @@ window.lessonText = {
   '"좋"을 골라 글 끝에 붙임 (토큰 5개)': 'pick "nice", append it (5 tokens)', '다시 물어 "다", "."도 붙임': 'ask again: append "-day", "." too', '"오늘 날씨가 정말 좋다."': '"Today the weather is really nice."',
   '좋 45% · 덥 30% · 춥 15%': 'nice 45% · hot 30% · cold 15%', '온도 0.2면 대부분 "좋"': 'temperature 0.2: mostly "nice"', '1.5면 골고루 뽑혀 다른 이어 쓰기': '1.5: spread out, other endings',
   '"1바이트는 몇 비트야?"를 대화 글로': '"How many bits in a byte?" as chat text', '조수 차례를 이어 씀': 'continue the assistant turn', '"8"을 고르고 끝 토큰에서 멈춤': 'pick "8", stop at the end token',
-  '다시 계산': 'Again', '같은 확률표': 'Same table', '끝 토큰': 'End token', '토큰 20': '20 tokens', '고르기 · 뽑은 토큰': 'Choose · drawn token', '지금까지의 글 · 다시': 'Text so far · again', '계산 중': 'Computing',
+  '다시 계산': 'Again', '같은 확률표': 'Same table', '끝 토큰': 'End token', '토큰 20': '20 tokens', '고르기 · 뽑은 토큰': 'Choose · drawn token', '지금까지의 글 · 다시': 'Text so far · again', '계산 중': 'Computing', '계산 끝': 'Done',
 };

@@ -15,17 +15,17 @@ window.lessonText = {
   '"다음 단계"를 누르면 신호가 한 정거장씩 움직입니다.': 'Press "Next step" and the signal moves one station at a time.',
   '"다음 단계"를 눌러 신호를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the signal one station at a time. Prediction questions come up along the way.',
   // Stations
-  '셸 (bash)': 'Shell (bash)', '자식 프로세스': 'Child process', '시스템 콜': 'System call', '터미널': 'Terminal', '셸 자리': 'Where the shell was',
+  '셸 (bash)': 'Shell (bash)', '자식 프로세스': 'Child process', '자식 PID 101': 'Child PID 101', 'SSD → 자식 PID 101': 'SSD → Child PID 101', '자식 PID 101 → 시스템 콜': 'Child PID 101 → System call', '커널 → 자식 PID 101': 'Kernel → Child PID 101', '시스템 콜': 'System call', '터미널': 'Terminal', '셸 자리': 'Where the shell was',
   // Legs in the stage list and the example strip
   '셸 (bash) → 시스템 콜': 'Shell (bash) → system call', '시스템 콜 → 커널': 'System call → kernel', '커널 → 자식 프로세스': 'Kernel → child process', '커널 → 셸 (bash)': 'Kernel → shell (bash)',
   '자식 프로세스 → 시스템 콜': 'Child process → system call', '커널 → SSD': 'Kernel → SSD', 'SSD → 자식 프로세스': 'SSD → child process',
   '시스템 콜 → SSD': 'System call → SSD', 'SSD → 셸 (bash)': 'SSD → shell (bash)', '셸 (bash) → 터미널': 'Shell (bash) → terminal',
   '커널 · 101': 'Kernel · 101', 'SSD · ls 코드': 'SSD · ls code', '커널 · 종료 코드 0': 'Kernel · Exit code 0', '셸 (bash) · exit(0)': 'Shell (bash) · exit(0)',
   // Badges and moving labels
-  'bash · PID 100': 'bash · PID 100', 'fork': 'fork', '통째로 복사': 'Whole copy', 'PID 101 · fork → 0': 'PID 101 · fork → 0', 'fork → 101': 'fork → 101',
-  'bash 복사본 · PID 101': 'bash copy · PID 101', 'exec': 'exec', '자식 메모리 비움': 'Child emptied', 'ls 실행 파일': 'ls file', 'ls · PID 101 그대로': 'ls · PID 101 unchanged',
+  'bash · PID 100': 'bash · PID 100', 'fork': 'fork', '통째로 복사': 'Whole copy', 'fork → 0 받음': 'got 0 from fork', 'fork → 101': 'fork → 101',
+  'bash 복사본 · PID 101': 'bash copy · PID 101', 'exec': 'exec', '자식 메모리 비움': 'Child emptied', 'ls 실행 파일': 'ls file', 'ls로 바뀜': 'became ls', 'ls · PID 101 그대로': 'ls · still PID 101',
   'PID 100': 'PID 100', 'ls · PID 101': 'ls · PID 101', 'wait': 'wait', '잠듦 · wait': 'Asleep · wait', 'exit 0': 'exit 0', '끝남 · 코드 0': 'Ended · code 0', '자식 101 정리': 'Child 101 cleaned up', '0 받음 · $': 'Got 0 · $',
-  '셸 메모리 비움': 'Shell emptied', 'ls · PID 100 (셸 없음)': 'ls · PID 100 (no shell)', '끝남': 'Ended', 'bash → ls': 'bash → ls', 'bash → ls → 끝남': 'bash → ls → ended', 'PID 100 → 시스템 콜': 'PID 100 → system call', 'SSD → PID 100': 'SSD → PID 100', 'PID 100 → 터미널': 'PID 100 → terminal', 'bash': 'bash', 'PID 100': 'PID 100', '셸 없음 · 창 닫힘': 'No shell · closed',
+  '셸 메모리 비움': 'Shell emptied', 'ls · PID 100 (셸 없음)': 'ls · PID 100 (no shell)', '끝남': 'Ended', 'bash → ls': 'bash → ls', 'bash→ls→끝': 'bash→ls→end', 'PID 100 → 시스템 콜': 'PID 100 → system call', 'SSD → PID 100': 'SSD → PID 100', 'PID 100 → 터미널': 'PID 100 → terminal', 'bash': 'bash', 'PID 100': 'PID 100', '셸 없음 · 창 닫힘': 'No shell · closed',
   'fork()': 'fork()', 'PID 101': 'PID 101', '101': '101', 'exec("/bin/ls")': 'exec("/bin/ls")', '/bin/ls 읽기': 'read /bin/ls', 'ls 코드': 'ls code', 'wait()': 'wait()', 'exit(0)': 'exit(0)', '종료 코드 0': 'exit code 0',
   // Step 1
   '셸에 ls를 치면 셸은 먼저 fork 시스템 콜을 부릅니다. 커널은 셸 프로세스의 메모리, 연 파일 목록, 다음에 실행할 위치까지 그대로 복사해 자식 프로세스를 만들고 새 번호(PID)를 붙입니다. 두 프로세스는 같은 코드의 같은 줄에서 함께 이어 가는데, fork가 돌려준 값만 다릅니다. 부모는 자식의 번호를, 자식은 0을 받아 자기가 누구인지 압니다.':
@@ -88,7 +88,7 @@ window.lessonText = {
   '그래서 셸은 먼저 복사하고, 복사본을 바꾼다': 'So the shell copies first, then changes the copy',
   'fork 없이 셸이 직접 exec를 부르면 어떻게 될까요? exec는 부른 프로세스 자신의 프로그램을 갈아 끼우므로, 셸이 ls로 바뀝니다. ls가 끝나면 그 프로세스도 끝나고, 돌아갈 셸이 없어 터미널 창이 닫힙니다. 셸에 exec ls를 쳐 보면 실제로 이렇게 됩니다. 그래서 셸은 늘 fork로 복사본을 만든 뒤 그 복사본에서 exec합니다.':
     'What if the shell calls exec itself, without fork? exec swaps the program of the very process that calls it, so the shell turns into ls. When ls ends, that process ends too, and with no shell to go back to, the terminal window closes. Type exec ls in a shell and this really happens. That is why a shell always makes a copy with fork and runs exec in the copy.',
-  '이번에는 셸 자신에서 exec가 나가고, ls 코드가 같은 PID 100 으로 돌아옵니다. PID 100 이름표가 bash → ls → 끝남으로 바뀌고, 터미널이 주황 오류색으로 닫힙니다.':
+  '이번에는 셸 자신에서 exec가 나가고, ls 코드가 같은 PID 100 으로 돌아옵니다. PID 100 이름표가 bash→ls→끝으로 바뀌고, 터미널이 주황 오류색으로 닫힙니다.':
     'This time exec leaves from the shell itself, and ls code comes back to the shell\'s place. The shell\'s label turns into ls, and when ls ends the terminal closes in the orange error colour.',
   '왼쪽 사용자 영역에 셸(PID 100)이, 경계 너머에 시스템 콜 창구, 커널, SSD, 오른쪽 끝에 터미널이 있습니다. 셸이 fork 없이 exec를 부릅니다.': 'The shell is in user space on the left; across the boundary are the system-call gate, the kernel and the SSD, with the terminal at the far right. The shell calls exec without fork.',
   '셸 PID 100: exec("/bin/ls")': 'Shell PID 100: exec("/bin/ls")', '셸이 ls로 바뀜': 'The shell turns into ls', 'ls 끝 = 그 프로세스도 끝': 'ls ends = that process ends', '터미널 닫힘': 'Terminal closes',

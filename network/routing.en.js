@@ -32,7 +32,7 @@ window.lessonText = {
   // Diagram (step 1)
   'A에서 I로 전송': 'Send from A to I', 'B에서 목적지 I 조회': 'B looks up destination I', 'B의 표는 다음 홉 E를 지정': 'B\'s table names next hop E', 'E가 다시 H로 전달': 'E passes it on to H',
   'A에서 I까지 링크 네 개를 지나 전달': 'Forwarded from A to I over four links', 'A  ─4→  B  ─1→  E  ─2→  H  ─5→  I     합계 12ms': 'A  ─4→  B  ─1→  E  ─2→  H  ─5→  I     total 12ms',
-  'B는 목적지 I에 대한 다음 홉 E만 고른다': 'For destination I, B picks only the next hop, E', 'B의 표: I → E       E의 표: I → H       H의 표: I → I': 'B\'s table: I → E       E\'s table: I → H       H\'s table: I → I',
+  'B는 목적지 I에 대한 다음 홉 E만 고른다': 'For destination I, B picks only the next hop, E', 'B의 표: I → E   ·   E의 표: I → H   ·   H의 표: I → I': 'B\'s table: I → E   ·   E\'s table: I → H   ·   H\'s table: I → I',
   'A, B, E, H, I 순서로 4ms, 1ms, 2ms, 5ms를 더하면 12ms입니다.': 'In the order A, B, E, H, I, 4ms, 1ms, 2ms and 5ms add up to 12ms.', '합계 12ms': 'Total 12ms',
   '각 라우터는 자신의 표에서 목적지 I에 해당하는 다음 라우터를 고릅니다. B는 E, E는 H, H는 I를 고릅니다.': 'Each router picks the next router for destination I from its own table. B picks E, E picks H, H picks I.',
   // Step 2

@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 read를 파일 시스템마다 다른 코드로 보내는 VFS, 폴더를 다른 장치에 잇는 mount, 경로 중간에서 파일 시스템이 바뀌는 길, RAM에만 있는 tmpfs를 한 정거장씩 따라가 보세요.">
+<title>VFS와 마운트 · 레슨 5.4</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#115e59}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
+.cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
+.cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
+.cell.changed .top{animation:flash 1s ease-out}
+@keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
+.cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
+.cell.empty .cell-value{fill:#9aa8a2}
+.address{font:600 9px var(--mono);fill:#6b7d76;text-anchor:start}
+.tag.name{transition:opacity .25s}
+.tag.name rect{stroke:var(--accent);stroke-width:1.1}
+.tag.name text{fill:var(--accent);font-weight:700}
+.bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bus.active{stroke:#7fa891}
+.packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
+.packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
+.packet-group.read .packet-label{fill:#3b4880}
+.code-area{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.code{list-style:none;counter-reset:line;margin:0;padding:10px 0;background:#1f2d29;border-radius:12px;color:#e8f2ec;font:600 1rem/1.5 var(--mono);flex:1 1 300px}
+.code li{counter-increment:line;padding:5px 14px 5px 46px;position:relative}
+.code li::before{content:counter(line);position:absolute;left:16px;color:#6f8a80}
+.code li.done{color:#8fa79c}
+.code li.current{background:#2f4a41;color:#ffffff}
+.code li.current::after{content:'다음';position:absolute;right:14px;color:#9fe3b6;font-size:.8125rem}
+.code-actions{display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
+.try-choices{display:flex;gap:6px;flex-wrap:wrap}
+.try-choices:empty{display:none}
+.dot.read{background:var(--response);border-color:var(--response)}
+.dot.write{background:var(--request);border-color:var(--request)}
+@media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.bus.inner{stroke:#c9d6ce;stroke-dasharray:3 3}
+.bus.main{stroke:#9fbfae;stroke-width:3}
+.cpu-area{fill:#e2ece5;stroke:#9fb7a9;stroke-width:1.2;stroke-dasharray:6 4}
+.board-tag rect{fill:#26322e;stroke:#26322e}.board-tag text{fill:#fff;font-weight:800}
+.cell .left{fill:#e6ebe8;stroke:#8c9d96}.cell .right{fill:#cfd8d4;stroke:#8c9d96}.cell .top{fill:#fff;stroke:#8c9d96}
+.cell.code .top{fill:#eef1fb;stroke:#7d88b4}.cell.code .left{fill:#dfe4f2;stroke:#7d88b4}.cell.code .right{fill:#c4cbe3;stroke:#7d88b4}
+.cell.code .cell-value{fill:#3c4a85;font-size:8.5px}
+.address{text-anchor:middle}
+.cell.active .top{fill:#fff1c9;stroke:#c9940f}
+.cell.next-pc .address{fill:var(--accent);font-weight:800}
+.part .face{stroke-width:.8;transition:fill .2s}
+.part.register .left{fill:#dbe9e2;stroke:#5f8f78}.part.register .right{fill:#c2d9cd;stroke:#5f8f78}.part.register .top{fill:#f3f8f5;stroke:#5f8f78}
+.part.control .left{fill:#eadcf0;stroke:#9a77ad}.part.control .right{fill:#d9c4e3;stroke:#9a77ad}.part.control .top{fill:#f7f0fa;stroke:#9a77ad}
+.part.alu .left{fill:#e4e1d3;stroke:#8f8763}.part.alu .right{fill:#d2cdb6;stroke:#8f8763}.part.alu .top{fill:#f7f5ec;stroke:#8f8763}
+.part.busy .top{fill:#fff1c9}
+.part-tag text{font:700 11.5px var(--mono)}
+.part.busy .part-tag rect{stroke:#c9940f;stroke-width:1.3}
+.packet-group.inner .packet,.packet-group.inner .packet-halo{fill:#9a77ad}
+.packet-group.inner .packet-label{fill:#5f3a73}
+.dot.inner{background:#9a77ad;border-color:#9a77ad}
+.memory-panel{flex:1 1 320px;display:flex;flex-direction:column;gap:8px}
+.phase-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.phases{list-style:none;display:flex;gap:4px;margin:0;padding:0}
+.phases li{padding:4px 12px;border:1px solid var(--border);border-radius:999px;font-size:.875rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.phases li.current{background:var(--accent);border-color:var(--accent);color:#fff}
+.clock{font:700 .9375rem var(--mono);color:var(--accent);margin-left:auto}
+.clock.tick{animation:bump .3s ease-out}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+.clock{display:inline-block}
+.memory-list{counter-reset:none;flex:none}
+.memory-list li{counter-increment:none;padding:3px 12px 3px 44px;display:flex;gap:10px}
+.memory-list li::before{content:none}
+.memory-list .addr{position:absolute;left:14px;color:#6f8a80}
+.memory-list li.data code{color:#bfe8cf}
+.memory-list li.ir{background:#2f4a41}
+.memory-list li.touched{box-shadow:inset 3px 0 #ffd34d}
+.memory-list .mark{margin-left:auto;color:#9fe3b6;font-size:.8125rem}
+.memory-list li.current::after{content:none}
+@media(prefers-reduced-motion:reduce){.clock.tick{animation:none}}
+@media(max-width:600px){.part-tag text{font-size:14px}.cell.code .cell-value{font-size:12px}}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+@media(max-width:600px){.packet-label{font-size:13px}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
+.bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
+.station .face{stroke-width:.8;transition:fill .2s}
+.station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
+.sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
+.station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.ssd .left{fill:#dfe4f2;stroke:#7a87b5}.station.ssd .right{fill:#c4cbe3;stroke:#7a87b5}.station.ssd .top{fill:#eaeef9;stroke:#7a87b5}
+.station.ram .left{fill:#acd5b9;stroke:#5f9474}.station.ram .right{fill:#80b596;stroke:#5f9474}.station.ram .top{fill:#dcf1e2;stroke:#5f9474}
+.station.cpu .left{fill:#3f4f4a;stroke:#26322e}.station.cpu .right{fill:#2f3d39;stroke:#26322e}.station.cpu .top{fill:#5d6f69;stroke:#26322e}
+.station.active .top{fill:#fff1c9}
+.station.cpu.active .top{fill:#8a7d4a}
+.station.error.error .top{fill:#f6b893;stroke:#a24c14}
+.station-tag text{font-weight:800}
+.tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
+.tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
+.tag.empty{display:none}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.dot.file{background:#fff;border-color:#8c9d96}.dot.tool{background:#eadcf0;border-color:#9a77ad}.dot.errordot{background:#ffd9c2;border-color:#a24c14}
+.stage-list{list-style:none;display:flex;flex-wrap:wrap;gap:4px;margin:0;padding:0}
+.stage-list li{padding:3px 10px;border:1px solid var(--border);border-radius:999px;font-size:.8125rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.stage-list li.done{color:var(--accent);border-color:#9fb7a9}
+.stage-list li.current{background:var(--accent);color:#fff;border-color:var(--accent)}
+.work-title{font-weight:800;color:var(--ink)}
+.work-panel.error .work-title{color:#a24c14}
+.work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
+.work li{padding-left:16px}
+@media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+.zone{stroke-width:1.2;stroke-dasharray:6 4}
+.zone.user-zone{fill:#e2ece5;stroke:#9fb7a9}
+.zone.kernel-zone{fill:#ece4f2;stroke:#b39ac4}
+.zone-label{font:800 11px system-ui,sans-serif;fill:#43574f}
+.border-line{stroke:#a24c14;stroke-width:2.4;stroke-dasharray:8 5}
+.station.user .left{fill:#bfe2cb;stroke:#4f8f6b}.station.user .right{fill:#9fcfb1;stroke:#4f8f6b}.station.user .top{fill:#e2f5e8;stroke:#4f8f6b}
+.station.gate .left{fill:#f6dfc8;stroke:#c26a1e}.station.gate .right{fill:#ecc8a4;stroke:#c26a1e}.station.gate .top{fill:#fdf2e7;stroke:#c26a1e}
+.station.kernel .left{fill:#eadcf0;stroke:#9a77ad}.station.kernel .right{fill:#d9c4e3;stroke:#9a77ad}.station.kernel .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.screen .left{fill:#d7dfdb;stroke:#8c9d96}.station.screen .right{fill:#34514a;stroke:#26322e}.station.screen .top{fill:#f4f7f5;stroke:#8c9d96}
+.dot.userdot{background:#e2ece5;border-color:#4f8f6b}.dot.kerneldot{background:#ece4f2;border-color:#9a77ad}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./vfs.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">운영체제 5장 장치와 파일 · 레슨 5.4</p>
+    <h1>VFS와 마운트</h1>
+    <p class="lead">디스크 파일, USB, /proc, RAM 속 파일을 프로그램은 어떻게 모두 같은 read로 다룰까요? 경로가 VFS를 거쳐 알맞은 파일 시스템에 닿는 길을 한 정거장씩 따라가 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">프로그램, VFS, 파일 시스템, 저장 위치</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">프로그램의 read가 VFS를 거쳐 경로에 맞는 파일 시스템(ext4, proc, vfat, xfs, tmpfs)으로 가는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="code-area">
+            <div class="memory-panel work-panel" id="work-panel">
+              <ol class="stage-list" id="stage-list" aria-label="정거장"></ol>
+              <p class="work-title" id="work-title"></p>
+              <ol class="code memory-list work" id="work" aria-label="지금 코드의 모습"></ol>
+            </div>
+            <div class="code-actions">
+              <button class="action primary" id="run-stage" type="button">다음 단계</button>
+              <button class="action" id="restart" type="button">처음부터</button>
+            </div>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="dot userdot"></i>사용자 영역</span><span><i class="dot kerneldot"></i>커널 영역</span></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+const kinds = { user: '프로세스', kernel: '커널', ssd: '저장장치', ram: '메모리' };
+// The VFS gives every file system the same open/read interface and decides, by the mount table,
+// which file system a path belongs to. Stations left of `kernelFrom` are user space.
+const lesson = [
+  {
+    label: '같은 read',
+    readingStage: 5,
+    title: 'VFS는 같은 read를 파일 시스템마다 다른 코드로 보낸다',
+    body: '리눅스 커널에는 VFS(가상 파일 시스템)라는 공통 층이 있습니다. 프로그램이 read를 부르면 VFS는 그 파일이 어느 파일 시스템에 속하는지 보고, 그 파일 시스템이 등록해 둔 read 함수를 부릅니다. /home/a.txt는 ext4라 디스크 블록을 읽고, /proc/meminfo는 proc이라 디스크 없이 커널이 가진 값으로 그 자리에서 글을 만들어 줍니다. 프로그램 쪽에서는 둘 다 똑같은 read입니다.',
+    takeaway: '프로그램 이름표가 "같은 read ×2"이고, VFS 이름표가 "경로로 나눔"이 됩니다. ext4 이름표는 "a.txt: 블록", proc 이름표는 "meminfo: 값"이 됩니다.',
+    description: '왼쪽 사용자 영역에 프로그램이, 경계 너머에 VFS, ext4 파일 시스템, proc 파일 시스템이 있습니다. 프로그램이 /home/a.txt와 /proc/meminfo를 읽습니다.',
+    note: ['read(/home/a.txt) · read(/proc/meminfo)', ' → ', 'VFS가 파일 시스템을 보고 나눔', ' → ', 'ext4: 디스크 블록 · proc: 커널 값으로 글을 만듦'],
+    kernelFrom: 1,
+    stations: [['prog', '프로그램', 'user'], ['vfs', 'VFS', 'kernel'], ['ext4', 'ext4', 'kernel', [17, -7]], ['proc', 'proc', 'kernel', [17, 7]]],
+    links: [['prog', 'vfs'], ['vfs', 'ext4'], ['vfs', 'proc']],
+    start: { title: '프로그램', lines: ['read(/home/a.txt)', 'read(/proc/meminfo)'], holds: { prog: '같은 read ×2' } },
+    stages: [
+      { from: 'prog', to: 'vfs', label: 'read ×2', title: 'VFS', lines: ['a.txt는 ext4', 'meminfo는 proc'],
+        text: '두 read 모두 VFS에 닿습니다. VFS가 각 파일의 파일 시스템을 봅니다.', holds: { vfs: '경로로 나눔' },
+        ask: { q: '/proc/meminfo를 읽을 때 디스크를 읽을까요?', choices: ['디스크에서 읽는다', '커널이 그 자리에서 만들어 준다', '캐시에만 있다'], answer: '커널이 그 자리에서 만들어 준다', why: 'proc은 디스크가 없는 파일 시스템입니다. read가 오면 커널이 지금 가진 값으로 글을 만들어 돌려줍니다.' } },
+      { from: 'vfs', to: 'ext4', label: 'ext4 read', title: 'ext4', lines: ['아이노드 → 디스크 블록'],
+        text: 'a.txt는 ext4의 read가 맡아 디스크 블록을 읽습니다.', holds: { ext4: 'a.txt: 블록' } },
+      { from: 'vfs', to: 'proc', label: 'proc read', title: 'proc', lines: ['MemTotal: … 글을 만듦', '디스크 없음'],
+        text: 'meminfo는 proc의 read가 맡아 커널의 메모리 통계로 글을 만듭니다.', holds: { proc: 'meminfo: 값' } },
+      { from: 'proc', to: 'vfs', label: '글', title: 'VFS', lines: ['ext4와 proc이 만든 글을 받음'],
+        text: '두 파일 시스템이 만든 글이 VFS로 돌아옵니다.', holds: {} },
+      { from: 'vfs', to: 'prog', label: '글 ×2', title: '프로그램', lines: ['두 read 모두 글을 받음'],
+        text: '프로그램은 두 read에서 똑같이 글을 받습니다.', holds: {} },
+    ],
+  },
+  {
+    label: 'mount로 붙이기',
+    readingStage: 3,
+    title: 'mount는 폴더 하나를 다른 장치의 파일 시스템에 잇는다',
+    body: 'USB 메모리를 꽂으면 /dev/sdb1이라는 장치가 생기지만, 그 안의 파일을 경로로 열려면 어딘가에 붙여야 합니다. mount /dev/sdb1 /mnt/usb는 VFS의 마운트 표에 "/mnt/usb 아래는 sdb1의 vfat 파일 시스템"이라고 적습니다. 그 뒤 /mnt/usb/photo.jpg를 열면 VFS가 /mnt/usb에서 USB의 파일 시스템으로 건너갑니다. 원래 /mnt/usb 폴더에 있던 것은 mount가 풀릴 때까지 가려집니다.',
+    takeaway: 'mount가 VFS로 가 VFS 이름표가 "/mnt/usb=sdb1"이 됩니다. open이 VFS를 지나 vfat로 가고 USB 이름표가 "photo.jpg"가 되며, 프로그램 이름표가 "폴더처럼 열림"이 됩니다.',
+    description: '왼쪽 사용자 영역에 프로그램이, 경계 너머에 VFS, vfat 파일 시스템, USB 메모리가 있습니다. /mnt/usb는 빈 폴더입니다.',
+    note: ['mount /dev/sdb1 /mnt/usb', ' → ', '마운트 표: /mnt/usb = sdb1(vfat)', ' → ', 'open(/mnt/usb/photo.jpg) → USB로'],
+    kernelFrom: 1,
+    stations: [['prog', '프로그램', 'user'], ['vfs', 'VFS', 'kernel'], ['fs', 'vfat', 'kernel'], ['usb', 'USB 메모리', 'ssd']],
+    start: { title: '프로그램', lines: ['$ mount /dev/sdb1 /mnt/usb', 'open("/mnt/usb/photo.jpg")'], holds: { vfs: '/mnt/usb: 빈 폴더' } },
+    stages: [
+      { from: 'prog', to: 'vfs', label: 'mount', title: 'VFS', lines: ['마운트 표에 추가', '/mnt/usb = sdb1 (vfat)'],
+        text: 'mount가 VFS의 마운트 표에 /mnt/usb와 USB의 파일 시스템을 잇습니다.', holds: { vfs: '/mnt/usb=sdb1' },
+        ask: { q: 'mount 뒤 /mnt/usb/photo.jpg를 열면 어디로 갈까요?', choices: ['원래 디스크의 빈 폴더', 'USB 메모리', '열 수 없다'], answer: 'USB 메모리', why: '마운트 표가 /mnt/usb 아래를 USB의 파일 시스템으로 잇습니다. 경로는 그대로지만 가리키는 곳이 바뀌었습니다.' } },
+      { from: 'vfs', to: 'fs', label: 'open', title: 'vfat', lines: ['USB의 파일 시스템이 맡음'],
+        text: 'photo.jpg를 열자 VFS가 /mnt/usb에서 vfat 파일 시스템으로 건너갑니다.', holds: { fs: 'vfat가 맡음', prog: '폴더처럼 열림' } },
+      { from: 'fs', to: 'usb', label: 'photo.jpg', title: 'USB 메모리', lines: ['USB에서 photo.jpg를 찾음'],
+        text: 'vfat가 USB 메모리에서 photo.jpg를 찾아 읽습니다.', holds: { usb: 'photo.jpg' } },
+    ],
+  },
+  {
+    label: '경로 따라가기',
+    readingStage: 4,
+    title: '경로 중간에 마운트 지점이 있으면 다른 파일 시스템으로 건너간다',
+    body: '/home/kim/x.txt를 열면 VFS는 /부터 한 칸씩 내려갑니다. /는 NVMe 디스크의 ext4라 ext4에서 home을 찾습니다. 그런데 /home은 두 번째 디스크의 xfs가 붙은 마운트 지점입니다. VFS는 여기서 xfs로 건너가 kim과 x.txt를 xfs에서 찾습니다. 그래서 x.txt는 두 번째 디스크에 있습니다. 프로그램은 경로가 디스크 두 개에 걸쳐 있다는 것을 모릅니다.',
+    takeaway: 'VFS 이름표가 "/home=xfs"가 됩니다. 경로가 /home에서 xfs로 건너가 xfs 이름표가 "x.txt 찾음", 디스크 2 이름표가 "x.txt"가 됩니다.',
+    description: '왼쪽 사용자 영역에 프로그램이, 경계 너머에 VFS, ext4(디스크 1), xfs, 디스크 2가 있습니다. /home은 디스크 2의 xfs가 붙은 마운트 지점입니다.',
+    note: ['/home/kim/x.txt', ' → ', '/ 는 ext4', ' → ', '/home 에서 마운트 지점 → xfs (디스크 2)', ' → ', 'x.txt는 디스크 2에'],
+    kernelFrom: 1,
+    stations: [['prog', '프로그램', 'user'], ['vfs', 'VFS', 'kernel'], ['ext4', 'ext4 (/)', 'kernel'], ['xfs', 'xfs (/home)', 'kernel'], ['disk2', '디스크 2', 'ssd']],
+    start: { title: 'VFS', lines: ['마운트 표', '/ = nvme0n1 (ext4)', '/home = sdb1 (xfs)'], holds: { prog: 'open' } },
+    stages: [
+      { from: 'prog', to: 'vfs', label: '/home/kim/x.txt', title: 'VFS', lines: ['/부터 한 칸씩'],
+        text: 'VFS가 경로를 /부터 한 칸씩 따라갑니다.', holds: { vfs: '/home=xfs' } },
+      { from: 'vfs', to: 'ext4', label: '/ 에서 home', title: 'ext4 (/)', lines: ['home 폴더를 찾음', '마운트 지점 표시가 있음'],
+        text: 'ext4에서 home을 찾았지만, 그 자리는 마운트 지점입니다.', holds: { ext4: '마운트 지점' },
+        ask: { q: '/home에서 VFS는 어떻게 할까요?', choices: ['ext4에서 계속 찾는다', '붙어 있는 xfs로 건너간다', '찾기를 멈춘다'], answer: '붙어 있는 xfs로 건너간다', why: '마운트 표에 /home은 두 번째 디스크의 xfs로 적혀 있습니다. 그 아래 경로는 xfs가 맡습니다.' } },
+      { from: 'ext4', to: 'xfs', label: '건너감', title: 'xfs (/home)', lines: ['kim → x.txt를 찾음'],
+        text: 'VFS가 xfs로 건너가 kim과 x.txt를 찾습니다.', holds: { xfs: 'x.txt 찾음' } },
+      { from: 'xfs', to: 'disk2', label: 'x.txt', title: '디스크 2', lines: ['x.txt의 블록을 읽음'],
+        text: 'x.txt는 두 번째 디스크에 있습니다.', holds: { disk2: 'x.txt' } },
+    ],
+  },
+  {
+    label: 'RAM 속 파일',
+    readingStage: 3,
+    title: 'tmpfs의 파일은 디스크 없이 RAM에만 있다',
+    body: '/tmp나 /run은 흔히 tmpfs로 붙어 있습니다. tmpfs는 파일 내용을 디스크에 쓰지 않고 3.6의 페이지 캐시(RAM)에만 둡니다. 그래서 읽고 쓰기가 빠르지만, 전원을 끄거나 재부팅하면 내용이 사라집니다. 메모리가 모자라면 스왑으로 밀려날 수는 있습니다. 컨테이너와 임시 파일, 소켓 파일처럼 잠깐 쓰고 버릴 것에 알맞습니다.',
+    takeaway: 'VFS 이름표가 "/tmp=tmpfs"가 되고, write가 tmpfs로 가 tmpfs 이름표가 "디스크 없음"이 됩니다. RAM 이름표가 "꺼지면 사라짐"이 됩니다.',
+    description: '왼쪽 사용자 영역에 프로그램이, 경계 너머에 VFS, tmpfs, RAM이 있습니다. /tmp는 tmpfs로 붙어 있습니다.',
+    note: ['/tmp = tmpfs', ' → ', 'write(/tmp/cache)', ' → ', '디스크 없이 RAM(페이지 캐시)에만', ' → ', '빠르지만 꺼지면 사라짐'],
+    kernelFrom: 1,
+    stations: [['prog', '프로그램', 'user'], ['vfs', 'VFS', 'kernel'], ['tmpfs', 'tmpfs', 'kernel'], ['ram', 'RAM', 'ram']],
+    start: { title: '프로그램', lines: ['write("/tmp/cache", …)'], holds: { vfs: '/tmp=tmpfs' } },
+    stages: [
+      { from: 'prog', to: 'vfs', label: 'write', title: 'VFS', lines: ['/tmp는 tmpfs'],
+        text: 'write가 VFS에 닿고, /tmp는 tmpfs라는 것을 마운트 표에서 찾습니다.', holds: {} },
+      { from: 'vfs', to: 'tmpfs', label: 'tmpfs write', title: 'tmpfs', lines: ['디스크에 쓰지 않음'],
+        text: 'tmpfs는 디스크를 쓰지 않습니다.', holds: { tmpfs: '디스크 없음' },
+        ask: { q: '재부팅한 뒤 /tmp/cache는 남아 있을까요?', choices: ['남아 있다', '사라진다', '디스크로 옮겨져 있다'], answer: '사라진다', why: 'tmpfs의 파일은 RAM에만 있습니다. 전원이 꺼지면 RAM의 내용도 사라집니다.' } },
+      { from: 'tmpfs', to: 'ram', label: 'cache', title: 'RAM', lines: ['페이지 캐시에만 둠'],
+        text: '내용은 RAM의 페이지 캐시에만 있습니다. 빠르지만 재부팅하면 사라집니다.', holds: { ram: '꺼지면 사라짐' } },
+    ],
+  },
+];
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'vfs-lab:v1:step';
+const state = { index: 0, s: 0, playing: !motion.matches, wait: 0, busy: false, wrong: '', solvedText: '' };
+const progress = lesson.map(() => 0);
+const answered = lesson.map(() => new Set());
+let packets = [];
+let frame = null;
+let lastFrame = null;
+let timers = [];
+
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const laneHeight = 4;
+const gap = 8.5;   // u between stations (wider than 1.2: two user-space badges such as "PID 101 · fork → 0" sit side by side)
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+byId('grid').setAttribute('d', gridLines.join(''));
+
+
+let plates = [];
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Scene: stations in a row ----------
+const shapeOf = { user: [1.1, 12], gate: [.9, 18], kernel: [1.15, 13], ssd: [1.3, 12], screen: [1.2, 22], ram: [1.3, 8] };
+let views = {};
+// A station's floor position: its own [u, v] when given (a branch off the row), otherwise its place in the row.
+const posOf = (id) => {
+  const stations = lesson[state.index].stations;
+  const k = stations.findIndex(([sid]) => sid === id);
+  return stations[k][3] ?? [k * gap, 0];
+};
+// A link between stations on different rows runs along the first row, turns halfway between them and runs along
+// the second row, so a branch reads as a fork and never cuts through a name plate. Packets follow the same path.
+const route = (from, to) => from[1] === to[1] ? [from, to]
+  : [from, [(from[0] + to[0]) / 2, from[1]], [(from[0] + to[0]) / 2, to[1]], to];
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  views = {};
+  const stations = lesson[state.index].stations;
+  const spots = stations.map(([id]) => posOf(id));
+  const far = Math.max(...spots.map(([u]) => u));
+  const reach = 4.6 + Math.max(...spots.map(([, v]) => Math.abs(v)));
+  // User space and kernel space, split between the first station and the system-call gate.
+  const border = (lesson[state.index].kernelFrom - .5) * gap;
+  const zone = (u0, u1, cls, label) => {
+    svg('polygon', { class: 'zone ' + cls, points: [[u0, -reach], [u1, -reach], [u1, reach], [u0, reach]].map(([u, v]) => flat(u, v).join(',')).join(' ') }, byId('casings'));
+    // The zone name sits in its own group, apart from the zone's floor.
+    const t = svg('text', { class: 'zone-label', x: 14 * (u0 + u1) / 2, y: flat(0, reach)[1] + 26, 'text-anchor': 'middle' }, svg('g', { class: 'zone-name' }, byId('casings')));
+    t.textContent = label;
+  };
+  zone(-2.6, border, 'user-zone', '사용자 영역');
+  zone(border, far + 2.6, 'kernel-zone', '커널 영역 · 하드웨어');
+  svg('path', { class: 'border-line', d: `M${flat(border, -reach).join(' ')}L${flat(border, reach).join(' ')}` }, byId('casings'));
+  // One rail per link (the step's own list, or each station to the next), each ending at its two stations, so no
+  // rail runs under a station it does not serve.
+  const pairs = lesson[state.index].links ?? stations.slice(1).map(([id], k) => [stations[k][0], id]);
+  for (const [a, b] of pairs) {
+    const d = 'M' + route(posOf(a), posOf(b)).map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
+    svg('path', { class: 'casing', d }, byId('casings'));
+    svg('path', { class: 'bus', d }, byId('links'));
+  }
+  stations.forEach(([id, name, kind], k) => {
+    const [h, H] = shapeOf[kind];
+    const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(...posOf(id)).join(' ')})` }, byId('nodes'));
+    drawShadow(node, h);
+    drawBox(node, h, H);
+    if (kind === 'file') {
+      // Lines of text on a sheet.
+      for (let r = 0; r < 3; r++) {
+        const y = -h + .45 + r * .5;
+        svg('path', { class: 'sheet-line', d: `M${point(-h + .35, y, H)}L${point(h - .35 - (r === 2 ? .5 : 0), y, H)}` }, node);
+      }
+    }
+    if (kind === 'cpu') {
+      const mark = [[-.45, -.45, H], [.45, -.45, H], [.45, .45, H], [-.45, .45, H]];
+      svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, node);
+    }
+    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    const holds = addPlate(node, 'tag holds', 0, -H - 14 * h - 14, '', { pad: 1.2 });
+    views[id] = { node, holds };
+  });
+  const left = -60, right = 14 * far + 60, top = -104 - 7 * (reach - 4.6), bottom = 70 + 7 * (reach - 4.6);
+  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// ---------- The moving dot ----------
+function travel(from, to, label, done) {
+  if (motion.matches) { done(); return; }
+  const group = svg('g', { class: 'packet-group' }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  // Screen points of the path, pulled in at both ends so the dot starts and ends beside the boxes.
+  const pts = route(from, to).map(([u, v]) => flat(u, v, laneHeight));
+  const pull = (a, b) => { const len = Math.hypot(b[0] - a[0], b[1] - a[1]); const k = len > 60 ? 30 / len : .3; return [mix(a[0], b[0], k), mix(a[1], b[1], k)]; };
+  pts[0] = pull(pts[0], pts[1]);
+  pts[pts.length - 1] = pull(pts[pts.length - 1], pts[pts.length - 2]);
+  packets.push({ group, pts, start: performance.now(), ms: 950, done });
+  kick();
+}
+// Callbacks run after the list is updated, so a callback that starts a new trip is not lost.
+function movePackets(now) {
+  const finished = [];
+  packets = packets.filter((packet) => {
+    const t = (now - packet.start) / packet.ms;
+    if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
+    const ease = t * t * (3 - 2 * t);
+    // Walk the given share of the path's length.
+    const lens = packet.pts.slice(1).map((p, i) => Math.hypot(p[0] - packet.pts[i][0], p[1] - packet.pts[i][1]));
+    let rest = ease * lens.reduce((a, b) => a + b, 0), i = 0;
+    while (i < lens.length - 1 && rest > lens[i]) rest -= lens[i++];
+    const k = lens[i] ? rest / lens[i] : 0;
+    const x = mix(packet.pts[i][0], packet.pts[i + 1][0], k), y = mix(packet.pts[i][1], packet.pts[i + 1][1], k);
+    packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    return true;
+  });
+  finished.forEach((done) => done());
+}
+
+// ---------- State after s stages ----------
+function paint() {
+  const step = lesson[state.index];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
+  for (const [id] of step.stations) {
+    setPlate(views[id].holds, holds[id] ?? '');
+    views[id].holds.group.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
+  }
+  // The still picture says in one line what happened up to the reading stage, so the badges read as its result.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
+  byId('work-title').textContent = view.title;
+  byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
+  byId('work-panel').classList.toggle('error', Boolean(last?.error));
+  byId('readout').textContent = last ? last.text : '"다음 단계"를 누르면 신호가 한 정거장씩 움직입니다.';
+  const finished = state.s >= step.stages.length;
+  const blocked = !state.playing && (finished || state.busy || Boolean(pendingAsk()));
+  byId('run-stage').disabled = blocked;
+  byId('run-stage').textContent = finished ? '끝까지 왔습니다' : '다음 단계';
+  [...byId('stage-list').children].forEach((li, k) => {
+    li.classList.toggle('done', k < state.s);
+    li.classList.toggle('current', k === state.s);
+  });
+}
+
+function runStage(done) {
+  const step = lesson[state.index];
+  const stage = step.stages[state.s];
+  if (!stage || state.busy) return;
+  state.busy = true;
+  views[stage.from].node.classList.add('active');
+  travel(posOf(stage.from), posOf(stage.to), stage.label, () => {
+    state.s++;
+    state.busy = false;
+    paint();
+    byId('announcement').textContent = stage.text;
+    done?.();
+  });
+  paint();
+}
+
+// ---------- Predictions ----------
+function pendingAsk() {
+  if (state.playing) return null;
+  const stage = lesson[state.index].stages[state.s];
+  return stage?.ask && !answered[state.index].has(state.s) ? stage.ask : null;
+}
+const asksCount = () => lesson[state.index].stages.filter((stage) => stage.ask).length;
+function syncTask() {
+  const choices = byId('try-choices');
+  choices.replaceChildren();
+  const ask = pendingAsk();
+  if (ask && !state.busy) {
+    byId('try').classList.remove('solved');
+    byId('try-text').textContent = ask.q;
+    byId('try-result').textContent = state.wrong || state.solvedText;
+    for (const choice of ask.choices) {
+      const button = Object.assign(document.createElement('button'), { type: 'button', className: 'action choice-button', textContent: choice });
+      button.addEventListener('click', () => answer(choice));
+      choices.append(button);
+    }
+  } else if (state.solvedText) {
+    byId('try').classList.add('solved');
+    byId('try-text').textContent = state.solvedText;
+    byId('try-result').textContent = '';
+  } else {
+    byId('try').classList.remove('solved');
+    byId('try-result').textContent = '';
+    byId('try-text').textContent = state.s >= lesson[state.index].stages.length
+      ? (progress[state.index] >= asksCount() ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
+      : '"다음 단계"를 눌러 신호를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.';
+  }
+}
+function answer(choice) {
+  const ask = pendingAsk();
+  if (!ask) return;
+  if (choice !== ask.answer) {
+    state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`;
+    byId('announcement').textContent = state.wrong;
+    syncTask();
+    return;
+  }
+  state.wrong = '';
+  answered[state.index].add(state.s);
+  progress[state.index] = answered[state.index].size;
+  state.solvedText = `✓ 맞았습니다. ${ask.why}`;
+  byId('announcement').textContent = state.solvedText;
+  runStage(() => syncTask());
+  syncTask();
+}
+
+// Taking over from the demo starts the learner's own run from the beginning, so no prediction is skipped.
+byId('run-stage').onclick = () => {
+  takeOver();
+  if (state.busy || pendingAsk()) { syncTask(); return; }
+  state.solvedText = '';
+  runStage(() => syncTask());
+  syncTask();
+};
+byId('restart').onclick = () => {
+  state.playing = false;
+  resetRun();
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 다시 시작합니다.';
+};
+
+// ---------- Demo ----------
+
+// ---------- Steps and routing ----------
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/vfs/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/vfs\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/vfs/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

@@ -29,6 +29,7 @@ window.lessonText = {
   '{0} → 코드 합 {#1} → {#2} mod {#3} = {#4}번 칸 · 빈 칸 → 없음 · 리스트였다면 {#5}번 비교':
     '{0} → code sum {1} → {2} mod {3} = slot {4} · empty slot → not there · a list would take {5} {5|comparison|comparisons}',
   '{0} → 코드 합 {#1} → {#2} mod {#3} = {#4}': '{0} → code sum {1} → {2} mod {3} = {4}',
+  '채움 비율 {#0} ÷ {#1} = {#2} > 0.75': 'fill ratio {0} ÷ {1} = {2} > 0.75',
   '{0}은(는) 이미 들어 있습니다. 같은 이름은 한 번만 넣습니다.': '{0} is already in. Each name goes in only once.',
   '채움 비율이 0.75를 넘었습니다. 칸을 29개로 늘리고 모든 이름의 칸을 다시 계산합니다.': 'The fill ratio passed 0.75. The table grows to 29 slots and every name\'s slot is worked out again.',
   '칸이 29개가 됐습니다. 채움 비율 {#0} ÷ 29 = {#1} · 두 개 이상 몰린 칸 {#2}개': 'There are now 29 slots. Fill ratio {0} ÷ 29 = {1} · slots holding two or more: {2}',

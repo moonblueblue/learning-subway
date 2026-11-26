@@ -173,7 +173,9 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 @media(max-width:600px){.packet-label{font-size:13px}}
 .casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
 .bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
+.bus.cut{stroke:#c26a1e;stroke-width:2.4;stroke-dasharray:6 6;opacity:.8}
 .station .face{stroke-width:.8;transition:fill .2s}
+@media(prefers-reduced-motion:reduce){.station .face{transition:none}}
 .station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
 .sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
 .station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
@@ -187,6 +189,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
 .tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
 .tag.empty{display:none}
+.packet-tag rect{fill:#fff;fill-opacity:.94;stroke:#9fbfae;stroke-width:.7}.packet-tag .packet-label{font-size:10.5px;stroke:none;dominant-baseline:central}
+@media(max-width:600px){.packet-tag .packet-label{font-size:13px}}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
@@ -368,8 +372,8 @@ setCamera(0, 0, 1);
 const kinds = { app: '응용', layer: '계층', wire: '전선', router: '라우터' };
 // A message travels down the sender's layers, across the wire, and up the receiver's layers.
 // Each layer adds (or removes) its own header; the work panel shows the nested envelopes.
-// Three servers that must agree on one value, in the style of Raft. Stations may sit off the row: [id, name, kind, [u, v]].
-const NODES = [['client', '클라이언트', 'wire', [0, 0]], ['a', '서버 A', 'app', [11, 0]], ['b', '서버 B', 'app', [21, -13]], ['c', '서버 C', 'app', [21, 13]]];
+// Three servers that must agree on one value, in the style of Raft. Stations may sit off the row: [id, name, kind, [u, v]], plus 'left' or 'right' (and a distance) to put the station's plates beside it.
+const NODES = [['client', '클라이언트', 'wire', [0, 0]], ['a', '서버 A', 'app', [11, 0], 'right', 64], ['b', '서버 B', 'app', [24, -13], 'right'], ['c', '서버 C', 'app', [24, 13], 'right']];
 const LINKS = [['client', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'c']];
 const lesson = [
   {
@@ -381,7 +385,7 @@ const lesson = [
     body: '중요한 설정값(예: "지금 주 DB는 누구인가")을 서버 세 대가 함께 보관한다고 해 봅시다. 한 대만 두면 그 서버가 죽을 때 함께 사라지니까요. 그런데 클라이언트 둘이 서로 다른 서버에 동시에 다른 값을 쓰면, 서버마다 값이 달라집니다. 어느 것이 진짜인지 아무도 모릅니다.',
     takeaway: 'A는 x = 5, B는 x = 7이라고 믿습니다. 서버 여러 대가 하나의 값에 동의하려면 "누가 순서를 정하는가"와 "몇 대가 받아야 확정인가"라는 규칙이 필요합니다. 이것이 합의 알고리즘(Raft, Paxos)이 하는 일입니다.',
     description: '왼쪽 위와 아래에 클라이언트 둘, 오른쪽에 서버 A, B, C가 있습니다.',
-    stations: [['c1', '클라이언트 1', 'wire', [0, -13]], ['c2', '클라이언트 2', 'wire', [0, 13]], ['a', '서버 A', 'app', [12, -13]], ['b', '서버 B', 'app', [12, 13]], ['c', '서버 C', 'app', [22, 0]]],
+    stations: [['c1', '클라이언트 1', 'wire', [0, -13]], ['c2', '클라이언트 2', 'wire', [0, 13]], ['a', '서버 A', 'app', [12, -13], 'right'], ['b', '서버 B', 'app', [12, 13], 'right'], ['c', '서버 C', 'app', [22, 0]]],
     links: [['c1', 'a'], ['c2', 'b'], ['a', 'c'], ['b', 'c'], ['a', 'b']],
     start: { title: '모두 같음', lines: ['A, B, C: x = 1'], holds: { a: 'x = 1', b: 'x = 1', c: 'x = 1' } },
     stages: [
@@ -407,7 +411,7 @@ const lesson = [
       { from: 'client', to: 'a', label: 'x = 5', title: '리더가 받음', lines: ['A 로그: [x = 5] (아직 확정 아님)'], text: '쓰기는 리더 A가 받습니다.', holds: { a: '로그에 x = 5' } },
       { from: 'a', to: 'b', label: '로그 복사', title: 'B에 복사', lines: ['B 로그: [x = 5] → "기록함"'], text: 'A가 B에게 로그를 복사합니다.', holds: { b: '기록함' },
         ask: { q: '서버 3대에서 리더 A가 값을 확정하려면 최소 몇 대의 기록이 필요할까요?', choices: ['2대 (A 자신 + 1대)', '3대 모두'], answer: '2대 (A 자신 + 1대)', why: '3대의 과반은 2대입니다. A와 B가 기록했으니 C를 기다리지 않아도 됩니다.' } },
-      { from: 'b', to: 'a', label: '기록함', title: '과반 확인', lines: ['A + B = 2대 → x = 5 확정'], text: '과반이 기록해 x = 5가 확정됩니다.', holds: { a: '리더 · x = 5 확정' } },
+      { from: 'b', to: 'a', label: '기록함', title: '과반 확인', lines: ['A + B = 2대 → x = 5 확정'], text: '과반이 기록해 x = 5가 확정됩니다.', holds: { a: 'x = 5 확정' } },
       { from: 'a', to: 'client', label: '완료', title: '클라이언트에 답함', lines: ['C는 아직 못 받았지만 확정은 이미 끝남'], text: '확정되자마자 클라이언트에 답합니다.', holds: { client: 'x = 5 완료' } },
       { from: 'a', to: 'c', label: '로그 복사', title: 'C도 따라잡음', lines: ['C 로그: [x = 5]', '세 서버 모두 x = 5'], text: '느린 C도 곧 따라잡습니다.', holds: { c: 'x = 5' } },
     ],
@@ -424,7 +428,7 @@ const lesson = [
     links: [['client', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'c'], ['client', 'b']],
     start: { title: '지금 상태', lines: ['리더 A (임기 1) · 모두 x = 5', '하트비트: 0.1초마다 · 끊긴 지 0.3초면 선거'], holds: { a: '리더 · 임기 1', b: '팔로워', c: '팔로워' } },
     stages: [
-      { from: 'a', to: 'b', label: '하트비트', title: 'A가 죽음', lines: ['A가 꺼짐 → 하트비트가 끊김'], error: 'a', text: '리더 A가 죽어 하트비트가 끊깁니다.', holds: { a: '죽음' } },
+      { from: 'a', to: 'b', label: '하트비트', title: 'A가 죽음', lines: ['A가 꺼짐 → 하트비트가 끊김'], error: 'a', cut: [['client', 'a'], ['a', 'b'], ['a', 'c']], text: '리더 A가 죽어 하트비트가 끊깁니다.', holds: { a: '죽음' } },
       { from: 'b', to: 'c', label: '임기 2, 표 줄래?', title: 'B가 후보로', lines: ['B: 0.3초 동안 신호 없음 → 임기 2 후보', 'B는 자기에게 1표'], text: 'B가 임기를 올려 후보가 되고 C에게 표를 청합니다.', holds: { b: '후보 · 임기 2 · 1표' },
         ask: { q: 'B가 리더가 되려면 표가 몇 개 필요할까요?', choices: ['2표 (자기 + C)', '3표 (A의 표까지)'], answer: '2표 (자기 + C)', why: '서버 3대의 과반은 2입니다. 죽은 A의 표 없이도 리더를 뽑을 수 있습니다.' } },
       { from: 'c', to: 'b', label: '찬성', title: 'C가 투표', lines: ['C: 임기 2에서 아직 아무에게도 표를 안 줌 → B에게 찬성', 'B: 2표 → 리더'], text: 'C가 B에게 표를 줍니다. B가 과반을 얻어 리더가 됩니다.', holds: { b: '리더 · 임기 2', c: '팔로워' } },
@@ -444,11 +448,11 @@ const lesson = [
     links: LINKS,
     start: { title: '갈라지기 직전', lines: ['리더 A (임기 1) · 모두 x = 5'], holds: { a: '리더 · 임기 1', b: '팔로워', c: '팔로워' } },
     stages: [
-      { from: 'a', to: 'b', label: '로그 복사', title: '네트워크가 끊김', lines: ['A ↔ B, C 연결이 끊김', 'A: 혼자 · B, C: 둘'], error: 'a', text: 'A와 나머지 사이가 끊겼습니다.', holds: { a: '혼자 고립' } },
-      { from: 'client', to: 'a', label: 'x = 9', title: 'A가 쓰기를 받음', lines: ['A 로그: [x = 5, x = 9]', 'B, C에 복사 불가 → 1대뿐, 과반 아님'], text: '고립된 A도 쓰기를 받지만 복사할 곳이 없습니다.', holds: { a: 'x = 9 확정 못 함' },
+      { from: 'a', to: 'b', label: '로그 복사', title: '네트워크가 끊김', lines: ['A ↔ B, C 연결이 끊김', 'A: 혼자 · B, C: 둘'], error: 'a', cut: [['a', 'b'], ['a', 'c']], text: 'A와 나머지 사이가 끊겼습니다.', holds: { a: '혼자 고립' } },
+      { from: 'client', to: 'a', label: 'x = 9', title: 'A가 쓰기를 받음', lines: ['A 로그: [x = 5, x = 9]', 'B, C에 복사 불가 → 1대뿐, 과반 아님'], text: '고립된 A도 쓰기를 받지만 복사할 곳이 없습니다.', holds: { a: 'x = 9 미확정' },
         ask: { q: '고립된 A는 x = 9를 확정할 수 있을까요?', choices: ['없다, 1대는 과반이 아니다', '있다, 아직 리더니까'], answer: '없다, 1대는 과반이 아니다', why: '리더라도 과반의 기록을 얻지 못하면 확정할 수 없습니다. 클라이언트는 답을 받지 못합니다.' } },
       { from: 'b', to: 'c', label: '임기 2, 표 줄래?', title: '반대편의 선거', lines: ['B, C는 A의 하트비트를 못 받음 → B가 임기 2 리더', 'B: x = 8 쓰기 → C와 함께 2대 → 확정'], text: '과반인 B, C 쪽은 새 리더를 뽑고 계속 확정합니다.', holds: { b: '리더 · 임기 2 · x = 8', c: 'x = 8' } },
-      { from: 'b', to: 'a', label: '임기 2 로그', title: '다시 이어짐', lines: ['A: 임기 2 > 내 임기 1 → 팔로워로 내려감', 'A의 확정 안 된 x = 9는 버리고 B의 로그를 따름', '모두 x = 8'], reset: 'a', text: '네트워크가 이어지자 A는 B를 따라 x = 8로 맞춥니다.', holds: { a: '팔로워 · x = 8' },
+      { from: 'b', to: 'a', label: '임기 2 로그', title: '다시 이어짐', lines: ['A: 임기 2 > 내 임기 1 → 팔로워로 내려감', 'A의 확정 안 된 x = 9는 버리고 B의 로그를 따름', '모두 x = 8'], reset: 'a', heal: [['a', 'b'], ['a', 'c']], text: '네트워크가 이어지자 A는 B를 따라 x = 8로 맞춥니다.', holds: { a: '팔로워 · x = 8' },
         ask: { q: '서버를 3대가 아니라 2대로 두면 무엇이 문제일까요?', choices: ['한 대만 죽어도 과반(2대)이 없어 아무것도 확정할 수 없다', '더 빨라진다'], answer: '한 대만 죽어도 과반(2대)이 없어 아무것도 확정할 수 없다', why: '2대의 과반은 2대라 한 대도 잃을 수 없습니다. 그래서 합의 집단은 보통 3대나 5대처럼 홀수로 둡니다.' } },
     ],
   },
@@ -478,6 +482,17 @@ byId('grid').setAttribute('d', gridLines.join(''));
 
 let plates = [];
 matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+// A plate beside its station grows away from the box: the holds plate just above the line height, the name plate
+// just below it, so a line along the station's own row runs between the two. Its centre follows the text width,
+// so the engine's sizePlate (after new text, a narrower screen or a translation) keeps the inner edge in place.
+function besidePlate(plate, side, edge) {
+  const size = () => parseFloat(getComputedStyle(plate.label).fontSize);
+  Object.defineProperties(plate, {
+    x: { get: () => (side === 'right' ? 1 : -1) * (edge + (plate.label.getComputedTextLength() + size() * plate.pad) / 2) },
+    y: { get: () => -laneHeight + (plate.group.classList.contains('holds') ? -1 : 1) * (6 + (size() + 8) / 2) },
+  });
+  sizePlate(plate);
+}
 
 // ---------- Scene: stations in a row ----------
 const shapeOf = { app: [1.1, 14], layer: [1.1, 10], wire: [1.2, 5], router: [1.1, 12], file: [.9, 7], tool: [1.15, 13], ssd: [1.3, 12], ram: [1.3, 10], cpu: [1.1, 8] };
@@ -499,9 +514,9 @@ function buildScene() {
   for (const [a, b] of pairs) {
     const d = 'M' + [posOf(a), posOf(b)].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
     svg('path', { class: 'casing', d }, byId('casings'));
-    svg('path', { class: 'bus', d }, byId('links'));
+    views[`${a}|${b}`] = svg('path', { class: 'bus', d }, byId('links'));
   }
-  stations.forEach(([id, name, kind]) => {
+  stations.forEach(([id, name, kind, , side, edge]) => {
     const [h, H] = shapeOf[kind];
     const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(...posOf(id)).join(' ')})` }, byId('nodes'));
     drawShadow(node, h);
@@ -517,13 +532,32 @@ function buildScene() {
       const mark = [[-.45, -.45, H], [.45, -.45, H], [.45, .45, H], [-.45, .45, H]];
       svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, node);
     }
-    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    const tag = addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
     const holds = addPlate(node, 'tag holds', 0, -H - 14 * h - 14, '', { pad: 1.2 });
+    // A line that leaves a station steeply up or down, or passes just above or below it, would run through the
+    // plates there. Such a station names a `side` and keeps both plates beside the box on that side, `edge` from its centre.
+    if (side) for (const plate of [tag, holds]) besidePlate(plate, side, edge ?? 28 * h + 24);
     views[id] = { node, holds };
   });
   const spots = stations.map(([id]) => posOf(id));
   const us = spots.map(([u]) => u), vs = spots.map(([, v]) => v);
-  const left = 14 * Math.min(...us) - 60, right = 14 * Math.max(...us) + 60;
+  // Plates beside a station reach further out than the ones above and below it: as far as its widest badge in this
+  // step, measured on the plate itself (a fixed 150 cut "이름 보고 닫음" at the left edge on a narrow screen).
+  const step = lesson[state.index];
+  const outer = stations.map(([id, , , , side]) => {
+    if (!side) return 60;
+    const plate = views[id].holds, widths = [];
+    for (const text of [step.start.holds?.[id], ...step.stages.map((stage) => stage.holds?.[id])].filter(Boolean)) {
+      setPlate(plate, text);
+      widths.push(Math.abs(plate.x) + plate.rect.width.baseVal.value / 2);
+    }
+    setPlate(plate, '');
+    return Math.max(150, ...widths) + 12;
+  });
+  const reach = (k, toward) => 14 * us[k] + (stations[k][4] === toward ? outer[k] : 60) * (toward === 'right' ? 1 : -1);
+  const drawn = byId('nodes').getBBox();  // long station names reach further still
+  const left = Math.min(drawn.x - 8, ...us.map((_, k) => reach(k, 'left')));
+  const right = Math.max(drawn.x + drawn.width + 8, ...us.map((_, k) => reach(k, 'right')));
   const top = 7 * Math.min(...vs) - 78, bottom = 7 * Math.max(...vs) + 52;
   // The top 32 units stay free for the example note on the still picture.
   const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
@@ -537,7 +571,10 @@ function travel(from, to, label, done) {
   const group = svg('g', { class: 'packet-group' }, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 8.5 }, group);
   svg('circle', { class: 'packet', r: 4.4 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  // The label rides on its own small plate: bare text was hard to read where it crossed a box face.
+  const tag = addPlate(group, 'packet-tag', 0, -16, '', { pad: .9 });
+  tag.label.setAttribute('class', 'packet-label');
+  setPlate(tag, label);
   // Screen points, pulled in a little from both stations so the dot starts and ends beside the boxes.
   const a = flat(...from, laneHeight), b = flat(...to, laneHeight);
   const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
@@ -556,6 +593,8 @@ function movePackets(now) {
     const ease = t * t * (3 - 2 * t);
     const x = mix(packet.from[0], packet.to[0], ease), y = mix(packet.from[1], packet.to[1], ease);
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    // The label shows only between 12–26% and 74–88% of the way, so it never sits on the start or end box and its plates.
+    packet.group.querySelector('.packet-tag')?.setAttribute('opacity', Math.max(0, Math.min(1, (t - .12) / .14, (.88 - t) / .14)).toFixed(2));
     return true;
   });
   finished.forEach((done) => done());
@@ -574,6 +613,14 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  // A stage that takes a station down or splits the network lists the lines it breaks (`cut`); `heal` joins them again.
+  // A broken line is a dashed warning line, so the picture does not keep showing a working link to a dead server.
+  const cut = new Set();
+  for (const stage of step.stages.slice(0, shown)) {
+    (stage.heal ?? []).forEach(([a, b]) => cut.delete(`${a}|${b}`));
+    (stage.cut ?? []).forEach(([a, b]) => cut.add(`${a}|${b}`));
+  }
+  for (const [a, b] of step.links ?? []) views[`${a}|${b}`]?.classList.toggle('cut', cut.has(`${a}|${b}`));
   // The still picture names who wrote, voted and confirmed, so the badges read as the result of that run.
   byId('example-note')?.remove();
   if (preview) exampleNote(step.note, step.noteTone);

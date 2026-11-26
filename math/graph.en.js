@@ -21,7 +21,7 @@ window.lessonText = {
   '가람과 나래 등 다섯 사람의 친구 관계를 네 개의 선으로 표시합니다. 친구 관계에는 방향이 없습니다.':
     'The friendships of five people, Garam, Narae and the others, are shown with four lines. Friendship has no direction.',
   '사람 = 점     ·     친구 관계 = 방향 없는 선': 'person = point     ·     friendship = line without direction',
-  '친구 한 쌍을 잇는 선 하나': 'One line joins a pair of friends', '실선과 점선이 함께 있으면 양방향': 'A solid and a dotted line together mean both ways',
+  '친구 한 쌍을 잇는 선 하나': 'One line joins a pair of friends',
   // Step 2
   '차수': 'Degree', '선 4개': '4 lines', '선마다 양 끝을 한 번씩 셈': 'Each line counts once at each end', '차수의 합 8': 'Degrees add up to 8',
   '차수 {#0}': 'degree {0}',
@@ -41,13 +41,13 @@ window.lessonText = {
   '한쪽으로만 가는 관계는 화살표로 그린다': 'A one-way relationship is drawn as an arrow',
   'SNS의 팔로우는 한쪽만 할 수도 있습니다. 이런 관계는 방향이 있는 선(방향 그래프)으로 그립니다. 가람이 나래를 팔로우해도 나래가 가람을 팔로우한다는 뜻은 아닙니다. 웹 페이지의 링크, 1.3의 함수 호출 관계도 방향 그래프입니다.':
     'A follow on social media can go one way only. Such relationships are drawn as lines with direction (a directed graph). Garam following Narae does not mean Narae follows Garam. Links between web pages and the function calls in 1.3 are directed graphs too.',
-  '이번에는 실선 하나씩만 있습니다. 가람 → 나래, 라희 → 나래, 나래 → 다온, 다온 → 마루, 마루 → 다온입니다. 다온과 마루는 서로 팔로우합니다.':
-    'This time each link is a single solid line: Garam → Narae, Rahee → Narae, Narae → Daon, Daon → Maru and Maru → Daon. Daon and Maru follow each other.',
+  '이번에는 선마다 방향 표시 ›가 있습니다. 가람 → 나래, 라희 → 나래, 나래 → 다온, 다온 → 마루, 마루 → 다온입니다. 다온과 마루는 서로 팔로우해서 선이 두 개입니다.':
+    'This time every line has a direction mark ›: Garam → Narae, Rahee → Narae, Narae → Daon, Daon → Maru and Maru → Daon. Daon and Maru follow each other, so there are two lines.',
   '방향이 있는 선이 다섯 개 있습니다. 가람과 라희가 나래를, 나래가 다온을 팔로우하고, 다온과 마루는 서로 팔로우합니다.':
     'There are five lines with direction. Garam and Rahee follow Narae, Narae follows Daon, and Daon and Maru follow each other.',
   '가람에서 나래로 화살표가 갑니다. 반대 방향의 화살표는 없습니다.': 'An arrow goes from Garam to Narae. There is no arrow the other way.',
   '가람 → 나래     ·     나래 → 가람은 없음': 'Garam → Narae     ·     no Narae → Garam',
-  '화살표가 가리키는 쪽을 팔로우': 'Follows the one the arrow points to', '한쪽 방향 관계': 'One-way relationship', '반대 방향 관계': 'Relationship the other way',
+  '화살표가 가리키는 쪽을 팔로우': 'Follows the one the arrow points to', '방향 없는 관계(화살표 없음)': 'Relationship with no direction (no arrow)', '› 화살표 쪽으로 가는 관계': '› Relationship toward the arrow', '경로 밖의 관계': 'Relationship off the path',
   // Step 4
   '경로': 'Paths', '가람에서 마루로': 'From Garam to Maru', '나래와 다온을 거침': 'Through Narae and Daon', '선 3개 · 경로 길이 3': '3 lines · path length 3',
   '출발': 'Start', '도착 · 길이 {#0}': 'Arrive · length {0}',

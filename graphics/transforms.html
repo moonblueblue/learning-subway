@@ -200,6 +200,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+.packet-tag rect{fill:#fff;stroke:var(--request);stroke-width:.9}.packet-tag .packet-label{stroke:none;dominant-baseline:central}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -457,7 +458,7 @@ byId('grid').setAttribute('d', gridLines.join(''));
 
 
 let plates = [];
-matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+matchMedia('(max-width: 600px)').addEventListener('change', () => { plates.forEach(sizePlate); if (Object.keys(views).length) placeNames(); });
 
 // ---------- Scene: stations in a row ----------
 const shapeOf = { file: [.9, 7], tool: [1.15, 13], ssd: [1.3, 12], ram: [1.3, 10], cpu: [1.1, 8] };
@@ -472,7 +473,12 @@ function buildScene() {
   const far = (stations.length - 1) * gap;
   const d = 'M' + [[0, 0], [far, 0]].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
   svg('path', { class: 'casing', d }, byId('casings'));
-  svg('path', { class: 'bus', d }, byId('links'));
+  // One bus piece between each pair of neighbouring stations, so every piece starts and ends at a station.
+  // A single line from the first to the last ran under every station in between (audit-motion: line under box).
+  for (let k = 0; k + 1 < stations.length; k++) {
+    const piece = 'M' + [[k * gap, 0], [(k + 1) * gap, 0]].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
+    svg('path', { class: 'bus', d: piece }, byId('links'));
+  }
   stations.forEach(([id, name, kind], k) => {
     const [h, H] = shapeOf[kind];
     const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(k * gap, 0).join(' ')})` }, byId('nodes'));
@@ -489,23 +495,58 @@ function buildScene() {
       const mark = [[-.45, -.45, H], [.45, -.45, H], [.45, .45, H], [-.45, .45, H]];
       svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, node);
     }
-    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    const nameTag = addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
     const holds = addPlate(node, 'tag holds', 0, -H - 14 * h - 14, '', { pad: 1.2 });
-    views[id] = { node, holds };
+    views[id] = { node, holds, nameTag };
   });
-  const left = -60, right = 14 * far + 60, top = -78, bottom = 52;
-  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
-  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  placeNames();
+}
+// Tags of neighbouring stations that would touch (closer than 8) move a row in turn: every second station's tag
+// goes up (badges, shift -1) or down (names, shift 1). The whole row zigzags, so it reads as a pattern; moving
+// only the tag that touched left one stray tag (8D.2 review). Returns whether the row moved.
+function staggerRow(row, shift) {
+  const boxes = row.map((plate, k) => {
+    plate.group.removeAttribute('transform');
+    if (plate.group.classList.contains('empty')) return null;
+    return { left: k * gap * 14 + Number(plate.rect.getAttribute('x')), width: Number(plate.rect.getAttribute('width')), height: Number(plate.rect.getAttribute('height')) };
+  });
+  const touch = boxes.some((box, k) => box && boxes[k - 1] && box.left < boxes[k - 1].left + boxes[k - 1].width + 8);
+  if (touch) row.forEach((plate, k) => { if (k % 2 && boxes[k]) plate.group.setAttribute('transform', `translate(0 ${shift * (boxes[k].height + 5)})`); });
+  return touch;
+}
+// Names zigzag down when they would touch (4: "카메라 위치", "뷰 행렬 (반대로)", "카메라 기준"), and the scene keeps
+// room for that row below and for lifted badges above.
+function placeNames() {
+  const stations = lesson[state.index].stations;
+  const dropped = staggerRow(stations.map(([id]) => views[id].nameTag), 1);
+  const far = (stations.length - 1) * gap;
+  // The left margin is wide enough for the first badge on a phone (4: "(3, 3)" touched the edge at -60).
+  const left = -76, right = 14 * far + 76, top = -102, bottom = dropped ? 80 : 52;
+  const scale = Math.min(1.9, 590 / (right - left), 240 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 156 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
 }
 
 // ---------- The moving dot ----------
+// The dot's label rides in a small white tag above it. Bare text on a block's top face read as that block's value
+// ("16 maps" over the filter block in 8B.4), and a trip spends about half its time over the two blocks it joins.
+function addPacketTag(group, label) {
+  const tag = svg('g', { class: 'packet-tag' }, group);
+  const rect = svg('rect', {}, tag);
+  const text = svg('text', { class: 'packet-label' }, tag);
+  text.textContent = label;
+  const size = parseFloat(getComputedStyle(text).fontSize) || 9.5;
+  const width = (text.getComputedTextLength() || label.length * size * .62) + size, height = size + 5, y = -7 - height / 2;
+  text.setAttribute('y', y.toFixed(1));
+  Object.entries({ x: -width / 2, y: y - height / 2, width, height, rx: height / 2 })
+    .forEach(([key, value]) => rect.setAttribute(key, value.toFixed(1)));
+}
 function travel(fromU, toU, label, done) {
   if (motion.matches) { done(); return; }
   const group = svg('g', { class: 'packet-group' }, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 8.5 }, group);
   svg('circle', { class: 'packet', r: 4.4 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  addPacketTag(group, label);
   packets.push({ group, fromU, toU, start: performance.now(), ms: 950, done });
   kick();
 }
@@ -516,14 +557,19 @@ function movePackets(now) {
     const t = (now - packet.start) / packet.ms;
     if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
     const ease = t * t * (3 - 2 * t);
-    const [x, y] = flat(mix(packet.fromU + 1.3, packet.toU - 1.3, ease), 0, laneHeight);
+    // Pulled in 1.3 from both stations toward each other, so a trip back to the left still ends on the line.
+    const dir = Math.sign(packet.toU - packet.fromU) || 1;
+    const [x, y] = flat(mix(packet.fromU + 1.3 * dir, packet.toU - 1.3 * dir, ease), 0, laneHeight);
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    // The tag shows once the dot is clear of the box it left and fades before the next, so it never covers a box.
+    packet.group.querySelector('.packet-tag')?.setAttribute('opacity', Math.max(0, Math.min(1, (t - .12) / .14, (.88 - t) / .14)).toFixed(2));
     return true;
   });
   finished.forEach((done) => done());
 }
 
 // ---------- State after s stages ----------
+matchMedia('(max-width: 600px)').addEventListener('change', () => { if (Object.keys(views).length) staggerRow(lesson[state.index].stations.map(([id]) => views[id].holds), -1); });
 function paint() {
   const step = lesson[state.index];
   const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
@@ -536,6 +582,7 @@ function paint() {
     views[id].node.classList.toggle('error', errors.has(id));
     views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
   }
+  staggerRow(step.stations.map(([id]) => views[id].holds), -1);
   // The still picture names each transform and its result, so the badges read as the result of that run.
   byId('example-note')?.remove();
   if (preview) exampleNote(step.note, step.noteTone);

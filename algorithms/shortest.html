@@ -119,11 +119,14 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .place-name{font:800 13px var(--mono);fill:var(--ink);text-anchor:middle;dominant-baseline:central}
 .dist rect{fill:#fff;stroke:#7a87b5;stroke-width:1.1}
 .dist text{font:800 9.5px var(--mono);fill:#3c4a85;text-anchor:middle;dominant-baseline:central}
-.dist.changed text{fill:#0f7a4a}
-.dist.changed rect{fill:#d2f4dd;stroke:var(--accent)}
+/* A time pill has one colour per state: navy while not settled, green once settled. A time just cut keeps the
+   navy text and gets the cutting road's green as a thick outline, so it never reads as settled. */
+.dist.changed rect{stroke:#2f9b6a;stroke-width:2.2}
 .place.settled .dist rect{stroke:var(--accent)}.place.settled .dist text{fill:var(--accent)}
 .dot.settleddot{background:#a9e2bd;border-color:var(--accent)}
-.sample.relaxb{border-top:3px solid #2f9b6a}.sample.tree{border-top:3px solid #7a87b5}.sample.path{border-top:5px solid #c9940f}
+.sample.relaxb{border-top:3px solid #2f9b6a}
+.pill{display:inline-block;width:20px;height:11px;border-radius:6px;background:#fff;border:1.2px solid #7a87b5}
+.pill.cut{border:2px solid #2f9b6a}.sample.tree{border-top:3px solid #7a87b5}.sample.path{border-top:5px solid #c9940f}
 .truth{border-collapse:collapse;font:600 .875rem var(--mono);text-align:center}
 .truth caption{font:700 .8125rem system-ui,sans-serif;color:var(--muted);text-align:left;margin-bottom:4px}
 .truth th,.truth td{border:1px solid var(--border);padding:2px 8px;min-width:34px}
@@ -204,7 +207,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
         </div>
         <div class="controls">
-          <div class="legend" aria-label="범례"><span><i class="dot settleddot"></i>확정된 곳</span><span><i class="sample relaxb"></i>시간을 줄인 길</span><span><i class="sample tree"></i>지금 쓰는 앞 곳 길</span><span><i class="sample path"></i>가장 빠른 길</span></div>
+          <div class="legend" aria-label="범례"><span><i class="pill"></i>확정 전 시간</span><span><i class="dot settleddot"></i>확정된 곳</span><span><i class="pill cut"></i>방금 줄어든 시간</span><span><i class="sample relaxb"></i>시간을 줄인 길</span><span><i class="sample tree"></i>지금 쓰는 앞 곳 길</span><span><i class="sample path"></i>가장 빠른 길</span></div>
         </div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
@@ -298,7 +301,7 @@ viewport.addEventListener('keydown', (event) => {
 setCamera(0, 0, 1);
 // Shortest paths with travel times. The graph is the one from 4.7, now with minutes on every road.
 const places = {
-  A: [0, 0], B: [4.2, -4.4], C: [4.2, 4.4], D: [8.6, -6.6], E: [8.6, 0], F: [8.6, 6.6], G: [13, -3.4], H: [13, 3.4], I: [17.4, 0],
+  A: [0, 0], B: [5.5, -6.4], C: [5.5, 6.4], D: [11.2, -9.6], E: [11.2, 0], F: [11.2, 9.6], G: [16.9, -4.9], H: [16.9, 4.9], I: [22.6, 0],
 };
 const roads = { AB: 4, AC: 2, BD: 5, BE: 1, CE: 8, CF: 3, DG: 2, EG: 7, EH: 2, FH: 4, GI: 3, HI: 5 };
 const names = Object.keys(places);
@@ -407,7 +410,8 @@ for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(
 byId('grid').setAttribute('d', gridLines.join(''));
 
 // ---------- Scene ----------
-const H = 15, half = .85;
+// Small boxes far apart, so every road and its minutes stay visible between the boxes.
+const H = 12, half = .55;
 let nodeViews = {}, roadViews = {};
 function buildScene() {
   for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
@@ -429,12 +433,14 @@ function buildScene() {
     drawShadow(node, half);
     drawBox(node, half, H);
     svg('text', { class: 'place-name', x: 0, y: -H + .5 }, node).textContent = name;
-    // Known time, written on the box's front face so it never covers the roads' minutes.
-    const badge = svg('g', { class: 'dist', transform: `translate(${-14 * half / 2 - 4} ${7 * half / 2 - H / 2 + 3})` }, node);
+    // Known time, a pill on the floor right under the box's front corner: off the faces and below every road,
+    // which leave the box sideways at a slope of at most 0.56.
+    const badge = svg('g', { class: 'dist', transform: `translate(0 ${14 * half + 11})` }, node);
+    const pill = svg('rect', { x: -14, y: -7, width: 28, height: 14, rx: 7 }, badge);
     const text = svg('text', {}, badge);
-    nodeViews[name] = { node, badge, text };
+    nodeViews[name] = { node, badge, pill, text };
   });
-  const left = -30, right = 14 * 17.4 + 40, top = 7 * -6.6 - 50, bottom = 7 * 6.6 + 30;
+  const left = -30, right = 14 * 22.6 + 40, top = 7 * -9.6 - 50, bottom = 7 * 9.6 + 34;
   const scale = Math.min(1.7, 590 / (right - left), 268 / (bottom - top));
   const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
   byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
@@ -466,6 +472,14 @@ function paint() {
   const path = preview ? (preview.path ? pathTo('I', last.prev) : null) : state.highlight ?? (state.pos >= state.moves.length && state.moves.length && running ? pathTo('I', last.prev) : null);
   if (path) for (let i = 1; i < path.length; i++) roadViews[roadOf(path[i - 1], path[i])].line.classList.add('path');
   syncTable(dist, done, last);
+  // Size each time pill to its text after the page has translated it ('11분' → '11 min').
+  requestAnimationFrame(() => {
+    for (const view of Object.values(nodeViews)) {
+      let width = 30;
+      try { width = Math.max(22, view.text.getComputedTextLength() + 10); } catch { /* hidden */ }
+      Object.entries({ x: -width / 2, width }).forEach(([k, v]) => view.pill.setAttribute(k, v));
+    }
+  });
   // The still picture states the step's point in a note at the top: the route's sum, the place just settled,
   // or the smallest of the waiting candidates.
   byId('example-note')?.remove();

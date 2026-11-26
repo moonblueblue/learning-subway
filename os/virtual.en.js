@@ -8,7 +8,7 @@ window.lessonText = {
     'Why does every program seem to have memory all to itself? Follow virtual pages through the page table to RAM and disk.',
   '프로세스 A와 B의 가상 페이지가 페이지 테이블을 따라 RAM 프레임이나 디스크로 이어지는 장면': 'Virtual pages of processes A and B leading along page tables to RAM frames or disk',
   '가상 페이지, RAM, 디스크': 'Virtual pages, RAM, disk', '가상 주소 (프로세스가 보는 것)': 'Virtual addresses (what the process sees)', 'RAM 프레임': 'RAM frames', '디스크': 'Disk',
-  '프로세스 A': 'Process A', '프로세스 B': 'Process B', 'A의 페이지': 'A\'s pages', 'B의 페이지': 'B\'s pages', '디스크로 가는 연결': 'Link to disk', '허용된 접근': 'Allowed access', '차단된 접근': 'Blocked access', '✗ 길 없음': '✗ No route',
+  '프로세스 A': 'Process A', '프로세스 B': 'Process B', 'A의 페이지': 'A\'s pages', 'B의 페이지': 'B\'s pages', '디스크로 가는 연결': 'Link to disk', '허용된 접근': 'Allowed access', '차단된 접근': 'Blocked access',
   '가상 페이지': 'Virtual page', '있는 곳': 'Where it is', 'A의 페이지 읽기': 'Read A\'s pages', 'B의 페이지 읽기': 'Read B\'s pages', '읽을 페이지를 눌러 보세요.': 'Press a page to read.',
   'A가 프레임 5(B의 것) 읽기': 'A reads frame 5 (B\'s)',
   // Readouts
@@ -20,7 +20,7 @@ window.lessonText = {
     'A tried to read frame 5 (B\'s page 1), but A\'s page table has no row leading to frame 5. The MMU blocks it and the operating system stops A (a segmentation fault).',
   // Step 1
   '주소 바꾸기': 'Translating addresses', 'A와 B 모두 페이지 0 읽기': 'A and B both read page 0', '각자의 페이지 표 조회': 'Each looks up its own page table', 'A는 프레임 1 · B는 프레임 2': 'A is frame 1 · B is frame 2',
-  '주소 0 읽기': 'Read address 0', 'A의 표': 'A\'s table', 'B의 표': 'B\'s table', 'A의 데이터': 'A\'s data', 'B의 데이터': 'B\'s data', '가상 페이지 0': 'Virtual page 0',
+  'A의 표': 'A\'s table', 'B의 표': 'B\'s table', '가상 페이지 0': 'Virtual page 0',
   '프로그램이 보는 주소는 진짜 주소가 아니다': 'The addresses a program sees are not the real ones',
   '5.1에서 프로세스마다 메모리가 따로였습니다. 비결은 가상 메모리입니다. 프로그램은 0번 페이지, 1번 페이지처럼 자기만의 가상 주소를 쓰고, 운영체제가 만든 페이지 테이블이 이를 RAM의 실제 칸(프레임)으로 바꿉니다. 주소를 바꾸는 일은 CPU 안의 하드웨어(MMU)가 매번 해 줍니다.':
     'In 5.1 each process had its own memory. The secret is virtual memory. A program uses its own virtual addresses, such as page 0 and page 1, and a page table made by the operating system turns them into real cells (frames) in RAM. Hardware inside the CPU (the MMU) does this translation every time.',
@@ -32,7 +32,7 @@ window.lessonText = {
   '페이지 테이블이 프로세스마다 따로 있어 같은 가상 번호도 다른 실제 칸으로 바뀝니다.': 'Each process has its own page table, so the same virtual number turns into a different real cell.',
   // Step 2
   '보호': 'Protection', 'A가 B의 프레임 5 요청': 'A asks for B\'s frame 5', 'A의 표에 경로 없음': 'No route in A\'s table', '접근 차단': 'Access blocked',
-  'A가 B의 데이터를 노림': 'A goes after B\'s data', 'A의 표에 프레임 5 없음': 'Frame 5 is not in A\'s table', '차단': 'Blocked', 'B의 페이지 1': 'B\'s page 1', '세그멘테이션 오류': 'Segmentation fault',
+  'A의 표에 프레임 5 없음': 'Frame 5 is not in A\'s table', '차단': 'Blocked', 'B의 페이지 1': 'B\'s page 1', '세그멘테이션 오류': 'Segmentation fault',
   '페이지 테이블에 없는 곳은 갈 수 없다': 'Nowhere outside the page table can be reached',
   '프로세스는 자기 페이지 테이블에 적힌 프레임에만 갈 수 있습니다. A가 B의 프레임 주소를 알아내 읽으려 해도, A의 페이지 테이블에는 그 프레임으로 가는 줄이 없어서 MMU가 막고 운영체제가 A를 멈춥니다. 흔히 보는 "세그멘테이션 오류"가 이것입니다.':
     'A process can only reach the frames written in its own page table. Even if A finds out the address of B\'s frame and tries to read it, A\'s page table has no row leading there, so the MMU blocks it and the operating system stops A. This is the familiar "segmentation fault".',
@@ -43,7 +43,7 @@ window.lessonText = {
   '허락되지 않은 주소에 닿았다는 뜻입니다. 운영체제가 그 프로세스를 멈춥니다.': 'It means it touched an address it was not allowed. The operating system stops that process.',
   // Step 3
   '페이지 부재': 'Page faults', '원하는 페이지가 디스크에 있음': 'The wanted page is on disk', '다른 페이지를 내보내 RAM 확보': 'Push another page out to free RAM', '필요한 페이지를 올려 다시 읽기': 'Bring the needed page up and read again',
-  'A의 페이지 3': 'A\'s page 3', '디스크 D0': 'Disk D0', '폴트 전': 'Before the fault', '폴트 처리': 'Handling the fault', '기존 페이지 내보냄': 'Push out an existing page', 'A3를 RAM에 적재': 'Load A3 into RAM', '재시도 성공': 'Retry succeeds',
+  'A의 페이지 3': 'A\'s page 3', '폴트 전': 'Before the fault', '폴트 처리': 'Handling the fault', '재시도 성공': 'Retry succeeds',
   'RAM이 모자라면 페이지를 디스크에 잠시 내려놓는다': 'When RAM runs short, pages are set down on disk for a while',
   '모든 페이지가 RAM에 있을 필요는 없습니다. 당장 안 쓰는 페이지는 디스크(스왑)에 두고, 필요해지면 그때 RAM으로 올립니다. 디스크에 있는 페이지에 닿으면 "페이지 부재"가 일어나, 운영체제가 오래 안 쓴 프레임 하나를 디스크로 내리고 그 자리에 필요한 페이지를 올립니다. 3.7에서 본 것처럼 디스크는 RAM보다 수천 배 느립니다.':
     'Not every page needs to be in RAM. Pages not in use right now stay on disk (swap) and come up into RAM when needed. Touching a page on disk causes a "page fault": the operating system sends one frame unused the longest down to disk and brings the needed page up in its place. As seen in 3.7, disk is thousands of times slower than RAM.',
@@ -54,12 +54,12 @@ window.lessonText = {
   '페이지 부재가 자주 나면 왜 느려질까요?': 'Why do frequent page faults make things slow?', '디스크를 오가야 해서': 'It has to go back and forth to disk', 'CPU가 꺼져서': 'The CPU turns off', '페이지 테이블이 사라져서': 'The page table disappears',
   '부재 한 번마다 디스크에서 페이지를 읽고 써야 해서 RAM 접근보다 수천 배 오래 걸립니다.': 'Each fault means reading and writing a page on disk, which takes thousands of times longer than reaching RAM.',
   // Step 4
-  '왜 쓰나': 'Why use it', '서로 다른 프로세스의 같은 주소': 'The same address in different processes', '각자 가진 페이지 표로 변환': 'Translated by each one\'s own page table', '주소가 같아도 실제 데이터 분리': 'Same address, separate real data',
+  '왜 쓰나': 'Why use it', 'A와 B가 같은 프로그램 코드': 'A and B run the same program code', '두 표가 같은 프레임을 가리킴': 'Both tables point to the same frame', '코드는 RAM에 한 벌만': 'Only one copy of the code in RAM', '코드 페이지 0': 'Code page 0', '프레임 1 (같은 칸)': 'Frame 1 (the same slot)', '2: 빈 칸': '2: free', 'A3를 프레임 2에 적재': 'A3 into frame 2', 'A가 프레임 5를 직접 읽음': 'A reads frame 5 directly', '오래 안 쓴 B0 내보냄': 'Oldest B0 out', '디스크 칸 0': 'Disk slot 0', 'Disk 칸 0': 'Disk slot 0', '✗ 프레임 5 없음': '✗ No frame 5', '아낀 칸': 'Slot saved',
+  '처음 상태에서 다시 시작합니다. 이번에는 A와 B가 같은 프로그램이라 0번(코드) 페이지가 같은 프레임 1을 가리키고, 프레임 2는 비어 있습니다.': 'This starts again from the first state. This time A and B run the same program, so page 0 (code) points to the same frame 1, and frame 2 is free.',
   '가상 메모리가 주는 세 가지': 'Three things virtual memory gives',
   '가상 메모리 덕분에 (1) 프로세스마다 메모리가 따로라 서로 지켜지고, (2) RAM보다 큰 프로그램도 필요한 부분만 올려 돌릴 수 있고, (3) 같은 프로그램 코드처럼 공유해도 되는 페이지는 여러 프로세스의 페이지 테이블이 같은 프레임을 가리키게 해 메모리를 아낍니다.':
     'Thanks to virtual memory, (1) each process has its own memory, so they are protected from each other, (2) a program bigger than RAM can run by loading only the parts it needs, and (3) pages that can be shared, such as the code of the same program, save memory by having several processes\' page tables point to the same frame.',
-  '해 보기의 질문으로 정리해 보세요. 페이지를 더 읽어 보며 확인해도 됩니다.': 'Sum up with the questions in Try. You can read more pages to check, too.',
-  '같은 장면입니다. 아무 페이지나 읽어 보며 페이지 테이블이 어디를 가리키는지 확인할 수 있습니다.': 'The same scene. Read any page to check where the page table points.',
+  '프레임 1의 이름표가 "1: A0·B0"이 되고, A0과 B0에서 나온 선 두 개가 프레임 1로 모입니다. 비어 있던 프레임 2는 다른 페이지가 쓸 수 있습니다.': 'Frame 1\'s label becomes "1: A0·B0", and two lines from A0 and B0 meet at frame 1. Frame 2, now free, can be used by another page.',
   '메모장을 두 개 띄우면(5.1) 같은 코드 페이지는 어떻게 하면 메모리를 아낄까요?': 'With two Notepads running (5.1), how can the identical code pages save memory?',
   '두 페이지 테이블이 같은 프레임을 가리킨다': 'Both page tables point to the same frame', '코드를 두 번 올린다': 'Load the code twice', '한쪽은 디스크에서 바로 실행한다': 'One runs straight from disk',
   '코드는 바뀌지 않으므로 함께 써도 안전합니다. 데이터·스택만 따로 둡니다.': 'Code does not change, so sharing it is safe. Only data and stacks are kept separate.',

@@ -25,7 +25,7 @@ window.lessonText = {
   '페이지 폴트 처리기 → 내 프로그램': 'Fault handler → my program', '페이지 폴트 처리기 → 터미널': 'Fault handler → terminal',
   '키보드 · A': 'Keyboard · A', '키보드 처리기 · 복귀': 'Key handler · Return', '스케줄러 · B 실행': 'Scheduler · Run B', '페이지 폴트 처리기 · 종료 이유': 'Fault handler · Why it ended',
   // Badges and moving labels
-  '키 기다림': 'Waiting for a key', '아니': 'No', '다시 물음': 'Asks again', '아니 ×100만': 'No ×1 million', 'A 받음 · 1초 버림': 'Got A · 1 s wasted', 'A 눌림': 'A pressed',
+  '키 기다림': 'Waiting for a key', '아니': 'No', '다시 물음': 'Asks again', '아니 ×100만': 'No ×1 million', 'CPU 1초 버림': 'CPU lost 1 s', 'A 눌림': 'A pressed',
   '눌렸니?': 'Pressed?', '눌렸니? ×100만': 'Pressed? ×1 million',
   '계산 중 · PC 42': 'Calculating · PC 42', '멈춤 · PC 42 저장': 'Paused · PC 42 saved', 'IRQ 1 → 키보드': 'IRQ 1 → keys', '버퍼에 A': 'A buffered', 'PC 42부터': 'From PC 42', 'PC 42부터 계속': 'Carries on from PC 42',
   '처리기 실행': 'Run handler', '복귀': 'Return',

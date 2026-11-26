@@ -11,7 +11,7 @@ window.lessonText = {
   'CPU 하나가 여러 일을 어떻게 번갈아 할까요? 같은 세 일을 여러 방법으로 줄 세워 기다린 시간을 비교해 보세요.':
     'How does one CPU take turns at several jobs? Queue the same three jobs in different ways and compare the waiting times.',
   '준비 큐의 일들이 CPU에서 차례로 실행되고, 바닥에 시간 칸마다 실행한 일이 색 블록으로 쌓이는 장면': 'Jobs from the ready queue running on the CPU in turn, with a coloured block piling up on the floor for each time slot',
-  '준비 큐, CPU, 시간표': 'Ready queue, CPU, timeline', '준비 큐': 'Ready queue', '끝난 일': 'Done', '시간': 'Time', '문맥 교환': 'Context switch',
+  '준비 큐, CPU, 시간표': 'Ready queue, CPU, timeline', '준비 큐': 'Ready queue', '= 문맥 교환': '= context switch', '끝난 일': 'Done', '시간': 'Time', '문맥 교환': 'Context switch',
   '방법 고르기': 'Choose a method', '방법': 'Method', '시간 조각 고르기': 'Choose a time slice', '시간 조각': 'Time slice', '한 칸': 'One slot', '실행': 'Run',
   '방법을 고르고 "실행"을 눌러 보세요.': 'Choose a method and press "Run".', '기록 · 같은 세 일을 방법마다 실행한 결과': 'Log · the same three jobs run by each method', '실행을 끝까지 하면 여기에 쌓입니다': 'Finished runs pile up here',
   'P1 기다림': 'P1 wait', 'P2 기다림': 'P2 wait', 'P3 기다림': 'P3 wait', '평균 기다림': 'Average wait', '첫 실행까지 평균': 'Average to first run',

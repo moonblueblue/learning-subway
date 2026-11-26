@@ -174,6 +174,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
 .bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
 .station .face{stroke-width:.8;transition:fill .2s}
+@media(prefers-reduced-motion:reduce){.station .face{transition:none}}
 .station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
 .sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
 .station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
@@ -187,6 +188,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
 .tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
 .tag.empty{display:none}
+.packet-tag rect{fill:#fff;fill-opacity:.94;stroke:#9fbfae;stroke-width:.7}.packet-tag .packet-label{font-size:10.5px;stroke:none;dominant-baseline:central}
+@media(max-width:600px){.packet-tag .packet-label{font-size:13px}}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
@@ -382,7 +385,7 @@ const lesson = [
     takeaway: '추천이라는 곁가지 기능 하나 때문에 상품 페이지 전체가 멈췄습니다. 고장 난 곳을 계속 부르면 기다림이 쌓여 나까지 쓰러집니다.',
     description: '왼쪽부터 사용자, 상품 페이지 서비스, 추천 서비스가 한 줄로 놓여 있습니다.',
     stations: DIRECT,
-    start: { title: '조건', lines: ['추천 서비스: 응답 없음 (고장)', '상품 페이지 서비스: 동시에 20개까지 처리 · 시간 초과 10초'], holds: { rec: '고장', order: '여유 20' } },
+    start: { title: '조건', lines: ['추천 서비스: 응답 없음 (고장)', '상품 페이지 서비스: 동시에 20개까지 처리 · 시간 초과 10초'], holds: { rec: '고장', order: '여유 20' }, errors: ['rec'] },
     stages: [
       { from: 'user', to: 'order', label: '상품 보기', title: '요청 도착', lines: ['1초에 10개씩 상품 페이지 요청'], text: '상품 페이지 요청이 계속 들어옵니다.', holds: { order: '처리 중' } },
       { from: 'order', to: 'rec', label: '추천 줘', title: '추천 서비스를 기다림', lines: ['응답 없음 → 10초 동안 기다림', '그동안 이 요청은 일꾼 하나를 붙잡고 있음'], error: 'rec', text: '요청마다 10초씩 일꾼을 붙잡고 기다립니다.', holds: { order: '기다리는 중 10' } },
@@ -400,7 +403,7 @@ const lesson = [
     takeaway: '열린 뒤의 요청은 10초가 아니라 0.001초 만에 실패를 받았습니다. 일꾼이 묶이지 않아 상품 페이지는 살아 있고, 고장 난 추천 서비스도 요청 폭탄에서 벗어나 회복할 틈을 얻습니다.',
     description: '왼쪽부터 사용자, 상품 페이지 서비스, 서킷 브레이커, 추천 서비스가 놓여 있습니다.',
     stations: CB,
-    start: { title: '차단기 규칙', lines: ['닫힘: 그대로 부르고 실패를 셈', '연속 실패 5번 → 열림: 부르지 않고 즉시 실패', '시간 초과: 1초'], holds: { cb: '닫힘 · 실패 4', rec: '고장' } },
+    start: { title: '차단기 규칙', lines: ['닫힘: 그대로 부르고 실패를 셈', '연속 실패 5번 → 열림: 부르지 않고 즉시 실패', '시간 초과: 1초'], holds: { cb: '닫힘 · 실패 4', rec: '고장' }, errors: ['rec'] },
     stages: [
       { from: 'order', to: 'cb', label: '추천 줘', title: '차단기를 지나 부름', lines: ['차단기: 닫힘 → 그대로 보냄'], text: '차단기가 닫혀 있어 그대로 보냅니다.', holds: { cb: '닫힘' } },
       { from: 'cb', to: 'rec', label: '추천 줘', title: '다섯 번째 실패', lines: ['1초 시간 초과 → 연속 실패 5번', '차단기: 열림'], error: 'rec', text: '다섯 번째 실패로 차단기가 열립니다.', holds: { cb: '열림: 막음' } },
@@ -531,7 +534,10 @@ function travel(from, to, label, done) {
   const group = svg('g', { class: 'packet-group' }, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 8.5 }, group);
   svg('circle', { class: 'packet', r: 4.4 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  // The label rides on its own small plate: bare text was hard to read where it crossed a box face.
+  const tag = addPlate(group, 'packet-tag', 0, -16, '', { pad: .9 });
+  tag.label.setAttribute('class', 'packet-label');
+  setPlate(tag, label);
   // Screen points, pulled in a little from both stations so the dot starts and ends beside the boxes.
   const a = flat(...from, laneHeight), b = flat(...to, laneHeight);
   const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
@@ -550,6 +556,8 @@ function movePackets(now) {
     const ease = t * t * (3 - 2 * t);
     const x = mix(packet.from[0], packet.to[0], ease), y = mix(packet.from[1], packet.to[1], ease);
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    // The label shows only between 12–26% and 74–88% of the way, so it never sits on the start or end box and its plates.
+    packet.group.querySelector('.packet-tag')?.setAttribute('opacity', Math.max(0, Math.min(1, (t - .12) / .14, (.88 - t) / .14)).toFixed(2));
     return true;
   });
   finished.forEach((done) => done());
@@ -561,6 +569,8 @@ function paint() {
   const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
   const shown = preview ? step.readingStage : state.s;
   const { holds, errors, view } = snapshot(shown);
+  // A station that is already broken when the step starts (`start.errors`) shows it before any stage runs.
+  for (const id of step.start.errors ?? []) if (!step.stages.slice(0, shown).some((stage) => stage.reset === id)) errors.add(id);
   const last = step.stages[shown - 1];
   for (const [id] of step.stations) {
     setPlate(views[id].holds, holds[id] ?? '');

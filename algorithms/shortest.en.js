@@ -14,7 +14,7 @@ return {
   '지도 앱은 가장 빠른 길을 어떻게 찾을까요? 길마다 걸리는 시간이 적힌 그래프에서 다익스트라 알고리즘을 한 걸음씩 돌려 보세요.':
     'How does a map app find the fastest way? Run Dijkstra\'s algorithm step by step on a graph with a travel time on each road.',
   '길마다 걸리는 시간이 적힌 그래프에서 A로부터의 가장 빠른 시간을 구하는 장면': 'Working out the fastest times from A on a graph with a travel time on each road',
-  '시간이 적힌 길': 'Roads with times', '확정된 곳': 'Settled place', '시간을 줄인 길': 'Road that cut a time', '지금 쓰는 앞 곳 길': 'Road to the current previous place', '찾은 경로': 'Path found',
+  '시간이 적힌 길': 'Roads with times', '확정된 곳': 'Settled place', '확정 전 시간': 'Time not settled yet', '방금 줄어든 시간': 'Time just cut', '시간을 줄인 길': 'Road that cut a time', '지금 쓰는 앞 곳 길': 'Road to the current previous place', '찾은 경로': 'Path found',
   '거리표 · A에서 걸리는 시간': 'Distance table · time from A', '시간': 'Time', '앞 곳': 'Previous', '확정': 'Settled', '출발': 'start',
   '길 고르기': 'Choose a path', '한 걸음': 'One step', '끝까지': 'To the end',   '"한 걸음"으로 하나씩, "끝까지"로 한 번에 실행해 보세요.': 'Run it one at a time with "One step", or all at once with "To the end".',
   '두 버튼으로 두 길의 시간을 비교해 보세요.': 'Compare the times of the two paths with the two buttons.',

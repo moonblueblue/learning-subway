@@ -254,7 +254,7 @@ const lesson = [
     takeaway: '켜진 스위치에서만 값이 흘러나와 합계에 모입니다. 꺼진 스위치에는 선이 없습니다. 같은 수를 만드는 방법은 한 가지뿐입니다.',
     description: '스위치 여덟 개가 한 줄로 놓여 있고 왼쪽부터 128, 64, 32, 16, 8, 4, 2, 1을 맡습니다. 켜진 스위치의 값만 선을 따라 합계 화면으로 모입니다.',
     switches: 8,
-    fit: [248, 126, 1.13],
+    fit: [258, 126, 1.04],
     initial: 5,
     demo: { values: [19, 100, 200, 5], interval: 3400 },
     tasks: [
@@ -271,7 +271,7 @@ const lesson = [
     takeaway: '255 다음 수는 스위치 8개로 나타낼 수 없습니다. 256을 세려면 아홉 번째 스위치가 필요합니다. +1 버튼으로 한 칸씩 세어 볼 수도 있습니다.',
     description: '스위치 여덟 개가 0부터 1씩 올라가며 켜지고 꺼집니다. 여덟 개가 모두 켜지면 합계는 가장 큰 수인 255입니다.',
     switches: 8,
-    fit: [248, 126, 1.13],
+    fit: [258, 126, 1.04],
     initial: 0,
     staticInitial: 255,
     byte: true,
@@ -392,7 +392,8 @@ byId('grid').setAttribute('d', gridLines.join(''));
 
 // Switches sit on the floor diagonal (x = y), which is a horizontal row on screen.
 // The row ends at the sum display, and the whole group stays centred on `rowCenter`.
-const spacing = 1.8;
+// 2.0 apart: a wire runs +x just in front of the switches to its right, and at 1.8 it skimmed their bases.
+const spacing = 2;
 const sumGap = 3.4;
 const rowCenter = 1.7;
 function layout(count) {
@@ -644,7 +645,9 @@ function sendPacket(bit) {
   const group = svg('g', {}, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 9 }, group);
   svg('circle', { class: 'packet', r: 4.6 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = places[bit];
+  // The value hangs under the dot: the wire runs just in front of the switches to its right, and a value
+  // above the dot sat on the next switch's base and read as that switch's value (visual-language.md 0장).
+  svg('text', { class: 'packet-label', y: 19 }, group).textContent = places[bit];
   const length = view.lane.line.getTotalLength();
   packets.push({ group, view, start: performance.now(), duration: Math.max(420, length / .27) });
   kick();

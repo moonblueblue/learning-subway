@@ -45,6 +45,9 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .chevron.request{stroke:var(--request)}
 .chevron.response{stroke:var(--response)}
+.wire.undirected{stroke:#5f7f70;stroke-width:2.6}
+.wire.muted{stroke:#aab8b0;stroke-width:2;stroke-dasharray:5 4}
+.chevron.muted{stroke:#aab8b0}
 .tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
 .tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
 .badge{transition:opacity .37s}
@@ -60,6 +63,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sample{width:22px;border-top:3px solid var(--request)}
 .sample.return{border-top:3px dashed var(--response)}
+.sample.plain{border-top-color:#5f7f70}
+.sample.muted{border-top:3px dashed #aab8b0}
 .actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
 .action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
 .action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
@@ -124,7 +129,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대 · 확대 후 드래그</span></span>
         </div>
         <div class="controls">
-          <div class="legend" aria-label="범례"><span><i class="sample"></i>한쪽 방향 관계</span><span><i class="sample return"></i>반대 방향 관계</span><span>실선과 점선이 함께 있으면 양방향</span></div>
+          <div class="legend" aria-label="범례"><span><i class="sample plain"></i>방향 없는 관계(화살표 없음)</span><span><i class="sample"></i>› 화살표 쪽으로 가는 관계</span><span><i class="sample muted"></i>경로 밖의 관계</span></div>
         </div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
@@ -150,8 +155,8 @@ const entities = {
   e: { world: [9, 9], label: '마루', shape: 'client' },
 };
 const people = ['a', 'b', 'c', 'd', 'e'];
-// An undirected edge is drawn as a pair of lanes, one each way.
-const both = (x, y) => [[x, y, 'request'], [y, x, 'response']];
+// An undirected edge is one centred line with no direction marker; a directed edge is a lane with ›.
+const both = (x, y) => [[x, y, 'undirected']];
 
 const lesson = [
   {
@@ -241,11 +246,11 @@ const lesson = [
     example: ["가람 → 나래", "가람이 나래를 팔로우", "반대 방향은 별도 관계"],
     title: '한쪽으로만 가는 관계는 화살표로 그린다',
     body: 'SNS의 팔로우는 한쪽만 할 수도 있습니다. 이런 관계는 방향이 있는 선(방향 그래프)으로 그립니다. 가람이 나래를 팔로우해도 나래가 가람을 팔로우한다는 뜻은 아닙니다. 웹 페이지의 링크, 1.3의 함수 호출 관계도 방향 그래프입니다.',
-    takeaway: '이번에는 실선 하나씩만 있습니다. 가람 → 나래, 라희 → 나래, 나래 → 다온, 다온 → 마루, 마루 → 다온입니다. 다온과 마루는 서로 팔로우합니다.',
+    takeaway: '이번에는 선마다 방향 표시 ›가 있습니다. 가람 → 나래, 라희 → 나래, 나래 → 다온, 다온 → 마루, 마루 → 다온입니다. 다온과 마루는 서로 팔로우해서 선이 두 개입니다.',
     description: '방향이 있는 선이 다섯 개 있습니다. 가람과 라희가 나래를, 나래가 다온을 팔로우하고, 다온과 마루는 서로 팔로우합니다.',
     nodes: people,
     badges: { b: { text: '팔로워 2', tone: 'ok' }, c: { text: '팔로워 2', tone: 'ok' } },
-    links: [['a', 'b', 'request'], ['d', 'b', 'request'], ['b', 'c', 'request'], ['c', 'e', 'request'], ['e', 'c', 'response']],
+    links: [['a', 'b', 'request'], ['d', 'b', 'request'], ['b', 'c', 'request'], ['c', 'e', 'request'], ['e', 'c', 'request']],
   },
   {
     label: '경로',
@@ -262,10 +267,11 @@ const lesson = [
       edges: [
         ["a", "b", "active", "1"],
         ["b", "c", "active", "2"],
-        ["c", "e", "active", "3", 20],
+        // The path's curve bows up so its number sits above it, not on it.
+        ["c", "e", "active", "3", -20],
         // Same follow graph as step 3: 라희 → 나래 keeps its arrow, only greyed as it is off the path.
         ["d", "b", "muted"],
-        ["e", "c", "muted", "", -20],
+        ["e", "c", "muted", "", 20],
       ],
       labels: [
         [28, 254, "가람  →¹  나래  →²  다온  →³  마루"],
@@ -278,7 +284,8 @@ const lesson = [
     description: '가람에서 마루까지 소식이 나래와 다온을 거쳐 전해집니다. 선 세 개를 지나는 길이 3의 경로입니다.',
     nodes: people,
     badges: { a: { text: '출발', tone: 'ok' }, e: { text: '도착 · 길이 3', tone: 'ok' } },
-    links: [['a', 'b', 'request'], ['b', 'c', 'request'], ['c', 'e', 'request']],
+    // The follows off the path stay as greyed dashes, as in the diagram; no dot runs on them.
+    links: [['a', 'b', 'request'], ['b', 'c', 'request'], ['c', 'e', 'request'], ['d', 'b', 'muted'], ['e', 'c', 'muted']],
   },
 ];
 
@@ -356,7 +363,7 @@ let paths = [];
 const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
 const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
 const mix = (a, b, t) => a + (b - a) * t;
-const laneColors = { request: '#187959', response: '#5362a0' };
+const laneColors = { request: '#187959', response: '#5362a0', undirected: '#5f7f70' };
 const laneHeight = 12;
 const laneGap = .42;
 const rise = 10;
@@ -514,7 +521,7 @@ function offsetLane(points, gap) {
 function updateGeometry(view) {
   const a = nodeViews.get(view.start);
   const b = nodeViews.get(view.end);
-  const screen = offsetLane(centerline([a.wx, a.wy], [b.wx, b.wy]), laneGap)
+  const screen = offsetLane(centerline([a.wx, a.wy], [b.wx, b.wy]), view.kind === 'undirected' ? 0 : laneGap)
     .map(([x, y]) => project(x, y, laneHeight));
   const d = 'M' + screen.map((p) => p.join(' ')).join('L');
   view.casing.setAttribute('d', d);
@@ -526,19 +533,22 @@ function updateGeometry(view) {
     if (length > best) { best = length; index = i; }
   }
   const [p, q] = [screen[index], screen[index + 1]];
-  const t = screen.length === 2 ? .42 : .5;
+  // The marker sits toward the arriving end, just before the box hides the line, so it reads as an arrowhead.
+  const t = screen.length === 2 ? Math.max(.5, 1 - (boxInside(view.end) + 12) / best) : .5;
   const angle = Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI;
   const transform = `translate(${mix(p[0], q[0], t)} ${mix(p[1], q[1], t)}) rotate(${angle})`;
   view.chevronCasing.setAttribute('transform', transform);
   view.chevron.setAttribute('transform', transform);
 }
 
+const boxInside = (id) => (shapes[entities[id]?.shape]?.half ?? 1.6) * 15.65 + 8;
 function createLink(key, from, to, kind) {
   const casing = svg('path', { class: 'casing', 'data-link': key }, byId('casings'));
   const group = svg('g', { class: 'lane', 'data-link': key }, byId('links'));
   const line = svg('path', { class: 'wire ' + kind }, group);
   const chevronCasing = svg('path', { class: 'casing', d: 'M-5 -5.5L2.5 0L-5 5.5', 'stroke-width': 6 }, group);
   const chevron = svg('path', { class: 'chevron ' + kind, d: 'M-5 -5.5L2.5 0L-5 5.5' }, group);
+  if (kind === 'undirected') chevronCasing.style.display = chevron.style.display = 'none';
   return { casing, group, line, chevronCasing, chevron, kind, start: from, end: to, from: 0, opacity: 0 };
 }
 
@@ -569,7 +579,7 @@ function renderScene(step, animate) {
     const view = linkViews.get(key);
     view.to = 1;
     return view;
-  });
+  }).filter((view) => view.kind !== 'muted');
   transition = animate && !motion.matches ? performance.now() : null;
   updateScene(transition === null ? 1 : 0);
 }
@@ -613,7 +623,11 @@ function paint() {
   const visible = path && transition === null && !motion.matches;
   for (const circle of [packet, halo]) circle.setAttribute('visibility', visible ? 'visible' : 'hidden');
   if (!visible) return;
-  const at = path.line.getPointAtLength(path.length * ((state.elapsed % segmentMs) / segmentMs));
+  // The line runs on to the centre of each box, where the box hides it. The dot travels only the visible part:
+  // it leaves at one box's face and stops at the other's, instead of riding on over the front face.
+  const inside = boxInside;
+  const from = Math.min(inside(path.start), path.length / 2), to = Math.max(path.length - inside(path.end), path.length / 2);
+  const at = path.line.getPointAtLength(from + (to - from) * ((state.elapsed % segmentMs) / segmentMs));
   for (const circle of [packet, halo]) {
     circle.setAttribute('cx', at.x);
     circle.setAttribute('cy', at.y);

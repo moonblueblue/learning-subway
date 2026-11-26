@@ -14,7 +14,7 @@ window.lessonText = {
   '"다음 단계"를 눌러 단어를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to move the words one station at a time. Prediction questions come up along the way.',
   '단어들': 'Words', '벡터화': 'Embed', '점수': 'Scores', '비율': 'Ratios', '섞은 결과': 'Mix',
   '단어들 → 벡터화': 'Words → embed', '벡터화 → 점수': 'Embed → scores', '점수 → 비율': 'Scores → ratios', '비율 → 섞은 결과': 'Ratios → mix', '섞은 결과 → 단어들': 'Mix → words',
-  '벡터화 · q · 열쇠': 'Embed · q · key', '벡터화 · 그것': 'Embed · it', '비율 · 값 섞기': 'Ratios · mix values', '점수 · 머리 4개': 'Scores · 4 heads',
+  '벡터화 · 내적': 'Embed · dot', '벡터화 · 그것': 'Embed · it', '비율 · 값 섞기': 'Ratios · mix values', '점수 · 머리 4개': 'Scores · 4 heads',
   '왼쪽부터 문장의 단어들, 벡터로 바꾸기, 점수, 비율, 섞은 결과가 한 줄로 놓여 있습니다.': 'From the left: the sentence\'s words, turning them into vectors, scores, ratios and the mixed result, in a row.',
   // Words
   '고양이': 'cat', '생선': 'fish', '먹었다': 'ate', '그것': 'it',
@@ -48,7 +48,7 @@ window.lessonText = {
   '같은 장면입니다. "그것"의 질문 벡터로 다른 단어들의 열쇠에 점수를 매깁니다.': 'The same scene. The query vector of "it" scores the keys of the other words.',
   '질문과 열쇠': 'Query and keys', '그것의 질문 q = [1, 0] ("살아 있는 것을 찾아")': 'query of it q = [1, 0] ("look for something alive")',
   '열쇠: 고양이 [3, 0] · 생선 [1, 1] · 먹었다 [0, 2]': 'keys: cat [3, 0] · fish [1, 1] · ate [0, 2]', '질문·열쇠·값': 'Q·K·V',
-  'q · 열쇠': 'q · key', '"그것"의 질문과 고양이의 열쇠를 내적합니다.': 'Take the dot product of the query of "it" and the key of cat.', '고양이 3': 'cat 3',
+  '내적': 'dot', '"그것"의 질문과 고양이의 열쇠를 내적합니다.': 'Take the dot product of the query of "it" and the key of cat.', '고양이 3': 'cat 3',
   '생선과 먹었다': 'fish and ate', '생선: [1, 0] · [1, 1] = 1': 'fish: [1, 0] · [1, 1] = 1', '먹었다: [1, 0] · [0, 2] = 0': 'ate: [1, 0] · [0, 2] = 0', '나머지 단어와도 내적합니다.': 'Take dot products with the other words too.',
   '"그것"이 가장 주목해야 할 단어는?': 'Which word should "it" pay most attention to?', '고양이 (점수 3)': 'cat (score 3)', '생선 (점수 1)': 'fish (score 1)', '먹었다 (점수 0)': 'ate (score 0)',
   '질문과 열쇠의 내적이 가장 큰 단어가 "그것"이 찾는 것과 가장 잘 맞습니다.': 'The word whose key has the biggest dot product with the query best matches what "it" is looking for.',

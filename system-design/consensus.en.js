@@ -20,7 +20,7 @@ window.lessonText = {
   // Labels and holds
   '로그 복사': 'Copy log', '기록함': 'Recorded', '완료': 'Done', '하트비트': 'Heartbeat', '임기 2, 표 줄래?': 'Term 2, vote for me?', '찬성': 'Yes', '임기 2 로그': 'Term 2 log',
   '리더 · 임기 {#0}': 'Leader · term {0}', '팔로워': 'Follower', '죽음': 'Dead', '혼자 고립': 'Cut off alone',
-  '로그에 x = {#0}': 'x = {0} in log', 'x = {#0} 확정': 'x = {0} committed', 'x = {#0} 완료': 'x = {0} done', 'x = {#0} 확정 못 함': 'x = {0} not committed',
+  '로그에 x = {#0}': 'x = {0} in log', 'x = {#0} 확정': 'x = {0} committed', 'x = {#0} 완료': 'x = {0} done', 'x = {#0} 미확정': 'x = {0} not committed',
   '후보 · 임기 2 · 1표': 'Candidate · term 2 · 1 vote', '리더 · 임기 2 · x = 8': 'Leader · term 2 · x = 8', '팔로워 · x = 8': 'Follower · x = 8',
   '모두 같음': 'All the same', '역할': 'Roles', '지금 상태': 'Current state', '갈라지기 직전': 'Just before the split',
   '클라이언트 1 → A': 'Client 1 → A', '동시에 클라이언트 2 → B': 'Client 2 → B at the same time', 'A가 C에 알림': 'A tells C', 'B도 C에 알림': 'B tells C too',
@@ -108,5 +108,4 @@ window.lessonText = {
   '리더 A가 x = 5를 로그에 적음': 'leader A logs x = 5', 'B도 기록 (3대 중 2대)': 'B records it too (2 of 3)', '과반이라 확정': 'a majority, so committed',
   '리더 A가 죽어 하트비트가 끊김': 'leader A dies, heartbeats stop', 'B가 임기 2로 표를 청하고 C가 찬성': 'B asks for votes in term 2, C agrees', 'B가 새 리더': 'B is the new leader',
   '네트워크가 갈라져 A만 따로 남음': 'the network splits, A is alone', 'A의 x = 9는 과반이 없어 확정 못 함': 'A cannot commit x = 9: no majority', 'B, C는 새 리더 B로 x = 8 확정': 'B, C elect B and commit x = 8',
-  '리더 · x = 5 확정': 'Leader · x = 5 committed',
 };

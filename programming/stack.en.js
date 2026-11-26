@@ -12,7 +12,7 @@ window.lessonText = {
   '{#0}층': 'level {0}', '· 맨 위': '· top', '{0} 전달': '{0} passed down', '{0} 돌려주기': 'Return {0}', '{0} 부르기': 'Call {0}',
   '스택 넘침': 'Stack overflow', '스택 넘침 · RecursionError': 'Stack overflow · RecursionError', '스택이 넘쳤습니다': 'The stack overflowed',
   '스택이 넘쳐 멈췄습니다. 처음부터 다시 볼 수 있습니다.': 'The stack overflowed and stopped. You can watch it again from the start.',
-  '없음': 'none', '중단': 'Stopped',
+  '없음': 'none',
   // Code
   '두배': 'double', '더하기': 'add', '평균': 'average', '바꾸기': 'change', '세기': 'count', '합': 'sum', '맨 바깥': 'outermost', '바깥': 'outside',
   'def 두배(x):': 'def double(x):', 'y = 두배(5)': 'y = double(5)', '두배(5)': 'double(5)',
@@ -31,7 +31,7 @@ window.lessonText = {
   '쌓이는 순서': 'Order of piling up', '풀리는 순서': 'Order of unwinding',
   '바깥 x = 1': 'Outside x = 1', '안쪽 x = 100': 'Inside x = 100', '함수 안의 x만 100으로 변경': 'Only the x inside the function becomes 100', '바깥 x는 여전히 1': 'The outside x is still 1',
   '층 = 함수 하나의 작업 공간': 'Level = one function\'s workspace',
-  '종료 조건 없는 호출': 'Calls with no stop condition', '호출 때마다': 'With every call', '용량 도달': 'Capacity reached', '예시 스택 9층에서 중단': 'This example stops at level 9',
+  '종료 조건 없는 호출': 'Calls with no stop condition', '멈추는 조건이 없어 아홉 층에서 스택이 넘친다': 'With no stop condition the stack overflows at level 9', '세기(1)이 세기(2)를, 세기(2)가 세기(3)을 부르며 층이 하나씩 쌓입니다. 아무 층도 돌려주지 못한 채 아홉 층에 이르자 스택이 넘쳐 멈춥니다.': 'count(1) calls count(2), count(2) calls count(3), and a level is added each time. No level returns, and at level 9 the stack overflows and stops.', '1층': 'level 1', '2층': 'level 2', '3층 …': 'level 3 …', '세기(2)': 'count(2)', '세기(3) …': 'count(3) …', '세기(9) · 9층': 'count(9) · level 9', '돌려주기 전에 다음 층을 부름': 'Each level calls the next before returning', '예시 스택 9층에서 중단': 'This example stops at level 9',
   'n이 10이 되면': 'When n reaches 10', '끝나지 않는다': 'Never ends',
   // Step 1
   '함수 부르기': 'Calling a function',

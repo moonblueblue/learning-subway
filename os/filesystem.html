@@ -331,7 +331,7 @@ const lesson = [
   },
   {
     label: '지우기',
-    readingRows: [["삭제 전", "메모.txt", "아이노드 3 · 참조 1개", "블록 2·7"], ["삭제 후", "이름 제거", "참조 0개", "블록 재사용 가능"]],
+    readingRows: [["삭제 전", "사진.jpg", "아이노드 5 · 이름 1개", "블록 0·1·4·5"], ["삭제 후", "이름 제거", "이름 0개 → 아이노드 해제", "블록: 옛 내용 남음"]],
     example: ["파일 삭제", "블록을 빈칸으로 표시", "다음 쓰기에서 덮어씀"],
     title: '지워도 내용은 바로 사라지지 않는다',
     body: '파일을 지우면 파일 시스템은 디렉터리에서 이름을 빼고, 아이노드와 블록을 "빈 것"으로 표시합니다. 블록의 내용을 0으로 덮어쓰지는 않습니다. 그래서 다른 파일이 그 블록을 다시 쓰기 전까지는 복구 프로그램으로 되살릴 수도 있습니다. 중요한 파일을 확실히 지우려면 덮어쓰기가 필요합니다.',
@@ -345,7 +345,7 @@ const lesson = [
   },
   {
     label: '이름 두 개',
-    readingRows: [["기존 이름", "메모.txt", "아이노드 3", "블록 2·7"], ["추가한 이름", "메모-사본.txt", "아이노드 3 · 참조 2개", "블록 2·7 (복사 안 함)"]],
+    readingRows: [["기존 이름", "메모.txt", "아이노드 3", "블록 2·7"], ["추가한 이름", "메모-사본.txt", "아이노드 3 · 이름 2개", "블록 2·7 (복사 안 함)"]],
     example: ["같은 파일에 이름 추가", "두 이름 → 한 아이노드", "데이터 블록은 한 벌"],
     title: '한 파일에 이름이 여러 개일 수 있다',
     body: '이름과 내용이 따로 있으므로, 디렉터리에 같은 아이노드를 가리키는 이름을 하나 더 만들 수 있습니다(하드 링크). 두 이름은 같은 파일이라 한쪽으로 고치면 다른 쪽에도 보입니다. 아이노드는 자기를 가리키는 이름 수를 세다가, 0이 될 때 비로소 블록을 놓아줍니다.',
@@ -397,7 +397,12 @@ const rowV = (k, n) => (k - (n - 1) / 2) * 5.2;
 const namePos = (k) => [0, rowV(k, Math.max(state.dir.length, 3))];
 const inodeNums = () => Object.keys(state.inodes).map(Number).sort((a, b) => a - b);
 const inodePos = (ino) => [7.2, rowV(inodeNums().indexOf(ino), Math.max(inodeNums().length, 3))];
-const blockPos = (b) => [14.2 + (b % 3) * 3.2, (Math.floor(b / 3) - 1.5) * 4.6];
+const blockPos = (b) => [15.4 + (b % 3) * 4, (Math.floor(b / 3) - 1.5) * 5.2];
+// Lines run on the ground in lanes under each row and turn only in the empty bands between the zones, so they
+// never pass a box or a label. Only the file being worked on gets lines; the labels carry the other pairs.
+const lane = (v) => v + 2.2;
+const bandName = 3.6, bandBlock = 12.6;
+const pathOf = (points) => points.map(([u, v], i) => (i ? 'L' : 'M') + flat(u, v).join(' ')).join('');
 const ownerOf = (b) => Number(Object.entries(state.inodes).find(([, i]) => i.blocks.includes(b))?.[0]);
 const fileColor = { 3: 'c3', 5: 'c5', 8: 'c8', 9: 'c9' };
 
@@ -407,42 +412,44 @@ function paint() {
     svg('polygon', { class: 'zone ' + cls, points: [[u0, -10.4], [u1, -10.4], [u1, 10.4], [u0, 10.4]].map(([u, v]) => flat(u, v).join(',')).join(' ') }, byId('casings'));
     text(byId('casings'), 14 * (u0 + u1) / 2, flat(0, 10.4)[1] + 20, label, 'zone-label');
   };
-  zone(-4.2, 2.4, '디렉터리 (이름)', 'dir');
-  zone(4.8, 9.6, '아이노드', 'inode');
-  zone(12, 22.8, '디스크 블록', 'disk');
+  zone(-7.6, 2.0, '디렉터리 (이름)', 'dir');
+  zone(5.0, 11.6, '아이노드', 'inode');
+  zone(13.6, 25.2, '디스크 블록', 'disk');
   const hot = state.flash;
-  state.dir.forEach((d, k) => {
-    const a = flat(...namePos(k), 4), b = flat(...inodePos(d.ino), 4);
-    svg('path', { class: 'map name-link' + (hot?.name === d.name ? ' hot' : ''), d: `M${a.join(' ')}C${a[0] + 40} ${a[1]} ${b[0] - 40} ${b[1]} ${b.join(' ')}` }, byId('links'));
-  });
-  for (const ino of inodeNums()) {
-    state.inodes[ino].blocks.forEach((blk) => {
-      const a = flat(...inodePos(ino), 4), b = flat(...blockPos(blk), 4);
-      svg('path', { class: `map block-link ${fileColor[ino] ?? ''}` + (hot?.ino === ino ? ' hot' : ''), d: `M${a.join(' ')}C${a[0] + 50} ${a[1]} ${b[0] - 50} ${b[1]} ${b.join(' ')}` }, byId('links'));
+  if (hot?.ino !== undefined && state.inodes[hot.ino]) {
+    const [iu, iv] = inodePos(hot.ino);
+    state.dir.forEach((d, k) => {
+      if (d.ino !== hot.ino) return;
+      const [nu, nv] = namePos(k);
+      svg('path', { class: 'map name-link hot', d: pathOf([[nu, nv], [nu, lane(nv)], [bandName, lane(nv)], [bandName, lane(iv)], [iu - .25, lane(iv)], [iu - .25, iv]]) }, byId('links'));
     });
+    for (const blk of state.inodes[hot.ino].blocks) {
+      const [bu, bv] = blockPos(blk);
+      svg('path', { class: 'map block-link hot', d: pathOf([[iu + .25, iv], [iu + .25, lane(iv)], [bandBlock, lane(iv)], [bandBlock, lane(bv)], [bu, lane(bv)], [bu, bv]]) }, byId('links'));
+    }
   }
   state.dir.forEach((d, k) => {
     const g = svg('g', { class: 'node', transform: `translate(${flat(...namePos(k)).join(' ')})` }, byId('nodes'));
-    drawBox(g, .7, 5, 'name' + (hot?.name === d.name ? ' hot' : ''));
-    text(g, -14 * .7 - 6, -1, d.name, 'name-label');
+    drawBox(g, .7, 5, 'name' + (hot?.ino === d.ino && hot?.ino !== undefined ? ' hot' : ''));
+    text(g, -14 * .7 - 12, -1, `${d.name} → #${d.ino}`, 'name-label');
   });
   for (const ino of inodeNums()) {
     const node = state.inodes[ino];
     const g = svg('g', { class: 'node', transform: `translate(${flat(...inodePos(ino)).join(' ')})` }, byId('nodes'));
-    drawBox(g, .95, 9, `card ${fileColor[ino] ?? ''}` + (hot?.ino === ino ? ' hot' : ''));
-    text(g, 0, -8.5, `#${ino}`, 'box-label');
+    drawBox(g, .8, 6, `card ${fileColor[ino] ?? ''}` + (hot?.ino === ino ? ' hot' : ''));
+    text(g, 0, -6, `#${ino}`, 'box-label');
     const names = state.dir.filter((d) => d.ino === ino).length;
-    text(g, 14 * .95 + 6, -2, `${node.size}`, 'card-info');
-    text(g, 14 * .95 + 6, 9, `이름 ${names}개`, 'card-info');
+    text(g, 28 * .8 + 4, -4, `${node.size}`, 'card-info');
+    text(g, 28 * .8 + 4, 6, `이름 ${names}개`, 'card-info');
   }
   for (let b = 0; b < blockCount; b++) {
     const owner = ownerOf(b);
     const g = svg('g', { class: 'node', transform: `translate(${flat(...blockPos(b)).join(' ')})` }, byId('nodes'));
     drawBox(g, .8, 5, 'block ' + (owner ? fileColor[owner] : state.ghosts.has(b) ? 'ghost' : 'free') + (hot?.blocks?.includes(b) ? ' hot' : ''));
-    text(g, 0, -4.5, owner ? `#${owner}` : state.ghosts.has(b) ? '옛 내용' : '빈칸', 'box-label small');
-    text(g, 0, 7 * .8 + 11, `블록 ${b}`, 'frame-num');
+    const tag = owner ? '#' + owner : state.ghosts.has(b) ? '옛 내용' : '빈칸';
+    text(g, 0, -5, `${b}: ${tag}`, 'box-label small');
   }
-  const left = 14 * -2.2 - 80, right = 14 * 22.8 + 20, top = 7 * -10.4 - 26, bottom = 7 * 10.4 + 30;
+  const left = 14 * -7.6 - 10, right = 14 * 25.2 + 20, top = 7 * -10.4 - 26, bottom = 7 * 10.4 + 30;
   const scale = Math.min(1.6, 590 / (right - left), 268 / (bottom - top));
   byId('world').setAttribute('transform', `translate(${(310 - scale * (left + right) / 2).toFixed(1)} ${(140 - scale * (top + bottom) / 2).toFixed(1)}) scale(${scale.toFixed(3)})`);
   syncDir();
@@ -595,7 +602,7 @@ function takeOver() {
 const demoPlans = {
   open: ['open:메모.txt', 'open:사진.jpg', 'open:할일.txt'],
   create: ['create', 'append', 'append', 'reset'],
-  delete: ['open:사진.jpg', 'delete:사진.jpg', 'create', 'reset'],
+  delete: ['delete:사진.jpg', 'create', 'reset'],
   link: ['link', 'open:메모-사본.txt', 'delete:메모.txt', 'reset'],
 };
 function demoTick() {

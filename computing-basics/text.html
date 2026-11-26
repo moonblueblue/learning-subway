@@ -263,7 +263,10 @@ const lesson = [
     description: '스위치 열여섯 개와 글자표가 있습니다. 32768, 8192, 2048, 1024를 맡은 스위치가 켜져 44032가 되고, 글자표는 한글 "가"를 보여 줍니다.',
     switches: 16,
     spacing: 1.8,
-    fit: [236, 170, .93],
+    rowGap: 10.6,
+    rowShift: 7.2,
+    sumGap: 5.2,
+    fit: [199, 207, .82],
     initial: 44032,
     board: 'range',
     demo: { values: [44032, 44033, 45208, 54620], interval: 3200 },
@@ -281,7 +284,10 @@ const lesson = [
     description: '스위치 열여섯 개와 글자표가 있습니다. 만든 번호의 글자와 함께, 그 글자를 UTF-8로 저장할 때 쓰는 바이트 수가 표시됩니다. A는 1바이트, 가는 3바이트입니다.',
     switches: 16,
     spacing: 1.8,
-    fit: [236, 170, .93],
+    rowGap: 10.6,
+    rowShift: 7.2,
+    sumGap: 5.2,
+    fit: [199, 207, .82],
     utf8: true,
     board: 'utf8',
     initial: 65,
@@ -418,17 +424,20 @@ const sumGap = 3.4;
 const rowCenter = 1.7;
 // Each position is [c, r]: c runs along the row, r lifts a node into a row further back.
 // The floor point is (c - r, c + r), which on screen sits 14·r pixels higher than (c, c).
-// More than eight switches are split into two rows of one byte each: the high byte behind.
-const rowGap = 4.6;
+// More than eight switches are split into two rows of one byte each: the high byte `rowGap` behind and
+// `rowShift` to the right. A back-row wire runs +x and would cross the front row at c + rowGap, so the
+// back row sits far enough back and right (c + rowGap >= the display's c) that its wires reach the
+// display's column before the front row: they stop behind it and come down the column into the display
+// from the upper right, past the end of the front row and clear of its plates (visual-language.md 0장).
 function layout(count) {
-  const spacing = lesson[state.index].spacing;
+  const { spacing, rowGap = 4.6, rowShift = 0, sumGap: gap = sumGap } = lesson[state.index];
   const columns = Math.min(count, 8);
-  const span = spacing * (columns - 1) + sumGap + (count > 8 ? 1.8 : 0);
+  const span = spacing * (columns - 1) + gap;
   const start = rowCenter - span / 2;
   const at = {};
   for (let bit = 0; bit < count; bit++) {
     const row = Math.floor(bit / 8);
-    at['b' + bit] = [start + spacing * (columns - 1 - bit % 8), row * rowGap];
+    at['b' + bit] = [start + spacing * (columns - 1 - bit % 8) + row * rowShift, row * rowGap];
   }
   at.sum = [start + span, 0];
   return at;
@@ -524,7 +533,8 @@ function createSum() {
 }
 
 // Wire path: along the floor x axis to the display's column, then along the y axis into it.
-// On screen that is a V shape: down to the right, then up to the right.
+// On screen that is a V shape: down to the right, then up to the right. A back-row wire reaches the
+// display's column behind the display, so its second part runs down to the left into it.
 function updateGeometry(view, sum) {
   const { c, r } = view;
   const sx = sum.c - sum.r, sy = sum.c + sum.r;
@@ -534,8 +544,7 @@ function updateGeometry(view, sum) {
   view.lane.line.setAttribute('d', d);
   const [p, q] = screen;
   const angle = Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI;
-  // A back-row wire runs under the front row 2r along and past its plates near r, so its chevron sits just after the switch.
-  const along = r ? Math.min(.56, 2.4 / (sx - c + r)) : .56;
+  const along = .56;
   const transform = `translate(${mix(p[0], q[0], along)} ${mix(p[1], q[1], along)}) rotate(${angle})`;
   view.lane.chevron.setAttribute('transform', transform);
 }
@@ -662,6 +671,10 @@ function retarget(animate, ms = transitionMs) {
   sum.total.group.classList.toggle('long', sum.total.label.textContent.length > 12);
   const shown = glyph(state.value);
   sum.screenGlyph.textContent = [...shown].length === 1 ? shown : '';
+  // With a back row, its wires come down into the display past where the panel sits above it, so the panel
+  // goes under the display's name instead.
+  if (sum.totalY === undefined) sum.totalY = sum.total.y;
+  sum.total.y = lesson[state.index].switches > 8 ? 64 : sum.totalY;
   sizePlate(sum.total);
   showBoards();
   // A small pulse on the total when it changes at a watchable pace.
@@ -715,9 +728,12 @@ function sendPacket(bit) {
   const group = svg('g', {}, byId('packets'));
   svg('circle', { class: 'packet-halo', r: 9 }, group);
   svg('circle', { class: 'packet', r: 4.6 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = places[bit];
+  // The value hangs under the dot: the wire runs just in front of the switches to its right, and a value
+  // above the dot sat on the next switch's base and read as that switch's value (visual-language.md 0장).
+  const label = svg('text', { class: 'packet-label', y: 19 }, group);
+  label.textContent = places[bit];
   const length = view.lane.line.getTotalLength();
-  packets.push({ group, view, start: performance.now(), duration: Math.max(420, length / .27) });
+  packets.push({ group, view, label, start: performance.now(), duration: Math.max(420, length / .27) });
   kick();
 }
 

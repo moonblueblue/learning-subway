@@ -153,6 +153,8 @@ function tick(now) {
 }
 
 function demoTick() {
+  // While the reading diagram covers the scene, the demo waits instead of sending packets nobody can see.
+  if (document.querySelector('.course-diagram-open:not(.course-diagram-native)')) { state.wait = 400; return; }
   document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
   if (state.busy) { state.wait = 200; return; }
   if (state.s >= lesson[state.index].stages.length) { resetRun(); state.wait = 1400; return; }
@@ -175,7 +177,9 @@ function kick() {
 // Example note: one line at the top centre of the scene that says what the still picture (reduced motion) shows,
 // e.g. "지아 → 102,148 mod 13 = 7 → 7번 칸에 넣음". `content` is a string or a list of pieces (each piece is its own
 // tspan, so the page translation finds every piece in the dictionary). `tone` 'ok' (green) or 'bad' (warning).
-// The box is sized to the text, again after translation, and a long line (English) is set smaller to fit 596px.
+// The box is sized to the text, again after translation. A line too long for 560px (box 580 of the 620 scene) breaks into two lines between
+// pieces (the split that leaves the longer line shortest); only a line still too long is set smaller. Shrinking alone
+// left phone-width notes touching both edges in letters too small to read (2026-11-26 scene review).
 function exampleNote(content, tone = 'ok') {
   document.getElementById('example-note')?.remove();
   const g = svg('g', { id: 'example-note', class: 'example-note ' + tone }, document.getElementById('scene'));
@@ -183,12 +187,38 @@ function exampleNote(content, tone = 'ok') {
   const label = svg('text', { x: 310, y: 16 }, g);
   for (const part of [].concat(content)) svg('tspan', {}, label).textContent = part;
   const size = () => {
+    const parts = [...label.children];
     label.style.fontSize = '';
+    label.setAttribute('y', 16);
+    parts.forEach((part) => { part.removeAttribute('x'); part.removeAttribute('dy'); });
+    let lines = 1, widest = label.getComputedTextLength();
+    if (widest > 560 && parts.length > 1) {
+      const widths = parts.map((part) => part.getComputedTextLength());
+      let best = 0, bestWidest = Infinity;
+      for (let i = 1; i < parts.length; i++) {
+        const a = widths.slice(0, i).reduce((x, y) => x + y, 0), b = widths.slice(i).reduce((x, y) => x + y, 0);
+        if (Math.max(a, b) < bestWidest) { best = i; bestWidest = Math.max(a, b); }
+      }
+      // A piece that is only an arrow (" → ") stays at the end of the first line.
+      if (/^\s*[→·,]\s*$/.test(parts[best].textContent) && best + 1 < parts.length) best += 1;
+      const fontSize = parseFloat(getComputedStyle(label).fontSize);
+      parts[best].setAttribute('x', 310);
+      parts[best].setAttribute('dy', `${fontSize * 1.25}px`);
+      lines = 2;
+      widest = Math.max(...[parts.slice(0, best), parts.slice(best)].map((line) => line.reduce((x, part) => x + part.getComputedTextLength(), 0)));
+    }
     // Text width does not scale exactly with font size (hinting, mixed scripts), so shrink until it fits.
-    for (let k = 0, length; k < 4 && (length = label.getComputedTextLength()) > 596; k++)
-      label.style.fontSize = `${parseFloat(getComputedStyle(label).fontSize) * 590 / length}px`;
-    const w = label.getComputedTextLength() + 20, h = parseFloat(getComputedStyle(label).fontSize) + 10;
-    Object.entries({ x: 310 - w / 2, y: 16 - h / 2, width: w, height: h }).forEach(([k, v]) => rect.setAttribute(k, v));
+    for (let k = 0; k < 4 && widest > 560; k++) {
+      const factor = 554 / widest;
+      label.style.fontSize = `${parseFloat(getComputedStyle(label).fontSize) * factor}px`;
+      parts.forEach((part) => part.getAttribute('dy') && part.setAttribute('dy', `${parseFloat(getComputedStyle(label).fontSize) * 1.25}px`));
+      widest *= factor;
+    }
+    const lineHeight = parseFloat(getComputedStyle(label).fontSize) * 1.25;
+    const h = lines * lineHeight + 10, top = lines > 1 ? 4 : 16 - h / 2;
+    label.setAttribute('y', top + 5 + lineHeight / 2);
+    const w = widest + 20;
+    Object.entries({ x: 310 - w / 2, y: top, width: w, height: h }).forEach(([k, v]) => rect.setAttribute(k, v));
   };
   size();
   new MutationObserver(() => requestAnimationFrame(size)).observe(label, { childList: true, characterData: true, subtree: true });

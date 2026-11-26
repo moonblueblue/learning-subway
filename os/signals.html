@@ -500,15 +500,20 @@ function buildScene() {
   const border = (lesson[state.index].kernelFrom - .5) * gap;
   const zone = (u0, u1, cls, label) => {
     svg('polygon', { class: 'zone ' + cls, points: [[u0, -4.6], [u1, -4.6], [u1, 4.6], [u0, 4.6]].map(([u, v]) => flat(u, v).join(',')).join(' ') }, byId('casings'));
-    const t = svg('text', { class: 'zone-label', x: 14 * (u0 + u1) / 2, y: flat(0, 4.6)[1] + 26, 'text-anchor': 'middle' }, byId('casings'));
+    // The zone name sits in its own group, apart from the zone's floor.
+    const t = svg('text', { class: 'zone-label', x: 14 * (u0 + u1) / 2, y: flat(0, 4.6)[1] + 26, 'text-anchor': 'middle' }, svg('g', { class: 'zone-name' }, byId('casings')));
     t.textContent = label;
   };
   zone(-2.6, border, 'user-zone', '사용자 영역');
   zone(border, far + 2.6, 'kernel-zone', '커널 영역 · 하드웨어');
   svg('path', { class: 'border-line', d: `M${flat(border, -4.6).join(' ')}L${flat(border, 4.6).join(' ')}` }, byId('casings'));
-  const d = 'M' + [[0, 0], [far, 0]].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
-  svg('path', { class: 'casing', d }, byId('casings'));
-  svg('path', { class: 'bus', d }, byId('links'));
+  // One rail per pair of neighbouring stations, each ending at the two stations, so no rail runs under a station
+  // it does not serve.
+  for (let k = 0; k + 1 < stations.length; k++) {
+    const d = 'M' + [[k * gap, 0], [(k + 1) * gap, 0]].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
+    svg('path', { class: 'casing', d }, byId('casings'));
+    svg('path', { class: 'bus', d }, byId('links'));
+  }
   stations.forEach(([id, name, kind], k) => {
     const [h, H] = shapeOf[kind];
     const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(k * gap, 0).join(' ')})` }, byId('nodes'));
@@ -552,7 +557,9 @@ function movePackets(now) {
     const t = (now - packet.start) / packet.ms;
     if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
     const ease = t * t * (3 - 2 * t);
-    const [x, y] = flat(mix(packet.fromU + 1.3, packet.toU - 1.3, ease), 0, laneHeight);
+    // Start and end just inside the two stations, on whichever side faces the other, so a trip to the left stays on the rail.
+    const dir = packet.toU < packet.fromU ? -1 : 1;
+    const [x, y] = flat(mix(packet.fromU + 2.2 * dir, packet.toU - 2.2 * dir, ease), 0, laneHeight);
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
     return true;
   });

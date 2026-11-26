@@ -222,6 +222,7 @@
 
   function section(group, isTrack = false) {
     const details = element('details', isTrack ? 'course-track' : 'course-chapter');
+    if (!isTrack) details.setAttribute('name', 'course-chapters');
     const summary = element('summary', 'course-summary');
     const prefix = isTrack || !group.id ? group.id : group.id + '장';
     const count = group.lessons.length + (group.tracks ?? []).reduce((total, track) => total + track.lessons.length, 0);

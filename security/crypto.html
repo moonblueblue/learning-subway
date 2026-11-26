@@ -200,6 +200,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+.course-diagram-open #example-note{visibility:hidden}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -383,6 +384,27 @@ const lesson = [
   },
   {
     label: '긴 열쇠',
+    readingDiagram: {
+      title: "양끝에만 같은 비밀키를 둔다",
+      description: "두 끝점은 이미 같은 AES 비밀키 K를 갖고 있다. 민지가 평문을 암호화하고 서준이 같은 K로 복호화한다. 중간에는 암호문만 보인다. AES-128의 키 후보는 2¹²⁸개다.",
+      nodes: [
+        ["a0", 107, 100, 174, 48, ["민지 · 평문", "HELLO"], "plain"],
+        ["a1", 310, 100, 174, 48, ["AES-128 암호화", "같은 비밀키 K"], "active"],
+        ["a2", 513, 100, 174, 48, ["네트워크 · 암호문", "3f 81 a2 …"], "blocked"],
+        ["b0", 107, 198, 174, 48, ["암호문 수신", "3f 81 a2 …"], "plain"],
+        ["b1", 310, 198, 174, 48, ["AES-128 복호화", "같은 비밀키 K"], "active"],
+        ["b2", 513, 198, 174, 48, ["서준 · 복원", "HELLO"], "active"],
+      ],
+      edges: [
+        ["a0", "a1", "active"],
+        ["a1", "a2", "blocked"],
+        ["b0", "b1", "active"],
+        ["b1", "b2", "active"],
+      ],
+      labels: [
+        [28, 264, "키 후보 2¹²⁸개 · 양끝이 K를 미리 확보"],
+      ],
+    },
     readingStage: 4,
     note: ['"내일 3시에 만나"', ' → ', '128비트 열쇠로 AES', ' → ', '엿보는 이는 9c 2e f1 …만 봄', ' → ', '서준이 같은 열쇠로 되돌림'],
     title: '열쇠의 경우가 아주 많으면 다 해 볼 수 없다',
@@ -422,22 +444,40 @@ const lesson = [
   },
   {
     label: '함께 쓰기',
+    readingDiagram: {
+      title: "인증과 키 합의 뒤 통신을 보호한다",
+      description: "브라우저와 서버가 공개 합의 값을 교환하고 브라우저가 서버를 인증한다. 양끝은 같은 합의 결과에서 트래픽 키를 유도한다. 브라우저가 보호한 GET /cart는 중간에 암호문으로 보이고 서버에서만 읽힌다.",
+      nodes: [
+        ["a0", 107, 100, 176, 48, ["① 키 교환", "공개 합의 값 교환"], "plain"],
+        ["a1", 310, 100, 177, 48, ["② 서버 인증", "인증서 확인"], "active"],
+        ["a2", 513, 100, 177, 48, ["③ 양끝에서 키 유도", "방향별 트래픽 키"], "active"],
+        ["b0", 107, 198, 176, 48, ["④ 브라우저가 보호", "GET /cart"], "plain"],
+        ["b1", 310, 198, 177, 48, ["⑤ 인터넷 · 암호문", "a7 03 …"], "blocked"],
+        ["b2", 513, 198, 177, 48, ["⑥ 서버에서 복원", "GET /cart"], "active"],
+      ],
+      edges: [
+        ["a0", "a1", "active"],
+        ["a1", "a2", "active"],
+        ["b0", "b1", "blocked"],
+        ["b1", "b2", "active"],
+      ],
+    },
     readingStage: 5,
-    note: ['공개 키로 대칭 키를 잠가 건넴', ' → ', '이제 GET /cart는 AES로 잠금', ' → ', '엿보는 이는 바이트만 봄', ' → ', '서준(웹 서버)이 요청 받음'],
-    title: '공개 키로 열쇠를 건네고, 대칭 키로 빠르게 대화한다',
-    body: '공개 키 암호는 계산이 무거워 큰 데이터를 잠그기에는 느립니다. 그래서 5.11의 TLS는 둘을 함께 씁니다. 먼저 공개 키 방식으로 이번 대화에만 쓸 대칭 키를 안전하게 정하고, 그 뒤의 모든 내용은 빠른 대칭 키(AES)로 암호화합니다. 2단계의 "열쇠를 어떻게 건네나" 문제를 3단계가 풀어 준 것입니다.',
-    takeaway: '한 번의 공개 키 계산으로 대칭 키를 정하고, 나머지 수천 개의 패킷은 대칭 키로 빠르게 잠급니다. 브라우저 주소창의 자물쇠가 이 과정을 거쳤다는 표시입니다. 6.12에서는 상대가 진짜인지 확인하는 일을 봅니다.',
-    description: '왼쪽부터 브라우저(민지), 암호화, 인터넷, 복호화, 서버(서준)로 읽어도 됩니다. 열쇠 정하기가 한 번 오가고, 이어서 내용이 오갑니다.',
+    note: ["키 교환과 서버 인증", " → ", "양끝에서 방향별 트래픽 키 유도", " → ", "GET /cart는 암호문으로 전달"],
+    title: "키 교환과 서버 인증을 거친 뒤 데이터를 보호한다",
+    body: "TLS 1.3의 일반적인 인증서 연결에서는 양끝이 공개 합의 값을 교환한 뒤 브라우저가 서버의 신원을 확인합니다. 인증서의 공개 키는 서버 신원을 검증하는 데 쓰입니다. 양끝은 합의한 결과에서 방향별 트래픽 키를 유도하고 그 키로 요청과 응답을 보호합니다.",
+    takeaway: "브라우저는 서버로 보내는 키와 서버에서 오는 키를 구별합니다. 여기서 보호한 GET /cart는 해당 방향의 키를 가진 서버에서 읽힙니다.",
+    description: "브라우저와 서버가 키를 합의하고 브라우저가 서버를 인증합니다. 그 뒤 요청이 암호문으로 인터넷을 건너 서버에서 복원됩니다.",
     stations: CH,
-    start: { title: 'HTTPS 연결', lines: ['서준 = 웹 서버, 민지 = 브라우저', '서버의 공개 키는 인증서에 들어 있음 (6.12)'], holds: { a: '브라우저', b: '서버 · 개인 키', net: '엿보는 중' } },
+
+    start: { title: 'HTTPS 연결', lines: ['민지: 브라우저 · 서준: 서버', '요청 대기: GET /cart'], holds: { a: '브라우저', b: '서버' } },
     stages: [
-      { from: 'b', to: 'a', label: '인증서 + 공개 키', title: '서버의 공개 키 받기', lines: ['서버 → 브라우저: 인증서(공개 키 포함)'], text: '서버가 공개 키가 든 인증서를 보냅니다.', holds: { a: '공개 키 받음', net: '공개 키 봄' } },
-      { from: 'a', to: 'b', label: '잠근 대칭 키', title: '대칭 키 정하기', lines: ['브라우저가 이번 대화용 AES 열쇠를 만들어', '서버의 공개 키로 잠가 보냄', '서버는 개인 키로 열어 같은 AES 열쇠를 얻음', '(요즘 TLS 1.3은 공개 키 방식의 "키 교환"으로 양쪽이 같은 열쇠를 함께 계산함)'], text: '대칭 키를 공개 키로 잠가 건넵니다. 엿보는 이는 열 수 없습니다.', holds: { a: 'AES 열쇠', b: 'AES 열쇠', net: '못 엶' },
-        ask: { q: '여기서 공개 키 암호가 맡은 일은?', choices: ['대칭 키를 엿보는 이 몰래 건네기', '모든 페이지 내용을 잠그기'], answer: '대칭 키를 엿보는 이 몰래 건네기', why: '공개 키는 느리므로 열쇠를 건넬 때 한 번만 씁니다.' } },
-      { from: 'a', to: 'enc', label: 'GET /cart', title: '대칭 키로 잠그기', lines: ['요청 "GET /cart"를 AES 열쇠로 잠금'], text: '이제부터 내용은 빠른 대칭 키로 잠급니다.', holds: { enc: 'AES' } },
-      { from: 'enc', to: 'dec', label: 'a7 03 …', title: '인터넷을 지남', lines: ['엿보는 이: 바이트만 봄'], text: '암호문이 인터넷을 지나 서버 쪽에서 풀립니다.', holds: { net: '바이트만 봄', dec: 'AES' } },
-      { from: 'dec', to: 'b', label: 'GET /cart', title: '서버가 읽음', lines: ['서버: "GET /cart" 처리'], text: '서버가 요청을 읽고 처리합니다.', holds: { b: '요청 받음' },
-        ask: { q: 'TLS가 내용 전체를 공개 키로 잠그지 않는 까닭은?', choices: ['공개 키 계산이 대칭 키보다 훨씬 느려서', '공개 키가 덜 안전해서'], answer: '공개 키 계산이 대칭 키보다 훨씬 느려서', why: '열쇠 건네기는 한 번이라 느려도 되지만, 내용은 계속 오가므로 빠른 대칭 키를 씁니다.' } },
+      { from: 'a', to: 'b', label: '키 교환', title: '공개 합의 값 교환', lines: ['브라우저와 서버가 공개 합의 값을 교환'], text: '양쪽이 공개 합의 값을 교환해 같은 공유 비밀을 얻습니다.', holds: { a: '키 교환', b: '키 교환' } },
+      { from: 'b', to: 'a', label: '서버 인증', title: '서버 확인과 트래픽 키', lines: ['서버 인증서와 서명 확인', '양끝이 방향별 트래픽 키 유도'], text: '서버 인증을 확인하고 두 끝점이 같은 합의 결과에서 트래픽 키를 유도합니다.', holds: { a: '트래픽 키 준비', b: '트래픽 키 준비' },
+        ask: { q: '요청을 암호화할 키는 어디에서 만들어질까요?', choices: ['양쪽 끝점에서 유도한다', '인터넷 중간에서 만든다'], answer: '양쪽 끝점에서 유도한다', why: '브라우저와 서버가 각각 합의 결과에서 방향별 키를 유도합니다.' } },
+      { from: 'a', to: 'enc', label: 'GET /cart', title: '트래픽 키로 보호', lines: ['브라우저→서버 트래픽 키로 요청을 보호'], text: '요청을 해당 방향의 트래픽 키로 보호합니다.', holds: { enc: 'AEAD' } },
+      { from: 'enc', to: 'dec', label: 'a7 03 …', title: '인터넷을 지남', lines: ['엿보는 이: 바이트만 봄'], text: '암호문이 인터넷을 지나 서버 쪽에서 풀립니다.', holds: { net: '바이트만 봄', dec: 'AEAD' } },
+      { from: 'dec', to: 'b', label: 'GET /cart', title: '서버가 읽음', lines: ['서버: "GET /cart" 처리'], text: '서버가 요청을 읽고 처리합니다.', holds: { b: '요청 받음' } },
     ],
   },
 ];
@@ -524,7 +564,8 @@ function movePackets(now) {
     const t = (now - packet.start) / packet.ms;
     if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
     const ease = t * t * (3 - 2 * t);
-    const [x, y] = flat(mix(packet.fromU + 1.3, packet.toU - 1.3, ease), 0, laneHeight);
+    const clearance = 1.3 * Math.sign(packet.toU - packet.fromU);
+    const [x, y] = flat(mix(packet.fromU + clearance, packet.toU - clearance, ease), 0, laneHeight);
     packet.group.setAttribute('transform', `translate(${x} ${y})`);
     return true;
   });

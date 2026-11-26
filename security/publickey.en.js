@@ -1,6 +1,29 @@
 // English for 8C.1 Public-key cryptography. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // Names follow 6.11 (dist/security/crypto.en.js): 민지 Minji, 서준 Seojun, 인터넷 (엿보는 이) Internet (spy).
 window.lessonText = {
+  "요청 → 정책 확인": "Request → Policy check",
+  "정책 확인 · 결과": "Policy check · Outcome",
+  "정책 확인 → 결과": "Policy check → Outcome",
+  "기대한 이름 · 받은 키": "Expected name · received key",
+  "인증 정보 일치": "Trusted information matches",
+  "같은 이름 · 다른 키": "Same name · different key",
+  "서명 검증 실패": "Signature fails",
+  "검증 통과": "Verified",
+  "보호 통신 시작": "Begin protected traffic",
+  "연결 중단": "Stop connection",
+  "별도 경로 확인": "Verify separately",
+  "상대 이름과 받은 키를 확인한다": "Verify the peer name and received key",
+  "기대한 이름과 받은 키를 신뢰 정보에 대조합니다. 실패하면 현재 연결을 중단하고 확인된 별도 경로를 사용합니다.": "Check the expected name and the received key against trusted information. If verification fails, stop and verify via a separate trusted channel.",
+  "연결 전 이름·키 확인": "Check name and key before connecting",
+  "신뢰 정보와 서명 대조": "Verify trust information and signature",
+  "통과만 연결 허용": "Connect only on success",
+  "요청": "Request",
+  "정책 확인": "Policy check",
+  "결과": "Outcome",
+  "공개값만 오가고 양쪽에 같은 값이 생긴다": "Only public values travel; both sides agree",
+  "계산용 작은 수입니다. 민지는 비밀 6, 서준은 비밀 15를 로컬에 둡니다. 공개값 8과 19만 교환한 뒤 양쪽에서 2가 나옵니다.": "Toy numbers for tracing the computation. Minji keeps 6 and Seojun keeps 15 locally. Only 8 and 19 travel, and both compute 2.",
+  "민지 · 보관": "Minji · local",
+  "서준 · 보관": "Seojun · local",
   // Page
   '공개키 암호 · 레슨 8C.1': 'Public-key cryptography · Lesson 8C.1', '공개키 암호': 'Public-key cryptography',
   '디피–헬만으로 공개된 수만 주고받아 같은 비밀 수 2를 만들고, 개인 키로 서명하고 공개 키로 확인하고, 바뀐 글의 서명이 맞지 않는 것을 보고, 중간자 공격이 서명 없는 키 교환을 어떻게 속이는지 따라가 보세요.':

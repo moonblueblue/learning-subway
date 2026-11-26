@@ -201,6 +201,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
 .packet-tag rect{fill:#fff;stroke:var(--request);stroke-width:.9}.packet-tag .packet-label{stroke:none;dominant-baseline:central}
+.course-diagram-open #example-note{visibility:hidden}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -380,6 +381,28 @@ const lesson = [
   },
   {
     label: '구문 트리',
+    readingDiagram: {
+      title: "곱셈은 덧셈의 왼쪽 가지에 놓인다",
+      description: "total의 대입 아래에 더하기가 있다. 왼쪽 곱셈 price × 3을 먼저 구하고 오른쪽의 500을 더한다.",
+      nodes: [
+        ["assign", 310, 69, 170, 28, ["대입: total"], "plain"],
+        ["plus", 310, 121, 94, 28, ["+"], "plain"],
+        ["multiply", 192, 171, 104, 28, ["×"], "active"],
+        ["constant", 442, 171, 108, 28, ["500"], "plain"],
+        ["price", 118, 225, 100, 28, ["price"], "plain"],
+        ["three", 264, 225, 82, 28, ["3"], "plain"],
+      ],
+      edges: [
+        ["assign", "plus", "undirected"],
+        ["plus", "multiply", "undirected"],
+        ["plus", "constant", "undirected"],
+        ["multiply", "price", "undirected"],
+        ["multiply", "three", "undirected"],
+      ],
+      labels: [
+        [30, 264, "괄호 없는 식: total = price * 3 + 500"],
+      ],
+    },
     readingStage: 2,
     note: ['토큰 7개', ' → ', '파서', ' → ', '대입 total 아래 더하기, 그 아래 곱하기(price * 3)', ' · ', '곱하기를 먼저 계산'],
     title: '토큰을 계산 순서가 드러나는 나무로 엮는다',
@@ -418,18 +441,36 @@ const lesson = [
   },
   {
     label: '오류',
+    readingDiagram: {
+      title: "문법 오류와 이름 오류는 멈추는 곳이 다르다",
+      description: "price + * 3은 파서에서 멈춘다. prise * 3은 파서를 통과하고 변수 표에 prise가 없어 실행 중에 멈춘다.",
+      nodes: [
+        ["a0", 107, 100, 174, 28, ["price + * 3"], "plain"],
+        ["a1", 310, 100, 174, 48, ["파서에서 정지", "SyntaxError"], "blocked"],
+        ["a2", 513, 100, 174, 28, ["실행 없음"], "muted"],
+        ["b0", 107, 198, 174, 28, ["prise * 3"], "plain"],
+        ["b1", 310, 198, 174, 48, ["구문 트리 생성", "prise × 3"], "active"],
+        ["b2", 513, 198, 174, 48, ["변수 표에 prise 없음", "NameError"], "blocked"],
+      ],
+      edges: [
+        ["a0", "a1", "blocked"],
+        ["a1", "a2", "muted"],
+        ["b0", "b1", "active"],
+        ["b1", "b2", "blocked"],
+      ],
+    },
     readingStage: 5,
-    note: ['① price * + 3', ' → ', '파서에서 SyntaxError (실행 전)', ' · ', '② prise * 3', ' → ', '파서 통과 · 실행 중 NameError'],
+    note: ['① price + * 3', ' → ', '파서에서 SyntaxError (실행 전)', ' · ', '② prise * 3', ' → ', '파서 통과 · 실행 중 NameError'],
     noteTone: 'bad',
     title: '문법 오류는 실행 전에, 이름 오류는 실행 중에 드러난다',
-    body: '오류는 어느 단계에서 발견되느냐로 나뉩니다. "total = price * + 3"처럼 문법이 틀리면 파서가 나무를 만들지 못해 한 줄도 실행되지 않습니다(SyntaxError). 문법은 맞지만 "total = prise * 3"처럼 없는 이름을 쓰면, 나무는 만들어지고 실행기가 변수 표를 찾을 때에야 오류가 납니다(NameError).',
+    body: '오류는 어느 단계에서 발견되느냐로 나뉩니다. "total = price + * 3"처럼 문법이 틀리면 파서가 나무를 만들지 못해 한 줄도 실행되지 않습니다(SyntaxError). 문법은 맞지만 "total = prise * 3"처럼 없는 이름을 쓰면, 나무는 만들어지고 실행기가 변수 표를 찾을 때에야 오류가 납니다(NameError).',
     takeaway: '파서에서 멈춘 오류는 실행 전에 바로 알려 줍니다. 이름 오류는 그 줄에 실제로 닿아야 드러나서, 드물게 실행되는 줄에 숨어 있을 수 있습니다. 그래서 6.2의 테스트로 그 줄까지 실행해 봐야 합니다.',
     description: '왼쪽부터 코드, 파서, 구문 트리, 실행기, 변수 표가 놓여 있습니다. 두 가지 틀린 코드가 각각 다른 곳에서 멈춥니다.',
     stations: [['src', '코드', 'file'], ['parse', '파서', 'tool'], ['tree', '구문 트리', 'file'], ['eval', '실행기', 'tool'], ['env', '변수 표', 'ram']],
-    start: { title: '틀린 코드 두 줄', lines: ['① total = price * + 3', '② total = prise * 3', '변수 표: price = 1200'], holds: { env: 'price = 1200' } },
+    start: { title: '틀린 코드 두 줄', lines: ['① total = price + * 3', '② total = prise * 3', '변수 표: price = 1200'], holds: { env: 'price = 1200' } },
     stages: [
-      { from: 'src', to: 'parse', label: '① price * + 3', title: 'SyntaxError', lines: ['* 다음에 값이 와야 하는데 + 가 옴', 'SyntaxError: invalid syntax', '나무 없음 · 한 줄도 실행 안 됨'], error: 'parse', text: '파서가 * 뒤에 값이 없어서 나무를 만들지 못합니다.', holds: { parse: '문법 오류' },
-        ask: { q: '①은 어디에서 멈출까요?', choices: ['파서', '실행기'], answer: '파서', why: '* 다음에 값이 없어 문법 규칙에 맞는 나무를 만들 수 없습니다. 실행 전에 멈춥니다.' } },
+      { from: 'src', to: 'parse', label: '① price + * 3', title: 'SyntaxError', lines: ['+ 다음에 값이 와야 하는데 * 가 옴', 'SyntaxError: invalid syntax', '나무 없음 · 한 줄도 실행 안 됨'], error: 'parse', text: '파서가 + 뒤에 피연산자를 읽을 수 없어서 나무를 만들지 못합니다.', holds: { parse: '문법 오류' },
+        ask: { q: '①은 어디에서 멈출까요?', choices: ['파서', '실행기'], answer: '파서', why: '+ 다음에 값이 없어 문법 규칙에 맞는 나무를 만들 수 없습니다. 실행 전에 멈춥니다.' } },
       { from: 'src', to: 'parse', label: '② prise * 3', title: '② 파서 통과', lines: ['이름 = 이름 * 숫자 → 문법 맞음'], reset: 'parse', text: '②는 문법이 맞아 파서를 통과합니다.', holds: { parse: '② 통과' } },
       { from: 'parse', to: 'tree', label: '나무', title: '② 구문 트리', lines: ['대입 total', '└ 곱하기 *', '   ├ 이름 prise', '   └ 숫자 3'], text: '나무가 만들어집니다. 오타는 아직 아무도 모릅니다.', holds: { tree: '노드 4개' } },
       { from: 'tree', to: 'eval', label: '곱하기 노드', title: '② 실행 시작', lines: ['곱하기의 왼쪽: 이름 prise'], text: '실행기가 곱하기를 계산하려 합니다.', holds: { eval: 'prise?' } },

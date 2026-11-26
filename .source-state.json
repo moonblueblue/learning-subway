@@ -63,6 +63,8 @@
     "platforms/mobile": "e3885046d03910d2025b0556725a7444cb43a98a",
     "platforms/webapp": "e3885046d03910d2025b0556725a7444cb43a98a",
     "programming-languages/compiler": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "programming-languages/interpreter": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "programming-languages/toolchain": "e3885046d03910d2025b0556725a7444cb43a98a",
     "projects/capstone": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "projects/tinydb": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "projects/trackproject": "6948c631d27cf02ddc17090753609254d12b0b3b",

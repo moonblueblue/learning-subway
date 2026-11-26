@@ -23,7 +23,7 @@ window.lessonText = {
   '곱하기의 왼쪽: 이름 price': 'Left of multiply: name price', '곱하기의 왼쪽: 이름 prise': 'Left of multiply: name prise',
   '변수 표: price = 1200': 'Variable table: price = 1200', '변수 표에서 price를 찾음': 'Found price in the variable table', '변수 표에 prise가 없음': 'No prise in the variable table',
   '이름 = 식 → 대입': 'name = expr → assign', '식 + 식 → 더하기': 'expr + expr → add', '식 * 식 → 곱하기 (더하기보다 먼저 묶음)': 'expr * expr → multiply (grouped before add)',
-  '이름 = 이름 * 숫자 → 문법 맞음': 'name = name * number → valid grammar', '* 다음에 값이 와야 하는데 + 가 옴': 'A value must follow *, but + came',
+  '이름 = 이름 * 숫자 → 문법 맞음': 'name = name * number → valid grammar', '+ 다음에 값이 와야 하는데 * 가 옴': 'A value must follow *, but + came',
   '나무 없음 · 한 줄도 실행 안 됨': 'No tree · not one line runs', '틀린 코드 두 줄': 'Two wrong lines of code',
   // Step 1
   '토큰 나누기': 'Splitting tokens', '띄어쓰기 → 버림': 'Spaces → dropped', 't o t a l → 글자가 이어지면 이름': 't o t a l → letters in a row make a name', '3, 5 0 0 → 숫자가 이어지면 숫자': '3, 5 0 0 → digits in a row make a number', '= * + → 기호': '= * + → symbols',
@@ -60,12 +60,12 @@ window.lessonText = {
   '이름과 값의 짝을 기억해 두어야 다음 줄의 price나 total이 무엇인지 알 수 있습니다.': 'Only by remembering name-and-value pairs can the next line know what price or total is.',
   // Step 4
   '문법 오류는 실행 전에, 이름 오류는 실행 중에 드러난다': 'Syntax errors show before running; name errors show while running',
-  '오류는 어느 단계에서 발견되느냐로 나뉩니다. "total = price * + 3"처럼 문법이 틀리면 파서가 나무를 만들지 못해 한 줄도 실행되지 않습니다(SyntaxError). 문법은 맞지만 "total = prise * 3"처럼 없는 이름을 쓰면, 나무는 만들어지고 실행기가 변수 표를 찾을 때에야 오류가 납니다(NameError).':
-    'Errors differ by the stage that finds them. With wrong grammar like "total = price * + 3", the parser cannot build a tree and not one line runs (SyntaxError). With valid grammar but a name that does not exist, like "total = prise * 3", the tree is built and the error comes only when the evaluator looks in the variable table (NameError).',
+  '오류는 어느 단계에서 발견되느냐로 나뉩니다. "total = price + * 3"처럼 문법이 틀리면 파서가 나무를 만들지 못해 한 줄도 실행되지 않습니다(SyntaxError). 문법은 맞지만 "total = prise * 3"처럼 없는 이름을 쓰면, 나무는 만들어지고 실행기가 변수 표를 찾을 때에야 오류가 납니다(NameError).':
+    'Errors differ by the stage that finds them. With wrong grammar like "total = price + * 3", the parser cannot build a tree and not one line runs (SyntaxError). With valid grammar but a name that does not exist, like "total = prise * 3", the tree is built and the error comes only when the evaluator looks in the variable table (NameError).',
   '파서에서 멈춘 오류는 실행 전에 바로 알려 줍니다. 이름 오류는 그 줄에 실제로 닿아야 드러나서, 드물게 실행되는 줄에 숨어 있을 수 있습니다. 그래서 6.2의 테스트로 그 줄까지 실행해 봐야 합니다.': 'An error that stops the parser is reported right away, before running. A name error shows only when that line is actually reached, so it can hide in a rarely run line. That is why the tests of 6.2 must run as far as that line.',
   '왼쪽부터 코드, 파서, 구문 트리, 실행기, 변수 표가 놓여 있습니다. 두 가지 틀린 코드가 각각 다른 곳에서 멈춥니다.': 'From the left stand the code, the parser, the syntax tree, the evaluator and the variable table. Two kinds of wrong code each stop in a different place.',
-  '파서가 * 뒤에 값이 없어서 나무를 만들지 못합니다.': 'The parser cannot build a tree because there is no value after *.',
-  '①은 어디에서 멈출까요?': 'Where does ① stop?', '* 다음에 값이 없어 문법 규칙에 맞는 나무를 만들 수 없습니다. 실행 전에 멈춥니다.': 'There is no value after *, so no tree fits the grammar rules. It stops before running.',
+  '파서가 + 뒤에 피연산자를 읽을 수 없어서 나무를 만들지 못합니다.': 'The parser cannot build a tree because there is no operand after +.',
+  '①은 어디에서 멈출까요?': 'Where does ① stop?', '+ 다음에 값이 없어 문법 규칙에 맞는 나무를 만들 수 없습니다. 실행 전에 멈춥니다.': 'There is no value after +, so no tree fits the grammar rules. It stops before running.',
   '② 파서 통과': '② passes the parser', '②는 문법이 맞아 파서를 통과합니다.': '② has valid grammar and passes the parser.', '② 구문 트리': '② Syntax tree', '나무가 만들어집니다. 오타는 아직 아무도 모릅니다.': 'The tree is built. Nobody knows about the typo yet.', '② 실행 시작': '② Starts running',
   '실행기가 곱하기를 계산하려 합니다.': 'The evaluator tries to calculate the multiply.', '변수 표에 prise가 없어 실행 중에 오류가 납니다.': 'There is no prise in the variable table, so an error happens while running.',
   '②의 오류가 실행할 때에야 드러나는 까닭은?': 'Why does ②\'s error show only when running?', '문법은 맞고, 이름이 있는지는 변수 표를 찾아봐야 알아서': 'The grammar is valid, and whether the name exists is known only by looking in the variable table', '파서가 오타를 무시해서': 'The parser ignores typos',
@@ -76,3 +76,20 @@ window.lessonText = {
   '곱하기 1200 * 3 = 3600': 'multiply: 1200 * 3 = 3600', '더하기 3600 + 500 = 4100': 'add: 3600 + 500 = 4100', '변수 표에 total = 4100': 'table: total = 4100', '실행기 · total = 4100': 'Evaluator · total = 4100',
   '파서에서 SyntaxError (실행 전)': 'parser: SyntaxError (before run)', '파서 통과 · 실행 중 NameError': 'parser OK · NameError while running',
 };
+
+Object.assign(window.lessonText, {
+  "곱셈은 덧셈의 왼쪽 가지에 놓인다": "Multiplication is the left branch of addition",
+  "total의 대입 아래에 더하기가 있다. 왼쪽 곱셈 price × 3을 먼저 구하고 오른쪽의 500을 더한다.": "An assignment to total sits above addition. Evaluate price × 3 on the left before adding 500 on the right.",
+  "대입: total": "Assign: total",
+  "괄호 없는 식: total = price * 3 + 500": "Expression without parentheses: total = price * 3 + 500",
+  "문법 오류와 이름 오류는 멈추는 곳이 다르다": "Syntax and name errors stop at different points",
+  "price + * 3은 파서에서 멈춘다. prise * 3은 파서를 통과하고 변수 표에 prise가 없어 실행 중에 멈춘다.": "price + * 3 stops at the parser. prise * 3 parses, then stops during execution because prise is missing from the variable table.",
+  "파서에서 정지": "Parser stops",
+  "실행 없음": "No execution",
+  "구문 트리 생성": "Tree built",
+  "변수 표: price만 있음": "Only price is defined",
+});
+
+Object.assign(window.lessonText, {
+  "변수 표에 prise 없음": "No prise in table",
+});

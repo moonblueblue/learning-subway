@@ -82,6 +82,12 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
 .truth td.blank{color:#9aa8a2}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
+/* Stage evidence stays visible in the reading view without solving the exercise. */
+.scene-evidence{border-collapse:collapse;table-layout:fixed;width:100%;font-size:.83rem;line-height:1.3}
+.scene-evidence caption{text-align:left;font-weight:700;padding:.3em 0}
+.scene-evidence :is(th,td){border:1px solid var(--border);padding:.28em .38em;overflow-wrap:anywhere;text-align:left}
+.scene-evidence thead th{background:#e9f4ed}
+.scene-evidence tbody td:last-child{font-weight:650}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -122,6 +128,9 @@ header p.lead{color:var(--muted);margin-top:10px}
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2><p id="body"></p>
+      <table class="scene-evidence" id="scene-evidence">
+        <caption></caption><thead><tr></tr></thead><tbody></tbody>
+      </table>
       <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
       <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
     </section>
@@ -139,6 +148,7 @@ const TF = [['true', '참'], ['false', '거짓']];
 const lesson = [
   {
     label: '대비 비율',
+    evidence: ["흰 배경, 같은 크기의 글자", ["견본 색", "대비", "4.5:1 기준"], [["#777777", "4.48:1", "미달"], ["#767676", "4.54:1", "통과"]]],
     example: ["흰 바탕에 #777777 글자", "대비 4.48:1", "4.5:1 미달 · #767676은 4.54:1로 통과"],
     title: '글자와 배경의 밝기 차이를 숫자로 잰다',
     body: '6.8에서 "대비가 충분해야 한다"고 했습니다. 접근성 기준(WCAG)은 이것을 숫자로 정합니다. 두 색의 밝기 비율(대비 비율)이 1:1(같은 색)에서 21:1(검정과 흰색)까지인데, 보통 글자는 4.5:1 이상, 큰 글자(약 24px 이상)는 3:1 이상이어야 합니다. 눈으로 괜찮아 보여도 계산하면 기준에 못 미치는 경우가 많습니다.',
@@ -156,6 +166,7 @@ const lesson = [
   },
   {
     label: '화면 읽기',
+    evidence: ["보이는 이름이 같아도 역할은 다르다", ["표시", "역할", "접근 가능한 이름"], [["구매 · 일반 요소", "일반", "버튼 이름 없음"], ["구매 · 기본 버튼", "버튼", "구매"]]],
     example: ["<div onclick>구매</div>", "버튼인지 몰라 \"구매\"만 읽음", "<button>이면 \"구매, 버튼\"으로 읽음"],
     title: '화면 읽기 프로그램이 알아듣게 뜻을 표시한다',
     body: '앞이 보이지 않는 사용자는 화면 읽기 프로그램이 읽어 주는 소리로 웹을 씁니다. 프로그램은 생김새가 아니라 HTML의 뜻(버튼인지, 제목인지, 무슨 칸인지)을 읽습니다. 그래서 버튼은 진짜 <button>으로, 그림에는 대체 글을, 입력 칸에는 이름표(label)를, 제목은 제목 태그로 표시해야 합니다.',
@@ -173,6 +184,7 @@ const lesson = [
   },
   {
     label: '키보드만으로',
+    evidence: ["주소에서 주문 확인까지 키보드로 이동", ["키", "포커스", "결과"], [["Tab", "주소 입력 → 구매", "테두리가 구매로 이동"], ["Enter / Space", "구매 → 확인 영역", "주문 실행"], ["Shift+Tab", "이전 제어로 이동", "역방향 가능"]]],
     example: ["포커스 테두리를 모두 없앰", "Tab으로 어디 있는지 안 보임", "키보드 사용자가 길을 잃음"],
     title: '마우스 없이 Tab과 Enter로 모든 기능을 쓸 수 있어야 한다',
     body: '손을 쓰기 어려운 사람, 화면 읽기 프로그램 사용자, 빠른 작업을 좋아하는 사람은 키보드만 씁니다. Tab으로 누를 수 있는 것들을 화면 순서대로 옮겨 다니고, 지금 어디에 있는지(포커스)가 눈에 보여야 하고, Enter나 Space로 누를 수 있어야 합니다. 들어갔다가 빠져나올 수 없는 곳(키보드 함정)이 있으면 안 됩니다.',
@@ -190,6 +202,7 @@ const lesson = [
   },
   {
     label: '여러 선택지',
+    evidence: ["움직임을 줄여도 결론은 같다", ["설정", "전환", "최종 화면"], [["기본", "이동 애니메이션", "주문 확인 · 닫기"], ["움직임 줄이기", "즉시 표시", "주문 확인 · 닫기"]]],
     example: ["움직임 줄이기가 켜져 있음", "화면 전환 애니메이션을 끔", "어지럼을 느끼는 사람도 씀"],
     title: '사람마다 다른 방법으로 같은 정보를 얻게 한다',
     body: '접근성은 특정 장애만을 위한 것이 아닙니다. 움직임에 어지러움을 느끼는 사람을 위해 애니메이션을 줄이는 설정(prefers-reduced-motion)을 따르고, 소리를 못 듣거나 조용한 곳에 있는 사람을 위해 영상에 자막을 넣고, 글자를 200%로 키워도 내용이 잘리지 않게 합니다. 이런 배려는 대부분의 사람에게도 편합니다.',
@@ -210,11 +223,30 @@ const lesson = [
 const byId = (id) => document.getElementById(id);
 const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
 
+function showEvidence([caption, columns, entries]) {
+  const table = byId('scene-evidence');
+  table.caption.textContent = caption;
+  const header = table.tHead.rows[0];
+  header.replaceChildren();
+  for (const column of columns) {
+    const cell = document.createElement('th');
+    cell.scope = 'col';
+    cell.textContent = column;
+    header.append(cell);
+  }
+  table.tBodies[0].replaceChildren();
+  for (const entry of entries) {
+    const row = table.tBodies[0].insertRow();
+    for (const value of entry) row.insertCell().textContent = value;
+  }
+}
+
 function showStep(index, announce = true) {
   state.index = index;
   const step = lesson[index];
   byId('step-title').textContent = step.title;
   byId('body').textContent = step.body;
+  showEvidence(step.evidence);
   byId('takeaway').textContent = step.link;
   // Text after a blank line in the question is code, shown in its own block.
   const [caseText, ...caseCode] = step.case.split('\n\n');

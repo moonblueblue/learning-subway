@@ -1,5 +1,25 @@
 // English for 8D.1 The rendering pipeline. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "같은 점을 세 원점에서 읽는다": "Read the same corner from three origins",
+  "모델의 (1,1,1)에 물체 위치를 더한 뒤 카메라 위치를 뺍니다. 세 좌표는 모두 같은 꼭짓점입니다.": "Add the object position to model (1,1,1), then subtract the camera position. All three coordinate sets refer to the same corner.",
+  "모델 원점": "Model origin",
+  "월드 원점": "World origin",
+  "카메라 원점": "Camera origin",
+  "● 세 좌표는 같은 꼭짓점": "● All coordinates represent the same corner",
+  "깊이가 두 배면 화면 중심에 더 가깝다": "Doubling depth moves the point towards the centre",
+  "x 화면은 400 + 400x/z, y 화면은 300 − 400y/z입니다. 600,250과 500,275는 같은 x,y의 서로 다른 깊이에서 나옵니다.": "Screen x is 400 + 400x/z; y is 300 − 400y/z. Keeping scene x and y fixed gives (600,250) and (500,275) at the two depths.",
+  "화면 중심": "Screen centre",
+  "닫힌 상자 · 삼각형 12개": "Closed box · 12 triangles",
+  "이 시점에서 뒤쪽 6개": "Six back-facing triangles",
+  "앞을 향한 6개 그리기": "Draw six front-facing triangles",
+  "뒤를 향한 6개 제외": "Cull six back-facing triangles",
+  "보이는 방향으로 분류한 뒤 뒷면을 버린다": "Classify winding before dropping back faces",
+  "같은 시간축에서 14ms의 프레임 비용": "A 14 ms frame on one time axis",
+  "예시의 직렬 비용은 3 더하기 2 더하기 9밀리초입니다. 16.67밀리초 예산에서 2.67밀리초가 남습니다.": "The example serial costs of 3, 2 and 9 ms total 14 ms, leaving 2.67 ms from the 16.67 ms budget.",
+  "준비": "Setup",
+  "제외": "Cull",
+  "픽셀 그리기": "Draw pixels",
+  "남은 시간": "Time left",
   // Page
   '렌더링 파이프라인 · 레슨 8D.1': 'The rendering pipeline · Lesson 8D.1',
   '상자의 꼭짓점 하나가 모델, 월드, 카메라 좌표를 지나 거리로 나누는 원근 투영으로 화면 픽셀이 되고, 보이지 않는 삼각형을 버리고, 한 프레임 16.7ms 예산 안에 그리기까지를 따라가 보세요.':

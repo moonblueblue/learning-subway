@@ -206,6 +206,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .station.router .left{fill:#f6dfc8;stroke:#c26a1e}.station.router .right{fill:#ecc8a4;stroke:#c26a1e}.station.router .top{fill:#fdf2e7;stroke:#c26a1e}
 .work li{white-space:pre-wrap}
 .dot.ssddot{background:#eaeef9;border-color:#7a87b5}.dot.ramdot{background:#dcf1e2;border-color:#5f9474}.dot.wiredot{background:#eef1ef;border-color:#8c9d96}.dot.appdot{background:#e2f5e8;border-color:#4f8f6b}.dot.layerdot{background:#eef1fb;border-color:#5362a0}.dot.routerdot{background:#fdf2e7;border-color:#c26a1e}
+/* The diagram explains the step itself. Keep the caption on the simulation only. */
+.course-diagram-open #scene #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -433,6 +435,23 @@ const lesson = [
   },
   {
     label: '자원 제한',
+    readingDiagram: {
+      title: "커널은 웹만 끝내고 관리 도구가 다시 시작한다",
+      description: "웹의 2.1GB 할당 시도는 2GB 한도를 넘습니다. 예시 정책에 따라 커널이 기존 웹 프로세스만 종료하고 관리 도구가 새 PID로 시작합니다. DB는 요청을 완료합니다.",
+      nodes: [
+        ["a0", 150, 82, 244, 48, ["웹 · PID 120", "2.1 GB > 2 GB"], "plain"],
+        ["b0", 470, 82, 230, 48, ["호스트 커널", "웹 프로세스만 종료"], "blocked"],
+        ["a1", 150, 139, 244, 48, ["관리 도구", "같은 웹 이미지"], "plain"],
+        ["b1", 470, 139, 230, 48, ["웹 다시 시작", "PID 121"], "active"],
+        ["a2", 150, 196, 244, 48, ["DB · PID 130", "5 GB / 8 GB"], "plain"],
+        ["b2", 470, 196, 230, 48, ["DB 요청 완료", "PID 130"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "blocked", "", 0],
+        ["a1", "b1", "active", "", 0],
+        ["a2", "b2", "active", "", 0],
+      ],
+    },
     readingStage: 4,
     note: ['웹이 한도 2GB를 넘음 (2.1GB)', ' → ', '커널이 웹 컨테이너만 강제 종료', ' → ', 'DB는 멀쩡 · 웹은 다시 실행'],
     title: '컨테이너마다 쓸 수 있는 CPU와 메모리를 제한한다',

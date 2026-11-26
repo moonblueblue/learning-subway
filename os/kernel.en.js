@@ -1,5 +1,20 @@
 // English for 8A.2 The operating system kernel. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "로그인 대기 · 시스템 콜이나 인터럽트에서 커널 진입": "Login waits · enter kernel on syscall or interrupt",
+  "커널이 타이머의 처리기를 등록한다": "The kernel registers a timer handler",
+  "페이지 표와 드라이버를 준비하고, 타이머 신호가 10ms마다 처리기로 이어지게 합니다.": "Set up the page table and drivers, then connect the timer signal to its handler every 10 ms.",
+  "페이지 표": "Page table",
+  "장치 드라이버": "Device drivers",
+  "타이머 켜짐": "Timer on",
+  "커널 처리기": "Kernel handler",
+  "인터럽트": "Interrupt",
+  "로그인 대기 중 타이머가 커널을 부른다": "The timer interrupts while login waits",
+  "PID 1이 로그인 서비스를 띄운 뒤, 타이머가 울리면 CPU가 커널 처리기로 옮겨 갔다가 사용자 작업으로 돌아옵니다.": "PID 1 starts the login service. When the timer fires, the CPU enters the kernel handler and returns to user work.",
+  "로그인 대기": "Login waiting",
+  "사용자 모드": "User mode",
+  "타이머": "Timer",
+  "커널 모드": "Kernel mode",
+  "사용자 작업 재개": "Resume user work",
   // Page
   '운영체제 커널 · 레슨 8A.2': 'The operating system kernel · Lesson 8A.2',
   '전원을 켠 뒤 펌웨어가 장치를 검사하고, 부트로더가 커널을 RAM에 올리고, 커널이 메모리·인터럽트·장치·타이머를 차리고, 첫 사용자 프로세스가 서비스와 로그인 화면을 띄우기까지를 따라가 보세요.':

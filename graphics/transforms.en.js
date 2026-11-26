@@ -1,5 +1,15 @@
 // English for 8D.2 Transforms and cameras. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "길이 ×2 → 원점 둘레 90° → 오른쪽 3, 위 1": "Double length → rotate 90° → right 3, up 1",
+  "같은 꼭짓점에 확대·회전·이동을 적용": "Scale, rotate and move the same point",
+  "A 회전 → 이동     B 이동 → 원점 회전": "A rotate then move    B move then rotate",
+  "같은 출발점에서 결과가 달라진다": "The same start has two different results",
+  "오른쪽 행렬부터 계산해 같은 점으로": "Rightmost matrix acts first",
+  "월드 점": "World point",
+  "같은 월드 점": "Same world point",
+  "카메라 x=0": "Camera x=0",
+  "카메라 x=2": "Camera x=2",
+  "카메라가 오른쪽으로 가면 상대 x는 작아진다": "Moving the camera right reduces relative x",
   // Page
   '변환과 카메라 · 레슨 8D.2': 'Transforms and cameras · Lesson 8D.2',
   '점 (1, 0)을 늘리고 돌리고 옮겨 보고, 순서가 바뀌면 결과가 달라지는 까닭, 동차 좌표로 변환 여러 개를 행렬 하나로 묶는 방법, 카메라 이동이 세상을 반대로 옮기는 뷰 행렬이라는 것을 따라가 보세요.':

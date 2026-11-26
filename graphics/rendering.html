@@ -201,6 +201,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
 .packet-tag rect{fill:#fff;stroke:var(--request);stroke-width:.9}.packet-tag .packet-label{stroke:none;dominant-baseline:central}
+.course-diagram-open #scene #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -366,6 +367,24 @@ const ST = [['model', '모델', 'file'], ['world', '월드', 'tool'], ['view', '
 const lesson = [
   {
     label: '좌표 공간 여행',
+    readingDiagram: {
+      title: "같은 점을 세 원점에서 읽는다",
+      description: "모델의 (1,1,1)에 물체 위치를 더한 뒤 카메라 위치를 뺍니다. 세 좌표는 모두 같은 꼭짓점입니다.",
+      nodes: [
+        ["a", 97, 145, 148, 48, ["모델 원점", "(1, 1, 1)"], "plain"],
+        ["b", 310, 145, 142, 48, ["월드 원점", "(4, 1, 11)"], "plain"],
+        ["c", 522, 145, 164, 48, ["카메라 원점", "(4, 1, 8)"], "active"],
+      ],
+      edges: [
+        ["a", "b", "active", "", 0],
+        ["b", "c", "active", "", 0],
+      ],
+      labels: [
+        [155, 99, "+(3, 0, 10)"],
+        [369, 99, "−(0, 0, 3)"],
+        [50, 239, "● 세 좌표는 같은 꼭짓점"],
+      ],
+    },
     readingStage: 2,
     note: ['꼭짓점 (1, 1, 1)', ' → ', '상자를 (3, 0, 10)에 놓아 (4, 1, 11)', ' → ', '카메라 (0, 0, 3)을 빼서 (4, 1, 8)'],
     title: '꼭짓점은 여러 좌표계를 거쳐 화면에 닿는다',
@@ -382,6 +401,26 @@ const lesson = [
   },
   {
     label: '원근',
+    readingDiagram: {
+      title: "깊이가 두 배면 화면 중심에 더 가깝다",
+      description: "x 화면은 400 + 400x/z, y 화면은 300 − 400y/z입니다. 600,250과 500,275는 같은 x,y의 서로 다른 깊이에서 나옵니다.",
+      nodes: [
+        ["near", 114, 93, 149, 48, ["(4, 1, 8)", "x/z = 0.5"], "plain"],
+        ["far", 114, 198, 149, 48, ["(4, 1,16)", "x/z = 0.25"], "plain"],
+        ["centre", 300, 211, 136, 48, ["화면 중심", "(400, 300)"], "muted"],
+        ["near2", 525, 94, 124, 28, ["(600, 250)"], "active"],
+        ["far2", 429, 150, 124, 28, ["(500, 275)"], "active"],
+      ],
+      edges: [
+        ["near", "near2", "active", "", 0],
+        ["far", "far2", "active", "", 0],
+        ["centre", "far2", "muted", "", 0],
+        ["far2", "near2", "muted", "", 0],
+      ],
+      labels: [
+        [40, 268, "x = 400 + 400x/z     y = 300 − 400y/z"],
+      ],
+    },
     readingStage: 2,
     note: ['(4, 1, 8)을 거리 8로 나눔', ' → ', '(0.5, 0.125)', ' → ', '400배 해서 가운데 (400, 300)에 더함 (y는 위로 빼기): (600, 250)'],
     title: '멀수록 작게: 거리로 나눈다',
@@ -398,6 +437,20 @@ const lesson = [
   },
   {
     label: '버리기',
+    readingDiagram: {
+      title: "보이는 방향으로 분류한 뒤 뒷면을 버린다",
+      description: "보이는 방향으로 분류한 뒤 뒷면을 버린다",
+      nodes: [
+        ["a0", 150, 103, 244, 28, ["닫힌 상자 · 삼각형 12개"], "plain"],
+        ["b0", 470, 103, 230, 28, ["앞을 향한 6개 그리기"], "active"],
+        ["a1", 150, 195, 244, 28, ["이 시점에서 뒤쪽 6개"], "plain"],
+        ["b1", 470, 195, 230, 28, ["뒤를 향한 6개 제외"], "blocked"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "blocked", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['상자 삼각형 12개', ' → ', '카메라 반대쪽을 향한 6개를 버림', ' → ', '6개만 그림'],
     title: '보이지 않는 삼각형은 일찍 버린다',
@@ -415,6 +468,24 @@ const lesson = [
   },
   {
     label: '한 프레임',
+    readingDiagram: {
+      title: "같은 시간축에서 14ms의 프레임 비용",
+      description: "예시의 직렬 비용은 3 더하기 2 더하기 9밀리초입니다. 16.67밀리초 예산에서 2.67밀리초가 남습니다.",
+      nodes: [
+        ["a", 99, 141, 78, 28, ["3 ms"], "plain"],
+        ["b", 169, 141, 51, 28, ["2 ms"], "plain"],
+        ["c", 306, 141, 228, 28, ["9 ms"], "active"],
+        ["d", 457, 141, 74, 28, ["2.67 ms"], "muted"],
+      ],
+      labels: [
+        [61, 99, "준비"],
+        [144, 187, "제외"],
+        [271, 99, "픽셀 그리기"],
+        [419, 187, "남은 시간"],
+        [61, 240, "0 ms                         14 ms → 16.67 ms"],
+      ],
+      edges: [],
+    },
     readingStage: 3,
     note: ['변환 3ms + 삼각형 2ms + 픽셀 9ms', ' → ', '합계 14ms < 60프레임 예산 16.7ms', ' → ', '제때 그림'],
     title: '1초에 60번, 한 번에 16.7ms 안에 모두 끝낸다',

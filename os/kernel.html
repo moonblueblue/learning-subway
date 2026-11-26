@@ -200,6 +200,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+/* The diagram explains the step itself. Keep the caption on the simulation only. */
+.course-diagram-open #scene #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -398,6 +400,19 @@ const lesson = [
   },
   {
     label: '커널의 준비',
+    readingDiagram: {
+      title: "커널이 타이머의 처리기를 등록한다",
+      description: "페이지 표와 드라이버를 준비하고, 타이머 신호가 10ms마다 처리기로 이어지게 합니다.",
+      nodes: [
+        ["ram", 130, 97, 182, 48, ["페이지 표", "RAM"], "plain"],
+        ["dev", 475, 97, 182, 28, ["장치 드라이버"], "plain"],
+        ["timer", 130, 196, 182, 48, ["타이머 켜짐", "10 ms"], "active"],
+        ["irq", 475, 196, 182, 28, ["커널 처리기"], "active"],
+      ],
+      edges: [
+        ["timer", "irq", "active", "인터럽트", 0],
+      ],
+    },
     readingStage: 3,
     note: ['커널이 하나씩 준비', ': ', 'RAM에 페이지 표', ' · ', '장치 드라이버', ' · ', '타이머 10ms마다'],
     title: '커널이 메모리, 인터럽트, 장치, 스케줄러를 차린다',
@@ -415,8 +430,25 @@ const lesson = [
   },
   {
     label: '첫 프로세스',
+    readingDiagram: {
+      title: "로그인 대기 중 타이머가 커널을 부른다",
+      description: "PID 1이 로그인 서비스를 띄운 뒤, 타이머가 울리면 CPU가 커널 처리기로 옮겨 갔다가 사용자 작업으로 돌아옵니다.",
+      nodes: [
+        ["pid", 97, 89, 135, 28, ["PID 1"], "plain"],
+        ["login", 315, 89, 164, 48, ["로그인 대기", "사용자 모드"], "plain"],
+        ["timer", 97, 183, 135, 48, ["타이머", "10 ms"], "plain"],
+        ["handler", 315, 183, 164, 48, ["커널 처리기", "커널 모드"], "active"],
+        ["resume", 519, 183, 166, 28, ["사용자 작업 재개"], "active"],
+      ],
+      edges: [
+        ["pid", "login", "active", "", 0],
+        ["login", "handler", "active", "10 ms", 0],
+        ["timer", "handler", "active", "", 0],
+        ["handler", "resume", "active", "", 0],
+      ],
+    },
     readingStage: 4,
-    note: ['커널이 첫 프로세스 PID 1을 띄움', ' → ', '서비스 12개', ' → ', '로그인 대기 · 커널은 시스템 콜로 부를 때만'],
+    note: ['커널이 첫 프로세스 PID 1을 띄움', ' → ', '서비스 12개', ' → ', '로그인 대기 · 시스템 콜이나 인터럽트에서 커널 진입'],
     title: '커널은 첫 사용자 프로세스를 띄우고 뒤로 물러난다',
     body: '판이 차려지면 커널은 첫 사용자 프로세스(PID 1, 보통 init 또는 systemd)를 만들어 사용자 영역(5.3)에서 실행합니다. PID 1은 네트워크, 로그인 화면 같은 서비스 프로세스를 차례로 띄우고, 그 프로세스들이 다시 다른 프로세스를 띄웁니다. 커널은 이제 시스템 콜이나 인터럽트가 올 때만 끼어듭니다.',
     takeaway: '전원 → 펌웨어 → 부트로더 → 커널 → PID 1 → 서비스 → 로그인 화면 순서로 컴퓨터가 깨어났습니다. 모든 프로세스는 PID 1의 자손입니다. 커널은 항상 메모리에 있지만, 평소에는 부름을 받을 때만 일합니다.',

@@ -82,6 +82,12 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
 .truth td.blank{color:#9aa8a2}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
+/* Stage evidence stays visible in the reading view without solving the exercise. */
+.scene-evidence{border-collapse:collapse;table-layout:fixed;width:100%;font-size:.83rem;line-height:1.3}
+.scene-evidence caption{text-align:left;font-weight:700;padding:.3em 0}
+.scene-evidence :is(th,td){border:1px solid var(--border);padding:.28em .38em;overflow-wrap:anywhere;text-align:left}
+.scene-evidence thead th{background:#e9f4ed}
+.scene-evidence tbody td:last-child{font-weight:650}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -122,6 +128,9 @@ header p.lead{color:var(--muted);margin-top:10px}
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2><p id="body"></p>
+      <table class="scene-evidence" id="scene-evidence">
+        <caption></caption><thead><tr></tr></thead><tbody></tbody>
+      </table>
       <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
       <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
     </section>
@@ -139,6 +148,7 @@ const TF = [['true', '참'], ['false', '거짓']];
 const lesson = [
   {
     label: '무엇을 지킬까',
+    evidence: ["같은 노출이라도 피해 규모를 비교한다", ["자산", "노출 시 영향", "우선순위"], [["결제 자격 증명", "고객 피해", "우선 보호"], ["공개 상품 소개", "이미 공개된 정보", "기밀성 위험 낮음"]]],
     example: ["결제 회사 비밀 키가 샘", "남의 이름으로 돈이 나감", "먼저 지킬 자산"],
     title: '먼저 잃으면 안 되는 것(자산)을 정한다',
     body: '위협 모델링은 "무엇을, 누구로부터, 어떻게 지킬지"를 만들기 전에 따져 보는 일입니다. 첫 질문은 "잃거나 새면 큰일 나는 것이 무엇인가"입니다. 모든 것을 똑같이 지킬 수는 없으니, 새거나 바뀌면 피해가 큰 것을 골라 집중합니다. 이 실험에서는 지금까지 만든 문구점 웹 앱(6.9–6.12, 9.3)을 대상으로 합니다.',
@@ -156,23 +166,20 @@ const lesson = [
   },
   {
     label: '위협 분류',
-    example: ["훔친 세션 쿠키로 남의 계정에 들어감", "남인 척하기", "STRIDE의 S: 위장"],
-    title: 'STRIDE로 빠뜨린 위협이 없는지 훑는다',
-    body: '위협을 빠짐없이 떠올리려고 STRIDE라는 목록을 씁니다. 위장(남인 척), 변조(내용 바꾸기), 부인(했는데 안 했다고 하기), 정보 유출, 서비스 거부(못 쓰게 만들기), 권한 상승(할 수 없는 일 하기)입니다. 시스템의 부품과 데이터 흐름마다 이 여섯 가지를 차례로 물어봅니다.',
-    link: '앞 레슨의 공격들이 모두 이 목록에 들어갑니다. 8C.1의 중간자, 6.9의 가격 조작, 8C.4의 경로 조작, 8C.3의 버퍼 넘침입니다.',
-    case: '이 위협은 STRIDE의 어디에 속할까요?',
-    choices: [['spoof', '위장'], ['tamper', '변조'], ['leak', '정보 유출'], ['elev', '권한 상승']],
-    items: [
-      { text: '훔친 세션 쿠키로 남의 계정에 로그인한다 (6.12)', answer: 'spoof', why: '다른 사람인 척하는 것이 위장입니다.' },
-      { text: '요청의 가격을 10원으로 바꿔 보낸다 (6.9)', answer: 'tamper', why: '오가는 데이터를 바꾸는 것이 변조입니다.' },
-      { text: '../ 경로로 비밀 설정 파일을 내려받는다 (8C.4)', answer: 'leak', why: '보면 안 되는 정보를 보는 것이 정보 유출입니다.' },
-      { text: '버퍼 넘침으로 is_admin을 바꿔 관리자가 된다 (8C.3)', answer: 'elev', why: '원래 권한보다 높은 일을 하게 되는 것이 권한 상승입니다.' },
-    ],
-    question: '레이트 리미터(7.7)와 서킷 브레이커(7.8)는 STRIDE의 어떤 위협을 줄일까요?',
-    sample: '서비스 거부입니다. 한 사용자나 한 고장 때문에 모두가 서비스를 못 쓰게 되는 것을 막습니다.',
+    evidence: ["징후를 보고 보호 속성을 분류한다", ["징후", "보호 속성", "위협 범주"], [["요청의 신원이 맞지 않음", "인증", "신원 위장"], ["인가 없이 자료 열람", "기밀성", "정보 노출"]]],
+    example: ["요청 신원 불일치", "서버의 신원 확인에서 발견", "신원 위장으로 분류"],
+    title: "관측된 징후를 보호 속성에 연결한다",
+    body: "누구인지 확인되지 않은 요청과 권한 밖의 열람은 서로 다른 경고입니다. 관측을 인증이나 기밀성 같은 보호 속성에 연결하면 어디를 검사해야 할지 정할 수 있습니다.",
+    link: "6.12에서 본 신원과 권한 확인의 차이를 징후에 적용합니다.",
+    case: "가상 서비스에서 나온 안전한 관측 기록을 분류하세요.",
+    choices: [["true", "참"], ["false", "거짓"]],
+    items: [{"text": "요청의 신원이 일치하지 않으면 인증을 확인합니다.", "answer": "true", "why": "이 기록은 요청자가 누구인지와 연결됩니다."}, {"text": "비인가 열람은 기밀성에 영향을 줍니다.", "answer": "true", "why": "자료를 읽을 수 있는 범위가 기밀성을 결정합니다."}],
+    question: "로그에 비인가 읽기 징후가 있으면 어느 보호 속성을 검토할까요?",
+    sample: "기밀성을 확인합니다. 담당자가 자료 권한과 반환된 결과가 정책에 맞았는지 대조합니다.",
   },
   {
     label: '먼저 막을 것',
+    evidence: ["가능성 × 영향으로 우선순위를 정한다", ["위험", "평가", "순위"], [["A", "5 × 4 = 20", "1위"], ["B", "3 × 5 = 15", "2위"]]],
     example: ["비밀번호 대입: 5 × 4 = 20", "결제 키 노출: 3 × 5 = 15", "점수 큰 20부터, 15도 곧"],
     title: '일어날 가능성과 피해 크기로 순서를 정한다',
     body: '찾은 위협을 한꺼번에 다 막을 수는 없습니다. 각 위협이 일어날 가능성(쉽게 시도할 수 있나, 이미 흔한가)과 일어났을 때 피해 크기를 매기고, 둘을 곱해 큰 것부터 막습니다. 가능성은 낮아도 피해가 아주 큰 것(결제 키 유출)은 일찍 막습니다.',
@@ -190,31 +197,46 @@ const lesson = [
   },
   {
     label: '대응 고르기',
-    example: ["로그인 칸에 ' OR '1'='1", "입력을 값으로 넘기는 매개변수 질의", "사용자 목록이 새지 않음"],
-    title: '위협마다 알맞은 대응을 짝짓는다',
-    body: '마지막으로 위협마다 대응을 정하고, 정말 막히는지 테스트(6.2)로 확인합니다. 대응은 앞 레슨들에서 이미 배웠습니다. 중요한 것은 위협과 대응을 표로 남겨, 서비스가 바뀔 때마다 다시 훑어보는 것입니다. 위협 모델은 한 번 쓰고 끝내는 문서가 아니라 함께 자라는 지도입니다.',
-    link: 'SameSite와 CSRF 토큰(8C.4), 매개변수 질의(6.12), 레이트 리미터(7.7), 서명과 인증서(8C.1, 8C.2)를 다시 꺼내 씁니다.',
-    case: '이 위협에 가장 알맞은 대응은?',
-    choices: [['param', '매개변수 질의'], ['csrf', 'SameSite·CSRF 토큰'], ['rate', '레이트 리미터'], ['sign', '전자 서명 확인']],
-    items: [
-      { text: '로그인 칸에 \' OR \'1\'=\'1을 넣어 모든 사용자를 꺼낸다', answer: 'param', why: 'SQL 인젝션입니다. 입력을 값으로만 넘기면 막힙니다(6.12).' },
-      { text: '다른 사이트의 숨은 양식이 로그인한 사용자의 포인트를 보낸다', answer: 'csrf', why: '사이트 간 요청 위조입니다(8C.4).' },
-      { text: '한 IP가 1초에 수천 번 쿠폰 번호를 대입한다', answer: 'rate', why: '대입 공격과 서비스 거부를 함께 줄입니다(7.7).' },
-      { text: '중간에서 앱 업데이트 파일을 악성 파일로 바꿔치기한다', answer: 'sign', why: '업데이트 파일에 개발사의 서명을 붙이고 설치 전에 확인합니다(8C.1).' },
-    ],
-    question: '새 기능 "친구에게 선물 보내기"를 만든다면, 어떤 위협을 먼저 떠올리겠어요?',
-    sample: '받는 사람을 바꿔치기(변조), 남의 계정으로 선물 보내기(위장), 선물을 끝없이 보내 포인트 빼돌리기(권한·남용), 선물 기록을 부인하기(부인)입니다. 각각 서버 검사, 인증, 레이트 리미터, 기록 남기기로 대응합니다.',
+    evidence: ["통제 적용 뒤 같은 척도로 다시 평가한다", ["시점", "통제와 점수", "확인"], [["적용 전", "5 × 4 = 20", "담당: 서비스 팀"], ["자료와 명령 분리", "2 × 4 = 8", "검증 통과 · 12/1 재검토"]]],
+    example: ["형식에 맞지 않는 입력", "자료와 명령을 분리하고 형식을 확인", "자료 미반환 · 검증 통과"],
+    title: "통제를 적용하고 남은 위험을 검토한다",
+    body: "가능성과 영향으로 우선순위를 정한 뒤 통제를 붙입니다. 이 예에서 요청 값과 질의 명령은 분리합니다. 형식에 맞지 않는 입력에 자료가 반환되지 않는지 확인하고 같은 척도로 다시 평가합니다.",
+    link: "8C.4의 자료와 명령 분리와 연결됩니다. 검증 결과와 책임자를 기록합니다.",
+    case: "담당자가 요청 값의 형식과 반환 결과를 안전한 검사 기록으로 검증했습니다.",
+    choices: [["true", "참"], ["false", "거짓"]],
+    items: [{"text": "형식에 맞지 않는 값에 자료를 반환하지 않았습니다.", "answer": "true", "why": "검증 기록에서 거절과 반환 자료 0건을 함께 확인합니다."}, {"text": "통제를 적용하면 재검토가 필요 없습니다.", "answer": "false", "why": "통제 검증 뒤에도 담당자가 잔여 위험과 재검토 시점을 기록합니다."}],
+    question: "점수가 20에서 8로 바뀐 뒤 무엇을 기록할까요?",
+    sample: "담당 팀, 검증 결과, 잔여 가능성과 영향, 재검토 일자를 기록합니다.",
   },
 ];
 
 const byId = (id) => document.getElementById(id);
 const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
 
+function showEvidence([caption, columns, entries]) {
+  const table = byId('scene-evidence');
+  table.caption.textContent = caption;
+  const header = table.tHead.rows[0];
+  header.replaceChildren();
+  for (const column of columns) {
+    const cell = document.createElement('th');
+    cell.scope = 'col';
+    cell.textContent = column;
+    header.append(cell);
+  }
+  table.tBodies[0].replaceChildren();
+  for (const entry of entries) {
+    const row = table.tBodies[0].insertRow();
+    for (const value of entry) row.insertCell().textContent = value;
+  }
+}
+
 function showStep(index, announce = true) {
   state.index = index;
   const step = lesson[index];
   byId('step-title').textContent = step.title;
   byId('body').textContent = step.body;
+  showEvidence(step.evidence);
   byId('takeaway').textContent = step.link;
   // Text after a blank line in the question is code, shown in its own block.
   const [caseText, ...caseCode] = step.case.split('\n\n');

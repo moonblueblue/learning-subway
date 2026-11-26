@@ -1,5 +1,15 @@
 // English for 8A.6 Virtualization and containers. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "커널은 웹만 끝내고 관리 도구가 다시 시작한다": "The kernel stops web and the manager restarts it",
+  "웹의 2.1GB 할당 시도는 2GB 한도를 넘습니다. 예시 정책에 따라 커널이 기존 웹 프로세스만 종료하고 관리 도구가 새 PID로 시작합니다. DB는 요청을 완료합니다.": "Web tries 2.1 GB against a 2 GB limit. The kernel stops the old web process under this policy and the manager starts a new PID. DB completes its request.",
+  "웹 · PID 120": "Web · PID 120",
+  "관리 도구": "Container manager",
+  "같은 웹 이미지": "Same web image",
+  "DB · PID 130": "DB · PID 130",
+  "호스트 커널": "Host kernel",
+  "웹 프로세스만 종료": "Stop only web",
+  "웹 다시 시작": "Web restarts",
+  "DB 요청 완료": "DB request completes",
   // Page
   '가상화와 컨테이너 · 레슨 8A.6': 'Virtualization and containers · Lesson 8A.6',
   '하이퍼바이저가 컴퓨터 한 대를 자기 커널을 가진 가상 머신 여러 대로 나누고 서로를 막는 방법과, 컨테이너가 커널 하나를 함께 쓰며 가려진 프로세스로 빠르게 뜨고 자원 한도로 서로를 지키는 방법을 비교해 보세요.':

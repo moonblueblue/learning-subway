@@ -1,5 +1,22 @@
 // English for 5.2 CPU scheduling. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Chapter 5 reading diagrams
+  "두 칸 실행 후 남은 작업을 큐 뒤로": "After two units, requeue the unfinished job",
+  "시각 0 · CPU": "t = 0 · CPU",
+  "시각 2 · CPU": "t = 2 · CPU",
+  "P1을 맨 뒤로": "P1 goes to tail",
+  "조각이 짧아지면 첫 실행이 앞당겨진다": "A shorter slice brings the first run forward",
+  "P3 첫 실행: 시각 4": "P3 first runs at t = 4",
+  "교대 5회": "5 switches",
+  "시간 조각 1": "Time slice 1",
+  "P3 첫 실행: 시각 2": "P3 first runs at t = 2",
+  "교대 10회": "10 switches",
+  "시각": "Time",
+  "P3 · 조각 1": "P3 · slice 1",
+  "P3 · 조각 2": "P3 · slice 2",
+  "시간 조각 2 → 1": "Time slice 2 → 1",
+  "세 번째 작업의 첫 실행: 4 → 2": "Third job first runs at 4 → 2",
+  "교대 5 → 10회": "Switches: 5 → 10",
   // Notes on the still pictures
   '도착 순서대로 ({0}) → 대기 {1} → 평균 {2}': 'In arrival order ({0}) → waits {1} → average {2}',
   '짧은 일 먼저 ({0}) → 대기 {1} → 평균 {2}': 'Shortest first ({0}) → waits {1} → average {2}',

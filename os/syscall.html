@@ -375,6 +375,25 @@ const kinds = { user: '프로그램', gate: '창구', kernel: '커널', ssd: '�
 const lesson = [
   {
     label: '파일 읽기',
+    readingDiagram: {
+      title: "파일 읽기는 데이터가 돌아와야 끝난다",
+      description: "파일 읽기는 데이터가 돌아와야 끝난다",
+      nodes: [
+        ["app", 82, 110, 127, 54, ["프로그램", "read(fd)"], "active"],
+        ["os", 242, 110, 130, 54, ["커널", "권한 확인"], "active"],
+        ["driver", 399, 110, 129, 54, ["드라이버", "READ"], "active"],
+        ["ssd", 540, 110, 115, 54, ["SSD", "블록 4812"], "active"],
+        ["buffer", 82, 216, 127, 54, ["프로그램 버퍼", "메모장 내용"], "active"],
+        ["copy", 399, 216, 145, 54, ["커널 버퍼", "블록 내용"], "active"],
+      ],
+      edges: [
+        ["app", "os", "active"],
+        ["os", "driver", "active"],
+        ["driver", "ssd", "active"],
+        ["ssd", "copy", "plain"],
+        ["copy", "buffer", "active", "내용 복사"],
+      ],
+    },
     readingStage: 3,
     title: '프로그램은 운영체제에 부탁해서 파일을 읽는다',
     body: '프로그램이 메모장.txt를 읽으려면 read 같은 시스템 콜을 부릅니다. 시스템 콜은 프로그램이 운영체제 커널에 일을 맡기는 정해진 창구입니다. 커널은 파일 시스템(5.5)으로 파일이 SSD 어디에 있는지 찾고, 장치 드라이버로 SSD에 명령을 보낸 뒤, 읽어 온 내용을 프로그램의 메모리에 복사해 줍니다.',
@@ -399,13 +418,25 @@ const lesson = [
   },
   {
     label: '직접은 안 된다',
+    readingDiagram: {
+      title: "직접 장치 명령은 경계에서 멈춘다",
+      description: "직접 장치 명령은 경계에서 멈춘다",
+      nodes: [
+        ["request", 104, 135, 164, 54, ["사용자 프로그램", "직접 장치 명령"], "active"],
+        ["deny", 319, 135, 149, 54, ["CPU · 차단", "사용자 모드"], "blocked"],
+        ["ssd", 524, 135, 128, 54, ["SSD", "요청 0회"], "muted"],
+      ],
+      edges: [
+        ["request", "deny", "blocked"],
+      ],
+    },
     readingStage: 1,
     title: '프로그램은 하드웨어를 직접 만질 수 없다',
     body: 'CPU에는 사용자 모드와 커널 모드가 있습니다. 사용자 모드로 도는 프로그램이 장치를 직접 다루는 명령을 실행하면 CPU가 막고 운영체제가 그 프로그램을 멈춥니다. 그래서 한 프로그램이 남의 파일을 지우거나 디스크를 망가뜨릴 수 없습니다. 5.1에서 본 프로세스 격리도 이 덕분입니다.',
     takeaway: '"SSD에 직접 쓰기"는 경계에서 주황으로 막힙니다. 같은 일을 write 시스템 콜로 부탁하면 커널이 권한을 확인한 뒤 대신 해 줍니다.',
     description: '같은 길입니다. 프로그램이 경계를 건너뛰어 SSD로 바로 가려 하면 막히고, 시스템 콜을 거치면 통과합니다.',
     kernelFrom: 1,
-    stations: [['app', '내 프로그램', 'user'], ['gate', '시스템 콜', 'gate'], ['kernel', '커널', 'kernel'], ['driver', '장치 드라이버', 'kernel'], ['ssd', 'SSD', 'ssd']],
+    stations: [['app', '내 프로그램', 'user'], ['gate', 'CPU 경계', 'gate'], ['kernel', '커널', 'kernel'], ['driver', '장치 드라이버', 'kernel'], ['ssd', 'SSD', 'ssd']],
     start: { title: '내 프로그램', lines: ['SSD 블록 9에 직접 쓰기 시도'], holds: { app: '장치 명령?' } },
     stages: [
       { from: 'app', to: 'gate', label: '장치 명령', title: '막힘: 보호 위반', lines: ['사용자 모드에서 장치 명령 실행', 'CPU가 막음 → 운영체제가 프로그램 중단'], error: 'gate',
@@ -421,6 +452,19 @@ const lesson = [
   },
   {
     label: '경계를 넘는 비용',
+    readingDiagram: {
+      title: "같은 100바이트라도 호출 횟수는 다르다",
+      description: "같은 100바이트라도 호출 횟수는 다르다",
+      nodes: [
+        ["tiny", 143, 113, 195, 54, ["read(1) × 100", "경계 진입 100회"], "active"],
+        ["once", 143, 207, 195, 54, ["read(100) × 1", "경계 진입 1회"], "active"],
+        ["buf", 465, 161, 212, 54, ["같은 결과 버퍼", "100바이트"], "active"],
+      ],
+      edges: [
+        ["tiny", "buf", "plain"],
+        ["once", "buf", "active"],
+      ],
+    },
     readingStage: 2,
     title: '시스템 콜은 공짜가 아니다',
     body: '경계를 넘을 때마다 CPU는 모드를 바꾸고, 커널은 검사를 합니다. 한 번은 짧지만 수백만 번이면 큽니다. 그래서 파일을 1바이트씩 100번 읽기보다 100바이트를 한 번에 읽는 편이 훨씬 빠릅니다. 프로그래밍 언어의 입출력 함수는 이 때문에 버퍼(모아 두는 칸)를 두고 한꺼번에 읽고 씁니다.',

@@ -130,6 +130,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .try-choices:empty{display:none}
 @media(prefers-reduced-motion:reduce){.proc.fresh{animation:none}}
 @media(max-width:600px){.seg-label{font-size:12px}.plate-text{font-size:13px}.thread-label{font-size:13px}.area-tag{font-size:14px}}
+.course-diagram-open #scene #example-note { display: none; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -296,6 +297,22 @@ const lesson = [
   },
   {
     label: '프로세스의 메모리',
+    readingDiagram: {
+      title: "호출하면 쌓이고 반환하면 사라진다",
+      description: "호출하면 쌓이고 반환하면 사라진다",
+      nodes: [
+        ["base", 100, 125, 154, 54, ["호출 전", "호출자 · PC 12"], "active"],
+        ["call", 310, 125, 163, 74, ["호출 중", "함수 · PC 28", "호출자 · PC 12"], "active"],
+        ["end", 520, 125, 153, 54, ["반환 후", "호출자 · PC 12"], "active"],
+      ],
+      edges: [
+        ["base", "call", "active", "호출"],
+        ["call", "end", "active", "반환"],
+      ],
+      labels: [
+        [28, 211, "함수의 지역 변수는 반환할 때 함수 프레임과 함께 사라진다."],
+      ],
+    },
     example: ["프로세스가 함수 호출", "호출 정보를 스택에 쌓음", "돌아오면 그 층 해제"],
     title: '프로세스는 코드, 데이터, 힙, 스택을 가진다',
     body: '프로세스의 메모리는 네 구역으로 나뉩니다. 코드는 실행할 기계어, 데이터는 전역 변수, 힙은 실행 중에 새로 만드는 값(1.4의 리스트 같은 것), 스택은 1.3의 호출 스택입니다. 힙은 아래에서 위로, 스택은 위에서 아래로 자라고 그 사이가 빈 공간입니다. 여기에 CPU 상태(PC, 레지스터)와 연 파일 목록이 더해져 프로세스가 됩니다.',
@@ -323,7 +340,23 @@ const lesson = [
   },
   {
     label: '격리와 공유',
-    example: ["A와 B가 각각 메모리 소유", "프로세스 간 주소 공간 분리", "A의 쓰기가 B의 값을 보존"],
+    readingDiagram: {
+      title: "같은 PID 안에서만 바뀐 값을 읽는다",
+      description: "같은 PID 안에서만 바뀐 값을 읽는다",
+      nodes: [
+        ["write", 94, 117, 135, 54, ["PID 101 · T1", "x: 7 → 9"], "active"],
+        ["shared", 306, 117, 170, 54, ["PID 101 데이터", "x = 9"], "active"],
+        ["see", 520, 117, 136, 54, ["PID 101 · T2", "x = 9"], "active"],
+        ["isolated", 306, 209, 170, 54, ["PID 102 데이터", "x = 7"], "active"],
+        ["other", 520, 209, 136, 54, ["PID 102 · T1", "x = 7"], "active"],
+      ],
+      edges: [
+        ["write", "shared", "active", "쓰기"],
+        ["shared", "see", "active", "읽기"],
+        ["isolated", "other", "plain", "읽기"],
+      ],
+    },
+    example: ["PID 101의 T1이 x를 9로 변경", "PID 101의 T2가 같은 변수 읽기", "PID 101은 9 · PID 102는 7"],
     title: '프로세스는 서로를 지키고, 스레드는 서로를 믿는다',
     body: '프로세스끼리는 메모리가 나뉘어 있어서 한 프로세스가 죽어도 다른 프로세스는 멀쩡합니다. 웹 브라우저가 탭마다 프로세스를 따로 쓰는 이유입니다. 반대로 스레드는 메모리를 함께 쓰므로, 한 스레드가 공유 데이터를 망가뜨리면 같은 프로세스의 모든 스레드가 영향을 받습니다. 5.6에서 이 문제를 더 봅니다.',
     takeaway: '"B에서 오류 내기"를 누르면 B 탑만 빨갛게 무너지고 A는 그대로입니다. "A의 스레드가 데이터 망가뜨리기"를 누르면 A의 데이터 구역이 빨갛게 되고 A의 스레드가 모두 주황 경고를 받습니다.',
@@ -420,7 +453,8 @@ function drawProcess(proc, u, mode) {
   // Region names on the front face.
   const face = (zMid, text) => label(node, -14 * h + 2, 7 * h - zMid + 2, text);
   face(codeH / 2, '코드');
-  face(codeH + dataH / 2, state.corrupted && proc.name === 'A' ? '데이터 ✗' : '데이터');
+  const dataValue = state.corrupted && proc.name === 'A' ? 9 : 7;
+  face(codeH + dataH / 2, mode === 'isolation' ? `x = ${dataValue}` : '데이터');
   face(codeH + dataH + heapH / 2, '힙');
   if (stackTotal) face(towerH - stackTotal / 2, '스택');
   if (free > 18 && !proc.dead) face(codeH + dataH + heapH + free / 2, '빈 공간');
@@ -438,7 +472,7 @@ function drawProcess(proc, u, mode) {
   if (mode === 'threads' || mode === 'isolation') {
     proc.threads.forEach((t, i) => {
       // Threads stand clear of the tower's box and shadow, so the line between them touches neither.
-      const tu = u + 5.2 + i * 3.6, tv = 3.4;
+      const tu = u + 5.2 + i * (mode === 'threads' ? 4.4 : 3.6), tv = 3.4;
       const tn = svg('g', { class: 'node thread' + (state.corrupted && proc.name === 'A' ? ' hurt' : '') + (proc.dead ? ' dead' : ''), transform: `translate(${flat(tu, tv).join(' ')})` }, byId('nodes'));
       drawShadow(tn, .6);
       for (let f = 0; f < t.frames; f++) drawBox(tn, .55, 6, f * 6.6, 'stack');
@@ -446,6 +480,7 @@ function drawProcess(proc, u, mode) {
       const pc = svg('g', { class: 'pc-tag', transform: `translate(0 ${-t.frames * 6.6 - 8})` }, tn);
       svg('rect', { x: -21, y: -8, width: 42, height: 16, rx: 8 }, pc);
       label(pc, 0, 1, `PC ${t.pc}`, 'pc-text');
+      if (mode === 'isolation') label(tn, 0, 15, `x = ${dataValue}`, 'pc-text');
       // Line to the tower it shares code, data and heap with: on the floor, in a lane in front of the threads. It
       // runs just in front of the threads' and the tower's shadows, so it never runs under a box or its names.
       const lane = 6;
@@ -474,7 +509,7 @@ function act(kind, user) {
   }
   if (kind === 'return') {
     if (p.frames <= 1) text = '맨 바깥 층만 남아 돌아갈 곳이 없습니다.';
-    else { p.frames--; p.pc = 12 + p.frames; text = `함수가 끝나 스택 맨 위 층이 사라졌습니다(${p.frames}층).`; }
+    else { p.frames--; p.pc = p.frames === 1 ? 12 : 20 + p.frames * 4; text = `함수가 끝나 스택 맨 위 층이 사라졌습니다(${p.frames}층).`; }
   }
   if (kind === 'alloc') {
     if (p.frames + p.heap >= 9) text = '힙과 스택이 만났습니다. 메모리가 부족합니다.';
@@ -631,7 +666,7 @@ function showStep(index, announce = true) {
       launch: ['launch', '메모장.exe 실행 → 운영체제가 RAM에 자리를 만들어 프로세스 PID 101'],
       memory: ['call', '함수 호출 → 스택에 층이 하나 쌓임 (2층) · 함수가 끝나면 그 층이 사라짐'],
       threads: ['thread', '스레드 2개: 코드·데이터·힙은 함께 쓰고 · 스택과 PC는 각자'],
-      isolation: ['corrupt', 'A의 스레드가 데이터를 덮어씀 → A의 다른 스레드도 망가진 값 · B는 메모리가 따로라 그대로'],
+      isolation: ['corrupt', 'PID 101의 쓰기 x: 7 → 9 · PID 102는 7 유지'],
     }[s.mode];
     act(example[0], false);
     exampleNote(example[1]);

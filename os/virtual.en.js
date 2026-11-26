@@ -1,5 +1,36 @@
 // English for 5.4 Virtual memory. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "두 페이지가 같은 코드 한 벌을 가리킨다": "Two pages point to one copy of the code",
+  "두 표가 프레임 1을 함께 가리켜 프레임 2가 비어 있습니다.": "Both tables point to frame 1, leaving frame 2 free.",
+  "공유 코드 · 한 벌": "Shared code · one copy",
+  "빈 칸": "Free",
+  "{#0}: 빈 칸": "{0}: free",
+
+  "같은 가상 페이지 1을 읽어도 B만 프레임 5에 갑니다. A는 자기 표에 매핑이 없어 접근이 중단됩니다.": "Both read virtual page 1, but only B reaches frame 5. A has no mapping in its own table, so the access stops.",
+  "A의 1번 페이지를 읽어 보세요.": "Try to read A’s virtual page 1.",
+  "A의 표에 페이지 1 매핑이 없어 막혔습니다.": "A’s access stops because its table has no entry for page 1.",
+  "✗ 매핑 없음": "✗ No mapping",
+  "A의 가상 페이지 1에는 매핑이 없습니다. MMU가 접근을 멈추고 운영체제에 알립니다. B의 표에는 페이지 1이 프레임 5로 매핑되어 있습니다.": "A’s virtual page 1 is unmapped. The MMU stops the access and alerts the operating system. B’s table maps its own page 1 to frame 5.",
+  "A의 1번 페이지 읽기": "Read A’s virtual page 1",
+  // Chapter 5 reading diagrams
+  "같은 페이지 번호도 각자 표에서 찾는다": "Each process looks up its own page number",
+  "A · 페이지 1": "A · page 1",
+  "A의 페이지 표": "A’s page table",
+  "매핑 없음": "No mapping",
+  "B · 페이지 1": "B · page 1",
+  "B의 페이지 표": "B’s page table",
+  "프레임 5": "Frame 5",
+  "프레임을 바꾸면 두 표도 갱신한다": "Reusing a frame updates both page tables",
+  "부재 전": "Before fault",
+  "A3 → 디스크": "A3 → disk",
+  "B0 → 프레임 2": "B0 → frame 2",
+  "프레임 2": "Frame 2",
+  "부재 처리 후": "After fault",
+  "A3 → 프레임 2": "A3 → frame 2",
+  "B0 → 디스크": "B0 → disk",
+  "A3 재시도 → A의 표를 통해 RAM 프레임 2에서 읽기 성공": "Retry A3 → A’s table leads to frame 2 in RAM",
+  "A와 B가 페이지 1을 읽음": "A and B read virtual page 1",
+  "A는 차단 · B는 프레임 5": "A is blocked · B reaches frame 5",
   // Page
   '가상 메모리 · 레슨 5.4': 'Virtual memory · Lesson 5.4',
   '프로세스의 가상 페이지가 페이지 테이블을 거쳐 RAM 프레임이나 디스크로 이어지는 길, 다른 프로세스 메모리 보호, 페이지 부재를 직접 확인해 보세요.':

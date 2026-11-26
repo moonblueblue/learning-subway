@@ -1,5 +1,24 @@
 // English for 5.1 Processes and threads. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Chapter 5 reading diagrams
+  "호출하면 쌓이고 반환하면 사라진다": "A call pushes a frame; return pops it",
+  "호출 전": "Before call",
+  "호출자 · PC 12": "Caller · PC 12",
+  "호출 중": "During call",
+  "함수 · PC 28": "Function · PC 28",
+  "반환 후": "After return",
+  "호출": "Call",
+  "반환": "Return",
+  "함수의 지역 변수는 반환할 때 함수 프레임과 함께 사라진다.": "The function’s frame and local variables are removed on return.",
+  "같은 PID 안에서만 바뀐 값을 읽는다": "Only threads in the same PID see the change",
+  "PID 101 데이터": "PID 101 data",
+  "PID 102 데이터": "PID 102 data",
+  "쓰기": "Write",
+  "읽기": "Read",
+  "PID 101의 T1이 x를 9로 변경": "T1 in PID 101 sets x to 9",
+  "PID 101의 T2가 같은 변수 읽기": "T2 in PID 101 reads that variable",
+  "PID 101은 9 · PID 102는 7": "PID 101 reads 9 · PID 102 reads 7",
+  "PID 101의 쓰기 x: 7 → 9 · PID 102는 7 유지": "PID 101 writes x: 7 → 9 · PID 102 stays at 7",
   // Notes on the still pictures
   '메모장.exe 실행 → 운영체제가 RAM에 자리를 만들어 프로세스 PID 101': 'notepad.exe runs → the OS makes room in RAM for process PID 101',
   '함수 호출 → 스택에 층이 하나 쌓임 (2층) · 함수가 끝나면 그 층이 사라짐': 'A function call adds a layer to the stack (2 layers) · it goes away when the function ends',

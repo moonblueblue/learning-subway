@@ -1,6 +1,31 @@
 // English for 5.3 System calls. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 // Data in the code: 메모장.txt notes.txt, "안녕" "hello", "오늘 할 일: …" "To do today: …".
 window.lessonText = {
+  "CPU 경계": "CPU boundary",
+  "CPU 경계 → 커널": "CPU boundary → kernel",
+  "내 프로그램 → CPU 경계": "My program → CPU boundary",
+  // Chapter 5 reading diagrams
+  "파일 읽기는 데이터가 돌아와야 끝난다": "A file read ends when its bytes return",
+  "프로그램": "Program",
+  "권한 확인": "Check access",
+  "드라이버": "Driver",
+  "블록 4812": "Block 4812",
+  "프로그램 버퍼": "Program buffer",
+  "메모장 내용": "Note contents",
+  "커널 버퍼": "Kernel buffer",
+  "블록 내용": "Block data",
+  "내용 복사": "Copy data",
+  "직접 장치 명령은 경계에서 멈춘다": "Direct device commands stop at the boundary",
+  "사용자 프로그램": "User program",
+  "직접 장치 명령": "Direct device command",
+  "CPU · 차단": "CPU · blocked",
+  "사용자 모드": "User mode",
+  "요청 0회": "0 requests",
+  "같은 100바이트라도 호출 횟수는 다르다": "Same 100 bytes, different call counts",
+  "경계 진입 100회": "100 boundary crossings",
+  "경계 진입 1회": "1 boundary crossing",
+  "같은 결과 버퍼": "Same output buffer",
+  "100바이트": "100 bytes",
   // Page
   '시스템 콜 · 레슨 5.3': 'System calls · Lesson 5.3',
   '프로그램의 파일 읽기 부탁이 시스템 콜로 사용자 영역과 커널 영역의 경계를 넘어 장치까지 가는 길, 직접 접근이 막히는 이유, 경계를 넘는 비용을 따라가 보세요.':

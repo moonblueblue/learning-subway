@@ -127,6 +127,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .try-choices{display:flex;gap:6px;flex-wrap:wrap}
 .try-choices:empty{display:none}
 @media(max-width:600px){.job-id{font-size:14px}.job-left{font-size:12px}.zone-label{font-size:14px}.tick{font-size:11px}.results{width:100%;font-size:.75rem}.results td,.results th{padding:2px 3px}}
+.course-diagram-open #scene #example-note { display: none; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -341,6 +342,20 @@ const lesson = [
   },
   {
     label: '라운드 로빈',
+    readingDiagram: {
+      title: "두 칸 실행 후 남은 작업을 큐 뒤로",
+      description: "두 칸 실행 후 남은 작업을 큐 뒤로",
+      nodes: [
+        ["cpu1", 124, 120, 177, 54, ["시각 0 · CPU", "P1 (8)"], "active"],
+        ["cpu2", 464, 120, 177, 54, ["시각 2 · CPU", "P2 (4)"], "active"],
+        ["queue1", 124, 205, 177, 54, ["준비 큐", "P2 (4) → P3 (2)"], "active"],
+        ["queue2", 464, 205, 177, 54, ["준비 큐", "P3 (2) → P1 (6)"], "active"],
+      ],
+      edges: [
+        ["cpu1", "cpu2", "active", "P1: 8 → 6"],
+        ["queue1", "queue2", "active", "P1을 맨 뒤로"],
+      ],
+    },
     readingSchedule: {"policy": "rr", "slice": 2},
     example: ["시간 조각 2", "끝나지 않은 일은 큐 뒤로", "세 작업 모두 시각 4까지 첫 실행"],
     title: '조금씩 돌아가며 실행한다',
@@ -355,8 +370,31 @@ const lesson = [
   },
   {
     label: '시간 조각',
+    readingDiagram: {
+      title: "조각이 짧아지면 첫 실행이 앞당겨진다",
+      description: "조각이 짧아지면 첫 실행이 앞당겨진다",
+      nodes: [
+        ["q2", 163, 116, 243, 74, ["시간 조각 2", "P3 첫 실행: 시각 4", "교대 5회"], "active"],
+        ["q1", 457, 116, 243, 74, ["시간 조각 1", "P3 첫 실행: 시각 2", "교대 10회"], "active"],
+      ],
+      edges: [
+        ["q2", "q1", "active"],
+      ],
+      labels: [
+        [29, 169, "시각"],
+        [190, 169, "0"],
+        [280, 169, "1"],
+        [370, 169, "2"],
+        [460, 169, "3"],
+        [550, 169, "4"],
+        [29, 202, "P3 · 조각 1"],
+        [369, 202, "●"],
+        [29, 235, "P3 · 조각 2"],
+        [549, 235, "●"],
+      ],
+    },
     readingSchedule: {"policy": "rr", "slice": 1},
-    example: ["시간 조각 4 → 1", "CPU를 더 자주 교대", "첫 반응은 빨라지고 교환 횟수 증가"],
+    example: ["시간 조각 2 → 1", "세 번째 작업의 첫 실행: 4 → 2", "교대 5 → 10회"],
     title: '조각이 작을수록 빠르게 반응하지만 바꾸는 비용이 는다',
     body: '시간 조각을 1로 줄이면 일이 더 자주 번갈아 실행되어 반응은 빨라지지만, 문맥 교환이 훨씬 많아집니다. 문맥 교환 동안 CPU는 쓸모 있는 일을 하지 못합니다. 조각을 키우면 교환은 줄지만 FCFS에 가까워집니다. 실제 운영체제는 수 밀리초 정도의 조각을 쓰고, 대화형 일에 우선순위를 더 줍니다.',
     takeaway: '조각 1과 4로 각각 실행해 문맥 교환 횟수를 비교해 보세요. 조각 1은 교환이 10번, 조각 2는 5번, 조각 4는 3번입니다.',

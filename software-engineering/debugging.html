@@ -336,6 +336,25 @@ const test = (kind, code, fn, reads, show, to) => ({ kind, code, test: fn, reads
 const lesson = [
   {
     label: '증상 확인',
+    readingDiagram: {
+      title: "같은 합계라도 나누는 수가 다르면 답이 달라진다",
+      description: "입력 2, 4, 6의 합계는 12이며 값은 세 개입니다. 코드가 2로 나누면 6, 개수 3으로 나누면 기대한 4가 나옵니다.",
+      nodes: [
+        ["input", 95, 137, 124, 47, ["입력 2 · 4 · 6", "값 3개"], "plain"],
+        ["sum", 258, 137, 120, 26, ["합계 12"], "plain"],
+        ["actual", 441, 93, 134, 47, ["실제 코드", "12 ÷ 2 = 6"], "blocked"],
+        ["expected", 441, 188, 134, 47, ["개수로 나눔", "12 ÷ 3 = 4"], "active"],
+      ],
+      edges: [
+        ["input", "sum", "plain"],
+        ["sum", "actual", "blocked"],
+        ["sum", "expected", "active"],
+      ],
+      labels: [
+        [421, 134, "실제 6"],
+        [419, 228, "기대 4"],
+      ],
+    },
     readingMemory: [["합계", 12], ["i", 4], ["평균", "6.0"]],
     // The still picture lights the routes of the line that decided this step: reads purple, writes green.
     readingRoutes: {read: ["합계"], write: ["평균"]},

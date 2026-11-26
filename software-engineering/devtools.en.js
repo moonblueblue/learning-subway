@@ -66,10 +66,19 @@ window.lessonText = {
   '실수 되돌리기': 'Undoing a mistake', '추적 중인 파일을 잘못 수정': 'A tracked file is changed by mistake',
   '저장한 버전에서 파일 복원': 'Restore the file from a saved version', '이전 내용 회복': 'The earlier contents come back',
   '기록이 있으면 실수를 되돌릴 수 있다': 'With a history, a mistake can be undone',
-  '"메모 망치기"를 누르면 메모 파일 내용이 실수로 지워진 것처럼 바뀝니다. git diff는 마지막 버전과 지금 파일이 어떻게 다른지 보여 주고, git restore는 파일을 마지막 버전으로 되돌립니다. git log로는 지금까지 남긴 버전 목록을 볼 수 있습니다.':
-    'Pressing "break notes" changes the notes file as if its contents were deleted by mistake. git diff shows how the file now differs from the last version, and git restore puts the file back to the last version. git log shows the list of versions saved so far.',
+  '"메모 망치기"를 누르면 메모 파일 내용이 실수로 지워진 것처럼 바뀝니다. 이 실습에서 git diff는 기록된 줄과 지금 파일의 차이를 보여 줍니다. 이 편집은 저장 목록에 올리지 않았으므로 git restore를 실행하면 기록된 줄이 돌아옵니다. git log로는 지금까지 남긴 버전 목록을 볼 수 있습니다.':
+    'Pressing "break notes" changes the notes file as if its contents were deleted by mistake. In this exercise, git diff shows how the working file differs from the recorded line. The edit was not staged, so git restore brings back the recorded line. git log shows the list of versions saved so far.',
   '0.4에서 손실 압축으로 버린 정보는 돌아오지 않았습니다. git은 버전을 통째로 남겨 두기 때문에 언제든 돌아갈 수 있습니다.':
     'In 0.4, information thrown away by lossy compression never came back. git keeps whole versions, so you can always go back.',
   '"메모 망치기"를 눌러 파일을 바꾼 뒤 git diff로 달라진 점을 보세요.': 'Press "break notes" to change the file, then see what changed with git diff.',
   'git restore 메모.txt로 파일을 되돌리세요.': 'Put the file back with git restore notes.txt.',
+  "현재 폴더: ~": "Current folder: ~",
+  "$ cd 레슨\n$ pwd": "$ cd lesson\n$ pwd",
+  "~/레슨": "~/lesson",
+  "git init\n메모.txt: 변수는 칸에 붙인 이름": "git init\nnotes.txt: A variable names a slot",
+  "git add 메모.txt\n메모.txt가 저장 목록에 있음": "git add notes.txt\nnotes.txt is staged",
+  "git commit -m \"첫 메모\"\n첫 메모: 변수는 칸에 붙인 이름": "git commit -m \"first note\"\nfirst note: A variable names a slot",
+  "첫 메모\n변수는 칸에 붙인 이름": "first note\nA variable names a slot",
+  "git diff\n− 변수는 칸에 붙인 이름\n+ (실수로 지움)": "git diff\n− A variable names a slot\n+ (deleted by mistake)",
+  "git restore 메모.txt\n변수는 칸에 붙인 이름": "git restore notes.txt\nA variable names a slot",
 };

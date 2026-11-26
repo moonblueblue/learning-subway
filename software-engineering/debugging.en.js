@@ -70,4 +70,14 @@ window.lessonText = {
   '버그를 고치려면 무엇을 바꿔야 할까요?': 'What must change to fix the bug?',
   'i < 3을 i <= 3으로': 'i < 3 to i <= 3', '/ 3을 / 2로': '/ 3 to / 2',
   'i가 3일 때도 반복해야 6이 더해집니다. 나누는 수는 이미 맞습니다.': 'It must also loop when i is 3 for 6 to be added. The divisor is already right.',
+  // Labels and examples in the default reading view.
+  "같은 합계라도 나누는 수가 다르면 답이 달라진다": "The same sum gives different results with different divisors",
+  "입력 2, 4, 6의 합계는 12이며 값은 세 개입니다. 코드가 2로 나누면 6, 개수 3으로 나누면 기대한 4가 나옵니다.": "The three inputs 2, 4, and 6 add up to 12. The code divides by 2 and gives 6. Dividing by the input count, 3, gives the expected 4.",
+  "입력 2 · 4 · 6": "Inputs 2 · 4 · 6",
+  "값 3개": "3 values",
+  "합계 12": "Sum 12",
+  "실제 코드": "Actual code",
+  "개수로 나눔": "Divide by count",
+  "실제 6": "Actual 6",
+  "기대 4": "Expected 4",
 };

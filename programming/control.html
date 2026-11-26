@@ -379,6 +379,26 @@ const lesson = [
   },
   {
     label: '반복 while',
+    readingDiagram: {
+      title: "조건이 참이면 더하고 다시 확인한다",
+      description: "i가 1, 2, 3일 때 더하고 i를 하나 올립니다. i가 4가 되면 조건이 거짓이고 합계 6에서 끝납니다.",
+      nodes: [
+        ["start", 94, 92, 116, 47, ["시작", "i=1 · 합계=0"], "plain"],
+        ["test", 286, 92, 116, 47, ["i ≤ 3", "조건 확인"], "plain"],
+        ["add", 504, 92, 150, 47, ["합계에 i 더함", "i ← i + 1"], "active"],
+        ["stop", 286, 228, 126, 47, ["i=4에서 끝", "합계 6"], "blocked"],
+      ],
+      edges: [
+        ["start", "test", "plain"],
+        ["test", "add", "active", "참"],
+        ["add", "test", "active", "다시 확인", 90],
+        ["test", "stop", "blocked", "거짓"],
+      ],
+      labels: [
+        [352, 195, "한 바퀴 뒤 (i, 합계)"],
+        [352, 218, "(2,1) → (3,3) → (4,6)"],
+      ],
+    },
     readingMemory: [["합계", 6], ["i", 4]],
     // The still picture lights the routes of the line that decided this step: reads purple, writes green.
     readingRoutes: {read: ["i"]},
@@ -402,6 +422,25 @@ const lesson = [
   },
   {
     label: '끝나지 않는 반복',
+    readingDiagram: {
+      title: "i가 그대로라 조건이 계속 참이다",
+      description: "i를 늘리는 줄이 없어 i는 1에 머뭅니다. 합계만 1, 2, 3으로 늘며 여섯 번째 바퀴에서 시연을 중단합니다.",
+      nodes: [
+        ["start", 94, 92, 116, 47, ["시작", "i=1 · 합계=0"], "plain"],
+        ["test", 286, 92, 116, 47, ["1 ≤ 3", "조건 확인"], "plain"],
+        ["add", 504, 92, 150, 47, ["합계에 1 더함", "i를 늘리지 않음"], "active"],
+        ["stop", 286, 228, 146, 47, ["거짓 출구에 못 감", "6회 · 시연 중단"], "blocked"],
+      ],
+      edges: [
+        ["start", "test", "plain"],
+        ["test", "add", "active", "참"],
+        ["add", "test", "active", "i=1로 복귀", 90],
+      ],
+      labels: [
+        [373, 195, "한 바퀴 뒤 (i, 합계)"],
+        [373, 218, "(1,1) → (1,2) → …"],
+      ],
+    },
     readingMemory: [["합계", 6], ["i", 1]],
     // The still picture lights the routes of the line that decided this step: reads purple, writes green.
     readingRoutes: {read: ["i"]},

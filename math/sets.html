@@ -80,6 +80,20 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
 .truth td.blank{color:#9aa8a2}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
+
+.worked-example { min-width: 0; margin: 0; }
+.worked-example table { width: 100%; table-layout: auto; border-collapse: separate; border-spacing: 0;
+  border: 1px solid var(--border); border-radius: 8px; font-size: .85rem; line-height: 1.3; }
+.worked-example caption { padding: 0 0 4px; font-weight: 700; text-align: start; }
+.worked-example :is(th, td) { padding: 3px 6px; border-bottom: 1px solid var(--border);
+  text-align: start; overflow-wrap: anywhere; }
+.worked-example thead { background: #eff6f1; }
+.worked-example tbody tr:last-child :is(th, td) { border-bottom: 0; }
+.worked-example tr.is-key :is(th, td) { background: #e3f1e9; font-weight: 700; }
+.worked-example .worked-note { margin-top: 4px; font-size: .85rem; font-weight: 700; }
+@media (max-height: 720px) and (min-width: 641px) {
+  .explanation:has(.worked-example:not([hidden])) .takeaway { display: none; }
+}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -120,6 +134,7 @@ header p.lead{color:var(--muted);margin-top:10px}
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2><p id="body"></p>
+      <figure class="worked-example" id="worked-example" hidden></figure>
       <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
       <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
     </section>
@@ -153,8 +168,9 @@ const lesson = [
     sample: '"어떤 과일들이 나왔는지"만 알고 싶으면 중복이 저절로 없어지는 집합이 알맞습니다. "각 과일을 몇 명이 골랐는지"까지 알고 싶으면 리스트나, 과일을 키로 하는 딕셔너리가 필요합니다.',
   },
   {
+    worked: {"head": ["연산", "1: A", "2: A·B", "3: B", "결과"], "rows": [["A ∪ B", "✓", "✓", "✓", "{1, 2, 3}"], ["A ∩ B", "—", "✓", "—", "{2}"], ["A − B", "✓", "—", "—", "{1}"]], "mark": [], "note": "A = {1, 2} · B = {2, 3}"},
     label: '합집합 · 교집합',
-    example: ["A = {1, 2} · B = {2, 3}", "양쪽 모두에 있는 값 선택", "교집합 {2}"],
+    example: ["A = {1, 2} · B = {2, 3}", "각 원소가 속한 집합을 비교", "∪ = {1, 2, 3} · ∩ = {2} · A − B = {1}"],
     title: '합집합은 또는, 교집합은 그리고다',
     body: 'A ∪ B(합집합)는 A나 B 중 한쪽에라도 있는 원소의 모음이고, A ∩ B(교집합)는 양쪽 모두에 있는 원소의 모음입니다. 2.1의 "또는", "그리고"와 똑같은 생각입니다. A − B(차집합)는 A에는 있지만 B에는 없는 원소입니다.',
     link: '2.1에서 "p 또는 q"는 하나라도 참이면 참이었습니다. "x가 A ∪ B에 있다"는 "x가 A에 있다 또는 x가 B에 있다"와 같습니다.',
@@ -170,8 +186,9 @@ const lesson = [
     sample: '교집합입니다. "한 명이라도 팔로우하는 사람"은 합집합이고, "나만 팔로우하는 사람"은 차집합입니다.',
   },
   {
+    worked: {"head": ["상태", "입력 → 출력", "함수인가?"], "rows": [["처음", "A → 1 · B → 1", "예 · 입력당 하나"], ["연결 추가", "A → 1, 2 · B → 1", "아니요 · A에 둘"]], "mark": [1]},
     label: '함수',
-    example: ["입력 3", "규칙 f(x) = 2x 적용", "출력은 6 하나"],
+    example: ["A → 1 · B → 1", "A에서 2로 가는 연결 추가", "A의 출력이 둘이므로 함수 아님"],
     title: '함수는 입력마다 출력을 딱 하나 정한다',
     body: '수학에서 함수는 첫 번째 집합의 원소마다 두 번째 집합의 원소를 딱 하나씩 짝지어 주는 규칙입니다. 입력 하나에 출력이 둘이면 함수가 아닙니다. 반대로 서로 다른 입력이 같은 출력을 가져도 괜찮습니다. 학생마다 키가 하나씩 정해져 있으므로 "학생 → 키"는 함수입니다.',
     link: '1.3의 파이썬 함수도 같은 인자를 주면 같은 값을 돌려주는 경우가 많습니다. 다만 프로그래밍의 함수는 입력이 같아도 바깥 상태에 따라 다른 값을 줄 수 있어서, 수학의 함수보다 넓은 뜻입니다.',
@@ -187,8 +204,9 @@ const lesson = [
     sample: '할 수 있습니다. 딕셔너리는 키마다 값을 딱 하나 짝지으므로, 키 집합에서 값 집합으로 가는 함수입니다. 같은 키에 값을 두 번 넣으면 앞의 값이 지워지는 것도 "출력은 하나"라는 규칙을 지키기 위해서입니다.',
   },
   {
+    worked: {"head": ["코드", "실행 결과"], "rows": [["A = set([1, 2, 2])", "{1, 2}"], ["B = {2, 3}", "{2, 3}"], ["A & B", "{2}"], ["2 in A", "True"]], "mark": [2, 3]},
     label: '파이썬의 집합',
-    example: ["set([1, 1, 2])", "중복 제거 뒤 len 계산", "길이 2"],
+    example: ["A = set([1, 2, 2]) · B = {2, 3}", "A & B · 2 in A", "{2} · True"],
     title: '파이썬도 집합과 함수를 그대로 쓴다',
     body: '파이썬의 set은 수학의 집합처럼 중복을 없애고, | 는 합집합, & 는 교집합, - 는 차집합을 계산합니다. in은 원소인지(∈) 확인합니다. 딕셔너리는 키에서 값으로 가는 함수입니다.',
     link: '1.4에서 리스트의 index는 칸을 하나씩 훑었습니다. set과 딕셔너리의 in은 해시 테이블(4.5에서 다룹니다) 덕분에 거의 한 번에 답합니다.',
@@ -208,9 +226,45 @@ const lesson = [
 const byId = (id) => document.getElementById(id);
 const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
 
+
+function showWorkedExample(worked) {
+  const figure = byId('worked-example');
+  figure.hidden = !worked;
+  figure.replaceChildren();
+  if (!worked) return;
+  const table = document.createElement('table');
+  table.createCaption().textContent = '계산 예시';
+  const header = table.createTHead().insertRow();
+  for (const name of worked.head) {
+    const cell = document.createElement('th');
+    cell.scope = 'col';
+    cell.textContent = name;
+    header.append(cell);
+  }
+  const body = table.createTBody();
+  worked.rows.forEach((values, index) => {
+    const row = body.insertRow();
+    row.classList.toggle('is-key', worked.mark.includes(index));
+    values.forEach((value, column) => {
+      const cell = document.createElement(column === 0 ? 'th' : 'td');
+      if (column === 0) cell.scope = 'row';
+      cell.textContent = value;
+      row.append(cell);
+    });
+  });
+  figure.append(table);
+  if (worked.note) {
+    const note = document.createElement('p');
+    note.className = 'worked-note';
+    note.textContent = worked.note;
+    figure.append(note);
+  }
+}
+
 function showStep(index, announce = true) {
   state.index = index;
   const step = lesson[index];
+  showWorkedExample(step.worked);
   byId('step-title').textContent = step.title;
   byId('body').textContent = step.body;
   byId('takeaway').textContent = step.link;

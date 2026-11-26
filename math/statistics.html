@@ -82,6 +82,12 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
 .truth td.blank{color:#9aa8a2}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
+/* Stage evidence stays visible in the reading view without solving the exercise. */
+.scene-evidence{border-collapse:collapse;table-layout:fixed;width:100%;font-size:.83rem;line-height:1.3}
+.scene-evidence caption{text-align:left;font-weight:700;padding:.3em 0}
+.scene-evidence :is(th,td){border:1px solid var(--border);padding:.28em .38em;overflow-wrap:anywhere;text-align:left}
+.scene-evidence thead th{background:#e9f4ed}
+.scene-evidence tbody td:last-child{font-weight:650}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -122,6 +128,9 @@ header p.lead{color:var(--muted);margin-top:10px}
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2><p id="body"></p>
+      <table class="scene-evidence" id="scene-evidence">
+        <caption></caption><thead><tr></tr></thead><tbody></tbody>
+      </table>
       <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
       <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
     </section>
@@ -139,6 +148,7 @@ const TF = [['true', '참'], ['false', '거짓']];
 const lesson = [
   {
     label: '대푯값',
+    evidence: ["맨 끝의 5 하나만 35로 바꾼다", ["순서대로 놓은 값", "평균", "중앙값"], [["3, 3, 4, 5, 5", "20 ÷ 5 = 4", "4"], ["3, 3, 4, 5, 35", "50 ÷ 5 = 10", "4"]]],
     example: ["용돈 3, 3, 4, 5, 35", "평균 10 · 중앙값 4", "35 하나가 평균만 끌어올림"],
     title: '평균은 튀는 값 하나에 크게 흔들린다',
     body: '데이터를 한 숫자로 요약할 때 평균(모두 더해 개수로 나눔)과 중앙값(크기순으로 줄 세운 가운데 값)을 씁니다. 대부분은 비슷하고 한 값만 크게 튀면, 평균은 그 값 쪽으로 끌려가지만 중앙값은 거의 그대로입니다. 그래서 소득이나 응답 시간처럼 튀는 값이 있는 데이터는 중앙값이나 상위 몇 %를 함께 봅니다.',
@@ -156,10 +166,11 @@ const lesson = [
   },
   {
     label: '조건부 확률',
+    evidence: ["분모를 양성인 사람으로 바꾼다", ["집단", "양성 조건 · 계산", "수와 비율"], [["환자 10명", "99%", "9.9"], ["나머지 990명", "1%", "9.9"], ["양성 중 환자", "9.9 ÷ 19.8", "50%"]]],
     example: ["1,000명 중 환자 10명", "진짜 양성 ≈ 10 · 거짓 양성 ≈ 10", "양성 20명 중 환자는 약 절반"],
     title: '양성이 나와도 병일 확률은 생각보다 낮을 수 있다',
-    body: '"A가 일어났을 때 B일 확률"을 조건부 확률이라 합니다. 1,000명 중 10명(1%)만 걸리는 병이 있고, 검사는 병이 있으면 99% 양성, 병이 없어도 1%는 잘못 양성이 나온다고 합시다. 양성이 나온 사람만 모으면, 진짜 환자 약 10명과 잘못 양성인 약 10명(990명의 1%)이 섞여 있습니다.',
-    link: '스팸 필터는 "이 단어가 있을 때 스팸일 확률"을, 그림을 분류하는 신경망(7.11)은 "이 그림일 때 세로선일 확률"을 계산합니다. 모두 조건부 확률입니다.',
+    body: "1,000명 중 환자 10명의 99%와 비환자 990명의 1%가 양성입니다. 환자 비율의 분모는 양성인 사람 전체입니다.",
+    link: "양성인 사람 중 환자인 비율처럼, 조건이 붙으면 분모부터 확인합니다.",
     case: '1,000명 중 10명이 병, 검사 정확도 99%(병 있으면 99% 양성, 없으면 1% 양성)입니다. 다음 문장이 참인지 고르세요.',
     choices: [['true', '참'], ['false', '거짓']],
     items: [
@@ -173,6 +184,7 @@ const lesson = [
   },
   {
     label: '표본과 오차',
+    evidence: ["표본이 커져도 빠진 집단은 돌아오지 않는다", ["추출 범위", "표본 크기", "차이"], [["전체 무작위", "32", "무작위 변동 큼"], ["전체 무작위", "1,000", "무작위 변동 작음"], ["앱 이용자만", "1,000", "비이용자 0명"]]],
     example: ["앱 사용자 10만 명에게만 물음", "앱을 안 쓰는 사람은 빠짐", "크게 물어도 전 국민과 다름"],
     title: '적게 보면 우연에 속고, 치우치게 보면 크게 봐도 틀린다',
     body: '전체를 다 볼 수 없으니 일부(표본)를 보고 추측합니다. 표본이 작으면 우연 때문에 크게 틀릴 수 있고, 표본이 클수록 비율이 참값에 가까워집니다(큰 수의 법칙). 하지만 표본을 한쪽에서만 뽑으면 아무리 많아도 틀립니다. 7.10에서 여름 데이터만으로 배운 모델이 겨울을 틀린 것과 같습니다.',
@@ -190,6 +202,7 @@ const lesson = [
   },
   {
     label: '상관과 인과',
+    evidence: ["관측을 설명할 공통 원인 후보", ["원인 후보", "관측", "판정"], [["더운 날", "판매 증가 · 물놀이 증가", "두 경로로 분기"], ["물놀이 증가", "사고 증가 가능", "판매→사고는 미확정"]]],
     example: ["더운 날이 늘어남", "아이스크림 판매와 물놀이 모두 증가", "함께 늘어도 직접 원인은 미확정"],
     title: '함께 변한다고 원인이라는 뜻은 아니다',
     body: '두 값이 함께 오르내리는 것을 상관이라 합니다. 상관이 있어도 하나가 다른 하나의 원인이라는 보장은 없습니다. 둘 다 제3의 원인 때문일 수도 있고, 방향이 거꾸로일 수도 있고, 우연일 수도 있습니다. 원인을 확인하는 가장 확실한 방법은 무작위로 두 집단을 나눠 하나만 바꾸고 비교하는 실험(A/B 테스트)입니다.',
@@ -210,11 +223,30 @@ const lesson = [
 const byId = (id) => document.getElementById(id);
 const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
 
+function showEvidence([caption, columns, entries]) {
+  const table = byId('scene-evidence');
+  table.caption.textContent = caption;
+  const header = table.tHead.rows[0];
+  header.replaceChildren();
+  for (const column of columns) {
+    const cell = document.createElement('th');
+    cell.scope = 'col';
+    cell.textContent = column;
+    header.append(cell);
+  }
+  table.tBodies[0].replaceChildren();
+  for (const entry of entries) {
+    const row = table.tBodies[0].insertRow();
+    for (const value of entry) row.insertCell().textContent = value;
+  }
+}
+
 function showStep(index, announce = true) {
   state.index = index;
   const step = lesson[index];
   byId('step-title').textContent = step.title;
   byId('body').textContent = step.body;
+  showEvidence(step.evidence);
   byId('takeaway').textContent = step.link;
   // Text after a blank line in the question is code, shown in its own block.
   const [caseText, ...caseCode] = step.case.split('\n\n');

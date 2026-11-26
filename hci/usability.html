@@ -82,6 +82,12 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
 .truth td.blank{color:#9aa8a2}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
+/* Stage evidence stays visible in the reading view without solving the exercise. */
+.scene-evidence{border-collapse:collapse;table-layout:fixed;width:100%;font-size:.83rem;line-height:1.3}
+.scene-evidence caption{text-align:left;font-weight:700;padding:.3em 0}
+.scene-evidence :is(th,td){border:1px solid var(--border);padding:.28em .38em;overflow-wrap:anywhere;text-align:left}
+.scene-evidence thead th{background:#e9f4ed}
+.scene-evidence tbody td:last-child{font-weight:650}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -122,6 +128,9 @@ header p.lead{color:var(--muted);margin-top:10px}
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2><p id="body"></p>
+      <table class="scene-evidence" id="scene-evidence">
+        <caption></caption><thead><tr></tr></thead><tbody></tbody>
+      </table>
       <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
       <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
     </section>
@@ -139,6 +148,7 @@ const TF = [['true', '참'], ['false', '거짓']];
 const lesson = [
   {
     label: '시켜 보기',
+    evidence: ["처음 온 참가자에게 공책 두 권 주문을 부탁한다", ["시각", "행동", "참가자가 본 위치"], [["00:12", "수량 2 설정", "장바구니"], ["00:31", "주문을 찾다가 멈춤", "장바구니 위쪽"]]],
     example: ["\"마음에 드세요?\"만 묻지 않음", "주문 과제를 주고 생각을 소리 내어 말하게", "멈추는 곳과 실수를 봄"],
     title: '물어보지 말고 직접 해 보게 하고 지켜본다',
     body: '6.8에서 헷갈리지 않는 화면의 원칙을 배웠지만, 실제로 헷갈리는지는 사람이 써 봐야 압니다. 사용성 평가는 실제 사용자에게 "장바구니에 공책 두 권을 담고 주문해 보세요" 같은 과제를 주고, 하는 모습을 지켜보는 것입니다. 사람들은 "좋아요"라고 말해도 실제로는 막히는 경우가 많아서, 말보다 행동을 봅니다.',
@@ -156,6 +166,7 @@ const lesson = [
   },
   {
     label: '숫자로 재기',
+    evidence: ["다섯 명 시도를 같은 기준으로 센다", ["측정값", "원기록", "결과"], [["성공률", "4 / 5", "80%"], ["시도시간 중앙값", "40, 45, 50, 55, 300 s", "50 s"], ["오조작", "다섯 명의 합계", "6"]]],
     example: ["5명 중 4명 성공 · 시간 40–300초", "4 ÷ 5 · 시간은 중앙값", "성공률 80% · 중앙값 50초"],
     title: '해냈는지, 얼마나 걸렸는지, 몇 번 틀렸는지 센다',
     body: '관찰과 함께 숫자도 남깁니다. 과제를 끝까지 해낸 비율(성공률), 걸린 시간, 잘못 누른 횟수입니다. 숫자가 있으면 고친 뒤 정말 나아졌는지 비교할 수 있습니다. 걸린 시간은 8B.2처럼 한두 사람이 크게 튀기 쉬우니 평균과 중앙값을 함께 봅니다.',
@@ -173,6 +184,7 @@ const lesson = [
   },
   {
     label: '문제 고르기',
+    evidence: ["새 참가자 집단: 막힘과 빈도를 각각 본다", ["문제", "빈도", "우선순위"], [["하단 주문 버튼 못 찾음", "3 / 5", "주문 중단 · 최우선"], ["여백이 어색함", "4 / 5", "과제 계속 가능"]]],
     example: ["5명 중 3명이 주문하기 버튼을 못 찾음", "과제를 포기함", "과제를 막는 문제라 가장 먼저"],
     title: '관찰한 문제를 심각도로 나눠 먼저 고칠 것을 정한다',
     body: '평가가 끝나면 관찰한 문제를 적고 심각도를 매깁니다. 과제를 아예 못 하게 막는 문제, 해내긴 하지만 헤매게 하는 문제, 거슬리기만 하는 문제로 나눕니다. 많은 사람이 겪고, 피할 방법이 없고, 자주 쓰는 곳일수록 심각합니다. 8C.6의 "가능성 × 피해"와 같은 생각입니다.',
@@ -190,6 +202,7 @@ const lesson = [
   },
   {
     label: '고친 뒤 확인',
+    evidence: ["같은 과제를 새 참가자에게 다시 잰다", ["지표", "수정 전 · 5명", "버튼 이동 후 · 5명"], [["성공", "4 / 5", "5 / 5"], ["시도시간 중앙값", "50 s", "39 s"], ["오조작", "6", "2"]]],
     example: ["숨은 주문하기 버튼을 위로 옮김", "처음 보는 5명에게 같은 과제", "성공률과 시간을 비교 · 큰 결정은 A/B"],
     title: '고쳤으면 다시 재고, 큰 결정은 실험으로 확인한다',
     body: '고친 화면이 정말 나은지는 다시 사람에게 시켜 보거나, 실제 사용자를 무작위로 나눠 옛 화면과 새 화면을 비교(A/B 테스트, 8B.2)해서 확인합니다. 디자이너나 개발자 자신은 이미 화면을 다 알아서 헷갈림을 느끼기 어렵습니다. "우리는 잘 쓰는데"는 근거가 되지 않습니다.',
@@ -210,11 +223,30 @@ const lesson = [
 const byId = (id) => document.getElementById(id);
 const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
 
+function showEvidence([caption, columns, entries]) {
+  const table = byId('scene-evidence');
+  table.caption.textContent = caption;
+  const header = table.tHead.rows[0];
+  header.replaceChildren();
+  for (const column of columns) {
+    const cell = document.createElement('th');
+    cell.scope = 'col';
+    cell.textContent = column;
+    header.append(cell);
+  }
+  table.tBodies[0].replaceChildren();
+  for (const entry of entries) {
+    const row = table.tBodies[0].insertRow();
+    for (const value of entry) row.insertCell().textContent = value;
+  }
+}
+
 function showStep(index, announce = true) {
   state.index = index;
   const step = lesson[index];
   byId('step-title').textContent = step.title;
   byId('body').textContent = step.body;
+  showEvidence(step.evidence);
   byId('takeaway').textContent = step.link;
   // Text after a blank line in the question is code, shown in its own block.
   const [caseText, ...caseCode] = step.case.split('\n\n');

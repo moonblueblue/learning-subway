@@ -69,4 +69,24 @@ window.lessonText = {
   '시계에서 지금 몇 시인지만 보고 "몇 시간이 흘렀는지" 알 수 있을까요?': 'Looking only at what time the clock shows, can you tell "how many hours have passed"?',
   '알 수 없습니다. 3시는 3시간 뒤일 수도, 15시간이나 27시간 뒤일 수도 있습니다. 나머지만 보면 정보가 사라지는 이 성질이 암호에서 쓰입니다.':
     'No. 3 o\'clock could be 3 hours later, or 15 or 27. This property, that information disappears when you see only the remainder, is used in encryption.',
+
+  // Worked examples aligned with the chapter diagrams.
+  "계산 예시": "Worked example",
+  "11시에서 3시간 전진": "Move forward 3 hours from 11",
+  "12 → 1 → 2를 지남": "Pass 12 → 1 → 2",
+  "14 % 12 = 2 · 2시": "14 % 12 = 2 · 2 o’clock",
+  "출발": "Start",
+  "세 시간 뒤": "Three hours later",
+  "나머지": "Remainder",
+  "11시": "11 o’clock",
+  "두 나머지 모두 7": "Both remainders are 7",
+  "둘 다 7번 칸": "Both go in slot 7",
+  "값": "Value",
+  "10으로 나눈 식": "Division by 10",
+  "나머지와 위치": "Remainder and slot",
+  "n = 1, 2, 3, 4를 차례로 대입": "Try n = 1, 2, 3, 4 in order",
+  "목표 4의 첫 지수는 4": "First exponent for target 4 is 4",
+  "양의 지수 n": "Positive exponent n",
+  "목표 나머지 4가 처음 나오는 지수는 4": "The target remainder 4 first appears at exponent 4",
+  "표의 0번부터 9번까지": "Table slots 0 to 9",
 };

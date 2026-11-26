@@ -201,6 +201,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
 .packet-tag rect{fill:#fff;stroke:var(--request);stroke-width:.9}.packet-tag .packet-label{stroke:none;dominant-baseline:central}
+.course-diagram-open #scene #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -381,6 +382,20 @@ const lesson = [
   },
   {
     label: '닮은 정도',
+    readingDiagram: {
+      title: "같은 취향 축끼리 곱하고 더한다",
+      description: "같은 취향 축끼리 곱하고 더한다",
+      nodes: [
+        ["a0", 150, 103, 244, 48, ["지우 · 민지", "[5,1] · [4,2]"], "plain"],
+        ["b0", 470, 103, 230, 48, ["5×4 + 1×2 = 22", "이 점수에서 민지 선택"], "active"],
+        ["a1", 150, 195, 244, 48, ["지우 · 서준", "[5,1] · [0,5]"], "plain"],
+        ["b1", 470, 195, 230, 28, ["5×0 + 1×5 = 5"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['지우 · 민지 = 5×4 + 1×2 = 22', ' · ', '지우 · 서준 = 5×0 + 1×5 = 5', ' → ', '22 > 5라 지우는 민지와 더 닮음'],
     title: '내적으로 두 벡터가 얼마나 닮았는지 잰다',
@@ -399,6 +414,27 @@ const lesson = [
   },
   {
     label: '행렬은 변환',
+    readingDiagram: {
+      title: "행마다 내적해 점을 반시계로 돌린다",
+      description: "입력 점 (1,2)에서 첫 행의 내적은 -2, 둘째는 1입니다. 같은 원점에서 출력 점 (-2,1)은 반시계 방향으로 90도 돌아갑니다.",
+      nodes: [
+        ["o", 198, 211, 35, 28, ["0"], "plain"],
+        ["x", 313, 211, 30, 28, ["x"], "plain"],
+        ["y", 198, 87, 30, 28, ["y"], "plain"],
+        ["in", 240, 123, 65, 28, ["(1, 2)"], "plain"],
+        ["out", 113, 167, 79, 28, ["(−2, 1)"], "active"],
+        ["r1", 469, 123, 235, 28, ["[0, −1] · [1, 2] = −2"], "plain"],
+        ["r2", 469, 183, 235, 28, ["[1, 0] · [1, 2] = 1"], "plain"],
+      ],
+      labels: [[39, 103, "↶ 90°"]],
+      edges: [
+        ["o", "x", "plain", "", 0],
+        ["o", "y", "plain", "", 0],
+        ["o", "in", "plain", "", 0],
+        ["o", "out", "active", "", 0],
+        ["in", "out", "active", "", -29],
+      ],
+    },
     readingStage: 3,
     note: ['[1, 2]에 돌리기 R = [[0, −1], [1, 0]]를 곱함', ' → ', '[−2, 1]', ' → ', '왼쪽으로 90° 돈 점'],
     title: '행렬을 곱하면 벡터가 늘어나고 돈다',
@@ -416,6 +452,20 @@ const lesson = [
   },
   {
     label: '층은 행렬 곱',
+    readingDiagram: {
+      title: "두 뉴런은 같은 입력을 서로 다르게 읽는다",
+      description: "두 뉴런은 같은 입력을 서로 다르게 읽는다",
+      nodes: [
+        ["a0", 150, 103, 244, 48, ["세로선 · 같은 9개 입력", "[0,1,0, 0,1,0, 0,1,0]"], "plain"],
+        ["b0", 470, 103, 230, 48, ["첫 가중치 행의 기여", "1 + 0 + 1 = 2"], "active"],
+        ["a1", 150, 195, 244, 48, ["세로선 · 같은 9개 입력", "[0,1,0, 0,1,0, 0,1,0]"], "plain"],
+        ["b1", 470, 195, 230, 48, ["둘째 가중치 행의 기여", "ReLU(−1 + 0 − 1) = 0"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+      ],
+    },
     readingStage: 2,
     note: ['9칸 그림 x에 W (2 × 9)를 곱함', ' → ', '뉴런마다 합 2, 0', ' → ', '숨은 층 [2, 0] (7.11과 같은 값)'],
     title: '신경망의 한 층은 행렬 곱 한 번이다',

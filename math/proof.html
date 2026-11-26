@@ -80,6 +80,20 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
 .truth td.blank{color:#9aa8a2}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
+
+.worked-example { min-width: 0; margin: 0; }
+.worked-example table { width: 100%; table-layout: auto; border-collapse: separate; border-spacing: 0;
+  border: 1px solid var(--border); border-radius: 8px; font-size: .85rem; line-height: 1.3; }
+.worked-example caption { padding: 0 0 4px; font-weight: 700; text-align: start; }
+.worked-example :is(th, td) { padding: 3px 6px; border-bottom: 1px solid var(--border);
+  text-align: start; overflow-wrap: anywhere; }
+.worked-example thead { background: #eff6f1; }
+.worked-example tbody tr:last-child :is(th, td) { border-bottom: 0; }
+.worked-example tr.is-key :is(th, td) { background: #e3f1e9; font-weight: 700; }
+.worked-example .worked-note { margin-top: 4px; font-size: .85rem; font-weight: 700; }
+@media (max-height: 720px) and (min-width: 641px) {
+  .explanation:has(.worked-example:not([hidden])) .takeaway { display: none; }
+}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -120,6 +134,7 @@ header p.lead{color:var(--muted);margin-top:10px}
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2><p id="body"></p>
+      <figure class="worked-example" id="worked-example" hidden></figure>
       <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
       <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
     </section>
@@ -136,10 +151,11 @@ const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : '
 const TF = [['true', '참'], ['false', '거짓']];
 const lesson = [
   {
+    worked: {"head": ["입력 n", "n² + n + 41", "판정"], "rows": [[0, "41", "소수"], [1, "43", "소수"], [2, "47", "소수"], [40, "1681 = 41 × 41", "합성수 · 반례"]], "mark": [3]},
     label: '예와 증명',
-    example: ["여러 입력에서 참", "반례 한 개 발견", "모든 입력에서 참이라는 주장 기각"],
+    example: ["n² + n + 41", "n = 40에서 41 × 41", "항상 소수라는 주장 기각"],
     title: '예를 아무리 많이 확인해도 증명은 아니다',
-    body: 'n² + n + 41에 n = 0, 1, 2 …를 넣으면 41, 43, 47, 53 … 모두 소수가 나옵니다. 39까지 넣어도 계속 소수입니다. 그런데 n = 40을 넣으면 1681 = 41 × 41로 소수가 아닙니다. 그래서 수학과 컴퓨터 과학에서는 "모든 경우에 참"을 말하려면 예시가 아니라 증명이 필요합니다.',
+    body: "여러 값에서 맞아도 모든 값에서 맞는다는 뜻은 아닙니다. n² + n + 41은 0, 1, 2에서 소수를 만들지만 n = 40에서는 1681 = 41 × 41입니다. 이 한 반례로 항상 소수라는 주장은 거짓입니다.",
     link: '1.6에서 몇 번 실행해 맞게 나와도 경계(i가 3일 때)에서 틀리는 버그가 있었습니다. 테스트는 버그를 찾을 수 있지만, 버그가 없다는 것을 보여 주지는 못합니다.',
     case: '다음 문장이 참인지 고르세요.',
     choices: TF,
@@ -170,8 +186,9 @@ const lesson = [
     sample: '시작 단계(n = 1일 때)와 닮았습니다. 재귀의 나머지 부분인 "n − 1의 답으로 n의 답을 만든다"는 이어 감 단계와 닮았습니다.',
   },
   {
+    worked: {"head": ["단계", "합 S"], "rows": [["n = 1", "1 = 1 × 2 / 2"], ["n = k", "S = k(k + 1) / 2"], ["n = k + 1", "S + (k + 1) = k(k + 1) / 2 + (k + 1)"], ["정리", "S + (k + 1) = (k + 1)(k + 2) / 2"]], "mark": [3]},
     label: '증명 따라가기',
-    example: ["1부터 k까지 합을 알고 있음", "다음 항 k + 1을 더함", "(k + 1)(k + 2)/2"],
+    example: ["S = k(k + 1) / 2", "양쪽에 k + 1을 더함", "(k + 1)(k + 2) / 2"],
     title: '1부터 n까지의 합은 n(n + 1)/2다',
     body: '1 + 2 + … + n = n(n + 1)/2를 귀납법으로 증명해 봅시다. ① n = 1이면 왼쪽은 1, 오른쪽은 1 × 2 / 2 = 1로 같습니다. ② n = k일 때 1 + … + k = k(k + 1)/2라고 가정합니다. 양쪽에 k + 1을 더하면 오른쪽은 k(k + 1)/2 + (k + 1) = (k + 1)(k + 2)/2가 되어, n = k + 1일 때의 식과 같아집니다. 따라서 모든 n에서 참입니다.',
     link: '1.2의 while 반복은 합계에 1, 2, 3을 차례로 더했습니다. 이 공식이 있으면 반복 없이 3 × 4 / 2 = 6을 바로 구할 수 있습니다.',
@@ -187,8 +204,9 @@ const lesson = [
     sample: '100 × 101 / 2 = 5050입니다. 반복으로 100번 더하지 않아도 공식 한 번이면 됩니다.',
   },
   {
+    worked: {"head": ["상태", "i", "합계 = 1 + … + (i − 1)"], "rows": [["반복 전", 3, "3 = 1 + 2"], ["3을 더하고 i를 1 증가", 4, "6 = 1 + 2 + 3"], ["종료 · i > n = 3", 4, 6]], "mark": [1]},
     label: '코드의 정확성',
-    example: ["반복 전 합계 0", "매 바퀴 합계 = 1 + … + (i − 1) 유지", "반복 종료 시 전체 합"],
+    example: ["i = 3 · 3 = 1 + 2", "3을 더하고 i를 4로", "i = 4 · 6 = 1 + 2 + 3"],
     title: '귀납법으로 프로그램이 맞다는 것을 보인다',
     body: '반복문이 맞다는 것은 "반복 불변식"으로 보입니다. 1.2의 합계 반복에서 "매 바퀴를 시작할 때 합계 = 1 + … + (i − 1)"이 처음에도 참이고, 한 바퀴가 지나도 계속 참이면, 반복이 끝났을 때 합계는 1 + … + n입니다. 재귀 함수도 같은 방식으로 보입니다.',
     link: '1.5의 팩(n)은 팩(1)이 맞고, 팩(n − 1)이 맞으면 n × 팩(n − 1)도 맞습니다. 바로 귀납법의 두 단계입니다.',
@@ -208,9 +226,45 @@ const lesson = [
 const byId = (id) => document.getElementById(id);
 const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
 
+
+function showWorkedExample(worked) {
+  const figure = byId('worked-example');
+  figure.hidden = !worked;
+  figure.replaceChildren();
+  if (!worked) return;
+  const table = document.createElement('table');
+  table.createCaption().textContent = '계산 예시';
+  const header = table.createTHead().insertRow();
+  for (const name of worked.head) {
+    const cell = document.createElement('th');
+    cell.scope = 'col';
+    cell.textContent = name;
+    header.append(cell);
+  }
+  const body = table.createTBody();
+  worked.rows.forEach((values, index) => {
+    const row = body.insertRow();
+    row.classList.toggle('is-key', worked.mark.includes(index));
+    values.forEach((value, column) => {
+      const cell = document.createElement(column === 0 ? 'th' : 'td');
+      if (column === 0) cell.scope = 'row';
+      cell.textContent = value;
+      row.append(cell);
+    });
+  });
+  figure.append(table);
+  if (worked.note) {
+    const note = document.createElement('p');
+    note.className = 'worked-note';
+    note.textContent = worked.note;
+    figure.append(note);
+  }
+}
+
 function showStep(index, announce = true) {
   state.index = index;
   const step = lesson[index];
+  showWorkedExample(step.worked);
   byId('step-title').textContent = step.title;
   byId('body').textContent = step.body;
   byId('takeaway').textContent = step.link;

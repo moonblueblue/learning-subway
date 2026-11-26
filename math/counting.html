@@ -80,6 +80,20 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
 .truth td.blank{color:#9aa8a2}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
+
+.worked-example { min-width: 0; margin: 0; }
+.worked-example table { width: 100%; table-layout: auto; border-collapse: separate; border-spacing: 0;
+  border: 1px solid var(--border); border-radius: 8px; font-size: .85rem; line-height: 1.3; }
+.worked-example caption { padding: 0 0 4px; font-weight: 700; text-align: start; }
+.worked-example :is(th, td) { padding: 3px 6px; border-bottom: 1px solid var(--border);
+  text-align: start; overflow-wrap: anywhere; }
+.worked-example thead { background: #eff6f1; }
+.worked-example tbody tr:last-child :is(th, td) { border-bottom: 0; }
+.worked-example :is(tr.is-key :is(th, td), .is-outcome) { background: #e3f1e9; font-weight: 700; }
+.worked-example .worked-note { margin-top: 4px; font-size: .85rem; font-weight: 700; }
+@media (max-height: 720px) and (min-width: 641px) {
+  .explanation:has(.worked-example:not([hidden])) .takeaway { display: none; }
+}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -120,6 +134,7 @@ header p.lead{color:var(--muted);margin-top:10px}
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2><p id="body"></p>
+      <figure class="worked-example" id="worked-example" hidden></figure>
       <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
       <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
     </section>
@@ -136,6 +151,7 @@ const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : '
 const TF = [['true', '참'], ['false', '거짓']];
 const lesson = [
   {
+    worked: {"head": ["상의", "하의 1", "하의 2"], "rows": [["A", "A1", "A2"], ["B", "B1", "B2"], ["C", "C1", "C2"]], "mark": [], "note": "3 × 2 = 6가지"},
     label: '곱의 법칙',
     example: ["상의 3가지 · 하의 2가지", "각 상의에 하의 2가지 대응", "조합 6가지"],
     title: '선택이 이어지면 가짓수를 곱한다',
@@ -153,10 +169,24 @@ const lesson = [
     sample: '자리마다 36가지라 36 × 36 × 36 = 46,656가지입니다.',
   },
   {
-    label: '순서가 있을 때와 없을 때',
-    example: ["세 명 중 두 명 선택", "A,B와 B,A는 같은 조", "조는 3개 · 줄 세우면 6개"],
-    title: '줄 세우기와 뽑기는 가짓수가 다르다',
-    body: '3명을 한 줄로 세우는 방법은 첫 자리 3명, 둘째 자리 2명, 셋째 자리 1명이라 3 × 2 × 1 = 6가지입니다(순열). 5명 중 회장과 부회장을 뽑는 방법은 5 × 4 = 20가지지만, 순서 없이 대표 2명만 뽑는다면 (가, 나)와 (나, 가)가 같으니 20 ÷ 2 = 10가지입니다(조합).',
+    worked: {"head": ["회장", "부회장 후보", "역할이 있는 쌍"], "rows": [["A", "B · C", "AB · AC"], ["B", "A · C", "BA · BC"], ["C", "A · B", "CA · CB"]], "mark": [], "note": "3 × 2 = 6쌍"},
+    label: "역할이 있는 선택",
+    example: ["후보 세 명", "회장 3가지 · 부회장 2가지", "AB와 BA를 따로 셈"],
+    title: "역할이 다르면 같은 두 사람도 두 번 센다",
+    body: "후보 A, B, C 중 회장을 먼저 고르면 부회장 후보는 두 명 남습니다. AB는 A가 회장, B가 부회장이라는 뜻이라 BA와 다릅니다. 역할이 있는 여섯 쌍을 셉니다.",
+    link: "1.5에서 팩토리얼을 만들 때도, 한 자리를 정하면 다음 자리에 쓸 후보가 줄었습니다.",
+    case: "A, B, C 가운데 회장 한 명과 부회장 한 명을 고릅니다.",
+    items: [{"text": "회장이 A라면 부회장을 고르는 방법은 두 가지다.", "answer": "true", "why": "남은 후보 B와 C가 있습니다."}, {"text": "AB와 BA는 같은 역할 배정이다.", "answer": "false", "why": "AB에서는 A가 회장이고 BA에서는 B가 회장입니다."}, {"text": "같은 사람이 두 역할을 모두 맡지 않으면 여섯 가지다.", "answer": "true", "why": "3 × 2 = 6입니다."}],
+    question: "후보가 네 명이라면 두 역할을 정하는 방법은 몇 가지일까요?",
+    sample: "회장 4가지에 부회장 3가지씩이어서 4 × 3 = 12가지입니다.",
+    choices: [['true', '맞다'], ['false', '틀리다']],
+  },
+  {
+    worked: {"head": ["역할이 있는 쌍", "같은 조"], "rows": [["AB · BA", "{A, B}"], ["AC · CA", "{A, C}"], ["BC · CB", "{B, C}"]], "mark": [], "note": "6 ÷ 2 = 3조"},
+    label: "순서 없이 뽑기",
+    example: ["역할 있는 여섯 쌍", "AB·BA, AC·CA, BC·CB를 각각 합침", "6 ÷ 2 = 3조"],
+    title: "역할을 지우면 서로 뒤집힌 두 쌍이 한 조가 된다",
+    body: "A와 B를 대표로 뽑았다면 누구를 먼저 불렀는지는 상관없습니다. 직전 단계의 여섯 쌍에서 AB와 BA, AC와 CA, BC와 CB를 각각 합치면 세 조가 남습니다.",
     link: '1.5의 팩토리얼 4! = 4 × 3 × 2 × 1이 바로 4명을 줄 세우는 방법의 수입니다.',
     case: '다음 경우의 수가 맞는지 고르세요.',
     choices: [['true', '맞다'], ['false', '틀리다']],
@@ -170,6 +200,7 @@ const lesson = [
     sample: '(45 × 44 × 43 × 42 × 41 × 40) ÷ (6 × 5 × 4 × 3 × 2 × 1) = 8,145,060가지입니다. 한 장으로 1등이 될 확률은 약 814만분의 1입니다.',
   },
   {
+    worked: {"head": ["공정한 주사위", "1", "2", "3", "4", "5", "6"], "rows": [["짝수", "—", "✓", "—", "✓", "—", "✓"]], "mark": [], "outcomes": [2, 4, 6], "note": "짝수 눈 3개 / 전체 6개 = 1/2"},
     label: '확률',
     example: ["공정한 주사위", "짝수 눈은 2, 4, 6", "확률 3/6 = 1/2"],
     title: '확률은 원하는 경우 ÷ 모든 경우다',
@@ -187,7 +218,8 @@ const lesson = [
     sample: '두 번 모두 뒷면일 확률 1/4을 1에서 빼면 3/4입니다. "적어도 한 번"은 반대 경우를 빼는 것이 쉽습니다.',
   },
   {
-    label: '컴퓨터 속 확률',
+    worked: {"head": ["자릿수", "자리마다 선택", "전체"], "rows": [[1, "26", "26"], [2, "26 × 26", "676"], [12, "26 × … × 26 (12번)", "26¹² ≈ 9.5 × 10¹⁶"]], "mark": [2], "note": "소문자 26개 · 같은 글자 반복 가능"},
+    label: "자리 수와 확률",
     example: ["소문자 12자리 비밀번호", "자리마다 26가지를 곱함", "26¹² ≈ 9.5경 가지"],
     title: '보안과 해시는 경우의 수와 확률 위에 서 있다',
     body: '비밀번호가 안전한 이유는 경우의 수가 너무 커서 하나씩 다 시도할 수 없기 때문입니다. 반대로 경우의 수가 넉넉해 보여도 겹칠 확률은 생각보다 빨리 커집니다. 23명만 모여도 생일이 같은 두 사람이 있을 확률이 50%를 넘습니다(생일 문제). 이 생각이 4.5 해시 테이블과 6.11 암호화에서 다시 나옵니다.',
@@ -208,9 +240,46 @@ const lesson = [
 const byId = (id) => document.getElementById(id);
 const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
 
+
+function showWorkedExample(worked) {
+  const figure = byId('worked-example');
+  figure.hidden = !worked;
+  figure.replaceChildren();
+  if (!worked) return;
+  const table = document.createElement('table');
+  table.createCaption().textContent = '계산 예시';
+  const header = table.createTHead().insertRow();
+  for (const name of worked.head) {
+    const cell = document.createElement('th');
+    cell.scope = 'col';
+    cell.textContent = name;
+    header.append(cell);
+  }
+  const body = table.createTBody();
+  worked.rows.forEach((values, index) => {
+    const row = body.insertRow();
+    row.classList.toggle('is-key', worked.mark.includes(index));
+    values.forEach((value, column) => {
+      const cell = document.createElement(column === 0 ? 'th' : 'td');
+      if (column === 0) cell.scope = 'row';
+      cell.textContent = value;
+      cell.classList.toggle('is-outcome', worked.outcomes?.includes(column) ?? false);
+      row.append(cell);
+    });
+  });
+  figure.append(table);
+  if (worked.note) {
+    const note = document.createElement('p');
+    note.className = 'worked-note';
+    note.textContent = worked.note;
+    figure.append(note);
+  }
+}
+
 function showStep(index, announce = true) {
   state.index = index;
   const step = lesson[index];
+  showWorkedExample(step.worked);
   byId('step-title').textContent = step.title;
   byId('body').textContent = step.body;
   byId('takeaway').textContent = step.link;

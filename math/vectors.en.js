@@ -1,5 +1,16 @@
 // English for 8B.1 Vectors and matrices. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "첫 가중치 행의 기여": "Contributions from row 1",
+  "둘째 가중치 행의 기여": "Contributions from row 2",
+  "지우 · 서준": "Jiwoo · Seojun",
+  "이 점수에서 민지 선택": "This score picks Minji",
+  "같은 취향 축끼리 곱하고 더한다": "Multiply matching preference dimensions",
+  "행마다 내적해 점을 반시계로 돌린다": "One dot product per row rotates the point",
+  "입력 점 (1,2)에서 첫 행의 내적은 -2, 둘째는 1입니다. 같은 원점에서 출력 점 (-2,1)은 반시계 방향으로 90도 돌아갑니다.": "The rows yield −2 and 1 for (1,2). From the same origin, (−2,1) is rotated 90 degrees counterclockwise.",
+  "세로선 · 같은 9개 입력": "Vertical line · same 9 inputs",
+  "세로 가중치: 가운데 열": "Vertical weights: middle",
+  "가로 가중치: 가운데 행": "Horizontal weights: middle",
+  "두 뉴런은 같은 입력을 서로 다르게 읽는다": "Two neurons read the same inputs differently",
   // Page
   '벡터와 행렬 · 레슨 8B.1': 'Vectors and matrices · Lesson 8B.1',
   '취향과 그림을 숫자 묶음(벡터)으로 적고, 더하기와 곱하기, 내적으로 닮은 정도 재기, 행렬로 점을 늘이고 돌리기, 신경망의 한 층을 행렬 곱 한 번으로 계산하기를 따라가 보세요.':

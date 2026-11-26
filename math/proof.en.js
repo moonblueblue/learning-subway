@@ -77,4 +77,24 @@ window.lessonText = {
   '1.6의 하나 차이 버그(while i < 3)를 불변식으로 보면 어디서 어긋날까요?': 'Looking at the off-by-one bug in 1.6 (while i < 3) through the invariant, where does it go wrong?',
   '반복이 끝났을 때 i = 3이라 불변식은 합계 = 1 + 2만 말해 줍니다. 원하는 결과(1 + 2 + 3)가 되려면 끝날 때 i가 4여야 하므로, 끝나는 조건이 잘못되었다는 것을 알 수 있습니다.':
     'When the loop ends, i = 3, so the invariant only tells you total = 1 + 2. For the wanted result (1 + 2 + 3), i must be 4 at the end, so you can tell the stopping condition is wrong.',
+
+  // Worked examples aligned with the chapter diagrams.
+  "계산 예시": "Worked example",
+  "n = 40에서 41 × 41": "At n = 40: 41 × 41",
+  "항상 소수라는 주장 기각": "The claim “always prime” fails",
+  "여러 값에서 맞아도 모든 값에서 맞는다는 뜻은 아닙니다. n² + n + 41은 0, 1, 2에서 소수를 만들지만 n = 40에서는 1681 = 41 × 41입니다. 이 한 반례로 항상 소수라는 주장은 거짓입니다.": "Success on several inputs does not prove a claim for all inputs. The formula n² + n + 41 gives primes at 0, 1 and 2, but at n = 40 it gives 1681 = 41 × 41. This one counterexample disproves the claim that it always gives primes.",
+  "입력 n": "Input n",
+  "판정": "Result",
+  "소수": "Prime",
+  "합성수 · 반례": "Composite · counterexample",
+  "양쪽에 k + 1을 더함": "Add k + 1 to both sides",
+  "단계": "Step",
+  "합 S": "Sum S",
+  "정리": "Factor",
+  "3을 더하고 i를 4로": "Add 3 and set i to 4",
+  "상태": "State",
+  "합계 = 1 + … + (i − 1)": "Sum = 1 + … + (i − 1)",
+  "반복 전": "Before the iteration",
+  "3을 더하고 i를 1 증가": "Add 3 and increase i by 1",
+  "종료 · i > n = 3": "Stop · i > n = 3",
 };

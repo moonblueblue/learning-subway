@@ -68,4 +68,21 @@ window.lessonText = {
   '중복된 이름이 섞인 명단에서 서로 다른 이름이 몇 개인지 세려면 어떻게 할까요?': 'How do you count the different names in a list of names with repeats mixed in?',
   'len(set(명단))입니다. 리스트를 set으로 바꾸면 중복이 사라지므로, 길이가 곧 서로 다른 이름의 수입니다.':
     'len(set(names)). Turning the list into a set removes the repeats, so its length is the number of different names.',
+
+  // Worked examples aligned with the chapter diagrams.
+  "계산 예시": "Worked example",
+  "각 원소가 속한 집합을 비교": "Compare which sets contain each element",
+  "연산": "Operation",
+  "결과": "Result",
+  "A에서 2로 가는 연결 추가": "Add another link from A to 2",
+  "A의 출력이 둘이므로 함수 아님": "A has two outputs, so this is not a function",
+  "상태": "State",
+  "입력 → 출력": "Input → output",
+  "함수인가?": "Function?",
+  "처음": "Before",
+  "예 · 입력당 하나": "Yes · one per input",
+  "연결 추가": "Added link",
+  "아니요 · A에 둘": "No · two for A",
+  "코드": "Code",
+  "실행 결과": "Output",
 };

@@ -111,7 +111,7 @@ addEventListener('DOMContentLoaded', () => {
   // A station is an interchange when a line branches off it, or when it shares lessons with another line beyond the
   // junction it hangs from (sharing with the junction is what the branch itself already shows).
   function stationsOf(roadmap) {
-    if (roadmap.id === 'ai') return [{ label: 'AI 노선도', href: './ai-map.html?v=903be53e806a2c0d', children: [], interchange: true }];
+    if (roadmap.id === 'ai') return [{ label: 'AI 노선도', href: './ai-map.html?v=1bb1d8ccac5e9eca', children: [], interchange: true }];
     const junction = roadmap.branch && byId.get(roadmap.branch.from).chapters.find((chapter) => chapter.id === roadmap.branch.chapter);
     const junctionRefs = new Set(junction ? refsOf(junction) : []);
     return roadmap.chapters.map((chapter) => {
@@ -135,7 +135,7 @@ addEventListener('DOMContentLoaded', () => {
     const through = (roadmap) => roadmap.chapters.findIndex((chapter) => refsOf(chapter).includes(here?.ref));
     const roadmap = [byId.get(here?.roadmap), ...roadmaps].find((item) => item && through(item) >= 0);
     if (!roadmap) return { roadmap: trunk, index: 0, href: stationsOf(trunk)[0].href };
-    if (roadmap.id === 'ai') return { roadmap, index: 0, href: './ai-map.html?v=903be53e806a2c0d' };
+    if (roadmap.id === 'ai') return { roadmap, index: 0, href: './ai-map.html?v=1bb1d8ccac5e9eca' };
     return { roadmap, index: through(roadmap), href: './' + here.ref + '.html?roadmap=' + encodeURIComponent(roadmap.id) };
   }
   const PIN = '#d92d20', PIN_TEXT = '#b42318';
@@ -228,7 +228,7 @@ addEventListener('DOMContentLoaded', () => {
   const strokeOf = (roadmap) => ({ stroke: colorOf(roadmap.id), 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none', ...(built(roadmap) ? {} : { opacity: .45 }) });
 
   function lineHref(roadmap) {
-    if (roadmap.id === 'ai') return './ai-map.html?v=903be53e806a2c0d';
+    if (roadmap.id === 'ai') return './ai-map.html?v=1bb1d8ccac5e9eca';
     const first = roadmap.chapters.flatMap(refsOf)[0];
     return first ? './' + first + '.html?roadmap=' + encodeURIComponent(roadmap.id) : null;
   }
@@ -327,7 +327,7 @@ addEventListener('DOMContentLoaded', () => {
     for (const [roadmap, d] of paths) {
       svg.append(make('svg:path', { d, ...strokeOf(roadmap) }));
       if (roadmap.id === 'ai') {
-        const link = make('svg:a', { href: './ai-map.html?v=903be53e806a2c0d', 'aria-label': tr('AI 노선도') });
+        const link = make('svg:a', { href: './ai-map.html?v=1bb1d8ccac5e9eca', 'aria-label': tr('AI 노선도') });
         link.append(make('svg:path', { d, stroke: 'transparent', 'stroke-width': 20, fill: 'none' }));
         svg.append(link);
       }
@@ -377,7 +377,7 @@ addEventListener('DOMContentLoaded', () => {
     select.addEventListener('change', () => {
       if (select.value === 'ai') {
         select.value = roadmap.id;
-        location.assign('./ai-map.html?v=903be53e806a2c0d');
+        location.assign('./ai-map.html?v=1bb1d8ccac5e9eca');
         return;
       }
       shownLine = select.value;

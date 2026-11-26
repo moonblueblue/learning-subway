@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+// The browser loaded a fresh view. Keep shared links and history on the public map URL.
+const address = new URL(location.href);
+address.pathname = new URL('./ai-map.html', address).pathname;
+address.searchParams.delete('visit');
+address.searchParams.delete('v');
+history.replaceState(null, '', address);
+addEventListener('pageshow', event => {
+  if (event.persisted) location.replace(location.href);
+});
+</script>
+<meta name="theme-color" content="#f4f7ef">
+<title>AI 노선도</title>
+<link rel="icon" href="./shared/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./shared/ai-map.css?v=8b73254559da0202">
+<script defer src="./shared/catalog.js?v=0314d0ead6c7a073"></script>
+<script defer src="./shared/ai-stations.js?v=2ed2272391833e59"></script>
+<script>window.lessonText = {"역 선택":"Station"};</script>
+<script defer src="./shared/i18n.js?v=d306a07a3e95bd81"></script>
+<script defer src="./shared/ai-map.js?v=bc910d6d4a9df1e3"></script>
+</head>
+<body>
+<header>
+  <a href="./index.html" class="home"><span aria-hidden="true">←</span> <span>전체 노선도</span></a>
+  <h1>AI 노선도</h1>
+  <div data-lang-switch></div>
+</header>
+<main>
+  <div class="sheet">
+    <svg class="network" role="group" aria-label="AI 노선도"></svg>
+    <nav class="legend" aria-label="노선"><div id="trunk"></div><div id="branches"></div></nav>
+  </div>
+  <section class="stop" aria-label="선택한 노선">
+    <div class="summary"><h2 id="line-name"></h2><span>졸업 과제</span> <strong id="destination"></strong></div>
+    <div class="boarding"><label for="lessons">역 선택</label><select id="lessons"></select>
+      <a id="enter">레슨 열기</a><span id="planned" hidden>준비 중</span>
+    </div>
+  </section>
+</main>
+</body>
+</html>

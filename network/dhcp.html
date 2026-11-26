@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="주소가 없는 컴퓨터가 DHCP로 주소를 묻고, 제안받고, 확정받는 과정과 임대 갱신, 다른 네트워크의 서버에 닿게 해 주는 릴레이를 따라가 보세요.">
+<title>DHCP · 레슨 2.2</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#115e59}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
+.cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
+.cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
+.cell.changed .top{animation:flash 1s ease-out}
+@keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
+.cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
+.cell.empty .cell-value{fill:#9aa8a2}
+.address{font:600 9px var(--mono);fill:#6b7d76;text-anchor:start}
+.tag.name{transition:opacity .25s}
+.tag.name rect{stroke:var(--accent);stroke-width:1.1}
+.tag.name text{fill:var(--accent);font-weight:700}
+.bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bus.active{stroke:#7fa891}
+.packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
+.packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
+.packet-group.read .packet-label{fill:#3b4880}
+.code-area{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.code{list-style:none;counter-reset:line;margin:0;padding:10px 0;background:#1f2d29;border-radius:12px;color:#e8f2ec;font:600 1rem/1.5 var(--mono);flex:1 1 300px}
+.code li{counter-increment:line;padding:5px 14px 5px 46px;position:relative}
+.code li::before{content:counter(line);position:absolute;left:16px;color:#6f8a80}
+.code li.done{color:#8fa79c}
+.code li.current{background:#2f4a41;color:#ffffff}
+.code li.current::after{content:'다음';position:absolute;right:14px;color:#9fe3b6;font-size:.8125rem}
+.code-actions{display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
+.try-choices{display:flex;gap:6px;flex-wrap:wrap}
+.try-choices:empty{display:none}
+.dot.read{background:var(--response);border-color:var(--response)}
+.dot.write{background:var(--request);border-color:var(--request)}
+@media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.bus.inner{stroke:#c9d6ce;stroke-dasharray:3 3}
+.bus.main{stroke:#9fbfae;stroke-width:3}
+.cpu-area{fill:#e2ece5;stroke:#9fb7a9;stroke-width:1.2;stroke-dasharray:6 4}
+.board-tag rect{fill:#26322e;stroke:#26322e}.board-tag text{fill:#fff;font-weight:800}
+.cell .left{fill:#e6ebe8;stroke:#8c9d96}.cell .right{fill:#cfd8d4;stroke:#8c9d96}.cell .top{fill:#fff;stroke:#8c9d96}
+.cell.code .top{fill:#eef1fb;stroke:#7d88b4}.cell.code .left{fill:#dfe4f2;stroke:#7d88b4}.cell.code .right{fill:#c4cbe3;stroke:#7d88b4}
+.cell.code .cell-value{fill:#3c4a85;font-size:8.5px}
+.address{text-anchor:middle}
+.cell.active .top{fill:#fff1c9;stroke:#c9940f}
+.cell.next-pc .address{fill:var(--accent);font-weight:800}
+.part .face{stroke-width:.8;transition:fill .2s}
+.part.register .left{fill:#dbe9e2;stroke:#5f8f78}.part.register .right{fill:#c2d9cd;stroke:#5f8f78}.part.register .top{fill:#f3f8f5;stroke:#5f8f78}
+.part.control .left{fill:#eadcf0;stroke:#9a77ad}.part.control .right{fill:#d9c4e3;stroke:#9a77ad}.part.control .top{fill:#f7f0fa;stroke:#9a77ad}
+.part.alu .left{fill:#e4e1d3;stroke:#8f8763}.part.alu .right{fill:#d2cdb6;stroke:#8f8763}.part.alu .top{fill:#f7f5ec;stroke:#8f8763}
+.part.busy .top{fill:#fff1c9}
+.part-tag text{font:700 11.5px var(--mono)}
+.part.busy .part-tag rect{stroke:#c9940f;stroke-width:1.3}
+.packet-group.inner .packet,.packet-group.inner .packet-halo{fill:#9a77ad}
+.packet-group.inner .packet-label{fill:#5f3a73}
+.dot.inner{background:#9a77ad;border-color:#9a77ad}
+.memory-panel{flex:1 1 320px;display:flex;flex-direction:column;gap:8px}
+.phase-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.phases{list-style:none;display:flex;gap:4px;margin:0;padding:0}
+.phases li{padding:4px 12px;border:1px solid var(--border);border-radius:999px;font-size:.875rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.phases li.current{background:var(--accent);border-color:var(--accent);color:#fff}
+.clock{font:700 .9375rem var(--mono);color:var(--accent);margin-left:auto}
+.clock.tick{animation:bump .3s ease-out}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+.clock{display:inline-block}
+.memory-list{counter-reset:none;flex:none}
+.memory-list li{counter-increment:none;padding:3px 12px 3px 44px;display:flex;gap:10px}
+.memory-list li::before{content:none}
+.memory-list .addr{position:absolute;left:14px;color:#6f8a80}
+.memory-list li.data code{color:#bfe8cf}
+.memory-list li.ir{background:#2f4a41}
+.memory-list li.touched{box-shadow:inset 3px 0 #ffd34d}
+.memory-list .mark{margin-left:auto;color:#9fe3b6;font-size:.8125rem}
+.memory-list li.current::after{content:none}
+@media(prefers-reduced-motion:reduce){.clock.tick{animation:none}}
+@media(max-width:600px){.part-tag text{font-size:14px}.cell.code .cell-value{font-size:12px}}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+@media(max-width:600px){.packet-label{font-size:13px}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
+.bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
+.station .face{stroke-width:.8;transition:fill .2s}
+.station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
+.sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
+.station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.ssd .left{fill:#dfe4f2;stroke:#7a87b5}.station.ssd .right{fill:#c4cbe3;stroke:#7a87b5}.station.ssd .top{fill:#eaeef9;stroke:#7a87b5}
+.station.ram .left{fill:#acd5b9;stroke:#5f9474}.station.ram .right{fill:#80b596;stroke:#5f9474}.station.ram .top{fill:#dcf1e2;stroke:#5f9474}
+.station.cpu .left{fill:#3f4f4a;stroke:#26322e}.station.cpu .right{fill:#2f3d39;stroke:#26322e}.station.cpu .top{fill:#5d6f69;stroke:#26322e}
+.station.active .top{fill:#fff1c9}
+.station.cpu.active .top{fill:#8a7d4a}
+.station.error.error .top{fill:#f6b893;stroke:#a24c14}
+.station-tag text{font-weight:800}
+.tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
+.tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
+.tag.empty{display:none}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.dot.file{background:#fff;border-color:#8c9d96}.dot.tool{background:#eadcf0;border-color:#9a77ad}.dot.errordot{background:#ffd9c2;border-color:#a24c14}
+.stage-list{list-style:none;display:flex;flex-wrap:wrap;gap:4px;margin:0;padding:0}
+.stage-list li{padding:3px 10px;border:1px solid var(--border);border-radius:999px;font-size:.8125rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.stage-list li.done{color:var(--accent);border-color:#9fb7a9}
+.stage-list li.current{background:var(--accent);color:#fff;border-color:var(--accent)}
+.work-title{font-weight:800;color:var(--ink)}
+.work-panel.error .work-title{color:#a24c14}
+.work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
+.work li{padding-left:16px}
+@media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+.zone{stroke-width:1.2;stroke-dasharray:6 4}
+.zone.user-zone{fill:#e2ece5;stroke:#9fb7a9}
+.zone.kernel-zone{fill:#ece4f2;stroke:#b39ac4}
+.zone-label{font:800 11px system-ui,sans-serif;fill:#43574f}
+.border-line{stroke:#a24c14;stroke-width:2.4;stroke-dasharray:8 5}
+.station.user .left{fill:#bfe2cb;stroke:#4f8f6b}.station.user .right{fill:#9fcfb1;stroke:#4f8f6b}.station.user .top{fill:#e2f5e8;stroke:#4f8f6b}
+.station.gate .left{fill:#f6dfc8;stroke:#c26a1e}.station.gate .right{fill:#ecc8a4;stroke:#c26a1e}.station.gate .top{fill:#fdf2e7;stroke:#c26a1e}
+.station.kernel .left{fill:#eadcf0;stroke:#9a77ad}.station.kernel .right{fill:#d9c4e3;stroke:#9a77ad}.station.kernel .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.screen .left{fill:#d7dfdb;stroke:#8c9d96}.station.screen .right{fill:#34514a;stroke:#26322e}.station.screen .top{fill:#f4f7f5;stroke:#8c9d96}
+.dot.userdot{background:#e2ece5;border-color:#4f8f6b}.dot.kerneldot{background:#ece4f2;border-color:#9a77ad}
+.station.pc .left{fill:#bfe2cb;stroke:#4f8f6b}.station.pc .right{fill:#9fcfb1;stroke:#4f8f6b}.station.pc .top{fill:#e2f5e8;stroke:#4f8f6b}
+.station.switch .left{fill:#cfd6ec;stroke:#5f6ea3}.station.switch .right{fill:#b3bddd;stroke:#5f6ea3}.station.switch .top{fill:#e4e8f6;stroke:#5f6ea3}
+.station.pc20 .left{fill:#f0d3dc;stroke:#a5607a}.station.pc20 .right{fill:#e2b5c3;stroke:#a5607a}.station.pc20 .top{fill:#fbecf0;stroke:#a5607a}
+.station.pc20.active .top{fill:#fff1c9}
+.dot.pc20dot{background:#f0d3dc;border-color:#a5607a}
+.bus.trunk{stroke-width:7;stroke:#7fa891}.casing.trunk{stroke-width:12}
+.sample.trunk{border-top-width:6px;border-top-color:#7fa891}
+.station.server .left{fill:#dfe4f2;stroke:#5f6ea3}.station.server .right{fill:#c4cbe3;stroke:#5f6ea3}.station.server .top{fill:#eaeef9;stroke:#5f6ea3}
+.station.server.active .top{fill:#fff1c9}
+.server-slot{stroke:#5f6ea3;stroke-width:1.2;stroke-linecap:round}
+.dot.serverdot{background:#dfe4f2;border-color:#5f6ea3}
+.station.router .left{fill:#eadcf0;stroke:#9a77ad}.station.router .right{fill:#d9c4e3;stroke:#9a77ad}.station.router .top{fill:#f7f0fa;stroke:#9a77ad}
+.antenna{stroke:#6f4f86;stroke-width:1.6;stroke-linecap:round}
+.dot.routerdot{background:#eadcf0;border-color:#9a77ad}
+.station.hub .left{fill:#dfe4f2;stroke:#7a87b5}.station.hub .right{fill:#c4cbe3;stroke:#7a87b5}.station.hub .top{fill:#eaeef9;stroke:#7a87b5}
+.station.pc.active .top,.station.switch.active .top,.station.router.active .top{fill:#fff1c9}
+.station.error.error .top{fill:#f6b893;stroke:#a24c14}
+.pc-screen{fill:#34514a;stroke:#26322e;stroke-width:.6}
+.badge-leader{stroke:#9fb7a9;stroke-width:1;stroke-dasharray:2 2}
+.port-light{fill:#4fcf87;stroke:#2f6b4f;stroke-width:.5}
+.dot.activedot{background:#fff1c9;border-color:#c9940f}.dot.pcdot{background:#bfe2cb;border-color:#4f8f6b}.dot.hubdot{background:#cfd6ec;border-color:#5f6ea3}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./dhcp.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">네트워크 2장 IP와 주소 · 레슨 2.2</p>
+    <h1>DHCP</h1>
+    <p class="lead">새로 켠 컴퓨터는 자기 IP 주소를 어떻게 받을까요? 주소 없는 PC A와 DHCP 서버 사이로 메시지를 보내 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">PC A와 DHCP 서버</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">주소가 없는 PC A가 DHCP 서버와 Discover, Offer, Request, Ack를 주고받아 주소를 받고, 라우터의 릴레이를 거쳐 다른 네트워크의 서버에 닿는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="code-area">
+            <div class="memory-panel work-panel" id="work-panel">
+              <ol class="stage-list" id="stage-list" aria-label="정거장"></ol>
+              <p class="work-title" id="work-title"></p>
+              <ol class="code memory-list work" id="work" aria-label="지금 코드의 모습"></ol>
+            </div>
+            <div class="code-actions">
+              <button class="action primary" id="run-stage" type="button">다음 단계</button>
+              <button class="action" id="restart" type="button">처음부터</button>
+            </div>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="sample"></i>케이블</span><span><i class="dot pcdot"></i>컴퓨터</span><span><i class="dot hubdot"></i>스위치</span><span><i class="dot routerdot"></i>라우터</span><span><i class="dot serverdot"></i>DHCP 서버</span><span><i class="dot activedot"></i>신호가 막 닿은 곳</span><span><i class="dot errordot"></i>오류</span></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+// DHCP on one LAN, then through a relay. A station carries a position [u, v] (u to the right, v down the screen).
+// PC A has no address at first; its badge shows the address it holds. A stage carries a DHCP message along one cable
+// (`from` → `to`, `label` on the moving dot), then shows the message (`title`, `lines`) and what each station holds
+// (`holds`). `ask` is a prediction answered before the stage runs.
+const kinds = { pc: '컴퓨터', switch: '스위치', router: '라우터', server: 'DHCP 서버' };
+const lan = [['a', 'PC A · MAC aa', 'pc', [0, 0]], ['sw', '스위치', 'switch', [8.5, 0]], ['srv', 'DHCP 서버 · 192.168.1.2', 'server', [17, 0]], ['b', 'PC B · 192.168.1.20', 'pc', [8.5, 11]]];
+const lanCables = [['sw', 'a'], ['sw', 'srv'], ['sw', 'b']];
+const lesson = [
+  {
+    label: '모두에게 묻기',
+    readingStage: 3,
+    title: '주소가 없는 컴퓨터는 0.0.0.0에서 모두에게 Discover를 보낸다',
+    body: '방금 켠 A는 아직 IP 주소가 없습니다. 그래서 출발지를 0.0.0.0, 목적지를 모두에게 가는 255.255.255.255로 채워 DHCP Discover를 보냅니다. 이더넷 프레임의 목적지도 ff:ff:ff:ff:ff:ff라서 스위치가 모든 포트로 퍼뜨립니다. DHCP 서버만 이 메시지에 답할 준비를 하고, 보통 컴퓨터인 B는 무시합니다. 서버는 A의 MAC aa를 보고 빌려줄 주소를 고릅니다.',
+    takeaway: 'A 이름표가 "IP 없음 → 모두에게"가 되고, 스위치가 Discover를 오른쪽 서버와 아래 B로 모두 보냅니다. 서버 이름표는 "Discover → .50 고름", B 이름표는 "DHCP 서버 아님 → 무시"입니다.',
+    description: '가운데 스위치에 왼쪽 PC A(MAC aa, 주소 없음), 오른쪽 DHCP 서버(192.168.1.2), 아래 PC B가 이어져 있습니다. A가 출발지 0.0.0.0, 목적지 255.255.255.255로 Discover를 보내고, 서버만 답할 준비를 합니다.',
+    note: ['A: 주소 없음', ' → ', 'Discover 0.0.0.0 → 255.255.255.255', ' → ', '서버: .50을 고름', ' · ', 'B: 무시'],
+    stations: lan,
+    cables: lanCables,
+    start: { title: 'PC A의 상태', lines: ['IP 주소  없음', 'MAC 주소  aa', 'DHCP 서버의 주소도 모름'], holds: { a: '주소 없음', srv: '풀: 192.168.1.50–.99' } },
+    stages: [
+      { from: 'a', to: 'sw', label: 'Discover', title: 'DHCP Discover', lines: ['출발지 IP  0.0.0.0 (아직 없음)', '목적지 IP  255.255.255.255 (모두)', '내용  aa에게 줄 주소 있나요?'],
+        text: 'A가 주소 없이 Discover를 모두에게 보냅니다.', holds: { a: 'IP 없음 → 모두에게', sw: 'ff → 모든 포트' },
+        ask: { q: 'A는 아직 IP 주소도, DHCP 서버의 주소도 모릅니다. Discover의 목적지 IP는 무엇일까요?', choices: ['192.168.1.2', '255.255.255.255', '0.0.0.0'], answer: '255.255.255.255', why: '서버를 모르니 모두에게 묻습니다. 255.255.255.255는 이 LAN의 모든 컴퓨터에게 가는 주소입니다.' } },
+      { from: 'sw', to: 'b', label: 'ff → B 쪽', title: 'PC B', lines: ['DHCP 서버가 아님 → 무시'],
+        text: 'B도 받지만 DHCP 서버가 아니라 무시합니다.', holds: { b: 'DHCP 서버 아님 → 무시' } },
+      { from: 'sw', to: 'srv', label: 'ff → 서버 쪽', title: 'DHCP 서버', lines: ['aa의 Discover 받음', '풀에서 비어 있는 192.168.1.50을 고름'],
+        text: '서버가 Discover를 받고, 풀에서 비어 있는 192.168.1.50을 고릅니다.', holds: { srv: 'Discover → .50 고름' } },
+    ],
+  },
+  {
+    label: '제안과 확정',
+    readingStage: 4,
+    title: 'Offer, Request, Ack를 거쳐 A가 주소와 설정을 받는다',
+    body: '서버는 Offer로 "192.168.1.50을 1시간 쓰세요"라고 제안하고, 마스크(/24), 게이트웨이(192.168.1.1), DNS 서버도 함께 적어 보냅니다. A는 그 주소를 쓰겠다는 Request를 보냅니다. 이때도 모두에게 보내서, 다른 서버가 있었다면 자기 제안이 선택되지 않았음을 알게 합니다. 서버가 Ack로 확정하면 A는 그제서야 주소를 설정합니다. 네 메시지의 머리글자를 따서 DORA라고 부릅니다.',
+    takeaway: '서버의 Offer와 A의 Request가 오간 뒤 서버 Ack가 A에 닿습니다. 서버 이름표는 "Offer → Ack: .50 · 1시간", A 이름표는 "Request → .50/24 받음"이 됩니다.',
+    description: '같은 배치에서 서버가 A에게 192.168.1.50을 제안하고(Offer), A가 그것을 고르고(Request), 서버가 확정합니다(Ack). A가 주소, 마스크, 게이트웨이, 임대 시간을 갖습니다.',
+    note: ['Offer: .50 · 1시간', ' → ', 'Request: .50을 쓰겠음', ' → ', 'Ack: 확정', ' → ', 'A: 192.168.1.50/24 · 게이트웨이 .1'],
+    stations: lan,
+    cables: lanCables,
+    start: { title: 'DHCP 서버가 보낼 것', lines: ['Offer  192.168.1.50 · 1시간', '마스크 /24 · 게이트웨이 192.168.1.1 · DNS 192.168.1.2'], holds: { a: '주소 없음', srv: 'Discover → .50 고름' } },
+    stages: [
+      { from: 'srv', to: 'sw', label: 'Offer .50', title: 'DHCP Offer', lines: ['제안 주소  192.168.1.50', '마스크 /24 · 게이트웨이 .1 · DNS .2', '임대 1시간'],
+        text: '서버가 192.168.1.50을 1시간 쓰라고 제안합니다.', holds: { srv: '.50 제안 · 1시간' } },
+      { from: 'sw', to: 'a', label: 'Offer .50', title: 'PC A', lines: ['Offer 받음 · 192.168.1.50'],
+        text: 'A가 Offer를 받습니다. 아직 주소를 설정하지는 않습니다.', holds: { a: 'Offer 받음 · 아직 설정 안 함' },
+        ask: { q: 'A가 Offer를 받았습니다. 바로 192.168.1.50을 써도 될까요?', choices: ['바로 쓴다', 'Request를 보내고 Ack를 받은 뒤 쓴다', '다시 Discover를 보낸다'], answer: 'Request를 보내고 Ack를 받은 뒤 쓴다', why: 'Offer는 제안일 뿐입니다. A가 고른다고 알리고(Request) 서버가 확정해야(Ack) 씁니다.' } },
+      { from: 'a', to: 'srv', label: 'Request .50', title: 'DHCP Request', lines: ['192.168.1.50을 쓰겠음', '모두에게 보냄 (다른 서버도 알게)'],
+        text: 'A가 .50을 쓰겠다는 Request를 보냅니다.', holds: { a: '.50을 쓰겠음' } },
+      { from: 'srv', to: 'a', label: 'Ack', title: 'PC A의 설정', lines: ['IP 192.168.1.50/24', '게이트웨이 192.168.1.1 · DNS 192.168.1.2', '임대 1시간'],
+        text: '서버가 Ack로 확정하고, A가 주소와 설정을 적용합니다.', holds: { srv: 'Offer → Ack: .50 · 1시간', a: 'Request → .50/24 받음' } },
+    ],
+  },
+  {
+    label: '임대 갱신',
+    readingStage: 2,
+    title: '임대 시간의 절반이 지나면 같은 주소를 연장한다',
+    body: 'DHCP 주소는 빌린 것이라 임대 시간이 있습니다. A는 1시간 임대의 절반인 30분이 지나면 서버에게 직접 연장을 요청합니다. 이제 서버 주소를 알고 자기 주소도 있으니 모두에게 보낼 필요가 없습니다. 서버가 Ack를 보내면 같은 주소 .50을 다시 1시간 씁니다. 꺼진 컴퓨터는 연장하지 않으니, 임대가 끝난 주소는 서버가 다른 컴퓨터에게 줄 수 있습니다.',
+    takeaway: 'A 이름표가 "30분 지남 → 연장 요청"으로 시작하고, 서버 이름표가 "직접 온 연장 → 다시 1시간"이 됩니다. A 이름표는 "30분 뒤 연장 · .50 그대로"가 됩니다. 주소는 바뀌지 않고 시간만 늘어납니다.',
+    description: '같은 배치에서 A가 192.168.1.50을 30분째 쓰고 있습니다. A가 서버에게 직접 연장을 요청하고, 서버가 확정해 같은 주소를 1시간 더 씁니다.',
+    note: ['임대 1시간 중 30분 지남', ' → ', 'A → 서버: .50 연장 요청 (직접)', ' → ', 'Ack', ' → ', '.50 그대로 · 다시 1시간'],
+    stations: lan,
+    cables: lanCables,
+    start: { title: 'PC A의 임대', lines: ['192.168.1.50 · 임대 1시간', '30분 지남 → 연장할 때'], holds: { a: '.50 · 30분 남음', srv: '.50 → aa · 30분 남음' } },
+    stages: [
+      { from: 'a', to: 'srv', label: 'Request 연장', title: 'DHCP Request (연장)', lines: ['출발지 192.168.1.50 → 목적지 192.168.1.2 (서버에게 직접)', '.50을 계속 쓰겠음'],
+        text: 'A가 서버에게 직접 연장을 요청합니다.', holds: { a: '30분 지남 → 연장 요청', srv: '연장 요청 받음' },
+        ask: { q: '임대 1시간 중 30분이 지났습니다. A는 어떻게 할까요?', choices: ['임대가 끝날 때까지 기다린다', '서버에게 같은 주소의 연장을 요청한다', '새 주소를 Discover로 찾는다'], answer: '서버에게 같은 주소의 연장을 요청한다', why: '절반 시간에 미리 연장해, 서버가 잠시 답하지 않아도 남은 시간 안에 다시 시도할 수 있게 합니다.' } },
+      { from: 'srv', to: 'a', label: 'Ack', title: 'PC A의 임대', lines: ['192.168.1.50 · 다시 1시간'],
+        text: '서버가 Ack로 연장을 확정합니다. 주소는 그대로입니다.', holds: { srv: '직접 온 연장 → 다시 1시간', a: '30분 뒤 연장 · .50 그대로' } },
+    ],
+  },
+  {
+    label: '릴레이',
+    readingStage: 3,
+    title: '서버가 다른 네트워크에 있으면 라우터의 릴레이가 전해 준다',
+    body: '회사에서는 DHCP 서버 하나가 여러 네트워크에 주소를 나눠 줍니다. 그런데 Discover는 브로드캐스트라서 라우터를 넘지 못합니다. 그래서 라우터에 DHCP 릴레이를 켜 둡니다. 릴레이는 받은 Discover를 서버의 주소로 직접 보내면서, 이 메시지가 들어온 네트워크의 라우터 주소 192.168.1.1을 giaddr 칸에 적습니다. 서버는 giaddr을 보고 192.168.1.x 풀에서 주소를 고르고, 답도 릴레이를 거쳐 A에게 돌아옵니다.',
+    takeaway: 'A의 Discover가 아래 라우터에 닿자 라우터 이름표가 "giaddr .1.1 붙여 서버로"가 되고, 오른쪽 아래 서버 이름표가 "giaddr 보고 192.168.1.x 풀에서"가 됩니다. 답이 돌아와 A 이름표가 "192.168.1.50 받음"이 됩니다.',
+    description: '왼쪽 PC A(주소 없음), 가운데 스위치, 오른쪽 PC B가 192.168.1.0 네트워크이고, 아래 라우터 너머 192.168.9.0 네트워크에 DHCP 서버(192.168.9.2)가 있습니다. 라우터의 릴레이가 Discover를 giaddr 192.168.1.1과 함께 서버에게 직접 보내고, 서버가 192.168.1.x 주소를 골라 릴레이를 거쳐 돌려줍니다.',
+    note: ['A: Discover (브로드캐스트)', ' → ', '릴레이: 서버에게 직접 · giaddr .1.1', ' → ', '서버: 192.168.1.x 풀에서 .50', ' → ', '답은 릴레이 거쳐 A로'],
+    stations: [['a', 'PC A · MAC aa', 'pc', [0, 0]], ['sw', '스위치', 'switch', [8.5, 0]], ['b', 'PC B · 192.168.1.20', 'pc', [17, 0]], ['r', '라우터(릴레이) · 192.168.1.1', 'router', [8.5, 11]], ['srv', 'DHCP 서버 · 192.168.9.2', 'server', [25.5, 11]]],
+    cables: [['sw', 'a'], ['sw', 'b'], ['sw', 'r'], ['r', 'srv']],
+    start: { title: '라우터의 설정', lines: ['192.168.1.0 쪽: 192.168.1.1', 'DHCP 릴레이 켜짐 → 서버 192.168.9.2'], holds: { a: '주소 없음', r: '릴레이 → 192.168.9.2' } },
+    stages: [
+      { from: 'a', to: 'sw', label: 'Discover', title: 'DHCP Discover', lines: ['0.0.0.0 → 255.255.255.255', '서버는 이 LAN에 없음'],
+        text: 'A가 평소처럼 Discover를 모두에게 보냅니다.', holds: { a: '주소 없음 · 모두에게', sw: 'ff → 모든 포트' } },
+      { from: 'sw', to: 'r', label: 'ff → 라우터', title: '라우터의 DHCP 릴레이', lines: ['브로드캐스트는 라우터를 넘지 못함', '릴레이: 서버 192.168.9.2에게 직접 보냄', 'giaddr  192.168.1.1 (들어온 네트워크)'],
+        text: '라우터의 릴레이가 Discover를 받아, giaddr에 192.168.1.1을 적고 서버에게 직접 보냅니다.', holds: { r: 'giaddr .1.1 붙여 서버로' },
+        ask: { q: 'DHCP 서버는 라우터 너머 다른 네트워크에 있습니다. A의 Discover는 어떻게 서버에 닿을까요?', choices: ['브로드캐스트가 라우터를 넘어 간다', '라우터의 릴레이가 서버에게 직접 보내 준다', '닿지 않는다'], answer: '라우터의 릴레이가 서버에게 직접 보내 준다', why: '브로드캐스트는 라우터를 넘지 못합니다. 릴레이가 받은 메시지를 서버의 주소로 다시 보내 줍니다.' } },
+      { from: 'r', to: 'srv', label: 'Discover · giaddr .1.1', title: 'DHCP 서버', lines: ['giaddr 192.168.1.1 → 192.168.1.0 네트워크에서 온 요청', '192.168.1.x 풀에서 .50을 고름', '답은 릴레이(192.168.1.1)에게'],
+        text: '서버가 giaddr을 보고 192.168.1.x 풀에서 .50을 고릅니다. 답은 릴레이에게 보냅니다.', holds: { srv: 'giaddr 보고 192.168.1.x 풀에서' } },
+      { from: 'srv', to: 'r', label: 'Offer → 릴레이', title: '라우터의 DHCP 릴레이', lines: ['서버의 답(Offer, Ack)이 릴레이에게 옴'],
+        text: '서버의 답이 릴레이에게 옵니다.', holds: { r: '답 받음 → A 쪽으로' } },
+      { from: 'r', to: 'sw', label: 'Offer · Ack', title: '라우터의 DHCP 릴레이', lines: ['서버의 답을 192.168.1.0 쪽으로 돌려보냄'],
+        text: '서버의 답이 릴레이에게 오고, 릴레이가 192.168.1.0 쪽으로 돌려보냅니다.', holds: { sw: 'aa → A 쪽' } },
+      { from: 'sw', to: 'a', label: 'Offer · Ack', title: 'PC A', lines: ['릴레이를 거쳐 Offer, Ack를 받음', '192.168.1.50/24 · 게이트웨이 192.168.1.1'],
+        text: 'A가 192.168.1.50을 받습니다.', holds: { a: '192.168.1.50 받음' } },
+    ],
+  },
+];
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'dhcp-lab:v1:step';
+const state = { index: 0, s: 0, playing: !motion.matches, wait: 0, busy: false, wrong: '', solvedText: '' };
+const progress = lesson.map(() => 0);
+const answered = lesson.map(() => new Set());
+let packets = [];
+let frame = null;
+let lastFrame = null;
+let timers = [];
+
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const laneHeight = 4;
+const gap = 8.5;   // u between neighbouring stations
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+byId('grid').setAttribute('d', gridLines.join(''));
+
+
+let plates = [];
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Scene: a star of cables around one switch ----------
+const shapeOf = { pc: [1.1, 12], switch: [1.5, 7], router: [1.3, 10], server: [1.1, 17] };
+let views = {};
+const stationPos = (id) => lesson[state.index].stations.find(([sid]) => sid === id)[3];
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  views = {};
+  const stations = lesson[state.index].stations;
+  // Cables from the step, each straight along the screen's horizontal or vertical axis. A trunk is thicker.
+  for (const [from, to, type] of lesson[state.index].cables) {
+    const [u0, v0] = stationPos(from), [u1, v1] = stationPos(to);
+    const d = `M${flat(u0, v0, laneHeight).join(' ')}L${flat(u1, v1, laneHeight).join(' ')}`;
+    svg('path', { class: 'casing' + (type ? ' ' + type : ''), d }, byId('casings'));
+    svg('path', { class: 'bus' + (type ? ' ' + type : ''), d }, byId('links'));
+  }
+  // Badges on the top row alternate between two heights from the left, so neighbours never sit side by side.
+  const topRow = stations.filter(([, , , [, v]]) => v <= 0).sort((p, q) => p[3][0] - q[3][0]).map(([id]) => id);
+  stations.forEach(([id, name, kind, [u, v]]) => {
+    const [h, H] = shapeOf[kind];
+    const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(u, v).join(' ')})` }, byId('nodes'));
+    drawShadow(node, h);
+    drawBox(node, h, H);
+    if (kind === 'server') {
+      // Three drive slots on the front face.
+      for (let r = 0; r < 3; r++) svg('path', { class: 'server-slot', d: `M${point(h, -h + .3, H - 4 - r * 4)}L${point(h, h - .3, H - 4 - r * 4)}` }, node);
+    }
+    if (kind === 'pc') {
+      const s = [[h, -h + .3, H - 2], [h, h - .3, H - 2], [h, h - .3, 3], [h, -h + .3, 3]];
+      svg('polygon', { class: 'pc-screen', points: s.map((p) => point(...p)).join(' ') }, node);
+    }
+    if (kind === 'router') {
+      // Two antennas on the top face.
+      for (const y of [-.6, .6]) svg('path', { class: 'antenna', d: `M${point(-.6, y, H)}L${point(-.6, y, H + 9)}` }, node);
+    }
+    if (kind === 'switch') {
+      // Port lights along the front edge, numbered 1–3 from the left.
+      for (let p = 0; p < 3; p++) {
+        const [cx, cy] = project(h, -h + .5 + p * (2 * h - 1) / 2, H / 2);
+        svg('circle', { class: 'port-light', r: 1.6, cx, cy }, node);
+      }
+    }
+    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    // The PC below the switch puts its badge under its name, so it does not crowd the switch's name.
+    const below = v > 0;
+    const lift = topRow.indexOf(id) % 2 === 1 ? 26 : 0;
+    const holds = addPlate(node, 'tag holds', 0, below ? 14 * h + 42 : -H - 14 * h - 14 - lift, '', { pad: 1.2 });
+    // The leader lives in the badge group, so an empty (hidden) badge hides its leader too.
+    if (lift) holds.group.prepend(svg('path', { class: 'badge-leader', d: `M0 ${-H - 14 * h - 4}V${-H - 14 * h - 14 - lift + 8}` }));
+    views[id] = { node, holds };
+  });
+  const us = stations.map(([, , , [u]]) => u), vs = stations.map(([, , , [, v]]) => v);
+  const left = 14 * Math.min(...us) - 84, right = 14 * Math.max(...us) + 84, top = -128, bottom = 7 * Math.max(...vs) + 74;
+  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// ---------- The moving dot ----------
+// It runs along one cable, stopping short of the boxes at both ends.
+function travel(from, to, label, done) {
+  if (motion.matches) { done(); return; }
+  const group = svg('g', { class: 'packet-group' }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  packets.push({ group, from, to, start: performance.now(), ms: 950, done });
+  kick();
+}
+// Callbacks run after the list is updated, so a callback that starts a new trip is not lost.
+function movePackets(now) {
+  const finished = [];
+  packets = packets.filter((packet) => {
+    const t = (now - packet.start) / packet.ms;
+    if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
+    const ease = t * t * (3 - 2 * t);
+    const [u0, v0] = packet.from, [u1, v1] = packet.to;
+    const length = Math.hypot(u1 - u0, v1 - v0), trim = 1.3 / length;
+    const k = mix(trim, 1 - trim, ease);
+    const [x, y] = flat(mix(u0, u1, k), mix(v0, v1, k), laneHeight);
+    packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    return true;
+  });
+  finished.forEach((done) => done());
+}
+
+// ---------- State after s stages ----------
+function paint() {
+  const step = lesson[state.index];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
+  for (const [id] of step.stations) {
+    setPlate(views[id].holds, holds[id] ?? '');
+    views[id].holds.group.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
+  }
+  // The still picture says in one line what happened up to the reading stage, so the badges read as its result.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
+  byId('work-title').textContent = view.title;
+  byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
+  byId('work-panel').classList.toggle('error', Boolean(last?.error));
+  byId('readout').textContent = last ? last.text : '"다음 단계"를 누르면 신호가 한 정거장씩 움직입니다.';
+  const finished = state.s >= step.stages.length;
+  const blocked = !state.playing && (finished || state.busy || Boolean(pendingAsk()));
+  byId('run-stage').disabled = blocked;
+  byId('run-stage').textContent = finished ? '끝까지 왔습니다' : '다음 단계';
+  [...byId('stage-list').children].forEach((li, k) => {
+    li.classList.toggle('done', k < state.s);
+    li.classList.toggle('current', k === state.s);
+  });
+}
+
+function runStage(done) {
+  const step = lesson[state.index];
+  const stage = step.stages[state.s];
+  if (!stage || state.busy) return;
+  state.busy = true;
+  views[stage.from].node.classList.add('active');
+  travel(stationPos(stage.from), stationPos(stage.to), stage.label, () => {
+    state.s++;
+    state.busy = false;
+    paint();
+    byId('announcement').textContent = stage.text;
+    done?.();
+  });
+  paint();
+}
+
+// ---------- Predictions ----------
+function pendingAsk() {
+  if (state.playing) return null;
+  const stage = lesson[state.index].stages[state.s];
+  return stage?.ask && !answered[state.index].has(state.s) ? stage.ask : null;
+}
+const asksCount = () => lesson[state.index].stages.filter((stage) => stage.ask).length;
+function syncTask() {
+  const choices = byId('try-choices');
+  choices.replaceChildren();
+  const ask = pendingAsk();
+  if (ask && !state.busy) {
+    byId('try').classList.remove('solved');
+    byId('try-text').textContent = ask.q;
+    byId('try-result').textContent = state.wrong || state.solvedText;
+    for (const choice of ask.choices) {
+      const button = Object.assign(document.createElement('button'), { type: 'button', className: 'action choice-button', textContent: choice });
+      button.addEventListener('click', () => answer(choice));
+      choices.append(button);
+    }
+  } else if (state.solvedText) {
+    byId('try').classList.add('solved');
+    byId('try-text').textContent = state.solvedText;
+    byId('try-result').textContent = '';
+  } else {
+    byId('try').classList.remove('solved');
+    byId('try-result').textContent = '';
+    byId('try-text').textContent = state.s >= lesson[state.index].stages.length
+      ? (progress[state.index] >= asksCount() ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
+      : '"다음 단계"를 눌러 신호를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.';
+  }
+}
+function answer(choice) {
+  const ask = pendingAsk();
+  if (!ask) return;
+  if (choice !== ask.answer) {
+    state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`;
+    byId('announcement').textContent = state.wrong;
+    syncTask();
+    return;
+  }
+  state.wrong = '';
+  answered[state.index].add(state.s);
+  progress[state.index] = answered[state.index].size;
+  state.solvedText = `✓ 맞았습니다. ${ask.why}`;
+  byId('announcement').textContent = state.solvedText;
+  runStage(() => syncTask());
+  syncTask();
+}
+
+// Taking over from the demo starts the learner's own run from the beginning, so no prediction is skipped.
+byId('run-stage').onclick = () => {
+  takeOver();
+  if (state.busy || pendingAsk()) { syncTask(); return; }
+  state.solvedText = '';
+  runStage(() => syncTask());
+  syncTask();
+};
+byId('restart').onclick = () => {
+  state.playing = false;
+  resetRun();
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 다시 시작합니다.';
+};
+
+// ---------- Demo ----------
+
+// ---------- Steps and routing ----------
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/dhcp/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/dhcp\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/dhcp/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

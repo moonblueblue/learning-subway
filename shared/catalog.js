@@ -734,6 +734,14 @@ const courseCatalog = {
             {
               "id": "1.4",
               "ref": "network/arp"
+            },
+            {
+              "id": "1.5",
+              "ref": "network/vlan"
+            },
+            {
+              "id": "1.6",
+              "ref": "network/wifi"
             }
           ],
           "tracks": []
@@ -742,7 +750,20 @@ const courseCatalog = {
           "id": "2",
           "title": "IP와 주소",
           "titleEn": "IP and addressing",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "2.1",
+              "ref": "network/subnets"
+            },
+            {
+              "id": "2.2",
+              "ref": "network/dhcp"
+            },
+            {
+              "id": "2.3",
+              "ref": "network/nat"
+            }
+          ],
           "tracks": []
         },
         {
@@ -902,6 +923,26 @@ const courseCatalog = {
             {
               "id": "3.1",
               "ref": "os/virtual"
+            },
+            {
+              "id": "3.2",
+              "ref": "os/pagetable"
+            },
+            {
+              "id": "3.3",
+              "ref": "os/tlb"
+            },
+            {
+              "id": "3.4",
+              "ref": "os/heap"
+            },
+            {
+              "id": "3.5",
+              "ref": "os/swap"
+            },
+            {
+              "id": "3.6",
+              "ref": "os/pagecache"
             }
           ],
           "tracks": []
@@ -1602,6 +1643,64 @@ const courseCatalog = {
           "page": "os/virtual.html"
         },
         {
+          "id": "pagetable",
+          "title": "페이지 테이블",
+          "titleEn": "Page tables",
+          "question": "가상 주소 하나를 실제 주소로 바꾸려면 MMU는 어떤 표를 몇 번 읽을까?",
+          "format": "실험",
+          "requires": [
+            "os/virtual",
+            "os/interrupts"
+          ],
+          "page": "os/pagetable.html"
+        },
+        {
+          "id": "tlb",
+          "title": "TLB",
+          "titleEn": "The TLB",
+          "question": "같은 페이지를 다시 읽을 때 MMU는 왜 페이지 표를 다시 읽지 않아도 될까?",
+          "format": "실험",
+          "requires": [
+            "os/pagetable"
+          ],
+          "page": "os/tlb.html"
+        },
+        {
+          "id": "heap",
+          "title": "힙과 메모리 할당",
+          "titleEn": "The heap and memory allocation",
+          "question": "malloc이 돌려준 메모리는 어디서 오고, free한 자리는 어디로 갈까?",
+          "format": "실험",
+          "requires": [
+            "os/pagetable",
+            "os/syscall"
+          ],
+          "page": "os/heap.html"
+        },
+        {
+          "id": "swap",
+          "title": "스와핑과 페이지 교체",
+          "titleEn": "Swapping and page replacement",
+          "question": "RAM이 가득 차면 커널은 어느 페이지를 내보낼까?",
+          "format": "실험",
+          "requires": [
+            "os/pagetable"
+          ],
+          "page": "os/swap.html"
+        },
+        {
+          "id": "pagecache",
+          "title": "페이지 캐시와 OOM",
+          "titleEn": "The page cache and OOM",
+          "question": "리눅스는 남는 RAM을 왜 파일 캐시로 채우고, 모자라면 무엇부터 비울까?",
+          "format": "실험",
+          "requires": [
+            "os/swap",
+            "os/signals"
+          ],
+          "page": "os/pagecache.html"
+        },
+        {
           "id": "filesystem",
           "title": "파일 시스템",
           "titleEn": "File systems",
@@ -1685,6 +1784,64 @@ const courseCatalog = {
             "network/switch"
           ],
           "page": "network/arp.html"
+        },
+        {
+          "id": "vlan",
+          "title": "VLAN",
+          "titleEn": "VLANs",
+          "question": "스위치 한 대를 서로 못 보는 네트워크 여럿으로 어떻게 나눌까?",
+          "format": "실험",
+          "requires": [
+            "network/switch",
+            "network/arp"
+          ],
+          "page": "network/vlan.html"
+        },
+        {
+          "id": "wifi",
+          "title": "무선 LAN",
+          "titleEn": "Wireless LANs",
+          "question": "충돌을 알아챌 수 없는 무선에서 잃어버리거나 부딪히는 프레임을 어떻게 다룰까?",
+          "format": "실험",
+          "requires": [
+            "network/ethernet",
+            "network/switch"
+          ],
+          "page": "network/wifi.html"
+        },
+        {
+          "id": "subnets",
+          "title": "IP 주소와 서브넷",
+          "titleEn": "IP addresses and subnets",
+          "question": "목적지가 같은 네트워크인지 어떻게 가를까?",
+          "format": "실험",
+          "requires": [
+            "network/arp",
+            "computing-basics/bits"
+          ],
+          "page": "network/subnets.html"
+        },
+        {
+          "id": "dhcp",
+          "title": "DHCP",
+          "titleEn": "DHCP",
+          "question": "새로 켠 컴퓨터는 자기 IP 주소를 어떻게 받을까?",
+          "format": "실험",
+          "requires": [
+            "network/subnets"
+          ],
+          "page": "network/dhcp.html"
+        },
+        {
+          "id": "nat",
+          "title": "NAT",
+          "titleEn": "NAT",
+          "question": "집 안 컴퓨터 여러 대가 공인 주소 하나로 어떻게 인터넷을 쓸까?",
+          "format": "실험",
+          "requires": [
+            "network/subnets"
+          ],
+          "page": "network/nat.html"
         },
         {
           "id": "routing",

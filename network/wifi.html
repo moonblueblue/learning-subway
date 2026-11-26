@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="노트북이 AP를 거쳐 이야기하는 길, 프레임마다 돌아오는 ACK, 무작위로 기다려 부딪힘을 피하는 모습, 서로 들리지 않는 노트북이 RTS/CTS로 순서를 정하는 모습을 따라가 보세요.">
+<title>무선 LAN · 레슨 1.6</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#115e59}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
+.cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
+.cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
+.cell.changed .top{animation:flash 1s ease-out}
+@keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
+.cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
+.cell.empty .cell-value{fill:#9aa8a2}
+.address{font:600 9px var(--mono);fill:#6b7d76;text-anchor:start}
+.tag.name{transition:opacity .25s}
+.tag.name rect{stroke:var(--accent);stroke-width:1.1}
+.tag.name text{fill:var(--accent);font-weight:700}
+.bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bus.active{stroke:#7fa891}
+.packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
+.packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
+.packet-group.read .packet-label{fill:#3b4880}
+.code-area{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.code{list-style:none;counter-reset:line;margin:0;padding:10px 0;background:#1f2d29;border-radius:12px;color:#e8f2ec;font:600 1rem/1.5 var(--mono);flex:1 1 300px}
+.code li{counter-increment:line;padding:5px 14px 5px 46px;position:relative}
+.code li::before{content:counter(line);position:absolute;left:16px;color:#6f8a80}
+.code li.done{color:#8fa79c}
+.code li.current{background:#2f4a41;color:#ffffff}
+.code li.current::after{content:'다음';position:absolute;right:14px;color:#9fe3b6;font-size:.8125rem}
+.code-actions{display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
+.try-choices{display:flex;gap:6px;flex-wrap:wrap}
+.try-choices:empty{display:none}
+.dot.read{background:var(--response);border-color:var(--response)}
+.dot.write{background:var(--request);border-color:var(--request)}
+@media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.bus.inner{stroke:#c9d6ce;stroke-dasharray:3 3}
+.bus.main{stroke:#9fbfae;stroke-width:3}
+.cpu-area{fill:#e2ece5;stroke:#9fb7a9;stroke-width:1.2;stroke-dasharray:6 4}
+.board-tag rect{fill:#26322e;stroke:#26322e}.board-tag text{fill:#fff;font-weight:800}
+.cell .left{fill:#e6ebe8;stroke:#8c9d96}.cell .right{fill:#cfd8d4;stroke:#8c9d96}.cell .top{fill:#fff;stroke:#8c9d96}
+.cell.code .top{fill:#eef1fb;stroke:#7d88b4}.cell.code .left{fill:#dfe4f2;stroke:#7d88b4}.cell.code .right{fill:#c4cbe3;stroke:#7d88b4}
+.cell.code .cell-value{fill:#3c4a85;font-size:8.5px}
+.address{text-anchor:middle}
+.cell.active .top{fill:#fff1c9;stroke:#c9940f}
+.cell.next-pc .address{fill:var(--accent);font-weight:800}
+.part .face{stroke-width:.8;transition:fill .2s}
+.part.register .left{fill:#dbe9e2;stroke:#5f8f78}.part.register .right{fill:#c2d9cd;stroke:#5f8f78}.part.register .top{fill:#f3f8f5;stroke:#5f8f78}
+.part.control .left{fill:#eadcf0;stroke:#9a77ad}.part.control .right{fill:#d9c4e3;stroke:#9a77ad}.part.control .top{fill:#f7f0fa;stroke:#9a77ad}
+.part.alu .left{fill:#e4e1d3;stroke:#8f8763}.part.alu .right{fill:#d2cdb6;stroke:#8f8763}.part.alu .top{fill:#f7f5ec;stroke:#8f8763}
+.part.busy .top{fill:#fff1c9}
+.part-tag text{font:700 11.5px var(--mono)}
+.part.busy .part-tag rect{stroke:#c9940f;stroke-width:1.3}
+.packet-group.inner .packet,.packet-group.inner .packet-halo{fill:#9a77ad}
+.packet-group.inner .packet-label{fill:#5f3a73}
+.dot.inner{background:#9a77ad;border-color:#9a77ad}
+.memory-panel{flex:1 1 320px;display:flex;flex-direction:column;gap:8px}
+.phase-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.phases{list-style:none;display:flex;gap:4px;margin:0;padding:0}
+.phases li{padding:4px 12px;border:1px solid var(--border);border-radius:999px;font-size:.875rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.phases li.current{background:var(--accent);border-color:var(--accent);color:#fff}
+.clock{font:700 .9375rem var(--mono);color:var(--accent);margin-left:auto}
+.clock.tick{animation:bump .3s ease-out}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+.clock{display:inline-block}
+.memory-list{counter-reset:none;flex:none}
+.memory-list li{counter-increment:none;padding:3px 12px 3px 44px;display:flex;gap:10px}
+.memory-list li::before{content:none}
+.memory-list .addr{position:absolute;left:14px;color:#6f8a80}
+.memory-list li.data code{color:#bfe8cf}
+.memory-list li.ir{background:#2f4a41}
+.memory-list li.touched{box-shadow:inset 3px 0 #ffd34d}
+.memory-list .mark{margin-left:auto;color:#9fe3b6;font-size:.8125rem}
+.memory-list li.current::after{content:none}
+@media(prefers-reduced-motion:reduce){.clock.tick{animation:none}}
+@media(max-width:600px){.part-tag text{font-size:14px}.cell.code .cell-value{font-size:12px}}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+@media(max-width:600px){.packet-label{font-size:13px}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
+.bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
+.station .face{stroke-width:.8;transition:fill .2s}
+.station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
+.sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
+.station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.ssd .left{fill:#dfe4f2;stroke:#7a87b5}.station.ssd .right{fill:#c4cbe3;stroke:#7a87b5}.station.ssd .top{fill:#eaeef9;stroke:#7a87b5}
+.station.ram .left{fill:#acd5b9;stroke:#5f9474}.station.ram .right{fill:#80b596;stroke:#5f9474}.station.ram .top{fill:#dcf1e2;stroke:#5f9474}
+.station.cpu .left{fill:#3f4f4a;stroke:#26322e}.station.cpu .right{fill:#2f3d39;stroke:#26322e}.station.cpu .top{fill:#5d6f69;stroke:#26322e}
+.station.active .top{fill:#fff1c9}
+.station.cpu.active .top{fill:#8a7d4a}
+.station.error.error .top{fill:#f6b893;stroke:#a24c14}
+.station-tag text{font-weight:800}
+.tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
+.tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
+.tag.empty{display:none}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.dot.file{background:#fff;border-color:#8c9d96}.dot.tool{background:#eadcf0;border-color:#9a77ad}.dot.errordot{background:#ffd9c2;border-color:#a24c14}
+.stage-list{list-style:none;display:flex;flex-wrap:wrap;gap:4px;margin:0;padding:0}
+.stage-list li{padding:3px 10px;border:1px solid var(--border);border-radius:999px;font-size:.8125rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.stage-list li.done{color:var(--accent);border-color:#9fb7a9}
+.stage-list li.current{background:var(--accent);color:#fff;border-color:var(--accent)}
+.work-title{font-weight:800;color:var(--ink)}
+.work-panel.error .work-title{color:#a24c14}
+.work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
+.work li{padding-left:16px}
+@media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+.zone{stroke-width:1.2;stroke-dasharray:6 4}
+.zone.user-zone{fill:#e2ece5;stroke:#9fb7a9}
+.zone.kernel-zone{fill:#ece4f2;stroke:#b39ac4}
+.zone-label{font:800 11px system-ui,sans-serif;fill:#43574f}
+.border-line{stroke:#a24c14;stroke-width:2.4;stroke-dasharray:8 5}
+.station.user .left{fill:#bfe2cb;stroke:#4f8f6b}.station.user .right{fill:#9fcfb1;stroke:#4f8f6b}.station.user .top{fill:#e2f5e8;stroke:#4f8f6b}
+.station.gate .left{fill:#f6dfc8;stroke:#c26a1e}.station.gate .right{fill:#ecc8a4;stroke:#c26a1e}.station.gate .top{fill:#fdf2e7;stroke:#c26a1e}
+.station.kernel .left{fill:#eadcf0;stroke:#9a77ad}.station.kernel .right{fill:#d9c4e3;stroke:#9a77ad}.station.kernel .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.screen .left{fill:#d7dfdb;stroke:#8c9d96}.station.screen .right{fill:#34514a;stroke:#26322e}.station.screen .top{fill:#f4f7f5;stroke:#8c9d96}
+.dot.userdot{background:#e2ece5;border-color:#4f8f6b}.dot.kerneldot{background:#ece4f2;border-color:#9a77ad}
+.station.pc .left{fill:#bfe2cb;stroke:#4f8f6b}.station.pc .right{fill:#9fcfb1;stroke:#4f8f6b}.station.pc .top{fill:#e2f5e8;stroke:#4f8f6b}
+.station.switch .left{fill:#cfd6ec;stroke:#5f6ea3}.station.switch .right{fill:#b3bddd;stroke:#5f6ea3}.station.switch .top{fill:#e4e8f6;stroke:#5f6ea3}
+.station.pc20 .left{fill:#f0d3dc;stroke:#a5607a}.station.pc20 .right{fill:#e2b5c3;stroke:#a5607a}.station.pc20 .top{fill:#fbecf0;stroke:#a5607a}
+.station.pc20.active .top{fill:#fff1c9}
+.dot.pc20dot{background:#f0d3dc;border-color:#a5607a}
+.bus.trunk{stroke-width:7;stroke:#7fa891}.casing.trunk{stroke-width:12}
+.sample.trunk{border-top-width:6px;border-top-color:#7fa891}
+.station.ap .left{fill:#eadcf0;stroke:#9a77ad}.station.ap .right{fill:#d9c4e3;stroke:#9a77ad}.station.ap .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.ap.active .top{fill:#fff1c9}
+.bus.radio{stroke-dasharray:2 6;stroke-width:3}.casing.radio{opacity:0}
+.sample.radio{border-top-style:dotted}
+.range{fill:#4fcf87;fill-opacity:.07;stroke:#4f8f6b;stroke-width:1;stroke-dasharray:5 4}
+.range-label{font:600 10px system-ui,sans-serif;fill:#43574f}
+@media(max-width:600px){.range-label{font-size:13px}}
+.station.router .left{fill:#eadcf0;stroke:#9a77ad}.station.router .right{fill:#d9c4e3;stroke:#9a77ad}.station.router .top{fill:#f7f0fa;stroke:#9a77ad}
+.antenna{stroke:#6f4f86;stroke-width:1.6;stroke-linecap:round}
+.dot.routerdot{background:#eadcf0;border-color:#9a77ad}
+.station.hub .left{fill:#dfe4f2;stroke:#7a87b5}.station.hub .right{fill:#c4cbe3;stroke:#7a87b5}.station.hub .top{fill:#eaeef9;stroke:#7a87b5}
+.station.pc.active .top,.station.switch.active .top,.station.router.active .top{fill:#fff1c9}
+.station.error.error .top{fill:#f6b893;stroke:#a24c14}
+.pc-screen{fill:#34514a;stroke:#26322e;stroke-width:.6}
+.badge-leader{stroke:#9fb7a9;stroke-width:1;stroke-dasharray:2 2}
+.port-light{fill:#4fcf87;stroke:#2f6b4f;stroke-width:.5}
+.dot.activedot{background:#fff1c9;border-color:#c9940f}.dot.pcdot{background:#bfe2cb;border-color:#4f8f6b}.dot.hubdot{background:#cfd6ec;border-color:#5f6ea3}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./wifi.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">네트워크 1장 링크와 LAN · 레슨 1.6</p>
+    <h1>무선 LAN</h1>
+    <p class="lead">충돌을 알아챌 수 없는 무선에서, 잃어버리거나 부딪히는 프레임을 어떻게 알아내고 피할까요? AP 하나에 연결된 노트북 사이로 프레임을 보내 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">AP와 노트북</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">노트북이 AP를 거쳐 프레임을 주고받고, ACK와 무작위 대기와 RTS/CTS로 잃어버림과 부딪힘을 다루는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="code-area">
+            <div class="memory-panel work-panel" id="work-panel">
+              <ol class="stage-list" id="stage-list" aria-label="정거장"></ol>
+              <p class="work-title" id="work-title"></p>
+              <ol class="code memory-list work" id="work" aria-label="지금 코드의 모습"></ol>
+            </div>
+            <div class="code-actions">
+              <button class="action primary" id="run-stage" type="button">다음 단계</button>
+              <button class="action" id="restart" type="button">처음부터</button>
+            </div>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="sample radio"></i>전파</span><span><i class="dot pcdot"></i>노트북</span><span><i class="dot routerdot"></i>AP (무선 공유기)</span><span><i class="dot activedot"></i>신호가 막 닿은 곳</span><span><i class="dot errordot"></i>오류</span></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+// Wi-Fi through one access point (AP). A station carries a position [u, v] (u to the right, v down the screen);
+// each step lays out its own stations and `cables` ([from, to, 'radio']), drawn as dotted radio paths.
+// `ranges` ([id, r]) draws a station's radio range on the floor (step 4: two laptops that cannot hear each other).
+// A stage carries a frame along one path (`from` → `to`, `label` on the moving dot), then shows what the receiver
+// decided (`title`, `lines`) and what each station holds (`holds`). `ask` is a prediction answered first.
+const kinds = { pc: '노트북', ap: 'AP (무선 공유기)' };
+const trio = [['a', '노트북 A · aa', 'pc', [0, 0]], ['ap', 'AP · ap', 'ap', [8.5, 0]], ['b', '노트북 B · bb', 'pc', [8.5, 11]]];
+const trioRadio = [['ap', 'a', 'radio'], ['ap', 'b', 'radio']];
+const pair = [['a', '노트북 A', 'pc', [0, 0]], ['ap', 'AP', 'ap', [8.5, 0]], ['c', '노트북 C', 'pc', [17, 0]]];
+const lesson = [
+  {
+    label: 'AP를 거쳐 가기',
+    readingStage: 2,
+    title: '같은 무선 LAN 안에서도 프레임은 AP를 거쳐 간다',
+    body: '노트북들은 AP(무선 공유기)에 연결되어 있고, 서로 직접이 아니라 AP를 거쳐 이야기합니다. 그래서 무선 프레임에는 주소가 셋 있습니다. 지금 받을 곳(AP), 처음 보낸 곳(aa), 최종 목적지(bb)입니다. AP는 받은 프레임의 최종 목적지를 보고, 받을 곳을 bb로 바꿔 다시 보냅니다. 1.2의 이더넷 프레임에는 주소가 둘뿐이었습니다.',
+    takeaway: 'A 이름표가 "받는 곳 ap · 목적지 bb"가 되고, 프레임이 AP를 거쳐 아래 B로 갑니다. AP 이름표는 "bb에게 다시 보냄", B 이름표는 "받음 · 출발지 aa"입니다.',
+    description: '가운데 AP에 왼쪽 노트북 A(aa)와 아래 노트북 B(bb)가 전파로 이어져 있습니다. A의 프레임은 받는 곳이 AP, 최종 목적지가 bb이고, AP가 B에게 다시 보냅니다.',
+    note: ['A: 받는 곳 ap · 목적지 bb', ' → ', 'AP: 목적지 bb를 보고 다시 보냄', ' → ', 'B 받음 · 출발지 aa'],
+    stations: trio,
+    cables: trioRadio,
+    start: { title: '노트북 A가 보낼 것', lines: ['B에게 보낼 데이터', '연결된 AP: ap'], holds: { a: 'B에게 보낼 것 있음', ap: '연결: A, B' } },
+    stages: [
+      { from: 'a', to: 'ap', label: '받는 곳 ap', title: '무선 프레임의 주소 셋', lines: ['주소 1 받을 곳  ap (AP)', '주소 2 보낸 곳  aa', '주소 3 최종 목적지  bb'],
+        text: 'A가 받을 곳을 AP로, 최종 목적지를 bb로 적어 보냅니다.', holds: { a: '받는 곳 ap · 목적지 bb', ap: '받음 · 목적지 bb' },
+        ask: { q: 'A와 B는 같은 AP에 연결되어 있습니다. A의 프레임은 어디로 먼저 갈까요?', choices: ['B에게 바로', 'AP에게', '모두에게'], answer: 'AP에게', why: '무선 LAN의 노트북은 AP를 통해 이야기합니다. 프레임의 받을 곳 주소가 AP입니다.' } },
+      { from: 'ap', to: 'b', label: '받는 곳 bb', title: '노트북 B', lines: ['주소 1 받을 곳  bb', '주소 2 보낸 곳  ap', '주소 3 처음 보낸 곳  aa'],
+        text: 'AP가 받을 곳을 bb로 바꿔 다시 보냅니다. B는 처음 보낸 곳이 aa임을 압니다.', holds: { ap: 'bb에게 다시 보냄', b: '받음 · 출발지 aa' } },
+    ],
+  },
+  {
+    label: '프레임마다 ACK',
+    readingStage: 4,
+    title: '받은 쪽은 프레임마다 ACK를 보내고, ACK가 없으면 다시 보낸다',
+    body: '무선 랜카드는 보내는 동안 다른 신호를 들을 수 없어서, 이더넷처럼 충돌이나 잡음을 보내면서 알아챌 수 없습니다. 그래서 받은 쪽이 프레임 하나를 제대로 받을 때마다 ACK를 돌려줍니다. 보낸 쪽은 ACK가 정해진 시간 안에 오지 않으면 그 프레임이 잃어버려졌다고 보고 다시 보냅니다. 1.2의 이더넷은 깨진 프레임을 알리지 않았지만, 무선은 이 자리에서 바로 다시 보냅니다.',
+    takeaway: '프레임 1에는 ACK가 돌아옵니다. 프레임 2는 잡음에 묻혀 ACK가 오지 않고, A 이름표가 "1 확인됨 · 2 ACK 없음 → 다시", AP 이름표가 "2 잡음에 묻힘 → 다시 받음"이 됩니다.',
+    description: '노트북 A가 AP에 프레임 1과 2를 보냅니다. 1에는 ACK가 돌아오고, 2는 전자레인지 잡음에 묻혀 ACK가 오지 않습니다. A가 2를 다시 보내 AP가 받고 ACK를 돌려줍니다.',
+    note: ['프레임 1 → ACK 1', ' → ', '프레임 2 잡음에 묻힘 · ACK 없음', ' → ', 'A가 2를 다시 보냄', ' → ', 'AP 받음 · ACK 2'],
+    stations: trio,
+    cables: trioRadio,
+    start: { title: '노트북 A가 보낼 것', lines: ['프레임 1, 2', '각 프레임마다 ACK를 기다림'], holds: { a: '프레임 1·2 보낼 것', ap: '연결: A, B' } },
+    stages: [
+      { from: 'a', to: 'ap', label: '프레임 1', title: 'AP', lines: ['프레임 1 받음 → ACK 보냄'],
+        text: 'A가 프레임 1을 보내고 AP가 받습니다.', holds: { a: '1 보냄 · ACK 기다림', ap: '1 받음' } },
+      { from: 'ap', to: 'a', label: 'ACK 1', title: '노트북 A', lines: ['ACK 1 받음 → 1은 잘 갔음'],
+        text: 'AP가 ACK 1을 돌려줍니다.', holds: { a: '1 확인됨' } },
+      { from: 'a', to: 'ap', label: '프레임 2 · 잡음', title: 'AP', lines: ['전자레인지 잡음에 신호가 묻힘', '프레임 2를 읽지 못함 → ACK 없음'], error: 'ap',
+        text: '프레임 2가 잡음에 묻혀 AP가 읽지 못합니다. ACK도 보내지 않습니다.', holds: { a: '2 보냄 · ACK 기다림', ap: '2 못 받음 (잡음)' },
+        ask: { q: 'A가 프레임 2의 ACK를 기다리는데 오지 않습니다. A는 어떻게 할까요?', choices: ['잘 갔다고 보고 넘어간다', '프레임 2를 다시 보낸다', 'AP 연결을 끊는다'], answer: '프레임 2를 다시 보낸다', why: 'ACK가 정해진 시간 안에 오지 않으면 잃어버린 것으로 보고 다시 보냅니다.' } },
+      { from: 'a', to: 'ap', label: '프레임 2 다시', title: 'AP', lines: ['다시 온 프레임 2 받음 → ACK 보냄'], reset: 'ap',
+        text: 'ACK가 오지 않자 A가 프레임 2를 다시 보냅니다. 이번에는 AP가 받습니다.', holds: { a: '1 확인됨 · 2 ACK 없음 → 다시', ap: '2 잡음에 묻힘 → 다시 받음' } },
+      { from: 'ap', to: 'a', label: 'ACK 2', title: '노트북 A', lines: ['ACK 2 받음 → 2도 잘 갔음'],
+        text: 'AP가 ACK 2를 돌려줍니다.', holds: { a: '2 확인됨' } },
+    ],
+  },
+  {
+    label: '무작위로 기다리기',
+    readingStage: 2,
+    title: '채널이 비어도 무작위 칸 수만큼 기다린 뒤 보낸다',
+    body: 'A와 C가 보낼 것을 들고, 다른 전송이 끝나기를 기다립니다. 채널이 비는 순간 둘이 바로 보내면 부딪힙니다. 그래서 각자 무작위로 칸 수를 뽑아, 채널이 빈 채로 그만큼 지나야 보냅니다(CSMA/CA). A는 3칸, C는 7칸을 뽑았습니다. 3칸이 지나 A가 보내기 시작하면, C는 채널이 바빠진 것을 듣고 남은 4칸에서 세기를 멈췄다가, A가 끝나면 이어서 셉니다.',
+    takeaway: '채널이 비자 A는 "무작위 3칸 뒤 보냄", C는 "7칸 중 3칸 · A 들림 → 멈춤"이 됩니다. A의 프레임만 AP에 닿아 AP 이름표가 "A 것 받음 · 부딪힘 없음"이 됩니다.',
+    description: '가운데 AP 양쪽에 노트북 A와 C가 있습니다. 채널이 비자 A는 무작위 3칸, C는 7칸을 센 뒤 보내려 합니다. 3칸이 먼저 끝난 A가 보내고, C는 남은 4칸에서 멈춥니다.',
+    note: ['채널 빔', ' → ', 'A 무작위 3칸 · C 무작위 7칸', ' → ', 'A가 먼저 보냄', ' → ', 'C: 4칸 남기고 멈춤 · 부딪힘 없음'],
+    stations: pair,
+    cables: [['ap', 'a', 'radio'], ['ap', 'c', 'radio']],
+    start: { title: '같은 순간', lines: ['다른 전송이 채널을 쓰는 중', 'A, C 모두 보낼 것 있음'], holds: { a: '보낼 것 있음', c: '보낼 것 있음', ap: '채널 바쁨' } },
+    stages: [
+      { from: 'ap', to: 'c', label: '앞 전송 끝', title: '노트북 A와 C', lines: ['채널이 빔', 'A: 무작위 3칸 뽑음', 'C: 무작위 7칸 뽑음'],
+        text: '앞의 전송이 끝나 채널이 빕니다. A와 C가 각자 무작위 칸 수를 뽑아 세기 시작합니다.', holds: { ap: '채널 빔', a: '무작위 3칸 셈', c: '무작위 7칸 셈' } },
+      { from: 'a', to: 'ap', label: 'A 프레임', title: 'AP', lines: ['3칸이 지나 A가 보냄', 'C: 3칸 셈 · 4칸 남음 · 채널 바쁨 → 멈춤'],
+        text: '3칸이 먼저 끝난 A가 보냅니다. C는 채널이 바빠진 것을 듣고 남은 4칸에서 멈춥니다.', holds: { a: '무작위 3칸 뒤 보냄', c: '7칸 중 3칸 · A 들림 → 멈춤', ap: 'A 것 받음 · 부딪힘 없음' },
+        ask: { q: 'A는 3칸, C는 7칸을 뽑았습니다. 어떻게 될까요?', choices: ['둘이 동시에 보내 부딪힌다', 'A가 먼저 보내고 C는 기다린다', 'C가 먼저 보낸다'], answer: 'A가 먼저 보내고 C는 기다린다', why: '칸 수가 작은 쪽이 먼저 끝나 보냅니다. 다른 쪽은 채널이 바빠진 것을 듣고 남은 칸을 들고 멈춥니다.' } },
+      { from: 'ap', to: 'a', label: 'ACK', title: '노트북 A', lines: ['ACK 받음'],
+        text: 'AP가 A에게 ACK를 보냅니다.', holds: { a: 'ACK 받음' } },
+      { from: 'c', to: 'ap', label: 'C 프레임', title: 'AP', lines: ['채널이 다시 빔 → C가 남은 4칸을 마저 셈', 'C가 보냄'],
+        text: '채널이 다시 비자 C가 남은 4칸을 마저 세고 보냅니다.', holds: { c: '남은 4칸 뒤 보냄', ap: 'C 것 받음' } },
+    ],
+  },
+  {
+    label: '숨은 노트북과 RTS/CTS',
+    readingStage: 3,
+    title: '서로 들리지 않는 노트북은 AP의 CTS를 듣고 순서를 지킨다',
+    body: 'A와 C가 AP 양쪽 끝에 있어, 둘의 전파는 AP에는 닿지만 서로에게는 닿지 않습니다. C는 A가 보내는 줄 모르고 채널이 비었다고 생각해 보낼 수 있고, 두 신호는 AP에서 부딪힙니다(숨은 단말 문제). 그래서 큰 프레임은 먼저 RTS로 "300µs 쓰겠다"고 AP에 알립니다. AP가 모두에게 CTS로 "A에게 300µs"를 알리면, A의 전파는 못 듣던 C도 AP의 CTS는 듣고 그동안 보내지 않습니다.',
+    takeaway: '바닥의 두 타원이 A와 C의 전파 범위이고, 둘은 AP에서만 겹칩니다. AP 이름표가 "CTS: A에게 300µs"가 되고, C 이름표가 "CTS 들음 → 300µs 조용히"가 됩니다.',
+    description: '노트북 A와 C가 AP 양쪽 멀리 있습니다. 바닥의 타원은 각자의 전파 범위로, 서로에게는 닿지 않고 AP에서 겹칩니다. A가 RTS를 보내고 AP가 CTS로 A에게 300µs를 알리자, C가 CTS를 듣고 그동안 조용히 합니다.',
+    note: ['A·C 서로 안 들림 (범위가 AP에서만 겹침)', ' → ', 'A: RTS 300µs', ' → ', 'AP: CTS "A에게 300µs"', ' → ', 'C: CTS 듣고 300µs 조용히'],
+    stations: [['a', '노트북 A', 'pc', [0, 0]], ['ap', 'AP', 'ap', [10, 0]], ['c', '노트북 C', 'pc', [20, 0]]],
+    cables: [['ap', 'a', 'radio'], ['ap', 'c', 'radio']],
+    ranges: [['a', 12], ['c', 12]],
+    start: { title: '전파 범위', lines: ['A의 전파: AP까지 닿음 · C에는 안 닿음', 'C의 전파: AP까지 닿음 · A에는 안 닿음'], holds: { a: '큰 프레임 보낼 것', c: '보낼 것 있음' } },
+    stages: [
+      { from: 'a', to: 'ap', label: 'RTS: 300µs', title: 'AP', lines: ['A의 RTS: 300µs 동안 쓰겠음'],
+        text: 'A가 큰 프레임을 보내기 전에 RTS로 300µs를 쓰겠다고 AP에 알립니다. C에게는 이 전파가 닿지 않습니다.', holds: { a: 'RTS 보냄', ap: 'RTS 받음', c: 'A 안 들림 · 채널 빈 줄 앎' },
+        ask: { q: 'C에게는 A의 전파가 닿지 않습니다. RTS/CTS가 없다면 어떻게 될까요?', choices: ['C가 A를 듣고 기다린다', 'C도 보내 AP에서 부딪힌다', 'AP가 둘 다 받는다'], answer: 'C도 보내 AP에서 부딪힌다', why: 'C는 A가 보내는 줄 모르고 채널이 비었다고 여깁니다. 두 신호는 둘 다 닿는 AP에서 부딪힙니다.' } },
+      { from: 'ap', to: 'c', label: 'CTS: A에게 300µs', title: '노트북 C', lines: ['A의 전파는 안 들림', 'AP의 CTS는 들림 → 300µs 동안 보내지 않음'],
+        text: 'AP가 모두에게 CTS로 "A에게 300µs"를 알립니다. C는 AP의 CTS를 듣고 그동안 조용히 합니다.', holds: { ap: 'CTS: A에게 300µs', c: 'CTS 들음 → 300µs 조용히' } },
+      { from: 'ap', to: 'a', label: 'CTS', title: '노트북 A', lines: ['CTS 받음 → 보내도 됨'],
+        text: 'A도 CTS를 받고 보내기 시작합니다.', holds: { a: 'RTS 뒤 CTS 받음 → 보냄' } },
+      { from: 'a', to: 'ap', label: '큰 프레임', title: 'AP', lines: ['A의 프레임 받음', 'C는 조용히 기다리는 중 → 부딪힘 없음'],
+        text: 'A의 큰 프레임이 부딪힘 없이 AP에 닿습니다.', holds: { ap: 'A 것 받음 · 부딪힘 없음' } },
+    ],
+  },
+];
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'wifi-lab:v1:step';
+const state = { index: 0, s: 0, playing: !motion.matches, wait: 0, busy: false, wrong: '', solvedText: '' };
+const progress = lesson.map(() => 0);
+const answered = lesson.map(() => new Set());
+let packets = [];
+let frame = null;
+let lastFrame = null;
+let timers = [];
+
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const laneHeight = 4;
+const gap = 8.5;   // u between neighbouring stations
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+byId('grid').setAttribute('d', gridLines.join(''));
+
+
+let plates = [];
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Scene: a star of cables around one switch ----------
+const shapeOf = { pc: [1.1, 12], ap: [1.3, 8] };
+let views = {};
+const stationPos = (id) => lesson[state.index].stations.find(([sid]) => sid === id)[3];
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  views = {};
+  const stations = lesson[state.index].stations;
+  // Radio ranges: an ellipse on the floor around a station (u radius r), named at its outer edge.
+  for (const [id, r] of lesson[state.index].ranges || []) {
+    const [u, v] = stationPos(id), [cx, cy] = flat(u, v);
+    svg('ellipse', { class: 'range', cx, cy, rx: 14 * r, ry: 7 * r }, byId('casings'));
+    const t = svg('text', { class: 'range-label', x: cx + (u === 0 ? -1 : 1) * 14 * r * .42, y: cy + 7 * r * .8, 'text-anchor': 'middle' }, byId('casings'));
+    t.textContent = `${stations.find(([sid]) => sid === id)[1]}의 전파 범위`;
+  }
+  // Cables from the step, each straight along the screen's horizontal or vertical axis. A trunk is thicker.
+  for (const [from, to, type] of lesson[state.index].cables) {
+    const [u0, v0] = stationPos(from), [u1, v1] = stationPos(to);
+    const d = `M${flat(u0, v0, laneHeight).join(' ')}L${flat(u1, v1, laneHeight).join(' ')}`;
+    svg('path', { class: 'casing' + (type ? ' ' + type : ''), d }, byId('casings'));
+    svg('path', { class: 'bus' + (type ? ' ' + type : ''), d }, byId('links'));
+  }
+  // Badges on the top row alternate between two heights from the left, so neighbours never sit side by side.
+  const topRow = stations.filter(([, , , [, v]]) => v <= 0).sort((p, q) => p[3][0] - q[3][0]).map(([id]) => id);
+  stations.forEach(([id, name, kind, [u, v]]) => {
+    const [h, H] = shapeOf[kind];
+    const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(u, v).join(' ')})` }, byId('nodes'));
+    drawShadow(node, h);
+    drawBox(node, h, H);
+    if (kind === 'pc') {
+      const s = [[h, -h + .3, H - 2], [h, h - .3, H - 2], [h, h - .3, 3], [h, -h + .3, 3]];
+      svg('polygon', { class: 'pc-screen', points: s.map((p) => point(...p)).join(' ') }, node);
+    }
+    if (kind === 'ap') {
+      // Two antennas on the top face.
+      for (const y of [-.6, .6]) svg('path', { class: 'antenna', d: `M${point(-.6, y, H)}L${point(-.6, y, H + 9)}` }, node);
+    }
+    if (kind === 'switch') {
+      // Port lights along the front edge, numbered 1–3 from the left.
+      for (let p = 0; p < 3; p++) {
+        const [cx, cy] = project(h, -h + .5 + p * (2 * h - 1) / 2, H / 2);
+        svg('circle', { class: 'port-light', r: 1.6, cx, cy }, node);
+      }
+    }
+    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    // The PC below the switch puts its badge under its name, so it does not crowd the switch's name.
+    const below = v > 0;
+    const lift = topRow.indexOf(id) % 2 === 1 ? 26 : 0;
+    const holds = addPlate(node, 'tag holds', 0, below ? 14 * h + 42 : -H - 14 * h - 14 - lift, '', { pad: 1.2 });
+    // The leader lives in the badge group, so an empty (hidden) badge hides its leader too.
+    if (lift) holds.group.prepend(svg('path', { class: 'badge-leader', d: `M0 ${-H - 14 * h - 4}V${-H - 14 * h - 14 - lift + 8}` }));
+    views[id] = { node, holds };
+  });
+  const us = stations.map(([, , , [u]]) => u), vs = stations.map(([, , , [, v]]) => v);
+  const reach = Math.max(0, ...(lesson[state.index].ranges || []).map(([, r]) => r));
+  const left = 14 * Math.min(...us) - Math.max(84, 14 * reach + 6), right = 14 * Math.max(...us) + Math.max(84, 14 * reach + 6), top = -128, bottom = Math.max(7 * Math.max(...vs) + 74, 7 * reach + 12);
+  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// ---------- The moving dot ----------
+// It runs along one cable, stopping short of the boxes at both ends.
+function travel(from, to, label, done) {
+  if (motion.matches) { done(); return; }
+  const group = svg('g', { class: 'packet-group' }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  packets.push({ group, from, to, start: performance.now(), ms: 950, done });
+  kick();
+}
+// Callbacks run after the list is updated, so a callback that starts a new trip is not lost.
+function movePackets(now) {
+  const finished = [];
+  packets = packets.filter((packet) => {
+    const t = (now - packet.start) / packet.ms;
+    if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
+    const ease = t * t * (3 - 2 * t);
+    const [u0, v0] = packet.from, [u1, v1] = packet.to;
+    const length = Math.hypot(u1 - u0, v1 - v0), trim = 1.3 / length;
+    const k = mix(trim, 1 - trim, ease);
+    const [x, y] = flat(mix(u0, u1, k), mix(v0, v1, k), laneHeight);
+    packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    return true;
+  });
+  finished.forEach((done) => done());
+}
+
+// ---------- State after s stages ----------
+function paint() {
+  const step = lesson[state.index];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
+  for (const [id] of step.stations) {
+    setPlate(views[id].holds, holds[id] ?? '');
+    views[id].holds.group.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
+  }
+  // The still picture says in one line what happened up to the reading stage, so the badges read as its result.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
+  byId('work-title').textContent = view.title;
+  byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
+  byId('work-panel').classList.toggle('error', Boolean(last?.error));
+  byId('readout').textContent = last ? last.text : '"다음 단계"를 누르면 신호가 한 정거장씩 움직입니다.';
+  const finished = state.s >= step.stages.length;
+  const blocked = !state.playing && (finished || state.busy || Boolean(pendingAsk()));
+  byId('run-stage').disabled = blocked;
+  byId('run-stage').textContent = finished ? '끝까지 왔습니다' : '다음 단계';
+  [...byId('stage-list').children].forEach((li, k) => {
+    li.classList.toggle('done', k < state.s);
+    li.classList.toggle('current', k === state.s);
+  });
+}
+
+function runStage(done) {
+  const step = lesson[state.index];
+  const stage = step.stages[state.s];
+  if (!stage || state.busy) return;
+  state.busy = true;
+  views[stage.from].node.classList.add('active');
+  travel(stationPos(stage.from), stationPos(stage.to), stage.label, () => {
+    state.s++;
+    state.busy = false;
+    paint();
+    byId('announcement').textContent = stage.text;
+    done?.();
+  });
+  paint();
+}
+
+// ---------- Predictions ----------
+function pendingAsk() {
+  if (state.playing) return null;
+  const stage = lesson[state.index].stages[state.s];
+  return stage?.ask && !answered[state.index].has(state.s) ? stage.ask : null;
+}
+const asksCount = () => lesson[state.index].stages.filter((stage) => stage.ask).length;
+function syncTask() {
+  const choices = byId('try-choices');
+  choices.replaceChildren();
+  const ask = pendingAsk();
+  if (ask && !state.busy) {
+    byId('try').classList.remove('solved');
+    byId('try-text').textContent = ask.q;
+    byId('try-result').textContent = state.wrong || state.solvedText;
+    for (const choice of ask.choices) {
+      const button = Object.assign(document.createElement('button'), { type: 'button', className: 'action choice-button', textContent: choice });
+      button.addEventListener('click', () => answer(choice));
+      choices.append(button);
+    }
+  } else if (state.solvedText) {
+    byId('try').classList.add('solved');
+    byId('try-text').textContent = state.solvedText;
+    byId('try-result').textContent = '';
+  } else {
+    byId('try').classList.remove('solved');
+    byId('try-result').textContent = '';
+    byId('try-text').textContent = state.s >= lesson[state.index].stages.length
+      ? (progress[state.index] >= asksCount() ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
+      : '"다음 단계"를 눌러 신호를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.';
+  }
+}
+function answer(choice) {
+  const ask = pendingAsk();
+  if (!ask) return;
+  if (choice !== ask.answer) {
+    state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`;
+    byId('announcement').textContent = state.wrong;
+    syncTask();
+    return;
+  }
+  state.wrong = '';
+  answered[state.index].add(state.s);
+  progress[state.index] = answered[state.index].size;
+  state.solvedText = `✓ 맞았습니다. ${ask.why}`;
+  byId('announcement').textContent = state.solvedText;
+  runStage(() => syncTask());
+  syncTask();
+}
+
+// Taking over from the demo starts the learner's own run from the beginning, so no prediction is skipped.
+byId('run-stage').onclick = () => {
+  takeOver();
+  if (state.busy || pendingAsk()) { syncTask(); return; }
+  state.solvedText = '';
+  runStage(() => syncTask());
+  syncTask();
+};
+byId('restart').onclick = () => {
+  state.playing = false;
+  resetRun();
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 다시 시작합니다.';
+};
+
+// ---------- Demo ----------
+
+// ---------- Steps and routing ----------
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/wifi/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/wifi\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/wifi/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

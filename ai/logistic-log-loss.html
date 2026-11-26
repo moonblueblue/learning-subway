@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="고장 분류에서 확신을 갖고 틀린 예측에 로그 손실은 얼마나 큰 값을 줄까요?">
+<title>로지스틱 출력과 로그 손실 · T22</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./logistic-log-loss.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T22</p><h1>로지스틱 출력과 로그 손실</h1><p>고장 분류에서 확신을 갖고 틀린 예측에 로그 손실은 얼마나 큰 값을 줄까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">로지스틱 출력과 로그 손실</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "점수에서 확률",
+    "title": "로지스틱 함수는 점수를 0과 1 사이로 바꿉니다",
+    "body": "가중합 z마다 p=1/(1+e^(−z))를 계산합니다. 펌프 Q의 z=0은 p=0.50이고 z≈1.386은 p≈0.80입니다. 이 값을 고장 확률로 해석하지만, 맞는 확률인지 따로 확인해야 합니다.",
+    "takeaway": "같은 함수에서 z가 0→1.386이면 p가 0.50→0.80으로 올라갑니다.",
+    "example": [
+      "z = 0 · 1.386",
+      "σ(z) = 1/(1+e⁻ᶻ)",
+      "p ≈ 0.50 · 0.80"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p103_0",
+          118,
+          103,
+          155,
+          37,
+          [
+            "z = 0"
+          ],
+          "plain"
+        ],
+        [
+          "p103_1",
+          310,
+          103,
+          155,
+          59,
+          [
+            "σ(z)",
+            "1/(1+e⁻ᶻ)"
+          ],
+          "plain"
+        ],
+        [
+          "p103_2",
+          502,
+          103,
+          155,
+          37,
+          [
+            "p = 0.50"
+          ],
+          "plain"
+        ],
+        [
+          "p202_0",
+          118,
+          202,
+          155,
+          37,
+          [
+            "z ≈ 1.386"
+          ],
+          "plain"
+        ],
+        [
+          "p202_1",
+          310,
+          202,
+          155,
+          59,
+          [
+            "σ(z)",
+            "1/(1+e⁻ᶻ)"
+          ],
+          "plain"
+        ],
+        [
+          "p202_2",
+          502,
+          202,
+          155,
+          37,
+          [
+            "p ≈ 0.80"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p103_0",
+          "p103_1",
+          "active",
+          ""
+        ],
+        [
+          "p103_1",
+          "p103_2",
+          "active",
+          ""
+        ],
+        [
+          "p202_0",
+          "p202_1",
+          "active",
+          ""
+        ],
+        [
+          "p202_1",
+          "p202_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "점수에서 확률",
+      "description": "같은 함수에서 z가 0→1.386이면 p가 0.50→0.80으로 올라갑니다."
+    },
+    "quiz": [
+      "z가 음수로 내려가면 p는 0.50을 기준으로 어느 쪽인가요?",
+      "0.50 미만",
+      "0.50 초과",
+      "e^(−z)가 1보다 커져 분모가 2보다 커집니다."
+    ]
+  },
+  {
+    "label": "정답에 준 확률",
+    "title": "실제 범주에 준 확률에 −ln을 적용합니다",
+    "body": "Q가 고장 나서 y=1입니다. 모델이 p=0.8을 주면 정답에 준 확률은 0.8이고 손실은 약 0.223입니다. p=0.2에서는 같은 정답에 0.2만 주어 약 1.609의 손실이 생깁니다.",
+    "takeaway": "y=1을 고정한 막대에서 정답 확률 0.2의 손실이 0.8의 손실보다 깁니다.",
+    "example": [
+      "y = 1",
+      "−ln(0.8) · −ln(0.2)",
+      "0.223 · 1.609"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          42,
+          88,
+          "p(y=1) = 0.8"
+        ],
+        [
+          42,
+          161,
+          "p(y=1) = 0.2"
+        ],
+        [
+          42,
+          231,
+          "y = 1 · 손실 = −ln(p)"
+        ]
+      ],
+      "bars": [
+        [
+          216,
+          68,
+          40,
+          24,
+          "0.223",
+          "active"
+        ],
+        [
+          216,
+          141,
+          290,
+          24,
+          "1.609",
+          "blocked"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "정답에 준 확률",
+      "description": "y=1을 고정한 막대에서 정답 확률 0.2의 손실이 0.8의 손실보다 깁니다."
+    },
+    "quiz": [
+      "y=1인데 고장 확률이 0.01이라면 손실은 1.609보다 큰가요?",
+      "더 큼",
+      "더 작음",
+      "정답 확률 0.01에 −ln을 적용하면 약 4.605입니다."
+    ]
+  },
+  {
+    "label": "정답이 정상일 때",
+    "title": "정답이 0이면 1−p를 로그에 넣습니다",
+    "body": "p는 고장(1)의 확률입니다. 고장이 없으면 정답 범주 0의 확률이 1−p입니다. 그래서 p=0.8을 그대로 냈어도 y=0인 새 행은 −ln(0.2)≈1.609입니다.",
+    "takeaway": "같은 p=0.8이 정답 0에서 1−0.8로 뒤집힌 뒤 긴 손실을 냅니다.",
+    "example": [
+      "p = 0.8 · y = 0",
+      "1−0.8 = 0.2",
+      "−ln(0.2) ≈ 1.609"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p144_0",
+          118,
+          144,
+          155,
+          59,
+          [
+            "고장 확률",
+            "p = 0.8"
+          ],
+          "plain"
+        ],
+        [
+          "p144_1",
+          310,
+          144,
+          155,
+          59,
+          [
+            "실제 y=0",
+            "1−p = 0.2"
+          ],
+          "plain"
+        ],
+        [
+          "p144_2",
+          502,
+          144,
+          155,
+          59,
+          [
+            "로그 손실",
+            "1.609"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p144_0",
+          "p144_1",
+          "blocked",
+          ""
+        ],
+        [
+          "p144_1",
+          "p144_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "정답이 정상일 때",
+      "description": "같은 p=0.8이 정답 0에서 1−0.8로 뒤집힌 뒤 긴 손실을 냅니다."
+    },
+    "quiz": [
+      "y=0이고 모델의 고장 확률이 0.1이라면 로그 안에 넣을 값은?",
+      "0.9",
+      "0.1",
+      "정답 0에 준 확률은 1−0.1=0.9입니다."
+    ]
+  }
+];
+const slug = 'logistic-log-loss';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

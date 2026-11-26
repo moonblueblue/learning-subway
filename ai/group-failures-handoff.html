@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="전체 미탐률이 가리는 실패를 어디서 찾고 누구에게 넘길까요?">
+<title>집단별 실패와 사람에게 넘길 기준 · T35</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./group-failures-handoff.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T35</p><h1>집단별 실패와 사람에게 넘길 기준</h1><p>전체 미탐률이 가리는 실패를 어디서 찾고 누구에게 넘길까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">집단별 실패와 사람에게 넘길 기준</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "분모를 나눔",
+    "title": "전체 4/15는 냉각기 집단의 3/5를 가립니다",
+    "body": "펌프에서 실제 고장 10건 중 1건, 냉각기에서 5건 중 3건을 놓쳤습니다. 전체 미탐률 27%와 함께 집단별 분모·분자도 냅니다. 냉각기는 표본 5건이라 추가 수집도 필요합니다.",
+    "takeaway": "전체 4/15를 두 행으로 쪼개면 낮은 1/10과 높은 3/5가 보입니다.",
+    "example": [
+      "전체: 4/15≈27%",
+      "설비 종류별로 집계",
+      "펌프 10% · 냉각기 60%"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m71_0",
+          130.0,
+          71,
+          173,
+          37,
+          [
+            "집단"
+          ],
+          "plain"
+        ],
+        [
+          "m71_1",
+          310.0,
+          71,
+          173,
+          37,
+          [
+            "미탐/고장"
+          ],
+          "plain"
+        ],
+        [
+          "m71_2",
+          490.0,
+          71,
+          173,
+          37,
+          [
+            "미탐률"
+          ],
+          "plain"
+        ],
+        [
+          "m124_0",
+          130.0,
+          124,
+          173,
+          37,
+          [
+            "펌프"
+          ],
+          "plain"
+        ],
+        [
+          "m124_1",
+          310.0,
+          124,
+          173,
+          37,
+          [
+            "1/10"
+          ],
+          "plain"
+        ],
+        [
+          "m124_2",
+          490.0,
+          124,
+          173,
+          37,
+          [
+            "10%"
+          ],
+          "plain"
+        ],
+        [
+          "m177_0",
+          130.0,
+          177,
+          173,
+          37,
+          [
+            "냉각기"
+          ],
+          "plain"
+        ],
+        [
+          "m177_1",
+          310.0,
+          177,
+          173,
+          37,
+          [
+            "3/5"
+          ],
+          "blocked"
+        ],
+        [
+          "m177_2",
+          490.0,
+          177,
+          173,
+          37,
+          [
+            "60%"
+          ],
+          "blocked"
+        ],
+        [
+          "m230_0",
+          130.0,
+          230,
+          173,
+          37,
+          [
+            "합계"
+          ],
+          "plain"
+        ],
+        [
+          "m230_1",
+          310.0,
+          230,
+          173,
+          37,
+          [
+            "4/15"
+          ],
+          "plain"
+        ],
+        [
+          "m230_2",
+          490.0,
+          230,
+          173,
+          37,
+          [
+            "≈27%"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "분모를 나눔",
+      "description": "전체 4/15를 두 행으로 쪼개면 낮은 1/10과 높은 3/5가 보입니다."
+    },
+    "quiz": [
+      "냉각기 오탐률을 계산하려면 어떤 분모가 더 필요하나요?",
+      "실제 정상인 냉각기 수",
+      "실제 고장 냉각기 5대",
+      "오탐은 정상인 냉각기 중 경보가 난 행의 비율입니다."
+    ]
+  },
+  {
+    "label": "추가 확인 기준",
+    "title": "약한 입력 조건에서는 자동 결정을 멈추고 담당자에게 보냅니다",
+    "body": "냉각기 세 미탐 중 두 건은 예측 시 센서 값이 없었습니다. 센서가 없거나 30분보다 오래됐으면 경보 점수를 자동 처리하지 않고 점검 반장에게 보냅니다. 반장은 대체 계기에서 최근 값을 확인하고 재평가를 요청합니다.",
+    "takeaway": "냉각기 R에서 값이 42분 된 조건이 기준을 넘겨, 자동 진행 가지가 닫히고 점검 반장에게 갑니다.",
+    "example": [
+      "R · 42분 전",
+      "42 > 30",
+      "점검 반장 확인"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "in",
+          111,
+          151,
+          154,
+          59,
+          [
+            "냉각기 R",
+            "42분 경과"
+          ],
+          "plain"
+        ],
+        [
+          "gate",
+          309,
+          151,
+          141,
+          37,
+          [
+            "≤ 30분?"
+          ],
+          "plain"
+        ],
+        [
+          "auto",
+          510,
+          95,
+          160,
+          37,
+          [
+            "자동 평가"
+          ],
+          "muted"
+        ],
+        [
+          "review",
+          510,
+          208,
+          160,
+          59,
+          [
+            "점검 반장",
+            "대체 계기"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "in",
+          "gate",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "gate",
+          "auto",
+          "muted",
+          "예",
+          0
+        ],
+        [
+          "gate",
+          "review",
+          "active",
+          "아니오",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "추가 확인 기준",
+      "description": "냉각기 R에서 값이 42분 된 조건이 기준을 넘겨, 자동 진행 가지가 닫히고 점검 반장에게 갑니다."
+    },
+    "quiz": [
+      "R에 10분 전 정상 형식의 센서값이 들어오면 이 규칙에서는 어디로 가나요?",
+      "자동 평가",
+      "계속 인계",
+      "10분은 허용하는 30분 안이고 값도 누락되지 않았습니다."
+    ]
+  }
+];
+const slug = 'group-failures-handoff';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

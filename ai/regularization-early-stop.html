@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="검증 오차가 커지기 전에 어느 학습 결과를 남길까요?">
+<title>정규화와 조기 종료 · T30</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./regularization-early-stop.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T30</p><h1>정규화와 조기 종료</h1><p>검증 오차가 커지기 전에 어느 학습 결과를 남길까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">정규화와 조기 종료</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "가중치 벌점",
+    "title": "L2 벌점은 지나치게 큰 가중치에 비용을 붙입니다",
+    "body": "두 후보의 학습 손실은 A=0.5와 B=0.8입니다. λ=0.1×가중치 제곱합을 더하면 A의 제곱합 16은 1.6, B의 제곱합 1은 0.1을 보탭니다. 이 학습 목표에서 A=2.1, B=0.9라 선택이 B로 바뀝니다.",
+    "takeaway": "λ=0일 때 작은 A의 손실에 큰 벌점이 붙어 같은 비교에서 B가 앞섭니다.",
+    "example": [
+      "A 0.5 · B 0.8",
+      "λ=0.1 · 제곱합 벌점",
+      "A 2.1 · B 0.9"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m81_0",
+          95.5,
+          81,
+          136,
+          37,
+          [
+            "후보"
+          ],
+          "plain"
+        ],
+        [
+          "m81_1",
+          238.5,
+          81,
+          136,
+          37,
+          [
+            "데이터 손실"
+          ],
+          "plain"
+        ],
+        [
+          "m81_2",
+          381.5,
+          81,
+          136,
+          37,
+          [
+            "λ×‖w‖²"
+          ],
+          "plain"
+        ],
+        [
+          "m81_3",
+          524.5,
+          81,
+          136,
+          37,
+          [
+            "목표 합"
+          ],
+          "plain"
+        ],
+        [
+          "m147_0",
+          95.5,
+          147,
+          136,
+          37,
+          [
+            "A"
+          ],
+          "plain"
+        ],
+        [
+          "m147_1",
+          238.5,
+          147,
+          136,
+          37,
+          [
+            "0.5"
+          ],
+          "plain"
+        ],
+        [
+          "m147_2",
+          381.5,
+          147,
+          136,
+          37,
+          [
+            "0.1×16=1.6"
+          ],
+          "plain"
+        ],
+        [
+          "m147_3",
+          524.5,
+          147,
+          136,
+          37,
+          [
+            "2.1"
+          ],
+          "blocked"
+        ],
+        [
+          "m212_0",
+          95.5,
+          212,
+          136,
+          37,
+          [
+            "B"
+          ],
+          "plain"
+        ],
+        [
+          "m212_1",
+          238.5,
+          212,
+          136,
+          37,
+          [
+            "0.8"
+          ],
+          "plain"
+        ],
+        [
+          "m212_2",
+          381.5,
+          212,
+          136,
+          37,
+          [
+            "0.1×1=0.1"
+          ],
+          "plain"
+        ],
+        [
+          "m212_3",
+          524.5,
+          212,
+          136,
+          37,
+          [
+            "0.9"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "가중치 벌점",
+      "description": "λ=0일 때 작은 A의 손실에 큰 벌점이 붙어 같은 비교에서 B가 앞섭니다."
+    },
+    "quiz": [
+      "λ를 0으로 되돌리면 어떤 후보가 학습 목표에서 앞서나요?",
+      "A",
+      "B",
+      "벌점이 0이므로 데이터 손실 0.5와 0.8만 비교합니다."
+    ]
+  },
+  {
+    "label": "시간에 따른 검증",
+    "title": "학습 오차가 계속 내려가도 검증 곡선은 되돌아설 수 있습니다",
+    "body": "B와 같은 학습 설정의 한 실행에서 에폭 1–4의 검증 손실은 0.90, 0.62, 0.66, 0.71입니다. 학습 손실은 계속 내려갑니다. 두 번 연속 개선이 없으면 멈추기로 했다면 4에서 멈춥니다.",
+    "takeaway": "같은 손실 축에서 학습 곡선은 계속 내려갑니다. 검증 곡선은 2 에폭의 0.62에서 저장한 뒤 0.66과 0.71로 올라 4에서 멈춥니다.",
+    "example": [
+      "검증 최저 0.62",
+      "두 번 연속 개선 없음",
+      "4 에폭에서 정지"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "v1",
+          137,
+          75,
+          9,
+          9,
+          [],
+          "active"
+        ],
+        [
+          "v2",
+          274,
+          150,
+          9,
+          9,
+          [],
+          "active"
+        ],
+        [
+          "v3",
+          411,
+          139,
+          9,
+          9,
+          [],
+          "blocked"
+        ],
+        [
+          "v4",
+          548,
+          126,
+          9,
+          9,
+          [],
+          "blocked"
+        ],
+        [
+          "t1",
+          137,
+          96,
+          9,
+          9,
+          [],
+          "plain"
+        ],
+        [
+          "t2",
+          274,
+          164,
+          9,
+          9,
+          [],
+          "plain"
+        ],
+        [
+          "t3",
+          411,
+          206,
+          9,
+          9,
+          [],
+          "plain"
+        ],
+        [
+          "t4",
+          548,
+          236,
+          9,
+          9,
+          [],
+          "plain"
+        ],
+        [
+          "o",
+          91,
+          249,
+          1,
+          1,
+          [],
+          "muted"
+        ],
+        [
+          "x",
+          595,
+          249,
+          1,
+          1,
+          [],
+          "muted"
+        ],
+        [
+          "y",
+          91,
+          66,
+          1,
+          1,
+          [],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "o",
+          "x",
+          "undirected"
+        ],
+        [
+          "o",
+          "y",
+          "undirected"
+        ],
+        [
+          "t1",
+          "t2",
+          "undirected"
+        ],
+        [
+          "t2",
+          "t3",
+          "undirected"
+        ],
+        [
+          "t3",
+          "t4",
+          "undirected"
+        ],
+        [
+          "v1",
+          "v2",
+          "active"
+        ],
+        [
+          "v2",
+          "v3",
+          "blocked"
+        ],
+        [
+          "v3",
+          "v4",
+          "blocked"
+        ]
+      ],
+      "labels": [
+        [
+          15,
+          66,
+          "손실 축"
+        ],
+        [
+          42,
+          80,
+          "0.90"
+        ],
+        [
+          42,
+          240,
+          "0.30"
+        ],
+        [
+          146,
+          67,
+          "검증 0.90"
+        ],
+        [
+          110,
+          144,
+          "학습 0.82"
+        ],
+        [
+          248,
+          130,
+          "0.62"
+        ],
+        [
+          233,
+          184,
+          "0.57"
+        ],
+        [
+          367,
+          126,
+          "0.66"
+        ],
+        [
+          368,
+          223,
+          "0.41"
+        ],
+        [
+          554,
+          114,
+          "0.71"
+        ],
+        [
+          554,
+          229,
+          "0.30"
+        ],
+        [
+          127,
+          271,
+          "1"
+        ],
+        [
+          239,
+          271,
+          "2 저장"
+        ],
+        [
+          401,
+          271,
+          "3"
+        ],
+        [
+          511,
+          271,
+          "4 정지"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "시간에 따른 검증",
+      "description": "같은 손실 축에서 학습 곡선은 계속 내려갑니다. 검증 곡선은 2 에폭의 0.62에서 저장한 뒤 0.66과 0.71로 올라 4에서 멈춥니다."
+    },
+    "quiz": [
+      "4 에폭에서 검증 손실이 대신 0.60이면 이 규칙으로 멈추나요?",
+      "계속 진행",
+      "즉시 정지",
+      "0.60은 이전 최저 0.62를 개선하므로 연속 악화 횟수가 0이 됩니다."
+    ]
+  },
+  {
+    "label": "최선 가중치 복원",
+    "title": "멈춘 에폭과 내보낼 에폭을 구별합니다",
+    "body": "에폭 4는 개선이 끝났는지 확인하는 용도였습니다. 배포하거나 최종 시험할 때는 최저 검증 손실 0.62의 에폭 2 체크포인트를 복원합니다. 시험 기간은 이 선택에 쓰지 않습니다.",
+    "takeaway": "4의 정지 표식에서 2의 저장본이 최종 시험으로 이어집니다.",
+    "example": [
+      "에폭 4 정지",
+      "검증 최저 에폭 2 불러옴",
+      "에폭 2로 시험"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          111,
+          94,
+          153,
+          59,
+          [
+            "에폭 4",
+            "학습 정지"
+          ],
+          "blocked"
+        ],
+        [
+          "b",
+          311,
+          196,
+          161,
+          59,
+          [
+            "에폭 2",
+            "검증 0.62"
+          ],
+          "active"
+        ],
+        [
+          "out",
+          516,
+          196,
+          152,
+          37,
+          [
+            "미사용 시험"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "b",
+          "active",
+          "복원",
+          0
+        ],
+        [
+          "b",
+          "out",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "최선 가중치 복원",
+      "description": "4의 정지 표식에서 2의 저장본이 최종 시험으로 이어집니다."
+    },
+    "quiz": [
+      "시험 에폭을 다시 고르는 데 시험 손실을 사용하면 어떻게 되나요?",
+      "최종 시험의 독립성이 깨짐",
+      "점수만 좋아지고 문제 없음",
+      "시험 결과에 따라 모델을 바꾸면 시험까지 선택에 써 버립니다."
+    ]
+  }
+];
+const slug = 'regularization-early-stop';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

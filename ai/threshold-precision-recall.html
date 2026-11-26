@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="경보 기준을 0.75에서 0.55로 낮추면 같은 여섯 점수에서 무엇이 바뀔까요?">
+<title>임계값과 정밀도·재현율 · T32</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./threshold-precision-recall.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T32</p><h1>임계값과 정밀도·재현율</h1><p>경보 기준을 0.75에서 0.55로 낮추면 같은 여섯 점수에서 무엇이 바뀔까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">임계값과 정밀도·재현율</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "높은 기준",
+    "title": "기준 0.75에서 A와 B만 울립니다",
+    "body": "점수가 0.75 이상인 A와 B를 경보로 고릅니다. 둘 다 고장이므로 정밀도는 2/2입니다. 실제 세 고장 중 D를 놓쳐 재현율은 2/3입니다.",
+    "takeaway": "A와 B만 선택되며 실제 고장 표식 D가 경보 밖에 남습니다.",
+    "example": [
+      "임계값 0.75",
+      "경보 A·B",
+      "정밀도 2/2 · 재현율 2/3"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m78_0",
+          70.0,
+          78,
+          89,
+          59,
+          [
+            "A",
+            ".90"
+          ],
+          "active"
+        ],
+        [
+          "m78_1",
+          166.0,
+          78,
+          89,
+          59,
+          [
+            "B",
+            ".80"
+          ],
+          "active"
+        ],
+        [
+          "m78_2",
+          262.0,
+          78,
+          89,
+          59,
+          [
+            "C",
+            ".65"
+          ],
+          "plain"
+        ],
+        [
+          "m78_3",
+          358.0,
+          78,
+          89,
+          59,
+          [
+            "D",
+            ".60"
+          ],
+          "plain"
+        ],
+        [
+          "m78_4",
+          454.0,
+          78,
+          89,
+          59,
+          [
+            "E",
+            ".55"
+          ],
+          "plain"
+        ],
+        [
+          "m78_5",
+          550.0,
+          78,
+          89,
+          59,
+          [
+            "F",
+            ".20"
+          ],
+          "plain"
+        ],
+        [
+          "m153_0",
+          70.0,
+          153,
+          89,
+          37,
+          [
+            "경보"
+          ],
+          "active"
+        ],
+        [
+          "m153_1",
+          166.0,
+          153,
+          89,
+          37,
+          [
+            "경보"
+          ],
+          "active"
+        ],
+        [
+          "m153_2",
+          262.0,
+          153,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ],
+        [
+          "m153_3",
+          358.0,
+          153,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ],
+        [
+          "m153_4",
+          454.0,
+          153,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ],
+        [
+          "m153_5",
+          550.0,
+          153,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ],
+        [
+          "m219_0",
+          70.0,
+          219,
+          89,
+          37,
+          [
+            "고장"
+          ],
+          "plain"
+        ],
+        [
+          "m219_1",
+          166.0,
+          219,
+          89,
+          37,
+          [
+            "고장"
+          ],
+          "plain"
+        ],
+        [
+          "m219_2",
+          262.0,
+          219,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ],
+        [
+          "m219_3",
+          358.0,
+          219,
+          89,
+          37,
+          [
+            "고장"
+          ],
+          "blocked"
+        ],
+        [
+          "m219_4",
+          454.0,
+          219,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ],
+        [
+          "m219_5",
+          550.0,
+          219,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          46,
+          268,
+          "τ=.75 · 정밀도 2/2 · 재현율 2/3"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "높은 기준",
+      "description": "A와 B만 선택되며 실제 고장 표식 D가 경보 밖에 남습니다."
+    },
+    "quiz": [
+      "현재 재현율의 분모는?",
+      "실제 고장 3대",
+      "경보 2대",
+      "재현율은 실제 고장 중 얼마나 잡았는지 계산합니다."
+    ]
+  },
+  {
+    "label": "낮은 기준",
+    "title": "기준 0.55에서 D도 잡지만 C와 E가 함께 울립니다",
+    "body": "같은 여섯 점수에서 0.55 이상인 A, B, C, D, E를 고릅니다. 새 적중 D와 새 오탐 C, E 때문에 정밀도는 3/5로 내려가고 재현율은 3/3으로 올라갑니다.",
+    "takeaway": "위쪽 점수는 그대로이고 새로 들어온 C·D·E만 경보 줄을 바꿉니다.",
+    "example": [
+      "임계값 0.55",
+      "경보 A·B·C·D·E",
+      "정밀도 3/5 · 재현율 3/3"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m78_0",
+          70.0,
+          78,
+          89,
+          59,
+          [
+            "A",
+            ".90"
+          ],
+          "active"
+        ],
+        [
+          "m78_1",
+          166.0,
+          78,
+          89,
+          59,
+          [
+            "B",
+            ".80"
+          ],
+          "active"
+        ],
+        [
+          "m78_2",
+          262.0,
+          78,
+          89,
+          59,
+          [
+            "C",
+            ".65"
+          ],
+          "blocked"
+        ],
+        [
+          "m78_3",
+          358.0,
+          78,
+          89,
+          59,
+          [
+            "D",
+            ".60"
+          ],
+          "active"
+        ],
+        [
+          "m78_4",
+          454.0,
+          78,
+          89,
+          59,
+          [
+            "E",
+            ".55"
+          ],
+          "blocked"
+        ],
+        [
+          "m78_5",
+          550.0,
+          78,
+          89,
+          59,
+          [
+            "F",
+            ".20"
+          ],
+          "plain"
+        ],
+        [
+          "m153_0",
+          70.0,
+          153,
+          89,
+          37,
+          [
+            "경보"
+          ],
+          "plain"
+        ],
+        [
+          "m153_1",
+          166.0,
+          153,
+          89,
+          37,
+          [
+            "경보"
+          ],
+          "plain"
+        ],
+        [
+          "m153_2",
+          262.0,
+          153,
+          89,
+          37,
+          [
+            "새 경보"
+          ],
+          "blocked"
+        ],
+        [
+          "m153_3",
+          358.0,
+          153,
+          89,
+          37,
+          [
+            "새 경보"
+          ],
+          "active"
+        ],
+        [
+          "m153_4",
+          454.0,
+          153,
+          89,
+          37,
+          [
+            "새 경보"
+          ],
+          "blocked"
+        ],
+        [
+          "m153_5",
+          550.0,
+          153,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ],
+        [
+          "m219_0",
+          70.0,
+          219,
+          89,
+          37,
+          [
+            "고장"
+          ],
+          "plain"
+        ],
+        [
+          "m219_1",
+          166.0,
+          219,
+          89,
+          37,
+          [
+            "고장"
+          ],
+          "plain"
+        ],
+        [
+          "m219_2",
+          262.0,
+          219,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ],
+        [
+          "m219_3",
+          358.0,
+          219,
+          89,
+          37,
+          [
+            "고장"
+          ],
+          "plain"
+        ],
+        [
+          "m219_4",
+          454.0,
+          219,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ],
+        [
+          "m219_5",
+          550.0,
+          219,
+          89,
+          37,
+          [
+            "—"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          46,
+          268,
+          "τ=.55 · 정밀도 3/5 · 재현율 3/3"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "낮은 기준",
+      "description": "위쪽 점수는 그대로이고 새로 들어온 C·D·E만 경보 줄을 바꿉니다."
+    },
+    "quiz": [
+      "기준을 0.61로 올리면 D의 0.60은 어떻게 되나요?",
+      "경보에서 빠져 재현율 감소",
+      "경보 유지",
+      "D가 실제 고장인데 점수가 0.61 미만이라 놓칩니다."
+    ]
+  }
+];
+const slug = 'threshold-precision-recall';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

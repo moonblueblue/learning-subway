@@ -3,41 +3,204 @@ const aiStationMap = {
   "1": {
     "stations": [
       {
+        "id": "1.10",
+        "ref": "ai/decision-owner"
+      },
+      {
+        "id": "1.11",
+        "ref": "ai/method-choice"
+      },
+      {
         "id": "1.1",
         "ref": "math/logic"
+      },
+      {
+        "id": "1.12",
+        "ref": "ai/rule-inference"
+      },
+      {
+        "id": "1.13",
+        "ref": "ai/observations-features-labels"
+      },
+      {
+        "id": "1.14",
+        "ref": "ai/prediction-row"
+      },
+      {
+        "id": "1.15",
+        "ref": "ai/sampling-bias"
+      },
+      {
+        "id": "1.16",
+        "ref": "ai/delayed-labels"
+      },
+      {
+        "id": "1.17",
+        "ref": "ai/missing-readings"
+      },
+      {
+        "id": "1.18",
+        "ref": "ai/future-leakage"
       },
       {
         "id": "1.2",
         "ref": "math/vectors"
       },
       {
+        "id": "1.19",
+        "ref": "ai/dot-product"
+      },
+      {
         "id": "1.3",
         "ref": "math/statistics"
+      },
+      {
+        "id": "1.20",
+        "ref": "ai/base-rate-bayes"
+      },
+      {
+        "id": "1.21",
+        "ref": "ai/resampling"
+      },
+      {
+        "id": "1.22",
+        "ref": "ai/temporal-split"
+      },
+      {
+        "id": "1.23",
+        "ref": "ai/fit-preprocessing"
+      },
+      {
+        "id": "1.24",
+        "ref": "ai/alert-baseline"
       },
       {
         "id": "1.4",
         "ref": "ai/ml"
       },
       {
+        "id": "1.25",
+        "ref": "ai/regression-classification"
+      },
+      {
+        "id": "1.26",
+        "ref": "ai/squared-error"
+      },
+      {
+        "id": "1.27",
+        "ref": "ai/logistic-log-loss"
+      },
+      {
+        "id": "1.28",
+        "ref": "ai/derivatives-sensitivity"
+      },
+      {
         "id": "1.5",
         "ref": "ai/gradient"
+      },
+      {
+        "id": "1.29",
+        "ref": "ai/learning-rate"
       },
       {
         "id": "1.6",
         "ref": "ai/neural"
       },
       {
+        "id": "1.30",
+        "ref": "ai/chain-rule-backprop"
+      },
+      {
+        "id": "1.31",
+        "ref": "ai/minibatch-epoch"
+      },
+      {
+        "id": "1.32",
+        "ref": "ai/fit-diagnosis"
+      },
+      {
+        "id": "1.33",
+        "ref": "ai/regularization-early-stop"
+      },
+      {
+        "id": "1.34",
+        "ref": "ai/confusion-matrix"
+      },
+      {
+        "id": "1.35",
+        "ref": "ai/threshold-precision-recall"
+      },
+      {
+        "id": "1.36",
+        "ref": "ai/probability-calibration"
+      },
+      {
         "id": "1.9",
-        "title": "오류 비용",
-        "titleEn": "Error costs"
+        "ref": "ai/error-cost-threshold"
+      },
+      {
+        "id": "1.37",
+        "ref": "ai/group-failures-handoff"
       },
       {
         "id": "1.7",
         "ref": "math/graph"
       },
       {
+        "id": "1.38",
+        "ref": "ai/route-state-cost"
+      },
+      {
+        "id": "1.39",
+        "ref": "algorithms/traversal"
+      },
+      {
         "id": "1.8",
         "ref": "algorithms/shortest"
+      },
+      {
+        "id": "1.40",
+        "ref": "ai/closed-unreachable"
+      },
+      {
+        "id": "1.41",
+        "ref": "software-engineering/testing"
+      },
+      {
+        "id": "1.42",
+        "ref": "ai/pinned-versions"
+      },
+      {
+        "id": "1.43",
+        "ref": "ai/seeds-repeated-runs"
+      },
+      {
+        "id": "1.44",
+        "ref": "ai/ablation"
+      },
+      {
+        "id": "1.45",
+        "ref": "ai/recording-nonreproduction"
+      },
+      {
+        "id": "1.46",
+        "ref": "ai/sensor-data-retention"
+      },
+      {
+        "id": "1.47",
+        "ref": "ai/risk-ranking"
+      },
+      {
+        "id": "1.48",
+        "ref": "ai/alert-map-join"
+      },
+      {
+        "id": "1.49",
+        "ref": "ai/prediction-vs-route-errors"
+      },
+      {
+        "id": "1.50",
+        "ref": "ai/inspection-release-report"
       }
     ]
   },

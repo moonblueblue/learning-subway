@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="시험 비용이 내려가도 언제 자동 점검을 보류해야 할까요?">
+<title>점검 배포 여부를 평가 보고서로 결정하기 · T50</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./inspection-release-report.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T50</p><h1>점검 배포 여부를 평가 보고서로 결정하기</h1><p>시험 비용이 내려가도 언제 자동 점검을 보류해야 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">점검 배포 여부를 평가 보고서로 결정하기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "비용 증거",
+    "title": "고정된 시험표에서 후보의 비용 절감을 확인합니다",
+    "body": "미사용 시험에서 기준선은 미탐 2·오탐 1, 후보는 미탐 1·오탐 2입니다. 판정 전에 정한 5:1을 계산하면 11→7로 4점을 아꼈습니다. 두 정책은 같은 설비 행으로 평가합니다.",
+    "takeaway": "미탐 감소 5점이 오탐 증가 1점을 넘어 같은 시험 비용이 4 내려갑니다.",
+    "example": [
+      "기준선 11점",
+      "후보 1×5+2",
+      "후보 7점"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m78_0",
+          95.5,
+          78,
+          136,
+          37,
+          [
+            "정책"
+          ],
+          "plain"
+        ],
+        [
+          "m78_1",
+          238.5,
+          78,
+          136,
+          37,
+          [
+            "미탐×5"
+          ],
+          "plain"
+        ],
+        [
+          "m78_2",
+          381.5,
+          78,
+          136,
+          37,
+          [
+            "오탐×1"
+          ],
+          "plain"
+        ],
+        [
+          "m78_3",
+          524.5,
+          78,
+          136,
+          37,
+          [
+            "비용"
+          ],
+          "plain"
+        ],
+        [
+          "m143_0",
+          95.5,
+          143,
+          136,
+          37,
+          [
+            "기준선"
+          ],
+          "plain"
+        ],
+        [
+          "m143_1",
+          238.5,
+          143,
+          136,
+          37,
+          [
+            "2×5"
+          ],
+          "plain"
+        ],
+        [
+          "m143_2",
+          381.5,
+          143,
+          136,
+          37,
+          [
+            "1×1"
+          ],
+          "plain"
+        ],
+        [
+          "m143_3",
+          524.5,
+          143,
+          136,
+          37,
+          [
+            "11"
+          ],
+          "plain"
+        ],
+        [
+          "m207_0",
+          95.5,
+          207,
+          136,
+          37,
+          [
+            "후보"
+          ],
+          "plain"
+        ],
+        [
+          "m207_1",
+          238.5,
+          207,
+          136,
+          37,
+          [
+            "1×5"
+          ],
+          "plain"
+        ],
+        [
+          "m207_2",
+          381.5,
+          207,
+          136,
+          37,
+          [
+            "2×1"
+          ],
+          "plain"
+        ],
+        [
+          "m207_3",
+          524.5,
+          207,
+          136,
+          37,
+          [
+            "7"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "비용 증거",
+      "description": "미탐 감소 5점이 오탐 증가 1점을 넘어 같은 시험 비용이 4 내려갑니다."
+    },
+    "quiz": [
+      "비용 비교 전에 임계값을 고른 기간은?",
+      "검증 기간",
+      "시험 기간",
+      "최종 시험 전에 선택을 끝내야 시험의 독립성을 지킵니다."
+    ]
+  },
+  {
+    "label": "경로·인계 기준",
+    "title": "비용은 통과해도 경로 인계가 실패하면 자동 배포를 보류합니다",
+    "body": "자동 배포의 조건에는 시험 비용 감소와 폐쇄·고립 시 인계 성공이 모두 있습니다. 이 후보는 고립 설비를 도달 불가로 반환했으나 작업자 알림이 전달되지 않았습니다. 인계가 복구되기까지 현행 수동 점검을 유지하고 실패 사례를 재시험합니다.",
+    "takeaway": "비용 통과 선과 인계 실패 선이 AND에 모여 배포 보류가 됩니다.",
+    "example": [
+      "비용 11 → 7",
+      "인계 알림 미전달",
+      "자동 배포 보류"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "a",
+          118,
+          94,
+          187,
+          59,
+          [
+            "시험 비용",
+            "11 → 7 · ✓"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          118,
+          204,
+          187,
+          59,
+          [
+            "고립 인계",
+            "알림 실패 ×"
+          ],
+          "blocked"
+        ],
+        [
+          "and",
+          320,
+          148,
+          84,
+          37,
+          [
+            "AND"
+          ],
+          "plain"
+        ],
+        [
+          "out",
+          515,
+          148,
+          170,
+          59,
+          [
+            "배포 보류",
+            "수동 점검"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "and",
+          "active",
+          "",
+          0
+        ],
+        [
+          "b",
+          "and",
+          "blocked",
+          "",
+          0
+        ],
+        [
+          "and",
+          "out",
+          "blocked",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "경로·인계 기준",
+      "description": "비용 통과 선과 인계 실패 선이 AND에 모여 배포 보류가 됩니다."
+    },
+    "quiz": [
+      "어떤 증거가 있어야 자동 배포를 다시 검토할까요?",
+      "고립 상황에서 알림 인계 재시험 성공",
+      "비용만 다시 확인",
+      "낮은 비용과 실패 시 인계가 모두 사전에 정한 조건입니다."
+    ]
+  }
+];
+const slug = 'inspection-release-report';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

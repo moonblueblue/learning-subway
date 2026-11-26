@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="민감도가 같은 경보도 고장이 드문 곳에서는 왜 확신이 떨어질까요?">
+<title>기초 발생률과 베이즈 갱신 · T14</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./base-rate-bayes.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T14</p><h1>기초 발생률과 베이즈 갱신</h1><p>민감도가 같은 경보도 고장이 드문 곳에서는 왜 확신이 떨어질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">기초 발생률과 베이즈 갱신</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "발생률에서 건수로",
+    "title": "고장과 정상 각각에 경보율을 적용합니다",
+    "body": "1,000대 중 10대가 고장입니다. 고장 10대 중 90%인 9대가 울립니다. 정상 990대 중에서도 10%인 99대가 울립니다.",
+    "takeaway": "9건과 99건이 모두 경보 쪽에 모여 108건입니다.",
+    "example": [
+      "고장 10 · 정상 990",
+      "10×.9 · 990×.1",
+      "경보 108"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          112,
+          93,
+          157,
+          59,
+          [
+            "고장 10",
+            "× 90%"
+          ],
+          "plain"
+        ],
+        [
+          "n",
+          112,
+          197,
+          157,
+          59,
+          [
+            "정상 990",
+            "× 10%"
+          ],
+          "plain"
+        ],
+        [
+          "tp",
+          302,
+          93,
+          100,
+          37,
+          [
+            "9"
+          ],
+          "active"
+        ],
+        [
+          "fp",
+          302,
+          197,
+          100,
+          37,
+          [
+            "99"
+          ],
+          "blocked"
+        ],
+        [
+          "out",
+          493,
+          145,
+          130,
+          59,
+          [
+            "경보 합",
+            "108"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "tp",
+          "active",
+          "",
+          0
+        ],
+        [
+          "n",
+          "fp",
+          "blocked",
+          "",
+          0
+        ],
+        [
+          "tp",
+          "out",
+          "active",
+          "",
+          0
+        ],
+        [
+          "fp",
+          "out",
+          "blocked",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "발생률에서 건수로",
+      "description": "9건과 99건이 모두 경보 쪽에 모여 108건입니다."
+    },
+    "quiz": [
+      "고장이 10대이고 민감도가 90%라면 놓친 고장은 몇 대인가요?",
+      "1",
+      "9",
+      "울린 9대를 고장 10대에서 빼면 1대입니다."
+    ]
+  },
+  {
+    "label": "경보의 분모",
+    "title": "울렸다는 조건을 적용해 분모를 108로 바꿉니다",
+    "body": "경보가 울렸을 때 정말 고장일 확률은 경보 108건 중 실제 고장 9건이므로 약 8.3%입니다. 90%는 고장부터 시작해서 경보가 울리는 비율입니다.",
+    "takeaway": "같은 고장 경보 9를 쓰지만 두 계산의 분모가 10과 108로 다릅니다.",
+    "example": [
+      "고장 경보 9",
+      "모든 경보 9+99",
+      "9/108 ≈ 8.3%"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m96_0",
+          130.0,
+          96,
+          173,
+          37,
+          [
+            "질문"
+          ],
+          "plain"
+        ],
+        [
+          "m96_1",
+          310.0,
+          96,
+          173,
+          37,
+          [
+            "분모"
+          ],
+          "plain"
+        ],
+        [
+          "m96_2",
+          490.0,
+          96,
+          173,
+          37,
+          [
+            "비율"
+          ],
+          "plain"
+        ],
+        [
+          "m151_0",
+          130.0,
+          151,
+          173,
+          37,
+          [
+            "고장 → 경보"
+          ],
+          "plain"
+        ],
+        [
+          "m151_1",
+          310.0,
+          151,
+          173,
+          37,
+          [
+            "고장 10"
+          ],
+          "plain"
+        ],
+        [
+          "m151_2",
+          490.0,
+          151,
+          173,
+          37,
+          [
+            "9/10 = 90%"
+          ],
+          "plain"
+        ],
+        [
+          "m209_0",
+          130.0,
+          209,
+          173,
+          37,
+          [
+            "경보 → 고장"
+          ],
+          "plain"
+        ],
+        [
+          "m209_1",
+          310.0,
+          209,
+          173,
+          37,
+          [
+            "경보 108"
+          ],
+          "active"
+        ],
+        [
+          "m209_2",
+          490.0,
+          209,
+          173,
+          37,
+          [
+            "9/108 ≈ 8.3%"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "경보의 분모",
+      "description": "같은 고장 경보 9를 쓰지만 두 계산의 분모가 10과 108로 다릅니다."
+    },
+    "quiz": [
+      "경보가 울린 대상을 조사할 때 분모는 무엇인가요?",
+      "경보 108건",
+      "전체 1,000대",
+      "주어진 조건은 경보가 울렸다는 것이므로 분모도 경보 건수입니다."
+    ]
+  },
+  {
+    "label": "기초율을 변경",
+    "title": "같은 경보기라도 고장 비율이 늘면 경보를 더 믿을 수 있습니다",
+    "body": "1,000대 중 고장이 100대인 현장에 같은 경보기를 옮깁니다. 고장 경보는 90건, 정상 경보도 90건이어서 울린 경우의 고장 확률은 50%입니다.",
+    "takeaway": "×90%와 ×10%는 그대로지만 90/180과 이전의 9/108이 달라집니다.",
+    "example": [
+      "기초율 1% → 10%",
+      "100×.9 · 900×.1",
+      "90/180 = 50%"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          112,
+          93,
+          157,
+          59,
+          [
+            "고장 100",
+            "× 90%"
+          ],
+          "plain"
+        ],
+        [
+          "n",
+          112,
+          197,
+          157,
+          59,
+          [
+            "정상 900",
+            "× 10%"
+          ],
+          "plain"
+        ],
+        [
+          "tp",
+          302,
+          93,
+          100,
+          37,
+          [
+            "90"
+          ],
+          "active"
+        ],
+        [
+          "fp",
+          302,
+          197,
+          100,
+          37,
+          [
+            "90"
+          ],
+          "blocked"
+        ],
+        [
+          "out",
+          493,
+          145,
+          145,
+          59,
+          [
+            "고장일 확률",
+            "90/180 = 50%"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "tp",
+          "active",
+          "",
+          0
+        ],
+        [
+          "n",
+          "fp",
+          "blocked",
+          "",
+          0
+        ],
+        [
+          "tp",
+          "out",
+          "active",
+          "",
+          0
+        ],
+        [
+          "fp",
+          "out",
+          "blocked",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "기초율을 변경",
+      "description": "×90%와 ×10%는 그대로지만 90/180과 이전의 9/108이 달라집니다."
+    },
+    "quiz": [
+      "검사 성능이 그대로인데 경보 후 고장 확률이 올라갔습니다. 무엇이 바뀌었나요?",
+      "실제 고장 기초율",
+      "민감도",
+      "현장에 고장이 더 흔해져, 같은 경보율에서도 진짜 경보의 비중이 커졌습니다."
+    ]
+  }
+];
+const slug = 'base-rate-bayes';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

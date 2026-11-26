@@ -11,7 +11,7 @@
 
   // The menu follows the roadmap the reader came through, else the first roadmap listing this lesson.
   const listsLesson = (roadmap) => roadmap.chapters.some((chapter) =>
-    [chapter, ...chapter.tracks].some((group) => group.lessons.some((lesson) => lesson.ref === pageRef)));
+    chapter.projectRef === pageRef || [chapter, ...chapter.tracks].some((group) => group.lessons.some((lesson) => lesson.ref === pageRef)));
   let storedRoadmap = null;
   try { storedRoadmap = sessionStorage.getItem('course-roadmap'); } catch { /* storage unavailable */ }
   const params = new URLSearchParams(location.search);
@@ -19,7 +19,7 @@
   const roadmap = courseCatalog.roadmaps.find((item) => item.id === wantedRoadmap && listsLesson(item)) ||
     courseCatalog.roadmaps.find(listsLesson);
   const aiChapters = roadmap?.id === 'ai' ? roadmap.chapters.filter(chapter =>
-    chapter.lessons.some(lesson => lesson.ref === pageRef)) : [];
+    chapter.projectRef === pageRef || chapter.lessons.some(lesson => lesson.ref === pageRef)) : [];
   const aiLine = aiChapters.find(chapter => chapter.id === params.get('line')) || aiChapters[0];
   if (aiLine) document.body.classList.add('ai-journey');
   try { if (roadmap) sessionStorage.setItem('course-roadmap', roadmap.id); } catch { /* storage unavailable */ }
@@ -30,7 +30,8 @@
   });
   const chapters = roadmap
     ? roadmap.chapters.map((chapter) => ({
-      ...chapter, lessons: chapter.lessons.map(lesson => resolve(lesson, chapter.id)),
+      ...chapter, lessons: [...chapter.lessons, ...(chapter.projectRef
+        ? [{id: chapter.id + '.P', ref: chapter.projectRef}] : [])].map(lesson => resolve(lesson, chapter.id)),
       tracks: chapter.tracks.map((track) => ({...track, lessons: track.lessons.map(resolve)}))
     }))
     : [{
@@ -225,7 +226,8 @@
     if (!isTrack) details.setAttribute('name', 'course-chapters');
     const summary = element('summary', 'course-summary');
     const prefix = isTrack || !group.id ? group.id : group.id + '장';
-    const count = group.lessons.length + (group.tracks ?? []).reduce((total, track) => total + track.lessons.length, 0);
+    const count = group.lessons.filter(lesson => lesson.ref !== group.projectRef).length
+      + (group.tracks ?? []).reduce((total, track) => total + track.lessons.length, 0);
     summary.append(element('span', 'course-number', prefix), element('span', '', group.title),
       element('span', 'course-count', String(count)));
     details.append(summary);
@@ -295,8 +297,10 @@
 
   const nav = element('nav', 'course-nav');
   nav.setAttribute('aria-label', '코스 목차');
-  const total = chapters.reduce((sum, chapter) =>
-    sum + chapter.lessons.length + chapter.tracks.reduce((n, track) => n + track.lessons.length, 0), 0);
+  const total = aiLine
+    ? new Set(roadmap.chapters.flatMap(chapter => chapter.lessons.map(lesson => lesson.ref))).size
+    : chapters.reduce((sum, chapter) =>
+      sum + chapter.lessons.length + chapter.tracks.reduce((n, track) => n + track.lessons.length, 0), 0);
   const label = element('div', 'course-nav-heading');
   label.append(element('strong', '', roadmap ? roadmap.title : current.topic.title),
     element('span', 'course-count', total + '개 레슨'));
@@ -386,8 +390,8 @@
   function drawDiagram(diagram) {
     scene?.querySelector('.course-diagram')?.remove();
     const reading = Boolean(diagram && workspace.classList.contains('course-reading'));
-    const visible = reading && !showSimulation;
-    drawingControl.hidden = !reading;
+    const visible = Boolean(diagram?.staticOnly) || (reading && !showSimulation);
+    drawingControl.hidden = !reading || diagram.staticOnly;
     drawingButton.textContent = visible ? '실행 장면 보기' : '도식 보기';
     workspace.classList.toggle('course-diagram-open', visible);
     workspace.classList.toggle('course-diagram-native', visible && Boolean(diagram.keepWorld));
@@ -502,7 +506,7 @@
     }
     const desktop = fitted.matches;
     const reading = hasScene && selectedView !== 'practice';
-    const summary = !aiLine && !desktop && hasScene && selectedView === 'canvas';
+    const summary = !desktop && hasScene && selectedView === 'canvas';
     workspace.classList.toggle('course-reading', reading);
     const hint = canvas.querySelector('.view-hint');
     if (hint) hint.setAttribute('aria-hidden', String(reading));

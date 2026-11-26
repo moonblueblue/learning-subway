@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 센서 경보가 작업자와 알림 프로그램에 각각 어떤 결정을 맡길까요?">
+<title>누가 어떤 결정을 내리는가 · T01</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./decision-owner.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T01</p><h1>누가 어떤 결정을 내리는가</h1><p>같은 센서 경보가 작업자와 알림 프로그램에 각각 어떤 결정을 맡길까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">누가 어떤 결정을 내리는가</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "알림 생성",
+    "title": "알림 프로그램이 점검 후보를 올립니다",
+    "body": "펌프 A가 86°C를 기록했습니다. 현재 규칙은 80°C 이상이면 경보를 만들고, 알림 프로그램의 출력은 설비 ID를 담은 후보 A입니다.",
+    "takeaway": "86°C가 80°C 이상을 통과해 펌프 A의 경보가 됩니다.",
+    "example": [
+      "A · 86°C",
+      "86 ≥ 80",
+      "A 경보"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p139_0",
+          118,
+          139,
+          155,
+          59,
+          [
+            "A · 86°C",
+            "센서 입력"
+          ],
+          "plain"
+        ],
+        [
+          "p139_1",
+          310,
+          139,
+          155,
+          59,
+          [
+            "온도 ≥ 80°C",
+            "규칙"
+          ],
+          "plain"
+        ],
+        [
+          "p139_2",
+          502,
+          139,
+          155,
+          59,
+          [
+            "A 경보",
+            "프로그램 출력"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p139_0",
+          "p139_1",
+          "active",
+          ""
+        ],
+        [
+          "p139_1",
+          "p139_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "알림 생성",
+      "description": "86°C가 80°C 이상을 통과해 펌프 A의 경보가 됩니다."
+    },
+    "quiz": [
+      "기준이 그대로일 때 79°C를 기록하면 어떤 출력이 나올까요?",
+      "경보 없음",
+      "A 경보",
+      "79°C는 기준인 80°C보다 낮습니다."
+    ]
+  },
+  {
+    "label": "작업 허가",
+    "title": "같은 경보라도 작업 허가에 따라 결정이 바뀝니다",
+    "body": "점검 담당자의 입력에는 경보와 작업 허가가 함께 들어옵니다. 현재 계기는 통전 중이라 접근 허가가 보류됐습니다. 담당자는 점검을 연기하고 인계 기록을 남깁니다.",
+    "takeaway": "점검 반장이 같은 A 경보를 보고 허가 여부에 따라 점검을 시작하거나 보류합니다.",
+    "example": [
+      "A 경보",
+      "허가 없음",
+      "작업 보류"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "alert",
+          127,
+          151,
+          155,
+          37,
+          [
+            "A 경보"
+          ],
+          "active"
+        ],
+        [
+          "gate",
+          309,
+          151,
+          148,
+          59,
+          [
+            "점검 반장",
+            "작업 허가?"
+          ],
+          "plain"
+        ],
+        [
+          "go",
+          496,
+          95,
+          148,
+          37,
+          [
+            "점검 시작"
+          ],
+          "muted"
+        ],
+        [
+          "stop",
+          496,
+          205,
+          148,
+          37,
+          [
+            "작업 보류"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "alert",
+          "gate",
+          "active",
+          "",
+          0
+        ],
+        [
+          "gate",
+          "go",
+          "muted",
+          "있음",
+          0
+        ],
+        [
+          "gate",
+          "stop",
+          "blocked",
+          "없음",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "작업 허가",
+      "description": "점검 반장이 같은 A 경보를 보고 허가 여부에 따라 점검을 시작하거나 보류합니다."
+    },
+    "quiz": [
+      "안전 확인 후 허가가 났다면 누가 점검을 시작할까요?",
+      "점검 담당자",
+      "알림 프로그램",
+      "알림은 후보를 올립니다. 작업 개시는 허가를 확인한 담당자의 결정입니다."
+    ]
+  }
+];
+const slug = 'decision-owner';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

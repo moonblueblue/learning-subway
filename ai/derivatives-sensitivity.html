@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="모델의 손실이 두 매개변수 중 어느 쪽에 더 민감한지 어떻게 읽을까요?">
+<title>미분과 편미분으로 민감도 읽기 · T23</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./derivatives-sensitivity.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T23</p><h1>미분과 편미분으로 민감도 읽기</h1><p>모델의 손실이 두 매개변수 중 어느 쪽에 더 민감한지 어떻게 읽을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">미분과 편미분으로 민감도 읽기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "한 방향 기울기",
+    "title": "아주 작은 이동의 손실 변화율을 미분으로 읽습니다",
+    "body": "센서 모델에서 b=1을 고정합니다. w를 1에서 1.1로 바꾸면 손실이 4→3.24라 변화율은 −7.6입니다. 1.01로 바꾸면 4→3.9204라 −7.96입니다. 이동을 0으로 줄인 극한인 미분값은 −8입니다.",
+    "takeaway": "같은 출발점에서 Δw가 줄어들 때 ΔL/Δw가 −8에 다가갑니다.",
+    "example": [
+      "w=1 · L=4",
+      "Δw = 0.1 → 0.01",
+      "−7.6 → −7.96 → −8"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m93_0",
+          130.0,
+          93,
+          173,
+          37,
+          [
+            "Δw"
+          ],
+          "plain"
+        ],
+        [
+          "m93_1",
+          310.0,
+          93,
+          173,
+          37,
+          [
+            "새 손실"
+          ],
+          "plain"
+        ],
+        [
+          "m93_2",
+          490.0,
+          93,
+          173,
+          37,
+          [
+            "ΔL/Δw"
+          ],
+          "plain"
+        ],
+        [
+          "m141_0",
+          130.0,
+          141,
+          173,
+          37,
+          [
+            "0.1"
+          ],
+          "plain"
+        ],
+        [
+          "m141_1",
+          310.0,
+          141,
+          173,
+          37,
+          [
+            "3.24"
+          ],
+          "plain"
+        ],
+        [
+          "m141_2",
+          490.0,
+          141,
+          173,
+          37,
+          [
+            "−7.6"
+          ],
+          "plain"
+        ],
+        [
+          "m189_0",
+          130.0,
+          189,
+          173,
+          37,
+          [
+            "0.01"
+          ],
+          "plain"
+        ],
+        [
+          "m189_1",
+          310.0,
+          189,
+          173,
+          37,
+          [
+            "3.9204"
+          ],
+          "plain"
+        ],
+        [
+          "m189_2",
+          490.0,
+          189,
+          173,
+          37,
+          [
+            "−7.96"
+          ],
+          "plain"
+        ],
+        [
+          "m237_0",
+          130.0,
+          237,
+          173,
+          37,
+          [
+            "→ 0"
+          ],
+          "active"
+        ],
+        [
+          "m237_1",
+          310.0,
+          237,
+          173,
+          37,
+          [
+            "→ 4"
+          ],
+          "plain"
+        ],
+        [
+          "m237_2",
+          490.0,
+          237,
+          173,
+          37,
+          [
+            "→ −8"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          39,
+          63,
+          "기준 w=b=1 · L=4"
+        ],
+        [
+          323,
+          63,
+          "ŷ=2w+b · y=5 · L=(ŷ−5)²"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "한 방향 기울기",
+      "description": "같은 출발점에서 Δw가 줄어들 때 ΔL/Δw가 −8에 다가갑니다."
+    },
+    "quiz": [
+      "Δw에 대한 변화율이 음수면 w를 조금 올릴 때 손실은?",
+      "내려감",
+      "올라감",
+      "음수 기울기 구간에서 양의 작은 이동은 손실을 줄입니다."
+    ]
+  },
+  {
+    "label": "다른 방향 고정",
+    "title": "편미분은 하나만 움직여 민감도를 비교합니다",
+    "body": "같은 점에서 w만 움직이면 예측이 2Δw만큼, b만 움직이면 Δb만큼 바뀝니다. 오차가 −2일 때 제곱 손실의 오차에 대한 변화율은 2×(−2)=−4라 편미분은 각각 −8, −4입니다.",
+    "takeaway": "w 가지의 ×2와 b 가지의 ×1이 같은 −4에 들어가 두 기울기를 만듭니다.",
+    "example": [
+      "w=1 · b=1 · 오차 −2",
+      "(−4)×2 · (−4)×1",
+      "∂L/∂w=−8 · ∂L/∂b=−4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p97_0",
+          118,
+          97,
+          155,
+          59,
+          [
+            "w만 변화",
+            "b = 1"
+          ],
+          "plain"
+        ],
+        [
+          "p97_1",
+          310,
+          97,
+          155,
+          59,
+          [
+            "예측 변화율",
+            "×2"
+          ],
+          "plain"
+        ],
+        [
+          "p97_2",
+          502,
+          97,
+          155,
+          37,
+          [
+            "∂L/∂w = −8"
+          ],
+          "active"
+        ],
+        [
+          "p198_0",
+          118,
+          198,
+          155,
+          59,
+          [
+            "b만 변화",
+            "w = 1"
+          ],
+          "plain"
+        ],
+        [
+          "p198_1",
+          310,
+          198,
+          155,
+          59,
+          [
+            "예측 변화율",
+            "×1"
+          ],
+          "plain"
+        ],
+        [
+          "p198_2",
+          502,
+          198,
+          155,
+          37,
+          [
+            "∂L/∂b = −4"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p97_0",
+          "p97_1",
+          "active",
+          ""
+        ],
+        [
+          "p97_1",
+          "p97_2",
+          "active",
+          ""
+        ],
+        [
+          "p198_0",
+          "p198_1",
+          "active",
+          ""
+        ],
+        [
+          "p198_1",
+          "p198_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "다른 방향 고정",
+      "description": "w 가지의 ×2와 b 가지의 ×1이 같은 −4에 들어가 두 기울기를 만듭니다."
+    },
+    "quiz": [
+      "같은 단위로 0.001씩 움직인다면 이 점에서 어느 변수가 손실에 더 큰 영향을 주나요?",
+      "w",
+      "b",
+      "이 점에서 절댓값 8이 4의 두 배입니다."
+    ]
+  }
+];
+const slug = 'derivatives-sensitivity';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

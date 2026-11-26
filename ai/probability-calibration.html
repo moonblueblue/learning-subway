@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="0.8로 예측한 고장들이 실제로 얼마나 자주 고장 나야 확률을 믿을까요?">
+<title>확률 보정과 신뢰도 곡선 · T33</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./probability-calibration.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T33</p><h1>확률 보정과 신뢰도 곡선</h1><p>0.8로 예측한 고장들이 실제로 얼마나 자주 고장 나야 확률을 믿을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">확률 보정과 신뢰도 곡선</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "구간에서 비교",
+    "title": "구간 안의 평균 점수와 실제 고장 비율을 나란히 둡니다",
+    "body": "구간별 10개 예측을 모읍니다. 평균 0.20에는 고장 2건, 0.50에는 5건, 0.80에는 6건입니다. 평균 점수와 관측 빈도를 대조하니 높은 구간만 실제 고장률 0.60보다 0.20 높습니다.",
+    "takeaway": "세 구간 중 높은 구간의 0.80과 6/10=0.60만 어긋납니다.",
+    "example": [
+      "평균 .20 · .50 · .80",
+      "고장 2/10 · 5/10 · 6/10",
+      "높은 구간 차이 0.20"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m70_0",
+          130.0,
+          70,
+          173,
+          37,
+          [
+            "평균 확률"
+          ],
+          "plain"
+        ],
+        [
+          "m70_1",
+          310.0,
+          70,
+          173,
+          37,
+          [
+            "실제 고장"
+          ],
+          "plain"
+        ],
+        [
+          "m70_2",
+          490.0,
+          70,
+          173,
+          37,
+          [
+            "실제 비율"
+          ],
+          "plain"
+        ],
+        [
+          "m121_0",
+          130.0,
+          121,
+          173,
+          37,
+          [
+            "0.20"
+          ],
+          "plain"
+        ],
+        [
+          "m121_1",
+          310.0,
+          121,
+          173,
+          37,
+          [
+            "2/10"
+          ],
+          "plain"
+        ],
+        [
+          "m121_2",
+          490.0,
+          121,
+          173,
+          37,
+          [
+            "0.20"
+          ],
+          "plain"
+        ],
+        [
+          "m172_0",
+          130.0,
+          172,
+          173,
+          37,
+          [
+            "0.50"
+          ],
+          "plain"
+        ],
+        [
+          "m172_1",
+          310.0,
+          172,
+          173,
+          37,
+          [
+            "5/10"
+          ],
+          "plain"
+        ],
+        [
+          "m172_2",
+          490.0,
+          172,
+          173,
+          37,
+          [
+            "0.50"
+          ],
+          "plain"
+        ],
+        [
+          "m223_0",
+          130.0,
+          223,
+          173,
+          37,
+          [
+            "0.80"
+          ],
+          "blocked"
+        ],
+        [
+          "m223_1",
+          310.0,
+          223,
+          173,
+          37,
+          [
+            "6/10"
+          ],
+          "plain"
+        ],
+        [
+          "m223_2",
+          490.0,
+          223,
+          173,
+          37,
+          [
+            "0.60"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "구간에서 비교",
+      "description": "세 구간 중 높은 구간의 0.80과 6/10=0.60만 어긋납니다."
+    },
+    "quiz": [
+      "평균 확률 0.40인 스무 행 중 여덟 건이 고장이면 관측 비율은?",
+      "0.40",
+      "0.80",
+      "8/20=0.40입니다."
+    ]
+  },
+  {
+    "label": "같은 축에서 읽기",
+    "title": "보정이 필요한 구간은 같은 확률 척도에서 아래로 벗어납니다",
+    "body": "가로 축을 평균 예측 확률, 세로 축을 실제 비율로 같은 0–1 범위에 놓습니다. 완전 보정은 y=x 위입니다. 높은 구간 점 (0.8, 0.6)이 (0.8, 0.8)보다 아래에 놓입니다. 10행으로 구한 빈도라 표본 오차를 함께 고려합니다.",
+    "takeaway": "x=0.8 위에서 실제 0.6 표식이 완전 보정 0.8보다 낮습니다.",
+    "example": [
+      "(0.2,0.2) · (0.5,0.5) · (0.8,0.6)",
+      "y = x 대조",
+      "높은 점이 기준선 아래"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "zero",
+          49,
+          236,
+          35,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "end",
+          514,
+          51,
+          35,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "low",
+          142,
+          199,
+          48,
+          37,
+          [
+            ".2"
+          ],
+          "active"
+        ],
+        [
+          "mid",
+          282,
+          144,
+          48,
+          37,
+          [
+            ".5"
+          ],
+          "active"
+        ],
+        [
+          "high",
+          421,
+          88,
+          48,
+          30,
+          [
+            ".8"
+          ],
+          "muted"
+        ],
+        [
+          "obs",
+          421,
+          125,
+          48,
+          30,
+          [
+            ".6"
+          ],
+          "blocked"
+        ],
+        [
+          "xend",
+          514,
+          236,
+          35,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "yend",
+          49,
+          51,
+          35,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "zero",
+          "xend",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "zero",
+          "yend",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "zero",
+          "end",
+          "muted",
+          "",
+          0
+        ],
+        [
+          "high",
+          "obs",
+          "blocked",
+          "−.2",
+          21
+        ]
+      ],
+      "labels": [
+        [
+          78,
+          59,
+          "실제 비율"
+        ],
+        [
+          219,
+          265,
+          "평균 예측 확률"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "같은 축에서 읽기",
+      "description": "x=0.8 위에서 실제 0.6 표식이 완전 보정 0.8보다 낮습니다."
+    },
+    "quiz": [
+      "높은 구간에서 확률을 그대로 보고 두 집단의 고장 수를 예산에 반영하면 무엇을 잊기 쉬운가요?",
+      "0.8의 과대 추정 근거",
+      "점수 정렬 방향이 반대",
+      "이 구간에서 평균 추정 0.80보다 실제 비율 0.60이 낮았습니다."
+    ]
+  },
+  {
+    "label": "새 구간에서 확인",
+    "title": "보정에 쓴 행과 보정 평가 행을 나눕니다",
+    "body": "보정 구간에서 높은 점수를 0.80에서 0.60 부근으로 매핑했다면 그 뒤 미사용 구간에서 실제 빈도를 다시 잽니다. 새 20행의 보정 평균이 0.60, 고장 11건이면 관측 비율은 0.55이며 차이는 0.05입니다.",
+    "takeaway": "앞 자료가 만든 보정값은 고정되고 뒤 자료의 11/20과 비교됩니다.",
+    "example": [
+      "보정 구간",
+      ".80 → .60 매핑 고정",
+      "미사용 11/20=.55"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p146_0",
+          118,
+          146,
+          155,
+          59,
+          [
+            "보정 구간",
+            ".80 → .60"
+          ],
+          "plain"
+        ],
+        [
+          "p146_1",
+          310,
+          146,
+          155,
+          59,
+          [
+            "미사용 구간",
+            "11/20 = .55"
+          ],
+          "plain"
+        ],
+        [
+          "p146_2",
+          502,
+          146,
+          155,
+          59,
+          [
+            "새 차이",
+            ".60 − .55 = .05"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p146_0",
+          "p146_1",
+          "active",
+          ""
+        ],
+        [
+          "p146_1",
+          "p146_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "새 구간에서 확인",
+      "description": "앞 자료가 만든 보정값은 고정되고 뒤 자료의 11/20과 비교됩니다."
+    },
+    "quiz": [
+      "미사용 20행에서 보정 함수를 다시 맞춘 뒤 같은 20행을 최종 평가해도 될까요?",
+      "최종 평가용 새 행이 필요",
+      "같은 행이면 충분",
+      "함수를 바꾸는 데 쓴 행은 새 함수에 대해 미사용 자료가 아닙니다."
+    ]
+  }
+];
+const slug = 'probability-calibration';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

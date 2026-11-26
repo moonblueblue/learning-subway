@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="경보 설비 ID를 좌표 이름과 헷갈리지 않고 목적지로 어떻게 연결하나요?">
+<title>경보 ID를 지도 목적지와 연결하기 · T48</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./alert-map-join.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T48</p><h1>경보 ID를 지도 목적지와 연결하기</h1><p>경보 설비 ID를 좌표 이름과 헷갈리지 않고 목적지로 어떻게 연결하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">경보 ID를 지도 목적지와 연결하기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "ID로 연결",
+    "title": "장비 ID 사전에서 지도 노드 하나를 찾습니다",
+    "body": "점검 경보 N-17이 올라왔습니다. 지도 v2의 연결 테이블 N-17→J4를 찾아 경로 탐색의 목적지 J4로 넘깁니다. 경보 이름과 노드 이름은 서로 다를 수 있습니다.",
+    "takeaway": "경보 ID N-17이 매핑 J4를 거쳐 동일 J4 목적지가 됩니다.",
+    "example": [
+      "N-17",
+      "지도 v2 조회",
+      "목적지 J4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p145_0",
+          118,
+          145,
+          155,
+          59,
+          [
+            "경보",
+            "N-17"
+          ],
+          "plain"
+        ],
+        [
+          "p145_1",
+          310,
+          145,
+          155,
+          59,
+          [
+            "연결표 v2",
+            "N-17 → J4"
+          ],
+          "plain"
+        ],
+        [
+          "p145_2",
+          502,
+          145,
+          155,
+          59,
+          [
+            "탐색 목적지",
+            "J4"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p145_0",
+          "p145_1",
+          "active",
+          ""
+        ],
+        [
+          "p145_1",
+          "p145_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "ID로 연결",
+      "description": "경보 ID N-17이 매핑 J4를 거쳐 동일 J4 목적지가 됩니다."
+    },
+    "quiz": [
+      "노드 J4가 사람에게는 ‘북쪽 밸브’로도 불립니다. 프로그램 키에는 무엇을 쓰나요?",
+      "고정 노드 ID J4",
+      "비슷해 보이는 별명",
+      "표의 ID는 지도 노드를 모호함 없이 가리킵니다."
+    ]
+  },
+  {
+    "label": "일치 실패",
+    "title": "연결표에 ID가 없으면 경로 질의를 만들지 않습니다",
+    "body": "다시 울린 N-71은 지도 v2의 연결표에 없습니다. 이미 알고 있는 N-17의 J4를 빌리지 않고, 매핑 없음 상태와 원래 경보 N-71을 작업자에게 넘깁니다.",
+    "takeaway": "N-71이 연결표에서 멈추며 J4로 가는 경로 입력이 생기지 않습니다.",
+    "example": [
+      "N-71",
+      "연결표 일치 0건",
+      "매핑 없음"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p145_0",
+          118,
+          145,
+          155,
+          59,
+          [
+            "경보",
+            "N-71"
+          ],
+          "plain"
+        ],
+        [
+          "p145_1",
+          310,
+          145,
+          155,
+          59,
+          [
+            "연결표 v2",
+            "일치 0건"
+          ],
+          "plain"
+        ],
+        [
+          "p145_2",
+          502,
+          145,
+          155,
+          59,
+          [
+            "매핑 없음",
+            "수동 검토"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p145_0",
+          "p145_1",
+          "active",
+          ""
+        ],
+        [
+          "p145_1",
+          "p145_2",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "일치 실패",
+      "description": "N-71이 연결표에서 멈추며 J4로 가는 경로 입력이 생기지 않습니다."
+    },
+    "quiz": [
+      "N-71이 J4 근처에 있다고 들었지만 표에 항목이 없습니다. 바로 J4로 안내할까요?",
+      "매핑 검증 후 지정",
+      "가장 비슷한 값으로 자동 지정",
+      "점검 대상이 잘못되지 않게 원래 ID를 유지하고 위치를 확인합니다."
+    ]
+  }
+];
+const slug = 'alert-map-join';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

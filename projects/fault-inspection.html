@@ -1,0 +1,1518 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="시간순 고장 경보를 만들고 실제 통로와 사람이 확인할 조건까지 어떻게 보고하나요?">
+<title>설비 경보와 점검 경로 · 졸업 과제</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.55 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:16px}
+h1,h2,p{margin:0}
+.eyebrow,.takeaway strong{color:var(--accent);font-size:.875rem;font-weight:700}
+.workspace{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:16px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px}
+.stage-top,.timeline,.explanation,.hands-on{padding:12px 16px}
+.stage-top h2,.timeline h2{font-size:1rem}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+#scene{display:block;width:100%;height:auto}
+.actions,.navigation,#choices,.downloads{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9aac9f;background:white;border-radius:8px;padding:6px 10px;min-height:44px;font-weight:650}
+.action:hover:not(:disabled){background:#e9f5f3}
+.action[aria-pressed=true]{border:2px solid var(--accent)}
+.primary,.primary:hover:not(:disabled){background:var(--accent);color:white;border-color:var(--accent)}
+.timeline-top{display:flex;justify-content:space-between;gap:10px}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;padding:0}
+.steps li{min-width:0}
+.steps button{width:100%;min-height:44px;padding:6px;border:1px solid var(--border);border-radius:8px;background:white}
+.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent)}
+.step-number{color:var(--accent);font-weight:bold;margin-inline-end:.4em}
+.explanation p{color:var(--muted)}
+.takeaway{background:#e9f5f3;border-inline-start:3px solid var(--accent);padding:.5rem .75rem}
+.try,.readout{margin-block:.5rem}
+.readout:empty{display:none}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}}
+</style>
+<script src="./fault-inspection/fixtures.js"></script>
+<script src="./fault-inspection/reference.js"></script>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./fault-inspection.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · 졸업 과제</p><h1>설비 경보와 점검 경로</h1><p>시간순 고장 경보를 만들고 실제 통로와 사람이 확인할 조건까지 어떻게 보고하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">설비 경보와 점검 경로</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>공장 자료와 참조 평가</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "시각과 입력",
+    "title": "08:00에 이미 받은 센서만 특징으로 씁니다",
+    "body": "설비 A의 온도 79°C와 진동 5 mm/s를 07:50에 측정해 07:52에 받았습니다. 13:00 고장 후 입력한 정비 코드는 08:00 경보에는 사용할 수 없습니다. 같은 UTC 시계에서 예측 뒤 24시간의 고장 여부로 정답을 붙입니다.",
+    "takeaway": "07:52에 받은 두 값이 08:00 입력 컷오프를 통과하고 정비 코드는 시간 경계 뒤에 남습니다.",
+    "example": [
+      "A · 07:52 수신",
+      "08:00 UTC 시점 고정",
+      "x=(79°C, 5 mm/s)"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p109_0",
+          118,
+          109,
+          155,
+          59,
+          [
+            "07:52",
+            "79°C · 5 mm/s"
+          ],
+          "active"
+        ],
+        [
+          "p109_1",
+          310,
+          109,
+          155,
+          59,
+          [
+            "08:00 UTC",
+            "예측"
+          ],
+          "plain"
+        ],
+        [
+          "p109_2",
+          502,
+          109,
+          155,
+          59,
+          [
+            "13:15",
+            "정비 코드"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p109_0",
+          "p109_1",
+          "active",
+          ""
+        ],
+        [
+          "p109_1",
+          "p109_2",
+          "muted",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          43,
+          205,
+          "08:00 입력: 79°C · 5 mm/s"
+        ],
+        [
+          43,
+          242,
+          "정비 코드는 입력 제외"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "시각과 입력",
+      "description": "07:52에 받은 두 값이 08:00 입력 컷오프를 통과하고 정비 코드는 시간 경계 뒤에 남습니다."
+    },
+    "quiz": [
+      "08:00 이후에 도착한 센서값으로 그날의 경보를 만들까요?",
+      "예측 뒤 도착값은 제외",
+      "측정값은 모두 사용",
+      "정한 시점에 이미 수신한 값만 자동 평가에 씁니다."
+    ]
+  },
+  {
+    "label": "학습 빈도표",
+    "title": "학습 15행에서 네 조합의 점수를 배웁니다",
+    "body": "온도 ≥80°C, 진동 ≥4 mm/s 여부를 두 특징으로 만듭니다. 각 조합에서 고장 수 f와 전체 n을 세고 (f+1)/(n+2)를 저장합니다. 미관측 조합도 이 식에서 0.5가 됩니다.",
+    "takeaway": "저온·고진동 조합은 실제 고장 3/4에서 보정 점수 4/6을 얻습니다.",
+    "example": [
+      "1월 학습 15행",
+      "(f+1)/(n+2)",
+      "(0,1) → 4/6"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m72_0",
+          95.5,
+          89,
+          136,
+          37,
+          [
+            "온도·진동"
+          ],
+          "plain"
+        ],
+        [
+          "m72_1",
+          238.5,
+          89,
+          136,
+          37,
+          [
+            "고장 f"
+          ],
+          "plain"
+        ],
+        [
+          "m72_2",
+          381.5,
+          89,
+          136,
+          37,
+          [
+            "전체 n"
+          ],
+          "plain"
+        ],
+        [
+          "m72_3",
+          524.5,
+          89,
+          136,
+          37,
+          [
+            "점수"
+          ],
+          "plain"
+        ],
+        [
+          "m120_0",
+          95.5,
+          132,
+          136,
+          37,
+          [
+            "0 · 0"
+          ],
+          "plain"
+        ],
+        [
+          "m120_1",
+          238.5,
+          132,
+          136,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m120_2",
+          381.5,
+          132,
+          136,
+          37,
+          [
+            "5"
+          ],
+          "plain"
+        ],
+        [
+          "m120_3",
+          524.5,
+          132,
+          136,
+          37,
+          [
+            "1/7"
+          ],
+          "plain"
+        ],
+        [
+          "m165_0",
+          95.5,
+          174,
+          136,
+          37,
+          [
+            "1 · 0"
+          ],
+          "plain"
+        ],
+        [
+          "m165_1",
+          238.5,
+          174,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m165_2",
+          381.5,
+          174,
+          136,
+          37,
+          [
+            "3"
+          ],
+          "plain"
+        ],
+        [
+          "m165_3",
+          524.5,
+          174,
+          136,
+          37,
+          [
+            "2/5"
+          ],
+          "plain"
+        ],
+        [
+          "m210_0",
+          95.5,
+          216,
+          136,
+          37,
+          [
+            "0 · 1"
+          ],
+          "active"
+        ],
+        [
+          "m210_1",
+          238.5,
+          216,
+          136,
+          37,
+          [
+            "3"
+          ],
+          "active"
+        ],
+        [
+          "m210_2",
+          381.5,
+          216,
+          136,
+          37,
+          [
+            "4"
+          ],
+          "active"
+        ],
+        [
+          "m210_3",
+          524.5,
+          216,
+          136,
+          37,
+          [
+            "4/6"
+          ],
+          "active"
+        ],
+        [
+          "m255_0",
+          95.5,
+          258,
+          136,
+          37,
+          [
+            "1 · 1"
+          ],
+          "plain"
+        ],
+        [
+          "m255_1",
+          238.5,
+          258,
+          136,
+          37,
+          [
+            "3"
+          ],
+          "plain"
+        ],
+        [
+          "m255_2",
+          381.5,
+          258,
+          136,
+          37,
+          [
+            "3"
+          ],
+          "plain"
+        ],
+        [
+          "m255_3",
+          524.5,
+          258,
+          136,
+          37,
+          [
+            "4/5"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          46,
+          61,
+          "점수 = (f+1)/(n+2)"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "학습 빈도표",
+      "description": "저온·고진동 조합은 실제 고장 3/4에서 보정 점수 4/6을 얻습니다."
+    },
+    "quiz": [
+      "80°C 미만이면서 진동 4 mm/s 이상인 설비의 점수는?",
+      "4/6",
+      "2/5",
+      "학습표의 (0,1)은 4행 중 3건이므로 (3+1)/(4+2)입니다."
+    ]
+  },
+  {
+    "label": "검증에서 정책 고정",
+    "title": "검증 비용으로 .35를 선택하고 정책 파일에 고정합니다",
+    "body": "2월 검증 행에서 .35, .55, .75의 비용은 2, 6, 10입니다. 5×미탐+오탐을 최소화하는 .35를 선택합니다. 동점이면 오탐 수가 더 작은 높은 임계값을 쓰는 것으로 정한 뒤 기준을 고정합니다.",
+    "takeaway": "검증 여섯 행에서 0.35만 놓친 고장이 0건이라 비용이 2입니다.",
+    "example": [
+      "2월 검증 6행",
+      "5×FN + FP",
+      "τ = .35 · 비용 2"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m78_0",
+          95.5,
+          78,
+          136,
+          37,
+          [
+            "임계값"
+          ],
+          "plain"
+        ],
+        [
+          "m78_1",
+          238.5,
+          78,
+          136,
+          37,
+          [
+            "미탐×5"
+          ],
+          "plain"
+        ],
+        [
+          "m78_2",
+          381.5,
+          78,
+          136,
+          37,
+          [
+            "오탐"
+          ],
+          "plain"
+        ],
+        [
+          "m78_3",
+          524.5,
+          78,
+          136,
+          37,
+          [
+            "비용"
+          ],
+          "plain"
+        ],
+        [
+          "m133_0",
+          95.5,
+          133,
+          136,
+          37,
+          [
+            ".35"
+          ],
+          "active"
+        ],
+        [
+          "m133_1",
+          238.5,
+          133,
+          136,
+          37,
+          [
+            "0×5"
+          ],
+          "plain"
+        ],
+        [
+          "m133_2",
+          381.5,
+          133,
+          136,
+          37,
+          [
+            "2"
+          ],
+          "plain"
+        ],
+        [
+          "m133_3",
+          524.5,
+          133,
+          136,
+          37,
+          [
+            "2"
+          ],
+          "active"
+        ],
+        [
+          "m185_0",
+          95.5,
+          185,
+          136,
+          37,
+          [
+            ".55"
+          ],
+          "plain"
+        ],
+        [
+          "m185_1",
+          238.5,
+          185,
+          136,
+          37,
+          [
+            "1×5"
+          ],
+          "plain"
+        ],
+        [
+          "m185_2",
+          381.5,
+          185,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m185_3",
+          524.5,
+          185,
+          136,
+          37,
+          [
+            "6"
+          ],
+          "plain"
+        ],
+        [
+          "m237_0",
+          95.5,
+          237,
+          136,
+          37,
+          [
+            ".75"
+          ],
+          "plain"
+        ],
+        [
+          "m237_1",
+          238.5,
+          237,
+          136,
+          37,
+          [
+            "2×5"
+          ],
+          "plain"
+        ],
+        [
+          "m237_2",
+          381.5,
+          237,
+          136,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m237_3",
+          524.5,
+          237,
+          136,
+          37,
+          [
+            "10"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "검증에서 정책 고정",
+      "description": "검증 여섯 행에서 0.35만 놓친 고장이 0건이라 비용이 2입니다."
+    },
+    "quiz": [
+      "미사용 시험을 열기 전에 무엇을 저장해야 하나요?",
+      "학습 빈도표·임계값·정책 버전",
+      "시험에서 다시 고른 값",
+      "평가할 정책을 먼저 고정해야 시험 결과를 독립적으로 얻습니다."
+    ]
+  },
+  {
+    "label": "미사용 시험 실행",
+    "title": "같은 일곱 행에서 비용이 12에서 8로 줄어듭니다",
+    "body": "3월 시험은 9행입니다. 정상적인 입력을 받은 7행 양쪽에 같은 기준으로 평가합니다. 새 정책은 놓친 설비 E에 5점, 헛경보 B·C·F에 3점으로 총 8입니다. 입력이 오래되거나 늦은 H·I는 별도 인계입니다.",
+    "takeaway": "후보가 미탐 2→1을 줄이고 오탐 2→3을 늘려 비용이 4점 내려갑니다.",
+    "example": [
+      "동일 시험 7행",
+      "5×FN + FP, 인계 2건 별도",
+      "기준선 12 → 후보 8"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m77_0",
+          95.5,
+          77,
+          136,
+          37,
+          [
+            "정책"
+          ],
+          "plain"
+        ],
+        [
+          "m77_1",
+          238.5,
+          77,
+          136,
+          37,
+          [
+            "미탐×5"
+          ],
+          "plain"
+        ],
+        [
+          "m77_2",
+          381.5,
+          77,
+          136,
+          37,
+          [
+            "오탐"
+          ],
+          "plain"
+        ],
+        [
+          "m77_3",
+          524.5,
+          77,
+          136,
+          37,
+          [
+            "비용"
+          ],
+          "plain"
+        ],
+        [
+          "m146_0",
+          95.5,
+          146,
+          136,
+          37,
+          [
+            "80°C 규칙"
+          ],
+          "plain"
+        ],
+        [
+          "m146_1",
+          238.5,
+          146,
+          136,
+          37,
+          [
+            "2×5"
+          ],
+          "plain"
+        ],
+        [
+          "m146_2",
+          381.5,
+          146,
+          136,
+          37,
+          [
+            "2"
+          ],
+          "plain"
+        ],
+        [
+          "m146_3",
+          524.5,
+          146,
+          136,
+          37,
+          [
+            "12"
+          ],
+          "plain"
+        ],
+        [
+          "m213_0",
+          95.5,
+          213,
+          136,
+          37,
+          [
+            ".35 모델"
+          ],
+          "active"
+        ],
+        [
+          "m213_1",
+          238.5,
+          213,
+          136,
+          37,
+          [
+            "1×5"
+          ],
+          "plain"
+        ],
+        [
+          "m213_2",
+          381.5,
+          213,
+          136,
+          37,
+          [
+            "3"
+          ],
+          "plain"
+        ],
+        [
+          "m213_3",
+          524.5,
+          213,
+          136,
+          37,
+          [
+            "8"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          43,
+          266,
+          "H·I: 입력 검토 2건 별도"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "미사용 시험 실행",
+      "description": "후보가 미탐 2→1을 줄이고 오탐 2→3을 늘려 비용이 4점 내려갑니다."
+    },
+    "quiz": [
+      "낮은 비용을 봤으니 지금 .30으로 바꿔 같은 시험표를 확정할까요?",
+      "정책 변경 시 새 시험 필요",
+      "같은 시험으로 확정",
+      "이미 이 시험 자료가 정책 변경에 쓰였습니다."
+    ]
+  },
+  {
+    "label": "첫 목적지",
+    "title": "위험 순 1위 D의 지도 목적지는 Z-D입니다",
+    "body": "경보 후보를 점수 내림차순으로 정렬하고 동점은 설비 ID 순으로 둡니다. 이 시험 교대의 두 자리는 D와 A이고 D의 목적지 Z-D는 열린 지도에서 S–J–Z-D로 5분입니다.",
+    "takeaway": "D의 별도 지도 키 Z-D에 J를 거치는 2+3이 연결됩니다.",
+    "example": [
+      "D · 점수 .80",
+      "지도 D → Z-D",
+      "S → J → Z-D · 5분"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          91,
+          150,
+          69,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "j",
+          299,
+          84,
+          69,
+          37,
+          [
+            "J"
+          ],
+          "active"
+        ],
+        [
+          "k",
+          299,
+          216,
+          69,
+          37,
+          [
+            "K"
+          ],
+          "plain"
+        ],
+        [
+          "z",
+          507,
+          150,
+          145,
+          59,
+          [
+            "Z-D",
+            "설비 D"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "j",
+          "active",
+          "2 min",
+          0
+        ],
+        [
+          "j",
+          "z",
+          "active",
+          "3 min",
+          0
+        ],
+        [
+          "s",
+          "k",
+          "plain",
+          "4 min",
+          0
+        ],
+        [
+          "k",
+          "z",
+          "plain",
+          "4 min",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          53,
+          268,
+          "D(.80) · A(.67): 두 슬롯"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "첫 목적지",
+      "description": "D의 별도 지도 키 Z-D에 J를 거치는 2+3이 연결됩니다."
+    },
+    "quiz": [
+      "D와 A의 점수가 같을 때 이번 과제의 동점 규칙이면 누가 먼저인가요?",
+      "A",
+      "D",
+      "동점은 설비 ID의 오름차순입니다."
+    ]
+  },
+  {
+    "label": "폐쇄 통로 우회",
+    "title": "J→Z-D가 막히면 K를 거쳐 8분이 됩니다",
+    "body": "시나리오 close-j에서는 J–Z-D를 후보에서 제외합니다. 점검 대상은 D 그대로이고, 통행선만 바뀝니다. S에서 K를 거쳐 Z-D까지 4+4=8분입니다.",
+    "takeaway": "폐쇄된 윗길의 3분 간선을 쓸 수 없어 아랫길 두 4분이 선택됩니다.",
+    "example": [
+      "D → Z-D",
+      "J→Z-D 닫힘",
+      "S → K → Z-D · 8분"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          91,
+          150,
+          69,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "j",
+          299,
+          84,
+          69,
+          37,
+          [
+            "J"
+          ],
+          "muted"
+        ],
+        [
+          "k",
+          299,
+          216,
+          69,
+          37,
+          [
+            "K"
+          ],
+          "active"
+        ],
+        [
+          "z",
+          507,
+          150,
+          145,
+          59,
+          [
+            "Z-D",
+            "설비 D"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "j",
+          "muted",
+          "2 min",
+          0
+        ],
+        [
+          "j",
+          "z",
+          "blocked",
+          "× 폐쇄",
+          0
+        ],
+        [
+          "s",
+          "k",
+          "active",
+          "4 min",
+          0
+        ],
+        [
+          "k",
+          "z",
+          "active",
+          "4 min",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          223,
+          268,
+          "우회 8분"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "폐쇄 통로 우회",
+      "description": "폐쇄된 윗길의 3분 간선을 쓸 수 없어 아랫길 두 4분이 선택됩니다."
+    },
+    "quiz": [
+      "이때 경보 임계값을 다시 학습하나요?",
+      "같은 경보에서 경로 재계산",
+      "임계값 새로 학습",
+      "막힌 것은 통로입니다. 경보 점수와 대상은 유지됩니다."
+    ]
+  },
+  {
+    "label": "고립과 인계",
+    "title": "Z-D가 고립되면 길을 보류하고 담당자에게 넘깁니다",
+    "body": "isolate-d에서는 J와 K에서 Z-D로 들어가는 두 통로가 폐쇄됐습니다. 경로·비용은 비우고 설비 ID, 목적지, 폐쇄 ID를 점검 반장에게 보냅니다. 반장이 통행 가능 여부를 확인하고 지도 갱신 후 다시 실행합니다.",
+    "takeaway": "Z-D로 들어가는 두 간선이 막혀 비용 없음과 사람 인계가 표시됩니다.",
+    "example": [
+      "J→Z-D · K→Z-D 폐쇄",
+      "두 진입선 제외",
+      "D 도달 불가 · 인계"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          85,
+          150,
+          67,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "j",
+          260,
+          86,
+          67,
+          37,
+          [
+            "J"
+          ],
+          "plain"
+        ],
+        [
+          "k",
+          260,
+          215,
+          67,
+          37,
+          [
+            "K"
+          ],
+          "plain"
+        ],
+        [
+          "z",
+          496,
+          150,
+          147,
+          59,
+          [
+            "Z-D",
+            "도달 불가"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "j",
+          "active",
+          "",
+          0
+        ],
+        [
+          "s",
+          "k",
+          "active",
+          "",
+          0
+        ],
+        [
+          "j",
+          "z",
+          "blocked",
+          "×",
+          0
+        ],
+        [
+          "k",
+          "z",
+          "blocked",
+          "×",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          299,
+          259,
+          "비용 없음 → 점검 반장"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "고립과 인계",
+      "description": "Z-D로 들어가는 두 간선이 막혀 비용 없음과 사람 인계가 표시됩니다."
+    },
+    "quiz": [
+      "D가 실제 고장이고 경보가 울렸지만 고립됐습니다. 비용표에서 D는 미탐인가요?",
+      "경보 적중, 경로 인계",
+      "경보 미탐",
+      "경보 평가와 경로 성공 여부는 분리합니다."
+    ]
+  },
+  {
+    "label": "재현 기록",
+    "title": "비용과 경로 예외가 모두 재현되면 인계를 검토합니다",
+    "body": "서로 다른 실행자가 같은 데이터·코드·지도 버전으로 경보, 비용, 세 경로 상태를 비교합니다. D가 고립된 경우와 센서 입력 확인이 필요한 H·I의 경우 누가 어떤 정보를 받아야 하는지 보고합니다. 작은 합성 자료에서 비용이 줄었다는 결과만으로 실제 자동 점검을 승인하지 않습니다.",
+    "takeaway": "비용 8과 경로 5·8·도달 불가를 기록하고, H·I 입력 검토와 D 고립을 각각 점검 반장에게 인계합니다.",
+    "example": [
+      "정책 .35 · 지도 v1",
+      "같은 입력으로 동료 재실행",
+      "비용 8 · 경로 예외 · 인계"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m77_0",
+          130.0,
+          68,
+          173,
+          37,
+          [
+            "검증할 출력"
+          ],
+          "plain"
+        ],
+        [
+          "m77_1",
+          310.0,
+          68,
+          173,
+          37,
+          [
+            "기준 결과"
+          ],
+          "plain"
+        ],
+        [
+          "m77_2",
+          490.0,
+          68,
+          173,
+          37,
+          [
+            "담당자"
+          ],
+          "plain"
+        ],
+        [
+          "m135_0",
+          130.0,
+          112,
+          173,
+          37,
+          [
+            "시험 비용"
+          ],
+          "plain"
+        ],
+        [
+          "m135_1",
+          310.0,
+          112,
+          173,
+          37,
+          [
+            "12 → 8"
+          ],
+          "plain"
+        ],
+        [
+          "m135_2",
+          490.0,
+          112,
+          173,
+          37,
+          [
+            "평가자"
+          ],
+          "plain"
+        ],
+        [
+          "m187_0",
+          130.0,
+          156,
+          173,
+          37,
+          [
+            "D 경로"
+          ],
+          "plain"
+        ],
+        [
+          "m187_1",
+          310.0,
+          156,
+          173,
+          37,
+          [
+            "5 · 8 · —"
+          ],
+          "plain"
+        ],
+        [
+          "m187_2",
+          490.0,
+          156,
+          173,
+          37,
+          [
+            "점검 반장"
+          ],
+          "plain"
+        ],
+        [
+          "m239_0",
+          130.0,
+          200,
+          173,
+          37,
+          [
+            "H·I 입력"
+          ],
+          "plain"
+        ],
+        [
+          "m239_1",
+          310.0,
+          200,
+          173,
+          37,
+          [
+            "센서 확인"
+          ],
+          "active"
+        ],
+        [
+          "m239_2",
+          490.0,
+          200,
+          173,
+          37,
+          [
+            "점검 반장"
+          ],
+          "plain"
+        ],
+        [
+          "m246_130",
+          130,
+          244,
+          173,
+          37,
+          [
+            "D 고립"
+          ],
+          "blocked"
+        ],
+        [
+          "m246_310",
+          310,
+          244,
+          173,
+          37,
+          [
+            "현장 통행 확인"
+          ],
+          "active"
+        ],
+        [
+          "m246_490",
+          490,
+          244,
+          173,
+          37,
+          [
+            "점검 반장"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "재현 기록",
+      "description": "비용 8과 경로 5·8·도달 불가를 기록하고, H·I 입력 검토와 D 고립을 각각 점검 반장에게 인계합니다."
+    },
+    "quiz": [
+      "재실행 장부에 지도의 버전이 빠졌다면 무엇을 확인할까요?",
+      "같은 지도와 폐쇄 ID인지",
+      "경보 비용만 같은지",
+      "경보가 같아도 지도와 폐쇄가 다르면 경로는 바뀝니다."
+    ]
+  }
+];
+const slug = 'fault-inspection';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1};
+
+function showStep(index, announce = true) {
+  state.index = index;
+  const step = lesson[index];
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.takeaway;
+  byId('scene-desc').textContent = step.readingDiagram.description;
+  byId('count').textContent = `${index + 1} / ${lesson.length}`;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  for (const [position, button] of stepButtons.entries()) {
+    if (position === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  }
+  try { localStorage.setItem(storageKey, String(index)); } catch {}
+  document.dispatchEvent(new Event('inspection:step'));
+  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
+}
+
+function routeIndex() {
+  const match = new RegExp('^#/' + slug + '/(\\d+)$').exec(location.hash);
+  const index = match ? Number(match[1]) - 1 : -1;
+  if (index >= 0 && index < lesson.length) return index;
+  try {
+    const saved = Number(localStorage.getItem(storageKey));
+    if (Number.isInteger(saved) && saved >= 0 && saved < lesson.length) return saved;
+  } catch {}
+  return 0;
+}
+
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/${slug}/${index + 1}`);
+  showStep(index);
+}
+
+const stepButtons = lesson.map(({label}, index) => {
+  const item = document.createElement('li');
+  const button = document.createElement('button');
+  const number = document.createElement('span');
+  button.type = 'button';
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.onclick = () => goToStep(index);
+  item.append(button);
+  byId('steps').append(item);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+window.addEventListener('popstate', syncRoute);
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('keydown', event => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/${slug}/${initial + 1}`);
+showStep(initial, false);
+const fixed = window.inspectionFixtures;
+const reference = window.faultInspection;
+let lockedPolicy;
+let evidence;
+
+function downloadJson(name, contents) {
+  const file = new Blob([JSON.stringify(contents, null, 2) + '\n'], {type: 'application/json'});
+  const url = URL.createObjectURL(file);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function showEvidence(...lines) {
+  const status = byId('feedback');
+  status.replaceChildren();
+  for (const line of lines) {
+    if (status.childNodes.length) status.append(document.createElement('br'));
+    status.append(document.createTextNode(line));
+  }
+}
+
+function practiceButton(label, action) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'action';
+  button.textContent = label;
+  button.onclick = action;
+  byId('choices').append(button);
+}
+
+function getPolicy() {
+  if (!lockedPolicy) showEvidence('검증 단계에서 정책을 먼저 고정하세요.');
+  return lockedPolicy;
+}
+
+function showRunSummary() {
+  showEvidence('미탐·오탐 비용', `80°C: ${evidence.baseline.counts.cost} · τ=${evidence.cutoff}: ${evidence.candidate.counts.cost}`,
+    '센서 확인이 필요한 설비', evidence.review.map(row => row.equipment_id).join(' · '));
+}
+
+const scenarios = ['open', 'close-j', 'isolate-d'];
+function showRoute(index) {
+  if (!evidence) {
+    showEvidence('시험 단계에서 미사용 자료를 먼저 평가하세요.');
+    return;
+  }
+  const result = evidence.routes.find(row => row.scenario === scenarios[index]);
+  showEvidence(...result.inspections.map(({equipment_id: unit, path, minutes, status}) =>
+    path ? `${unit}: ${path.join(' → ')} · ${minutes} min` : `${unit}: ${status} → inspection-lead`));
+}
+
+const problems = [
+  '개발 자료와 참조 코드를 받고 입력 시각을 확인하세요.',
+  '학습행에서 조합별 빈도를 계산해 보세요.',
+  '2월 비용이 가장 낮은 임계값을 선택하세요.',
+  '정책을 고정한 뒤 3월 시험 자료를 여세요.',
+  '공장 지도를 받고 열린 통로의 경로를 확인하세요.',
+  'J-D를 닫고 같은 두 설비에 경로를 다시 구하세요.',
+  'J-D와 K-D를 닫고 D 도달 여부를 확인하세요.',
+  '세 경로 상태와 시험 비용을 보고서 파일에 기록하세요.'
+];
+
+function renderProject() {
+  const {index} = state;
+  byId('choices').replaceChildren();
+  byId('prompt').textContent = problems[index];
+  showEvidence();
+  switch (index) {
+    case 0: {
+      practiceButton('개발 자료 받기', () => downloadJson('development.json', fixed.development));
+      const link = document.createElement('a');
+      link.className = 'action';
+      link.href = './fault-inspection/reference.js';
+      link.download = 'reference.js';
+      link.textContent = '참조 코드 받기';
+      const instructions = document.createElement('a');
+      instructions.className = 'action';
+      instructions.href = './fault-inspection/instructions.md';
+      instructions.download = 'instructions.md';
+      instructions.textContent = '과제 안내 받기';
+      byId('choices').append(link, instructions);
+      break;
+    }
+    case 1:
+      practiceButton('학습 빈도 계산', () => {
+        const {frequencies} = reference.lock(fixed.development);
+        showEvidence(...['00', '10', '01', '11'].map(key => {
+          const {failures, total, score} = frequencies[key];
+          return `${key}: (${failures}+1)/(${total}+2) = ${score.toFixed(3)}`;
+        }));
+      });
+      break;
+    case 2:
+      if (lockedPolicy) {
+        showEvidence('정책 고정', `τ = ${lockedPolicy.cutoff}`);
+        practiceButton('정책 파일 받기', () => downloadJson('policy.json', lockedPolicy));
+        break;
+      }
+      for (const cutoff of [0.35, 0.55, 0.75]) {
+        practiceButton(String(cutoff), () => {
+          const policy = reference.lock(fixed.development);
+          if (policy.cutoff === cutoff) {
+            lockedPolicy = policy;
+            renderProject();
+          } else {
+            const result = policy.validation.find(row => row.cutoff === cutoff);
+            showEvidence('다른 기준과 비용을 비교하세요.', `${result.fn} × 5 + ${result.fp} = ${result.cost}`);
+          }
+        });
+      }
+      break;
+    case 3:
+      if (getPolicy()) {
+        practiceButton('시험 비용 계산', () => {
+          evidence = reference.evaluate(lockedPolicy, fixed.holdout, fixed.map);
+          showRunSummary();
+        });
+        practiceButton('시험 자료 받기', () => downloadJson('holdout.json', fixed.holdout));
+        if (evidence) showRunSummary();
+      }
+      break;
+    case 4:
+    case 5:
+    case 6:
+      practiceButton('경로 실행', () => showRoute(index - 4));
+      if (index === 4) practiceButton('지도 받기', () => downloadJson('plant-map.json', fixed.map));
+      break;
+    default:
+      if (evidence) practiceButton('보고서 받기', () => downloadJson('report.json', evidence));
+      else showEvidence('시험 단계에서 미사용 자료를 먼저 평가하세요.');
+  }
+}
+
+document.addEventListener('inspection:step', renderProject);
+renderProject();
+
+</script>
+</body>
+</html>

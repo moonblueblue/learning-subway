@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="빈 값과 고장 센서의 숫자를 어떻게 분리하나요?">
+<title>결측과 센서 고장 구별하기 · T09</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./missing-readings.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T09</p><h1>결측과 센서 고장 구별하기</h1><p>빈 값과 고장 센서의 숫자를 어떻게 분리하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">결측과 센서 고장 구별하기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "빈 관측",
+    "title": "빈 값에는 관측이 없습니다",
+    "body": "센서 G의 마지막 정상값은 117 kPa입니다. 다음 표본에서 연결이 끊겨 값이 없습니다. 0 kPa는 실제 측정값일 수 있어 빈칸과 구별합니다.",
+    "takeaway": "117과 다음 빈칸을 같은 압력 열에 두고, 통신 끊김은 상태 열에 남깁니다.",
+    "example": [
+      "09:00:00 · 117 kPa",
+      "09:00:15 통신 단절",
+      "압력 = NULL"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m76_0",
+          130.0,
+          76,
+          173,
+          37,
+          [
+            "시각"
+          ],
+          "plain"
+        ],
+        [
+          "m76_1",
+          310.0,
+          76,
+          173,
+          37,
+          [
+            "압력"
+          ],
+          "plain"
+        ],
+        [
+          "m76_2",
+          490.0,
+          76,
+          173,
+          37,
+          [
+            "연결"
+          ],
+          "plain"
+        ],
+        [
+          "m138_0",
+          130.0,
+          138,
+          173,
+          37,
+          [
+            "09:00:00"
+          ],
+          "plain"
+        ],
+        [
+          "m138_1",
+          310.0,
+          138,
+          173,
+          37,
+          [
+            "117 kPa"
+          ],
+          "plain"
+        ],
+        [
+          "m138_2",
+          490.0,
+          138,
+          173,
+          37,
+          [
+            "연결됨"
+          ],
+          "active"
+        ],
+        [
+          "m198_0",
+          130.0,
+          198,
+          173,
+          37,
+          [
+            "09:00:15"
+          ],
+          "plain"
+        ],
+        [
+          "m198_1",
+          310.0,
+          198,
+          173,
+          37,
+          [
+            "NULL"
+          ],
+          "blocked"
+        ],
+        [
+          "m198_2",
+          490.0,
+          198,
+          173,
+          37,
+          [
+            "단절"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "빈 관측",
+      "description": "117과 다음 빈칸을 같은 압력 열에 두고, 통신 끊김은 상태 열에 남깁니다."
+    },
+    "quiz": [
+      "표에 0 kPa와 단절 상태가 동시에 있습니다. 확인할 일은?",
+      "0을 대신 기입했는지 확인",
+      "실제 압력 0으로 확정",
+      "연결 상태가 끊겼다면 그 0이 센서에서 도착했는지 대조해야 합니다."
+    ]
+  },
+  {
+    "label": "숫자가 의심될 때",
+    "title": "같은 숫자가 반복돼도 통신은 살아 있을 수 있습니다",
+    "body": "복구 뒤 G가 117을 세 번 연속 보냈습니다. 같은 시간 기준 계기는 117→124→132였으므로 연결은 정상이지만 센서가 고정된 값만 보내는지 점검합니다.",
+    "takeaway": "시각이 맞춰진 두 열에서 G만 117로 고정되고 마지막 편차는 15 kPa입니다.",
+    "example": [
+      "G: 117 → 117 → 117",
+      "기준 계기와 대조",
+      "132 − 117 = 15 kPa"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m71_0",
+          130.0,
+          71,
+          173,
+          37,
+          [
+            "시각"
+          ],
+          "plain"
+        ],
+        [
+          "m71_1",
+          310.0,
+          71,
+          173,
+          37,
+          [
+            "G · kPa"
+          ],
+          "plain"
+        ],
+        [
+          "m71_2",
+          490.0,
+          71,
+          173,
+          37,
+          [
+            "기준 · kPa"
+          ],
+          "plain"
+        ],
+        [
+          "m122_0",
+          130.0,
+          122,
+          173,
+          37,
+          [
+            "09:01:00"
+          ],
+          "plain"
+        ],
+        [
+          "m122_1",
+          310.0,
+          122,
+          173,
+          37,
+          [
+            "117"
+          ],
+          "plain"
+        ],
+        [
+          "m122_2",
+          490.0,
+          122,
+          173,
+          37,
+          [
+            "117"
+          ],
+          "plain"
+        ],
+        [
+          "m172_0",
+          130.0,
+          172,
+          173,
+          37,
+          [
+            "09:01:15"
+          ],
+          "plain"
+        ],
+        [
+          "m172_1",
+          310.0,
+          172,
+          173,
+          37,
+          [
+            "117"
+          ],
+          "blocked"
+        ],
+        [
+          "m172_2",
+          490.0,
+          172,
+          173,
+          37,
+          [
+            "124"
+          ],
+          "plain"
+        ],
+        [
+          "m222_0",
+          130.0,
+          222,
+          173,
+          37,
+          [
+            "09:01:30"
+          ],
+          "plain"
+        ],
+        [
+          "m222_1",
+          310.0,
+          222,
+          173,
+          37,
+          [
+            "117"
+          ],
+          "blocked"
+        ],
+        [
+          "m222_2",
+          490.0,
+          222,
+          173,
+          37,
+          [
+            "132"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "숫자가 의심될 때",
+      "description": "시각이 맞춰진 두 열에서 G만 117로 고정되고 마지막 편차는 15 kPa입니다."
+    },
+    "quiz": [
+      "두 센서가 모두 117을 유지하고 공정이 안정됐다면 G가 고장이라고 확정할까요?",
+      "다른 근거가 필요",
+      "고정 숫자이므로 고장",
+      "정상 공정에서도 측정값이 반복될 수 있습니다. 기준값과의 불일치가 이번 판단 근거였습니다."
+    ]
+  }
+];
+const slug = 'missing-readings';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

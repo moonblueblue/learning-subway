@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="고장 정답이 늦게 들어오면 언제까지 판단을 기다려야 할까요?">
+<title>정답의 관측 지연과 레이블 오류 · T08</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./delayed-labels.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T08</p><h1>정답의 관측 지연과 레이블 오류</h1><p>고장 정답이 늦게 들어오면 언제까지 판단을 기다려야 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">정답의 관측 지연과 레이블 오류</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "기록 대기",
+    "title": "고장 창이 끝나도 확인은 늦을 수 있습니다",
+    "body": "월 08:00에 밸브 E를 예측했고 화 08:00에 고장 창이 끝납니다. 보고서가 하루 늦을 수 있어 화 09:00에 기록이 비어 있으면 정답을 미확정으로 둡니다.",
+    "takeaway": "창 종료와 기록 조회가 별도 칸이고 조회 결과는 빈칸으로 남습니다.",
+    "example": [
+      "월 08:00 예측",
+      "화 09:00 조회",
+      "y = ?"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p143_0",
+          77,
+          143,
+          125,
+          59,
+          [
+            "월 08:00",
+            "예측"
+          ],
+          "plain"
+        ],
+        [
+          "p143_1",
+          232,
+          143,
+          125,
+          59,
+          [
+            "화 08:00",
+            "창 종료"
+          ],
+          "plain"
+        ],
+        [
+          "p143_2",
+          387,
+          143,
+          125,
+          59,
+          [
+            "화 09:00",
+            "기록 없음"
+          ],
+          "plain"
+        ],
+        [
+          "p143_3",
+          542,
+          143,
+          125,
+          37,
+          [
+            "y = ?"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p143_0",
+          "p143_1",
+          "plain",
+          ""
+        ],
+        [
+          "p143_1",
+          "p143_2",
+          "plain",
+          ""
+        ],
+        [
+          "p143_2",
+          "p143_3",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "기록 대기",
+      "description": "창 종료와 기록 조회가 별도 칸이고 조회 결과는 빈칸으로 남습니다."
+    },
+    "quiz": [
+      "화 07:00에 아직 정답을 못 받으면 어떤 값으로 저장할까요?",
+      "미확정",
+      "고장 없음",
+      "고장 창 자체도 마감 전이고 보고 지연도 있을 수 있습니다."
+    ]
+  },
+  {
+    "label": "사건과 기입",
+    "title": "늦게 기입한 고장의 사건 시각을 검사합니다",
+    "body": "수요일에 올라온 보고서에 고장 발생이 월 19:00으로 적혀 있습니다. 고장은 예측 후 24시간 안에 발생했으므로 월요일 행의 정답을 1로 확정합니다.",
+    "takeaway": "창 안의 월 19:00과 창 밖의 수요일 입력이 분리돼 있고 y=1은 사건 시각에서 이어집니다.",
+    "example": [
+      "y = ?",
+      "월 19:00 고장 확인",
+      "y = 1"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p102_0",
+          77,
+          102,
+          125,
+          59,
+          [
+            "월 08:00",
+            "창 시작"
+          ],
+          "plain"
+        ],
+        [
+          "p102_1",
+          232,
+          102,
+          125,
+          59,
+          [
+            "월 19:00",
+            "고장 발생"
+          ],
+          "active"
+        ],
+        [
+          "p102_2",
+          387,
+          102,
+          125,
+          59,
+          [
+            "화 08:00",
+            "창 종료"
+          ],
+          "plain"
+        ],
+        [
+          "p102_3",
+          542,
+          102,
+          125,
+          59,
+          [
+            "수요일",
+            "보고서 기입"
+          ],
+          "plain"
+        ],
+        [
+          "event",
+          232,
+          216,
+          135,
+          37,
+          [
+            "y = 1"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p102_0",
+          "p102_1",
+          "active",
+          ""
+        ],
+        [
+          "p102_1",
+          "p102_2",
+          "active",
+          ""
+        ],
+        [
+          "p102_2",
+          "p102_3",
+          "muted",
+          ""
+        ],
+        [
+          "p102_1",
+          "event",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "사건과 기입",
+      "description": "창 안의 월 19:00과 창 밖의 수요일 입력이 분리돼 있고 y=1은 사건 시각에서 이어집니다."
+    },
+    "quiz": [
+      "월요일 창의 정답을 매길 때 어느 시각으로 판단하나요?",
+      "실제 고장 시각",
+      "기록 입력 시각",
+      "레이블의 포함 기준은 보고서에 확인된 실제 고장 시각입니다."
+    ]
+  },
+  {
+    "label": "기록 정정",
+    "title": "확인 결과 오기입이면 근거와 함께 정정합니다",
+    "body": "2차 확인에서 19:00 사건이 E의 고장이 아닌 이웃 밸브 F의 고장임을 장비 ID와 함께 확인했습니다. E는 추적이 완료되어 0, F는 같은 기간에 1이 됩니다. 두 행의 기록 버전과 정정 근거를 남깁니다.",
+    "takeaway": "고장 사건이 F 행으로 옮겨지고 E는 확인 완료 후 0이 됩니다.",
+    "example": [
+      "사건 ID 오기입",
+      "설비 ID 확인",
+      "E: 1 → 0 · F: 0 → 1"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "sus",
+          106,
+          139,
+          142,
+          59,
+          [
+            "기존 E",
+            "y = 1"
+          ],
+          "blocked"
+        ],
+        [
+          "fact",
+          309,
+          139,
+          160,
+          59,
+          [
+            "사건 ID",
+            "F · 19:00"
+          ],
+          "plain"
+        ],
+        [
+          "e",
+          514,
+          91,
+          143,
+          59,
+          [
+            "E",
+            "y = 0"
+          ],
+          "plain"
+        ],
+        [
+          "f",
+          514,
+          193,
+          143,
+          59,
+          [
+            "F",
+            "y = 1"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "sus",
+          "fact",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "fact",
+          "e",
+          "muted",
+          "",
+          0
+        ],
+        [
+          "fact",
+          "f",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "기록 정정",
+      "description": "고장 사건이 F 행으로 옮겨지고 E는 확인 완료 후 0이 됩니다."
+    },
+    "quiz": [
+      "정정할 때 남겨야 할 기록은?",
+      "원래 값·새 값·확인 근거",
+      "새 값만",
+      "원래 값과 정정 근거가 있어야 이전 평가와 달라진 이유를 재현할 수 있습니다."
+    ]
+  }
+];
+const slug = 'delayed-labels';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

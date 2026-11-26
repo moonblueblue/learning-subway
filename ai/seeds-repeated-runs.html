@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 시드를 쓰는 목적과 여러 시드를 반복하는 목적은 어떻게 다를까요?">
+<title>무작위성·시드와 반복 실행 · T43</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./seeds-repeated-runs.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T43</p><h1>무작위성·시드와 반복 실행</h1><p>같은 시드를 쓰는 목적과 여러 시드를 반복하는 목적은 어떻게 다를까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">무작위성·시드와 반복 실행</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "같은 시드",
+    "title": "시드를 고정하면 같은 무작위 순서를 다시 만들 수 있습니다",
+    "body": "조건을 맞춘 교육용 실행에서 시드 41은 배치 순서 B·A·C와 시험 비용 5를 만들었습니다. 같은 환경과 결정적 연산에서 다시 실행하니 같은 배치 순서와 비용입니다.",
+    "takeaway": "시드 41 두 줄에서 배치 순서 B·A·C와 비용 5가 반복됩니다.",
+    "example": [
+      "seed 41",
+      "동일 설정으로 재실행",
+      "B·A·C · 비용 5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m80_0",
+          95.5,
+          80,
+          136,
+          37,
+          [
+            "실행"
+          ],
+          "plain"
+        ],
+        [
+          "m80_1",
+          238.5,
+          80,
+          136,
+          37,
+          [
+            "시드"
+          ],
+          "plain"
+        ],
+        [
+          "m80_2",
+          381.5,
+          80,
+          136,
+          37,
+          [
+            "배치 순서"
+          ],
+          "plain"
+        ],
+        [
+          "m80_3",
+          524.5,
+          80,
+          136,
+          37,
+          [
+            "비용"
+          ],
+          "plain"
+        ],
+        [
+          "m146_0",
+          95.5,
+          146,
+          136,
+          37,
+          [
+            "첫 실행"
+          ],
+          "plain"
+        ],
+        [
+          "m146_1",
+          238.5,
+          146,
+          136,
+          37,
+          [
+            "41"
+          ],
+          "plain"
+        ],
+        [
+          "m146_2",
+          381.5,
+          146,
+          136,
+          37,
+          [
+            "B·A·C"
+          ],
+          "plain"
+        ],
+        [
+          "m146_3",
+          524.5,
+          146,
+          136,
+          37,
+          [
+            "5"
+          ],
+          "plain"
+        ],
+        [
+          "m212_0",
+          95.5,
+          212,
+          136,
+          37,
+          [
+            "재실행"
+          ],
+          "plain"
+        ],
+        [
+          "m212_1",
+          238.5,
+          212,
+          136,
+          37,
+          [
+            "41"
+          ],
+          "active"
+        ],
+        [
+          "m212_2",
+          381.5,
+          212,
+          136,
+          37,
+          [
+            "B·A·C"
+          ],
+          "active"
+        ],
+        [
+          "m212_3",
+          524.5,
+          212,
+          136,
+          37,
+          [
+            "5"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "같은 시드",
+      "description": "시드 41 두 줄에서 배치 순서 B·A·C와 비용 5가 반복됩니다."
+    },
+    "quiz": [
+      "다른 하드웨어에서 비결정적인 계산을 쓴다면 시드만으로 완전히 같아질까요?",
+      "실행 조건도 확인",
+      "항상 완전히 같음",
+      "시드는 난수열을 통제합니다. 하드웨어와 연산의 다른 원인까지 같게 만들지는 않습니다."
+    ]
+  },
+  {
+    "label": "여러 시드",
+    "title": "다른 시드에서는 같은 방법의 결과가 얼마나 흔들리는지 봅니다",
+    "body": "시드 41, 42, 43을 미리 정하고 각각 5, 9, 7을 얻었습니다. 평균은 7이고 범위는 5–9입니다. 가장 유리했던 한 번만 고르면 평균과 변동을 숨깁니다.",
+    "takeaway": "같은 비용 축의 5·9·7은 한 시드의 5보다 흔들림을 잘 보여줍니다.",
+    "example": [
+      "seed 41 · 42 · 43",
+      "동일 평가 반복",
+      "평균 7 · 범위 5–9"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          44,
+          92,
+          "41"
+        ],
+        [
+          44,
+          148,
+          "42"
+        ],
+        [
+          44,
+          204,
+          "43"
+        ],
+        [
+          45,
+          259,
+          "평균 7 · 범위 5–9"
+        ]
+      ],
+      "bars": [
+        [
+          103,
+          74,
+          150,
+          24,
+          "5",
+          "plain"
+        ],
+        [
+          103,
+          130,
+          270,
+          24,
+          "9",
+          "blocked"
+        ],
+        [
+          103,
+          186,
+          210,
+          24,
+          "7",
+          "plain"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "여러 시드",
+      "description": "같은 비용 축의 5·9·7은 한 시드의 5보다 흔들림을 잘 보여줍니다."
+    },
+    "quiz": [
+      "시드 42만 골라 비교 모델의 대표 점수로 쓰면 어떤 문제가 있나요?",
+      "실행 간 변동을 놓침",
+      "더 정확한 평균이 됨",
+      "이 방법의 세 실행은 5에서 9까지 퍼져 있습니다."
+    ]
+  }
+];
+const slug = 'seeds-repeated-runs';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

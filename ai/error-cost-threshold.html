@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="미탐 비용이 오탐의 다섯 배이면 두 기준 중 어느 것을 검증에서 고를까요?">
+<title>오류 비용으로 임계값 선택 · T34</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./error-cost-threshold.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T34</p><h1>오류 비용으로 임계값 선택</h1><p>미탐 비용이 오탐의 다섯 배이면 두 기준 중 어느 것을 검증에서 고를까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">오류 비용으로 임계값 선택</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "두 오류를 따로 셈",
+    "title": "임계값을 낮추면 미탐 하나를 막고 오탐 둘을 더 냅니다",
+    "body": "검증 여덟 행에서 실제 고장은 B와 C입니다. 0.70 이상은 A와 B를 울려 미탐 C와 오탐 A를 냅니다. 0.40 이상은 A부터 E까지 울려 미탐이 없고 A, D, E가 오탐입니다.",
+    "takeaway": "C의 .55가 .70에서는 빠지지만 .40에서는 들어오고 정상 D·E도 함께 들어옵니다.",
+    "example": [
+      ".70 경보 A·B",
+      "임계값 .40",
+      ".40 경보 A–E"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m80_0",
+          70.0,
+          80,
+          89,
+          37,
+          [
+            "ID"
+          ],
+          "plain"
+        ],
+        [
+          "m80_1",
+          166.0,
+          80,
+          89,
+          37,
+          [
+            "A"
+          ],
+          "plain"
+        ],
+        [
+          "m80_2",
+          262.0,
+          80,
+          89,
+          37,
+          [
+            "B"
+          ],
+          "plain"
+        ],
+        [
+          "m80_3",
+          358.0,
+          80,
+          89,
+          37,
+          [
+            "C"
+          ],
+          "plain"
+        ],
+        [
+          "m80_4",
+          454.0,
+          80,
+          89,
+          37,
+          [
+            "D"
+          ],
+          "plain"
+        ],
+        [
+          "m80_5",
+          550.0,
+          80,
+          89,
+          37,
+          [
+            "E"
+          ],
+          "plain"
+        ],
+        [
+          "m134_0",
+          70.0,
+          134,
+          89,
+          37,
+          [
+            "점수"
+          ],
+          "plain"
+        ],
+        [
+          "m134_1",
+          166.0,
+          134,
+          89,
+          37,
+          [
+            ".92"
+          ],
+          "plain"
+        ],
+        [
+          "m134_2",
+          262.0,
+          134,
+          89,
+          37,
+          [
+            ".83"
+          ],
+          "plain"
+        ],
+        [
+          "m134_3",
+          358.0,
+          134,
+          89,
+          37,
+          [
+            ".55"
+          ],
+          "active"
+        ],
+        [
+          "m134_4",
+          454.0,
+          134,
+          89,
+          37,
+          [
+            ".48"
+          ],
+          "blocked"
+        ],
+        [
+          "m134_5",
+          550.0,
+          134,
+          89,
+          37,
+          [
+            ".43"
+          ],
+          "blocked"
+        ],
+        [
+          "m188_0",
+          70.0,
+          188,
+          89,
+          37,
+          [
+            "실제"
+          ],
+          "plain"
+        ],
+        [
+          "m188_1",
+          166.0,
+          188,
+          89,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m188_2",
+          262.0,
+          188,
+          89,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m188_3",
+          358.0,
+          188,
+          89,
+          37,
+          [
+            "1"
+          ],
+          "active"
+        ],
+        [
+          "m188_4",
+          454.0,
+          188,
+          89,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m188_5",
+          550.0,
+          188,
+          89,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          52,
+          233,
+          "≥ .70: A·B     ≥ .40: A·B·C·D·E"
+        ],
+        [
+          52,
+          261,
+          "F .38 · G .30 · H .10 · 모두 정상"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "두 오류를 따로 셈",
+      "description": "C의 .55가 .70에서는 빠지지만 .40에서는 들어오고 정상 D·E도 함께 들어옵니다."
+    },
+    "quiz": [
+      ".70에서 C의 실제 고장을 놓친 경우 무엇을 세나요?",
+      "미탐 1건",
+      "오탐 1건",
+      "결함이 있는데 경보가 나오지 않았습니다."
+    ]
+  },
+  {
+    "label": "비용으로 선택",
+    "title": "미탐을 다섯 배로 계산하면 기준 0.40이 이깁니다",
+    "body": "0.70의 비용은 1×5+1×1=6이고 0.40의 비용은 0×5+3×1=3입니다. 건수만 최소화하면 두 오류가 난 0.70을 택할 수 있지만, 같은 비용 가중치로 계산하면 0.40이 더 낮습니다.",
+    "takeaway": "0.70의 미탐 1건 칸에 5점이 붙어 비용 6, 0.40은 비용 3이 됩니다.",
+    "example": [
+      "미탐·오탐",
+      "5×FN + FP",
+      "6 → 3"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m75_0",
+          95.5,
+          75,
+          136,
+          37,
+          [
+            "임계값"
+          ],
+          "plain"
+        ],
+        [
+          "m75_1",
+          238.5,
+          75,
+          136,
+          37,
+          [
+            "미탐×5"
+          ],
+          "plain"
+        ],
+        [
+          "m75_2",
+          381.5,
+          75,
+          136,
+          37,
+          [
+            "오탐×1"
+          ],
+          "plain"
+        ],
+        [
+          "m75_3",
+          524.5,
+          75,
+          136,
+          37,
+          [
+            "비용"
+          ],
+          "plain"
+        ],
+        [
+          "m141_0",
+          95.5,
+          141,
+          136,
+          37,
+          [
+            "0.70"
+          ],
+          "plain"
+        ],
+        [
+          "m141_1",
+          238.5,
+          141,
+          136,
+          37,
+          [
+            "1×5"
+          ],
+          "blocked"
+        ],
+        [
+          "m141_2",
+          381.5,
+          141,
+          136,
+          37,
+          [
+            "1×1"
+          ],
+          "plain"
+        ],
+        [
+          "m141_3",
+          524.5,
+          141,
+          136,
+          37,
+          [
+            "6"
+          ],
+          "blocked"
+        ],
+        [
+          "m208_0",
+          95.5,
+          208,
+          136,
+          37,
+          [
+            "0.40"
+          ],
+          "active"
+        ],
+        [
+          "m208_1",
+          238.5,
+          208,
+          136,
+          37,
+          [
+            "0×5"
+          ],
+          "plain"
+        ],
+        [
+          "m208_2",
+          381.5,
+          208,
+          136,
+          37,
+          [
+            "3×1"
+          ],
+          "plain"
+        ],
+        [
+          "m208_3",
+          524.5,
+          208,
+          136,
+          37,
+          [
+            "3"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "비용으로 선택",
+      "description": "0.70의 미탐 1건 칸에 5점이 붙어 비용 6, 0.40은 비용 3이 됩니다."
+    },
+    "quiz": [
+      "미탐과 오탐의 비용이 모두 1이라면 어느 기준이 싸나요?",
+      "0.70",
+      "0.40",
+      "그 조건이면 0.70은 합계 2, 0.40은 3입니다."
+    ]
+  },
+  {
+    "label": "정책 고정과 시험",
+    "title": "시험 기간에서는 검증에서 고른 기준을 그대로 실행합니다",
+    "body": "0.40을 정책에 기록한 뒤 미사용 기간을 엽니다. 미탐 1건, 오탐 2건이 나와 비용은 7입니다. 평가 결과를 보고 기준을 다시 고른다면 다른 미사용 기간에서 그 새 정책을 시험합니다.",
+    "takeaway": "검증 비용 3을 만든 0.40이 시험으로 이어지고 시험 결과는 1×5+2=7입니다.",
+    "example": [
+      "검증 .40 · 비용 3",
+      "임계값 고정",
+      "시험 비용 7"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p141_0",
+          118,
+          141,
+          155,
+          59,
+          [
+            "검증",
+            "0.40 · 비용 3"
+          ],
+          "plain"
+        ],
+        [
+          "p141_1",
+          310,
+          141,
+          155,
+          59,
+          [
+            "정책 고정",
+            "τ = 0.40"
+          ],
+          "plain"
+        ],
+        [
+          "p141_2",
+          502,
+          141,
+          155,
+          59,
+          [
+            "미사용 시험",
+            "1×5+2 = 7"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p141_0",
+          "p141_1",
+          "active",
+          ""
+        ],
+        [
+          "p141_1",
+          "p141_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "정책 고정과 시험",
+      "description": "검증 비용 3을 만든 0.40이 시험으로 이어지고 시험 결과는 1×5+2=7입니다."
+    },
+    "quiz": [
+      "시험 비용을 본 뒤 .45로 바꾸면 같은 시험셋에서 최종 성능을 확정할 수 있나요?",
+      "새 미사용 기간 필요",
+      "같은 기간이면 충분",
+      "이미 시험 결과가 새 정책 선택에 쓰였습니다."
+    ]
+  }
+];
+const slug = 'error-cost-threshold';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

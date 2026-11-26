@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="공장 지도의 위치·이동·분을 탐색 입력으로 어떻게 바꾸나요?">
+<title>지도에서 상태·행동·경로 비용 정하기 · T37</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./route-state-cost.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T37</p><h1>지도에서 상태·행동·경로 비용 정하기</h1><p>공장 지도의 위치·이동·분을 탐색 입력으로 어떻게 바꾸나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">지도에서 상태·행동·경로 비용 정하기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "지도를 모델로",
+    "title": "위치는 상태, 열린 통로의 건너기는 행동입니다",
+    "body": "수리실 S, 교차점 A와 B, 펌프 P를 위치 상태로 둡니다. S에서 갈 수 있는 첫 행동은 A로 가는 4분 통로와 B로 가는 2분 통로입니다. 화살표는 이 예의 허용 방향입니다.",
+    "takeaway": "S에서 A와 B로 각각 움직일 때 비용 4와 2가 선에 붙습니다.",
+    "example": [
+      "상태 S",
+      "열린 이동 확인",
+      "A: 4분 · B: 2분"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          88,
+          151,
+          79,
+          37,
+          [
+            "S"
+          ],
+          "active"
+        ],
+        [
+          "a",
+          302,
+          90,
+          79,
+          37,
+          [
+            "A"
+          ],
+          "plain"
+        ],
+        [
+          "b",
+          302,
+          218,
+          79,
+          37,
+          [
+            "B"
+          ],
+          "plain"
+        ],
+        [
+          "p",
+          523,
+          151,
+          79,
+          37,
+          [
+            "P"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "active",
+          "4 min",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "active",
+          "2 min",
+          0
+        ],
+        [
+          "a",
+          "p",
+          "plain",
+          "3 min",
+          0
+        ],
+        [
+          "b",
+          "p",
+          "plain",
+          "9 min",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "지도를 모델로",
+      "description": "S에서 A와 B로 각각 움직일 때 비용 4와 2가 선에 붙습니다."
+    },
+    "quiz": [
+      "S에서 P로 한 행동만에 갈 수 있나요?",
+      "직접 통로 없음",
+      "S → P",
+      "S에서 나가는 선은 A와 B로만 갑니다."
+    ]
+  },
+  {
+    "label": "경로 전체의 비용",
+    "title": "첫 통로가 짧아도 전체 길은 더 길 수 있습니다",
+    "body": "S–A–P의 비용은 4+3=7분, S–B–P는 2+9=11분입니다. 각 행동의 비용을 더한 전체 경로로 비교하니 첫 이동이 4분인 A 쪽을 고릅니다.",
+    "takeaway": "같은 지도에서 윗길 4+3과 아랫길 2+9의 합을 함께 읽습니다.",
+    "example": [
+      "S → P",
+      "4+3 \u003c 2+9",
+      "S → A → P · 7분"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          88,
+          151,
+          79,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          302,
+          90,
+          79,
+          37,
+          [
+            "A"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          302,
+          218,
+          79,
+          37,
+          [
+            "B"
+          ],
+          "muted"
+        ],
+        [
+          "p",
+          523,
+          151,
+          79,
+          37,
+          [
+            "P"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "active",
+          "4 min",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "muted",
+          "2 min",
+          0
+        ],
+        [
+          "a",
+          "p",
+          "active",
+          "3 min",
+          0
+        ],
+        [
+          "b",
+          "p",
+          "muted",
+          "9 min",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          215,
+          265,
+          "7분 \u003c 11분"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "경로 전체의 비용",
+      "description": "같은 지도에서 윗길 4+3과 아랫길 2+9의 합을 함께 읽습니다."
+    },
+    "quiz": [
+      "B에서 P까지 3분으로 줄면 어느 경로가 더 싼가요?",
+      "S → B → P",
+      "S → A → P",
+      "B 쪽은 2+3=5분이고 A 쪽은 7분입니다."
+    ]
+  }
+];
+const slug = 'route-state-cost';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

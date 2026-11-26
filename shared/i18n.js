@@ -137,7 +137,7 @@
     if (!core) return null;
     if (exact.has(core)) return lead + exact.get(core) + tail;
     // A lesson or chapter number before a known title: "0.1 비트와 이진수", "8A 시스템·인프라", "5 운영체제와 네트워크".
-    const numbered = core.match(/^(\d+[A-Z]?(?:\.\d+)?) (.+)$/);
+    const numbered = core.match(/^(\d+[A-Z]?(?:\.(?:\d+|P))?) (.+)$/);
     if (numbered && exact.has(numbered[2])) return lead + numbered[1] + ' ' + exact.get(numbered[2]) + tail;
     for (const [pattern, en] of patterns) {
       const match = core.match(pattern);

@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="진동 특징이 비용을 줄였는지 보려면 무엇 하나만 바꾸나요?">
+<title>구성요소 제거 실험으로 원인 분리 · T44</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./ablation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T44</p><h1>구성요소 제거 실험으로 원인 분리</h1><p>진동 특징이 비용을 줄였는지 보려면 무엇 하나만 바꾸나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">구성요소 제거 실험으로 원인 분리</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "비교 준비",
+    "title": "동일 조건에서 진동 열만 제거하고 다시 학습합니다",
+    "body": "기준 모델은 온도와 진동으로 학습해 검증에서 비용 4를 냅니다. 구성요소 제거 실험은 진동 열을 빼고 같은 학습 행, 알고리즘과 시드를 써서 모델을 다시 맞춥니다. 두 실행 모두 같은 검증 절차로 기준을 고릅니다.",
+    "takeaway": "온도·행·시드·선택 규칙을 유지하고 두 입력 집합의 차이를 진동 한 열로 제한합니다.",
+    "example": [
+      "온도 + 진동",
+      "진동 제거 후 재학습",
+      "온도만"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m81_0",
+          95.5,
+          81,
+          136,
+          37,
+          [
+            "실행"
+          ],
+          "plain"
+        ],
+        [
+          "m81_1",
+          238.5,
+          81,
+          136,
+          37,
+          [
+            "온도"
+          ],
+          "plain"
+        ],
+        [
+          "m81_2",
+          381.5,
+          81,
+          136,
+          37,
+          [
+            "진동"
+          ],
+          "plain"
+        ],
+        [
+          "m81_3",
+          524.5,
+          81,
+          136,
+          37,
+          [
+            "행·시드"
+          ],
+          "plain"
+        ],
+        [
+          "m148_0",
+          95.5,
+          148,
+          136,
+          37,
+          [
+            "전체"
+          ],
+          "plain"
+        ],
+        [
+          "m148_1",
+          238.5,
+          148,
+          136,
+          37,
+          [
+            "✓"
+          ],
+          "plain"
+        ],
+        [
+          "m148_2",
+          381.5,
+          148,
+          136,
+          37,
+          [
+            "✓"
+          ],
+          "plain"
+        ],
+        [
+          "m148_3",
+          524.5,
+          148,
+          136,
+          37,
+          [
+            "v3 · 41"
+          ],
+          "plain"
+        ],
+        [
+          "m215_0",
+          95.5,
+          215,
+          136,
+          37,
+          [
+            "제거"
+          ],
+          "plain"
+        ],
+        [
+          "m215_1",
+          238.5,
+          215,
+          136,
+          37,
+          [
+            "✓"
+          ],
+          "plain"
+        ],
+        [
+          "m215_2",
+          381.5,
+          215,
+          136,
+          37,
+          [
+            "× 제거"
+          ],
+          "blocked"
+        ],
+        [
+          "m215_3",
+          524.5,
+          215,
+          136,
+          37,
+          [
+            "v3 · 41"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "비교 준비",
+      "description": "온도·행·시드·선택 규칙을 유지하고 두 입력 집합의 차이를 진동 한 열로 제한합니다."
+    },
+    "quiz": [
+      "진동을 빼면서 학습 기간도 한 달 늘리면 무엇이 달라지나요?",
+      "차이의 원인 분리 어려움",
+      "더 깨끗한 비교",
+      "자료 기간과 진동 두 조건이 바뀌어 어느 것이 비용 차이를 냈는지 알기 어렵습니다."
+    ]
+  },
+  {
+    "label": "동일 평가 비교",
+    "title": "미탐 한 건이 늘어난 비용 차이 5를 확인합니다",
+    "body": "온도만 쓴 경우 기존 오탐 4건은 그대로이고 미탐이 0에서 1로 늘어 비용이 9입니다. 검증셋에서 이 진동 특징의 기여를 볼 수 있습니다. 다른 기간에도 같다고 일반화하려면 별도 평가가 필요합니다.",
+    "takeaway": "두 줄의 오탐은 4로 같고 미탐 0→1만 비용 4→9를 설명합니다.",
+    "example": [
+      "전체 비용 4",
+      "실험 비용 = 1×5+4",
+      "제거 비용 9"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m81_0",
+          95.5,
+          81,
+          136,
+          37,
+          [
+            "실행"
+          ],
+          "plain"
+        ],
+        [
+          "m81_1",
+          238.5,
+          81,
+          136,
+          37,
+          [
+            "미탐"
+          ],
+          "plain"
+        ],
+        [
+          "m81_2",
+          381.5,
+          81,
+          136,
+          37,
+          [
+            "오탐"
+          ],
+          "plain"
+        ],
+        [
+          "m81_3",
+          524.5,
+          81,
+          136,
+          37,
+          [
+            "비용"
+          ],
+          "plain"
+        ],
+        [
+          "m148_0",
+          95.5,
+          148,
+          136,
+          37,
+          [
+            "전체"
+          ],
+          "plain"
+        ],
+        [
+          "m148_1",
+          238.5,
+          148,
+          136,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m148_2",
+          381.5,
+          148,
+          136,
+          37,
+          [
+            "4"
+          ],
+          "plain"
+        ],
+        [
+          "m148_3",
+          524.5,
+          148,
+          136,
+          37,
+          [
+            "4"
+          ],
+          "plain"
+        ],
+        [
+          "m215_0",
+          95.5,
+          215,
+          136,
+          37,
+          [
+            "제거"
+          ],
+          "plain"
+        ],
+        [
+          "m215_1",
+          238.5,
+          215,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "blocked"
+        ],
+        [
+          "m215_2",
+          381.5,
+          215,
+          136,
+          37,
+          [
+            "4"
+          ],
+          "plain"
+        ],
+        [
+          "m215_3",
+          524.5,
+          215,
+          136,
+          37,
+          [
+            "9"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "동일 평가 비교",
+      "description": "두 줄의 오탐은 4로 같고 미탐 0→1만 비용 4→9를 설명합니다."
+    },
+    "quiz": [
+      "차이가 5라면 이 실험에서 어느 오류 건수가 바뀌었나요?",
+      "미탐 +1",
+      "오탐 +5",
+      "미탐 한 건이 5점이며 두 줄의 오탐은 같습니다."
+    ]
+  }
+];
+const slug = 'ablation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

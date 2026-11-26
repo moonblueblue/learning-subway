@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="온도와 진동 특징의 가중 내적은 각 특징이 만든 점수를 어떻게 합칠까요?">
+<title>내적과 가중합 · T12</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./dot-product.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T12</p><h1>내적과 가중합</h1><p>온도와 진동 특징의 가중 내적은 각 특징이 만든 점수를 어떻게 합칠까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">내적과 가중합</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "항별 곱",
+    "title": "특징과 같은 열의 가중치끼리 곱합니다",
+    "body": "펌프 I의 특징은 정상 범위보다 얼마나 높은지로 변환한 온도 3과 진동 2입니다. 온도에는 0.5, 진동에는 2를 곱합니다. 단위를 변환한 특징이므로 점수의 두 기여를 더할 수 있도록 가중치를 정했습니다.",
+    "takeaway": "입력 열과 가중치 열이 두 쌍으로 맞물려 각각 1.5와 4가 됩니다.",
+    "example": [
+      "x = (3, 2) · w = (0.5, 2)",
+      "성분끼리 곱",
+      "(1.5, 4)"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m72_0",
+          220.0,
+          72,
+          173,
+          37,
+          [
+            "온도 특징"
+          ],
+          "plain"
+        ],
+        [
+          "m72_1",
+          400.0,
+          72,
+          173,
+          37,
+          [
+            "진동 특징"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          170,
+          129,
+          163,
+          37,
+          [
+            "3 × 0.5"
+          ],
+          "plain"
+        ],
+        [
+          "b",
+          450,
+          129,
+          163,
+          37,
+          [
+            "2 × 2"
+          ],
+          "plain"
+        ],
+        [
+          "c",
+          170,
+          218,
+          163,
+          59,
+          [
+            "온도 기여",
+            "1.5"
+          ],
+          "active"
+        ],
+        [
+          "d",
+          450,
+          218,
+          163,
+          59,
+          [
+            "진동 기여",
+            "4"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "c",
+          "active",
+          "",
+          0
+        ],
+        [
+          "b",
+          "d",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "항별 곱",
+      "description": "입력 열과 가중치 열이 두 쌍으로 맞물려 각각 1.5와 4가 됩니다."
+    },
+    "quiz": [
+      "온도 4, 온도 가중치 0.5이면 온도의 기여는?",
+      "2",
+      "4.5",
+      "특징과 가중치를 곱하므로 4×0.5=2입니다."
+    ]
+  },
+  {
+    "label": "합산과 조정",
+    "title": "가중치 하나를 바꾸면 그 항의 기여만 바뀝니다",
+    "body": "두 기여 1.5와 4를 더하면 5.5입니다. 진동 가중치를 2에서 1로 낮추면 진동의 기여는 4에서 2로, 합은 5.5에서 3.5로 내려갑니다.",
+    "takeaway": "위아래에서 온도 1.5가 고정되고 진동 항 4→2가 합계를 2 낮춥니다.",
+    "example": [
+      "1.5 + 4 = 5.5",
+      "w진동: 2 → 1",
+      "1.5 + 2 = 3.5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p97_0",
+          118,
+          97,
+          155,
+          59,
+          [
+            "온도",
+            "3 × 0.5 = 1.5"
+          ],
+          "plain"
+        ],
+        [
+          "p97_1",
+          310,
+          97,
+          155,
+          59,
+          [
+            "진동",
+            "2 × 2 = 4"
+          ],
+          "plain"
+        ],
+        [
+          "p97_2",
+          502,
+          97,
+          155,
+          59,
+          [
+            "합",
+            "5.5"
+          ],
+          "active"
+        ],
+        [
+          "p197_0",
+          118,
+          197,
+          155,
+          59,
+          [
+            "온도",
+            "3 × 0.5 = 1.5"
+          ],
+          "plain"
+        ],
+        [
+          "p197_1",
+          310,
+          197,
+          155,
+          59,
+          [
+            "진동",
+            "2 × 1 = 2"
+          ],
+          "active"
+        ],
+        [
+          "p197_2",
+          502,
+          197,
+          155,
+          59,
+          [
+            "합",
+            "3.5"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p97_0",
+          "p97_1",
+          "undirected",
+          ""
+        ],
+        [
+          "p97_1",
+          "p97_2",
+          "active",
+          ""
+        ],
+        [
+          "p197_0",
+          "p197_1",
+          "undirected",
+          ""
+        ],
+        [
+          "p197_1",
+          "p197_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "합산과 조정",
+      "description": "위아래에서 온도 1.5가 고정되고 진동 항 4→2가 합계를 2 낮춥니다."
+    },
+    "quiz": [
+      "같은 입력에서 진동 가중치 0을 쓰면 총점은?",
+      "1.5",
+      "3.5",
+      "진동 기여는 0이 되고 온도 기여 1.5만 남습니다."
+    ]
+  }
+];
+const slug = 'dot-product';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

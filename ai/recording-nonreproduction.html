@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="이전 결과를 재현하지 못했다면 무엇을 확인했고 무엇이 불확실한지 어떻게 기록하나요?">
+<title>재현되지 않은 결과와 한계 기록 · T45</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./recording-nonreproduction.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T45</p><h1>재현되지 않은 결과와 한계 기록</h1><p>이전 결과를 재현하지 못했다면 무엇을 확인했고 무엇이 불확실한지 어떻게 기록하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">재현되지 않은 결과와 한계 기록</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "차이의 기록",
+    "title": "목표와 실제를 같은 지표의 건수로 적습니다",
+    "body": "기록에 기준 목표는 미탐 0, 오탐 4, 비용 4입니다. 새 재실행은 미탐 1, 오탐 4, 비용 9입니다. 코드와 실행 환경은 같은데 4월 레이블 파일의 원본 해시가 누락되어 일치하는지 확인할 수 없습니다.",
+    "takeaway": "비용 차이 5가 미탐 한 건에서 나왔고 원본 레이블은 확인 불가로 남습니다.",
+    "example": [
+      "목표 4",
+      "새 실행 1×5+4",
+      "재현 못함 · 비용 9"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m81_0",
+          95.5,
+          81,
+          136,
+          37,
+          [
+            "실행"
+          ],
+          "plain"
+        ],
+        [
+          "m81_1",
+          238.5,
+          81,
+          136,
+          37,
+          [
+            "미탐"
+          ],
+          "plain"
+        ],
+        [
+          "m81_2",
+          381.5,
+          81,
+          136,
+          37,
+          [
+            "오탐"
+          ],
+          "plain"
+        ],
+        [
+          "m81_3",
+          524.5,
+          81,
+          136,
+          37,
+          [
+            "비용"
+          ],
+          "plain"
+        ],
+        [
+          "m145_0",
+          95.5,
+          145,
+          136,
+          37,
+          [
+            "원 보고서"
+          ],
+          "plain"
+        ],
+        [
+          "m145_1",
+          238.5,
+          145,
+          136,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m145_2",
+          381.5,
+          145,
+          136,
+          37,
+          [
+            "4"
+          ],
+          "plain"
+        ],
+        [
+          "m145_3",
+          524.5,
+          145,
+          136,
+          37,
+          [
+            "4"
+          ],
+          "plain"
+        ],
+        [
+          "m209_0",
+          95.5,
+          209,
+          136,
+          37,
+          [
+            "재실행"
+          ],
+          "plain"
+        ],
+        [
+          "m209_1",
+          238.5,
+          209,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "blocked"
+        ],
+        [
+          "m209_2",
+          381.5,
+          209,
+          136,
+          37,
+          [
+            "4"
+          ],
+          "plain"
+        ],
+        [
+          "m209_3",
+          524.5,
+          209,
+          136,
+          37,
+          [
+            "9"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          50,
+          263,
+          "4월 원본 레이블 해시 없음"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "차이의 기록",
+      "description": "비용 차이 5가 미탐 한 건에서 나왔고 원본 레이블은 확인 불가로 남습니다."
+    },
+    "quiz": [
+      "원본 레이블이 없는데 모델이 나빠졌다고 확정할 수 있나요?",
+      "원인 미확정",
+      "모델 성능 저하 확정",
+      "입력 차이라는 경쟁 설명을 아직 확인하지 못했습니다."
+    ]
+  },
+  {
+    "label": "구별할 다음 시험",
+    "title": "원본을 복구하면 입력 차이와 구현 차이를 분리할 수 있습니다",
+    "body": "다음에는 원본 레이블 파일을 복구해 동일 실행에 넣습니다. 비용이 4로 돌아오면 레이블 차이의 근거가 됩니다. 원본을 확보하지 못하면 정확한 원인을 판정할 수 없다는 한계를 남깁니다.",
+    "takeaway": "비용 9에서 원본 복구 여부가 갈라지고, 복구된 입력만 재측정으로 이어집니다.",
+    "example": [
+      "비용 9",
+      "원본 자료 복구 시도",
+      "재실행 또는 한계 기록"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "start",
+          116,
+          147,
+          138,
+          37,
+          [
+            "비용 9"
+          ],
+          "plain"
+        ],
+        [
+          "gate",
+          309,
+          147,
+          154,
+          37,
+          [
+            "원본 복구?"
+          ],
+          "plain"
+        ],
+        [
+          "yes",
+          510,
+          93,
+          161,
+          59,
+          [
+            "재측정",
+            "비용 4인지 확인"
+          ],
+          "active"
+        ],
+        [
+          "no",
+          510,
+          209,
+          161,
+          59,
+          [
+            "한계 기록",
+            "원인 미확정"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "start",
+          "gate",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "gate",
+          "yes",
+          "active",
+          "가능",
+          0
+        ],
+        [
+          "gate",
+          "no",
+          "blocked",
+          "불가",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "구별할 다음 시험",
+      "description": "비용 9에서 원본 복구 여부가 갈라지고, 복구된 입력만 재측정으로 이어집니다."
+    },
+    "quiz": [
+      "원본을 끝내 찾지 못했다면 최종 보고서 문구는?",
+      "비용 9, 원인 미확정",
+      "결과 차이 숨김",
+      "관찰한 결과와 확인할 자료가 없는 한계를 모두 공유합니다."
+    ]
+  }
+];
+const slug = 'recording-nonreproduction';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 설비에 갈 때 통로 폐쇄와 목적지 고립을 어떻게 다르게 반환할까요?">
+<title>통로 폐쇄와 도달 불가 처리 · T40</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./closed-unreachable.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T40</p><h1>통로 폐쇄와 도달 불가 처리</h1><p>같은 설비에 갈 때 통로 폐쇄와 목적지 고립을 어떻게 다르게 반환할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">통로 폐쇄와 도달 불가 처리</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "열린 지도",
+    "title": "열린 지도에서는 5분 경로가 가장 짧습니다",
+    "body": "S에서 Z까지 A를 거치면 2+3=5분, B를 거치면 4+4=8분입니다. 난간 점검 전 지도의 최소 비용은 5분입니다. 경로에는 출발과 목적지 사이의 중간점도 표시합니다.",
+    "takeaway": "숫자 2와 3이 붙은 윗길이 열려 있고 합 5가 선택됩니다.",
+    "example": [
+      "S → Z",
+      "A로 2+3 · B로 4+4",
+      "S → A → Z · 5분"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          85,
+          151,
+          78,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          303,
+          88,
+          78,
+          37,
+          [
+            "A"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          303,
+          216,
+          78,
+          37,
+          [
+            "B"
+          ],
+          "plain"
+        ],
+        [
+          "z",
+          527,
+          151,
+          78,
+          37,
+          [
+            "Z"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "active",
+          "2 min",
+          0
+        ],
+        [
+          "a",
+          "z",
+          "active",
+          "3 min",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "plain",
+          "4 min",
+          0
+        ],
+        [
+          "b",
+          "z",
+          "plain",
+          "4 min",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          237,
+          265,
+          "선택 5분"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "열린 지도",
+      "description": "숫자 2와 3이 붙은 윗길이 열려 있고 합 5가 선택됩니다."
+    },
+    "quiz": [
+      "A 쪽의 전체 비용은 얼마인가요?",
+      "5분",
+      "3분",
+      "두 통로의 비용 2와 3을 합칩니다."
+    ]
+  },
+  {
+    "label": "폐쇄 후 우회",
+    "title": "닫힌 간선을 제외하면 남은 8분 길이 선택됩니다",
+    "body": "통로 A→Z가 폐쇄되었습니다. 탐색 후보에서 A→Z를 지워 S–A가 Z까지 이어지지 않게 합니다. S–B–Z가 열려 있으므로 경로와 새 비용 8분을 반환합니다.",
+    "takeaway": "A에 가더라도 Z로 갈 수 없어 B 쪽 4+4가 선택됩니다.",
+    "example": [
+      "A → Z 폐쇄",
+      "닫힌 간선 제외",
+      "S → B → Z · 8분"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          85,
+          151,
+          78,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          303,
+          88,
+          78,
+          37,
+          [
+            "A"
+          ],
+          "muted"
+        ],
+        [
+          "b",
+          303,
+          216,
+          78,
+          37,
+          [
+            "B"
+          ],
+          "active"
+        ],
+        [
+          "z",
+          527,
+          151,
+          78,
+          37,
+          [
+            "Z"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "muted",
+          "2 min",
+          0
+        ],
+        [
+          "a",
+          "z",
+          "blocked",
+          "× 폐쇄",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "active",
+          "4 min",
+          0
+        ],
+        [
+          "b",
+          "z",
+          "active",
+          "4 min",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          237,
+          265,
+          "우회 8분"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "폐쇄 후 우회",
+      "description": "A에 가더라도 Z로 갈 수 없어 B 쪽 4+4가 선택됩니다."
+    },
+    "quiz": [
+      "우회 길이 열려 있는데도 도달 불가를 반환해야 하나요?",
+      "경로와 8분 반환",
+      "도달 불가 반환",
+      "B를 통과하는 유효 경로가 남아 있습니다."
+    ]
+  },
+  {
+    "label": "목적지 고립",
+    "title": "목적지로 연결되는 유효 경로가 없으면 실패 상태를 반환합니다",
+    "body": "B→Z도 막히면 A와 B는 방문할 수 있어도 Z는 닿지 않습니다. 결과에는 Z, 도달 불가 상태와 두 폐쇄를 남깁니다. 비용은 비워 두고, 작업자에게 대체 통로 확인을 요청합니다.",
+    "takeaway": "Z에 닿는 두 선이 모두 닫혀 방문 가능 집합은 S·A·B에서 끝납니다.",
+    "example": [
+      "A → Z · B → Z 폐쇄",
+      "방문 가능 S·A·B",
+      "Z 도달 불가"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          85,
+          151,
+          78,
+          37,
+          [
+            "S"
+          ],
+          "plain"
+        ],
+        [
+          "a",
+          303,
+          88,
+          78,
+          37,
+          [
+            "A"
+          ],
+          "plain"
+        ],
+        [
+          "b",
+          303,
+          216,
+          78,
+          37,
+          [
+            "B"
+          ],
+          "plain"
+        ],
+        [
+          "z",
+          527,
+          151,
+          120,
+          59,
+          [
+            "Z",
+            "도달 불가"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "a",
+          "active",
+          "",
+          0
+        ],
+        [
+          "a",
+          "z",
+          "blocked",
+          "× 폐쇄",
+          0
+        ],
+        [
+          "s",
+          "b",
+          "active",
+          "",
+          0
+        ],
+        [
+          "b",
+          "z",
+          "blocked",
+          "× 폐쇄",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          157,
+          265,
+          "경로 없음 · 비용 없음"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "목적지 고립",
+      "description": "Z에 닿는 두 선이 모두 닫혀 방문 가능 집합은 S·A·B에서 끝납니다."
+    },
+    "quiz": [
+      "도달 불가에서 비용을 0분으로 기록하면 어떤 오해가 생기나요?",
+      "비용 0인 유효 경로처럼 보임",
+      "폐쇄 위치를 바로 알 수 있음",
+      "0분은 이미 목적지에 있는 것처럼 유효한 경우에도 나올 수 있습니다. 상태와 빈 비용을 구별합니다."
+    ]
+  }
+];
+const slug = 'closed-unreachable';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

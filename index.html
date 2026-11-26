@@ -132,7 +132,8 @@ addEventListener('DOMContentLoaded', () => {
   function hereSpot() {
     let here = null;
     try { here = JSON.parse(localStorage.getItem('learning-subway:here')); } catch {}
-    const through = (roadmap) => roadmap.chapters.findIndex((chapter) => refsOf(chapter).includes(here?.ref));
+    const through = (roadmap) => roadmap.chapters.findIndex((chapter) =>
+      refsOf(chapter).includes(here?.ref) || (chapter.projectRef && chapter.projectRef === here?.ref));
     const roadmap = [byId.get(here?.roadmap), ...roadmaps].find((item) => item && through(item) >= 0);
     if (!roadmap) return { roadmap: trunk, index: 0, href: stationsOf(trunk)[0].href };
     if (roadmap.id === 'ai') return { roadmap, index: 0, href: './ai-map.html?v=1bb1d8ccac5e9eca' };
@@ -143,10 +144,10 @@ addEventListener('DOMContentLoaded', () => {
   // A map pin whose tip touches the station, and the words "현재 위치" where they cover no station name. The pin stands
   // above the station; if a neighbour's name is there it hangs below, and only if both sides are taken does the
   // neighbour's name step aside.
-  function pin(svg, x, y, href, own, bounds) {
+  function pin(svg, x, y, href, own, bounds, { inline = false } = {}) {
     const names = () => [...svg.querySelectorAll('text.name')];
     const others = () => names().filter((t) => t !== own).map((t) => t.getBBox());
-    let size = 33;   // pin height; a station boxed in above and below gets a smaller pin
+    let size = inline ? 16 : 33;
     const headOf = (up) => (up ? { x: x - 12, y: y - 9 - size, width: 24, height: size } : { x: x - 12, y: y + 9, width: 24, height: size });
     const shiftText = (text, dy) => text.setAttribute('y', Number(text.getAttribute('y')) + dy);
     // Move the station's own name off the pin: to the other side of the station, else past the pin's head.
@@ -162,7 +163,7 @@ addEventListener('DOMContentLoaded', () => {
       return false;
     }
     let up = true;
-    if (others().some((b) => overlaps(b, headOf(true), 2)) || !clearOwn(true)) {
+    if (!inline && (others().some((b) => overlaps(b, headOf(true), 2)) || !clearOwn(true))) {
       if (!others().some((b) => overlaps(b, headOf(false), 2)) && clearOwn(false)) up = false;
       else {
         // Both sides taken: whatever name sits where the pin's head goes above the station steps up past it.
@@ -172,7 +173,7 @@ addEventListener('DOMContentLoaded', () => {
           shiftText(text, head.y - 2 - (text.getBBox().y + text.getBBox().height));
       }
     }
-    const f = size / 33, r = 11 * f, tip = up ? y - 9 : y + 9, k = up ? 1 : -1, c = tip - k * 21 * f;
+    const f = size / 33, r = 11 * f, tip = inline ? y + 8 : up ? y - 9 : y + 9, k = up ? 1 : -1, c = tip - k * 21 * f;
     const link = make('svg:a', { href, class: 'here', 'aria-label': tr('현재 위치') });
     link.append(make('svg:path', { d: `M${x} ${tip}C${x} ${tip} ${x - r} ${tip - k * 12 * f} ${x - r} ${c}A${r} ${r} 0 0 ${up ? 1 : 0} ${x + r} ${c}C${x + r} ${tip - k * 12 * f} ${x} ${tip} ${x} ${tip}Z`, fill: PIN, stroke: '#ffffff', 'stroke-width': 2 }));
     link.append(make('svg:circle', { cx: x, cy: c, r: 4.5 * f, fill: '#ffffff' }));
@@ -180,7 +181,8 @@ addEventListener('DOMContentLoaded', () => {
     link.append(label);
     svg.append(link);
     const taken = [...others(), ...(own ? [own.getBBox()] : [])];
-    const spots = [[x + 16, c + 5, 'start'], [x - 16, c + 5, 'end'], [x, up ? c - 17 : c + 27, 'middle']];
+    const spots = inline ? [[x + 13, y + 4.5, 'start']]
+      : [[x + 16, c + 5, 'start'], [x - 16, c + 5, 'end'], [x, up ? c - 17 : c + 27, 'middle']];
     for (const [lx, ly, anchor] of spots) {
       label.setAttribute('x', lx); label.setAttribute('y', ly); label.setAttribute('text-anchor', anchor);
       const box = label.getBBox();
@@ -387,7 +389,7 @@ addEventListener('DOMContentLoaded', () => {
     });
     picker.append(make('span', { class: 'line-bar', 'aria-hidden': 'true' }), select);
     let here = null;
-    // Room above the first station for the "현재 위치" pin (its head rises 33px above the station).
+    // Keep room above the first station and, on branches, below the transfer caption.
     const list = stationsOf(roadmap), top = roadmap.branch ? 44 : 34;
     const height = Math.max(1, holder.clientHeight - 12 - 44 - 4);
     const step = (height - top - 24) / Math.max(1, list.length - 1);
@@ -399,13 +401,17 @@ addEventListener('DOMContentLoaded', () => {
     svg.append(make('svg:path', { d: `M${x} ${top}V${top + (list.length - 1) * step}`, ...strokeOf(roadmap) }));
     list.forEach((s, i) => {
       const y = top + i * step;
-      const name = station(svg, s, x, y, colorOf(roadmap.id), i === list.length - 1, 'right', width - x - 40, [8, width - 8]);
+      const name = station(svg, s, x, y, colorOf(roadmap.id), i === list.length - 1, 'right', width - x - 54, [8, width - 8]);
       if (roadmap === spot.roadmap && i === spot.index) here = [y, name];
     });
     holder.replaceChildren(picker, svg);
     document.body.classList.remove('index-in-map');
-    // One line per row: the pin and its words follow the station name.
-    if (here) { const box = here[1].getBBox(); pin(svg, box.x + box.width + 20, here[0] + 18, spot.href, null, [8, width - 8]); }
+    // Keep the compact pin on the same row as its station, with room for its right edge.
+    if (here) {
+      const box = here[1].getBBox();
+      const pinX = Math.min(box.x + box.width + 13, width - 14);
+      pin(svg, pinX, here[0], spot.href, null, [8, width - 8], { inline: true });
+    }
   }
 
   const network = make('li', { class: 'map' });

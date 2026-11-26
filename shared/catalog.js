@@ -531,41 +531,210 @@ const courseCatalog = {
           "titleEn": "Common line",
           "lessons": [
             {
+              "id": "1.10",
+              "ref": "ai/decision-owner"
+            },
+            {
+              "id": "1.11",
+              "ref": "ai/method-choice"
+            },
+            {
               "id": "1.1",
               "ref": "math/logic"
+            },
+            {
+              "id": "1.12",
+              "ref": "ai/rule-inference"
+            },
+            {
+              "id": "1.13",
+              "ref": "ai/observations-features-labels"
+            },
+            {
+              "id": "1.14",
+              "ref": "ai/prediction-row"
+            },
+            {
+              "id": "1.15",
+              "ref": "ai/sampling-bias"
+            },
+            {
+              "id": "1.16",
+              "ref": "ai/delayed-labels"
+            },
+            {
+              "id": "1.17",
+              "ref": "ai/missing-readings"
+            },
+            {
+              "id": "1.18",
+              "ref": "ai/future-leakage"
             },
             {
               "id": "1.2",
               "ref": "math/vectors"
             },
             {
+              "id": "1.19",
+              "ref": "ai/dot-product"
+            },
+            {
               "id": "1.3",
               "ref": "math/statistics"
+            },
+            {
+              "id": "1.20",
+              "ref": "ai/base-rate-bayes"
+            },
+            {
+              "id": "1.21",
+              "ref": "ai/resampling"
+            },
+            {
+              "id": "1.22",
+              "ref": "ai/temporal-split"
+            },
+            {
+              "id": "1.23",
+              "ref": "ai/fit-preprocessing"
+            },
+            {
+              "id": "1.24",
+              "ref": "ai/alert-baseline"
             },
             {
               "id": "1.4",
               "ref": "ai/ml"
             },
             {
+              "id": "1.25",
+              "ref": "ai/regression-classification"
+            },
+            {
+              "id": "1.26",
+              "ref": "ai/squared-error"
+            },
+            {
+              "id": "1.27",
+              "ref": "ai/logistic-log-loss"
+            },
+            {
+              "id": "1.28",
+              "ref": "ai/derivatives-sensitivity"
+            },
+            {
               "id": "1.5",
               "ref": "ai/gradient"
+            },
+            {
+              "id": "1.29",
+              "ref": "ai/learning-rate"
             },
             {
               "id": "1.6",
               "ref": "ai/neural"
             },
             {
+              "id": "1.30",
+              "ref": "ai/chain-rule-backprop"
+            },
+            {
+              "id": "1.31",
+              "ref": "ai/minibatch-epoch"
+            },
+            {
+              "id": "1.32",
+              "ref": "ai/fit-diagnosis"
+            },
+            {
+              "id": "1.33",
+              "ref": "ai/regularization-early-stop"
+            },
+            {
+              "id": "1.34",
+              "ref": "ai/confusion-matrix"
+            },
+            {
+              "id": "1.35",
+              "ref": "ai/threshold-precision-recall"
+            },
+            {
+              "id": "1.36",
+              "ref": "ai/probability-calibration"
+            },
+            {
+              "id": "1.9",
+              "ref": "ai/error-cost-threshold"
+            },
+            {
+              "id": "1.37",
+              "ref": "ai/group-failures-handoff"
+            },
+            {
               "id": "1.7",
               "ref": "math/graph"
             },
             {
+              "id": "1.38",
+              "ref": "ai/route-state-cost"
+            },
+            {
+              "id": "1.39",
+              "ref": "algorithms/traversal"
+            },
+            {
               "id": "1.8",
               "ref": "algorithms/shortest"
+            },
+            {
+              "id": "1.40",
+              "ref": "ai/closed-unreachable"
+            },
+            {
+              "id": "1.41",
+              "ref": "software-engineering/testing"
+            },
+            {
+              "id": "1.42",
+              "ref": "ai/pinned-versions"
+            },
+            {
+              "id": "1.43",
+              "ref": "ai/seeds-repeated-runs"
+            },
+            {
+              "id": "1.44",
+              "ref": "ai/ablation"
+            },
+            {
+              "id": "1.45",
+              "ref": "ai/recording-nonreproduction"
+            },
+            {
+              "id": "1.46",
+              "ref": "ai/sensor-data-retention"
+            },
+            {
+              "id": "1.47",
+              "ref": "ai/risk-ranking"
+            },
+            {
+              "id": "1.48",
+              "ref": "ai/alert-map-join"
+            },
+            {
+              "id": "1.49",
+              "ref": "ai/prediction-vs-route-errors"
+            },
+            {
+              "id": "1.50",
+              "ref": "ai/inspection-release-report"
             }
           ],
           "tracks": [],
           "destination": "설비 경보와 점검 경로",
-          "destinationEn": "Fault alerts and inspection routes"
+          "destinationEn": "Fault alerts and inspection routes",
+          "projectRef": "projects/fault-inspection"
         },
         {
           "id": "2",
@@ -2555,6 +2724,448 @@ const courseCatalog = {
           "format": "실험",
           "requires": [],
           "page": "ai/llm.html"
+        },
+        {
+          "id": "decision-owner",
+          "title": "누가 어떤 결정을 내리는가",
+          "titleEn": "Who makes which decision?",
+          "question": "같은 센서 경보가 작업자와 알림 프로그램에 각각 어떤 결정을 맡길까요?",
+          "format": "실험",
+          "requires": [
+            "programming/variables",
+            "programming/control",
+            "programming/stack"
+          ],
+          "page": "ai/decision-owner.html"
+        },
+        {
+          "id": "method-choice",
+          "title": "규칙·탐색·학습 중 방법 고르기",
+          "titleEn": "Choosing rules, search or learning",
+          "question": "설비 점검에 규칙·탐색·학습을 각각 어디에 쓸 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/decision-owner"
+          ],
+          "page": "ai/method-choice.html"
+        },
+        {
+          "id": "rule-inference",
+          "title": "사실과 규칙에서 결론 도출하기",
+          "titleEn": "Deriving conclusions from facts and rules",
+          "question": "확인된 사실에서 점검 후보를 어떤 순서로 유도하나요?",
+          "format": "실험",
+          "requires": [
+            "math/logic"
+          ],
+          "page": "ai/rule-inference.html"
+        },
+        {
+          "id": "observations-features-labels",
+          "title": "관측값·특징·정답 구분하기",
+          "titleEn": "Observations, features and labels",
+          "question": "펌프의 기록과 모델의 입력, 맞힐 정답을 어떻게 나누나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rule-inference"
+          ],
+          "page": "ai/observations-features-labels.html"
+        },
+        {
+          "id": "prediction-row",
+          "title": "한 행의 단위와 예측 시각 정하기",
+          "titleEn": "Defining a row and prediction time",
+          "question": "어느 설비의 어느 시점에 대한 한 행을 만들고 정답 창은 어디에 둘까요?",
+          "format": "실험",
+          "requires": [
+            "ai/observations-features-labels"
+          ],
+          "page": "ai/prediction-row.html"
+        },
+        {
+          "id": "sampling-bias",
+          "title": "표본 추출과 선택 편향",
+          "titleEn": "Sampling and selection bias",
+          "question": "신고 장비만 뽑으면 전체 고장률이 어떻게 왜곡될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/prediction-row"
+          ],
+          "page": "ai/sampling-bias.html"
+        },
+        {
+          "id": "delayed-labels",
+          "title": "정답의 관측 지연과 레이블 오류",
+          "titleEn": "Delayed outcomes and label errors",
+          "question": "고장 정답이 늦게 들어오면 언제까지 판단을 기다려야 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/sampling-bias"
+          ],
+          "page": "ai/delayed-labels.html"
+        },
+        {
+          "id": "missing-readings",
+          "title": "결측과 센서 고장 구별하기",
+          "titleEn": "Missing readings and sensor faults",
+          "question": "빈 값과 고장 센서의 숫자를 어떻게 분리하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/delayed-labels"
+          ],
+          "page": "ai/missing-readings.html"
+        },
+        {
+          "id": "future-leakage",
+          "title": "정비 기록에서 미래 정보 누수 찾기",
+          "titleEn": "Finding future leakage in maintenance logs",
+          "question": "예측 시점에 쓸 수 없는 정비 기록 열을 어떻게 찾나요?",
+          "format": "실험",
+          "requires": [
+            "ai/missing-readings"
+          ],
+          "page": "ai/future-leakage.html"
+        },
+        {
+          "id": "dot-product",
+          "title": "내적과 가중합",
+          "titleEn": "Dot products and weighted sums",
+          "question": "온도와 진동 특징의 가중 내적은 각 특징이 만든 점수를 어떻게 합칠까요?",
+          "format": "실험",
+          "requires": [
+            "math/vectors"
+          ],
+          "page": "ai/dot-product.html"
+        },
+        {
+          "id": "base-rate-bayes",
+          "title": "기초 발생률과 베이즈 갱신",
+          "titleEn": "Base rates and Bayesian updating",
+          "question": "민감도가 같은 경보도 고장이 드문 곳에서는 왜 확신이 떨어질까요?",
+          "format": "실험",
+          "requires": [
+            "math/statistics"
+          ],
+          "page": "ai/base-rate-bayes.html"
+        },
+        {
+          "id": "resampling",
+          "title": "표본을 다시 뽑아 추정의 흔들림 보기",
+          "titleEn": "Resampling to see estimate variability",
+          "question": "같은 네 표본을 복원추출하면 고장률 추정이 얼마나 달라질 수 있나요?",
+          "format": "실험",
+          "requires": [
+            "ai/base-rate-bayes"
+          ],
+          "page": "ai/resampling.html"
+        },
+        {
+          "id": "temporal-split",
+          "title": "기간순 학습·검증·시험 분할",
+          "titleEn": "Training, validation and testing in time order",
+          "question": "경보 평가에서 왜 옛 기간으로 배우고 최신 시험 기간을 숨길까요?",
+          "format": "실험",
+          "requires": [
+            "ai/resampling"
+          ],
+          "page": "ai/temporal-split.html"
+        },
+        {
+          "id": "fit-preprocessing",
+          "title": "전처리를 학습 구간에만 맞추기",
+          "titleEn": "Fit preprocessing on training data only",
+          "question": "시험 구간을 들여다보지 않고 중심값을 정하려면 어떻게 하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/temporal-split"
+          ],
+          "page": "ai/fit-preprocessing.html"
+        },
+        {
+          "id": "alert-baseline",
+          "title": "단순 경보 기준선 설계",
+          "titleEn": "Designing a simple alert baseline",
+          "question": "간단한 온도 규칙의 비용을 어떻게 비교 기준으로 삼나요?",
+          "format": "실험",
+          "requires": [
+            "ai/fit-preprocessing"
+          ],
+          "page": "ai/alert-baseline.html"
+        },
+        {
+          "id": "regression-classification",
+          "title": "회귀·분류 출력과 정답 형식",
+          "titleEn": "Regression and classification outputs",
+          "question": "같은 냉각기 기록에서 수치 예측과 고장 분류의 정답은 어떻게 다를까요?",
+          "format": "실험",
+          "requires": [
+            "ai/ml"
+          ],
+          "page": "ai/regression-classification.html"
+        },
+        {
+          "id": "squared-error",
+          "title": "제곱 오차와 이상치",
+          "titleEn": "Squared error and outliers",
+          "question": "온도 예측의 큰 오차 하나가 평균제곱오차를 얼마나 바꿀까요?",
+          "format": "실험",
+          "requires": [
+            "ai/regression-classification"
+          ],
+          "page": "ai/squared-error.html"
+        },
+        {
+          "id": "logistic-log-loss",
+          "title": "로지스틱 출력과 로그 손실",
+          "titleEn": "Logistic output and log loss",
+          "question": "고장 분류에서 확신을 갖고 틀린 예측에 로그 손실은 얼마나 큰 값을 줄까요?",
+          "format": "실험",
+          "requires": [
+            "ai/squared-error"
+          ],
+          "page": "ai/logistic-log-loss.html"
+        },
+        {
+          "id": "derivatives-sensitivity",
+          "title": "미분과 편미분으로 민감도 읽기",
+          "titleEn": "Reading sensitivity with derivatives",
+          "question": "모델의 손실이 두 매개변수 중 어느 쪽에 더 민감한지 어떻게 읽을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/logistic-log-loss"
+          ],
+          "page": "ai/derivatives-sensitivity.html"
+        },
+        {
+          "id": "learning-rate",
+          "title": "학습률과 발산 진단",
+          "titleEn": "Learning rate and divergence",
+          "question": "같은 손실에서 한 걸음의 크기를 바꾸면 언제 수렴 대신 발산할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/gradient"
+          ],
+          "page": "ai/learning-rate.html"
+        },
+        {
+          "id": "chain-rule-backprop",
+          "title": "연쇄법칙과 역전파",
+          "titleEn": "Chain rule and backpropagation",
+          "question": "하나의 손실에서 앞 가중치와 뒤 편향까지 변화율을 어떻게 되돌려 보낼까요?",
+          "format": "실험",
+          "requires": [
+            "ai/neural"
+          ],
+          "page": "ai/chain-rule-backprop.html"
+        },
+        {
+          "id": "minibatch-epoch",
+          "title": "미니배치와 한 에폭",
+          "titleEn": "Mini-batches and an epoch",
+          "question": "다섯 행을 두 개씩 학습할 때 한 에폭은 언제 끝날까요?",
+          "format": "실험",
+          "requires": [
+            "ai/chain-rule-backprop"
+          ],
+          "page": "ai/minibatch-epoch.html"
+        },
+        {
+          "id": "fit-diagnosis",
+          "title": "과소적합과 과적합 판별",
+          "titleEn": "Diagnosing underfitting and overfitting",
+          "question": "같은 검증 행에서 학습 오차와 검증 오차를 함께 보면 어떤 실패를 구별할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/minibatch-epoch"
+          ],
+          "page": "ai/fit-diagnosis.html"
+        },
+        {
+          "id": "regularization-early-stop",
+          "title": "정규화와 조기 종료",
+          "titleEn": "Regularization and early stopping",
+          "question": "검증 오차가 커지기 전에 어느 학습 결과를 남길까요?",
+          "format": "실험",
+          "requires": [
+            "ai/fit-diagnosis"
+          ],
+          "page": "ai/regularization-early-stop.html"
+        },
+        {
+          "id": "confusion-matrix",
+          "title": "혼동행렬에서 건수 읽기",
+          "titleEn": "Counting outcomes in a confusion matrix",
+          "question": "여섯 경보 판정을 실제 고장과 맞대면 네 가지 결과가 몇 건씩 나오나요?",
+          "format": "실험",
+          "requires": [
+            "ai/regularization-early-stop"
+          ],
+          "page": "ai/confusion-matrix.html"
+        },
+        {
+          "id": "threshold-precision-recall",
+          "title": "임계값과 정밀도·재현율",
+          "titleEn": "Threshold, precision and recall",
+          "question": "경보 기준을 0.75에서 0.55로 낮추면 같은 여섯 점수에서 무엇이 바뀔까요?",
+          "format": "실험",
+          "requires": [
+            "ai/confusion-matrix"
+          ],
+          "page": "ai/threshold-precision-recall.html"
+        },
+        {
+          "id": "probability-calibration",
+          "title": "확률 보정과 신뢰도 곡선",
+          "titleEn": "Probability calibration and reliability",
+          "question": "0.8로 예측한 고장들이 실제로 얼마나 자주 고장 나야 확률을 믿을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/threshold-precision-recall"
+          ],
+          "page": "ai/probability-calibration.html"
+        },
+        {
+          "id": "error-cost-threshold",
+          "title": "오류 비용으로 임계값 선택",
+          "titleEn": "Choosing thresholds by error cost",
+          "question": "미탐 비용이 오탐의 다섯 배이면 두 기준 중 어느 것을 검증에서 고를까요?",
+          "format": "실험",
+          "requires": [
+            "ai/probability-calibration"
+          ],
+          "page": "ai/error-cost-threshold.html"
+        },
+        {
+          "id": "group-failures-handoff",
+          "title": "집단별 실패와 사람에게 넘길 기준",
+          "titleEn": "Group failures and human handoff",
+          "question": "전체 미탐률이 가리는 실패를 어디서 찾고 누구에게 넘길까요?",
+          "format": "실험",
+          "requires": [
+            "ai/error-cost-threshold"
+          ],
+          "page": "ai/group-failures-handoff.html"
+        },
+        {
+          "id": "route-state-cost",
+          "title": "지도에서 상태·행동·경로 비용 정하기",
+          "titleEn": "Defining route states, actions and costs",
+          "question": "공장 지도의 위치·이동·분을 탐색 입력으로 어떻게 바꾸나요?",
+          "format": "실험",
+          "requires": [
+            "math/graph"
+          ],
+          "page": "ai/route-state-cost.html"
+        },
+        {
+          "id": "closed-unreachable",
+          "title": "통로 폐쇄와 도달 불가 처리",
+          "titleEn": "Handling closures and unreachable destinations",
+          "question": "같은 설비에 갈 때 통로 폐쇄와 목적지 고립을 어떻게 다르게 반환할까요?",
+          "format": "실험",
+          "requires": [
+            "algorithms/shortest"
+          ],
+          "page": "ai/closed-unreachable.html"
+        },
+        {
+          "id": "pinned-versions",
+          "title": "데이터·코드·환경 버전 고정",
+          "titleEn": "Pinning data, code and environment versions",
+          "question": "같은 설정 이름으로 재실행한 두 사람이 다른 결과를 얻으면 어떤 버전을 비교해야 할까요?",
+          "format": "실험",
+          "requires": [
+            "software-engineering/testing"
+          ],
+          "page": "ai/pinned-versions.html"
+        },
+        {
+          "id": "seeds-repeated-runs",
+          "title": "무작위성·시드와 반복 실행",
+          "titleEn": "Randomness, seeds and repeated runs",
+          "question": "같은 시드를 쓰는 목적과 여러 시드를 반복하는 목적은 어떻게 다를까요?",
+          "format": "실험",
+          "requires": [
+            "ai/pinned-versions"
+          ],
+          "page": "ai/seeds-repeated-runs.html"
+        },
+        {
+          "id": "ablation",
+          "title": "구성요소 제거 실험으로 원인 분리",
+          "titleEn": "Isolating a cause with ablation",
+          "question": "진동 특징이 비용을 줄였는지 보려면 무엇 하나만 바꾸나요?",
+          "format": "실험",
+          "requires": [
+            "ai/seeds-repeated-runs"
+          ],
+          "page": "ai/ablation.html"
+        },
+        {
+          "id": "recording-nonreproduction",
+          "title": "재현되지 않은 결과와 한계 기록",
+          "titleEn": "Recording non-reproduction and limitations",
+          "question": "이전 결과를 재현하지 못했다면 무엇을 확인했고 무엇이 불확실한지 어떻게 기록하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/ablation"
+          ],
+          "page": "ai/recording-nonreproduction.html"
+        },
+        {
+          "id": "sensor-data-retention",
+          "title": "센서 기록의 개인정보와 보존 기한",
+          "titleEn": "Sensor privacy and retention",
+          "question": "설비 데이터에서 작업자를 식별하는 열과 필요 기간을 어떻게 줄일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/recording-nonreproduction"
+          ],
+          "page": "ai/sensor-data-retention.html"
+        },
+        {
+          "id": "risk-ranking",
+          "title": "설비 위험 순위에서 점검 대상 고르기",
+          "titleEn": "Choosing inspection targets from a risk ranking",
+          "question": "경보 후보가 여러 대이고 두 대만 볼 수 있으면 어떻게 선정할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/sensor-data-retention"
+          ],
+          "page": "ai/risk-ranking.html"
+        },
+        {
+          "id": "alert-map-join",
+          "title": "경보 ID를 지도 목적지와 연결하기",
+          "titleEn": "Linking alert IDs to map destinations",
+          "question": "경보 설비 ID를 좌표 이름과 헷갈리지 않고 목적지로 어떻게 연결하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/risk-ranking"
+          ],
+          "page": "ai/alert-map-join.html"
+        },
+        {
+          "id": "prediction-vs-route-errors",
+          "title": "예측 오류와 경로 오류 따로 집계하기",
+          "titleEn": "Counting prediction and routing errors separately",
+          "question": "경보가 틀린 사례와 맞는 경보가 막힌 사례를 어떻게 따로 셀까요?",
+          "format": "실험",
+          "requires": [
+            "ai/alert-map-join"
+          ],
+          "page": "ai/prediction-vs-route-errors.html"
+        },
+        {
+          "id": "inspection-release-report",
+          "title": "점검 배포 여부를 평가 보고서로 결정하기",
+          "titleEn": "Deciding release from an evaluation report",
+          "question": "시험 비용이 내려가도 언제 자동 점검을 보류해야 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/prediction-vs-route-errors"
+          ],
+          "page": "ai/inspection-release-report.html"
         }
       ]
     },
@@ -2598,6 +3209,17 @@ const courseCatalog = {
           "format": "프로젝트",
           "requires": [],
           "page": "projects/trackproject.html"
+        },
+        {
+          "id": "fault-inspection",
+          "title": "설비 경보와 점검 경로",
+          "titleEn": "Fault alerts and inspection routes",
+          "question": "시간순 고장 경보를 만들고 실제 통로와 사람이 확인할 조건까지 어떻게 보고하나요?",
+          "format": "프로젝트",
+          "requires": [
+            "ai/inspection-release-report"
+          ],
+          "page": "projects/fault-inspection.html"
         }
       ]
     }

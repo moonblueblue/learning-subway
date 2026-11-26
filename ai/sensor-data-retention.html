@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="설비 데이터에서 작업자를 식별하는 열과 필요 기간을 어떻게 줄일까요?">
+<title>센서 기록의 개인정보와 보존 기한 · T46</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./sensor-data-retention.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T46</p><h1>센서 기록의 개인정보와 보존 기한</h1><p>설비 데이터에서 작업자를 식별하는 열과 필요 기간을 어떻게 줄일까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">센서 기록의 개인정보와 보존 기한</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "입력 열 줄이기",
+    "title": "경보에 필요 없는 작업자 ID는 특징표에서 제외합니다",
+    "body": "밸브 V의 센서 기록에는 진동 5 mm/s와 작업자 배지 W17이 들어왔습니다. 이 예의 설비 경보에는 설비 ID·시각·진동만 필요합니다. 접근이 제한된 원본은 정해진 보존 기간만 두고, 모델용 표에는 배지 열을 옮기지 않습니다.",
+    "takeaway": "W17에서 특징표로 가는 선만 차단되고 장비·시각·진동은 남습니다.",
+    "example": [
+      "V · 05:00 · 5 mm/s · W17",
+      "특징 열 허용 목록",
+      "V · 05:00 · 5 mm/s"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "a",
+          138,
+          95,
+          212,
+          37,
+          [
+            "V · 05:00 · 5 mm/s"
+          ],
+          "plain"
+        ],
+        [
+          "b",
+          138,
+          204,
+          212,
+          37,
+          [
+            "작업자 W17"
+          ],
+          "blocked"
+        ],
+        [
+          "d",
+          475,
+          146,
+          225,
+          59,
+          [
+            "사용할 열",
+            "V · 05:00 · 5 mm/s"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "d",
+          "active",
+          "",
+          0
+        ],
+        [
+          "b",
+          "d",
+          "blocked",
+          "× 제외",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "입력 열 줄이기",
+      "description": "W17에서 특징표로 가는 선만 차단되고 장비·시각·진동은 남습니다."
+    },
+    "quiz": [
+      "작업자 배지를 임의 토큰으로 바꿨지만 같은 작업자를 계속 연결할 수 있다면, 바로 넣나요?",
+      "필요성부터 확인",
+      "토큰이면 항상 추가",
+      "식별자를 바꿔도 연결할 수 있습니다. 이번 예의 경보에는 작업자 정보가 필요하지 않습니다."
+    ]
+  },
+  {
+    "label": "기한에 따라 삭제",
+    "title": "보고서와 원본의 보존 시점을 따로 관리합니다",
+    "body": "연습 정책은 원본 행을 7일, 식별자 없는 설비군 단위 월별 집계는 30일 보존합니다. 원본 수명 7일이 지나면 원본을 삭제하고, 식별 정보가 남아 있지 않은 집계는 기한이 될 때까지 보존합니다.",
+    "takeaway": "7일 원본 끝에서 삭제가 표시되고 30일 집계 줄은 계속 이어집니다.",
+    "example": [
+      "원본·집계 보유",
+      "원본 7일 · 집계 30일",
+      "원본 삭제 · 집계 유지"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p96_0",
+          118,
+          96,
+          155,
+          59,
+          [
+            "원본",
+            "W17 포함"
+          ],
+          "plain"
+        ],
+        [
+          "p96_1",
+          310,
+          96,
+          155,
+          59,
+          [
+            "7일",
+            "삭제"
+          ],
+          "blocked"
+        ],
+        [
+          "p96_2",
+          502,
+          96,
+          155,
+          37,
+          [
+            "30일에 원본 없음"
+          ],
+          "plain"
+        ],
+        [
+          "p204_0",
+          118,
+          204,
+          155,
+          59,
+          [
+            "월별 집계",
+            "식별자 없음"
+          ],
+          "plain"
+        ],
+        [
+          "p204_1",
+          310,
+          204,
+          155,
+          59,
+          [
+            "7일",
+            "유지"
+          ],
+          "plain"
+        ],
+        [
+          "p204_2",
+          502,
+          204,
+          155,
+          59,
+          [
+            "30일",
+            "삭제"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p96_0",
+          "p96_1",
+          "blocked",
+          ""
+        ],
+        [
+          "p96_1",
+          "p96_2",
+          "muted",
+          ""
+        ],
+        [
+          "p204_0",
+          "p204_1",
+          "active",
+          ""
+        ],
+        [
+          "p204_1",
+          "p204_2",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "기한에 따라 삭제",
+      "description": "7일 원본 끝에서 삭제가 표시되고 30일 집계 줄은 계속 이어집니다."
+    },
+    "quiz": [
+      "원본만 지웠는데 같은 행이 별도 파일에도 남아 있으면요?",
+      "대상 사본도 함께 처리",
+      "원본이면 충분",
+      "보존 기한은 정책 범위에 포함된 사본에도 적용해야 합니다."
+    ]
+  }
+];
+const slug = 'sensor-data-retention';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

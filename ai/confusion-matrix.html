@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="여섯 경보 판정을 실제 고장과 맞대면 네 가지 결과가 몇 건씩 나오나요?">
+<title>혼동행렬에서 건수 읽기 · T31</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./confusion-matrix.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T31</p><h1>혼동행렬에서 건수 읽기</h1><p>여섯 경보 판정을 실제 고장과 맞대면 네 가지 결과가 몇 건씩 나오나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">혼동행렬에서 건수 읽기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "두 값을 짝짓기",
+    "title": "예측과 실제를 같은 설비 ID에서 맞춥니다",
+    "body": "설비 A, B, C는 경보 1, D, E, F는 경보 0입니다. 실제 고장은 A, B, D입니다. 같은 설비 ID를 맞춘 뒤 경보와 고장이라는 두 값을 각각 읽습니다.",
+    "takeaway": "C는 경보만 1이고 D는 고장만 1입니다.",
+    "example": [
+      "경보 A·B·C",
+      "실제 A·B·D와 대조",
+      "C 오탐 · D 미탐"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m70_0",
+          64.0,
+          70,
+          75,
+          37,
+          [
+            "ID"
+          ],
+          "plain"
+        ],
+        [
+          "m70_1",
+          146.0,
+          70,
+          75,
+          37,
+          [
+            "A"
+          ],
+          "plain"
+        ],
+        [
+          "m70_2",
+          228.0,
+          70,
+          75,
+          37,
+          [
+            "B"
+          ],
+          "plain"
+        ],
+        [
+          "m70_3",
+          310.0,
+          70,
+          75,
+          37,
+          [
+            "C"
+          ],
+          "plain"
+        ],
+        [
+          "m70_4",
+          392.0,
+          70,
+          75,
+          37,
+          [
+            "D"
+          ],
+          "plain"
+        ],
+        [
+          "m70_5",
+          474.0,
+          70,
+          75,
+          37,
+          [
+            "E"
+          ],
+          "plain"
+        ],
+        [
+          "m70_6",
+          556.0,
+          70,
+          75,
+          37,
+          [
+            "F"
+          ],
+          "plain"
+        ],
+        [
+          "m128_0",
+          64.0,
+          128,
+          75,
+          37,
+          [
+            "경보"
+          ],
+          "plain"
+        ],
+        [
+          "m128_1",
+          146.0,
+          128,
+          75,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m128_2",
+          228.0,
+          128,
+          75,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m128_3",
+          310.0,
+          128,
+          75,
+          37,
+          [
+            "1"
+          ],
+          "blocked"
+        ],
+        [
+          "m128_4",
+          392.0,
+          128,
+          75,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m128_5",
+          474.0,
+          128,
+          75,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m128_6",
+          556.0,
+          128,
+          75,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m185_0",
+          64.0,
+          185,
+          75,
+          37,
+          [
+            "고장"
+          ],
+          "plain"
+        ],
+        [
+          "m185_1",
+          146.0,
+          185,
+          75,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m185_2",
+          228.0,
+          185,
+          75,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m185_3",
+          310.0,
+          185,
+          75,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m185_4",
+          392.0,
+          185,
+          75,
+          37,
+          [
+            "1"
+          ],
+          "blocked"
+        ],
+        [
+          "m185_5",
+          474.0,
+          185,
+          75,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m185_6",
+          556.0,
+          185,
+          75,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          51,
+          248,
+          "C: (1,0) · D: (0,1)"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "두 값을 짝짓기",
+      "description": "C는 경보만 1이고 D는 고장만 1입니다."
+    },
+    "quiz": [
+      "경보 0인 D가 실제로 고장 났습니다. 어떤 오류인가요?",
+      "미탐",
+      "오탐",
+      "실제 양성에 예측 음성이므로 미탐입니다."
+    ]
+  },
+  {
+    "label": "교차표 집계",
+    "title": "실제와 예측의 교차점으로 ID를 옮깁니다",
+    "body": "행은 실제 고장 여부, 열은 예측 경보입니다. 실제 고장 행에는 A·B 두 건의 적중과 D 한 건의 미탐을 넣습니다. 실제 정상 행에는 C 오탐 한 건, E·F 정상 판정 두 건을 넣습니다.",
+    "takeaway": "네 칸에 A–F가 한 번씩 나타나 전체 6건을 유지합니다.",
+    "example": [
+      "A–F",
+      "실제 행 × 예측 열",
+      "TP=2 · FN=1 · FP=1 · TN=2"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m70_0",
+          130.0,
+          70,
+          173,
+          37,
+          [
+            "실제 ↓"
+          ],
+          "plain"
+        ],
+        [
+          "m70_1",
+          310.0,
+          70,
+          173,
+          37,
+          [
+            "경보 1"
+          ],
+          "plain"
+        ],
+        [
+          "m70_2",
+          490.0,
+          70,
+          173,
+          37,
+          [
+            "경보 0"
+          ],
+          "plain"
+        ],
+        [
+          "m139_0",
+          130.0,
+          139,
+          173,
+          37,
+          [
+            "고장 1"
+          ],
+          "plain"
+        ],
+        [
+          "m139_1",
+          310.0,
+          139,
+          173,
+          59,
+          [
+            "TP · A,B",
+            "2"
+          ],
+          "active"
+        ],
+        [
+          "m139_2",
+          490.0,
+          139,
+          173,
+          59,
+          [
+            "FN · D",
+            "1"
+          ],
+          "blocked"
+        ],
+        [
+          "m213_0",
+          130.0,
+          213,
+          173,
+          37,
+          [
+            "정상 0"
+          ],
+          "plain"
+        ],
+        [
+          "m213_1",
+          310.0,
+          213,
+          173,
+          59,
+          [
+            "FP · C",
+            "1"
+          ],
+          "blocked"
+        ],
+        [
+          "m213_2",
+          490.0,
+          213,
+          173,
+          59,
+          [
+            "TN · E,F",
+            "2"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "교차표 집계",
+      "description": "네 칸에 A–F가 한 번씩 나타나 전체 6건을 유지합니다."
+    },
+    "quiz": [
+      "F에서 나중에 고장이 확인되면 어느 칸으로 이동하나요?",
+      "TN → FN",
+      "TN → FP",
+      "예측 0은 그대로라 같은 열의 실제 고장 행으로 올라갑니다."
+    ]
+  }
+];
+const slug = 'confusion-matrix';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

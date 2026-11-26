@@ -7,7 +7,7 @@
     ...chapter, code: index ? String.fromCharCode(64 + index) : 'AI',
     color: chapter.transfer?.color || '#009184',
     stops: [...chapter.stations.map(s => ({...lessons.get(s.ref), ...s})),
-      {id:'end', title:chapter.destination, titleEn:chapter.destinationEn, terminal:true}]
+      {id:'end', ref:chapter.projectRef, title:chapter.destination, titleEn:chapter.destinationEn, terminal:true}]
   }));
   const trunk = lines[0], network = document.querySelector('.network');
   const get = id => document.getElementById(id);
@@ -20,7 +20,7 @@
   let line = lines.find(item => item.id === (params.get('line') || last.line)) || trunk;
   const initial = params.get('lesson') || params.get('stop') || (last.line === line.id && last.ref);
   const value = stop => stop.ref || stop.id;
-  let stop = line.stops.find(s => value(s) === initial) || line.stops[0];
+  let stop = line.stops.find(s => value(s) === initial || s.id === initial) || line.stops[0];
   const legend = new Map();
   const lessonURL = (route, station) => './' + station.ref + '.html?' + new URLSearchParams({roadmap:'ai', line:route.id});
 
@@ -65,6 +65,33 @@
     return rows;
   }
 
+  // Draw an overview when a line outgrows its rail. The station picker always has every lesson.
+  // Endpoints and transfer coordinates stay fixed while a reader selects individual lessons.
+  function stationPoints(route, start, end, y, capacity, interchanges, currentStop) {
+    const kept = new Set([0, route.stops.length - 1]);
+    route.stops.forEach((station, i) => {
+      if (route === trunk && interchanges.has(station.ref)) kept.add(i);
+    });
+    const indices = [...kept].sort((a,b) => a-b);
+    while (indices.length < Math.min(capacity, route.stops.length)) {
+      let gap = 1;
+      for (let i = 2; i < indices.length; i++) {
+        if (indices[i]-indices[i-1] > indices[gap]-indices[gap-1]) gap = i;
+      }
+      indices.splice(gap, 0, Math.floor((indices[gap-1]+indices[gap])/2));
+    }
+    const segment = (end-start) / (indices.length-1);
+    const points = [];
+    indices.forEach((index, i) => {
+      const x = start + segment * i;
+      points.push({station:route.stops[index], x, y});
+      if (i === indices.length-1) return;
+      const selected = route.stops.slice(index+1, indices[i+1]).filter(s => s===stop || s===currentStop);
+      selected.forEach((station, j) => points.push({station, x:x+segment*(j+1)/(selected.length+1), y}));
+    });
+    return points;
+  }
+
   function draw() {
     const w = network.clientWidth, h = network.clientHeight;
     if (!w || !h) return;
@@ -79,10 +106,13 @@
     const gap = (h - top - bottom) / 7, mid = top + 4 * gap;
     const left = compact ? Math.min(119, w * .31) : Math.max(44,w*.046);
     const right = w - (compact ? 16 : Math.max(52,w*.05));
-    const trunkX = trunk.stops.map((_,i) => left + (right - left) * i/(trunk.stops.length-1));
-    const places = new Map([[trunk, trunkX.map(x=>({x,y:mid}))]]);
-    const risers = [];
+    const currentLine = lines.find(r=>r.id===last.line && r.stops.some(s=>s.ref===last.ref)) || trunk;
+    const currentStop = (last.ref && currentLine.stops.find(s=>s.ref===last.ref)) || currentLine.stops[0];
     const interchanges = new Set(lines.slice(1).map(r=>r.transfer.ref));
+    const capacity = span => Math.max(2, Math.floor(span / (compact ? 18 : 75)) + 1);
+    const trunkPoints = stationPoints(trunk,left,right,mid,capacity(right-left),interchanges,currentStop);
+    const places = new Map([[trunk,trunkPoints]]);
+    const risers = [];
     // Real rails are painted first, then all interchange and station markers sit on top.
     function rail(d, color, finished) {
       fragment.append(svg('path',{d, fill:'none', stroke:color, 'stroke-width':compact ? 4 : 7,
@@ -90,18 +120,16 @@
     }
     for (const route of lines.slice(1)) {
       const hint = route.transfer, dir = hint.direction, sign = Math.sign(hint.row);
-      const transfer = trunk.stops.findIndex(s=>s.ref===hint.ref), x = trunkX[transfer];
+      const x = trunkPoints.find(point=>point.station.ref===hint.ref).x;
       const y = mid + hint.row*gap, end = dir > 0 ? right : left;
       const bend = Math.min(compact ? 9 : 24, Math.abs(y-mid)*.45, Math.abs(end-x)*.16);
       const first = x + dir * Math.min(Math.abs(end-x)*.20,compact ? 20 : Math.max(48,w*.048));
-      const pts = route.stops.map((s,i)=>({x:first+(end-first)*i/(route.stops.length-1),y}));
+      const pts = stationPoints(route,first,end,y,capacity(Math.abs(end-first)),interchanges,currentStop);
       places.set(route,pts);
       risers.push({l:x-2,r:x+2,t:Math.min(y,mid)+6,b:Math.max(y,mid)-6});
       rail(`M${x} ${mid}V${y-sign*bend}Q${x} ${y} ${x+dir*bend} ${y}H${end}`,route.color,route.lessons.length);
     }
     rail(`M${left} ${mid}H${right}`,trunk.color,true);
-    const currentLine = lines.find(r=>r.id===last.line && r.stops.some(s=>s.ref===last.ref)) || trunk;
-    const currentStop = (last.ref && currentLine.stops.find(s=>s.ref===last.ref)) || currentLine.stops[0];
     const positions = [...risers];
     const collision = (a,b) => a.l<b.r+2 && a.r>b.l-2 && a.t<b.b+2 && a.b>b.t-2;
     const labels = [], pins = [];
@@ -120,8 +148,8 @@
         activate(link,()=>selectStation(route,route.stops.find(s=>s.ref) || route.stops[0]));
         fragment.append(link);
       }
-      route.stops.forEach((station,i)=>{
-        const {x,y}=points[i], isTransfer=route===trunk && interchanges.has(station.ref);
+      points.forEach(({station,x,y},i)=>{
+        const isTransfer=route===trunk && interchanges.has(station.ref);
         const radius=compact ? 3.7 : 6.4;
         const key=route.id+':'+station.id;
         const accessible = t(station,'title')+(station.ref ? '' : ', '+courseI18n.translate('준비 중'));

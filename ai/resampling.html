@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 네 표본을 복원추출하면 고장률 추정이 얼마나 달라질 수 있나요?">
+<title>표본을 다시 뽑아 추정의 흔들림 보기 · T15</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./resampling.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T15</p><h1>표본을 다시 뽑아 추정의 흔들림 보기</h1><p>같은 네 표본을 복원추출하면 고장률 추정이 얼마나 달라질 수 있나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">표본을 다시 뽑아 추정의 흔들림 보기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "원표본",
+    "title": "한 번의 관측에서 고장률 25%를 얻습니다",
+    "body": "네 장비 가운데 A만 고장입니다. 1·0·0·0의 평균은 0.25지만 같은 방법으로 다른 네 장비를 조사했다면 표본 결과는 달라졌을 수 있습니다.",
+    "takeaway": "고장 칸 A의 1 하나가 네 칸의 합 1이 됩니다.",
+    "example": [
+      "(1, 0, 0, 0)",
+      "합 ÷ 4",
+      "25%"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m94_0",
+          95.5,
+          94,
+          136,
+          59,
+          [
+            "A",
+            "1"
+          ],
+          "active"
+        ],
+        [
+          "m94_1",
+          238.5,
+          94,
+          136,
+          59,
+          [
+            "B",
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m94_2",
+          381.5,
+          94,
+          136,
+          59,
+          [
+            "C",
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m94_3",
+          524.5,
+          94,
+          136,
+          59,
+          [
+            "D",
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "p198_0",
+          140,
+          198,
+          218,
+          59,
+          [
+            "합",
+            "1+0+0+0=1"
+          ],
+          "plain"
+        ],
+        [
+          "p198_1",
+          480,
+          198,
+          218,
+          59,
+          [
+            "고장률",
+            "1/4 = 25%"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p198_0",
+          "p198_1",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "원표본",
+      "description": "고장 칸 A의 1 하나가 네 칸의 합 1이 됩니다."
+    },
+    "quiz": [
+      "D도 고장이었다면 원표본의 비율은?",
+      "50%",
+      "25%",
+      "고장 2대를 표본 크기 4로 나누면 50%입니다."
+    ]
+  },
+  {
+    "label": "복원추출",
+    "title": "같은 행을 다시 뽑을 수 있어 표본의 합이 달라집니다",
+    "body": "원래 네 행에서 뽑은 뒤 다시 넣는 일을 네 번 합니다. A, A, D, B를 뽑으면 50%이고 B, C, D, B를 뽑으면 0%입니다. 원표본의 행 A가 반복되거나 빠집니다.",
+    "takeaway": "두 재표본에서 A 칸 두 개와 A 칸 없음이 2/4와 0/4를 만듭니다.",
+    "example": [
+      "A·B·C·D",
+      "두 번 복원추출",
+      "50% · 0%"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m99_0",
+          95.5,
+          99,
+          136,
+          59,
+          [
+            "A",
+            "1"
+          ],
+          "active"
+        ],
+        [
+          "m99_1",
+          238.5,
+          99,
+          136,
+          59,
+          [
+            "A",
+            "1"
+          ],
+          "active"
+        ],
+        [
+          "m99_2",
+          381.5,
+          99,
+          136,
+          59,
+          [
+            "D",
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m99_3",
+          524.5,
+          99,
+          136,
+          59,
+          [
+            "B",
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m192_0",
+          95.5,
+          192,
+          136,
+          59,
+          [
+            "B",
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m192_1",
+          238.5,
+          192,
+          136,
+          59,
+          [
+            "C",
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m192_2",
+          381.5,
+          192,
+          136,
+          59,
+          [
+            "D",
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m192_3",
+          524.5,
+          192,
+          136,
+          59,
+          [
+            "B",
+            "0"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          51,
+          147,
+          "2 / 4 = 50%"
+        ],
+        [
+          51,
+          241,
+          "0 / 4 = 0%"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "복원추출",
+      "description": "두 재표본에서 A 칸 두 개와 A 칸 없음이 2/4와 0/4를 만듭니다."
+    },
+    "quiz": [
+      "재표본 C, A, C, A의 추정치는?",
+      "50%",
+      "25%",
+      "복원추출에서는 같은 A가 두 번 카운트됩니다."
+    ]
+  },
+  {
+    "label": "반복의 분포",
+    "title": "재표본의 고장 건수를 모아 퍼짐을 읽습니다",
+    "body": "원표본에서는 A를 뽑을 확률이 매번 1/4입니다. 네 번 뽑는 256가지 순서 중 고장 0건은 81개, 1건은 108개, 2건은 54개, 3건은 12개, 4건은 1개입니다. 이 분포는 네 행 밖에 없던 장비 유형을 만들어내지 못합니다.",
+    "takeaway": "같은 축에서 25%가 가장 자주 나와도 0%, 50%, 75%, 100%에 다른 결과가 남습니다.",
+    "example": [
+      "한 재표본 = 4회",
+      "4⁴ = 256개 순서",
+      "25%에 108개"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          42,
+          269,
+          "4⁴ = 256가지 복원추출 순서"
+        ]
+      ],
+      "bars": [
+        [
+          145,
+          59,
+          243,
+          24,
+          "0% · 81가지",
+          "plain"
+        ],
+        [
+          145,
+          99,
+          324,
+          24,
+          "25% · 108가지",
+          "active"
+        ],
+        [
+          145,
+          139,
+          162,
+          24,
+          "50% · 54가지",
+          "plain"
+        ],
+        [
+          145,
+          179,
+          36,
+          24,
+          "75% · 12가지",
+          "plain"
+        ],
+        [
+          145,
+          219,
+          3,
+          24,
+          "100% · 1가지",
+          "plain"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "반복의 분포",
+      "description": "같은 축에서 25%가 가장 자주 나와도 0%, 50%, 75%, 100%에 다른 결과가 남습니다."
+    },
+    "quiz": [
+      "원표본에 대형 펌프가 전혀 없다면 복원추출에 대형 펌프가 들어올까요?",
+      "들어올 수 없음",
+      "반복을 늘리면 등장",
+      "복원추출은 원래 기록에서만 뽑습니다. 누락된 집단을 복원하지 않습니다."
+    ]
+  }
+];
+const slug = 'resampling';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

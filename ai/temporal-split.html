@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="경보 평가에서 왜 옛 기간으로 배우고 최신 시험 기간을 숨길까요?">
+<title>기간순 학습·검증·시험 분할 · T16</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./temporal-split.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T16</p><h1>기간순 학습·검증·시험 분할</h1><p>경보 평가에서 왜 옛 기간으로 배우고 최신 시험 기간을 숨길까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">기간순 학습·검증·시험 분할</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "날짜 순서",
+    "title": "기간을 순서대로 나누고 각 역할을 고정합니다",
+    "body": "1월로 경보 점수의 가중치를 맞추고 2월로 임계값을 정합니다. 3월은 두 값이 정해진 뒤 성능을 한 번 재는 데 씁니다. 날짜를 섞으면 설비나 공정 상태가 이미 바뀐 뒤의 기록으로 과거를 예측할 수 있습니다.",
+    "takeaway": "1월→2월→3월의 화살표 위에서 바꿀 값과 최종 평가를 구분합니다.",
+    "example": [
+      "1–3월 데이터",
+      "달 순서 고정",
+      "학습 → 검증 → 시험"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p139_0",
+          118,
+          139,
+          155,
+          59,
+          [
+            "1월 · 학습",
+            "가중치 맞춤"
+          ],
+          "plain"
+        ],
+        [
+          "p139_1",
+          310,
+          139,
+          155,
+          59,
+          [
+            "2월 · 검증",
+            "임계값 선택"
+          ],
+          "plain"
+        ],
+        [
+          "p139_2",
+          502,
+          139,
+          155,
+          59,
+          [
+            "3월 · 시험",
+            "평가만"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p139_0",
+          "p139_1",
+          "active",
+          ""
+        ],
+        [
+          "p139_1",
+          "p139_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "날짜 순서",
+      "description": "1월→2월→3월의 화살표 위에서 바꿀 값과 최종 평가를 구분합니다."
+    },
+    "quiz": [
+      "후보 임계값 두 개를 비교할 기간은?",
+      "2월 검증",
+      "3월 시험",
+      "3월은 정책을 고정한 뒤 한 번 평가하는 역할입니다."
+    ]
+  },
+  {
+    "label": "경계의 정답",
+    "title": "정답 창이 다음 구간으로 넘어가는 행을 다룹니다",
+    "body": "1월 31일 12:00 행의 정답은 2월 1일 12:00까지 필요합니다. 2월 1일 00:00을 첫 평가 시점으로 고정하면, 이 행의 정답은 그때 아직 확정되지 않았으므로 1월 학습에서 제외합니다.",
+    "takeaway": "창 시작과 종료 사이에 2월 경계가 놓여 늦은 학습 행이 가려집니다.",
+    "example": [
+      "1/31 12:00",
+      "24시간 뒤 > 2/1 00:00",
+      "학습 제외"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p122_0",
+          118,
+          122,
+          155,
+          59,
+          [
+            "1/31 12:00",
+            "마지막 행"
+          ],
+          "plain"
+        ],
+        [
+          "p122_1",
+          310,
+          122,
+          155,
+          59,
+          [
+            "2/1 00:00",
+            "분할 경계"
+          ],
+          "blocked"
+        ],
+        [
+          "p122_2",
+          502,
+          122,
+          155,
+          59,
+          [
+            "2/1 12:00",
+            "정답 창 종료"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "p122_0",
+          "p122_1",
+          "muted",
+          ""
+        ],
+        [
+          "p122_1",
+          "p122_2",
+          "muted",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          66,
+          223,
+          "정답이 다음 구간에 닿는 행은 학습 제외"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "경계의 정답",
+      "description": "창 시작과 종료 사이에 2월 경계가 놓여 늦은 학습 행이 가려집니다."
+    },
+    "quiz": [
+      "1월 30일 12:00 행의 창이 31일 12:00에 끝나고 보고도 즉시 됐습니다. 학습 가능할까요?",
+      "학습 가능",
+      "학습 제외",
+      "시작 시각과 정답 확인 시각이 모두 학습 기간 안입니다."
+    ]
+  }
+];
+const slug = 'temporal-split';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

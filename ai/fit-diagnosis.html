@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 검증 행에서 학습 오차와 검증 오차를 함께 보면 어떤 실패를 구별할까요?">
+<title>과소적합과 과적합 판별 · T29</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./fit-diagnosis.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T29</p><h1>과소적합과 과적합 판별</h1><p>같은 검증 행에서 학습 오차와 검증 오차를 함께 보면 어떤 실패를 구별할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">과소적합과 과적합 판별</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "큰 두 오차",
+    "title": "두 오차가 크면 기존 패턴부터 놓쳤을 가능성이 있습니다",
+    "body": "냉각기의 다음 온도를 언제나 70°C라고 내는 상수 모델은 학습 MAE 8°C와 검증 MAE 9°C를 냈습니다. 두 기간 모두에서 목표인 4°C 이하를 놓쳤습니다. 용량이 너무 작거나 충분히 학습되지 않았는지 확인합니다.",
+    "takeaway": "막대 두 개가 모두 목표 4°C 눈금을 넘습니다.",
+    "example": [
+      "상수 70°C",
+      "동일 분할의 MAE",
+      "학습 8 · 검증 9"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "t",
+          281,
+          193,
+          18,
+          37,
+          [
+            "▼"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          38,
+          103,
+          "학습"
+        ],
+        [
+          38,
+          160,
+          "검증"
+        ],
+        [
+          281,
+          221,
+          "4°C 목표"
+        ]
+      ],
+      "bars": [
+        [
+          153,
+          84,
+          256,
+          24,
+          "8°C",
+          "plain"
+        ],
+        [
+          153,
+          141,
+          288,
+          24,
+          "9°C",
+          "blocked"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "큰 두 오차",
+      "description": "막대 두 개가 모두 목표 4°C 눈금을 넘습니다."
+    },
+    "quiz": [
+      "검증 9°C만 보고 과적합이라고 판정할 수 있나요?",
+      "학습 오차도 필요",
+      "과적합 확정",
+      "학습 오차도 커서 학습 자료 자체를 잘 맞추지 못했을 수 있습니다."
+    ]
+  },
+  {
+    "label": "격차가 커짐",
+    "title": "학습 0.5°C와 검증 12°C의 격차는 과적합의 단서입니다",
+    "body": "개별 학습 장비에 맞춘 복잡한 모델은 학습 오차가 0.5°C로 작지만 검증 오차는 12°C입니다. 같은 분할에서 단순한 선형 모델은 학습 2°C, 검증 3°C를 냈습니다. 복잡한 모델의 낮은 학습 오차만으로 선택하면 새 행에서 더 자주 어긋납니다.",
+    "takeaway": "같은 두 열에서 복잡한 모델만 학습 오차가 낮아지고 검증은 3→12로 커집니다.",
+    "example": [
+      "선형 2/3°C",
+      "복잡한 모델 비교",
+      "0.5/12°C"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m83_0",
+          130.0,
+          83,
+          173,
+          37,
+          [
+            "모델"
+          ],
+          "plain"
+        ],
+        [
+          "m83_1",
+          310.0,
+          83,
+          173,
+          37,
+          [
+            "학습 MAE"
+          ],
+          "plain"
+        ],
+        [
+          "m83_2",
+          490.0,
+          83,
+          173,
+          37,
+          [
+            "검증 MAE"
+          ],
+          "plain"
+        ],
+        [
+          "m146_0",
+          130.0,
+          146,
+          173,
+          37,
+          [
+            "선형"
+          ],
+          "plain"
+        ],
+        [
+          "m146_1",
+          310.0,
+          146,
+          173,
+          37,
+          [
+            "2°C"
+          ],
+          "plain"
+        ],
+        [
+          "m146_2",
+          490.0,
+          146,
+          173,
+          37,
+          [
+            "3°C"
+          ],
+          "active"
+        ],
+        [
+          "m211_0",
+          130.0,
+          211,
+          173,
+          37,
+          [
+            "복잡한 모델"
+          ],
+          "plain"
+        ],
+        [
+          "m211_1",
+          310.0,
+          211,
+          173,
+          37,
+          [
+            "0.5°C"
+          ],
+          "active"
+        ],
+        [
+          "m211_2",
+          490.0,
+          211,
+          173,
+          37,
+          [
+            "12°C"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "격차가 커짐",
+      "description": "같은 두 열에서 복잡한 모델만 학습 오차가 낮아지고 검증은 3→12로 커집니다."
+    },
+    "quiz": [
+      "고정된 검증 기간에서는 어느 모델을 고르나요?",
+      "선형",
+      "복잡한 모델",
+      "선형 모델은 동일한 검증 행에서 더 낮은 3°C를 냈습니다."
+    ]
+  }
+];
+const slug = 'fit-diagnosis';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

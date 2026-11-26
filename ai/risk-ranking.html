@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="경보 후보가 여러 대이고 두 대만 볼 수 있으면 어떻게 선정할까요?">
+<title>설비 위험 순위에서 점검 대상 고르기 · T47</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./risk-ranking.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T47</p><h1>설비 위험 순위에서 점검 대상 고르기</h1><p>경보 후보가 여러 대이고 두 대만 볼 수 있으면 어떻게 선정할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">설비 위험 순위에서 점검 대상 고르기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "점수 순서",
+    "title": "점수 높은 설비부터 두 자리를 채웁니다",
+    "body": "밸브 K 0.92, 펌프 J 0.85, 냉각기 M 0.72, 펌프 L 0.61이 모두 경보 후보입니다. 이 교대에는 두 대만 볼 수 있으므로 K와 J를 선택합니다. M과 L은 다음 판단을 위해 대기 목록에 남깁니다.",
+    "takeaway": "순위 1·2가 두 슬롯을 채우고 나머지 점수도 대기 목록에 남습니다.",
+    "example": [
+      "K .92 · J .85 · M .72 · L .61",
+      "두 자리",
+      "K·J 선택 · M·L 대기"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m92_0",
+          95.5,
+          92,
+          136,
+          59,
+          [
+            "1. K",
+            "0.92"
+          ],
+          "active"
+        ],
+        [
+          "m92_1",
+          238.5,
+          92,
+          136,
+          59,
+          [
+            "2. J",
+            "0.85"
+          ],
+          "active"
+        ],
+        [
+          "m92_2",
+          381.5,
+          92,
+          136,
+          59,
+          [
+            "3. M",
+            "0.72"
+          ],
+          "plain"
+        ],
+        [
+          "m92_3",
+          524.5,
+          92,
+          136,
+          59,
+          [
+            "4. L",
+            "0.61"
+          ],
+          "plain"
+        ],
+        [
+          "m200_0",
+          95.5,
+          200,
+          136,
+          37,
+          [
+            "점검"
+          ],
+          "active"
+        ],
+        [
+          "m200_1",
+          238.5,
+          200,
+          136,
+          37,
+          [
+            "점검"
+          ],
+          "active"
+        ],
+        [
+          "m200_2",
+          381.5,
+          200,
+          136,
+          37,
+          [
+            "대기"
+          ],
+          "muted"
+        ],
+        [
+          "m200_3",
+          524.5,
+          200,
+          136,
+          37,
+          [
+            "대기"
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "점수 순서",
+      "description": "순위 1·2가 두 슬롯을 채우고 나머지 점수도 대기 목록에 남습니다."
+    },
+    "quiz": [
+      "한 자리를 더 확보하면 다음 설비는?",
+      "M",
+      "L",
+      "남은 후보 중 M의 0.72가 L의 0.61보다 높습니다."
+    ]
+  },
+  {
+    "label": "동점 처리",
+    "title": "점검 순서를 뒤집는 동점 기준은 사전에 고정합니다",
+    "body": "M의 점수가 0.85로 올라가 J와 동점입니다. 동점은 지난 점검이 더 오래된 설비부터 보기로 정했습니다. 21일 지난 M이 4일 지난 J보다 먼저여서 두 번째 자리는 M에 갑니다.",
+    "takeaway": "같은 0.85 옆의 21일과 4일이 둘째 슬롯을 M으로 바꿉니다.",
+    "example": [
+      "J=.85 · M=.85",
+      "동점은 마지막 점검이 오래된 순",
+      "K·M 선택"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m81_0",
+          95.5,
+          81,
+          136,
+          37,
+          [
+            "설비"
+          ],
+          "plain"
+        ],
+        [
+          "m81_1",
+          238.5,
+          81,
+          136,
+          37,
+          [
+            "위험 점수"
+          ],
+          "plain"
+        ],
+        [
+          "m81_2",
+          381.5,
+          81,
+          136,
+          37,
+          [
+            "점검 경과"
+          ],
+          "plain"
+        ],
+        [
+          "m81_3",
+          524.5,
+          81,
+          136,
+          37,
+          [
+            "배정"
+          ],
+          "plain"
+        ],
+        [
+          "m133_0",
+          95.5,
+          133,
+          136,
+          37,
+          [
+            "K"
+          ],
+          "plain"
+        ],
+        [
+          "m133_1",
+          238.5,
+          133,
+          136,
+          37,
+          [
+            ".92"
+          ],
+          "plain"
+        ],
+        [
+          "m133_2",
+          381.5,
+          133,
+          136,
+          37,
+          [
+            "7일"
+          ],
+          "plain"
+        ],
+        [
+          "m133_3",
+          524.5,
+          133,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "active"
+        ],
+        [
+          "m184_0",
+          95.5,
+          184,
+          136,
+          37,
+          [
+            "M"
+          ],
+          "active"
+        ],
+        [
+          "m184_1",
+          238.5,
+          184,
+          136,
+          37,
+          [
+            ".85"
+          ],
+          "plain"
+        ],
+        [
+          "m184_2",
+          381.5,
+          184,
+          136,
+          37,
+          [
+            "21일"
+          ],
+          "active"
+        ],
+        [
+          "m184_3",
+          524.5,
+          184,
+          136,
+          37,
+          [
+            "2"
+          ],
+          "active"
+        ],
+        [
+          "m235_0",
+          95.5,
+          235,
+          136,
+          37,
+          [
+            "J"
+          ],
+          "plain"
+        ],
+        [
+          "m235_1",
+          238.5,
+          235,
+          136,
+          37,
+          [
+            ".85"
+          ],
+          "plain"
+        ],
+        [
+          "m235_2",
+          381.5,
+          235,
+          136,
+          37,
+          [
+            "4일"
+          ],
+          "plain"
+        ],
+        [
+          "m235_3",
+          524.5,
+          235,
+          136,
+          37,
+          [
+            "대기"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "동점 처리",
+      "description": "같은 0.85 옆의 21일과 4일이 둘째 슬롯을 M으로 바꿉니다."
+    },
+    "quiz": [
+      "J와 M의 마지막 점검 날짜도 같다면 반복할 때 같은 결과를 얻으려면?",
+      "설비 ID 순 같은 마지막 규칙 고정",
+      "실행할 때마다 값 없이 선택",
+      "동점이 끝날 때까지 순서를 정해야 같은 목록이 재현됩니다."
+    ]
+  }
+];
+const slug = 'risk-ranking';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

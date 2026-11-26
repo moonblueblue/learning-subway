@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 손실에서 한 걸음의 크기를 바꾸면 언제 수렴 대신 발산할까요?">
+<title>학습률과 발산 진단 · T25</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./learning-rate.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T25</p><h1>학습률과 발산 진단</h1><p>같은 손실에서 한 걸음의 크기를 바꾸면 언제 수렴 대신 발산할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">학습률과 발산 진단</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "작은 걸음",
+    "title": "적당한 학습률에서 목표와의 거리가 반씩 줄어듭니다",
+    "body": "손실 기울기는 2(w−3)입니다. 학습률 η=0.25이면 w=1에서 1−0.25×(−4)=2로 갑니다. 다음에는 w=2의 기울기 −2를 써서 2.5로 갑니다.",
+    "takeaway": "3까지 거리가 2→1→0.5라 손실은 4→1→0.25입니다.",
+    "example": [
+      "w=1",
+      "η=0.25 · 기울기 갱신",
+      "w=2 → 2.5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p139_0",
+          118,
+          139,
+          155,
+          59,
+          [
+            "초기",
+            "w=1 · L=4"
+          ],
+          "plain"
+        ],
+        [
+          "p139_1",
+          310,
+          139,
+          155,
+          59,
+          [
+            "첫 갱신",
+            "w=2 · L=1"
+          ],
+          "plain"
+        ],
+        [
+          "p139_2",
+          502,
+          139,
+          155,
+          59,
+          [
+            "둘째 갱신",
+            "w=2.5 · L=0.25"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p139_0",
+          "p139_1",
+          "active",
+          ""
+        ],
+        [
+          "p139_1",
+          "p139_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          36,
+          221,
+          "w 다음 = w − 0.25 × 2(w−3)"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "작은 걸음",
+      "description": "3까지 거리가 2→1→0.5라 손실은 4→1→0.25입니다."
+    },
+    "quiz": [
+      "w=2.5에서 같은 학습률로 한 걸음 더 가면?",
+      "2.75",
+      "3.5",
+      "기울기 −1을 써서 2.5−0.25×(−1)=2.75입니다."
+    ]
+  },
+  {
+    "label": "발산 확인",
+    "title": "큰 학습률에서는 최솟값을 오가며 더 멀어집니다",
+    "body": "η=1.25만 바꾸면 w가 1→6→−1.5로 갑니다. 3과의 거리는 2→3→4.5이고 손실은 4→9→20.25입니다. 최솟값을 넘는 현상과 거리 증가가 함께 나타납니다.",
+    "takeaway": "같은 출발점의 손실이 4→9→20.25로 커지고 w가 3의 양쪽을 번갈아 방문합니다.",
+    "example": [
+      "w=1",
+      "η=1.25",
+      "w=6 → −1.5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p139_0",
+          118,
+          139,
+          155,
+          59,
+          [
+            "초기",
+            "w=1 · L=4"
+          ],
+          "plain"
+        ],
+        [
+          "p139_1",
+          310,
+          139,
+          155,
+          59,
+          [
+            "첫 갱신",
+            "w=6 · L=9"
+          ],
+          "plain"
+        ],
+        [
+          "p139_2",
+          502,
+          139,
+          155,
+          59,
+          [
+            "둘째 갱신",
+            "w=−1.5 · L=20.25"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p139_0",
+          "p139_1",
+          "blocked",
+          ""
+        ],
+        [
+          "p139_1",
+          "p139_2",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          36,
+          79,
+          "학습률 η=1.25 (이전 0.25)"
+        ],
+        [
+          36,
+          221,
+          "목표 w=3 · 거리 2 → 3 → 4.5"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "발산 확인",
+      "description": "같은 출발점의 손실이 4→9→20.25로 커지고 w가 3의 양쪽을 번갈아 방문합니다."
+    },
+    "quiz": [
+      "w가 3의 양쪽을 오갈 때 거리가 줄고 있다면 발산이라 할 수 있나요?",
+      "멀어지는지 확인해야 함",
+      "넘으면 항상 발산",
+      "이 함수에서는 지나치더라도 최솟값과의 거리가 줄면 수렴할 수 있습니다."
+    ]
+  }
+];
+const slug = 'learning-rate';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

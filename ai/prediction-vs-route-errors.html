@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="경보가 틀린 사례와 맞는 경보가 막힌 사례를 어떻게 따로 셀까요?">
+<title>예측 오류와 경로 오류 따로 집계하기 · T49</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./prediction-vs-route-errors.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T49</p><h1>예측 오류와 경로 오류 따로 집계하기</h1><p>경보가 틀린 사례와 맞는 경보가 막힌 사례를 어떻게 따로 셀까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">예측 오류와 경로 오류 따로 집계하기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "경보 평가",
+    "title": "먼저 경보와 실제 고장을 비교합니다",
+    "body": "P와 Q에 경보가 떴고 R·S는 경보가 없습니다. 실제 고장은 P와 R입니다. 따라서 경보 평가에는 P 적중, Q 오탐, R 미탐, S 정상 판정을 남깁니다.",
+    "takeaway": "Q는 경보 1·정답 0이고 R은 경보 0·정답 1입니다.",
+    "example": [
+      "경보 P·Q",
+      "실제 P·R",
+      "오탐 Q · 미탐 R"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m69_0",
+          95.5,
+          69,
+          136,
+          37,
+          [
+            "ID"
+          ],
+          "plain"
+        ],
+        [
+          "m69_1",
+          238.5,
+          69,
+          136,
+          37,
+          [
+            "경보"
+          ],
+          "plain"
+        ],
+        [
+          "m69_2",
+          381.5,
+          69,
+          136,
+          37,
+          [
+            "고장"
+          ],
+          "plain"
+        ],
+        [
+          "m69_3",
+          524.5,
+          69,
+          136,
+          37,
+          [
+            "평가"
+          ],
+          "plain"
+        ],
+        [
+          "m118_0",
+          95.5,
+          118,
+          136,
+          37,
+          [
+            "P"
+          ],
+          "plain"
+        ],
+        [
+          "m118_1",
+          238.5,
+          118,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m118_2",
+          381.5,
+          118,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m118_3",
+          524.5,
+          118,
+          136,
+          37,
+          [
+            "TP"
+          ],
+          "active"
+        ],
+        [
+          "m166_0",
+          95.5,
+          166,
+          136,
+          37,
+          [
+            "Q"
+          ],
+          "plain"
+        ],
+        [
+          "m166_1",
+          238.5,
+          166,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m166_2",
+          381.5,
+          166,
+          136,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m166_3",
+          524.5,
+          166,
+          136,
+          37,
+          [
+            "FP"
+          ],
+          "blocked"
+        ],
+        [
+          "m214_0",
+          95.5,
+          214,
+          136,
+          37,
+          [
+            "R"
+          ],
+          "plain"
+        ],
+        [
+          "m214_1",
+          238.5,
+          214,
+          136,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m214_2",
+          381.5,
+          214,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m214_3",
+          524.5,
+          214,
+          136,
+          37,
+          [
+            "FN"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          43,
+          269,
+          "S: 경보 0 · 고장 0 → TN"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "경보 평가",
+      "description": "Q는 경보 1·정답 0이고 R은 경보 0·정답 1입니다."
+    },
+    "quiz": [
+      "P가 도달 불가일 때 P의 경보 평가도 미탐이 되나요?",
+      "경보는 적중 유지",
+      "경보도 미탐이 됨",
+      "P는 경보 1, 실제 고장 1입니다. 도달 불가는 경로 결과입니다."
+    ]
+  },
+  {
+    "label": "경로 평가",
+    "title": "시도한 경로만 분모에 두고 지도 문제를 찾습니다",
+    "body": "경보가 난 P와 Q에만 경로를 시도했습니다. P는 폐쇄로 도달 불가이고 Q는 지도의 유효 경로가 나왔습니다. 경로 실패는 시도 2건 중 P 1건과 이유가 남습니다. R은 미탐이라 경로 시도 분모로 옮기지 않습니다.",
+    "takeaway": "같은 P에서 TP와 도달 불가가 공존하고 R은 미시도로 남습니다.",
+    "example": [
+      "경로 시도 P·Q",
+      "폐쇄·미시도 구별",
+      "경로 실패 1/2"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m79_0",
+          130.0,
+          79,
+          173,
+          37,
+          [
+            "ID"
+          ],
+          "plain"
+        ],
+        [
+          "m79_1",
+          310.0,
+          79,
+          173,
+          37,
+          [
+            "경보 결과"
+          ],
+          "plain"
+        ],
+        [
+          "m79_2",
+          490.0,
+          79,
+          173,
+          37,
+          [
+            "경로 상태"
+          ],
+          "plain"
+        ],
+        [
+          "m131_0",
+          130.0,
+          131,
+          173,
+          37,
+          [
+            "P"
+          ],
+          "plain"
+        ],
+        [
+          "m131_1",
+          310.0,
+          131,
+          173,
+          37,
+          [
+            "TP"
+          ],
+          "active"
+        ],
+        [
+          "m131_2",
+          490.0,
+          131,
+          173,
+          37,
+          [
+            "도달 불가"
+          ],
+          "blocked"
+        ],
+        [
+          "m183_0",
+          130.0,
+          183,
+          173,
+          37,
+          [
+            "Q"
+          ],
+          "plain"
+        ],
+        [
+          "m183_1",
+          310.0,
+          183,
+          173,
+          37,
+          [
+            "FP"
+          ],
+          "blocked"
+        ],
+        [
+          "m183_2",
+          490.0,
+          183,
+          173,
+          37,
+          [
+            "도달"
+          ],
+          "active"
+        ],
+        [
+          "m235_0",
+          130.0,
+          235,
+          173,
+          37,
+          [
+            "R"
+          ],
+          "plain"
+        ],
+        [
+          "m235_1",
+          310.0,
+          235,
+          173,
+          37,
+          [
+            "FN"
+          ],
+          "blocked"
+        ],
+        [
+          "m235_2",
+          490.0,
+          235,
+          173,
+          37,
+          [
+            "미시도"
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "경로 평가",
+      "description": "같은 P에서 TP와 도달 불가가 공존하고 R은 미시도로 남습니다."
+    },
+    "quiz": [
+      "미탐 R까지 경로 실패 분모에 넣으면 어떤 해석이 어려워지나요?",
+      "실행된 경로의 실패율",
+      "전체 고장 건수",
+      "애초에 없던 경로 요청과 지도에 의해 실패한 시도가 섞입니다."
+    ]
+  }
+];
+const slug = 'prediction-vs-route-errors';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="하나의 손실에서 앞 가중치와 뒤 편향까지 변화율을 어떻게 되돌려 보낼까요?">
+<title>연쇄법칙과 역전파 · T27</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./chain-rule-backprop.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T27</p><h1>연쇄법칙과 역전파</h1><p>하나의 손실에서 앞 가중치와 뒤 편향까지 변화율을 어떻게 되돌려 보낼까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">연쇄법칙과 역전파</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "순전파",
+    "title": "입력에서 예측과 손실까지 순서대로 계산합니다",
+    "body": "먼저 u=wx=6이고 예측은 u+b=7입니다. 정답 10을 빼 오차 −3을 얻고 제곱한 손실은 9입니다. 중간값은 역방향에서 기울기를 계산할 때 다시 읽습니다.",
+    "takeaway": "u=6, 예측 7, 오차 −3, 손실 9가 순서대로 이어집니다.",
+    "example": [
+      "w=2 · x=3 · b=1",
+      "6+1−10",
+      "(−3)² = 9"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p144_0",
+          77,
+          144,
+          125,
+          59,
+          [
+            "곱 u",
+            "2×3 = 6"
+          ],
+          "plain"
+        ],
+        [
+          "p144_1",
+          232,
+          144,
+          125,
+          59,
+          [
+            "예측",
+            "6+1 = 7"
+          ],
+          "plain"
+        ],
+        [
+          "p144_2",
+          387,
+          144,
+          125,
+          59,
+          [
+            "오차 e",
+            "7−10 = −3"
+          ],
+          "plain"
+        ],
+        [
+          "p144_3",
+          542,
+          144,
+          125,
+          59,
+          [
+            "손실",
+            "(−3)² = 9"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p144_0",
+          "p144_1",
+          "active",
+          ""
+        ],
+        [
+          "p144_1",
+          "p144_2",
+          "active",
+          ""
+        ],
+        [
+          "p144_2",
+          "p144_3",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "순전파",
+      "description": "u=6, 예측 7, 오차 −3, 손실 9가 순서대로 이어집니다."
+    },
+    "quiz": [
+      "b만 2로 바꾸면 순전파의 새 손실은?",
+      "4",
+      "9",
+      "예측 8과 정답 10의 차이 −2를 제곱하면 4입니다."
+    ]
+  },
+  {
+    "label": "역방향 곱",
+    "title": "연쇄법칙은 경로의 국소 변화율을 곱합니다",
+    "body": "제곱에서 시작하면 dL/de=2e=−6입니다. 예측에 대한 오차의 변화율은 1, u와 b 각각에 대한 예측의 변화율도 1입니다. u에서 w로 가는 곱셈의 변화율은 x=3이므로 두 매개변수의 기울기는 −18과 −6입니다.",
+    "takeaway": "왼쪽부터 돌아온 −6이 u 쪽 ×3을 지나 −18, b 쪽 ×1에서는 −6 그대로입니다.",
+    "example": [
+      "dL/de = −6",
+      "−6×1×1×3 · −6×1×1",
+      "dw: −18 · db: −6"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "loss",
+          124,
+          147,
+          163,
+          59,
+          [
+            "dL/de = −6",
+            "e = −3"
+          ],
+          "plain"
+        ],
+        [
+          "pred",
+          312,
+          147,
+          125,
+          37,
+          [
+            "dL/dŷ = −6"
+          ],
+          "plain"
+        ],
+        [
+          "w",
+          509,
+          92,
+          144,
+          59,
+          [
+            "dL/dw = −18",
+            "u 경유"
+          ],
+          "active"
+        ],
+        [
+          "b",
+          509,
+          203,
+          144,
+          37,
+          [
+            "dL/db = −6"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "loss",
+          "pred",
+          "active",
+          "×1",
+          0
+        ],
+        [
+          "pred",
+          "w",
+          "active",
+          "×1×3",
+          0
+        ],
+        [
+          "pred",
+          "b",
+          "active",
+          "×1",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "역방향 곱",
+      "description": "왼쪽부터 돌아온 −6이 u 쪽 ×3을 지나 −18, b 쪽 ×1에서는 −6 그대로입니다."
+    },
+    "quiz": [
+      "입력 x만 0이면 u=wx에서 w로의 국소 변화율은?",
+      "0",
+      "3",
+      "곱의 국소 변화율 du/dw는 그 행의 입력 x입니다."
+    ]
+  },
+  {
+    "label": "같은 점에서 갱신",
+    "title": "두 기울기로 매개변수를 함께 바꾼 뒤 다시 예측합니다",
+    "body": "학습률 0.05를 사용해 w=2에서 2.9, b=1에서 1.3으로 갱신합니다. 두 기울기는 모두 원래 점에서 구합니다. 새 예측 2.9×3+1.3=10에서 이 관측의 손실은 0입니다.",
+    "takeaway": "두 줄의 새 w와 b가 같은 순전파로 모여 기존 손실 9를 0으로 바꿉니다.",
+    "example": [
+      "w=2 · b=1",
+      "−0.05×(−18, −6)",
+      "(w,b)=(2.9,1.3) · L=0"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "w",
+          126,
+          92,
+          182,
+          59,
+          [
+            "w: 2 → 2.9",
+            "−0.05×(−18)"
+          ],
+          "plain"
+        ],
+        [
+          "b",
+          126,
+          204,
+          182,
+          59,
+          [
+            "b: 1 → 1.3",
+            "−0.05×(−6)"
+          ],
+          "plain"
+        ],
+        [
+          "pred",
+          344,
+          147,
+          161,
+          59,
+          [
+            "새 예측",
+            "2.9×3+1.3 = 10"
+          ],
+          "plain"
+        ],
+        [
+          "out",
+          521,
+          147,
+          108,
+          37,
+          [
+            "L: 9 → 0"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "w",
+          "pred",
+          "active",
+          "",
+          0
+        ],
+        [
+          "b",
+          "pred",
+          "active",
+          "",
+          0
+        ],
+        [
+          "pred",
+          "out",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "같은 점에서 갱신",
+      "description": "두 줄의 새 w와 b가 같은 순전파로 모여 기존 손실 9를 0으로 바꿉니다."
+    },
+    "quiz": [
+      "한 행의 손실이 0이면 다른 설비의 성능도 확인한 것일까요?",
+      "새 행에서 따로 평가",
+      "한 행으로 검증 완료",
+      "이 한 행에서는 정확하지만 다른 행의 손실은 관측하지 않았습니다."
+    ]
+  }
+];
+const slug = 'chain-rule-backprop';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

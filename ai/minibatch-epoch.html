@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="다섯 행을 두 개씩 학습할 때 한 에폭은 언제 끝날까요?">
+<title>미니배치와 한 에폭 · T28</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./minibatch-epoch.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T28</p><h1>미니배치와 한 에폭</h1><p>다섯 행을 두 개씩 학습할 때 한 에폭은 언제 끝날까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">미니배치와 한 에폭</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "배치 경계",
+    "title": "행을 두 개씩 묶고 마지막 한 행도 남겨둡니다",
+    "body": "보유한 다섯 행 A부터 E까지를 순서대로 A·B, C·D, E로 묶습니다. 배치는 모아서 기울기를 구할 학습 행 묶음입니다. 이번에는 마지막 짧은 배치도 쓰기로 합니다.",
+    "takeaway": "첫 두 묶음은 두 칸씩, 마지막 묶음에는 E 한 칸만 있습니다.",
+    "example": [
+      "A B C D E",
+      "배치 크기 2",
+      "[A,B] [C,D] [E]"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m91_0",
+          80.0,
+          91,
+          108,
+          37,
+          [
+            "A"
+          ],
+          "plain"
+        ],
+        [
+          "m91_1",
+          195.0,
+          91,
+          108,
+          37,
+          [
+            "B"
+          ],
+          "plain"
+        ],
+        [
+          "m91_2",
+          310.0,
+          91,
+          108,
+          37,
+          [
+            "C"
+          ],
+          "plain"
+        ],
+        [
+          "m91_3",
+          425.0,
+          91,
+          108,
+          37,
+          [
+            "D"
+          ],
+          "plain"
+        ],
+        [
+          "m91_4",
+          540.0,
+          91,
+          108,
+          37,
+          [
+            "E"
+          ],
+          "plain"
+        ],
+        [
+          "m207_0",
+          130.0,
+          207,
+          173,
+          59,
+          [
+            "배치 1",
+            "[A,B]"
+          ],
+          "active"
+        ],
+        [
+          "m207_1",
+          310.0,
+          207,
+          173,
+          59,
+          [
+            "배치 2",
+            "[C,D]"
+          ],
+          "active"
+        ],
+        [
+          "m207_2",
+          490.0,
+          207,
+          173,
+          59,
+          [
+            "배치 3",
+            "[E]"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "배치 경계",
+      "description": "첫 두 묶음은 두 칸씩, 마지막 묶음에는 E 한 칸만 있습니다."
+    },
+    "quiz": [
+      "배치 크기를 3으로 바꾸어도 모든 행을 쓴다면 배치는?",
+      "[A,B,C] [D,E]",
+      "[A,B,C]",
+      "마지막 두 행도 한 배치입니다."
+    ]
+  },
+  {
+    "label": "갱신과 에폭",
+    "title": "배치마다 한 번 갱신하고 다섯 행을 다 보면 한 에폭입니다",
+    "body": "한 배치 안에서는 같은 가중치로 예측하고 기울기를 평균냅니다. 첫 배치의 행 기울기가 2와 4면 평균 3으로 한 번만 갱신합니다. 배치 세 개를 마치면 세 번을 갱신했고 모든 행을 한 번씩 본 한 에폭이 끝납니다.",
+    "takeaway": "갱신 1·2·3과 누적 행 2·4·5가 다른 열로 늘어납니다.",
+    "example": [
+      "배치 1: (2+4)/2=3",
+      "배치별 1회 갱신",
+      "3회 갱신 · 1 에폭"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m70_0",
+          130.0,
+          70,
+          173,
+          37,
+          [
+            "배치"
+          ],
+          "plain"
+        ],
+        [
+          "m70_1",
+          310.0,
+          70,
+          173,
+          37,
+          [
+            "갱신 누적"
+          ],
+          "plain"
+        ],
+        [
+          "m70_2",
+          490.0,
+          70,
+          173,
+          37,
+          [
+            "본 행 누적"
+          ],
+          "plain"
+        ],
+        [
+          "m121_0",
+          130.0,
+          121,
+          173,
+          37,
+          [
+            "A, B"
+          ],
+          "plain"
+        ],
+        [
+          "m121_1",
+          310.0,
+          121,
+          173,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m121_2",
+          490.0,
+          121,
+          173,
+          37,
+          [
+            "2"
+          ],
+          "plain"
+        ],
+        [
+          "m172_0",
+          130.0,
+          172,
+          173,
+          37,
+          [
+            "C, D"
+          ],
+          "plain"
+        ],
+        [
+          "m172_1",
+          310.0,
+          172,
+          173,
+          37,
+          [
+            "2"
+          ],
+          "plain"
+        ],
+        [
+          "m172_2",
+          490.0,
+          172,
+          173,
+          37,
+          [
+            "4"
+          ],
+          "plain"
+        ],
+        [
+          "m223_0",
+          130.0,
+          223,
+          173,
+          37,
+          [
+            "E"
+          ],
+          "active"
+        ],
+        [
+          "m223_1",
+          310.0,
+          223,
+          173,
+          37,
+          [
+            "3"
+          ],
+          "active"
+        ],
+        [
+          "m223_2",
+          490.0,
+          223,
+          173,
+          37,
+          [
+            "5 · 1 epoch"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "갱신과 에폭",
+      "description": "갱신 1·2·3과 누적 행 2·4·5가 다른 열로 늘어납니다."
+    },
+    "quiz": [
+      "첫 배치에서 A와 B의 기울기를 모두 얻었습니다. 가중치를 몇 번 바꾸나요?",
+      "1회",
+      "2회",
+      "두 기울기를 모아 평균내고 배치 하나당 한 번 갱신합니다."
+    ]
+  }
+];
+const slug = 'minibatch-epoch';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

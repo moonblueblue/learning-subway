@@ -132,6 +132,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .try-choices{display:flex;gap:6px;flex-wrap:wrap}
 .try-choices:empty{display:none}
 @media(max-width:600px){.place-name{font-size:16px}.order text{font-size:12px}}
+.course-diagram-open #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -325,8 +326,37 @@ function pathTo(goal, parent) {
 const lesson = [
   {
     label: '너비 우선',
+    readingDiagram: {
+      "title": "A와 B를 처리하면 큐의 다음 칸은 C다",
+      "description": "A와 B를 처리하면 큐의 다음 칸은 C다",
+      "nodes": [
+        ["A", 104, 86, 39, 35, ["A"], "active"],
+        ["B", 65, 146, 39, 35, ["B"], "active"],
+        ["C", 143, 146, 39, 35, ["C"], "plain"],
+        ["D", 44, 217, 39, 35, ["D"], "plain"],
+        ["E", 124, 217, 39, 35, ["E"], "plain"],
+        ["y940", 385, 94, 64, 40, ["A"], "active"],
+        ["y1620", 385, 162, 64, 40, ["B"], "active"],
+        ["y1621", 467, 162, 64, 40, ["C"], "active"],
+        ["y2300", 385, 230, 64, 40, ["C"], "active"],
+        ["y2301", 467, 230, 64, 40, ["D"], "active"],
+        ["y2302", 549, 230, 64, 40, ["E"], "active"],
+      ],
+      "edges": [
+        ["A", "B", "undirected", "", 0],
+        ["A", "C", "undirected", "", 0],
+        ["B", "D", "undirected", "", 0],
+        ["B", "E", "undirected", "", 0],
+      ],
+      "labels": [
+        [233, 100, "처음"],
+        [233, 168, "A를 꺼냄"],
+        [233, 236, "B를 꺼냄"],
+        [352, 272, "앞: 다음에 C 처리"],
+      ]
+    },
     readingSearch: {"kind": "bfs", "moves": 3},
-    example: ["A의 이웃을 큐에 넣음", "먼저 발견한 순서대로 방문", "거리 1인 점부터 탐색"],
+    example: ["큐에 A","A를 꺼내 B,C 추가 · B를 꺼내 D,E 추가","큐 C,D,E의 앞은 C"],
     title: '가까운 곳부터 한 겹씩 넓혀 간다',
     body: '그래프(2.5)에서 A부터 모든 곳을 빠짐없이 방문해 봅시다. 너비 우선 탐색(BFS)은 큐(4.3)를 씁니다. A를 꺼내 방문하고, A의 이웃을 큐 뒤에 넣고, 다시 큐 앞에서 꺼냅니다. 그러면 A에서 한 칸 떨어진 곳, 두 칸 떨어진 곳 순서로 물결처럼 퍼져 나갑니다.',
     takeaway: '방문 순서는 A, B, C, D, E, F, G, H, I입니다. 노드 위 숫자는 방문 순서이고, 색이 짙을수록 A에서 먼 겹입니다. 장면 아래 큐에서 앞의 것이 먼저 나갑니다.',
@@ -339,8 +369,34 @@ const lesson = [
   },
   {
     label: '깊이 우선',
+    readingDiagram: {
+      "title": "갈 곳 없는 정점에서 부모로 돌아간다",
+      "description": "갈 곳 없는 정점에서 부모로 돌아간다",
+      "nodes": [
+        ["path0", 244, 84, 68, 42, ["A"], "active"],
+        ["path1", 326, 84, 68, 42, ["B"], "active"],
+        ["path2", 408, 84, 68, 42, ["D"], "active"],
+        ["path3", 490, 84, 68, 42, ["G"], "active"],
+        ["dead0", 244, 158, 68, 42, ["A"], "active"],
+        ["dead1", 326, 158, 68, 42, ["B"], "active"],
+        ["dead2", 408, 158, 68, 42, ["D"], "active"],
+        ["dead3", 490, 158, 68, 42, ["G"], "active"],
+        ["dead4", 572, 158, 68, 42, ["E"], "active"],
+        ["pop0", 244, 232, 68, 42, ["A"], "active"],
+        ["pop1", 326, 232, 68, 42, ["B"], "active"],
+        ["pop2", 408, 232, 68, 42, ["D"], "active"],
+        ["pop3", 490, 232, 68, 42, ["G"], "active"],
+      ],
+      "edges": [],
+      "labels": [
+        [28, 90, "들어간 순서"],
+        [28, 164, "E의 이웃을 모두 처리함"],
+        [28, 238, "E를 빼고 G로"],
+        [28, 273, "오른쪽 끝이 스택 꼭대기"],
+      ]
+    },
     readingSearch: {"kind": "dfs", "moves": 5},
-    example: ["한 이웃을 골라 내려감", "막다른 곳에서 스택을 되감음", "다른 갈래를 계속 탐색"],
+    example: ["A부터 스택에 넣음","E의 이웃을 다 처리해 E를 뺌","부모 G에서 다른 이웃을 확인"],
     title: '한 길로 끝까지 갔다가 되돌아온다',
     body: '깊이 우선 탐색(DFS)은 스택(4.3)을 씁니다. 방금 넣은 이웃을 먼저 꺼내므로, 한 방향으로 갈 수 있는 데까지 깊이 들어갔다가 막히면 되돌아와 다른 길로 갑니다. 1.5의 재귀로도 같은 일을 할 수 있습니다. 미로를 손으로 더듬어 가는 방식과 비슷합니다.',
     takeaway: '방문 순서는 A, B, D, G, E, C, F, H, I입니다. B에서 D, G로 쭉 내려간 뒤 G의 이웃 E로, 다시 C, F, H로 이어 갑니다. 너비 우선과 같은 그래프인데 순서가 전혀 다릅니다.',
@@ -353,8 +409,39 @@ const lesson = [
   },
   {
     label: 'I까지 길 찾기',
+    readingDiagram: {
+      "title": "방문 순서를 쓰지 않고 부모를 거슬러 간다",
+      "description": "방문 순서를 쓰지 않고 부모를 거슬러 간다",
+      "nodes": [
+        ["seen0", 193, 77, 40, 35, ["A"], "muted"],
+        ["seen1", 240, 77, 40, 35, ["B"], "muted"],
+        ["seen2", 287, 77, 40, 35, ["C"], "muted"],
+        ["seen3", 334, 77, 40, 35, ["D"], "muted"],
+        ["seen4", 381, 77, 40, 35, ["E"], "muted"],
+        ["seen5", 428, 77, 40, 35, ["F"], "muted"],
+        ["seen6", 475, 77, 40, 35, ["G"], "muted"],
+        ["seen7", 522, 77, 40, 35, ["H"], "muted"],
+        ["seen8", 569, 77, 40, 35, ["I"], "muted"],
+        ["p0", 80, 198, 83, 44, ["I"], "active"],
+        ["p1", 195, 198, 83, 44, ["G"], "active"],
+        ["p2", 310, 198, 83, 44, ["D"], "active"],
+        ["p3", 425, 198, 83, 44, ["B"], "active"],
+        ["p4", 540, 198, 83, 44, ["A"], "active"],
+      ],
+      "edges": [
+        ["p0", "p1", "active", "", 0],
+        ["p1", "p2", "active", "", 0],
+        ["p2", "p3", "active", "", 0],
+        ["p3", "p4", "active", "", 0],
+      ],
+      "labels": [
+        [29, 83, "방문 순서"],
+        [29, 144, "처음 발견한 부모"],
+        [29, 266, "A → B → D → G → I · 최소 4간선"],
+      ]
+    },
     readingSearch: {"kind": "bfs", "moves": 9},
-    example: ["A에서 I까지 같은 비용의 길", "BFS로 거리별 방문", "처음 도착한 경로가 최소 홉"],
+    example: ["I 도착","I → G → D → B → A로 부모 따라가기","뒤집으면 최소 4간선"],
     title: '너비 우선은 가장 짧은 길을 찾는다',
     body: '이번에는 A에서 I까지 가는 길을 찾고, I에 닿으면 멈춥니다. 노드마다 "어디서 왔는지"를 적어 두면 I에서 거꾸로 따라가 길을 얻습니다. 너비 우선은 가까운 겹부터 보므로 처음 닿은 길이 지나는 길 수가 가장 적은 길입니다. 깊이 우선은 먼저 들어간 길이 멀리 돌아가더라도 그 길을 씁니다.',
     takeaway: '너비 우선은 A–B–D–G–I, 길 4개로 찾습니다. 깊이 우선은 A–B–D–G–E–C–F–H–I, 길 8개짜리 먼 길을 찾습니다. 길마다 걸리는 시간이 다르면 4.8의 최단 경로 알고리즘이 필요합니다.',

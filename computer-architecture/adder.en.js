@@ -66,4 +66,11 @@ window.lessonText = {
   '올림이 한 번도 생기지 않게 합이 7인 덧셈을 만들어 보세요.': 'Make an addition that sums to 7 without a single carry.',
   '같은 자리에 1이 겹치지 않으면 올림이 없습니다.': 'If no place has 1 in both, there is no carry.',
   '가장 큰 덧셈 7 + 7을 만들어 보세요.': 'Make the largest addition, 7 + 7.', '111 + 111 = 1110, 곧 14입니다.': '111 + 111 = 1110, which is 14.',
+  "올림을 받은 자리부터 다음 계산을 한다": "Each place waits for its carry-in",
+  "111 더하기 001에서 1, 2, 4의 자리가 차례로 1을 올리고 8의 자리만 켜집니다.": "In 111 plus 001, the ones, twos and fours send carries in order, leaving only the eights bit set.",
+  "1의 자리": "Ones",
+  "2의 자리": "Twos",
+  "4의 자리": "Fours",
+  "8의 자리": "Eights",
+  "하위 세 자리의 합은 모두 0 → 결과 1000": "The three low sum bits are 0 → result 1000",
 };

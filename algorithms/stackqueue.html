@@ -130,6 +130,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .out-line{display:flex;gap:8px 20px;flex-wrap:wrap;color:var(--muted);font-weight:700}
 .out-line b{font:800 1.1rem var(--mono);color:var(--accent);letter-spacing:.15em;margin-left:6px}
 .out-line [hidden]{display:none}
+.course-diagram-open #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -319,6 +320,27 @@ const lesson = [
   },
   {
     label: '괄호 짝 맞추기',
+    readingDiagram: {
+      "title": "세 번째 입력에서 꼭대기와 맞지 않는다",
+      "description": "세 번째 입력에서 꼭대기와 맞지 않는다",
+      "nodes": [
+        ["n0", 132, 96, 64, 44, ["("], "plain"],
+        ["n1", 216, 96, 64, 44, ["["], "plain"],
+        ["n2", 300, 96, 64, 44, [")"], "blocked"],
+        ["n3", 384, 96, 64, 44, ["]"], "plain"],
+        ["stack", 139, 200, 174, 60, ["스택 위 → 아래", "[   ("], "plain"],
+        ["compare", 345, 200, 182, 60, ["[ 와 ) 불일치", "기대: ]"], "blocked"],
+        ["stop", 534, 200, 122, 44, ["3번째에서 실패"], "blocked"],
+      ],
+      "edges": [
+        ["n2", "compare", "blocked", "", 0],
+        ["stack", "compare", "blocked", "", 0],
+        ["compare", "stop", "blocked", "", 0],
+      ],
+      "labels": [
+        [29, 77, "입력"],
+      ]
+    },
     example: ["( 다음에 [ 를 쌓음", "닫는 )와 맨 위 [ 비교", "괄호 짝 불일치"],
     title: '스택으로 괄호의 짝을 확인한다',
     body: '코드 편집기는 괄호 짝이 맞는지 스택으로 확인합니다. 글자를 왼쪽부터 읽으며 여는 괄호는 스택에 넣고, 닫는 괄호를 만나면 스택 맨 위를 꺼내 짝이 맞는지 봅니다. 끝까지 읽었을 때 스택이 비어 있으면 짝이 모두 맞습니다.',
@@ -333,10 +355,38 @@ const lesson = [
   },
   {
     label: '어디에 쓰나',
-    example: ["같은 작업 A부터 D까지", "큐는 앞에서 · 스택은 위에서", "첫 처리 대상 A vs D"],
+    readingDiagram: {
+      "title": "같은 순서로 넣고 꺼내도 결과는 다르다",
+      "description": "같은 순서로 넣고 꺼내도 결과는 다르다",
+      "nodes": [
+        ["s0", 99, 106, 130, 44, ["A, B"], "active"],
+        ["s1", 242, 106, 130, 44, ["꺼냄 B"], "active"],
+        ["s2", 385, 106, 130, 44, ["C 넣음"], "active"],
+        ["s3", 530, 106, 130, 44, ["꺼냄 C"], "active"],
+        ["q0", 99, 208, 130, 44, ["A, B"], "active"],
+        ["q1", 242, 208, 130, 44, ["꺼냄 A"], "active"],
+        ["q2", 385, 208, 130, 44, ["C 넣음"], "active"],
+        ["q3", 530, 208, 130, 44, ["꺼냄 B"], "active"],
+      ],
+      "edges": [
+        ["s0", "s1", "active", "", 0],
+        ["s1", "s2", "active", "", 0],
+        ["s2", "s3", "active", "", 0],
+        ["q0", "q1", "active", "", 0],
+        ["q1", "q2", "active", "", 0],
+        ["q2", "q3", "active", "", 0],
+      ],
+      "labels": [
+        [29, 70, "스택"],
+        [29, 143, "남은 값: A"],
+        [29, 172, "큐"],
+        [29, 245, "남은 값: C"],
+      ]
+    },
+    example: ["A, B를 넣음","한 번 꺼내고 C를 넣음","다음: 스택 C · 큐 B"],
     title: '같은 손님도 구조에 따라 순서가 바뀐다',
-    body: '같은 순서로 도착한 일 A, B, C, D를 스택과 큐에 넣고 하나씩 처리해 봅니다. 큐는 도착 순서대로, 스택은 거꾸로 처리합니다. 공정한 대기 줄, 프린터 대기열, 4.7의 너비 우선 탐색은 큐를, 실행 취소, 뒤로 가기, 깊이 우선 탐색은 스택을 씁니다.',
-    takeaway: '"도착" 네 번 뒤 "처리"를 네 번 누르면 큐는 A, B, C, D, 스택은 D, C, B, A 순서로 나옵니다. 해 보기의 상황마다 어느 순서가 맞는지 골라 보세요.',
+    body: "A, B를 넣은 뒤 하나를 처리하면 스택에서 B가, 큐에서 A가 나옵니다. 여기에 C를 추가하면, 스택에서 C가, 큐에서 B가 다음으로 나옵니다. 실행 취소와 깊이 우선 탐색은 스택을, 대기열과 너비 우선 탐색은 큐를 씁니다.",
+    takeaway: "직접 해 보기에서 도착과 처리를 번갈아 눌러 보세요. 여러 작업을 모두 넣고 처리하는 경우와 남은 줄을 비교해 보세요.",
     description: '왼쪽에 스택 탑, 오른쪽에 큐 줄이 있습니다. 도착한 일은 둘 다에 들어가고, 처리하면 각자 하나씩 꺼냅니다.',
     show: ['stack', 'queue'],
     mode: 'both',

@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="절대 오차가 같을 때 어떻게 과소 주문을 찾나요?">
+<title>예측 편향과 과소 주문 · B20</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./forecast-bias-underordering.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B20</p><h1>예측 편향과 과소 주문</h1><p>절대 오차가 같을 때 어떻게 과소 주문을 찾나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">예측 편향과 과소 주문</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "잔차 방향",
+    "title": "오차에 부호를 붙이면 낮게 맞힌 방향이 보입니다",
+    "body": "예측 A는 8,8이고 예측 B는 8,12입니다. 실제−예측 잔차는 A +2,+2, B +2,−2입니다. 양수는 예측이 실제보다 낮다는 뜻입니다.",
+    "takeaway": "하단 두 번째 날의 −2가 B의 과대 방향에 나타나 A와 달라집니다.",
+    "example": [
+      "실제 10·10",
+      "실제 − 예측",
+      "A +2,+2 · B +2,−2"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m72_0",
+          130.0,
+          72,
+          173,
+          37,
+          [
+            "방법"
+          ],
+          "plain"
+        ],
+        [
+          "m72_1",
+          310.0,
+          72,
+          173,
+          37,
+          [
+            "1일"
+          ],
+          "plain"
+        ],
+        [
+          "m72_2",
+          490.0,
+          72,
+          173,
+          37,
+          [
+            "2일"
+          ],
+          "plain"
+        ],
+        [
+          "m138_0",
+          130.0,
+          138,
+          173,
+          37,
+          [
+            "A"
+          ],
+          "plain"
+        ],
+        [
+          "m138_1",
+          310.0,
+          138,
+          173,
+          37,
+          [
+            "10 − 8 = +2"
+          ],
+          "active"
+        ],
+        [
+          "m138_2",
+          490.0,
+          138,
+          173,
+          37,
+          [
+            "10 − 8 = +2"
+          ],
+          "active"
+        ],
+        [
+          "m200_0",
+          130.0,
+          200,
+          173,
+          37,
+          [
+            "B"
+          ],
+          "plain"
+        ],
+        [
+          "m200_1",
+          310.0,
+          200,
+          173,
+          37,
+          [
+            "10 − 8 = +2"
+          ],
+          "active"
+        ],
+        [
+          "m200_2",
+          490.0,
+          200,
+          173,
+          37,
+          [
+            "10 − 12 = −2"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          120,
+          258,
+          "실수요 − 예측 주문량(개)"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "잔차 방향",
+      "description": "하단 두 번째 날의 −2가 B의 과대 방향에 나타나 A와 달라집니다."
+    },
+    "quiz": [
+      "예측 9, 실제 12라면 잔차의 부호는?",
+      "양수",
+      "음수",
+      "실제에서 예측을 빼면 +3입니다."
+    ]
+  },
+  {
+    "label": "주문 부족",
+    "title": "평균 잔차와 부족량은 서로 다른 집계입니다",
+    "body": "평균 잔차는 A +2, B 0입니다. 그날 예측만큼만 주문하고 이월 재고가 없다면 A의 미충족 4개, B의 미충족은 2개입니다. B는 잔차 평균이 0이어도 첫날에 2개가 부족합니다.",
+    "takeaway": "B의 +2와 −2는 평균에서 상쇄되고, 부족량 계산에서는 −2쪽이 재고 초과로 빠집니다.",
+    "example": [
+      "B · +2와 −2",
+      "편향 평균과 양수 잔차 합",
+      "편향 0 · 부족 2"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p88_0",
+          118,
+          88,
+          155,
+          37,
+          [
+            "B · +2, −2"
+          ],
+          "plain"
+        ],
+        [
+          "p88_1",
+          310,
+          88,
+          155,
+          37,
+          [
+            "(+2 − 2) ÷ 2"
+          ],
+          "plain"
+        ],
+        [
+          "p88_2",
+          502,
+          88,
+          155,
+          37,
+          [
+            "편향 0"
+          ],
+          "active"
+        ],
+        [
+          "p188_0",
+          118,
+          188,
+          155,
+          37,
+          [
+            "B · +2, −2"
+          ],
+          "plain"
+        ],
+        [
+          "p188_1",
+          310,
+          188,
+          155,
+          37,
+          [
+            "max(2,0) + 0"
+          ],
+          "plain"
+        ],
+        [
+          "p188_2",
+          502,
+          188,
+          155,
+          37,
+          [
+            "부족 2"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p88_0",
+          "p88_1",
+          "plain",
+          ""
+        ],
+        [
+          "p88_1",
+          "p88_2",
+          "active",
+          ""
+        ],
+        [
+          "p188_0",
+          "p188_1",
+          "plain",
+          ""
+        ],
+        [
+          "p188_1",
+          "p188_2",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "주문 부족",
+      "description": "B의 +2와 −2는 평균에서 상쇄되고, 부족량 계산에서는 −2쪽이 재고 초과로 빠집니다."
+    },
+    "quiz": [
+      "잔차가 −3, +1, +2이고 재고를 이월하지 않을 때 총 부족은?",
+      "3",
+      "0",
+      "부족은 양수 잔차 1과 2만 더합니다."
+    ]
+  }
+];
+const slug = 'forecast-bias-underordering';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

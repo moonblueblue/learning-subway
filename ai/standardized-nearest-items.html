@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="판매와 반품을 함께 비교하면 어느 품목이 가장 가깝나요?">
+<title>표준화와 최근접 이웃 · B29</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./standardized-nearest-items.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B29</p><h1>표준화와 최근접 이웃</h1><p>판매와 반품을 함께 비교하면 어느 품목이 가장 가깝나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">표준화와 최근접 이웃</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "원래 단위",
+    "title": "값의 흔들림이 큰 축이 거리 계산을 좌우합니다",
+    "body": "평균 월 판매와 반품으로 품목을 비교합니다. Q와 A의 차이는 (10,8), B와의 차이는 (30,1)입니다. 그대로 잰 거리의 제곱은 164와 901이어서 A가 가깝습니다.",
+    "takeaway": "가로 판매 차이 30이 큰 B가 Q에서 훨씬 멀리 찍힙니다.",
+    "example": [
+      "Q→A (10,8) · Q→B (30,1)",
+      "10²+8² · 30²+1²",
+      "d²(A)=164 \u003c d²(B)=901"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "xx",
+          355,
+          197,
+          400,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "yy",
+          155,
+          134,
+          2,
+          125,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "q",
+          155,
+          197,
+          13,
+          13,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "a",
+          265,
+          109,
+          13,
+          13,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "b",
+          485,
+          186,
+          13,
+          13,
+          [
+            ""
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "q",
+          "a",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "q",
+          "b",
+          "undirected",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          122,
+          235,
+          "Q"
+        ],
+        [
+          284,
+          88,
+          "A (10,8)"
+        ],
+        [
+          284,
+          114,
+          "d² = 164"
+        ],
+        [
+          453,
+          138,
+          "B (30,1)"
+        ],
+        [
+          453,
+          164,
+          "d² = 901"
+        ],
+        [
+          153,
+          62,
+          "반품 차이(개)"
+        ],
+        [
+          329,
+          247,
+          "판매 차이(개)"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "원래 단위",
+      "description": "가로 판매 차이 30이 큰 B가 Q에서 훨씬 멀리 찍힙니다."
+    },
+    "quiz": [
+      "반품 차이를 빼고 판매 차이만 보면 어느 쪽이 더 가깝나요?",
+      "A",
+      "B",
+      "A는 10개, B는 30개 차이입니다."
+    ]
+  },
+  {
+    "label": "표준화 거리",
+    "title": "학습 집단의 표준편차를 적용하면 이웃이 바뀝니다",
+    "body": "학습에서 판매 표준편차 20개, 반품 표준편차 2개를 얻었습니다. 차이를 각각으로 나누면 A=(0.5,4), B=(1.5,0.5)입니다. 이제 거리 제곱 16.25 대 2.5로 B가 가깝습니다.",
+    "takeaway": "세로의 A가 Q보다 4 표준편차 위에 놓이며 B가 가장 가까워집니다.",
+    "example": [
+      "σ판매=20 · σ반품=2",
+      "축마다 표준편차로 나눔",
+      "d²(B)=2.5 \u003c d²(A)=16.25"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "xx",
+          296,
+          209,
+          280,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "yy",
+          156,
+          137,
+          2,
+          144,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "q",
+          156,
+          209,
+          13,
+          13,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "a",
+          173,
+          73,
+          13,
+          13,
+          [
+            ""
+          ],
+          "blocked"
+        ],
+        [
+          "b",
+          207,
+          192,
+          13,
+          13,
+          [
+            ""
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "q",
+          "a",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "q",
+          "b",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          108,
+          235,
+          "Q"
+        ],
+        [
+          200,
+          78,
+          "A (0.5,4)"
+        ],
+        [
+          200,
+          106,
+          "d² = 16.25"
+        ],
+        [
+          231,
+          174,
+          "B (1.5,0.5)"
+        ],
+        [
+          231,
+          201,
+          "d² = 2.5"
+        ],
+        [
+          385,
+          118,
+          "반품 Δ ÷ 2"
+        ],
+        [
+          232,
+          247,
+          "판매 Δ ÷ 20"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "표준화 거리",
+      "description": "세로의 A가 Q보다 4 표준편차 위에 놓이며 B가 가장 가까워집니다."
+    },
+    "quiz": [
+      "시험 품목들이 들어온 뒤 표준편차를 다시 계산해야 하나요?",
+      "학습에서 구한 값 유지",
+      "시험에서 다시 맞춤",
+      "같은 학습 기준으로 새 품목을 비교합니다."
+    ]
+  }
+];
+const slug = 'standardized-nearest-items';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

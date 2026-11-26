@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="점을 배정하고 중심을 옮긴 뒤 군집 수를 어떻게 선택하나요?">
+<title>k-means와 군집 수 선택 · B30</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./kmeans-demand-groups.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B30</p><h1>k-means와 군집 수 선택</h1><p>점을 배정하고 중심을 옮긴 뒤 군집 수를 어떻게 선택하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">k-means와 군집 수 선택</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "가까운 중심",
+    "title": "각 품목을 가장 가까운 초기 중심으로 배정합니다",
+    "body": "판매·반품을 같은 척도의 특징으로 맞췄습니다. 두 중심을 좌표 (1,1)과 (7,3)에 놓으면 낮은 두 점은 왼쪽, 높은 두 점은 오른쪽 중심에 배정됩니다.",
+    "takeaway": "낮은 두 점과 높은 두 점이 각각 가까운 중심으로 이어집니다.",
+    "example": [
+      "네 점 · 중심 (1,1),(7,3)",
+      "유클리드 거리 최소",
+      "쌍 (1,1),(3,1) · (7,3),(9,3)"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "xx",
+          329,
+          219,
+          442,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "yy",
+          108,
+          143,
+          2,
+          153,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "a",
+          155,
+          175,
+          17,
+          17,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "b",
+          243,
+          175,
+          10,
+          10,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "c",
+          419,
+          87,
+          17,
+          17,
+          [
+            ""
+          ],
+          "blocked"
+        ],
+        [
+          "d",
+          507,
+          87,
+          10,
+          10,
+          [
+            ""
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "b",
+          "a",
+          "active",
+          "",
+          0
+        ],
+        [
+          "d",
+          "c",
+          "blocked",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          124,
+          201,
+          "(1,1)"
+        ],
+        [
+          226,
+          201,
+          "(3,1)"
+        ],
+        [
+          386,
+          68,
+          "(7,3)"
+        ],
+        [
+          486,
+          68,
+          "(9,3)"
+        ],
+        [
+          331,
+          247,
+          "판매 축"
+        ],
+        [
+          31,
+          104,
+          "반품"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "가까운 중심",
+      "description": "낮은 두 점과 높은 두 점이 각각 가까운 중심으로 이어집니다."
+    },
+    "quiz": [
+      "초기 중심 (1,1)과 (7,3)에서 새 점 (2,1)은 어느 쪽에 배정되나요?",
+      "(1,1)",
+      "(7,3)",
+      "첫 중심까지 거리는 1로 둘째 중심까지의 √29보다 작습니다."
+    ]
+  },
+  {
+    "label": "평균으로 이동",
+    "title": "같은 배정에서 중심을 쌍의 중간으로 옮깁니다",
+    "body": "배정된 점들의 좌표별 평균은 왼쪽 (2,1), 오른쪽 (8,3)입니다. 중심을 두 위치로 옮겨도 소속은 유지됩니다. 이때 네 점은 각각 중심에서 한 단위씩 떨어져 SSE가 4입니다.",
+    "takeaway": "이전 중심 (1,1)과 (7,3)에서 평균 (2,1)과 (8,3)까지 한 칸 이동합니다.",
+    "example": [
+      "중심 (1,1),(7,3)",
+      "각 군집 좌표의 평균",
+      "중심 (2,1),(8,3) · SSE 4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "xx",
+          329,
+          219,
+          442,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "yy",
+          108,
+          143,
+          2,
+          153,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "a",
+          155,
+          175,
+          10,
+          10,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "b",
+          243,
+          175,
+          10,
+          10,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "c",
+          419,
+          87,
+          10,
+          10,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "d",
+          507,
+          87,
+          10,
+          10,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "n",
+          199,
+          175,
+          14,
+          14,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "m",
+          463,
+          87,
+          14,
+          14,
+          [
+            ""
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "n",
+          "active",
+          "",
+          0
+        ],
+        [
+          "c",
+          "m",
+          "blocked",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          121,
+          156,
+          "(1,1)"
+        ],
+        [
+          183,
+          205,
+          "(2,1)"
+        ],
+        [
+          383,
+          65,
+          "(7,3)"
+        ],
+        [
+          449,
+          117,
+          "(8,3)"
+        ],
+        [
+          225,
+          250,
+          "SSE = 4 × 1² = 4"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "평균으로 이동",
+      "description": "이전 중심 (1,1)과 (7,3)에서 평균 (2,1)과 (8,3)까지 한 칸 이동합니다."
+    },
+    "quiz": [
+      "(2,1)과 (4,1)이 하나의 군집이면 새 중심은?",
+      "(3,1)",
+      "(6,2)",
+      "각 좌표를 따로 평균합니다."
+    ]
+  },
+  {
+    "label": "군집 수",
+    "title": "군집을 늘리면 오차는 내려가므로 크기와 해석을 함께 확인합니다",
+    "body": "k=1의 중심은 (5,2)이고 SSE는 44입니다. k=2는 SSE 4이고, k=3은 두 점만 한 군집으로 남겨 SSE 2입니다. k=3의 작은 추가 개선과 한 점짜리 군집이 새 자료에서도 의미 있는지 살핍니다.",
+    "takeaway": "SSE 막대가 44→4에서 급감하고 4→2에서 변화 폭이 작습니다.",
+    "example": [
+      "같은 네 점",
+      "k=1,2,3 비교",
+      "SSE 44→4→2"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          145,
+          246,
+          "군집 내부 SSE"
+        ]
+      ],
+      "bars": [
+        [
+          62,
+          80,
+          352,
+          24,
+          "k=1 · 44",
+          "plain"
+        ],
+        [
+          62,
+          132,
+          32,
+          24,
+          "k=2 · 4",
+          "active"
+        ],
+        [
+          62,
+          182,
+          16,
+          24,
+          "k=3 · 2",
+          "plain"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "군집 수",
+      "description": "SSE 막대가 44→4에서 급감하고 4→2에서 변화 폭이 작습니다."
+    },
+    "quiz": [
+      "k=4에서 네 점을 모두 따로 두어 SSE가 0이면 자동으로 최선인가요?",
+      "사용 목적과 새 자료 확인",
+      "항상 최선",
+      "SSE는 군집을 늘리면 감소합니다. 한 점씩 나누면 공통 패턴을 설명하기 어렵습니다."
+    ]
+  }
+];
+const slug = 'kmeans-demand-groups';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

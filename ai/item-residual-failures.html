@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="전체 평균이 좋아졌는데 어떤 품목의 도입을 보류해야 할까요?">
+<title>품목별 잔차와 오류 사례 분해 · B23</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./item-residual-failures.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B23</p><h1>품목별 잔차와 오류 사례 분해</h1><p>전체 평균이 좋아졌는데 어떤 품목의 도입을 보류해야 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">품목별 잔차와 오류 사례 분해</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "전체 개선",
+    "title": "A의 개선이 전체 MAE를 끌어내립니다",
+    "body": "A의 8행에서 기준선 오차는 각 4개, 모델은 각 1개입니다. B 두 행에서 기준선은 각 2개, 모델은 각 5개입니다. 전체 MAE는 36÷10=3.6에서 18÷10=1.8로 줄어듭니다.",
+    "takeaway": "10행 합계에서 모델의 18은 기준선의 36보다 작습니다.",
+    "example": [
+      "A 8행 · B 2행",
+      "양쪽 모두 같은 10행",
+      "MAE 3.6 → 1.8"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          121,
+          234,
+          "누적 절대 오차(개)"
+        ]
+      ],
+      "bars": [
+        [
+          54,
+          95,
+          300,
+          24,
+          "기준선 36 ÷ 10 = 3.6",
+          "plain"
+        ],
+        [
+          54,
+          152,
+          150,
+          24,
+          "모델 18 ÷ 10 = 1.8",
+          "active"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "전체 개선",
+      "description": "10행 합계에서 모델의 18은 기준선의 36보다 작습니다."
+    },
+    "quiz": [
+      "모델 오차 합계가 25이고 행 수가 10이라면 MAE는?",
+      "2.5",
+      "25",
+      "총 절대 오차를 평가한 행 수로 나눕니다."
+    ]
+  },
+  {
+    "label": "B 따로 보기",
+    "title": "B는 오차가 커졌고 두 날 모두 적게 주문합니다",
+    "body": "B 두 날 실제는 12,13이고 기준선 예측은 10,11입니다. 모델은 7,8이어서 각 잔차가 +5입니다. 전체 평균 개선에도 B는 기준선에 남기고 원인을 별도로 조사합니다.",
+    "takeaway": "B의 두 실제값과 기준선·모델을 같은 행에 놓으면 2→5 악화가 두 번 보입니다.",
+    "example": [
+      "B · 12와 13",
+      "기준선 10·11 · 모델 7·8",
+      "B MAE 2 → 5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m67_0",
+          130.0,
+          67,
+          173,
+          37,
+          [
+            "B 실제"
+          ],
+          "plain"
+        ],
+        [
+          "m67_1",
+          310.0,
+          67,
+          173,
+          37,
+          [
+            "기준선"
+          ],
+          "plain"
+        ],
+        [
+          "m67_2",
+          490.0,
+          67,
+          173,
+          37,
+          [
+            "모델"
+          ],
+          "plain"
+        ],
+        [
+          "m125_0",
+          130.0,
+          125,
+          173,
+          37,
+          [
+            "12"
+          ],
+          "plain"
+        ],
+        [
+          "m125_1",
+          310.0,
+          125,
+          173,
+          37,
+          [
+            "10 · +2"
+          ],
+          "plain"
+        ],
+        [
+          "m125_2",
+          490.0,
+          125,
+          173,
+          37,
+          [
+            "7 · +5"
+          ],
+          "blocked"
+        ],
+        [
+          "m178_0",
+          130.0,
+          178,
+          173,
+          37,
+          [
+            "13"
+          ],
+          "plain"
+        ],
+        [
+          "m178_1",
+          310.0,
+          178,
+          173,
+          37,
+          [
+            "11 · +2"
+          ],
+          "plain"
+        ],
+        [
+          "m178_2",
+          490.0,
+          178,
+          173,
+          37,
+          [
+            "8 · +5"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          120,
+          248,
+          "B · MAE 2 → 5 · 기준선 유지"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "B 따로 보기",
+      "description": "B의 두 실제값과 기준선·모델을 같은 행에 놓으면 2→5 악화가 두 번 보입니다."
+    },
+    "quiz": [
+      "B의 모델이 7,14를 내면 새 MAE는?",
+      "3",
+      "2",
+      "실제 대비 절대 오차 5와 1의 평균은 3입니다."
+    ]
+  }
+];
+const slug = 'item-residual-failures';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

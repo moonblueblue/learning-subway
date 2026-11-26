@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 시험 기간으로 모델을 평가하고 어느 품목을 기준선으로 되돌릴까요?">
+<title>품목별 수요 예측기 · 졸업 과제</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<style>
+.demand-dialog {
+  width: min(630px, calc(100% - 24px));
+  max-width: 100%;
+  max-height: calc(100dvh - 16px);
+  padding: 12px;
+  margin: auto;
+  border: 1px solid #aebeb5;
+  border-radius: 12px;
+  background: #fcfefd;
+  color: #142620;
+  font: 15px/1.35 system-ui, sans-serif;
+}
+.demand-dialog::backdrop { background: #081c19b8; }
+.demand-dialog header { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.demand-dialog h2 { margin: 0; font-size: 1.25em; }
+.demand-dialog p { margin: 6px 0; overflow-wrap: anywhere; }
+.demand-dialog form { margin: 0; }
+.demand-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin: 8px 0; }
+.demand-fields label, .demand-upload { display: grid; gap: 3px; min-width: 0; font-weight: 650; }
+.demand-dialog input, .demand-dialog select {
+  font: inherit;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 4px;
+  color: inherit;
+  background: #f4f8f5;
+  border: 1px solid #a6bbb0;
+  border-radius: 6px;
+}
+.demand-upload span { display: block; }
+.demand-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 8px 0; }
+.demand-status { font-weight: 650; }
+.demand-dialog table { width: 100%; border-collapse: collapse; text-align: start; font-variant-numeric: tabular-nums; }
+.demand-dialog th, .demand-dialog td { padding: 4px; border-block-end: 1px solid #cbd9d0; text-align: start; }
+.demand-dialog thead { background: #e8f1eb; }
+.demand-context { color: #456151; font-size: .93em; }
+#forecast-actions { margin: 4px 0; }
+#forecast-actions .action { min-height: 44px; }
+@media (max-width: 370px), (max-height: 440px) {
+  .demand-dialog { font-size: 13px; padding: 8px; }
+  .demand-dialog th, .demand-dialog td { padding: 2px; }
+}
+@media (max-width: 640px) {
+  #forecast-actions .action { flex: 1 1 32%; padding-inline: 3px; text-align: center; }
+}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./item-demand-forecast.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · 졸업 과제</p><h1>품목별 수요 예측기</h1><p>같은 시험 기간으로 모델을 평가하고 어느 품목을 기준선으로 되돌릴까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">품목별 수요 예측기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <div id="forecast-actions" class="demand-actions"></div>
+        <p id="forecast-feedback" class="readout" role="status"></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<dialog id="edit-demand" class="demand-dialog" aria-labelledby="edit-heading">
+  <header><h2 id="edit-heading">실행 입력</h2><form method="dialog"><button class="action">닫기</button></form></header>
+  <form id="edit-form" novalidate>
+    <div class="demand-fields">
+      <label>릿지 λ<input id="setting-ridge" type="number" inputmode="decimal" step="0.01" min="0.01" max="1000" required></label>
+      <label>최소 개선<input id="setting-adopt" type="number" inputmode="decimal" step="any" min="0" max="10000" required></label>
+      <label>복귀 격차<input id="setting-gap" type="number" inputmode="decimal" step="any" min="0.01" max="10000" required></label>
+    </div>
+    <label class="demand-upload"><span>JSON 바꾸기</span><input id="import-data" type="file" accept=".json,application/json"></label>
+    <div class="demand-actions">
+      <button type="submit" class="action primary" id="apply-config">입력 적용</button>
+      <button type="button" class="action" id="reset-input">기본 입력 복원</button>
+    </div>
+    <p class="demand-status" id="edit-status" role="status"></p>
+  </form>
+</dialog>
+<dialog id="forecast-results" class="demand-dialog" aria-labelledby="results-heading">
+  <header><h2 id="results-heading">예측 실행 결과</h2><form method="dialog"><button class="action">닫기</button></form></header>
+  <p class="demand-status" id="reference-status" role="status"></p>
+  <div class="demand-fields">
+    <label>품목<select id="results-item"></select></label>
+    <label>예측월<select id="results-month"></select></label>
+    <label>보기<select id="results-view"><option value="comparison">오차 비교</option><option value="decision">운영 결정</option><option value="features">가용 기록</option></select></label>
+  </div>
+  <div id="result-content" aria-live="polite"></div>
+</dialog>
+
+<script>
+const lesson = [
+  {
+    "label": "발행 시점",
+    "title": "6월 발행에는 6월 1일에 알던 숫자만 씁니다",
+    "body": "A의 5월 재고 52개가 6월 1일에 등록됐습니다. 재고를 79개로 고친 6월 3일 기록은 6월 1일 00:00 UTC에 발행한 예측에 들어가지 않습니다. 판매와 반품도 각 기록의 등록 시각을 확인합니다.",
+    "takeaway": "6월 1일 발행 칸에 52만 연결되고 오른쪽 정정 79는 차단됩니다.",
+    "example": [
+      "A · 5월 재고",
+      "6/1 00:00 UTC",
+      "6월 특징 52"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "old",
+          122,
+          98,
+          178,
+          37,
+          [
+            "6/1 기록 52"
+          ],
+          "active"
+        ],
+        [
+          "new",
+          122,
+          193,
+          178,
+          37,
+          [
+            "6/3 정정 79"
+          ],
+          "blocked"
+        ],
+        [
+          "out",
+          459,
+          144,
+          214,
+          59,
+          [
+            "6/1 발행",
+            "재고 특징 52"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "old",
+          "out",
+          "active",
+          "",
+          0
+        ],
+        [
+          "new",
+          "out",
+          "blocked",
+          "경계 이후",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "발행 시점",
+      "description": "6월 1일 발행 칸에 52만 연결되고 오른쪽 정정 79는 차단됩니다."
+    },
+    "quiz": [
+      "정정을 6월 1일 00:01에 등록하면 6월 발행의 52가 79로 바뀌나요?",
+      "52 유지",
+      "79 적용",
+      "1분 차이라도 예측 뒤의 기록입니다."
+    ]
+  },
+  {
+    "label": "같은 시험",
+    "title": "전체 개선과 품목 B의 실패를 함께 봅니다",
+    "body": "1–6월의 같은 12행에서 MAE는 기준선 11개, 모델 5.5개입니다. A는 22→9.17개로 좋아지지만 B는 0→1.83개로 악화됩니다. 그림자 점수만으로 재고 비용을 알 수는 없습니다.",
+    "takeaway": "전체 11→5.5와 B 0→1.83을 동일 시험 표에서 비교합니다.",
+    "example": [
+      "1–6월 · A와 B",
+      "같은 12행의 MAE(개)",
+      "전체 개선 · B 악화"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m75_0",
+          130.0,
+          75,
+          173,
+          37,
+          [
+            "품목·행 수"
+          ],
+          "plain"
+        ],
+        [
+          "m75_1",
+          310.0,
+          75,
+          173,
+          37,
+          [
+            "기준선 MAE"
+          ],
+          "plain"
+        ],
+        [
+          "m75_2",
+          490.0,
+          75,
+          173,
+          37,
+          [
+            "모델 MAE"
+          ],
+          "plain"
+        ],
+        [
+          "m131_0",
+          130.0,
+          131,
+          173,
+          59,
+          [
+            "전체",
+            "12"
+          ],
+          "plain"
+        ],
+        [
+          "m131_1",
+          310.0,
+          131,
+          173,
+          37,
+          [
+            "11"
+          ],
+          "plain"
+        ],
+        [
+          "m131_2",
+          490.0,
+          131,
+          173,
+          37,
+          [
+            "5.5"
+          ],
+          "active"
+        ],
+        [
+          "m207_0",
+          130.0,
+          207,
+          173,
+          59,
+          [
+            "B",
+            "6"
+          ],
+          "plain"
+        ],
+        [
+          "m207_1",
+          310.0,
+          207,
+          173,
+          37,
+          [
+            "0"
+          ],
+          "plain"
+        ],
+        [
+          "m207_2",
+          490.0,
+          207,
+          173,
+          37,
+          [
+            "1.83"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "같은 시험",
+      "description": "전체 11→5.5와 B 0→1.83을 동일 시험 표에서 비교합니다."
+    },
+    "quiz": [
+      "B의 기준선이 0에서 3으로 나빠졌다면 모델 MAE 1.83과 어느 쪽이 더 작은가요?",
+      "모델",
+      "기준선",
+      "1.83이 3보다 작습니다. 실제 도입은 최소 개선 규칙도 확인해야 합니다."
+    ]
+  },
+  {
+    "label": "도입과 복귀",
+    "title": "확정 오차가 두 번 나빠진 뒤 다음 발행을 돌립니다",
+    "body": "A는 앞 두 시험월의 쌍이 확정되어 3월부터 모델을 씁니다. 4월과 5월의 모델 오차가 같은 월 기준선보다 각각 8개, 5개 큽니다. 두 격차가 5개 이상으로 확인된 6월 1일 발행부터 기준선으로 복귀합니다.",
+    "takeaway": "4월 확정 20−12=8, 5월 확정 17−12=5가 같은 문턱을 넘어 6월 복귀로 이어집니다.",
+    "example": [
+      "4·5월 확정 오차",
+      "모델−기준선 ≥5 · 연속 2회",
+      "6월 발행 기준선"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p113_0",
+          118,
+          113,
+          155,
+          59,
+          [
+            "5/1 확인",
+            "20−12=8 ≥5"
+          ],
+          "active"
+        ],
+        [
+          "p113_1",
+          310,
+          113,
+          155,
+          59,
+          [
+            "6/1 확인",
+            "17−12=5 ≥5"
+          ],
+          "active"
+        ],
+        [
+          "p113_2",
+          502,
+          113,
+          155,
+          59,
+          [
+            "6/1 발행",
+            "기준선 복귀"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p113_0",
+          "p113_1",
+          "blocked",
+          ""
+        ],
+        [
+          "p113_1",
+          "p113_2",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          65,
+          65,
+          "A · 3월 모델 도입"
+        ],
+        [
+          115,
+          217,
+          "격차 = 모델 오차 − 기준선 오차"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "도입과 복귀",
+      "description": "4월 확정 20−12=8, 5월 확정 17−12=5가 같은 문턱을 넘어 6월 복귀로 이어집니다."
+    },
+    "quiz": [
+      "격차 기준을 6개로 고치면 같은 4·5월 기록으로 6월에 복귀할까요?",
+      "복귀하지 않음",
+      "복귀함",
+      "5월 격차 5는 새 문턱 6에 못 미칩니다."
+    ]
+  }
+];
+const slug = 'item-demand-forecast';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+<script src="./item-demand-forecast/item-demand-forecast.js"></script>
+<script src="./item-demand-forecast/workbench.js"></script>
+</body>
+</html>

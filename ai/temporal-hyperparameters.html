@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="모델 설정을 비교하는 기간과 마지막 시험을 어떻게 분리할까요?">
+<title>시간 순서를 지키는 하이퍼파라미터 선택 · B18</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./temporal-hyperparameters.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B18</p><h1>시간 순서를 지키는 하이퍼파라미터 선택</h1><p>모델 설정을 비교하는 기간과 마지막 시험을 어떻게 분리할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">시간 순서를 지키는 하이퍼파라미터 선택</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "설정 비교",
+    "title": "같은 두 검증월에서 깊이별 오차를 모읍니다",
+    "body": "깊이 1의 4월·5월 MAE는 각각 4와 6, 깊이 4는 2와 10입니다. 두 달의 평가 행 수가 같으면 각각 5와 6입니다. 4월 하나만 보면 달라질 선택을 두 창에서 확인합니다.",
+    "takeaway": "같은 두 달에서 깊이 1 평균 5가 깊이 4 평균 6보다 낮습니다.",
+    "example": [
+      "깊이 1 · 깊이 4",
+      "4·5월 평가 행 수 동일",
+      "깊이 1 · MAE 5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m68_0",
+          95.5,
+          68,
+          136,
+          37,
+          [
+            "깊이"
+          ],
+          "plain"
+        ],
+        [
+          "m68_1",
+          238.5,
+          68,
+          136,
+          37,
+          [
+            "4월 MAE"
+          ],
+          "plain"
+        ],
+        [
+          "m68_2",
+          381.5,
+          68,
+          136,
+          37,
+          [
+            "5월 MAE"
+          ],
+          "plain"
+        ],
+        [
+          "m68_3",
+          524.5,
+          68,
+          136,
+          37,
+          [
+            "평균"
+          ],
+          "plain"
+        ],
+        [
+          "m132_0",
+          95.5,
+          132,
+          136,
+          37,
+          [
+            "1"
+          ],
+          "plain"
+        ],
+        [
+          "m132_1",
+          238.5,
+          132,
+          136,
+          37,
+          [
+            "4"
+          ],
+          "plain"
+        ],
+        [
+          "m132_2",
+          381.5,
+          132,
+          136,
+          37,
+          [
+            "6"
+          ],
+          "plain"
+        ],
+        [
+          "m132_3",
+          524.5,
+          132,
+          136,
+          37,
+          [
+            "5"
+          ],
+          "active"
+        ],
+        [
+          "m192_0",
+          95.5,
+          192,
+          136,
+          37,
+          [
+            "4"
+          ],
+          "plain"
+        ],
+        [
+          "m192_1",
+          238.5,
+          192,
+          136,
+          37,
+          [
+            "2"
+          ],
+          "plain"
+        ],
+        [
+          "m192_2",
+          381.5,
+          192,
+          136,
+          37,
+          [
+            "10"
+          ],
+          "blocked"
+        ],
+        [
+          "m192_3",
+          524.5,
+          192,
+          136,
+          37,
+          [
+            "6"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          178,
+          255,
+          "(4 + 6) ÷ 2 \u003c (2 + 10) ÷ 2"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "설정 비교",
+      "description": "같은 두 달에서 깊이 1 평균 5가 깊이 4 평균 6보다 낮습니다."
+    },
+    "quiz": [
+      "5월 깊이 4의 오차가 6으로 줄면 어느 깊이가 우세한가요?",
+      "깊이 4",
+      "깊이 1",
+      "깊이 4 평균은 (2+6)÷2=4로 깊이 1의 5보다 작습니다."
+    ]
+  },
+  {
+    "label": "시험 개봉",
+    "title": "마지막 월은 고른 설정의 점수만 냅니다",
+    "body": "5월 데이터가 등록된 뒤 깊이 1을 다시 학습합니다. 다음 6월의 MAE가 7이어도 깊이 선택을 바꾸지 않고 결과를 기록합니다. 그 값을 보고 교체하려면 이후 시험을 확보해야 합니다.",
+    "takeaway": "깊이 1이 고정되는 경계 뒤 6월 오차 7은 보고서로 가고 설정 변경으로 되돌아가지 않습니다.",
+    "example": [
+      "검증 평균 5와 6",
+      "깊이 1 고정",
+      "6월 MAE 7 기록"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p118_0",
+          118,
+          118,
+          155,
+          37,
+          [
+            "4·5월 비교"
+          ],
+          "plain"
+        ],
+        [
+          "p118_1",
+          310,
+          118,
+          155,
+          37,
+          [
+            "깊이 1 고정"
+          ],
+          "active"
+        ],
+        [
+          "p118_2",
+          502,
+          118,
+          155,
+          59,
+          [
+            "6월 시험",
+            "MAE 7"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p118_0",
+          "p118_1",
+          "active",
+          ""
+        ],
+        [
+          "p118_1",
+          "p118_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          137,
+          225,
+          "6월 점수 → 보고서"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "시험 개봉",
+      "description": "깊이 1이 고정되는 경계 뒤 6월 오차 7은 보고서로 가고 설정 변경으로 되돌아가지 않습니다."
+    },
+    "quiz": [
+      "6월 점수를 본 뒤 깊이 4로 바꿔 6월 오차를 내면 그 수치는 무엇인가요?",
+      "선택에 사용한 검증 점수",
+      "독립 시험 점수",
+      "6월 결과가 설정 선택에 이미 들어갔습니다."
+    ]
+  }
+];
+const slug = 'temporal-hyperparameters';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

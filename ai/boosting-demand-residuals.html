@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="다음 나무는 무엇을 학습하고 기존 예측에 얼마나 더하나요?">
+<title>잔차를 줄이는 그래디언트 부스팅 · B16</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./boosting-demand-residuals.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B16</p><h1>잔차를 줄이는 그래디언트 부스팅</h1><p>다음 나무는 무엇을 학습하고 기존 예측에 얼마나 더하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">잔차를 줄이는 그래디언트 부스팅</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "잔차 만들기",
+    "title": "첫 예측에서 과대·과소 방향을 구합니다",
+    "body": "초기 예측을 두 행 평균 8로 잡습니다. 제곱 오차에서 새 나무가 학습할 목표는 실제−예측입니다. A는 4−8=−4, B는 12−8=+4입니다.",
+    "takeaway": "같은 예측 8에서 실제 4 방향은 −4, 실제 12 방향은 +4입니다.",
+    "example": [
+      "A=4, B=12 · 예측 8",
+      "실제 − 예측",
+      "A −4 · B +4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p93_0",
+          118,
+          93,
+          155,
+          37,
+          [
+            "A · 실제 4"
+          ],
+          "plain"
+        ],
+        [
+          "p93_1",
+          310,
+          93,
+          155,
+          37,
+          [
+            "예측 8"
+          ],
+          "plain"
+        ],
+        [
+          "p93_2",
+          502,
+          93,
+          155,
+          37,
+          [
+            "잔차 −4"
+          ],
+          "blocked"
+        ],
+        [
+          "p196_0",
+          118,
+          196,
+          155,
+          37,
+          [
+            "B · 실제 12"
+          ],
+          "plain"
+        ],
+        [
+          "p196_1",
+          310,
+          196,
+          155,
+          37,
+          [
+            "예측 8"
+          ],
+          "plain"
+        ],
+        [
+          "p196_2",
+          502,
+          196,
+          155,
+          37,
+          [
+            "잔차 +4"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p93_0",
+          "p93_1",
+          "plain",
+          ""
+        ],
+        [
+          "p93_1",
+          "p93_2",
+          "blocked",
+          ""
+        ],
+        [
+          "p196_0",
+          "p196_1",
+          "plain",
+          ""
+        ],
+        [
+          "p196_1",
+          "p196_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "잔차 만들기",
+      "description": "같은 예측 8에서 실제 4 방향은 −4, 실제 12 방향은 +4입니다."
+    },
+    "quiz": [
+      "C의 실제가 7, 현재 예측 8이면 잔차는?",
+      "−1",
+      "+1",
+      "실제에서 예측을 빼면 7−8=−1입니다."
+    ]
+  },
+  {
+    "label": "절반 보정",
+    "title": "잔차를 맞힌 나무의 출력을 절반만 더합니다",
+    "body": "잔차 나무가 A에 −4, B에 +4를 돌려줍니다. 학습률 0.5를 곱하면 새 예측은 6과 10입니다. 절대 잔차는 4에서 2로, SSE는 32에서 8로 줄었습니다.",
+    "takeaway": "예측 8에서 −2와 +2만큼 이동한 6·10과 SSE 32→8이 남습니다.",
+    "example": [
+      "잔차 −4 · +4",
+      "η=0.5 · 보정 −2 · +2",
+      "예측 6 · 10"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p88_0",
+          118,
+          88,
+          155,
+          37,
+          [
+            "A · 8"
+          ],
+          "plain"
+        ],
+        [
+          "p88_1",
+          310,
+          88,
+          155,
+          37,
+          [
+            "0.5 × (−4)"
+          ],
+          "plain"
+        ],
+        [
+          "p88_2",
+          502,
+          88,
+          155,
+          59,
+          [
+            "6",
+            "실제 4"
+          ],
+          "active"
+        ],
+        [
+          "p177_0",
+          118,
+          177,
+          155,
+          37,
+          [
+            "B · 8"
+          ],
+          "plain"
+        ],
+        [
+          "p177_1",
+          310,
+          177,
+          155,
+          37,
+          [
+            "0.5 × (+4)"
+          ],
+          "plain"
+        ],
+        [
+          "p177_2",
+          502,
+          177,
+          155,
+          59,
+          [
+            "10",
+            "실제 12"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p88_0",
+          "p88_1",
+          "plain",
+          ""
+        ],
+        [
+          "p88_1",
+          "p88_2",
+          "active",
+          ""
+        ],
+        [
+          "p177_0",
+          "p177_1",
+          "plain",
+          ""
+        ],
+        [
+          "p177_1",
+          "p177_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          197,
+          250,
+          "SSE = 32 → 8"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "절반 보정",
+      "description": "예측 8에서 −2와 +2만큼 이동한 6·10과 SSE 32→8이 남습니다."
+    },
+    "quiz": [
+      "다음 번에 새로 구하는 B의 잔차는?",
+      "+2",
+      "+4",
+      "새 예측 10을 실제 12에서 뺍니다."
+    ]
+  }
+];
+const slug = 'boosting-demand-residuals';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

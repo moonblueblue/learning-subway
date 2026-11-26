@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="주말 판매와 평일 판매를 한 축으로 줄이면 무엇이 남고 무엇이 사라지나요?">
+<title>PCA로 수요 패턴 압축 · B31</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./pca-demand-patterns.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B31</p><h1>PCA로 수요 패턴 압축</h1><p>주말 판매와 평일 판매를 한 축으로 줄이면 무엇이 남고 무엇이 사라지나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">PCA로 수요 패턴 압축</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "가장 긴 방향",
+    "title": "중심을 지나 점들이 가장 넓게 퍼지는 방향을 찾습니다",
+    "body": "네 품목의 판매량을 좌표로 찍으면 중심은 (2,2)입니다. 중심을 뺀 자료의 모집단 공분산은 두 축 분산이 각각 2.5, 교차 공분산이 2입니다. 같은 방향으로 움직이는 대각선의 분산은 4.5, 다른 대각선은 0.5입니다.",
+    "takeaway": "같은 중심의 대각선 중 우상향 축이 두 무리의 큰 벌어짐 4.5를 붙잡습니다.",
+    "example": [
+      "네 좌표 · 평균 (2,2)",
+      "두 주축의 분산 비교",
+      "PC1 4.5 · PC2 0.5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "x",
+          314,
+          220,
+          334,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "y",
+          214,
+          137,
+          2,
+          165,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "e",
+          207,
+          227,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "f",
+          384,
+          50,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "g",
+          199,
+          57,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "h",
+          366,
+          224,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "a",
+          214,
+          183,
+          11,
+          11,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "b",
+          251,
+          220,
+          11,
+          11,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "c",
+          325,
+          72,
+          11,
+          11,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "d",
+          362,
+          109,
+          11,
+          11,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "mean",
+          288,
+          146,
+          11,
+          11,
+          [
+            ""
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "e",
+          "f",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "g",
+          "h",
+          "muted",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          416,
+          67,
+          "PC1 · 4.5"
+        ],
+        [
+          67,
+          86,
+          "PC2 · 0.5"
+        ],
+        [
+          88,
+          135,
+          "주말"
+        ],
+        [
+          312,
+          158,
+          "(2,2)"
+        ],
+        [
+          321,
+          252,
+          "평일 판매(개)"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "가장 긴 방향",
+      "description": "같은 중심의 대각선 중 우상향 축이 두 무리의 큰 벌어짐 4.5를 붙잡습니다."
+    },
+    "quiz": [
+      "같은 방향 PC1만 보존하면 이 자료의 총 분산 중 얼마가 남나요?",
+      "90%",
+      "50%",
+      "4.5 ÷ (4.5 + 0.5) = 90%입니다."
+    ]
+  },
+  {
+    "label": "같은 위치에 투영",
+    "title": "PC1에 내리면 서로 다른 두 점이 같은 점으로 겹칩니다",
+    "body": "(0,1)과 (1,0)은 모두 (0.5,0.5)에 투영되어 같은 PC1 점수 −3/√2를 갖습니다. 이 축은 총 분산의 90%를 보존하지만 평일과 주말 중 어느 쪽이 더 많이 팔렸는지는 잃습니다.",
+    "takeaway": "(0,1)과 (1,0)의 화살표가 PC1의 같은 점에 닿아 두 품목의 차이가 사라집니다.",
+    "example": [
+      "(0,1) · (1,0)",
+      "PC1에 직각 투영",
+      "공통 투영 (0.5,0.5)"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "x",
+          314,
+          220,
+          334,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "y",
+          214,
+          137,
+          2,
+          165,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "l",
+          207,
+          227,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "r",
+          384,
+          50,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "a",
+          214,
+          183,
+          11,
+          11,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "b",
+          251,
+          220,
+          11,
+          11,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "p",
+          232,
+          202,
+          12,
+          12,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "c",
+          325,
+          72,
+          11,
+          11,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "d",
+          362,
+          109,
+          11,
+          11,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "q",
+          344,
+          91,
+          12,
+          12,
+          [
+            ""
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "l",
+          "r",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "a",
+          "p",
+          "active",
+          "",
+          0
+        ],
+        [
+          "b",
+          "p",
+          "active",
+          "",
+          0
+        ],
+        [
+          "c",
+          "q",
+          "active",
+          "",
+          0
+        ],
+        [
+          "d",
+          "q",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          143,
+          178,
+          "(0,1)"
+        ],
+        [
+          233,
+          247,
+          "(1,0)"
+        ],
+        [
+          279,
+          199,
+          "(0.5,0.5)"
+        ],
+        [
+          416,
+          66,
+          "PC1"
+        ],
+        [
+          367,
+          258,
+          "4.5 ÷ 5 = 90%"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "같은 위치에 투영",
+      "description": "(0,1)과 (1,0)의 화살표가 PC1의 같은 점에 닿아 두 품목의 차이가 사라집니다."
+    },
+    "quiz": [
+      "새 품목을 기존 PCA 공간에 놓을 때 평균과 축은 어떻게 처리하나요?",
+      "학습 평균과 축 그대로",
+      "새 품목 하나로 축 다시 계산",
+      "같은 기준을 써야 이전 품목과 점수를 대조할 수 있습니다."
+    ]
+  }
+];
+const slug = 'pca-demand-patterns';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

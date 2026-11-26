@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="여러 시점에서 두 예측기의 우열은 어떻게 확인하나요?">
+<title>여러 예측 시점에서 반복 검증 · B12</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rolling-origin-validation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B12</p><h1>여러 예측 시점에서 반복 검증</h1><p>여러 시점에서 두 예측기의 우열은 어떻게 확인하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">여러 예측 시점에서 반복 검증</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "첫 검증",
+    "title": "5월 예측은 4월까지의 데이터로 학습합니다",
+    "body": "4월까지의 관측으로 5월을 맞힙니다. 기준선과 모델 모두 같은 5월의 관측 행에서 MAE를 냅니다. 이 창에서는 모델 2개, 기준선 4개입니다.",
+    "takeaway": "첫 시점의 학습 창은 4월에 멈추며 두 예측기의 오차가 5월 한 칸에 모입니다.",
+    "example": [
+      "1–4월 학습",
+      "5월 공통 검증",
+      "기준선 4 · 모델 2"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m76_0",
+          95.5,
+          76,
+          136,
+          37,
+          [
+            "1–4월"
+          ],
+          "plain"
+        ],
+        [
+          "m76_1",
+          238.5,
+          76,
+          136,
+          37,
+          [
+            "5월"
+          ],
+          "active"
+        ],
+        [
+          "m76_2",
+          381.5,
+          76,
+          136,
+          37,
+          [
+            "6월"
+          ],
+          "plain"
+        ],
+        [
+          "m76_3",
+          524.5,
+          76,
+          136,
+          37,
+          [
+            "7월"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          156,
+          224,
+          "5월 MAE · 기준선 4 · 모델 2"
+        ]
+      ],
+      "bars": [
+        [
+          29,
+          126,
+          135,
+          24,
+          "학습 → 5월",
+          "active"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "첫 검증",
+      "description": "첫 시점의 학습 창은 4월에 멈추며 두 예측기의 오차가 5월 한 칸에 모입니다."
+    },
+    "quiz": [
+      "이 5월 검증에 6월 판매를 넣어도 되나요?",
+      "사용할 수 없음",
+      "사용할 수 있음",
+      "6월은 예측 시점 뒤의 정보입니다."
+    ]
+  },
+  {
+    "label": "원점 이동",
+    "title": "6월 검증에서는 희미했던 실패가 드러납니다",
+    "body": "다음 시점에는 등록된 5월까지 넣어 다시 학습합니다. 6월 MAE는 기준선 4, 모델 5로 우열이 바뀝니다. 각 창의 행 수가 같으면 검증 평균은 기준선 4, 모델 3.5입니다.",
+    "takeaway": "학습 띠는 5월까지 연장되고 6월에서 기준선 4가 모델 5보다 작습니다.",
+    "example": [
+      "1–5월 학습",
+      "6월 공통 검증",
+      "기준선 4 · 모델 5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "m76_0",
+          95.5,
+          76,
+          136,
+          37,
+          [
+            "1–4월"
+          ],
+          "plain"
+        ],
+        [
+          "m76_1",
+          238.5,
+          76,
+          136,
+          37,
+          [
+            "5월"
+          ],
+          "plain"
+        ],
+        [
+          "m76_2",
+          381.5,
+          76,
+          136,
+          37,
+          [
+            "6월"
+          ],
+          "active"
+        ],
+        [
+          "m76_3",
+          524.5,
+          76,
+          136,
+          37,
+          [
+            "7월"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          156,
+          224,
+          "6월 MAE · 기준선 4 · 모델 5"
+        ]
+      ],
+      "bars": [
+        [
+          29,
+          126,
+          278,
+          24,
+          "학습 → 6월",
+          "active"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "원점 이동",
+      "description": "학습 띠는 5월까지 연장되고 6월에서 기준선 4가 모델 5보다 작습니다."
+    },
+    "quiz": [
+      "5월과 6월에 예측 행이 같은 수라면 모델의 검증 MAE는?",
+      "3.5",
+      "7",
+      "절대 오차 평균 2와 5에 같은 비중을 줍니다."
+    ]
+  },
+  {
+    "label": "마지막 시험",
+    "title": "7월은 모델 선택 뒤에 한 번 엽니다",
+    "body": "5월과 6월을 바탕으로 후보를 고릅니다. 그 이후 후보와 비교 규칙을 고정하고 7월을 채점합니다. 7월을 보고 다시 고르면 7월은 검증 데이터가 되어 새 시험이 필요합니다.",
+    "takeaway": "5·6월 결과는 선택에 들어가고 7월로 가는 길은 선택 고정 뒤에만 열립니다.",
+    "example": [
+      "5·6월 점수",
+      "7월 전에 선택 고정",
+      "7월 시험 1회"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p135_0",
+          118,
+          135,
+          155,
+          37,
+          [
+            "5·6월 검증"
+          ],
+          "plain"
+        ],
+        [
+          "p135_1",
+          310,
+          135,
+          155,
+          37,
+          [
+            "선택 고정"
+          ],
+          "active"
+        ],
+        [
+          "p135_2",
+          502,
+          135,
+          155,
+          59,
+          [
+            "7월 시험",
+            "1회 채점"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p135_0",
+          "p135_1",
+          "active",
+          ""
+        ],
+        [
+          "p135_1",
+          "p135_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "마지막 시험",
+      "description": "5·6월 결과는 선택에 들어가고 7월로 가는 길은 선택 고정 뒤에만 열립니다."
+    },
+    "quiz": [
+      "7월 실패를 보고 후보를 바꾸면 다음에 필요한 것은?",
+      "새로운 시험 기간",
+      "같은 7월 시험 반복",
+      "7월이 선택에 들어갔으므로 독립된 미래 구간을 마련합니다."
+    ]
+  }
+];
+const slug = 'rolling-origin-validation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="주문과 재고의 기록 시각이 다를 때 어떤 값이 예측 행에 들어갈까요?">
+<title>주문·재고를 예측일 기준으로 결합하기 · B02</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./order-inventory-as-of.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B02</p><h1>주문·재고를 예측일 기준으로 결합하기</h1><p>주문과 재고의 기록 시각이 다를 때 어떤 값이 예측 행에 들어갈까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">주문·재고를 예측일 기준으로 결합하기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "두 시계",
+    "title": "실사와 등록 사이에 예측 시각이 있습니다",
+    "body": "4월 5일 09시에 품목 A의 내일 판매를 추정합니다. 오전 8시 재고 실사는 12시에 등록됐습니다. 예측 당시에는 전날에 등록된 재고 14개가 최신 기록입니다.",
+    "takeaway": "8시 실사 3개가 12시에 등록되어 9시 예측 경계 뒤에 놓입니다.",
+    "example": [
+      "A · 재고 실사 3개",
+      "등록 12:00 > 예측 09:00",
+      "3개 미사용"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p137_0",
+          118,
+          137,
+          155,
+          59,
+          [
+            "실사 08:00",
+            "3개"
+          ],
+          "plain"
+        ],
+        [
+          "p137_1",
+          310,
+          137,
+          155,
+          59,
+          [
+            "09:00",
+            "예측 경계"
+          ],
+          "plain"
+        ],
+        [
+          "p137_2",
+          502,
+          137,
+          155,
+          59,
+          [
+            "등록 12:00",
+            "3개 미사용"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p137_0",
+          "p137_1",
+          "plain",
+          ""
+        ],
+        [
+          "p137_1",
+          "p137_2",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          156,
+          59,
+          "A · 4/5"
+        ],
+        [
+          156,
+          225,
+          "4/4 등록 · 14개는 사용 가능"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "두 시계",
+      "description": "8시 실사 3개가 12시에 등록되어 9시 예측 경계 뒤에 놓입니다."
+    },
+    "quiz": [
+      "8시 실사를 8시 30분에 등록했다면 9시에 3개를 쓸 수 있나요?",
+      "사용 가능",
+      "사용 불가",
+      "실사와 등록 모두 예측 시각 이전입니다."
+    ]
+  },
+  {
+    "label": "최신값 하나",
+    "title": "같은 품목의 최신 가용 재고만 붙입니다",
+    "body": "A의 주문은 07:00에 4개, 08:30에 2개가 등록됐습니다. 주문 합계 6개와 가용 재고 14개를 예측 행 한 줄에 넣습니다. 주문 두 건에 재고 이력 두 건을 그대로 연결하면 행이 네 줄로 불어납니다.",
+    "takeaway": "주문은 합계 6개, 재고는 가용 최신 14개를 만든 뒤 두 화살표가 A의 단일 행에 모입니다.",
+    "example": [
+      "A · 주문 4개와 2개 · 재고 14개와 3개",
+      "주문 합산 · 가용 재고 최신 선택",
+      "A · 주문 6개 · 재고 14개"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "o",
+          128,
+          84,
+          178,
+          59,
+          [
+            "주문 합계",
+            "4 + 2 = 6"
+          ],
+          "plain"
+        ],
+        [
+          "s",
+          128,
+          202,
+          178,
+          59,
+          [
+            "4/4 등록",
+            "재고 14개"
+          ],
+          "plain"
+        ],
+        [
+          "row",
+          452,
+          142,
+          223,
+          59,
+          [
+            "A · 4/5 09:00",
+            "주문 6 · 재고 14"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "o",
+          "row",
+          "active",
+          "",
+          0
+        ],
+        [
+          "s",
+          "row",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "최신값 하나",
+      "description": "주문은 합계 6개, 재고는 가용 최신 14개를 만든 뒤 두 화살표가 A의 단일 행에 모입니다."
+    },
+    "quiz": [
+      "등록된 주문이 3건 더 들어왔을 때 예측 행은 몇 줄인가요?",
+      "1줄",
+      "4줄",
+      "품목과 예측 시각이 같으면 주문 수량을 같은 행에 합산합니다."
+    ]
+  }
+];
+const slug = 'order-inventory-as-of';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

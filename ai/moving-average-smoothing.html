@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 급증에서 두 평활 방법은 얼마나 빠르게 반응하나요?">
+<title>이동평균과 지수 평활 · B09</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./moving-average-smoothing.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B09</p><h1>이동평균과 지수 평활</h1><p>같은 급증에서 두 평활 방법은 얼마나 빠르게 반응하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">이동평균과 지수 평활</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "이동평균",
+    "title": "3일 창이 이동하면 가장 오래된 값이 빠집니다",
+    "body": "10, 10, 22의 평균은 14입니다. 다음 날 10이 기록되면 첫 10을 빼고 새 10을 넣습니다. 급증 22는 창에 남아 있으므로 두 예측은 모두 14입니다.",
+    "takeaway": "창을 한 칸 밀어도 22가 겹치는 두 창에 모두 포함되고 평균 14가 유지됩니다.",
+    "example": [
+      "10, 10, 22, 10",
+      "3일 창 +1일",
+      "14 → 14"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "d1",
+          123,
+          80,
+          90,
+          37,
+          [
+            "10"
+          ],
+          "plain"
+        ],
+        [
+          "d2",
+          247,
+          80,
+          90,
+          37,
+          [
+            "10"
+          ],
+          "plain"
+        ],
+        [
+          "d3",
+          371,
+          80,
+          90,
+          37,
+          [
+            "22"
+          ],
+          "active"
+        ],
+        [
+          "d4",
+          495,
+          80,
+          90,
+          37,
+          [
+            "10"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [],
+      "labels": [
+        [
+          210,
+          253,
+          "(10 + 22 + 10) ÷ 3 = 14"
+        ]
+      ],
+      "bars": [
+        [
+          77,
+          130,
+          340,
+          24,
+          "1–3일 → 14",
+          "active"
+        ],
+        [
+          201,
+          191,
+          340,
+          24,
+          "2–4일",
+          "plain"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "이동평균",
+      "description": "창을 한 칸 밀어도 22가 겹치는 두 창에 모두 포함되고 평균 14가 유지됩니다."
+    },
+    "quiz": [
+      "다음 값도 10이면 마지막 3일 22, 10, 10의 평균은?",
+      "14",
+      "10",
+      "22는 아직 창의 첫 칸에 있습니다."
+    ]
+  },
+  {
+    "label": "지수 평활",
+    "title": "최신 판매에 절반의 비중을 주면 급증의 여파가 절반씩 줄어듭니다",
+    "body": "평활값 10에서 시작합니다. 22가 들어오면 0.5×10+0.5×22=16입니다. 다음 10에서는 0.5×16+0.5×10=13입니다. 평활은 22를 따로 저장하지 않고 이전 평활값에 영향이 남습니다.",
+    "takeaway": "최신 22부터 10으로 돌아오자 기준 10 위 초과분이 +6에서 +3으로 줄어듭니다.",
+    "example": [
+      "10 → 22 → 10",
+      "α = 0.5",
+      "평활 10 → 16 → 13"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p119_0",
+          118,
+          119,
+          155,
+          37,
+          [
+            "초기 10"
+          ],
+          "plain"
+        ],
+        [
+          "p119_1",
+          310,
+          119,
+          155,
+          59,
+          [
+            "22 · (10+22)/2",
+            "평활 16"
+          ],
+          "active"
+        ],
+        [
+          "p119_2",
+          502,
+          119,
+          155,
+          59,
+          [
+            "10 · (16+10)/2",
+            "평활 13"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p119_0",
+          "p119_1",
+          "active",
+          ""
+        ],
+        [
+          "p119_1",
+          "p119_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          139,
+          218,
+          "기준 10 위 · +6 → +3"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "지수 평활",
+      "description": "최신 22부터 10으로 돌아오자 기준 10 위 초과분이 +6에서 +3으로 줄어듭니다."
+    },
+    "quiz": [
+      "그 다음 판매도 10이라면 새 평활값은?",
+      "11.5",
+      "13",
+      "(13 + 10) ÷ 2 = 11.5입니다."
+    ]
+  }
+];
+const slug = 'moving-average-smoothing';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="아직 정답이 없는 예측을 오류나 성공으로 세지 않으려면 어떻게 할까요?">
+<title>늦게 들어오는 정답으로 성능 감시 · B25</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./delayed-forecast-monitoring.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B25</p><h1>늦게 들어오는 정답으로 성능 감시</h1><p>아직 정답이 없는 예측을 오류나 성공으로 세지 않으려면 어떻게 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">늦게 들어오는 정답으로 성능 감시</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "대기 상태",
+    "title": "관측 전에는 MAE 분모에 들어갈 행이 없습니다",
+    "body": "A의 5일 예측 10과 6일 예측 12를 발행 당시 저장했습니다. 7일 08:00에는 두 날의 판매 정답이 아직 등록되지 않아 평가 분모가 0이고 MAE는 미정의입니다.",
+    "takeaway": "두 예측의 등록 경로가 08:00 경계에서 막혀 확정 0/2가 표시됩니다.",
+    "example": [
+      "예측 10·12",
+      "7일 08:00 · 정답 미등록",
+      "확정 0/2 · MAE —"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p89_0",
+          140,
+          89,
+          218,
+          37,
+          [
+            "5일 예측 10"
+          ],
+          "plain"
+        ],
+        [
+          "p89_1",
+          480,
+          89,
+          218,
+          37,
+          [
+            "정답 대기"
+          ],
+          "blocked"
+        ],
+        [
+          "p165_0",
+          140,
+          165,
+          218,
+          37,
+          [
+            "6일 예측 12"
+          ],
+          "plain"
+        ],
+        [
+          "p165_1",
+          480,
+          165,
+          218,
+          37,
+          [
+            "정답 대기"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p89_0",
+          "p89_1",
+          "blocked",
+          ""
+        ],
+        [
+          "p165_0",
+          "p165_1",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          124,
+          241,
+          "7일 08:00 · 확정 0/2 · MAE —"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "대기 상태",
+      "description": "두 예측의 등록 경로가 08:00 경계에서 막혀 확정 0/2가 표시됩니다."
+    },
+    "quiz": [
+      "정답이 모두 대기 중일 때 MAE를 0으로 표시할까요?",
+      "MAE 미정의",
+      "MAE 0",
+      "확정 행이 없으므로 0으로 나눌 수 없습니다."
+    ]
+  },
+  {
+    "label": "첫 정답",
+    "title": "먼저 등록된 5일 정답만 예측과 짝짓습니다",
+    "body": "09:00에 5일 실제 8이 등록됐습니다. 고정한 예측 10과의 오차는 2입니다. 6일 정답이 없으므로 MAE는 2÷1입니다. 확정률도 1/2라고 같이 봅니다.",
+    "takeaway": "5일 경로만 정답 8에 연결되어 절대 오차 2와 분모 1이 생깁니다.",
+    "example": [
+      "5일 예측 10",
+      "7일 09:00 · 실제 8 등록",
+      "확정 1/2 · MAE 2"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p88_0",
+          140,
+          88,
+          218,
+          37,
+          [
+            "5일 예측 10"
+          ],
+          "plain"
+        ],
+        [
+          "p88_1",
+          480,
+          88,
+          218,
+          59,
+          [
+            "09:00",
+            "실제 8"
+          ],
+          "active"
+        ],
+        [
+          "p165_0",
+          140,
+          165,
+          218,
+          37,
+          [
+            "6일 예측 12"
+          ],
+          "plain"
+        ],
+        [
+          "p165_1",
+          480,
+          165,
+          218,
+          37,
+          [
+            "정답 대기"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p88_0",
+          "p88_1",
+          "active",
+          ""
+        ],
+        [
+          "p165_0",
+          "p165_1",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          108,
+          244,
+          "확정 1/2 · MAE = 2 ÷ 1"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "첫 정답",
+      "description": "5일 경로만 정답 8에 연결되어 절대 오차 2와 분모 1이 생깁니다."
+    },
+    "quiz": [
+      "추가로 6일 실제 15가 도착하면 MAE는?",
+      "2.5",
+      "5",
+      "두 오차 2와 3을 분모 2로 나눕니다."
+    ]
+  }
+];
+const slug = 'delayed-forecast-monitoring';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -339,29 +339,132 @@ const aiStationMap = {
   "3": {
     "stations": [
       {
+        "id": "3.6",
+        "ref": "database/sql"
+      },
+      {
         "id": "3.1",
-        "title": "표본과 레이블",
-        "titleEn": "Samples and labels"
+        "ref": "ai/order-inventory-as-of"
+      },
+      {
+        "id": "3.7",
+        "ref": "ai/stockout-censoring"
+      },
+      {
+        "id": "3.8",
+        "ref": "ai/returns-cancellations-labels"
+      },
+      {
+        "id": "3.9",
+        "ref": "ai/item-sample-weights"
+      },
+      {
+        "id": "3.10",
+        "ref": "ai/demand-data-access"
       },
       {
         "id": "3.2",
-        "title": "계절 기준선",
-        "titleEn": "Seasonal baseline"
+        "ref": "ai/seasonal-autocorrelation"
+      },
+      {
+        "id": "3.11",
+        "ref": "ai/seasonal-naive-demand"
+      },
+      {
+        "id": "3.12",
+        "ref": "ai/moving-average-smoothing"
       },
       {
         "id": "3.3",
-        "title": "시계열 분할",
-        "titleEn": "Time splits"
+        "ref": "ai/lag-rolling-features"
+      },
+      {
+        "id": "3.13",
+        "ref": "ai/forecast-horizon-split"
+      },
+      {
+        "id": "3.14",
+        "ref": "ai/rolling-origin-validation"
+      },
+      {
+        "id": "3.15",
+        "ref": "ai/ridge-demand-regression"
       },
       {
         "id": "3.4",
-        "title": "트리와 앙상블",
-        "titleEn": "Tree ensembles"
+        "ref": "ai/demand-tree-split"
+      },
+      {
+        "id": "3.16",
+        "ref": "ai/demand-random-forest"
+      },
+      {
+        "id": "3.17",
+        "ref": "ai/boosting-demand-residuals"
+      },
+      {
+        "id": "3.18",
+        "ref": "ai/rare-item-encoding"
+      },
+      {
+        "id": "3.19",
+        "ref": "ai/temporal-hyperparameters"
+      },
+      {
+        "id": "3.20",
+        "ref": "ai/scaled-demand-mae"
+      },
+      {
+        "id": "3.21",
+        "ref": "ai/forecast-bias-underordering"
+      },
+      {
+        "id": "3.22",
+        "ref": "ai/demand-quantile-cost"
+      },
+      {
+        "id": "3.23",
+        "ref": "ai/forecast-interval-coverage"
       },
       {
         "id": "3.5",
-        "title": "오류와 분포 변화",
-        "titleEn": "Errors and drift"
+        "ref": "ai/item-residual-failures"
+      },
+      {
+        "id": "3.24",
+        "ref": "ai/demand-distribution-shift"
+      },
+      {
+        "id": "3.25",
+        "ref": "ai/delayed-forecast-monitoring"
+      },
+      {
+        "id": "3.26",
+        "ref": "ai/shadow-demand-deployment"
+      },
+      {
+        "id": "3.27",
+        "ref": "ai/item-rollout-rollback"
+      },
+      {
+        "id": "3.28",
+        "ref": "ai/demand-experiment-interference"
+      },
+      {
+        "id": "3.29",
+        "ref": "ai/standardized-nearest-items"
+      },
+      {
+        "id": "3.30",
+        "ref": "ai/kmeans-demand-groups"
+      },
+      {
+        "id": "3.31",
+        "ref": "ai/pca-demand-patterns"
+      },
+      {
+        "id": "3.32",
+        "ref": "ai/anomaly-review-budget"
       }
     ],
     "transfer": {

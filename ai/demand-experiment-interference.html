@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="두 그룹이 재고를 공유하면 어떤 단위로 A/B를 배정할까요?">
+<title>A/B 실험의 배정 단위와 간섭 · B28</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./demand-experiment-interference.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B28</p><h1>A/B 실험의 배정 단위와 간섭</h1><p>두 그룹이 재고를 공유하면 어떤 단위로 A/B를 배정할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">A/B 실험의 배정 단위와 간섭</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "점포 배정",
+    "title": "같은 재고를 두 그룹이 써서 서로의 결과를 바꿉니다",
+    "body": "창고 P에 30개가 있습니다. 모델 점포가 먼저 20개를 배정받으면 15개를 요구한 기준선 점포에는 최대 10개밖에 남지 않습니다. 두 점포의 결과가 독립적이지 않습니다.",
+    "takeaway": "모델의 20개 이동이 같은 재고에서 기준선의 5개 부족을 일으킵니다.",
+    "example": [
+      "P · 30개",
+      "모델에 20개 우선 할당",
+      "기준선 요청 15 · 최대 10"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p111_0",
+          118,
+          111,
+          155,
+          37,
+          [
+            "P 재고 30"
+          ],
+          "plain"
+        ],
+        [
+          "p111_1",
+          310,
+          111,
+          155,
+          37,
+          [
+            "모델에 −20"
+          ],
+          "plain"
+        ],
+        [
+          "p111_2",
+          502,
+          111,
+          155,
+          37,
+          [
+            "남은 10개"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p111_0",
+          "p111_1",
+          "active",
+          ""
+        ],
+        [
+          "p111_1",
+          "p111_2",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          137,
+          219,
+          "기준선 요청 15 → 10개만"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "점포 배정",
+      "description": "모델의 20개 이동이 같은 재고에서 기준선의 5개 부족을 일으킵니다."
+    },
+    "quiz": [
+      "같은 창고의 재고가 충분하면 그 날의 재고 경로에서 상대 그룹의 배정 효과가 보일까요?",
+      "이 부족 경로는 사라짐",
+      "항상 5개 부족",
+      "공유 재고가 두 주문을 모두 감당하면 표시된 경쟁 경로는 발동하지 않습니다."
+    ]
+  },
+  {
+    "label": "창고 배정",
+    "title": "공유 자원 전체를 하나의 실험 단위로 묶습니다",
+    "body": "각 창고가 재고를 따로 갖고 창고 사이 물량 이동이 없다고 가정합니다. P 전체를 모델, Q 전체를 기준선에 둡니다. 실제 실험에서는 충분한 창고 수를 사용하고 결과도 배정 단위인 창고에서 비교합니다.",
+    "takeaway": "P·Q 안에서는 두 점포가 같은 정책으로 연결되고 재고 경로가 창고 경계를 건너지 않습니다.",
+    "example": [
+      "P · Q의 별도 재고",
+      "창고 단위 무작위 배정",
+      "P 모델 · Q 기준선"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p",
+          132,
+          148,
+          127,
+          37,
+          [
+            "P 재고"
+          ],
+          "active"
+        ],
+        [
+          "q",
+          421,
+          148,
+          127,
+          37,
+          [
+            "Q 재고"
+          ],
+          "plain"
+        ],
+        [
+          "p1",
+          245,
+          83,
+          123,
+          37,
+          [
+            "P1 · 모델"
+          ],
+          "active"
+        ],
+        [
+          "p2",
+          245,
+          213,
+          123,
+          37,
+          [
+            "P2 · 모델"
+          ],
+          "active"
+        ],
+        [
+          "q1",
+          533,
+          83,
+          124,
+          37,
+          [
+            "Q1 · 기준선"
+          ],
+          "plain"
+        ],
+        [
+          "q2",
+          533,
+          213,
+          124,
+          37,
+          [
+            "Q2 · 기준선"
+          ],
+          "plain"
+        ],
+        [
+          "boundary",
+          338,
+          150,
+          2,
+          152,
+          [
+            ""
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "p",
+          "p1",
+          "active",
+          "",
+          0
+        ],
+        [
+          "p",
+          "p2",
+          "active",
+          "",
+          0
+        ],
+        [
+          "q",
+          "q1",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "q",
+          "q2",
+          "plain",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          129,
+          265,
+          "창고 간 재고 이동 없음"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "창고 배정",
+      "description": "P·Q 안에서는 두 점포가 같은 정책으로 연결되고 재고 경로가 창고 경계를 건너지 않습니다."
+    },
+    "quiz": [
+      "P가 품절될 때 Q에서 자주 빌려 준다면 무엇을 다시 살펴봐야 하나요?",
+      "공유 재고가 묶이는 배정 범위",
+      "가격 단위만 변경",
+      "재고 이동이 그룹 사이에 다시 간섭 경로를 만듭니다."
+    ]
+  }
+];
+const slug = 'demand-experiment-interference';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

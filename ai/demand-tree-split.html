@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="어떤 가격 기준이 잎 안에서 제곱 오차를 더 많이 줄이나요?">
+<title>트리의 분할 기준 · B14</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./demand-tree-split.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B14</p><h1>트리의 분할 기준</h1><p>어떤 가격 기준이 잎 안에서 제곱 오차를 더 많이 줄이나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">트리의 분할 기준</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "한 잎",
+    "title": "분할 전에는 네 품목 예측이 평균 5입니다",
+    "body": "가격은 1, 2, 3, 4천원이고 판매는 8, 8, 2, 2개입니다. 한 잎의 예측은 5이고 각 오차 거리는 3입니다. 제곱 오차 합은 36입니다.",
+    "takeaway": "가격 1·2·3·4천원의 네 점과 높이 5의 예측선 사이에 거리 3이 남습니다.",
+    "example": [
+      "(1,8) · (2,8) · (3,2) · (4,2)",
+      "(8 + 8 + 2 + 2) ÷ 4 = 5",
+      "SSE = 4×3² = 36"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "ax",
+          303,
+          220,
+          428,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "ay",
+          90,
+          138,
+          2,
+          165,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "mean",
+          303,
+          144,
+          426,
+          3,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "a",
+          152,
+          88,
+          12,
+          12,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "b",
+          252,
+          88,
+          12,
+          12,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "c",
+          352,
+          200,
+          12,
+          12,
+          [
+            ""
+          ],
+          "blocked"
+        ],
+        [
+          "d",
+          452,
+          200,
+          12,
+          12,
+          [
+            ""
+          ],
+          "blocked"
+        ],
+        [
+          "ar",
+          152,
+          144,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "br",
+          252,
+          144,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "cr",
+          352,
+          144,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "dr",
+          452,
+          144,
+          2,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "ar",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "b",
+          "br",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "c",
+          "cr",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "d",
+          "dr",
+          "undirected",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          102,
+          86,
+          "8"
+        ],
+        [
+          523,
+          149,
+          "5"
+        ],
+        [
+          521,
+          205,
+          "2"
+        ],
+        [
+          33,
+          238,
+          "가격"
+        ],
+        [
+          145,
+          244,
+          "1"
+        ],
+        [
+          245,
+          244,
+          "2"
+        ],
+        [
+          345,
+          244,
+          "3"
+        ],
+        [
+          445,
+          244,
+          "4"
+        ],
+        [
+          489,
+          241,
+          "천원"
+        ],
+        [
+          183,
+          269,
+          "SSE = 4 × (3²) = 36"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "한 잎",
+      "description": "가격 1·2·3·4천원의 네 점과 높이 5의 예측선 사이에 거리 3이 남습니다."
+    },
+    "quiz": [
+      "판매 11인 표본 하나의 예측이 5이면 제곱 오차는?",
+      "36",
+      "6",
+      "차이 6을 제곱합니다."
+    ]
+  },
+  {
+    "label": "두 후보",
+    "title": "각 후보의 잎 평균으로 다시 오차를 계산합니다",
+    "body": "1.5천원에서 나누면 한쪽은 8 하나, 다른 쪽은 8,2,2로 평균 4입니다. SSE는 24입니다. 2.5천원에서 나누면 두 잎이 각각 8,8과 2,2가 되어 SSE=0입니다.",
+    "takeaway": "두 후보의 잎 구성과 제곱 오차 24·0이 보이고 2.5천원 분할을 선택합니다.",
+    "example": [
+      "1.5 · 2.5",
+      "잎 평균 기준 SSE",
+      "2.5 · SSE 0"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p95_0",
+          118,
+          95,
+          155,
+          59,
+          [
+            "≤1.5",
+            "[8] → 8"
+          ],
+          "plain"
+        ],
+        [
+          "p95_1",
+          310,
+          95,
+          155,
+          59,
+          [
+            ">1.5",
+            "[8,2,2] → 4"
+          ],
+          "plain"
+        ],
+        [
+          "p95_2",
+          502,
+          95,
+          155,
+          37,
+          [
+            "SSE 24"
+          ],
+          "plain"
+        ],
+        [
+          "p179_0",
+          118,
+          179,
+          155,
+          59,
+          [
+            "≤2.5",
+            "[8,8] → 8"
+          ],
+          "plain"
+        ],
+        [
+          "p179_1",
+          310,
+          179,
+          155,
+          59,
+          [
+            ">2.5",
+            "[2,2] → 2"
+          ],
+          "plain"
+        ],
+        [
+          "p179_2",
+          502,
+          179,
+          155,
+          37,
+          [
+            "SSE 0"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p95_0",
+          "p95_1",
+          "plain",
+          ""
+        ],
+        [
+          "p95_1",
+          "p95_2",
+          "plain",
+          ""
+        ],
+        [
+          "p179_0",
+          "p179_1",
+          "active",
+          ""
+        ],
+        [
+          "p179_1",
+          "p179_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          160,
+          252,
+          "가격 단위 천원 · 0 \u003c 24"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "두 후보",
+      "description": "두 후보의 잎 구성과 제곱 오차 24·0이 보이고 2.5천원 분할을 선택합니다."
+    },
+    "quiz": [
+      "선택한 트리에서 가격 3.5천원의 예측은?",
+      "2",
+      "8",
+      "3.5는 2.5보다 커 잎의 평균 2를 반환합니다."
+    ]
+  }
+];
+const slug = 'demand-tree-split';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

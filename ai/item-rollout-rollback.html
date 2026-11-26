@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="처음 모델을 쓸 조건과 다시 기준선으로 갈 신호를 어떻게 실행할까요?">
+<title>품목 그룹별 도입·복귀 판정 · B27</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./item-rollout-rollback.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B27</p><h1>품목 그룹별 도입·복귀 판정</h1><p>처음 모델을 쓸 조건과 다시 기준선으로 갈 신호를 어떻게 실행할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">품목 그룹별 도입·복귀 판정</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "그룹별 도입",
+    "title": "같은 시험에서 개선이 기준에 도달한 그룹만 전환합니다",
+    "body": "기준선에서 모델로 바꿀 때 MAE가 2개 이상 줄어야 합니다. A는 6에서 3으로 3개 개선되어 도입합니다. B는 4에서 5가 되어 기준선을 유지합니다.",
+    "takeaway": "A의 +3은 문턱 +2를 넘고 B의 −1은 넘지 않아 두 길이 갈라집니다.",
+    "example": [
+      "A 6→3 · B 4→5",
+      "개선 ≥2개",
+      "A 도입 · B 보류"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p86_0",
+          118,
+          86,
+          155,
+          37,
+          [
+            "A · 6→3"
+          ],
+          "plain"
+        ],
+        [
+          "p86_1",
+          310,
+          86,
+          155,
+          37,
+          [
+            "+3 ≥ 2"
+          ],
+          "plain"
+        ],
+        [
+          "p86_2",
+          502,
+          86,
+          155,
+          37,
+          [
+            "모델 도입"
+          ],
+          "active"
+        ],
+        [
+          "p182_0",
+          118,
+          182,
+          155,
+          37,
+          [
+            "B · 4→5"
+          ],
+          "plain"
+        ],
+        [
+          "p182_1",
+          310,
+          182,
+          155,
+          37,
+          [
+            "−1 \u003c 2"
+          ],
+          "plain"
+        ],
+        [
+          "p182_2",
+          502,
+          182,
+          155,
+          37,
+          [
+            "기준선 유지"
+          ],
+          "plain"
+        ]
+      ],
+      "edges": [
+        [
+          "p86_0",
+          "p86_1",
+          "active",
+          ""
+        ],
+        [
+          "p86_1",
+          "p86_2",
+          "active",
+          ""
+        ],
+        [
+          "p182_0",
+          "p182_1",
+          "blocked",
+          ""
+        ],
+        [
+          "p182_1",
+          "p182_2",
+          "plain",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          122,
+          250,
+          "개선 = 기준선 MAE − 모델 MAE"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "그룹별 도입",
+      "description": "A의 +3은 문턱 +2를 넘고 B의 −1은 넘지 않아 두 길이 갈라집니다."
+    },
+    "quiz": [
+      "C가 7에서 5로 좋아졌다면 통과할까요?",
+      "조건 충족",
+      "기준선 유지",
+      "2개 개선은 ‘2개 이상’에 포함됩니다."
+    ]
+  },
+  {
+    "label": "복귀 신호",
+    "title": "확정된 두 창에서 악화 기준을 연속으로 넘기면 복귀합니다",
+    "body": "A의 모델 오차가 기준선보다 3개 이상 큰 확정 창이 연속 두 건이면 복귀합니다. 4월은 7−3=4, 5월은 8−4=4입니다. 5월 정답까지 확인한 6월 발행부터 기준선을 사용합니다.",
+    "takeaway": "4월·5월 두 칸이 모두 +4≥3을 통과해 다음 6월 예측부터 복귀합니다.",
+    "example": [
+      "A · 4월 7−3 · 5월 8−4",
+      "격차 ≥3, 정답 확정 연속 2회",
+      "6월 기준선 복귀"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p107_0",
+          118,
+          107,
+          155,
+          59,
+          [
+            "4월 확정",
+            "7−3=4 ≥3"
+          ],
+          "plain"
+        ],
+        [
+          "p107_1",
+          310,
+          107,
+          155,
+          59,
+          [
+            "5월 확정",
+            "8−4=4 ≥3"
+          ],
+          "plain"
+        ],
+        [
+          "p107_2",
+          502,
+          107,
+          155,
+          59,
+          [
+            "6월 발행",
+            "기준선 복귀"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p107_0",
+          "p107_1",
+          "blocked",
+          ""
+        ],
+        [
+          "p107_1",
+          "p107_2",
+          "blocked",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          112,
+          211,
+          "악화 = 모델 MAE − 기준선 MAE"
+        ],
+        [
+          112,
+          249,
+          "정답 확정 2회 → 다음 발행"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "복귀 신호",
+      "description": "4월·5월 두 칸이 모두 +4≥3을 통과해 다음 6월 예측부터 복귀합니다."
+    },
+    "quiz": [
+      "5월 정답이 대기 중이라면 6월에 이 규칙으로 복귀하나요?",
+      "확정 2회까지 대기",
+      "즉시 복귀",
+      "지금 확인된 악화는 4월 한 번입니다."
+    ]
+  }
+];
+const slug = 'item-rollout-rollback';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

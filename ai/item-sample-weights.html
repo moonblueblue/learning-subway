@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="많이 팔리는 품목 때문에 다른 품목의 실패가 가려지는 이유는 무엇인가요?">
+<title>품목별 표본 비중과 가중치 · B05</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./item-sample-weights.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B05</p><h1>품목별 표본 비중과 가중치</h1><p>많이 팔리는 품목 때문에 다른 품목의 실패가 가려지는 이유는 무엇인가요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">품목별 표본 비중과 가중치</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "행별 평균",
+    "title": "행이 많은 A가 전체 평균을 끌어당깁니다",
+    "body": "A의 9개 예측 행에서 각 절대 오차가 1이고 B의 예측 행 하나에서 오차가 5입니다. 모든 행을 동일하게 세면 전체 평균은 14÷10=1.4개입니다.",
+    "takeaway": "A가 행 9개, B가 행 1개를 차지해 B의 5개 오차가 전체 1.4개가 됩니다.",
+    "example": [
+      "A: 9×1 · B: 1×5",
+      "(9+5) ÷ (9+1)",
+      "1.4개"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          276,
+          55,
+          "행 수 · 절대 오차(개)"
+        ],
+        [
+          156,
+          226,
+          "(9 + 5) ÷ 10 = 1.4"
+        ]
+      ],
+      "bars": [
+        [
+          54,
+          88,
+          324,
+          24,
+          "A · 9행 × 1개",
+          "active"
+        ],
+        [
+          54,
+          138,
+          36,
+          24,
+          "B · 1행 × 5개",
+          "blocked"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "행별 평균",
+      "description": "A가 행 9개, B가 행 1개를 차지해 B의 5개 오차가 전체 1.4개가 됩니다."
+    },
+    "quiz": [
+      "A의 9행은 그대로이고 B 오차가 9개가 되면 전체 행 평균은?",
+      "1.8",
+      "5",
+      "(9×1+1×9)÷10=1.8입니다."
+    ]
+  },
+  {
+    "label": "품목별 균형",
+    "title": "품목마다 같은 비중을 주면 평균이 달라집니다",
+    "body": "품목별로 먼저 평균을 구하면 A는 1, B는 5입니다. 두 품목의 평균에 같은 비중을 주면 3개입니다. 각 A 행에 1/9, B 행에 1을 곱해 총 가중치 2로 나눠도 같습니다.",
+    "takeaway": "A의 9×1/9와 B의 1×1이 같은 폭인 총 가중치 1에 맞춰집니다.",
+    "example": [
+      "A 평균 1 · B 평균 5",
+      "같은 품목 가중치",
+      "(1 + 5) ÷ 2 = 3"
+    ],
+    "readingDiagram": {
+      "nodes": [],
+      "edges": [],
+      "labels": [
+        [
+          276,
+          57,
+          "총 가중치"
+        ],
+        [
+          156,
+          226,
+          "(1 + 5) ÷ 2 = 3"
+        ]
+      ],
+      "bars": [
+        [
+          54,
+          91,
+          285,
+          24,
+          "A · 9행 × 1/9 = 1",
+          "active"
+        ],
+        [
+          54,
+          142,
+          285,
+          24,
+          "B · 1행 × 1 = 1",
+          "active"
+        ]
+      ],
+      "staticOnly": true,
+      "title": "품목별 균형",
+      "description": "A의 9×1/9와 B의 1×1이 같은 폭인 총 가중치 1에 맞춰집니다."
+    },
+    "quiz": [
+      "B가 두 행이 되고 품목 균형을 계속 맞춘다면 B 행 하나에 주는 가중치는?",
+      "1/2",
+      "2",
+      "B의 두 행 가중치 합이 1이어야 합니다."
+    ]
+  }
+];
+const slug = 'item-sample-weights';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

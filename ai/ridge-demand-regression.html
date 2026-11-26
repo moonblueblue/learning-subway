@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="할인과 가격의 변동을 설명하되 지나친 민감도는 어떻게 줄이나요?">
+<title>규제 선형 회귀로 수요 예측 · B13</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./ridge-demand-regression.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B13</p><h1>규제 선형 회귀로 수요 예측</h1><p>할인과 가격의 변동을 설명하되 지나친 민감도는 어떻게 줄이나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">규제 선형 회귀로 수요 예측</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "가격 기울기",
+    "title": "평균을 중심에 두고 가격 변화에 반응시킵니다",
+    "body": "학습 예시는 가격 9천원에 24개, 11천원에 16개입니다. 가격을 천원씩 올릴 때 판매는 4개씩 줄어 기울기는 −4입니다. 가격 중심 10의 예측은 20입니다.",
+    "takeaway": "9천원·24개와 11천원·16개를 잇는 선이 10천원에서 20개를 지납니다.",
+    "example": [
+      "(9,24) · (11,16)",
+      "Δy ÷ Δx = −8 ÷ 2",
+      "기울기 −4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "x0",
+          323,
+          226,
+          402,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "y0",
+          120,
+          136,
+          2,
+          181,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "a",
+          185,
+          87,
+          12,
+          12,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "b",
+          460,
+          190,
+          12,
+          12,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "c",
+          322,
+          138,
+          10,
+          10,
+          [
+            ""
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "c",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "c",
+          "b",
+          "undirected",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          152,
+          78,
+          "(9, 24)"
+        ],
+        [
+          306,
+          120,
+          "(10, 20)"
+        ],
+        [
+          440,
+          174,
+          "(11, 16)"
+        ],
+        [
+          52,
+          56,
+          "판매(개)"
+        ],
+        [
+          374,
+          255,
+          "가격(천원)"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "가격 기울기",
+      "description": "9천원·24개와 11천원·16개를 잇는 선이 10천원에서 20개를 지납니다."
+    },
+    "quiz": [
+      "같은 직선에서 가격이 10.5천원이면 예측은?",
+      "18",
+      "22",
+      "20−4×0.5=18입니다."
+    ]
+  },
+  {
+    "label": "규제 적용",
+    "title": "기울기에 비용을 더하면 가격 민감도가 줄어듭니다",
+    "body": "절편을 20에 두고, 제곱 오차 합에 λb²를 더합니다. 중심을 뺀 가격은 −1과 1이라 Σx²=2, Σxy=−8입니다. λ=2이면 b=−8/(2+2)=−2가 되어 11천원에서 18개로 완만해집니다.",
+    "takeaway": "두 직선은 같은 중심을 지나고 11천원에서 규제 예측 18이 이전 예측 16보다 평균 20에 가깝습니다.",
+    "example": [
+      "Σxy=−8 · Σx²=2",
+      "λ=2 · −8/(2+2)=−2",
+      "11천원 → 18개"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "x0",
+          323,
+          226,
+          402,
+          2,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "y0",
+          120,
+          136,
+          2,
+          181,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "a",
+          185,
+          87,
+          9,
+          9,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "b",
+          460,
+          190,
+          9,
+          9,
+          [
+            ""
+          ],
+          "muted"
+        ],
+        [
+          "c",
+          322,
+          138,
+          9,
+          9,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "d",
+          185,
+          112,
+          11,
+          11,
+          [
+            ""
+          ],
+          "active"
+        ],
+        [
+          "e",
+          460,
+          164,
+          11,
+          11,
+          [
+            ""
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "a",
+          "c",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "c",
+          "b",
+          "undirected",
+          "",
+          0
+        ],
+        [
+          "d",
+          "c",
+          "active",
+          "",
+          0
+        ],
+        [
+          "c",
+          "e",
+          "active",
+          "",
+          0
+        ]
+      ],
+      "labels": [
+        [
+          137,
+          74,
+          "24"
+        ],
+        [
+          153,
+          132,
+          "22"
+        ],
+        [
+          309,
+          121,
+          "20"
+        ],
+        [
+          468,
+          157,
+          "18"
+        ],
+        [
+          468,
+          199,
+          "16"
+        ],
+        [
+          107,
+          253,
+          "λ = 2 · −8 ÷ (2 + 2) = −2"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "규제 적용",
+      "description": "두 직선은 같은 중심을 지나고 11천원에서 규제 예측 18이 이전 예측 16보다 평균 20에 가깝습니다."
+    },
+    "quiz": [
+      "λ를 6까지 올리면 이 예시의 기울기는?",
+      "−1",
+      "−3",
+      "−8 ÷ (2 + 6) = −1입니다."
+    ]
+  }
+];
+const slug = 'ridge-demand-regression';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

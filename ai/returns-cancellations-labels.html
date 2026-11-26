@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="취소와 반품은 판매 수요와 순회수량에 각각 어떻게 반영되나요?">
+<title>반품과 취소의 레이블 처리 · B04</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./returns-cancellations-labels.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B04</p><h1>반품과 취소의 레이블 처리</h1><p>취소와 반품은 판매 수요와 순회수량에 각각 어떻게 반영되나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">반품과 취소의 레이블 처리</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "이행 수량",
+    "title": "배송 전 취소는 이행 수량을 줄입니다",
+    "body": "5월 2일 주문 A에는 8개가 들어왔지만 창고가 보내기 전에 2개가 취소됐습니다. 이행 판매 레이블을 정의했다면 배송된 6개가 그 날의 정답입니다.",
+    "takeaway": "주문 8이 취소 2를 지나 배송 6으로 연결됩니다.",
+    "example": [
+      "A · 주문 8",
+      "배송 전 취소 2",
+      "배송 6"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p142_0",
+          118,
+          142,
+          155,
+          37,
+          [
+            "5/2 주문 8"
+          ],
+          "plain"
+        ],
+        [
+          "p142_1",
+          310,
+          142,
+          155,
+          37,
+          [
+            "취소 −2"
+          ],
+          "plain"
+        ],
+        [
+          "p142_2",
+          502,
+          142,
+          155,
+          37,
+          [
+            "배송 6"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p142_0",
+          "p142_1",
+          "active",
+          ""
+        ],
+        [
+          "p142_1",
+          "p142_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "이행 수량",
+      "description": "주문 8이 취소 2를 지나 배송 6으로 연결됩니다."
+    },
+    "quiz": [
+      "주문 11개 중 배송 전에 3개를 취소했다면 이행 판매는?",
+      "8",
+      "11",
+      "배송 전 취소량을 주문량에서 빼면 8개입니다."
+    ]
+  },
+  {
+    "label": "반품 정산",
+    "title": "반품은 정의한 레이블과 마감 시각에 따라 붙입니다",
+    "body": "배송된 6개 중 1개가 5월 6일에 반품됐습니다. 5월 9일에 마감하는 7일 순판매 레이블에는 5개를 기록합니다. 배송량 레이블 6은 그대로 남습니다.",
+    "takeaway": "같은 배송 6에서 배송량 6과 7일 순판매 5 두 경로가 나갑니다.",
+    "example": [
+      "A · 5/2 배송 6",
+      "5/6 반품 1",
+      "5/9 순판매 5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "s",
+          120,
+          146,
+          163,
+          37,
+          [
+            "5/2 배송 6"
+          ],
+          "plain"
+        ],
+        [
+          "m",
+          465,
+          83,
+          180,
+          37,
+          [
+            "배송량 6"
+          ],
+          "plain"
+        ],
+        [
+          "n",
+          465,
+          214,
+          180,
+          59,
+          [
+            "5/9 마감",
+            "순판매 5"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "s",
+          "m",
+          "plain",
+          "",
+          0
+        ],
+        [
+          "s",
+          "n",
+          "active",
+          "5/6 −1",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "반품 정산",
+      "description": "같은 배송 6에서 배송량 6과 7일 순판매 5 두 경로가 나갑니다."
+    },
+    "quiz": [
+      "반품이 5월 10일에 도착했다면 5월 9일 마감 순판매는?",
+      "6",
+      "5",
+      "반품이 7일 마감 뒤에 도착했으므로 이 레이블에는 들어가지 않습니다."
+    ]
+  }
+];
+const slug = 'returns-cancellations-labels';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

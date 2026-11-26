@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="지난 계절의 어느 판매량을 다음 주 예측으로 가져오나요?">
+<title>지난 계절 같은 시점의 값으로 예측하기 · B08</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./seasonal-naive-demand.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B08</p><h1>지난 계절 같은 시점의 값으로 예측하기</h1><p>지난 계절의 어느 판매량을 다음 주 예측으로 가져오나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">지난 계절 같은 시점의 값으로 예측하기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "같은 요일 연결",
+    "title": "같은 요일의 직전 관측값을 복사합니다",
+    "body": "4월 6일 월요일에 12개, 4월 11일 토요일에 30개를 팔았습니다. 주기가 7일인 기준선은 두 값을 각각 4월 13일과 18일 예측에 복사합니다.",
+    "takeaway": "월 12와 토 30이 각각 7일 오른쪽의 같은 요일로 가는 실선을 갖습니다.",
+    "example": [
+      "월 12 · 토 30",
+      "같은 요일 +7일",
+      "다음 월 12 · 토 30"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p92_0",
+          140,
+          92,
+          218,
+          37,
+          [
+            "4/6 월 · 12"
+          ],
+          "plain"
+        ],
+        [
+          "p92_1",
+          480,
+          92,
+          218,
+          37,
+          [
+            "4/13 월 · 12"
+          ],
+          "active"
+        ],
+        [
+          "p190_0",
+          140,
+          190,
+          218,
+          37,
+          [
+            "4/11 토 · 30"
+          ],
+          "plain"
+        ],
+        [
+          "p190_1",
+          480,
+          190,
+          218,
+          37,
+          [
+            "4/18 토 · 30"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p92_0",
+          "p92_1",
+          "active",
+          ""
+        ],
+        [
+          "p190_0",
+          "p190_1",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          156,
+          250,
+          "간격 7일 · 단위 개"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "같은 요일 연결",
+      "description": "월 12와 토 30이 각각 7일 오른쪽의 같은 요일로 가는 실선을 갖습니다."
+    },
+    "quiz": [
+      "지난 일요일 26개이고 지난 토요일 30개였다면 다음 일요일 기준선 예측은?",
+      "26",
+      "30",
+      "지난 일요일 수량을 그대로 가져옵니다."
+    ]
+  },
+  {
+    "label": "실제와 대조",
+    "title": "판매가 관측된 뒤 같은 행에서 오차를 잽니다",
+    "body": "4월 13일 실제 판매는 10개, 18일은 25개였습니다. 미리 고정한 두 예측은 그대로 두고 각각 절대 오차 2와 5를 붙입니다. 평균은 (2+5)÷2=3.5개입니다.",
+    "takeaway": "두 요일의 예측과 실제가 각각 오차 2와 5에 이어집니다.",
+    "example": [
+      "예측 12 · 30",
+      "실제 10 · 25와 비교",
+      "MAE 3.5"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p80_0",
+          118,
+          80,
+          155,
+          37,
+          [
+            "월 예측 12"
+          ],
+          "plain"
+        ],
+        [
+          "p80_1",
+          310,
+          80,
+          155,
+          37,
+          [
+            "실제 10"
+          ],
+          "plain"
+        ],
+        [
+          "p80_2",
+          502,
+          80,
+          155,
+          37,
+          [
+            "오차 2"
+          ],
+          "active"
+        ],
+        [
+          "p157_0",
+          118,
+          157,
+          155,
+          37,
+          [
+            "토 예측 30"
+          ],
+          "plain"
+        ],
+        [
+          "p157_1",
+          310,
+          157,
+          155,
+          37,
+          [
+            "실제 25"
+          ],
+          "plain"
+        ],
+        [
+          "p157_2",
+          502,
+          157,
+          155,
+          37,
+          [
+            "오차 5"
+          ],
+          "active"
+        ]
+      ],
+      "edges": [
+        [
+          "p80_0",
+          "p80_1",
+          "plain",
+          ""
+        ],
+        [
+          "p80_1",
+          "p80_2",
+          "active",
+          ""
+        ],
+        [
+          "p157_0",
+          "p157_1",
+          "plain",
+          ""
+        ],
+        [
+          "p157_1",
+          "p157_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [
+        [
+          156,
+          233,
+          "MAE = (2 + 5) ÷ 2 = 3.5"
+        ]
+      ],
+      "bars": [],
+      "staticOnly": true,
+      "title": "실제와 대조",
+      "description": "두 요일의 예측과 실제가 각각 오차 2와 5에 이어집니다."
+    },
+    "quiz": [
+      "월 예측 12가 실제 14와 만났다면 월요일 절대 오차는?",
+      "2",
+      "−2",
+      "절대 오차는 부호를 제거한 차이입니다."
+    ]
+  }
+];
+const slug = 'seasonal-naive-demand';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="품목 수요에 필요한 정보만 어디까지 가져오면 될까요?">
+<title>데이터 사용 권한과 최소 수집 · B06</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./demand-data-access.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">데이터·응용 머신러닝 · B06</p><h1>데이터 사용 권한과 최소 수집</h1><p>품목 수요에 필요한 정보만 어디까지 가져오면 될까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">데이터 사용 권한과 최소 수집</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    "label": "주문 원장",
+    "title": "예측 목표에 필요한 필드를 먼저 구분합니다",
+    "body": "주문 원장에는 주소와 카드 토큰도 들어 있습니다. 품목별 판매 수량을 합산하는 데 필요한 키는 품목과 날짜이며 수량과 기록 시각만 읽으면 됩니다.",
+    "takeaway": "품목·수량·기록 시각과 배송 주소·카드 토큰의 데이터 경로가 분리됩니다.",
+    "example": [
+      "A 원장",
+      "예측 필드 선택",
+      "품목·수량·날짜·기록 시각"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "src",
+          111,
+          145,
+          150,
+          37,
+          [
+            "주문 원장"
+          ],
+          "plain"
+        ],
+        [
+          "good",
+          467,
+          87,
+          211,
+          59,
+          [
+            "A · 수량 4",
+            "날짜 · 기록 시각"
+          ],
+          "active"
+        ],
+        [
+          "bad",
+          467,
+          204,
+          211,
+          59,
+          [
+            "주소 · 결제",
+            "접근 차단"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "src",
+          "good",
+          "active",
+          "",
+          0
+        ],
+        [
+          "src",
+          "bad",
+          "blocked",
+          "",
+          0
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "주문 원장",
+      "description": "품목·수량·기록 시각과 배송 주소·카드 토큰의 데이터 경로가 분리됩니다."
+    },
+    "quiz": [
+      "매출 수량 예측에 주문자 전화번호를 포함할까요?",
+      "제외",
+      "항상 포함",
+      "이 목적에는 연락처가 필요하지 않습니다."
+    ]
+  },
+  {
+    "label": "권한 축소",
+    "title": "작업 계정에는 집계 보기 권한만 줍니다",
+    "body": "원장 소유자가 품목 A의 하루 판매 2+2=4개를 집계합니다. 모델 작업 계정은 이 집계용 읽기 전용 보기만 조회하고 원장 요청은 거절됩니다. 입력에 가용 시각을 포함해 시간 경계도 유지합니다.",
+    "takeaway": "읽기 전용 보기를 통해 4개가 전달되고 원장 직행 경로는 끊깁니다.",
+    "example": [
+      "A · 원장 2+2",
+      "집계 보기만 허용",
+      "작업 입력 A=4"
+    ],
+    "readingDiagram": {
+      "nodes": [
+        [
+          "p118_0",
+          118,
+          118,
+          155,
+          59,
+          [
+            "원장 · A",
+            "2 + 2"
+          ],
+          "plain"
+        ],
+        [
+          "p118_1",
+          310,
+          118,
+          155,
+          59,
+          [
+            "읽기 전용 보기",
+            "A = 4"
+          ],
+          "active"
+        ],
+        [
+          "p118_2",
+          502,
+          118,
+          155,
+          59,
+          [
+            "예측 작업",
+            "A = 4"
+          ],
+          "active"
+        ],
+        [
+          "raw",
+          310,
+          224,
+          260,
+          37,
+          [
+            "작업 → 원장 · 거절"
+          ],
+          "blocked"
+        ]
+      ],
+      "edges": [
+        [
+          "p118_0",
+          "p118_1",
+          "active",
+          ""
+        ],
+        [
+          "p118_1",
+          "p118_2",
+          "active",
+          ""
+        ]
+      ],
+      "labels": [],
+      "bars": [],
+      "staticOnly": true,
+      "title": "권한 축소",
+      "description": "읽기 전용 보기를 통해 4개가 전달되고 원장 직행 경로는 끊깁니다."
+    },
+    "quiz": [
+      "집계 보기 접근만 필요한 새 작업 계정에 원장 쓰기 권한도 줄까요?",
+      "읽기 권한만",
+      "쓰기 권한 추가",
+      "예측 작업은 보기의 데이터를 읽기만 하면 됩니다."
+    ]
+  }
+];
+const slug = 'demand-data-access';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

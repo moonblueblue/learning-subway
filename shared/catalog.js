@@ -871,10 +871,140 @@ const courseCatalog = {
           "id": "3",
           "title": "데이터·응용 머신러닝",
           "titleEn": "Data and applied ML",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "3.6",
+              "ref": "database/sql"
+            },
+            {
+              "id": "3.1",
+              "ref": "ai/order-inventory-as-of"
+            },
+            {
+              "id": "3.7",
+              "ref": "ai/stockout-censoring"
+            },
+            {
+              "id": "3.8",
+              "ref": "ai/returns-cancellations-labels"
+            },
+            {
+              "id": "3.9",
+              "ref": "ai/item-sample-weights"
+            },
+            {
+              "id": "3.10",
+              "ref": "ai/demand-data-access"
+            },
+            {
+              "id": "3.2",
+              "ref": "ai/seasonal-autocorrelation"
+            },
+            {
+              "id": "3.11",
+              "ref": "ai/seasonal-naive-demand"
+            },
+            {
+              "id": "3.12",
+              "ref": "ai/moving-average-smoothing"
+            },
+            {
+              "id": "3.3",
+              "ref": "ai/lag-rolling-features"
+            },
+            {
+              "id": "3.13",
+              "ref": "ai/forecast-horizon-split"
+            },
+            {
+              "id": "3.14",
+              "ref": "ai/rolling-origin-validation"
+            },
+            {
+              "id": "3.15",
+              "ref": "ai/ridge-demand-regression"
+            },
+            {
+              "id": "3.4",
+              "ref": "ai/demand-tree-split"
+            },
+            {
+              "id": "3.16",
+              "ref": "ai/demand-random-forest"
+            },
+            {
+              "id": "3.17",
+              "ref": "ai/boosting-demand-residuals"
+            },
+            {
+              "id": "3.18",
+              "ref": "ai/rare-item-encoding"
+            },
+            {
+              "id": "3.19",
+              "ref": "ai/temporal-hyperparameters"
+            },
+            {
+              "id": "3.20",
+              "ref": "ai/scaled-demand-mae"
+            },
+            {
+              "id": "3.21",
+              "ref": "ai/forecast-bias-underordering"
+            },
+            {
+              "id": "3.22",
+              "ref": "ai/demand-quantile-cost"
+            },
+            {
+              "id": "3.23",
+              "ref": "ai/forecast-interval-coverage"
+            },
+            {
+              "id": "3.5",
+              "ref": "ai/item-residual-failures"
+            },
+            {
+              "id": "3.24",
+              "ref": "ai/demand-distribution-shift"
+            },
+            {
+              "id": "3.25",
+              "ref": "ai/delayed-forecast-monitoring"
+            },
+            {
+              "id": "3.26",
+              "ref": "ai/shadow-demand-deployment"
+            },
+            {
+              "id": "3.27",
+              "ref": "ai/item-rollout-rollback"
+            },
+            {
+              "id": "3.28",
+              "ref": "ai/demand-experiment-interference"
+            },
+            {
+              "id": "3.29",
+              "ref": "ai/standardized-nearest-items"
+            },
+            {
+              "id": "3.30",
+              "ref": "ai/kmeans-demand-groups"
+            },
+            {
+              "id": "3.31",
+              "ref": "ai/pca-demand-patterns"
+            },
+            {
+              "id": "3.32",
+              "ref": "ai/anomaly-review-budget"
+            }
+          ],
           "tracks": [],
           "destination": "품목별 수요 예측기",
-          "destinationEn": "Item-level demand forecasting"
+          "destinationEn": "Item-level demand forecasting",
+          "projectRef": "projects/item-demand-forecast"
         },
         {
           "id": "4",
@@ -3607,6 +3737,347 @@ const courseCatalog = {
             "ai/monte-carlo-tree-iteration"
           ],
           "page": "ai/local-search-random-restarts.html"
+        },
+        {
+          "id": "order-inventory-as-of",
+          "title": "주문·재고를 예측일 기준으로 결합하기",
+          "titleEn": "Joining orders and inventory as of prediction time",
+          "question": "주문과 재고의 기록 시각이 다를 때 어떤 값이 예측 행에 들어갈까요?",
+          "format": "실험",
+          "requires": [
+            "database/sql"
+          ],
+          "page": "ai/order-inventory-as-of.html"
+        },
+        {
+          "id": "stockout-censoring",
+          "title": "품절로 관측되지 않은 수요",
+          "titleEn": "Demand hidden by stockouts",
+          "question": "같은 판매 5개를 한쪽에서는 그대로 쓰고 다른 쪽에서는 왜 보류할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/order-inventory-as-of"
+          ],
+          "page": "ai/stockout-censoring.html"
+        },
+        {
+          "id": "returns-cancellations-labels",
+          "title": "반품과 취소의 레이블 처리",
+          "titleEn": "Labeling returns and cancellations",
+          "question": "취소와 반품은 판매 수요와 순회수량에 각각 어떻게 반영되나요?",
+          "format": "실험",
+          "requires": [
+            "ai/stockout-censoring"
+          ],
+          "page": "ai/returns-cancellations-labels.html"
+        },
+        {
+          "id": "item-sample-weights",
+          "title": "품목별 표본 비중과 가중치",
+          "titleEn": "Sample weights by item",
+          "question": "많이 팔리는 품목 때문에 다른 품목의 실패가 가려지는 이유는 무엇인가요?",
+          "format": "실험",
+          "requires": [
+            "ai/returns-cancellations-labels"
+          ],
+          "page": "ai/item-sample-weights.html"
+        },
+        {
+          "id": "demand-data-access",
+          "title": "데이터 사용 권한과 최소 수집",
+          "titleEn": "Data access and minimization",
+          "question": "품목 수요에 필요한 정보만 어디까지 가져오면 될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/item-sample-weights"
+          ],
+          "page": "ai/demand-data-access.html"
+        },
+        {
+          "id": "seasonal-autocorrelation",
+          "title": "계절 주기와 자기상관",
+          "titleEn": "Seasonal patterns and autocorrelation",
+          "question": "판매 수열을 며칠 밀면 주말 피크가 다시 맞물리나요?",
+          "format": "실험",
+          "requires": [
+            "ai/demand-data-access"
+          ],
+          "page": "ai/seasonal-autocorrelation.html"
+        },
+        {
+          "id": "seasonal-naive-demand",
+          "title": "지난 계절 같은 시점의 값으로 예측하기",
+          "titleEn": "Seasonal naive demand forecasts",
+          "question": "지난 계절의 어느 판매량을 다음 주 예측으로 가져오나요?",
+          "format": "실험",
+          "requires": [
+            "ai/seasonal-autocorrelation"
+          ],
+          "page": "ai/seasonal-naive-demand.html"
+        },
+        {
+          "id": "moving-average-smoothing",
+          "title": "이동평균과 지수 평활",
+          "titleEn": "Moving averages and exponential smoothing",
+          "question": "같은 급증에서 두 평활 방법은 얼마나 빠르게 반응하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/seasonal-naive-demand"
+          ],
+          "page": "ai/moving-average-smoothing.html"
+        },
+        {
+          "id": "lag-rolling-features",
+          "title": "시차 특징과 이동 창",
+          "titleEn": "Lagged features and rolling windows",
+          "question": "내일 판매를 예측하는 날에는 시차와 이동 창을 어디에 맞추나요?",
+          "format": "실험",
+          "requires": [
+            "ai/moving-average-smoothing"
+          ],
+          "page": "ai/lag-rolling-features.html"
+        },
+        {
+          "id": "forecast-horizon-split",
+          "title": "예측 지평에 맞춘 시계열 분할",
+          "titleEn": "Splitting time series at the forecast horizon",
+          "question": "미래 2일을 예측할 때 겹치는 레이블을 어디서 비워야 하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/lag-rolling-features"
+          ],
+          "page": "ai/forecast-horizon-split.html"
+        },
+        {
+          "id": "rolling-origin-validation",
+          "title": "여러 예측 시점에서 반복 검증",
+          "titleEn": "Rolling-origin validation",
+          "question": "여러 시점에서 두 예측기의 우열은 어떻게 확인하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/forecast-horizon-split"
+          ],
+          "page": "ai/rolling-origin-validation.html"
+        },
+        {
+          "id": "ridge-demand-regression",
+          "title": "규제 선형 회귀로 수요 예측",
+          "titleEn": "Ridge regression for demand",
+          "question": "할인과 가격의 변동을 설명하되 지나친 민감도는 어떻게 줄이나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rolling-origin-validation"
+          ],
+          "page": "ai/ridge-demand-regression.html"
+        },
+        {
+          "id": "demand-tree-split",
+          "title": "트리의 분할 기준",
+          "titleEn": "Splitting a regression tree",
+          "question": "어떤 가격 기준이 잎 안에서 제곱 오차를 더 많이 줄이나요?",
+          "format": "실험",
+          "requires": [
+            "ai/ridge-demand-regression"
+          ],
+          "page": "ai/demand-tree-split.html"
+        },
+        {
+          "id": "demand-random-forest",
+          "title": "무작위 숲과 배깅",
+          "titleEn": "Bagging and random forests",
+          "question": "같은 품목을 여러 나무에 넣으면 어느 값이 숲의 예측이 되나요?",
+          "format": "실험",
+          "requires": [
+            "ai/demand-tree-split"
+          ],
+          "page": "ai/demand-random-forest.html"
+        },
+        {
+          "id": "boosting-demand-residuals",
+          "title": "잔차를 줄이는 그래디언트 부스팅",
+          "titleEn": "Gradient boosting to reduce residuals",
+          "question": "다음 나무는 무엇을 학습하고 기존 예측에 얼마나 더하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/demand-random-forest"
+          ],
+          "page": "ai/boosting-demand-residuals.html"
+        },
+        {
+          "id": "rare-item-encoding",
+          "title": "범주 인코딩과 희귀 품목",
+          "titleEn": "Encoding categories and rare items",
+          "question": "판매 사례가 적거나 처음 보는 품목의 범주를 어떻게 기록할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/boosting-demand-residuals"
+          ],
+          "page": "ai/rare-item-encoding.html"
+        },
+        {
+          "id": "temporal-hyperparameters",
+          "title": "시간 순서를 지키는 하이퍼파라미터 선택",
+          "titleEn": "Time-aware hyperparameter selection",
+          "question": "모델 설정을 비교하는 기간과 마지막 시험을 어떻게 분리할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/rare-item-encoding"
+          ],
+          "page": "ai/temporal-hyperparameters.html"
+        },
+        {
+          "id": "scaled-demand-mae",
+          "title": "MAE와 규모가 다른 품목의 비교",
+          "titleEn": "MAE across items of different scales",
+          "question": "두 품목의 오차 5개는 운영상 같은 크기인가요?",
+          "format": "실험",
+          "requires": [
+            "ai/temporal-hyperparameters"
+          ],
+          "page": "ai/scaled-demand-mae.html"
+        },
+        {
+          "id": "forecast-bias-underordering",
+          "title": "예측 편향과 과소 주문",
+          "titleEn": "Forecast bias and under-ordering",
+          "question": "절대 오차가 같을 때 어떻게 과소 주문을 찾나요?",
+          "format": "실험",
+          "requires": [
+            "ai/scaled-demand-mae"
+          ],
+          "page": "ai/forecast-bias-underordering.html"
+        },
+        {
+          "id": "demand-quantile-cost",
+          "title": "분위수 예측과 비대칭 비용",
+          "titleEn": "Quantiles under asymmetric ordering costs",
+          "question": "부족 비용이 초과 비용의 세 배면 어느 분위수까지 주문하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/forecast-bias-underordering"
+          ],
+          "page": "ai/demand-quantile-cost.html"
+        },
+        {
+          "id": "forecast-interval-coverage",
+          "title": "예측 구간의 포함률",
+          "titleEn": "Coverage of prediction intervals",
+          "question": "예측 구간에 정답이 몇 번 들었고 구간은 얼마나 넓나요?",
+          "format": "실험",
+          "requires": [
+            "ai/demand-quantile-cost"
+          ],
+          "page": "ai/forecast-interval-coverage.html"
+        },
+        {
+          "id": "item-residual-failures",
+          "title": "품목별 잔차와 오류 사례 분해",
+          "titleEn": "Item-level residuals and failure cases",
+          "question": "전체 평균이 좋아졌는데 어떤 품목의 도입을 보류해야 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/forecast-interval-coverage"
+          ],
+          "page": "ai/item-residual-failures.html"
+        },
+        {
+          "id": "demand-distribution-shift",
+          "title": "입력 분포 변화와 실제 수요 변화",
+          "titleEn": "Input drift and changing demand",
+          "question": "판매 특징이 움직인 것과 같은 조건의 수요가 바뀐 것을 어떻게 구분할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/item-residual-failures"
+          ],
+          "page": "ai/demand-distribution-shift.html"
+        },
+        {
+          "id": "delayed-forecast-monitoring",
+          "title": "늦게 들어오는 정답으로 성능 감시",
+          "titleEn": "Monitoring forecasts with late labels",
+          "question": "아직 정답이 없는 예측을 오류나 성공으로 세지 않으려면 어떻게 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/demand-distribution-shift"
+          ],
+          "page": "ai/delayed-forecast-monitoring.html"
+        },
+        {
+          "id": "shadow-demand-deployment",
+          "title": "그림자 배포로 기준선과 비교",
+          "titleEn": "Shadow deployment for demand forecasts",
+          "question": "실주문을 건드리지 않고 어떤 결과까지 검증할 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/delayed-forecast-monitoring"
+          ],
+          "page": "ai/shadow-demand-deployment.html"
+        },
+        {
+          "id": "item-rollout-rollback",
+          "title": "품목 그룹별 도입·복귀 판정",
+          "titleEn": "Rollout and rollback by item group",
+          "question": "처음 모델을 쓸 조건과 다시 기준선으로 갈 신호를 어떻게 실행할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/shadow-demand-deployment"
+          ],
+          "page": "ai/item-rollout-rollback.html"
+        },
+        {
+          "id": "demand-experiment-interference",
+          "title": "A/B 실험의 배정 단위와 간섭",
+          "titleEn": "Assignment units and interference",
+          "question": "두 그룹이 재고를 공유하면 어떤 단위로 A/B를 배정할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/item-rollout-rollback"
+          ],
+          "page": "ai/demand-experiment-interference.html"
+        },
+        {
+          "id": "standardized-nearest-items",
+          "title": "표준화와 최근접 이웃",
+          "titleEn": "Standardization and nearest neighbors",
+          "question": "판매와 반품을 함께 비교하면 어느 품목이 가장 가깝나요?",
+          "format": "실험",
+          "requires": [
+            "ai/demand-experiment-interference"
+          ],
+          "page": "ai/standardized-nearest-items.html"
+        },
+        {
+          "id": "kmeans-demand-groups",
+          "title": "k-means와 군집 수 선택",
+          "titleEn": "K-means and the number of clusters",
+          "question": "점을 배정하고 중심을 옮긴 뒤 군집 수를 어떻게 선택하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/standardized-nearest-items"
+          ],
+          "page": "ai/kmeans-demand-groups.html"
+        },
+        {
+          "id": "pca-demand-patterns",
+          "title": "PCA로 수요 패턴 압축",
+          "titleEn": "Compressing demand patterns with PCA",
+          "question": "주말 판매와 평일 판매를 한 축으로 줄이면 무엇이 남고 무엇이 사라지나요?",
+          "format": "실험",
+          "requires": [
+            "ai/kmeans-demand-groups"
+          ],
+          "page": "ai/pca-demand-patterns.html"
+        },
+        {
+          "id": "anomaly-review-budget",
+          "title": "이상치 점수와 조사 예산",
+          "titleEn": "Anomaly scores and investigation budgets",
+          "question": "의심 품목이 여러 개일 때 조사 한 자리에는 무엇을 올릴까요?",
+          "format": "실험",
+          "requires": [
+            "ai/pca-demand-patterns"
+          ],
+          "page": "ai/anomaly-review-budget.html"
         }
       ]
     },
@@ -3672,6 +4143,17 @@ const courseCatalog = {
             "ai/verify-warehouse-plan"
           ],
           "page": "projects/warehouse-planner.html"
+        },
+        {
+          "id": "item-demand-forecast",
+          "title": "품목별 수요 예측기",
+          "titleEn": "Item-level demand forecasting",
+          "question": "같은 시험 기간으로 모델을 평가하고 어느 품목을 기준선으로 되돌릴까요?",
+          "format": "프로젝트",
+          "requires": [
+            "ai/demand-experiment-interference"
+          ],
+          "page": "projects/item-demand-forecast.html"
         }
       ]
     }

@@ -201,6 +201,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
 .packet-tag rect{fill:#fff;stroke:var(--request);stroke-width:.9}.packet-tag .packet-label{stroke:none;dominant-baseline:central}
+.course-diagram-open #scene #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -365,6 +366,23 @@ const ST = [['text', '지금까지의 글', 'file'], ['tok', '토큰 나누기',
 const lesson = [
   {
     label: '다음 토큰',
+    readingDiagram: {
+      title: "문맥 뒤에 올 네 가지 후보",
+      description: "현재 토큰을 고정하고 다음 토큰 분포를 구합니다. 아직 하나도 고르지 않았습니다.",
+      nodes: [
+        ["context", 107, 155, 170, 28, ["문맥 토큰 4개"], "plain"],
+      ],
+      labels: [
+        [240, 68, "다음 후보 · 선택 전"],
+      ],
+      bars: [
+        [241, 82, 136, 30, "좋 · 45%", "active"],
+        [241, 126, 91, 30, "덥 · 30%", "plain"],
+        [241, 170, 45, 30, "춥 · 15%", "plain"],
+        [241, 214, 30, 30, "그 밖 · 10%", "plain"],
+      ],
+      edges: [],
+    },
     readingStage: 3,
     note: ['"오늘 날씨가 정말"', ' → ', '토큰 4개', ' → ', '다음 토큰: 좋 45% · 덥 30% · 춥 15% · 그 밖 10%'],
     title: '언어 모델은 다음에 올 토큰의 확률을 계산한다',
@@ -382,6 +400,23 @@ const lesson = [
   },
   {
     label: '이어 쓰기',
+    readingDiagram: {
+      title: "고른 조각을 다시 넣고 분포를 새로 계산한다",
+      description: "고른 조각을 다시 넣고 분포를 새로 계산한다",
+      nodes: [
+        ["a0", 150, 82, 244, 48, ["문맥 4개", "후보: 좋 45%, 덥 30%…"], "plain"],
+        ["b0", 470, 82, 230, 28, ["좋을 선택"], "active"],
+        ["a1", 150, 139, 244, 48, ["문맥 5개 · 끝에 좋", "후보: 다 92%"], "plain"],
+        ["b1", 470, 139, 230, 28, ["다를 선택"], "active"],
+        ["a2", 150, 196, 244, 48, ["문맥 6개에서 마침표 선택", "마침표 뒤 종료 기호 선택"], "plain"],
+        ["b2", 470, 196, 230, 28, ["생성 종료"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+        ["a2", "b2", "active", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['"좋"을 골라 글 끝에 붙임 (토큰 5개)', ' → ', '다시 물어 "다", "."도 붙임', ' → ', '"오늘 날씨가 정말 좋다."'],
     title: '고른 토큰을 글 끝에 붙이고 다시 묻는다',
@@ -399,6 +434,20 @@ const lesson = [
   },
   {
     label: '온도',
+    readingDiagram: {
+      title: "같은 확률을 온도별로 재정규화한다",
+      description: "같은 확률을 온도별로 재정규화한다",
+      nodes: [
+        ["a0", 150, 103, 244, 48, ["T = 0.2", "p^(1 / 0.2)"], "plain"],
+        ["b0", 470, 103, 230, 48, ["88.0 · 11.6 · 0.4 · <0.1%", "가장 큰 후보에 집중"], "active"],
+        ["a1", 150, 195, 244, 48, ["T = 1.5", "p^(1 / 1.5)"], "plain"],
+        ["b1", 470, 195, 230, 48, ["38.3 · 29.2 · 18.4 · 14.1%", "더 고르게 분산"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['좋 45% · 덥 30% · 춥 15%', ' → ', '온도 0.2면 대부분 "좋"', ' · ', '1.5면 골고루 뽑혀 다른 이어 쓰기'],
     title: '온도로 얼마나 모험할지 정한다',
@@ -416,6 +465,23 @@ const lesson = [
   },
   {
     label: '대화가 되기까지',
+    readingDiagram: {
+      title: "같은 모델에 서로 다른 학습 신호를 준다",
+      description: "같은 모델에 서로 다른 학습 신호를 준다",
+      nodes: [
+        ["a0", 150, 82, 244, 28, ["일반 문서"], "plain"],
+        ["b0", 470, 82, 230, 28, ["기본 모델 · 다음 토큰"], "active"],
+        ["a1", 150, 139, 244, 28, ["질문과 좋은 답"], "plain"],
+        ["b1", 470, 139, 230, 28, ["지시 모델 · 답안 예시"], "active"],
+        ["a2", 150, 196, 244, 28, ["선호 비교"], "plain"],
+        ["b2", 470, 196, 230, 28, ["선호 조정 · 두 답 순위"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+        ["a2", "b2", "active", "", 0],
+      ],
+    },
     readingStage: 4,
     note: ['"1바이트는 몇 비트야?"를 대화 글로', ' → ', '조수 차례를 이어 씀', ' → ', '"8"을 고르고 끝 토큰에서 멈춤'],
     title: '글을 이어 쓰는 모델을 대화하는 조수로 길러 낸다',

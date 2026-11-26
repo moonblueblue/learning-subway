@@ -1,8 +1,16 @@
 {
   "base_source": "76c46fd92f5d60ba7e8edac255225a20b33ccc0f",
   "lessons": {
+    "ai/attention": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "ai/cnn": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "ai/gradient": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "ai/llm": "e3885046d03910d2025b0556725a7444cb43a98a",
     "ai/ml": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "ai/neural": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "algorithms/bst": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "algorithms/complexity": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "algorithms/dynamic": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "algorithms/hash": "e3885046d03910d2025b0556725a7444cb43a98a",
     "computing-basics/bits": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "computing-basics/compress": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "computing-basics/computer": "6948c631d27cf02ddc17090753609254d12b0b3b",
@@ -25,5 +33,5 @@
     "system-design/replication": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "system-design/sharding": "6948c631d27cf02ddc17090753609254d12b0b3b"
   },
-  "source_tip": "e0cbfba5da6f7ea8850b0f60a4357182a4d1bebd"
+  "source_tip": "e3885046d03910d2025b0556725a7444cb43a98a"
 }

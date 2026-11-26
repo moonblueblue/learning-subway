@@ -72,5 +72,18 @@ return {
   '"작은 값부터 읽기"를 눌러 보세요.': 'Press "Read smallest first".', '값이 작은 것부터 차례로 나왔습니다.': 'The values came out smallest first.',
   '고르게 퍼진 트리에 값이 100만 개면 높이는 대략?': 'With a million values in a balanced tree, about how high is it?', '50만': '500,000',
   '층마다 노드 수가 두 배가 되므로 2를 20번 곱하면 100만을 넘습니다. 찾기가 20번 비교로 끝납니다.': 'Each level doubles the number of nodes, and 2 multiplied 20 times passes a million. Finding takes 20 comparisons.',
+  "10 → … → 70: 7회": "10 → … → 70: 7 visits",
+  "40 → 60 → 70: 3회": "40 → 60 → 70: 3 visits",
+  "70까지 3회 또는 7회": "3 or 7 visits to reach 70",
+  "같은 일곱 값": "Same seven values",
+  "같은 일곱 값도 삽입 순서에 따라 다르다": "Insertion order changes the tree for the same seven values",
+  "비교할 때마다 한쪽 가지를 버린다": "Each comparison rules out one branch",
+  "뿌리 40 · 왼쪽 20과 30 · 오른쪽 60": "Root 40 · left 20 and 30 · right 60",
+  "삽입 순서만 바꿈": "Change only insertion order",
+  "왼쪽 → 부모 → 오른쪽": "Left → parent → right",
+  "왼쪽을 끝낼 때까지 40 대기": "40 waits for the left subtree",
+  "왼쪽을 출력한 뒤 부모를 출력한다": "Output the left subtree before its parent",
+  "출력": "Output",
+  "균형 있게 값이 들어간 이진 탐색 트리에서 65를 찾아 봅니다. 50보다 크므로 오른쪽 70, 70보다 작으므로 왼쪽 60, 60보다 크므로 오른쪽 65로 갑니다. 비교할 때마다 한쪽 가지를 버립니다. 두 갈래의 크기가 비슷한 트리에서는 후보를 빠르게 줄일 수 있습니다.": "Find 65 in a balanced binary search tree. It is larger than 50, so go right to 70; smaller than 70, so go left to 60; and larger than 60, so go right to 65. Each comparison rules out one branch. A balanced tree cuts down the candidates quickly.",
 };
 })();

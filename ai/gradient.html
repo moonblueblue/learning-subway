@@ -207,6 +207,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work li{white-space:pre-wrap}
 .dot.ssddot{background:#eaeef9;border-color:#7a87b5}.dot.ramdot{background:#dcf1e2;border-color:#5f9474}.dot.wiredot{background:#eef1ef;border-color:#8c9d96}.dot.appdot{background:#e2f5e8;border-color:#4f8f6b}.dot.layerdot{background:#eef1fb;border-color:#5362a0}.dot.routerdot{background:#fdf2e7;border-color:#c26a1e}
 .packet-tag rect{fill:#fff;stroke:var(--request);stroke-width:.9}.packet-tag .packet-label{stroke:none;dominant-baseline:central}
+.course-diagram-open #scene #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -376,6 +377,24 @@ const LOOP_LINKS = [['w', 'loss'], ['loss', 'grad'], ['grad', 'upd'], ['upd', 'w
 const lesson = [
   {
     label: '기울기 보기',
+    readingDiagram: {
+      title: "음의 기울기에서 오른쪽으로 이동",
+      description: "w=0에서 기울기 −6입니다. 학습률 .1만큼 반대 방향으로 옮긴 뒤 손실을 다시 계산합니다.",
+      nodes: [
+        ["old", 105, 103, 142, 48, ["w = 0", "L = 9"], "plain"],
+        ["step", 305, 103, 146, 48, ["−0.1 × (−6)", "= +0.6"], "plain"],
+        ["new", 512, 103, 148, 48, ["w = 0.6", "L = 5.76"], "active"],
+        ["min", 512, 202, 148, 48, ["w = 3", "L = 0"], "muted"],
+      ],
+      edges: [
+        ["old", "step", "active", "", 0],
+        ["step", "new", "active", "", 0],
+        ["new", "min", "muted", "", 0],
+      ],
+      labels: [
+        [59, 229, "L(w) = (w − 3)²"],
+      ],
+    },
     readingStage: 4,
     note: ['w = 0에서 L = (w − 3)² = 9', ' → ', '기울기 2 × (0 − 3) = −6', ' → ', '학습률 0.1로 반대쪽 +0.6', ' → ', 'w = 0.6'],
     title: '손실이 줄어드는 방향은 기울기의 반대쪽이다',
@@ -395,6 +414,23 @@ const lesson = [
   },
   {
     label: '학습률',
+    readingDiagram: {
+      title: "같은 시작점에서도 학습률이 경로를 바꾼다",
+      description: "같은 시작점에서도 학습률이 경로를 바꾼다",
+      nodes: [
+        ["a0", 150, 82, 244, 48, ["α = 0.1", "0 → 0.6"], "plain"],
+        ["b0", 470, 82, 230, 48, ["0.6 → 1.08 → 1.464", "w < 3"], "plain"],
+        ["a1", 150, 139, 244, 48, ["α = 0.5", "0 → 3"], "plain"],
+        ["b1", 470, 139, 230, 48, ["3 → 3 → 3", "w = 3"], "active"],
+        ["a2", 150, 196, 244, 48, ["α = 1.1", "0 → 6.6"], "plain"],
+        ["b2", 470, 196, 230, 48, ["6.6 → −1.32 → 8.184", "최솟점 양옆으로 진동"], "blocked"],
+      ],
+      edges: [
+        ["a0", "b0", "plain", "", 0],
+        ["a1", "b1", "active", "", 0],
+        ["a2", "b2", "blocked", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['w = 0에서 세 걸음씩', ' → ', '학습률 0.1은 1.46…로 천천히', ' · ', '0.5는 3에 멈춤', ' · ', '1.1은 8.18로 바닥을 건너뜀'],
     noteTone: 'bad',
@@ -415,6 +451,24 @@ const lesson = [
   },
   {
     label: '가중치 여러 개',
+    readingDiagram: {
+      title: "두 방향을 같은 시작점에서 계산한다",
+      description: "같은 점의 기울기 (−6, 2)에 −.1을 곱하면 (+.6, −.2)입니다. 한 번에 적용합니다.",
+      nodes: [
+        ["o", 139, 115, 155, 48, ["(0, 0)", "∇L = (−6, 2)"], "plain"],
+        ["h", 420, 115, 135, 28, ["(+0.6, 0)"], "muted"],
+        ["r", 420, 204, 166, 28, ["(+0.6, −0.2)"], "active"],
+        ["x", 590, 115, 35, 28, ["w₁"], "plain"],
+        ["y", 139, 211, 35, 28, ["w₂"], "plain"],
+      ],
+      edges: [
+        ["o", "h", "undirected", "", 0],
+        ["h", "r", "undirected", "", 0],
+        ["o", "r", "active", "", 0],
+        ["h", "x", "plain", "", 0],
+        ["o", "y", "plain", "", 0],
+      ],
+    },
     readingStage: 4,
     note: ['(0, 0)에서 L = 10', ' → ', '가중치마다 기울기 (−6, 2)', ' → ', '학습률 0.1로 (+0.6, −0.2)', ' → ', '(0.6, −0.2)'],
     title: '가중치마다 자기 기울기를 따라 동시에 움직인다',
@@ -434,6 +488,24 @@ const lesson = [
   },
   {
     label: '조금씩 나눠 보기',
+    readingDiagram: {
+      title: "같은 가중치에서도 표본마다 방향이 다르다",
+      description: "같은 w에서 서로 다른 32개 표본의 추정 방향을 비교합니다. 이 예에서는 배치 A의 방향으로 한 걸음 옮깁니다.",
+      nodes: [
+        ["w", 144, 154, 190, 28, ["같은 가중치 w"], "plain"],
+        ["a", 471, 82, 208, 48, ["배치 A · 32개", "이 방향으로 이동"], "active"],
+        ["avg", 471, 152, 208, 28, ["전체 평균 방향"], "muted"],
+        ["b", 471, 225, 208, 28, ["배치 B · 32개"], "plain"],
+      ],
+      edges: [
+        ["w", "a", "active", "", 0],
+        ["w", "avg", "muted", "", 0],
+        ["w", "b", "plain", "", 0],
+      ],
+      labels: [
+        [44, 262, "전체 데이터: 1,000,000개"],
+      ],
+    },
     readingStage: 4,
     note: ['예시 100만 개 중 32개만 평균', ' → ', '어림한 기울기로 한 걸음', ' → ', '다음 32개로 또 한 걸음'],
     title: '예시 일부만 보고 자주 걷는다',

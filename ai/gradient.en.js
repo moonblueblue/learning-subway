@@ -1,5 +1,19 @@
 // English for 8B.3 Gradient descent. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "음의 기울기에서 오른쪽으로 이동": "A negative slope moves the weight right",
+  "w=0에서 기울기 −6입니다. 학습률 .1만큼 반대 방향으로 옮긴 뒤 손실을 다시 계산합니다.": "Slope −6 at w=0. Step 0.6 in the opposite direction and recompute the loss.",
+  "최솟점 양옆으로 진동": "Oscillates around 3",
+  "같은 시작점에서도 학습률이 경로를 바꾼다": "Different learning rates change the path",
+  "두 방향을 같은 시작점에서 계산한다": "Compute both directions from the same start",
+  "같은 점의 기울기 (−6, 2)에 −.1을 곱하면 (+.6, −.2)입니다. 한 번에 적용합니다.": "Multiply the gradient (−6, 2) at the same point by −.1, then apply (+.6, −.2) together.",
+  "같은 가중치에서도 표본마다 방향이 다르다": "Different batches suggest different directions",
+  "같은 w에서 서로 다른 32개 표본의 추정 방향을 비교합니다. 이 예에서는 배치 A의 방향으로 한 걸음 옮깁니다.": "Compare estimates from two batches of 32 at the same w. In this example, the update follows batch A.",
+  "같은 가중치 w": "Same weights w",
+  "배치 A · 32개": "Batch A · 32",
+  "이 방향으로 이동": "Step this way",
+  "전체 평균 방향": "Full-data direction",
+  "배치 B · 32개": "Batch B · 32",
+  "전체 데이터: 1,000,000개": "Full dataset: 1,000,000 examples",
   // Page
   '경사하강법 · 레슨 8B.3': 'Gradient descent · Lesson 8B.3',
   '손실 (w − 3)²의 기울기를 보고 반대로 걷기, 학습률이 작을 때·딱 맞을 때·너무 클 때, 가중치 여러 개를 기울기 벡터로 함께 옮기기, 미니배치로 자주 걷기를 따라가 보세요.':

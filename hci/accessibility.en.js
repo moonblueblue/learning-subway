@@ -18,8 +18,8 @@ window.lessonText = {
   '#767676 (중간 회색) — 대비 4.54:1': '#767676 (mid gray) — contrast 4.54:1', '4.5를 아슬아슬하게 넘습니다. 흰 배경 위 회색 글자의 한계쯤입니다.': 'It just clears 4.5. About the limit for gray text on white.',
   '#777777 (한 단계 밝은 회색) — 대비 4.48:1': '#777777 (one step lighter) — contrast 4.48:1', '눈으로는 거의 같아 보이지만 4.5에 못 미칩니다. 그래서 눈대중 대신 계산합니다.': 'It looks nearly the same to the eye but falls short of 4.5. That is why you calculate instead of eyeballing.',
   '#aaaaaa (연한 회색) — 대비 2.32:1': '#aaaaaa (light gray) — contrast 2.32:1', '보통 글자는 물론 큰 글자 기준(3:1)에도 못 미칩니다.': 'It falls short not only for normal text but even for the large-text standard (3:1).',
-  '이 실험실의 초록 강조색(#0f766e)은 흰 배경에서 대비가 약 7.2:1입니다. 어떤 글자에 써도 될까요?': 'This lab\'s green accent (#0f766e) has a contrast of about 7.2:1 on white. What text can it be used for?',
-  '보통 글자 기준(4.5:1)과 더 엄격한 기준(7:1)도 넘으므로 본문 글자에도 쓸 수 있습니다.': 'It clears both the normal-text standard (4.5:1) and the stricter one (7:1), so it works even for body text.',
+  '이 실험실의 청록 강조색(#0f766e)은 흰 배경에서 대비가 약 5.5:1입니다. 어떤 글자에 써도 될까요?': 'This lab\'s teal accent (#0f766e) has a contrast of about 5.5:1 on white. What text can it be used for?',
+  '보통 글자 기준(4.5:1, AA)은 넘으므로 본문 글자에 쓸 수 있습니다. 더 엄격한 기준(7:1, AAA)에는 못 미칩니다.': 'It passes the normal-text level (4.5:1, AA), so it can be used for body text. It falls short of the stricter level (7:1, AAA).',
   // Step 2
   '화면 읽기': 'Screen readers',
   '화면 읽기 프로그램이 알아듣게 뜻을 표시한다': 'Mark meaning so screen readers understand',

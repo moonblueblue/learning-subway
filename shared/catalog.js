@@ -718,7 +718,16 @@ const courseCatalog = {
           "id": "1",
           "title": "링크와 LAN",
           "titleEn": "Links and LANs",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "1.1",
+              "ref": "network/layers"
+            },
+            {
+              "id": "1.2",
+              "ref": "network/ethernet"
+            }
+          ],
           "tracks": []
         },
         {
@@ -732,35 +741,68 @@ const courseCatalog = {
           "id": "3",
           "title": "라우팅",
           "titleEn": "Routing",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "3.1",
+              "ref": "network/routing"
+            }
+          ],
           "tracks": []
         },
         {
           "id": "4",
           "title": "전송 계층",
           "titleEn": "The transport layer",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "4.2",
+              "ref": "network/tcp"
+            }
+          ],
           "tracks": []
         },
         {
           "id": "5",
           "title": "응용 프로토콜",
           "titleEn": "Application protocols",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "5.1",
+              "ref": "network/dns"
+            },
+            {
+              "id": "5.4",
+              "ref": "network/web"
+            }
+          ],
           "tracks": []
         },
         {
           "id": "6",
           "title": "필터링과 보안",
           "titleEn": "Filtering and security",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "6.1",
+              "ref": "security/netdefense"
+            },
+            {
+              "id": "6.3",
+              "ref": "security/tls"
+            }
+          ],
           "tracks": []
         },
         {
           "id": "7",
           "title": "데이터센터 네트워크",
           "titleEn": "Data-centre networking",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "7.3",
+              "ref": "system-design/loadbalancing"
+            }
+          ],
           "tracks": []
         },
         {
@@ -818,8 +860,16 @@ const courseCatalog = {
               "ref": "os/process"
             },
             {
+              "id": "2.2",
+              "ref": "os/lifecycle"
+            },
+            {
               "id": "2.3",
               "ref": "os/scheduling"
+            },
+            {
+              "id": "2.4",
+              "ref": "os/fair"
             }
           ],
           "tracks": []
@@ -1422,6 +1472,17 @@ const courseCatalog = {
           "page": "os/process.html"
         },
         {
+          "id": "lifecycle",
+          "title": "프로세스의 생애",
+          "titleEn": "The life of a process",
+          "question": "끝난 프로세스는 누가 치울까?",
+          "format": "실험",
+          "requires": [
+            "os/exec"
+          ],
+          "page": "os/lifecycle.html"
+        },
+        {
           "id": "scheduling",
           "title": "CPU 스케줄링",
           "titleEn": "CPU scheduling",
@@ -1429,6 +1490,18 @@ const courseCatalog = {
           "format": "실험",
           "requires": [],
           "page": "os/scheduling.html"
+        },
+        {
+          "id": "fair",
+          "title": "공정한 스케줄러",
+          "titleEn": "Fair scheduling",
+          "question": "CPU를 여러 프로세스에 공평하게 나누려면 무엇을 세야 할까?",
+          "format": "실험",
+          "requires": [
+            "os/scheduling",
+            "os/interrupts"
+          ],
+          "page": "os/fair.html"
         },
         {
           "id": "syscall",
@@ -1523,6 +1596,17 @@ const courseCatalog = {
           "format": "실험",
           "requires": [],
           "page": "network/layers.html"
+        },
+        {
+          "id": "ethernet",
+          "title": "이더넷과 MAC 주소",
+          "titleEn": "Ethernet and MAC addresses",
+          "question": "같은 LAN에 보낸 프레임은 어떻게 받을 컴퓨터만 가져갈까?",
+          "format": "실험",
+          "requires": [
+            "network/layers"
+          ],
+          "page": "network/ethernet.html"
         },
         {
           "id": "routing",

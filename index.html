@@ -34,10 +34,14 @@ h1,h2{text-wrap:balance}
 .lang-switch button[aria-pressed="true"]{background:var(--active);color:var(--ink)}
 .maps{margin:0;padding:0;list-style:none;flex:1;min-height:0;display:flex}
 .map{flex:1;min-width:0;min-height:0;background:var(--scene);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.line-tabs{display:flex;gap:6px;margin:0 0 12px;overflow-x:auto}
-.line-tab{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--panel);font:600 14px system-ui,sans-serif;color:var(--muted);white-space:nowrap;cursor:pointer}
-.line-tab[aria-selected="true"]{border-color:var(--line);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
-.line-bar{width:18px;height:6px;border-radius:3px;background:var(--line)}
+.line-index{display:flex;flex-wrap:wrap;gap:2px 14px;margin:0;padding:0;list-style:none;font:600 13px/1.6 system-ui,sans-serif;color:var(--ink)}
+.line-index li{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.line-bar{width:18px;height:6px;border-radius:3px;background:var(--line);flex:none}
+.line-pick{display:flex;align-items:center;gap:10px;min-height:44px;margin:0 0 12px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:var(--panel)}
+.line-pick select{flex:1;min-width:0;min-height:42px;border:0;background:none;font:700 15px system-ui,sans-serif;color:var(--ink);cursor:pointer}
+.line-pick:focus-within{outline:3px solid var(--focus);outline-offset:2px}
+.line-pick select:focus-visible{outline:none}
+@media not ((min-width:720px) and (min-height:600px)){.line-index{display:none}}
 @media(max-width:719px){.map{overflow:visible;padding:12px 8px}.masthead{display:grid;grid-template-columns:1fr auto;align-items:center}.masthead .brand{display:contents}.masthead .meta{grid-column:2;grid-row:1;margin:0}.masthead .tagline{grid-column:1/-1;font-size:.875rem}}
 .map svg{display:block;width:100%;height:auto;overflow:visible}
 .map svg text{font-family:system-ui,sans-serif}
@@ -145,19 +149,17 @@ addEventListener('DOMContentLoaded', () => {
   }
   const strokeOf = (roadmap) => ({ stroke: colorOf(roadmap.id), 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none', ...(built(roadmap) ? {} : { opacity: .45 }) });
 
-  function lineIndex(svg, x, y, fromBottom) {
-    const names = roadmaps.map((roadmap) => tr(roadmap.title));
-    measure.font = '700 13px system-ui, sans-serif';
-    const w = 44 + Math.max(...names.map((name) => measure.measureText(name).width)) + 16, h = 12 + names.length * 22;
-    const top = fromBottom ? y - h : y;
-    const group = make('svg:g', { class: 'line-index', 'aria-hidden': 'true' });
-    group.append(make('svg:rect', { x, y: top, width: w, height: h, rx: 8, fill: '#fcfdfb', stroke: '#cbd9d0' }));
-    roadmaps.forEach((roadmap, i) => {
-      const ry = top + 17 + i * 22;
-      group.append(make('svg:rect', { x: x + 12, y: ry - 4, width: 24, height: 8, rx: 4, fill: colorOf(roadmap.id) }));
-      group.append(make('svg:text', { x: x + 44, y: ry + 4.5, 'font-size': 13, 'font-weight': 700, fill: '#142620' }, names[i]));
-    });
-    svg.append(group);
+  // The line index sits in the masthead, outside the map, so it never covers a station.
+  function lineIndex() {
+    const list = make('ul', { class: 'line-index', 'aria-label': tr('노선') });
+    for (const roadmap of roadmaps) {
+      const item = make('li');
+      item.style.setProperty('--line', colorOf(roadmap.id));
+      item.append(make('span', { class: 'line-bar', 'aria-hidden': 'true' }), tr(roadmap.title));
+      list.append(item);
+    }
+    const old = document.querySelector('.line-index');
+    if (old) old.replaceWith(list); else document.querySelector('.masthead .meta').prepend(list);
   }
 
   // Wide screens: the trunk runs across the middle; each branch rises or drops from its junction to its own row
@@ -212,24 +214,26 @@ addEventListener('DOMContentLoaded', () => {
         station(svg, s, x, y, colorOf(roadmap.id), i === list.length - 1, place, max, [8, W - 8]);
       });
     }
-    lineIndex(svg, 20, H - 20, true);
     holder.replaceChildren(svg);
   }
 
-  // Narrow screens: the line index becomes tabs, and one line is drawn down the left at a time.
+  // Narrow screens: a picker chooses the line, and one line is drawn down the left at a time.
   let shownLine = null;
   try { shownLine = sessionStorage.getItem('hub-line'); } catch {}
   function drawNarrow(holder) {
     const width = holder.clientWidth, x = 22;
     const roadmap = byId.get(shownLine) || trunk;
-    const tabs = make('div', { class: 'line-tabs', role: 'tablist', 'aria-label': tr('노선') });
+    // The current line's name opens the list of lines, so the picker fits any width.
+    const picker = make('label', { class: 'line-pick' });
+    picker.style.setProperty('--line', colorOf(roadmap.id));
+    const select = make('select', { 'aria-label': tr('노선') });
     for (const item of roadmaps) {
-      const tab = make('button', { type: 'button', role: 'tab', class: 'line-tab', 'aria-selected': String(item === roadmap) });
-      tab.style.setProperty('--line', colorOf(item.id));
-      tab.append(make('span', { class: 'line-bar', 'aria-hidden': 'true' }), tr(item.title));
-      tab.addEventListener('click', () => { shownLine = item.id; try { sessionStorage.setItem('hub-line', item.id); } catch {} draw(); });
-      tabs.append(tab);
+      const option = make('option', { value: item.id }, tr(item.title));
+      option.selected = item === roadmap;
+      select.append(option);
     }
+    select.addEventListener('change', () => { shownLine = select.value; try { sessionStorage.setItem('hub-line', shownLine); } catch {} draw(); document.querySelector('.line-pick select')?.focus(); });
+    picker.append(make('span', { class: 'line-bar', 'aria-hidden': 'true' }), select);
     const list = stationsOf(roadmap), top = roadmap.branch ? 44 : 18, step = 46;
     const svg = make('svg:svg', { role: 'group', 'aria-label': tr(roadmap.title), viewBox: `0 0 ${width} ${top + (list.length - 1) * step + 24}` });
     if (roadmap.branch) {
@@ -241,7 +245,7 @@ addEventListener('DOMContentLoaded', () => {
       const y = top + i * step;
       station(svg, s, x, y, colorOf(roadmap.id), i === list.length - 1, 'right', width - x - 40, [8, width - 8]);
     });
-    holder.replaceChildren(tabs, svg);
+    holder.replaceChildren(picker, svg);
   }
 
   const network = make('li', { class: 'map' });
@@ -249,13 +253,14 @@ addEventListener('DOMContentLoaded', () => {
   // The whole map needs room in both directions; a narrow or short window shows one line at a time.
   const wide = matchMedia('(min-width: 720px) and (min-height: 600px)');
   const draw = () => (wide.matches ? drawWide(network) : drawNarrow(network));
+  lineIndex();
   draw();
   let lastSize = '';
   new ResizeObserver(() => {
     const size = network.clientWidth + 'x' + network.clientHeight;
     if (size !== lastSize) { lastSize = size; draw(); }
   }).observe(network);
-  addEventListener('course:lang', draw);
+  addEventListener('course:lang', () => { lineIndex(); draw(); });
 });
 </script>
 </body>

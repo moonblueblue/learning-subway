@@ -558,11 +558,17 @@
   placeViews();
 
   const desktop = matchMedia('(min-width: 1100px)');
+  // The sidebar keeps its scroll position from the previous lesson, so it does not jump while the content changes.
   function placeNav() {
     if (desktop.matches && drawer.open) drawer.close();
     (desktop.matches ? sidebar : drawer).append(nav);
-    if (desktop.matches) nav.querySelector('[aria-current="page"]')?.scrollIntoView({block: 'nearest'});
+    if (!desktop.matches) return;
+    try { sidebar.scrollTop = Number(sessionStorage.getItem('course-sidebar-scroll')) || 0; } catch { /* storage unavailable */ }
+    nav.querySelector('[aria-current="page"]')?.scrollIntoView({block: 'nearest'});
   }
+  addEventListener('pagehide', () => {
+    try { sessionStorage.setItem('course-sidebar-scroll', String(sidebar.scrollTop)); } catch { /* storage unavailable */ }
+  });
   placeNav();
   desktop.addEventListener('change', placeNav);
   menu.addEventListener('click', () => {

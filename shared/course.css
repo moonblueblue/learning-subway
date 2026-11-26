@@ -740,3 +740,17 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .course-summary-open .explanation { max-height: none; }
   .course-shell .timeline { position: sticky; bottom: 0; z-index: 5; }
 }
+
+/* Moving between lessons (DESIGN.md "레슨 사이 이동"). Lesson scripts are render-blocking, so a page is first painted
+   with its shell already built. Between pages the browser keeps the top bar and sidebar as they are (same names in
+   both pages) and only crossfades the content. A browser that cannot hold the first paint keeps the lesson hidden
+   until the shell is ready, and shows it anyway after 1.5 s if the shell script fails. */
+@view-transition { navigation: auto; }
+.course-bar { view-transition-name: course-bar; }
+.course-sidebar { view-transition-name: course-sidebar; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .16s; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+body:not(.course-shell) > main { visibility: hidden; animation: course-reveal 0s 1.5s forwards; }
+@keyframes course-reveal { to { visibility: visible; } }

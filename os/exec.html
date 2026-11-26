@@ -216,10 +216,10 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
 <link rel="stylesheet" href="../shared/course.css">
 <script src="../shared/engine.js"></script>
-<script defer src="../shared/catalog.js"></script>
-<script defer src="./exec.en.js"></script>
-<script defer src="../shared/i18n.js"></script>
-<script defer src="../shared/course.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./exec.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
 </head>
 <body>
 <main class="shell">
@@ -448,13 +448,13 @@ const lesson = [
     readingStage: 4,
     title: '그래서 셸은 먼저 복사하고, 복사본을 바꾼다',
     body: 'fork 없이 셸이 직접 exec를 부르면 어떻게 될까요? exec는 부른 프로세스 자신의 프로그램을 갈아 끼우므로, 셸이 ls로 바뀝니다. ls가 끝나면 그 프로세스도 끝나고, 돌아갈 셸이 없어 터미널 창이 닫힙니다. 셸에 exec ls를 쳐 보면 실제로 이렇게 됩니다. 그래서 셸은 늘 fork로 복사본을 만든 뒤 그 복사본에서 exec합니다.',
-    takeaway: '이번에는 셸 자신에서 exec가 나가고, ls 코드가 셸 자리로 돌아옵니다. 셸 이름표가 ls로 바뀌고, ls가 끝나자 터미널이 주황 오류색으로 닫힙니다.',
-    description: '왼쪽 사용자 영역에 셸이, 경계 너머에 시스템 콜 창구, 커널, SSD, 오른쪽 끝에 터미널이 있습니다. 셸이 fork 없이 exec를 부릅니다.',
+    takeaway: '이번에는 셸 자신에서 exec가 나가고, ls 코드가 같은 PID 100 으로 돌아옵니다. PID 100 이름표가 bash → ls → 끝남으로 바뀌고, 터미널이 주황 오류색으로 닫힙니다.',
+    description: '왼쪽 사용자 영역에 셸(PID 100)이, 경계 너머에 시스템 콜 창구, 커널, SSD, 오른쪽 끝에 터미널이 있습니다. 셸이 fork 없이 exec를 부릅니다.',
     note: ['셸 PID 100: exec("/bin/ls")', ' → ', '셸이 ls로 바뀜', ' → ', 'ls 끝 = 그 프로세스도 끝', ' → ', '터미널 닫힘'],
     noteTone: 'bad',
     kernelFrom: 1,
-    stations: [['shell', '셸 (bash)', 'user'], ['gate', '시스템 콜', 'gate'], ['kernel', '커널', 'kernel'], ['ssd', 'SSD', 'ssd'], ['screen', '터미널', 'screen']],
-    start: { title: '셸 (bash)', lines: ['$ exec ls', 'fork 없이 바로 exec'], holds: { shell: 'bash · PID 100' } },
+    stations: [['shell', 'PID 100', 'user'], ['gate', '시스템 콜', 'gate'], ['kernel', '커널', 'kernel'], ['ssd', 'SSD', 'ssd'], ['screen', '터미널', 'screen']],
+    start: { title: '셸 (bash)', lines: ['$ exec ls', 'fork 없이 바로 exec'], holds: { shell: 'bash' } },
     stages: [
       { from: 'shell', to: 'gate', label: 'exec("/bin/ls")', title: '시스템 콜', lines: ['exec("/bin/ls")', '부른 프로세스: 셸 자신'],
         text: '셸이 fork 없이 자기 자신에서 exec를 부릅니다.', holds: { gate: 'exec' },
@@ -462,9 +462,9 @@ const lesson = [
       { from: 'gate', to: 'ssd', label: '/bin/ls 읽기', title: '커널', lines: ['셸의 메모리를 비움', 'SSD에서 /bin/ls 읽음'],
         text: '커널이 셸의 메모리를 비우고 SSD에서 ls를 읽어 옵니다.', holds: { kernel: '셸 메모리 비움', ssd: 'ls 실행 파일' } },
       { from: 'ssd', to: 'shell', label: 'ls 코드', title: '셸 자리', lines: ['ls · PID 100', 'bash는 이제 없음'],
-        text: '셸이 있던 프로세스가 ls가 됐습니다. bash는 이제 메모리에 없습니다.', holds: { shell: 'ls · PID 100 (셸 없음)' } },
+        text: '셸이 있던 프로세스가 ls가 됐습니다. bash는 이제 메모리에 없습니다.', holds: { shell: 'bash → ls' } },
       { from: 'shell', to: 'screen', label: 'exit(0)', title: '터미널', lines: ['ls 끝 → PID 100 끝남', '기다리던 셸이 없음 → 창 닫힘'], error: 'screen',
-        text: 'ls가 끝나면서 그 프로세스(PID 100)도 끝납니다. 돌아갈 셸이 없어 터미널 창이 닫힙니다.', holds: { shell: '끝남', screen: '셸 없음 · 창 닫힘' } },
+        text: 'ls가 끝나면서 그 프로세스(PID 100)도 끝납니다. 돌아갈 셸이 없어 터미널 창이 닫힙니다.', holds: { shell: 'bash → ls → 끝남', screen: '셸 없음 · 창 닫힘' } },
     ],
   },
 ];

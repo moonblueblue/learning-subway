@@ -88,10 +88,10 @@ header p.lead{color:var(--muted);margin-top:10px}
 <link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
 <link rel="stylesheet" href="../shared/course.css">
 <script src="../shared/engine.js"></script>
-<script defer src="../shared/catalog.js"></script>
-<script defer src="./accessibility.en.js"></script>
-<script defer src="../shared/i18n.js"></script>
-<script defer src="../shared/course.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./accessibility.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
 </head>
 <body>
 <main class="shell">
@@ -151,8 +151,8 @@ const lesson = [
       { text: '#777777 (한 단계 밝은 회색) — 대비 4.48:1', answer: 'fail', why: '눈으로는 거의 같아 보이지만 4.5에 못 미칩니다. 그래서 눈대중 대신 계산합니다.' },
       { text: '#aaaaaa (연한 회색) — 대비 2.32:1', answer: 'fail', why: '보통 글자는 물론 큰 글자 기준(3:1)에도 못 미칩니다.' },
     ],
-    question: '이 실험실의 초록 강조색(#0f766e)은 흰 배경에서 대비가 약 7.2:1입니다. 어떤 글자에 써도 될까요?',
-    sample: '보통 글자 기준(4.5:1)과 더 엄격한 기준(7:1)도 넘으므로 본문 글자에도 쓸 수 있습니다.',
+    question: '이 실험실의 청록 강조색(#0f766e)은 흰 배경에서 대비가 약 5.5:1입니다. 어떤 글자에 써도 될까요?',
+    sample: '보통 글자 기준(4.5:1, AA)은 넘으므로 본문 글자에 쓸 수 있습니다. 더 엄격한 기준(7:1, AAA)에는 못 미칩니다.',
   },
   {
     label: '화면 읽기',

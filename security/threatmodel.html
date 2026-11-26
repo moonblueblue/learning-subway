@@ -6,7 +6,7 @@
 <meta name="description" content="문구점 웹 앱을 대상으로 지킬 자산을 정하고, STRIDE로 위협을 분류하고, 가능성과 피해로 순서를 매기고, 위협마다 알맞은 대응을 짝짓는 위협 모델링을 문제로 익혀 보세요.">
 <title>위협 모델링 · 레슨 8C.6</title>
 <style>
-:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#12634b;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -22,22 +22,22 @@ header p.lead{color:var(--muted);margin-top:10px}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
 .actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
 .action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
-.action:hover:not(:disabled):not([aria-disabled=true]){background:#e8f4eb}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
 .primary{background:var(--accent);color:white;border-color:var(--accent)}
-.primary:hover:not(:disabled){background:#0a4c3a}
+.primary:hover:not(:disabled){background:#115e59}
 .timeline{padding:15px 18px}
 .timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
 .steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
 .steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
 .steps button:hover{border-color:var(--accent)}
-.steps button[aria-current=step]{background:#d9efe2;border-color:var(--accent);font-weight:750}
+.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
 .step-number{font:700 .875rem var(--mono);color:var(--accent)}
 .explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
 .explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
 .explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
 .takeaway p{font-size:1rem}
-.takeaway{padding:12px 14px;background:#eef5ed;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
 .takeaway strong{display:block;color:var(--accent);font-size:.875rem}
 .navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -47,7 +47,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
 .stage-top h2{font-size:1rem}
 .score{color:var(--accent);font:700 .875rem var(--mono)}
-.case{margin:18px;padding:16px 18px;border-radius:14px;background:#eef5ed;border:1px solid var(--border);display:grid;gap:6px}
+.case{margin:18px;padding:16px 18px;border-radius:14px;background:#e9f5f3;border:1px solid var(--border);display:grid;gap:6px}
 .case strong{color:var(--accent);font-size:.875rem}
 .case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
 .items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
@@ -79,7 +79,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth[hidden]{display:none}
 .truth table{border-collapse:collapse;font:700 1rem var(--mono);margin:0 auto}
 .truth th,.truth td{border:1px solid var(--border);padding:6px 18px;text-align:center}
-.truth th{background:#eef5ed;color:var(--accent);font-family:system-ui,sans-serif}
+.truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
 .truth td.blank{color:#9aa8a2}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
 </style>

@@ -88,7 +88,7 @@
     '컴퓨터와 시스템이 실제로 어떻게 돌아가는지, 노선을 따라 한 역씩 단계별 그림으로 봅니다. 역을 누르면 그 장의 첫 레슨으로 갑니다.':
       'See how computers and systems actually run, one station at a time along a line, in step-by-step diagrams. Choose a station to open the first lesson of that chapter.',
     '노선 {#0}개 · 레슨 {#1}개 · 주제 {#2}개': '{0} {0|line|lines} · {1} {1|lesson|lessons} · {2} {2|topic|topics}',
-    '{0} 노선': '{0} line', '준비 중': 'Coming soon', '노선도': 'Route map', '{0} {#1}장에서 갈아타기': 'Change from {0}, chapter {1}', '{0} 노선의 첫 역': 'First station of the {0} line', '{0}부터 타기': 'Board at {0}',
+    '{0} 노선': '{0} line', '준비 중': 'Coming soon', '노선도': 'Route map', '노선': 'Lines', '컴퓨터가 실제로 어떻게 돌아가는지, 노선을 따라 한 역씩 그림으로 봅니다.': 'See how computers really work, one station at a time along the lines.', '{0} {#1}장에서 갈아타기': 'Change from {0}, chapter {1}', '{0} 노선의 첫 역': 'First station of the {0} line', '{0}부터 타기': 'Board at {0}',
     '레슨 {#0}개': '{0} {0|lesson|lessons}', '레슨 {#0}개 · 환승 {1}': '{0} {0|lesson|lessons} · transfer to {1}',
     '{0}, 레슨 {#1}개': '{0}, {1} {1|lesson|lessons}', '{0}, 레슨 {#1}개, 환승 {2}': '{0}, {1} {1|lesson|lessons}, transfer to {2}',
     '역 = 장. 누르면 첫 레슨으로': 'Station = chapter. Opens its first lesson', '종점': 'Terminus',
@@ -267,7 +267,9 @@
       button.type = 'button';
       button.lang = code;
       button.dataset.langChoice = code;
-      button.textContent = label;
+      // Each language is named in itself ("한국어 | English"); a narrow screen shows the short code instead (CSS).
+      button.append(Object.assign(document.createElement('span'), { className: 'lang-long', textContent: name }),
+        Object.assign(document.createElement('span'), { className: 'lang-short', textContent: label }));
       button.setAttribute('aria-label', name);
       button.setAttribute('aria-pressed', String(code === lang));
       button.addEventListener('click', () => setLang(code));

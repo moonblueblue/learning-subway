@@ -9,55 +9,43 @@
 <link rel="icon" href="./shared/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="./shared/apple-touch-icon.png">
 <style>
-:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--rule:#dfe8e1;--paper:#f4f7ef;--panel:#fcfdfb;--scene:#eaf3eb;--accent:#12634b;--accent-press:#0d4f3b;--on-accent:#f4fbf6;--response:#5362a0;--active:#d9eee1;--focus:#a24c14;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--rule:#dfe8e1;--paper:#f4f7ef;--panel:#fcfdfb;--scene:#eaf3eb;--accent:#0f766e;--accent-press:#115e59;--on-accent:#f4fbf6;--response:#5362a0;--active:#d5efeb;--focus:#a24c14;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}
 html,body{overflow-x:clip}
 body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
 :focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 a{color:inherit}
 h1,h2{text-wrap:balance}
-.shell{max-width:1120px;margin:auto;padding:clamp(16px,4vw,48px)}
-.masthead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;border-bottom:2px solid var(--ink);padding-bottom:12px}
-.masthead h1{margin:0;font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.1;letter-spacing:-.045em}
+.shell{margin:0;padding:10px 20px 16px;min-height:100dvh;display:flex;flex-direction:column}
+.shell>section{flex:1;min-height:0;display:flex;flex-direction:column}
+.masthead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px}
+.masthead .brand{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.masthead .tagline{margin:0;color:var(--muted);font-size:.9375rem}
+.masthead h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.9rem);line-height:1.1;letter-spacing:-.045em}
 .masthead .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-inline-start:auto}
 .masthead p{margin:0;color:var(--muted);font-size:.875rem}
 .lang-switch{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--panel)}
 .lang-switch button{border:0;background:none;padding:4px 12px;min-height:36px;font:600 13px system-ui,sans-serif;color:var(--muted);cursor:pointer}
 .lang-switch button+button{border-inline-start:1px solid var(--border)}
+.lang-switch .lang-short{display:none}
+@media(max-width:719px){.lang-switch .lang-long{display:none}.lang-switch .lang-short{display:inline}}
 .lang-switch button:hover{color:var(--ink)}
 .lang-switch button:active{background:var(--rule)}
 .lang-switch button[aria-pressed="true"]{background:var(--active);color:var(--ink)}
-.intro{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px 24px;margin:clamp(20px,3vw,32px) 0 16px}
-.intro h2{margin:0;font-size:clamp(1.25rem,2.6vw,1.6rem);letter-spacing:-.03em}
-.intro p{margin:4px 0 0;color:var(--muted);max-width:42rem}
-.start{display:inline-block;padding:8px 16px;border-radius:8px;background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:600;font-size:.9375rem}
-.start:hover{background:var(--accent-press)}
-.start:active{transform:translateY(1px)}
-.start span{display:block;font-weight:400;font-size:.75rem;opacity:.85}
-.maps{margin:0;padding:0;list-style:none;display:grid;gap:12px}
-.map{background:var(--scene);border:1px solid var(--border);border-radius:14px;padding:12px 16px}
+.maps{margin:0;padding:0;list-style:none;flex:1;min-height:0;display:flex}
+.map{flex:1;min-width:0;min-height:0;background:var(--scene);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.line-tabs{display:flex;gap:6px;margin:0 0 12px;overflow-x:auto}
+.line-tab{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--panel);font:600 14px system-ui,sans-serif;color:var(--muted);white-space:nowrap;cursor:pointer}
+.line-tab[aria-selected="true"]{border-color:var(--line);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.line-bar{width:18px;height:6px;border-radius:3px;background:var(--line)}
+@media(max-width:719px){.map{overflow:visible;padding:12px 8px}.masthead{display:grid;grid-template-columns:1fr auto;align-items:center}.masthead .brand{display:contents}.masthead .meta{grid-column:2;grid-row:1;margin:0}.masthead .tagline{grid-column:1/-1;font-size:.875rem}}
 .map svg{display:block;width:100%;height:auto;overflow:visible}
+.map svg text{font-family:system-ui,sans-serif}
 .map a{text-decoration:none}
 .map a:hover .name,.map a:focus-visible .name{text-decoration:underline}
 .map a:active .name{opacity:.7}
-.legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0 0;padding:0;list-style:none;color:var(--muted);font-size:.8125rem}
-.legend li{display:flex;align-items:center;gap:8px}
-.topics-head{margin:clamp(28px,4vw,44px) 0 8px;font-size:1.125rem}
-.topics-note{margin:0 0 8px;color:var(--muted);font-size:.875rem}
-.topics{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:0 24px}
-.topics li{border-bottom:1px solid var(--rule)}
-.topics summary{display:flex;align-items:center;gap:12px;padding:8px 0;min-height:44px;cursor:pointer;list-style:none;font-weight:600}
-.topics summary::-webkit-details-marker{display:none}
-.topics summary::before{content:'';width:8px;height:8px;flex:none;border-radius:50%;border:3px solid var(--accent);background:var(--panel)}
-.topics summary:hover{color:var(--accent)}
-.topics summary:active{opacity:.7}
-.topics details[open] summary::before{background:var(--accent)}
-.topics summary span{margin-inline-start:auto;white-space:nowrap;color:var(--muted);font-weight:400;font-size:.875rem}
-.topics ol{margin:0 0 12px;padding-inline-start:36px;font-size:.9375rem}
-.topics ol li{border:0;padding:4px 0}
-.topics ol a{text-decoration:none}
-.topics ol a:hover,.topics ol a:focus-visible{text-decoration:underline}
-.topics ol a:active{opacity:.7}
+@media(min-width:720px) and (min-height:600px){.shell{height:100dvh}.map svg{width:100%;height:100%}}
+@media not ((min-width:720px) and (min-height:600px)){.map{overflow:visible;padding:12px 8px}}
 </style>
 <script defer src="./shared/catalog.js"></script>
 <script defer src="./shared/i18n.js"></script>
@@ -65,253 +53,209 @@ h1,h2{text-wrap:balance}
 <body>
 <main class="shell">
 <header class="masthead">
-<h1>Learning Subway</h1>
-<div class="meta"><p id="summary"></p><div data-lang-switch></div></div>
+<div class="brand"><h1>Learning Subway</h1><p class="tagline">컴퓨터가 실제로 어떻게 돌아가는지, 노선을 따라 한 역씩 그림으로 봅니다.</p></div>
+<div class="meta"><div data-lang-switch></div></div>
 </header>
-<section aria-labelledby="maps-title">
-<div class="intro">
-<div>
-<h2 id="maps-title">어디까지 가 볼까요</h2>
-<p>컴퓨터와 시스템이 실제로 어떻게 돌아가는지, 노선을 따라 한 역씩 단계별 그림으로 봅니다. 역을 누르면 그 장의 첫 레슨으로 갑니다.</p>
-</div>
-<a class="start" id="start" href="#"></a>
-</div>
+<section aria-label="노선도">
 <ul class="maps" id="roadmaps"></ul>
-<ul class="legend" id="legend"></ul>
-</section>
-<section aria-labelledby="topics-title">
-<h2 class="topics-head" id="topics-title">주제별 레슨</h2>
-<p class="topics-note">레슨은 주제 하나에만 속하고, 여러 노선이 같은 레슨을 함께 지납니다.</p>
-<ul class="topics" id="topics"></ul>
 </section>
 </main>
 <script>
-// Rules for this page are in DESIGN.md ("허브 노선도", "허브 주제 안내"). Everything is drawn from courseCatalog.
+// Rules for this page are in DESIGN.md ("허브 노선도"). Everything is drawn from courseCatalog.
 addEventListener('DOMContentLoaded', () => {
   const SVG = 'http://www.w3.org/2000/svg';
-  const LINE_COLORS = ['#12634b', '#5362a0'];
+  // One colour per line: the same lightness and chroma, hues spread round the wheel (DESIGN.md "허브 노선도").
+  const LINE_COLOR = {
+    'computer-science': '#009184', 'operating-systems': '#2b80bf', networking: '#7a6cbf', storage: '#a17000',
+    infrastructure: '#b95954', devops: '#4f8c41', ai: '#aa5a91',
+  };
+  const LINE_ORDER = Object.keys(LINE_COLOR);
+  const colorOf = (id) => LINE_COLOR[id] || '#6b7d76';
   const make = (tag, attrs = {}, text) => {
     const node = tag.startsWith('svg:') ? document.createElementNS(SVG, tag.slice(4)) : document.createElement(tag);
     for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
     if (text !== undefined) node.textContent = text;
     return node;
   };
-  const titles = new Map(courseCatalog.topics.flatMap((topic) =>
-    topic.lessons.map((lesson) => [topic.id + '/' + lesson.id, lesson.title])));
+  const tr = (text) => (window.courseI18n ? window.courseI18n.translate(text) : text);
   const groupsOf = (chapter) => [chapter, ...chapter.tracks];
   const refsOf = (chapter) => groupsOf(chapter).flatMap((group) => group.lessons.map((lesson) => lesson.ref));
+  const roadmaps = [...courseCatalog.roadmaps].sort((a, b) =>
+    (LINE_ORDER.indexOf(a.id) + 1 || 99) - (LINE_ORDER.indexOf(b.id) + 1 || 99));
+  const byId = new Map(roadmaps.map((roadmap) => [roadmap.id, roadmap]));
+  const trunk = courseCatalog.roadmaps.find((roadmap) => !roadmap.branch);
+  const branches = roadmaps.filter((roadmap) => roadmap.branch);
 
-  // Which roadmaps pass through each lesson: a chapter is a transfer station when one of its lessons is shared.
+  // Which roadmaps pass through each lesson.
   const lines = new Map();
-  for (const roadmap of courseCatalog.roadmaps)
+  for (const roadmap of roadmaps)
     for (const chapter of roadmap.chapters)
       for (const ref of refsOf(chapter)) lines.set(ref, new Set([...(lines.get(ref) || []), roadmap.id]));
-  const roadmapTitle = new Map(courseCatalog.roadmaps.map((roadmap) => [roadmap.id, roadmap.title]));
-
-  const stationsOf = (roadmap) => roadmap.chapters.map((chapter) => {
-    const refs = refsOf(chapter);
-    const others = new Set(refs.flatMap((ref) => [...lines.get(ref)].filter((id) => id !== roadmap.id)));
-    return {
-      label: chapter.id + ' ' + chapter.title, count: refs.length,
-      // A chapter with no finished lesson yet is drawn as a station without a link.
-      href: refs.length ? './' + refs[0] + '.html?roadmap=' + encodeURIComponent(roadmap.id) : null,
-      transfer: [...others].map((id) => roadmapTitle.get(id)),
-    };
-  });
-
-  // Station names are written in the page language here (the translator leaves English alone) so they can be
-  // measured and wrapped to the room between neighbours before they are drawn.
-  const tr = (text) => (window.courseI18n ? window.courseI18n.translate(text) : text);
-  const measure = document.createElement('canvas').getContext('2d');
-  function wrap(text, font, max) {
-    measure.font = font;
-    const lines = [];
-    for (const word of text.split(' ')) {
-      const last = lines.at(-1);
-      if (last && measure.measureText(last + ' ' + word).width <= max) lines[lines.length - 1] = last + ' ' + word;
-      else lines.push(word);
-    }
-    return lines;
+  // A station is an interchange when a line branches off it, or when it shares lessons with another line beyond the
+  // junction it hangs from (sharing with the junction is what the branch itself already shows).
+  function stationsOf(roadmap) {
+    const junction = roadmap.branch && byId.get(roadmap.branch.from).chapters.find((chapter) => chapter.id === roadmap.branch.chapter);
+    const junctionRefs = new Set(junction ? refsOf(junction) : []);
+    return roadmap.chapters.map((chapter) => {
+      const refs = refsOf(chapter);
+      const children = branches.filter((child) => child.branch.from === roadmap.id && child.branch.chapter === chapter.id);
+      const shares = refs.some((ref) => [...lines.get(ref)].some((id) => id !== roadmap.id) && !junctionRefs.has(ref));
+      return {
+        label: chapter.id + ' ' + chapter.title, children, interchange: children.length > 0 || shares,
+        // A chapter with no finished lesson yet is drawn as a station without a link.
+        href: refs.length ? './' + refs[0] + '.html?roadmap=' + encodeURIComponent(roadmap.id) : null,
+      };
+    });
   }
+  const built = (roadmap) => roadmap.chapters.some((chapter) => refsOf(chapter).length);
 
-  function station(svg, s, x, y, color, last, label) {
+  const measure = document.createElement('canvas').getContext('2d');
+  // Wrap a name into lines no wider than max (CJK words stay whole, as in the lessons).
+  function wrap(text, max) {
+    measure.font = '700 13px system-ui, sans-serif';
+    const out = [];
+    for (const word of text.split(' ')) {
+      const last = out.at(-1);
+      if (last && measure.measureText(last + ' ' + word).width <= max) out[out.length - 1] = last + ' ' + word;
+      else out.push(word);
+    }
+    return out;
+  }
+  function station(svg, s, x, y, color, last, pos, max = 160, bounds = [6, Infinity]) {
+    // pos: up | down | right | up-left | up-right | down-left | down-right (beside a line that branches off here)
     const name = tr(s.label);
-    const sub = s.href ? tr(`레슨 ${s.count}개${s.transfer.length ? ' · 환승 ' + s.transfer.join(', ') : ''}`) : tr('준비 중');
-    const link = s.href
-      ? make('svg:a', { href: s.href, 'aria-label': tr(`${s.label}, 레슨 ${s.count}개${s.transfer.length ? ', 환승 ' + s.transfer.join(', ') : ''}`) })
-      : make('svg:g', { role: 'img', 'aria-label': tr(s.label) + ', ' + tr('준비 중') });
-    if (s.transfer.length) link.append(make('svg:rect', { x: x - 13, y: y - 9, width: 26, height: 18, rx: 9, fill: '#fcfdfb', stroke: '#142620', 'stroke-width': 2.5 }));
+    const link = s.href ? make('svg:a', { href: s.href, 'aria-label': name })
+      : make('svg:g', { role: 'img', 'aria-label': name + ', ' + tr('준비 중') });
+    if (s.interchange) link.append(make('svg:rect', { x: x - 13, y: y - 9, width: 26, height: 18, rx: 9, fill: '#fcfdfb', stroke: '#142620', 'stroke-width': 2.5 }));
     else link.append(make('svg:circle', { cx: x, cy: y, r: 7, fill: last && s.href ? color : '#fcfdfb', stroke: color, 'stroke-width': 3, ...(s.href ? {} : { 'stroke-dasharray': '3 3' }) }));
-    const names = wrap(name, '700 13px system-ui, sans-serif', label.max);
-    const subs = wrap(sub, '400 12px system-ui, sans-serif', label.max);
-    const rows = [...names.map((line) => [line, { 'font-weight': 700, class: 'name' }]), ...subs.map((line) => [line, { fill: '#43574f', 'font-size': 12 }])];
-    // Labels above the line grow upward, so their first row moves up by the extra rows.
-    const top = label.above ? label.y - (rows.length - 2) * 16 : label.y;
-    const text = make('svg:text', { x: label.x, y: top, 'text-anchor': label.anchor, 'font-size': 13, fill: '#142620' });
-    rows.forEach(([content, extra], index) => text.append(make('svg:tspan', { x: label.x, dy: index ? 16 : 0, ...extra }, content)));
+    const side = pos.endsWith('left') ? -1 : pos.endsWith('right') ? 1 : 0;
+    const lines = wrap(name, max), width = Math.max(...lines.map((line) => measure.measureText(line).width));
+    // Keep the name inside the map: move it in from an edge rather than letting it be cut off.
+    let tx = x + side * 22;
+    const left = side < 0 ? tx - width : side > 0 ? tx : tx - width / 2;
+    tx += Math.max(0, bounds[0] - left) - Math.max(0, left + width - bounds[1]);
+    const ty = pos === 'right' ? y + 4.5 : pos.startsWith('up') ? y - 16 - (lines.length - 1) * 15 : y + 26;
+    const text = make('svg:text', {
+      x: tx, y: ty, class: 'name', 'font-size': 13, 'font-weight': 700,
+      'text-anchor': side < 0 ? 'end' : side > 0 ? 'start' : 'middle', fill: s.href ? '#142620' : '#6b7d76',
+    });
+    lines.forEach((line, i) => text.append(make('svg:tspan', { x: tx, dy: i ? 15 : 0 }, line)));
     link.append(text);
     svg.append(link);
   }
+  const strokeOf = (roadmap) => ({ stroke: colorOf(roadmap.id), 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none', ...(built(roadmap) ? {} : { opacity: .45 }) });
 
-  // The first roadmap is the trunk line. Every other roadmap branches off the trunk station (chapter) whose lessons
-  // it shares most, drops below the trunk and runs on its own row, as a branch line does on a metro map.
-  // Line names are not written beside the lines; a line index (colour bar + name) sits in empty space.
-  const trunk = courseCatalog.roadmaps[0];
-  const branches = courseCatalog.roadmaps.slice(1).map((roadmap) => {
-    const shared = trunk.chapters.map((chapter) => refsOf(chapter).filter((ref) => (lines.get(ref) || new Set()).has(roadmap.id)).length);
-    const junction = shared.indexOf(Math.max(...shared));
-    return { roadmap, junction };
-  });
-  const colorOf = new Map(courseCatalog.roadmaps.map((roadmap, index) => [roadmap.id, LINE_COLORS[index % LINE_COLORS.length]]));
-  // On a branch, the interchange shape marks a chapter that also shares lessons with a trunk station other than the
-  // junction; sharing with the junction is what the branch itself shows.
-  function branchStations({ roadmap, junction }) {
-    const junctionRefs = new Set(refsOf(trunk.chapters[junction]));
-    return stationsOf(roadmap).map((s, i) => {
-      const refs = refsOf(roadmap.chapters[i]);
-      const elsewhere = refs.some((ref) => [...(lines.get(ref) || [])].some((id) => id !== roadmap.id) && !junctionRefs.has(ref));
-      return { ...s, transfer: elsewhere ? s.transfer : [] };
-    });
-  }
-
-  function lineIndex(svg, x, y) {
-    const rows = courseCatalog.roadmaps.map((roadmap) => tr(roadmap.title));
+  function lineIndex(svg, x, y, fromBottom) {
+    const names = roadmaps.map((roadmap) => tr(roadmap.title));
     measure.font = '700 13px system-ui, sans-serif';
-    const w = 44 + Math.max(...rows.map((row) => measure.measureText(row).width)) + 16;
-    const group = make('svg:g', { class: 'line-index' });
-    group.append(make('svg:rect', { x, y, width: w, height: 16 + rows.length * 24, rx: 8, fill: '#fcfdfb', stroke: '#cbd9d0' }));
-    courseCatalog.roadmaps.forEach((roadmap, i) => {
-      const ry = y + 20 + i * 24;
-      group.append(make('svg:rect', { x: x + 12, y: ry - 4, width: 24, height: 8, rx: 4, fill: colorOf.get(roadmap.id) }));
-      group.append(make('svg:text', { x: x + 44, y: ry + 4.5, 'font-size': 13, 'font-weight': 700, fill: '#142620' }, rows[i]));
+    const w = 44 + Math.max(...names.map((name) => measure.measureText(name).width)) + 16, h = 12 + names.length * 22;
+    const top = fromBottom ? y - h : y;
+    const group = make('svg:g', { class: 'line-index', 'aria-hidden': 'true' });
+    group.append(make('svg:rect', { x, y: top, width: w, height: h, rx: 8, fill: '#fcfdfb', stroke: '#cbd9d0' }));
+    roadmaps.forEach((roadmap, i) => {
+      const ry = top + 17 + i * 22;
+      group.append(make('svg:rect', { x: x + 12, y: ry - 4, width: 24, height: 8, rx: 4, fill: colorOf(roadmap.id) }));
+      group.append(make('svg:text', { x: x + 44, y: ry + 4.5, 'font-size': 13, 'font-weight': 700, fill: '#142620' }, names[i]));
     });
     svg.append(group);
-    return w;
   }
 
-  function drawNetwork(holder) {
-    const width = holder.clientWidth;
-    const svg = make('svg:svg', { role: 'group', 'aria-label': tr('노선도') });
-    if (width >= 720) {
-      const pad = 70, trunkStations = stationsOf(trunk), n = trunkStations.length;
-      const step = (width - pad * 2) / Math.max(1, n - 1);
-      const max = Math.min(2 * step - 16, 220);
-      const rowsOf = (s, m = max) => wrap(tr(s.label), '700 13px system-ui, sans-serif', m).length + 1;
-      const junctions = new Set(branches.map((branch) => branch.junction));
-      const above = trunkStations.map((s, i) => (i % 2 === 0 ? rowsOf(s) : 0));
-      const y0 = 40 + Math.max(2, ...above) * 16;
-      const xOf = (i) => pad + step * i;
-      // Trunk: one straight row. A junction's name sits below and to the right of the station, clear of the branch.
-      svg.append(make('svg:path', { d: `M${xOf(0)} ${y0}H${xOf(n - 1)}`, stroke: colorOf.get(trunk.id), 'stroke-width': 8, 'stroke-linecap': 'round', fill: 'none' }));
-      let bottom = y0 + 34 + 2 * 16;
-      let rowY = y0 + 210;
-      for (const branch of branches) {
-        const stations = branchStations(branch), bx = xOf(branch.junction), color = colorOf.get(branch.roadmap.id);
-        const firstY = y0 + 118, x1 = bx + 60, last = width - pad;
-        const bstep = (last - x1) / Math.max(1, stations.length - 2);
-        const bmax = Math.min(2 * bstep - 12, 200);
-        svg.append(make('svg:path', { d: `M${bx} ${y0}V${rowY - 40}Q${bx} ${rowY} ${bx + 40} ${rowY}H${last}`, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none' }));
-        stations.forEach((s, i) => {
-          if (i === 0) {
-            station(svg, s, bx, firstY, color, stations.length === 1, { x: bx - 18, y: firstY - 3, anchor: 'end', above: false, max: Math.min(bx - pad - 30, 220) });
-            return;
-          }
-          const x = x1 + bstep * (i - 1), isAbove = i % 2 === 1;
-          station(svg, s, x, rowY, color, i === stations.length - 1, { x, y: isAbove ? rowY - 44 : rowY + 34, anchor: 'middle', above: isAbove, max: bmax });
-        });
-        bottom = Math.max(bottom, rowY + 34 + 3 * 16);
-        rowY += 200;
+  // Wide screens: the trunk runs across the middle; each branch rises or drops from its junction to its own row
+  // ("노선도:" line in the roadmap file) and runs left or right. Positions follow the box, so the map fills it.
+  function drawWide(holder) {
+    const W = holder.clientWidth, H = holder.clientHeight;
+    const svg = make('svg:svg', { role: 'group', 'aria-label': tr('노선도'), viewBox: `0 0 ${W} ${H}` });
+    const up = Math.max(0, ...branches.filter((b) => b.branch.side === 'up').map((b) => b.branch.row));
+    const down = Math.max(0, ...branches.filter((b) => b.branch.side === 'down').map((b) => b.branch.row));
+    const gap = (H - 72) / Math.max(1, up + down), trunkY = up + down ? 36 + up * gap : H / 2;
+    const rowY = (branch) => trunkY + (branch.side === 'up' ? -1 : 1) * branch.row * gap;
+    const pad = Math.max(48, W * .05), R = Math.min(36, gap * .3);
+    const pos = new Map(), stations = new Map(roadmaps.map((roadmap) => [roadmap.id, stationsOf(roadmap)]));
+    const trunkStations = stations.get(trunk.id), n = trunkStations.length;
+    pos.set(trunk.id, trunkStations.map((s, i) => [pad + i * (W - 2 * pad) / Math.max(1, n - 1), trunkY]));
+    const spacing = new Map([[trunk.id, (W - 2 * pad) / Math.max(1, n - 1)]]);
+    const paths = [];
+    for (let placed = true; placed;) {
+      placed = false;
+      for (const roadmap of branches) {
+        if (pos.has(roadmap.id) || !pos.has(roadmap.branch.from)) continue;
+        const { from, chapter, dir } = roadmap.branch, k = dir === 'right' ? 1 : -1;
+        const index = byId.get(from).chapters.findIndex((item) => item.id === chapter);
+        const [jx, jy] = pos.get(from)[index];
+        const siblings = branches.filter((b) => b.branch.from === from && b.branch.chapter === chapter);
+        const vx = jx + (siblings.length > 1 ? k * 7 : 0), y = rowY(roadmap.branch), m = stations.get(roadmap.id).length;
+        const d0 = Math.max(60, W * .06), room = k > 0 ? W - pad - vx - d0 : vx - d0 - pad;
+        const step = Math.min(room / Math.max(1, m - 1), W * .085);
+        pos.set(roadmap.id, stations.get(roadmap.id).map((s, i) => [vx + k * (d0 + i * step), y]));
+        spacing.set(roadmap.id, step);
+        const r = y > jy ? R : -R, endX = vx + k * (d0 + (m - 1) * step);
+        paths.push([roadmap, `M${vx} ${jy}V${y - r}Q${vx} ${y} ${vx + k * Math.abs(r)} ${y}H${endX}`]);
+        placed = true;
       }
-      trunkStations.forEach((s, i) => {
-        const x = xOf(i), isAbove = i % 2 === 0;
-        if (junctions.has(i)) {
-          station(svg, s, x, y0, colorOf.get(trunk.id), i === n - 1, { x: x + 16, y: y0 + 34, anchor: 'start', above: false, max: Math.max(80, step * 2 - 16 - 60) });
-          return;
+    }
+    for (const [roadmap, d] of paths) svg.append(make('svg:path', { d, ...strokeOf(roadmap) }));
+    const [[x0], [x1]] = [pos.get(trunk.id)[0], pos.get(trunk.id).at(-1)];
+    svg.append(make('svg:path', { d: `M${x0} ${trunkY}H${x1}`, ...strokeOf(trunk) }));
+    for (const roadmap of roadmaps) {
+      if (!pos.has(roadmap.id)) continue;
+      const list = stations.get(roadmap.id);
+      list.forEach((s, i) => {
+        const [x, y] = pos.get(roadmap.id)[i];
+        let place = i % 2 ? 'down' : 'up';
+        if (s.children.length) {
+          // A line leaves this station: keep its name off that side, or beside the station away from the branch.
+          const side = s.children[0].branch.side, dirs = new Set(s.children.map((child) => child.branch.dir));
+          if (place === side) place = side + '-' + (dirs.size > 1 ? 'left' : dirs.has('left') ? 'right' : 'left');
         }
-        station(svg, s, x, y0, colorOf.get(trunk.id), i === n - 1, { x, y: isAbove ? y0 - 44 : y0 + 34, anchor: 'middle', above: isAbove, max });
+        // Names alternate above and below, so a name may use the room up to the next name on its side.
+        const gapX = spacing.get(roadmap.id), max = place.includes('-') ? Math.max(gapX - 30, 120) : Math.min(2 * gapX - 18, 220);
+        station(svg, s, x, y, colorOf(roadmap.id), i === list.length - 1, place, max, [8, W - 8]);
       });
-      // The line index fills the empty corner under the start of the trunk.
-      if (branches.length) lineIndex(svg, pad - 20, y0 + 104);
-      else lineIndex(svg, pad - 20, bottom + 8), bottom += 40 + 24;
-      svg.setAttribute('viewBox', `0 0 ${width} ${bottom + 16}`);
-      holder.replaceChildren(svg);
-      return;
     }
-    // Narrow screens: each line runs down on its own, one after another, with the index at the top.
-    const x = 22, top = 16, maxw = width - x - 32;
-    let y = 16 + courseCatalog.roadmaps.length * 24 + 24;
-    const parts = [];
-    for (const roadmap of courseCatalog.roadmaps) {
-      const branch = branches.find((item) => item.roadmap === roadmap);
-      const stations = branch ? branchStations(branch).map((s, i) => (i === 0 ? { ...s, from: trunk.chapters[branch.junction] } : s)) : stationsOf(roadmap);
-      const heights = stations.map((s) => (wrap(tr(s.label), '700 13px system-ui, sans-serif', maxw).length + 1) * 16 + 18);
-      const ys = heights.reduce((list, h, i) => [...list, i ? list[i - 1] + heights[i - 1] : y + top], []);
-      parts.push({ roadmap, stations, ys, branch });
-      y = ys.at(-1) + heights.at(-1) + 28;
-    }
-    svg.setAttribute('viewBox', `0 0 ${width} ${y}`);
-    lineIndex(svg, 0, 0);
-    for (const { roadmap, stations, ys, branch } of parts) {
-      const color = colorOf.get(roadmap.id);
-      if (branch) {
-        const from = trunk.chapters[branch.junction];
-        svg.append(make('svg:text', { x, y: ys[0] - 22, 'font-size': 12, fill: '#43574f' }, tr(`${trunk.title} ${from.id}장에서 갈아타기`)));
-      }
-      svg.append(make('svg:path', { d: `M${x} ${ys[0]}V${ys.at(-1)}`, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round', fill: 'none' }));
-      stations.forEach((s, i) => station(svg, s, x, ys[i], color, i === stations.length - 1, { x: x + 24, y: ys[i] - 3, anchor: 'start', above: false, max: maxw }));
-    }
+    lineIndex(svg, 20, H - 20, true);
     holder.replaceChildren(svg);
   }
 
-  const total = courseCatalog.topics.reduce((sum, topic) => sum + topic.lessons.length, 0);
-  document.getElementById('summary').textContent =
-    `노선 ${courseCatalog.roadmaps.length}개 · 레슨 ${total}개 · 주제 ${courseCatalog.topics.length}개`;
-
-  const first = courseCatalog.roadmaps[0];
-  const firstRef = refsOf(first.chapters[0])[0];
-  const start = document.getElementById('start');
-  start.href = './' + firstRef + '.html?roadmap=' + encodeURIComponent(first.id);
-  start.append(`${first.chapters[0].lessons[0].id} ${titles.get(firstRef)}부터 타기`, make('span', {}, `${first.title} 노선의 첫 역`));
+  // Narrow screens: the line index becomes tabs, and one line is drawn down the left at a time.
+  let shownLine = null;
+  try { shownLine = sessionStorage.getItem('hub-line'); } catch {}
+  function drawNarrow(holder) {
+    const width = holder.clientWidth, x = 22;
+    const roadmap = byId.get(shownLine) || trunk;
+    const tabs = make('div', { class: 'line-tabs', role: 'tablist', 'aria-label': tr('노선') });
+    for (const item of roadmaps) {
+      const tab = make('button', { type: 'button', role: 'tab', class: 'line-tab', 'aria-selected': String(item === roadmap) });
+      tab.style.setProperty('--line', colorOf(item.id));
+      tab.append(make('span', { class: 'line-bar', 'aria-hidden': 'true' }), tr(item.title));
+      tab.addEventListener('click', () => { shownLine = item.id; try { sessionStorage.setItem('hub-line', item.id); } catch {} draw(); });
+      tabs.append(tab);
+    }
+    const list = stationsOf(roadmap), top = roadmap.branch ? 44 : 18, step = 46;
+    const svg = make('svg:svg', { role: 'group', 'aria-label': tr(roadmap.title), viewBox: `0 0 ${width} ${top + (list.length - 1) * step + 24}` });
+    if (roadmap.branch) {
+      const from = byId.get(roadmap.branch.from);
+      svg.append(make('svg:text', { x, y: 16, 'font-size': 12, fill: '#43574f' }, tr(`${from.title} ${roadmap.branch.chapter}장에서 갈아타기`)));
+    }
+    svg.append(make('svg:path', { d: `M${x} ${top}V${top + (list.length - 1) * step}`, ...strokeOf(roadmap) }));
+    list.forEach((s, i) => {
+      const y = top + i * step;
+      station(svg, s, x, y, colorOf(roadmap.id), i === list.length - 1, 'right', width - x - 40, [8, width - 8]);
+    });
+    holder.replaceChildren(tabs, svg);
+  }
 
   const network = make('li', { class: 'map' });
   document.getElementById('roadmaps').append(network);
-  const draw = () => drawNetwork(network);
+  // The whole map needs room in both directions; a narrow or short window shows one line at a time.
+  const wide = matchMedia('(min-width: 720px) and (min-height: 600px)');
+  const draw = () => (wide.matches ? drawWide(network) : drawNarrow(network));
   draw();
-  let lastWidth = 0;
+  let lastSize = '';
   new ResizeObserver(() => {
-    const width = document.getElementById('roadmaps').clientWidth;
-    if (width !== lastWidth) { lastWidth = width; draw(); }
-  }).observe(document.getElementById('roadmaps'));
+    const size = network.clientWidth + 'x' + network.clientHeight;
+    if (size !== lastSize) { lastSize = size; draw(); }
+  }).observe(network);
   addEventListener('course:lang', draw);
-
-  const legend = document.getElementById('legend');
-  const hasTransfer = [...lines.values()].some((set) => set.size > 1);
-  for (const [shape, text] of [
-    [`<circle cx="9" cy="9" r="6" fill="#fff" stroke="#12634b" stroke-width="3"/>`, '역 = 장. 누르면 첫 레슨으로'],
-    [`<circle cx="9" cy="9" r="7" fill="#12634b"/>`, '종점'],
-    ...(hasTransfer ? [[`<rect x="1" y="3" width="16" height="12" rx="6" fill="#fff" stroke="#142620" stroke-width="2.5"/>`, '환승역 = 다른 노선과 함께 쓰는 레슨이 있는 장']] : []),
-  ]) {
-    const item = make('li');
-    item.innerHTML = `<svg width="18" height="18" aria-hidden="true">${shape}</svg>`;
-    item.append(text);
-    legend.append(item);
-  }
-
-  for (const topic of courseCatalog.topics) {
-    const item = make('li');
-    const details = make('details');
-    const summary = make('summary', {}, topic.title);
-    summary.append(make('span', {}, `레슨 ${topic.lessons.length}개`));
-    const list = make('ol');
-    for (const lesson of topic.lessons) {
-      const entry = make('li');
-      entry.append(make('a', { href: './' + topic.id + '/' + lesson.id + '.html' }, lesson.title));
-      list.append(entry);
-    }
-    details.append(summary, list);
-    item.append(details);
-    document.getElementById('topics').append(item);
-  }
 });
 </script>
 </body>

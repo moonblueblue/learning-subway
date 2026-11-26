@@ -7,7 +7,7 @@
   --course-border: #d4dfd5;
   --course-ink: #142620;
   --course-muted: #43574f;
-  --course-active: #d9eee1;
+  --course-active: #d5efeb;
 }
 
 .course-bar {
@@ -518,7 +518,7 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .course-shell .course-practice .pixel-grid { grid-template-columns: repeat(8, 24px); }
   .course-shell .course-practice .pixel-button { width: 24px; height: 24px; }
 }
-.course-log-pages:not([hidden]) { display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; background: #eef5ed; }
+.course-log-pages:not([hidden]) { display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; background: #e9f5f3; }
 .course-log-pages .course-button { min-height: 32px; }
 
 @media (min-width: 1100px) and (min-height: 550px) {
@@ -575,7 +575,7 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .course-shell .course-summary-open .course-explanation-body > .course-fit-content { display: block; }
 }
 .course-shell .action.primary:hover:not(:disabled):not([aria-disabled=true]) {
-  background: #0a4c3a;
+  background: #115e59;
   color: #fff;
 }
 
@@ -630,7 +630,7 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   stroke: #587265;
   stroke-width: 2;
 }
-.course-diagram :is(.diagram-edge, .diagram-tip).active { stroke: #12634b; stroke-width: 3; }
+.course-diagram :is(.diagram-edge, .diagram-tip).active { stroke: #0f766e; stroke-width: 3; }
 .course-diagram :is(.diagram-edge, .diagram-tip).blocked { stroke: #a14c2d; stroke-dasharray: 5 3; }
 .course-diagram :is(.diagram-edge, .diagram-tip).muted { stroke: #768e82; stroke-dasharray: 4 4; }
 .course-diagram .diagram-edge-label { font-size: 14px; paint-order: stroke; stroke: #e8f0e9; stroke-width: 5; stroke-linejoin: round; }
@@ -657,6 +657,8 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   cursor: pointer;
 }
 .lang-switch button + button { border-inline-start: 1px solid var(--course-border); }
+.lang-switch .lang-short { display: none; }
+@media (max-width: 959px) { .lang-switch .lang-long { display: none; } .lang-switch .lang-short { display: inline; } }
 .lang-switch button[aria-pressed="true"] { background: var(--course-active); color: var(--course-ink); }
 @media (max-width: 959px), (max-height: 549px) {
   .lang-switch button { padding: 4px 10px; min-height: 36px; }
@@ -674,12 +676,12 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 @media (max-width: 959px) {
   .course-pager { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 2px; padding-top: 6px; border-top: 1px solid var(--course-border); }
   .course-pager-link { display: flex; align-items: center; gap: 4px; min-width: 0; height: var(--course-control-height); box-sizing: border-box; padding: 0 10px; border: 1px solid var(--course-border); border-radius: var(--course-item-radius); background: #fff; color: var(--course-ink); text-decoration: none; font-size: .8125rem; }
-  .course-pager-link:hover { border-color: var(--course-accent, #12634b); }
+  .course-pager-link:hover { border-color: var(--course-accent, #0f766e); }
   .course-pager-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .course-pager-title { font-weight: 700; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
   .course-pager-prev::before { content: "←"; flex: none; }
   .course-pager-next::after { content: "→"; flex: none; }
-  .course-pager-next { grid-column: 2; justify-content: flex-end; background: var(--course-active); border-color: #9fcab4; color: #12634b; }
+  .course-pager-next { grid-column: 2; justify-content: flex-end; background: var(--course-active); border-color: #9fcab4; color: #0f766e; }
 }
 /* A low landscape screen has no room for another row: the two links join the end of the timeline row,
    showing only "← 이전 레슨" and "다음 레슨 →" (the lesson name stays in the title). */
@@ -690,7 +692,7 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .course-pager-prev::before, .course-pager-next::after { content: none; }
   .course-pager-title { display: none; }
   .course-pager-label { position: static; width: auto; height: auto; overflow: visible; clip: auto; font-size: .8rem; font-weight: 700; color: var(--course-muted); }
-  .course-pager-next .course-pager-label { color: #12634b; }
+  .course-pager-next .course-pager-label { color: #0f766e; }
 }
 
 /* One control height per screen: the bar buttons, language switch and timeline step buttons line up. */

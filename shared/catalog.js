@@ -521,6 +521,265 @@ const courseCatalog = {
       ]
     },
     {
+      "id": "ai",
+      "title": "AI",
+      "titleEn": "Artificial intelligence",
+      "chapters": [
+        {
+          "id": "1",
+          "title": "AI를 위한 수학",
+          "titleEn": "Math for AI",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "2",
+          "title": "머신러닝 기초",
+          "titleEn": "Machine learning basics",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "3",
+          "title": "신경망과 학습",
+          "titleEn": "Neural networks and training",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "4",
+          "title": "컴퓨터 비전",
+          "titleEn": "Computer vision",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "5",
+          "title": "언어와 트랜스포머",
+          "titleEn": "Language and transformers",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "6",
+          "title": "LLM 활용",
+          "titleEn": "Using LLMs",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "7",
+          "title": "학습·추론 서빙",
+          "titleEn": "Training and inference serving",
+          "lessons": [],
+          "tracks": []
+        }
+      ],
+      "branch": {
+        "from": "computer-science",
+        "chapter": "8",
+        "side": "up",
+        "row": 2,
+        "dir": "left"
+      }
+    },
+    {
+      "id": "devops",
+      "title": "DevOps",
+      "titleEn": "DevOps",
+      "chapters": [
+        {
+          "id": "1",
+          "title": "컨테이너",
+          "titleEn": "Containers",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "2",
+          "title": "쿠버네티스 기초",
+          "titleEn": "Kubernetes basics",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "3",
+          "title": "쿠버네티스 운영",
+          "titleEn": "Operating Kubernetes",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "4",
+          "title": "CI/CD",
+          "titleEn": "CI/CD",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "5",
+          "title": "IaC·설정 관리",
+          "titleEn": "IaC and configuration management",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "6",
+          "title": "클라우드",
+          "titleEn": "Cloud",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "7",
+          "title": "관측과 SRE",
+          "titleEn": "Observability and SRE",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "8",
+          "title": "보안·공급망",
+          "titleEn": "Security and supply chain",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "9",
+          "title": "최종 프로젝트",
+          "titleEn": "Final project",
+          "lessons": [],
+          "tracks": []
+        }
+      ],
+      "branch": {
+        "from": "computer-science",
+        "chapter": "6",
+        "side": "up",
+        "row": 1,
+        "dir": "left"
+      }
+    },
+    {
+      "id": "infrastructure",
+      "title": "서버·인프라",
+      "titleEn": "Server infrastructure",
+      "chapters": [
+        {
+          "id": "1",
+          "title": "서버 하드웨어",
+          "titleEn": "Server hardware",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "2",
+          "title": "부팅과 프로비저닝",
+          "titleEn": "Booting and provisioning",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "3",
+          "title": "하이퍼바이저",
+          "titleEn": "Hypervisors",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "4",
+          "title": "데이터센터",
+          "titleEn": "Data centres",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "5",
+          "title": "이중화와 장애 조치",
+          "titleEn": "Redundancy and failover",
+          "lessons": [],
+          "tracks": []
+        }
+      ],
+      "branch": {
+        "from": "operating-systems",
+        "chapter": "6",
+        "side": "down",
+        "row": 4,
+        "dir": "left"
+      }
+    },
+    {
+      "id": "networking",
+      "title": "네트워크",
+      "titleEn": "Networking",
+      "chapters": [
+        {
+          "id": "1",
+          "title": "링크와 LAN",
+          "titleEn": "Links and LANs",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "2",
+          "title": "IP와 주소",
+          "titleEn": "IP and addressing",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "3",
+          "title": "라우팅",
+          "titleEn": "Routing",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "4",
+          "title": "전송 계층",
+          "titleEn": "The transport layer",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "5",
+          "title": "응용 프로토콜",
+          "titleEn": "Application protocols",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "6",
+          "title": "필터링과 보안",
+          "titleEn": "Filtering and security",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "7",
+          "title": "데이터센터 네트워크",
+          "titleEn": "Data-centre networking",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "8",
+          "title": "진단과 측정",
+          "titleEn": "Diagnosis and measurement",
+          "lessons": [],
+          "tracks": []
+        }
+      ],
+      "branch": {
+        "from": "computer-science",
+        "chapter": "5",
+        "side": "down",
+        "row": 2,
+        "dir": "left"
+      }
+    },
+    {
       "id": "operating-systems",
       "title": "운영체제",
       "titleEn": "Operating systems",
@@ -620,7 +879,77 @@ const courseCatalog = {
           "lessons": [],
           "tracks": []
         }
-      ]
+      ],
+      "branch": {
+        "from": "computer-science",
+        "chapter": "5",
+        "side": "down",
+        "row": 1,
+        "dir": "right"
+      }
+    },
+    {
+      "id": "storage",
+      "title": "스토리지",
+      "titleEn": "Storage",
+      "chapters": [
+        {
+          "id": "1",
+          "title": "디스크와 SSD",
+          "titleEn": "Disks and SSDs",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "2",
+          "title": "RAID와 볼륨",
+          "titleEn": "RAID and volumes",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "3",
+          "title": "파일 시스템 심화",
+          "titleEn": "File systems in depth",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "4",
+          "title": "블록·파일·오브젝트",
+          "titleEn": "Block, file and object",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "5",
+          "title": "NAS와 SAN",
+          "titleEn": "NAS and SAN",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "6",
+          "title": "분산 스토리지",
+          "titleEn": "Distributed storage",
+          "lessons": [],
+          "tracks": []
+        },
+        {
+          "id": "7",
+          "title": "백업과 복구",
+          "titleEn": "Backup and recovery",
+          "lessons": [],
+          "tracks": []
+        }
+      ],
+      "branch": {
+        "from": "operating-systems",
+        "chapter": "5",
+        "side": "down",
+        "row": 3,
+        "dir": "left"
+      }
     }
   ],
   "topics": [

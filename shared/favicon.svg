@@ -1,9 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Learning Subway: the front of a subway car on the course's accent green. -->
-  <rect width="64" height="64" rx="14" fill="#12634b"/>
-  <rect x="15" y="9" width="34" height="38" rx="9" fill="#f4fbf6"/>
-  <rect x="20" y="15" width="24" height="13" rx="3" fill="#12634b"/>
-  <circle cx="23" cy="38" r="3.2" fill="#12634b"/>
-  <circle cx="41" cy="38" r="3.2" fill="#12634b"/>
-  <path d="M22 47 15 56M42 47l7 9" stroke="#f4fbf6" stroke-width="4" stroke-linecap="round"/>
+  <!-- Learning Subway: the front of a subway car on its rails, white on the brand teal, with a margin all round. -->
+  <rect width="64" height="64" rx="12" fill="#0d9488"/>
+  <g transform="translate(3.2 2) scale(.9)">
+    <rect x="8" y="3" width="48" height="44" rx="7" fill="#f4fbf6"/>
+    <rect x="24" y="6.5" width="16" height="3.2" rx="1" fill="#0d9488"/>
+    <rect x="13" y="12.5" width="17" height="15" rx="2" fill="#0d9488"/>
+    <rect x="34" y="12.5" width="17" height="15" rx="2" fill="#0d9488"/>
+    <circle cx="16" cy="38" r="3.6" fill="#0d9488"/>
+    <circle cx="48" cy="38" r="3.6" fill="#0d9488"/>
+    <rect x="25" y="34" width="14" height="2.6" rx=".6" fill="#0d9488"/>
+    <rect x="25" y="39" width="14" height="2.6" rx=".6" fill="#0d9488"/>
+    <polygon points="12,50 19,50 15.5,63 7,63" fill="#f4fbf6"/>
+    <polygon points="45,50 52,50 57,63 48.5,63" fill="#f4fbf6"/>
+    <rect x="14" y="54.5" width="36" height="4" fill="#f4fbf6"/>
+  </g>
 </svg>

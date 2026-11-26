@@ -619,7 +619,7 @@ const courseCatalog = {
         {
           "id": "5",
           "title": "IaC·설정 관리",
-          "titleEn": "IaC and configuration management",
+          "titleEn": "IaC and config management",
           "lessons": [],
           "tracks": []
         },
@@ -726,6 +726,14 @@ const courseCatalog = {
             {
               "id": "1.2",
               "ref": "network/ethernet"
+            },
+            {
+              "id": "1.3",
+              "ref": "network/switch"
+            },
+            {
+              "id": "1.4",
+              "ref": "network/arp"
             }
           ],
           "tracks": []
@@ -870,6 +878,18 @@ const courseCatalog = {
             {
               "id": "2.4",
               "ref": "os/fair"
+            },
+            {
+              "id": "2.5",
+              "ref": "os/multicore"
+            },
+            {
+              "id": "2.6",
+              "ref": "os/signals"
+            },
+            {
+              "id": "2.7",
+              "ref": "os/ipc"
             }
           ],
           "tracks": []
@@ -1504,6 +1524,42 @@ const courseCatalog = {
           "page": "os/fair.html"
         },
         {
+          "id": "multicore",
+          "title": "멀티코어 스케줄링",
+          "titleEn": "Multicore scheduling",
+          "question": "코어가 여럿이면 스케줄러는 일을 어느 코어에 둘까?",
+          "format": "실험",
+          "requires": [
+            "os/fair",
+            "computer-architecture/hierarchy"
+          ],
+          "page": "os/multicore.html"
+        },
+        {
+          "id": "signals",
+          "title": "시그널",
+          "titleEn": "Signals",
+          "question": "실행 중인 프로세스에게 \"그만\" 같은 소식은 어떻게 전할까?",
+          "format": "실험",
+          "requires": [
+            "os/lifecycle",
+            "os/syscall"
+          ],
+          "page": "os/signals.html"
+        },
+        {
+          "id": "ipc",
+          "title": "프로세스 간 통신",
+          "titleEn": "Inter-process communication",
+          "question": "서로의 메모리를 읽을 수 없는 프로세스끼리 데이터를 어떻게 주고받을까?",
+          "format": "실험",
+          "requires": [
+            "os/process",
+            "os/virtual"
+          ],
+          "page": "os/ipc.html"
+        },
+        {
           "id": "syscall",
           "title": "시스템 콜",
           "titleEn": "System calls",
@@ -1607,6 +1663,28 @@ const courseCatalog = {
             "network/layers"
           ],
           "page": "network/ethernet.html"
+        },
+        {
+          "id": "switch",
+          "title": "스위치",
+          "titleEn": "Switches",
+          "question": "스위치는 프레임을 어느 포트로 보낼지 어떻게 알까?",
+          "format": "실험",
+          "requires": [
+            "network/ethernet"
+          ],
+          "page": "network/switch.html"
+        },
+        {
+          "id": "arp",
+          "title": "ARP",
+          "titleEn": "ARP",
+          "question": "IP 주소만 아는 상대의 MAC 주소는 어떻게 알아낼까?",
+          "format": "실험",
+          "requires": [
+            "network/switch"
+          ],
+          "page": "network/arp.html"
         },
         {
           "id": "routing",

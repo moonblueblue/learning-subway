@@ -18,6 +18,8 @@
   const roadmap = courseCatalog.roadmaps.find((item) => item.id === wantedRoadmap && listsLesson(item)) ||
     courseCatalog.roadmaps.find(listsLesson);
   try { if (roadmap) sessionStorage.setItem('course-roadmap', roadmap.id); } catch { /* storage unavailable */ }
+  // The hub marks the last lesson opened ("현재 위치"), on the line it was opened through. It survives a reload.
+  try { localStorage.setItem('learning-subway:here', JSON.stringify({ ref: pageRef, roadmap: roadmap?.id })); } catch { /* storage unavailable */ }
   const resolve = (lesson) => ({
     id: lesson.id, ref: lesson.ref, title: lessonsByRef.get(lesson.ref).title, page: '../' + lesson.ref + '.html'
   });

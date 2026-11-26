@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="코어가 여럿일 때 리눅스 스케줄러가 코어마다 실행 줄을 두는 이유, 캐시가 따뜻한 코어로 돌려보내는 방법, 노는 코어가 일을 당겨 오는 부하 분산, CPU 고정을 한 정거장씩 따라가 보세요.">
+<title>멀티코어 스케줄링 · 레슨 2.5</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
+header{margin-bottom:20px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
+header p.lead{color:var(--muted);margin-top:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.stage-top h2,.timeline h2{font-size:1rem}
+.status{color:var(--accent);font-size:.875rem;font-weight:700}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+svg{display:block;width:100%;height:auto;max-height:520px}
+#scene{touch-action:pan-y;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
+.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
+.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
+.try-result{color:var(--accent);font-weight:700}
+.try-result:empty{display:none}
+.try.solved{background:#d2f4dd}
+.readout{font-size:1rem;color:var(--muted)}
+.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
+.switch-actions{display:flex;gap:8px;align-items:center}
+.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
+.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
+.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
+.touch-hint{display:none}
+@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
+.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
+.node .face{stroke-width:.8;stroke-linejoin:round}
+.node .shadow{fill:#1f4434;opacity:.16}
+.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
+.switch{cursor:pointer}
+.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
+.switch .left{fill:#d3dad6;stroke:#8c9d96}
+.switch .right{fill:#b9c4be;stroke:#8c9d96}
+.switch .top{fill:#eef1ef;stroke:#8c9d96}
+.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
+.switch.on .right{fill:#78b592;stroke:#4f8f6b}
+.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
+.switch .glow{fill:#4fcf87;opacity:0}
+.switch.on .glow{opacity:.55}
+.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
+.switch.on .digit{fill:#0f5a3c}
+.switch.on .tag rect{stroke:var(--accent)}
+.switch.on .tag text{fill:var(--accent)}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire.signal{stroke:var(--request);stroke-width:2.6}
+.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.chevron.signal{stroke:var(--request)}
+.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
+.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sample{width:22px;border-top:3px solid var(--request)}
+.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
+.dot.on{border-color:#4f8f6b;background:#bfecce}
+.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
+.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.primary:hover:not(:disabled){background:#115e59}
+.timeline{padding:15px 18px}
+.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
+.steps button:hover{border-color:var(--accent)}
+.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
+.step-number{font:700 .875rem var(--mono);color:var(--accent)}
+.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
+.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
+.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
+.takeaway p{font-size:1rem}
+.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
+.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
+.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
+@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
+.cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
+.cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
+.cell.changed .top{animation:flash 1s ease-out}
+@keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
+.cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
+.cell.empty .cell-value{fill:#9aa8a2}
+.address{font:600 9px var(--mono);fill:#6b7d76;text-anchor:start}
+.tag.name{transition:opacity .25s}
+.tag.name rect{stroke:var(--accent);stroke-width:1.1}
+.tag.name text{fill:var(--accent);font-weight:700}
+.bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bus.active{stroke:#7fa891}
+.packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
+.packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
+.packet-group.read .packet-label{fill:#3b4880}
+.code-area{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.code{list-style:none;counter-reset:line;margin:0;padding:10px 0;background:#1f2d29;border-radius:12px;color:#e8f2ec;font:600 1rem/1.5 var(--mono);flex:1 1 300px}
+.code li{counter-increment:line;padding:5px 14px 5px 46px;position:relative}
+.code li::before{content:counter(line);position:absolute;left:16px;color:#6f8a80}
+.code li.done{color:#8fa79c}
+.code li.current{background:#2f4a41;color:#ffffff}
+.code li.current::after{content:'다음';position:absolute;right:14px;color:#9fe3b6;font-size:.8125rem}
+.code-actions{display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
+.try-choices{display:flex;gap:6px;flex-wrap:wrap}
+.try-choices:empty{display:none}
+.dot.read{background:var(--response);border-color:var(--response)}
+.dot.write{background:var(--request);border-color:var(--request)}
+@media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.bus.inner{stroke:#c9d6ce;stroke-dasharray:3 3}
+.bus.main{stroke:#9fbfae;stroke-width:3}
+.cpu-area{fill:#e2ece5;stroke:#9fb7a9;stroke-width:1.2;stroke-dasharray:6 4}
+.board-tag rect{fill:#26322e;stroke:#26322e}.board-tag text{fill:#fff;font-weight:800}
+.cell .left{fill:#e6ebe8;stroke:#8c9d96}.cell .right{fill:#cfd8d4;stroke:#8c9d96}.cell .top{fill:#fff;stroke:#8c9d96}
+.cell.code .top{fill:#eef1fb;stroke:#7d88b4}.cell.code .left{fill:#dfe4f2;stroke:#7d88b4}.cell.code .right{fill:#c4cbe3;stroke:#7d88b4}
+.cell.code .cell-value{fill:#3c4a85;font-size:8.5px}
+.address{text-anchor:middle}
+.cell.active .top{fill:#fff1c9;stroke:#c9940f}
+.cell.next-pc .address{fill:var(--accent);font-weight:800}
+.part .face{stroke-width:.8;transition:fill .2s}
+.part.register .left{fill:#dbe9e2;stroke:#5f8f78}.part.register .right{fill:#c2d9cd;stroke:#5f8f78}.part.register .top{fill:#f3f8f5;stroke:#5f8f78}
+.part.control .left{fill:#eadcf0;stroke:#9a77ad}.part.control .right{fill:#d9c4e3;stroke:#9a77ad}.part.control .top{fill:#f7f0fa;stroke:#9a77ad}
+.part.alu .left{fill:#e4e1d3;stroke:#8f8763}.part.alu .right{fill:#d2cdb6;stroke:#8f8763}.part.alu .top{fill:#f7f5ec;stroke:#8f8763}
+.part.busy .top{fill:#fff1c9}
+.part-tag text{font:700 11.5px var(--mono)}
+.part.busy .part-tag rect{stroke:#c9940f;stroke-width:1.3}
+.packet-group.inner .packet,.packet-group.inner .packet-halo{fill:#9a77ad}
+.packet-group.inner .packet-label{fill:#5f3a73}
+.dot.inner{background:#9a77ad;border-color:#9a77ad}
+.memory-panel{flex:1 1 320px;display:flex;flex-direction:column;gap:8px}
+.phase-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.phases{list-style:none;display:flex;gap:4px;margin:0;padding:0}
+.phases li{padding:4px 12px;border:1px solid var(--border);border-radius:999px;font-size:.875rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.phases li.current{background:var(--accent);border-color:var(--accent);color:#fff}
+.clock{font:700 .9375rem var(--mono);color:var(--accent);margin-left:auto}
+.clock.tick{animation:bump .3s ease-out}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+.clock{display:inline-block}
+.memory-list{counter-reset:none;flex:none}
+.memory-list li{counter-increment:none;padding:3px 12px 3px 44px;display:flex;gap:10px}
+.memory-list li::before{content:none}
+.memory-list .addr{position:absolute;left:14px;color:#6f8a80}
+.memory-list li.data code{color:#bfe8cf}
+.memory-list li.ir{background:#2f4a41}
+.memory-list li.touched{box-shadow:inset 3px 0 #ffd34d}
+.memory-list .mark{margin-left:auto;color:#9fe3b6;font-size:.8125rem}
+.memory-list li.current::after{content:none}
+@media(prefers-reduced-motion:reduce){.clock.tick{animation:none}}
+@media(max-width:600px){.part-tag text{font-size:14px}.cell.code .cell-value{font-size:12px}}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+@media(max-width:600px){.packet-label{font-size:13px}}
+.casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
+.bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
+.station .face{stroke-width:.8;transition:fill .2s}
+.station.file .left{fill:#e6ebe8;stroke:#8c9d96}.station.file .right{fill:#cfd8d4;stroke:#8c9d96}.station.file .top{fill:#fff;stroke:#8c9d96}
+.sheet-line{stroke:#a9b8b0;stroke-width:1.1;stroke-linecap:round}
+.station.tool .left{fill:#eadcf0;stroke:#9a77ad}.station.tool .right{fill:#d9c4e3;stroke:#9a77ad}.station.tool .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.ssd .left{fill:#dfe4f2;stroke:#7a87b5}.station.ssd .right{fill:#c4cbe3;stroke:#7a87b5}.station.ssd .top{fill:#eaeef9;stroke:#7a87b5}
+.station.ram .left{fill:#acd5b9;stroke:#5f9474}.station.ram .right{fill:#80b596;stroke:#5f9474}.station.ram .top{fill:#dcf1e2;stroke:#5f9474}
+.station.cpu .left{fill:#3f4f4a;stroke:#26322e}.station.cpu .right{fill:#2f3d39;stroke:#26322e}.station.cpu .top{fill:#5d6f69;stroke:#26322e}
+.station.active .top{fill:#fff1c9}
+.station.cpu.active .top{fill:#8a7d4a}
+.station.error.error .top{fill:#f6b893;stroke:#a24c14}
+.station-tag text{font-weight:800}
+.tag.holds rect{stroke:var(--accent);fill:#eaf7ef}.tag.holds text{fill:var(--accent);font:700 11px var(--mono)}
+.tag.holds.error rect{stroke:#a24c14;fill:#fff6ef}.tag.holds.error text{fill:#a24c14}
+.tag.empty{display:none}
+.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
+.packet-halo{opacity:.22;fill:var(--request)}
+.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
+.dot.file{background:#fff;border-color:#8c9d96}.dot.tool{background:#eadcf0;border-color:#9a77ad}.dot.errordot{background:#ffd9c2;border-color:#a24c14}
+.stage-list{list-style:none;display:flex;flex-wrap:wrap;gap:4px;margin:0;padding:0}
+.stage-list li{padding:3px 10px;border:1px solid var(--border);border-radius:999px;font-size:.8125rem;font-weight:700;color:var(--muted);background:#f6f8f5}
+.stage-list li.done{color:var(--accent);border-color:#9fb7a9}
+.stage-list li.current{background:var(--accent);color:#fff;border-color:var(--accent)}
+.work-title{font-weight:800;color:var(--ink)}
+.work-panel.error .work-title{color:#a24c14}
+.work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
+.work li{padding-left:16px}
+@media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+.zone{stroke-width:1.2;stroke-dasharray:6 4}
+.zone.user-zone{fill:#e2ece5;stroke:#9fb7a9}
+.zone.kernel-zone{fill:#ece4f2;stroke:#b39ac4}
+.zone-label{font:800 11px system-ui,sans-serif;fill:#43574f}
+.border-line{stroke:#a24c14;stroke-width:2.4;stroke-dasharray:8 5}
+.station.user .left{fill:#bfe2cb;stroke:#4f8f6b}.station.user .right{fill:#9fcfb1;stroke:#4f8f6b}.station.user .top{fill:#e2f5e8;stroke:#4f8f6b}
+.station.gate .left{fill:#f6dfc8;stroke:#c26a1e}.station.gate .right{fill:#ecc8a4;stroke:#c26a1e}.station.gate .top{fill:#fdf2e7;stroke:#c26a1e}
+.station.kernel .left{fill:#eadcf0;stroke:#9a77ad}.station.kernel .right{fill:#d9c4e3;stroke:#9a77ad}.station.kernel .top{fill:#f7f0fa;stroke:#9a77ad}
+.station.screen .left{fill:#d7dfdb;stroke:#8c9d96}.station.screen .right{fill:#34514a;stroke:#26322e}.station.screen .top{fill:#f4f7f5;stroke:#8c9d96}
+.dot.cpudot{background:#5d6f69;border-color:#26322e}.dot.userdot{background:#e2ece5;border-color:#4f8f6b}.dot.kerneldot{background:#ece4f2;border-color:#9a77ad}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./multicore.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">운영체제 2장 프로세스와 CPU · 레슨 2.5</p>
+    <h1>멀티코어 스케줄링</h1>
+    <p class="lead">코어가 여럿이면 스케줄러는 일을 어느 코어에 둘까요? 스레드가 스케줄러를 거쳐 코어로 가고, 코어 사이를 옮겨 가는 길을 한 정거장씩 따라가 보세요.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">스레드, 스케줄러, 코어 둘</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">스케줄러가 스레드를 코어 0과 코어 1의 실행 줄에 나눠 두고 코어 사이로 옮기는 장면</title><desc id="scene-desc"></desc>
+            <defs>
+              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+            </defs>
+            <g id="world" aria-hidden="true">
+              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
+              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <div class="try" id="try">
+            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p class="try-result" id="try-result" role="status"></p>
+            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
+          </div>
+          <p class="readout" id="readout"></p>
+          <div class="code-area">
+            <div class="memory-panel work-panel" id="work-panel">
+              <ol class="stage-list" id="stage-list" aria-label="정거장"></ol>
+              <p class="work-title" id="work-title"></p>
+              <ol class="code memory-list work" id="work" aria-label="지금 코드의 모습"></ol>
+            </div>
+            <div class="code-actions">
+              <button class="action primary" id="run-stage" type="button">다음 단계</button>
+              <button class="action" id="restart" type="button">처음부터</button>
+            </div>
+          </div>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+        </div>
+        <div class="controls">
+          <div class="legend" aria-label="범례"><span><i class="dot userdot"></i>사용자 영역</span><span><i class="dot kerneldot"></i>커널 영역</span><span><i class="dot cpudot"></i>CPU 코어</span></div>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const pointers = new Map();
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+
+
+// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
+
+
+// A press that starts on a switch and ends without moving toggles that switch.
+// Tracked separately from the camera pointers so it also works when the pointer is captured.
+let tap = null;
+viewport.addEventListener('pointerdown', (event) => {
+  const target = event.target.closest?.('[data-input]');
+  tap = target && event.button === 0 && pointers.size === 0
+    ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
+    : null;
+});
+viewport.addEventListener('pointerup', (event) => {
+  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
+    toggleInput(tap.input);
+  }
+  tap = null;
+});
+viewport.addEventListener('pointercancel', () => { tap = null; });
+
+viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || pointers.size >= 2) return;
+  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
+  pointers.set(event.pointerId, viewportPoint(event));
+  viewport.setPointerCapture(event.pointerId);
+});
+viewport.addEventListener('pointermove', (event) => {
+  if (!pointers.has(event.pointerId)) return;
+  const before = pointerGeometry();
+  pointers.set(event.pointerId, viewportPoint(event));
+  const after = pointerGeometry();
+  const pinch = pointers.size === 2;
+  if (pinch && (before.distance < 1 || after.distance < 1)) return;
+  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
+  zoomBetween(zoom, before.point, after.point);
+  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
+});
+for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  viewport.addEventListener(eventName, (event) => {
+    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
+  });
+}
+
+
+
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+viewport.addEventListener('keydown', (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+setCamera(0, 0, 1);
+const kinds = { user: '프로세스', kernel: '커널', cpu: 'CPU 코어' };
+// With several cores the scheduler also decides where a task runs: each core has its own run queue,
+// a task goes back to the core whose cache still holds its data, an idle core pulls work from the busiest one,
+// and an affinity mask pins a task to chosen cores. Stations left of `kernelFrom` are user space.
+const lesson = [
+  {
+    label: '코어마다 줄',
+    readingStage: 2,
+    title: '줄이 하나면 코어들이 잠금 앞에서 기다린다',
+    body: '모든 코어가 실행할 일을 줄 하나에서 꺼내 가면, 두 코어가 같은 일을 꺼내지 않도록 줄에 잠금을 걸어야 합니다. 한 코어가 잠금을 쥔 동안 다른 코어는 기다리고, 코어가 많을수록 이 기다림이 길어집니다. 그래서 리눅스는 코어마다 실행 줄(run queue)을 따로 둡니다. 코어는 자기 줄에서만 일을 꺼내므로 서로 기다리지 않습니다.',
+    takeaway: '코어 0이 줄의 잠금을 쥐자 코어 0 이름표는 "잠금 쥠", 코어 1 이름표는 "잠금 기다림"이 됩니다. 코어 0이 T1을 받고 나서야 코어 1이 T2를 받고, 스케줄러 이름표에 "리눅스: 코어마다 줄"이 남습니다.',
+    description: '왼쪽 사용자 영역에 스레드 T1과 T2가, 경계 너머에 스케줄러와 CPU 코어 0, 코어 1이 있습니다. 스케줄러의 실행 줄은 하나뿐입니다.',
+    note: ['줄 하나 · 잠금 하나', ' → ', '코어 0이 잠금을 쥠', ' → ', '코어 1은 잠금 앞에서 기다림', ' · ', '그래서 리눅스는 코어마다 줄을 둠'],
+    noteTone: 'bad',
+    kernelFrom: 1,
+    stations: [['th', '스레드 T1·T2', 'user'], ['sched', '스케줄러', 'kernel'], ['c0', '코어 0', 'cpu'], ['c1', '코어 1', 'cpu']],
+    start: { title: '스케줄러', lines: ['실행 줄 하나: T1, T2', '잠금 하나'], holds: { th: '실행 준비', sched: '줄 1개: T1 T2', c0: '빔', c1: '빔' } },
+    stages: [
+      { from: 'c0', to: 'sched', label: '다음 일?', title: '스케줄러', lines: ['코어 0이 잠금을 쥠', '줄에서 T1을 꺼냄'],
+        text: '코어 0이 다음 일을 꺼내려고 줄의 잠금을 쥡니다.', holds: { sched: '잠금: 코어 0', c0: '잠금 쥠' } },
+      { from: 'c1', to: 'sched', label: '다음 일?', title: '코어 1', lines: ['잠금이 풀리길 기다림'],
+        text: '같은 순간 코어 1도 일을 꺼내려 하지만, 잠금이 풀릴 때까지 기다려야 합니다.', holds: { c1: '잠금 기다림' },
+        ask: { q: '코어가 64개이고 줄이 하나라면 어떻게 될까요?', choices: ['64배 빨라진다', '잠금 앞의 기다림이 길어진다', '아무 차이가 없다'], answer: '잠금 앞의 기다림이 길어진다', why: '줄이 하나면 한 번에 한 코어만 꺼낼 수 있습니다. 코어가 늘수록 잠금을 기다리는 코어도 늘어납니다.' } },
+      { from: 'sched', to: 'c0', label: 'T1', title: '코어 0', lines: ['T1 실행', '잠금 풀어 줌'],
+        text: '코어 0이 T1을 받고 잠금을 풀어 줍니다.', holds: { c0: 'T1 실행', sched: '줄: T2' } },
+      { from: 'sched', to: 'c1', label: 'T2', title: '코어 1', lines: ['이제야 T2 실행'],
+        text: '그제야 코어 1이 T2를 받습니다. 그래서 리눅스는 코어마다 줄을 두어 이 기다림을 없앱니다.', holds: { c1: 'T2 · 늦게 받음', sched: '리눅스: 코어마다 줄' } },
+    ],
+  },
+  {
+    label: '캐시 친화성',
+    readingStage: 2,
+    title: '깨어난 스레드는 캐시가 따뜻한 코어로 돌아간다',
+    body: '스레드가 한 코어에서 달리면 그 코어의 캐시에 스레드가 쓰던 데이터가 남습니다. 잠깐 잠들었다 깨어난 스레드를 같은 코어에 두면 캐시에서 바로 읽어 빠르게 이어 갑니다. 다른 코어로 옮기면 그 코어의 캐시에는 데이터가 없어 메모리에서 다시 읽어야 합니다. 그래서 스케줄러는 할 수 있는 한 스레드를 같은 코어에 둡니다.',
+    takeaway: 'T1이 깨어나자 스케줄러 이름표에 "마지막: 코어 0"이 뜨고, T1이 코어 0으로 갑니다. 코어 0 이름표는 "T1 캐시 적중", 데이터가 없는 코어 1 이름표는 "T1 캐시 없음"입니다.',
+    description: '왼쪽 사용자 영역에 방금 깨어난 스레드 T1이, 경계 너머에 스케줄러와 코어 0, 코어 1이 있습니다. T1은 잠들기 전에 코어 0에서 달렸습니다.',
+    note: ['T1이 코어 0에서 달리다 잠듦', ' → ', '깨어남', ' → ', '캐시에 T1 데이터가 남은 코어 0에 둠', ' → ', '메모리 다시 읽지 않음'],
+    kernelFrom: 1,
+    stations: [['th', '스레드 T1', 'user'], ['sched', '스케줄러', 'kernel'], ['c0', '코어 0', 'cpu'], ['c1', '코어 1', 'cpu']],
+    start: { title: '스레드 T1', lines: ['코어 0에서 달리다', '디스크를 기다리며 잠듦'], holds: { th: '잠듦', c0: 'T1 캐시 있음', c1: 'T1 캐시 없음' } },
+    stages: [
+      { from: 'th', to: 'sched', label: 'T1 깨어남', title: '스케줄러', lines: ['T1이 마지막으로 달린 곳: 코어 0'],
+        text: '디스크 읽기가 끝나 T1이 깨어납니다. 스케줄러는 T1이 마지막에 달린 코어를 기억합니다.', holds: { th: '깨어남', sched: '마지막: 코어 0' },
+        ask: { q: '두 코어가 다 비어 있다면 T1을 어디에 둘까요?', choices: ['코어 0', '코어 1', '아무 데나'], answer: '코어 0', why: '코어 0의 캐시에 T1이 쓰던 데이터가 남아 있어 메모리에서 다시 읽지 않아도 됩니다.' } },
+      { from: 'sched', to: 'c0', label: 'T1', title: '코어 0', lines: ['T1을 코어 0의 줄에 넣음', 'T1 실행 · 캐시에서 바로 읽음'],
+        text: 'T1이 코어 0에서 다시 달립니다. 필요한 데이터가 캐시에 있어 바로 이어 갑니다.', holds: { c0: 'T1 캐시 적중' } },
+    ],
+  },
+  {
+    label: '부하 분산',
+    readingStage: 2,
+    title: '노는 코어는 가장 바쁜 코어의 줄에서 일을 당겨 온다',
+    body: '코어마다 줄이 따로 있으면, 한 코어의 줄에 일이 몰리고 다른 코어는 놀 수 있습니다. 리눅스는 타이머가 울릴 때 주기적으로, 그리고 코어가 할 일이 없어졌을 때 부하를 나눕니다. 일을 나누는 쪽은 한가한 코어입니다. 가장 바쁜 줄을 찾아 그 줄에서 일을 자기 줄로 당겨 옵니다.',
+    takeaway: '코어 1이 "줄 비었음"을 알리자 스케줄러가 "가장 바쁜 줄: 코어 0"을 찾습니다. T3이 코어 0 줄에서 코어 1로 옮겨 가 코어 0 이름표는 "T1 · 줄 T2", 코어 1 이름표는 "T3 옮겨 와 실행"이 됩니다.',
+    description: '왼쪽 사용자 영역에 스레드 T1, T2, T3이, 경계 너머에 스케줄러와 코어 0, 코어 1이 있습니다. 세 스레드가 모두 코어 0의 줄에 있고 코어 1의 줄은 비어 있습니다.',
+    note: ['코어 0 줄: T1 T2 T3 · 코어 1 줄: 없음', ' → ', '코어 1이 놀게 됨', ' → ', '가장 바쁜 코어 0에서 T3을 당겨 옴', ' → ', '2 : 1로 나뉨'],
+    kernelFrom: 1,
+    stations: [['th', '스레드 T1·T2·T3', 'user'], ['sched', '스케줄러', 'kernel'], ['c0', '코어 0', 'cpu'], ['c1', '코어 1', 'cpu']],
+    start: { title: '스케줄러', lines: ['코어 0 줄: T1(실행) T2 T3', '코어 1 줄: 비어 있음'], holds: { c0: 'T1 · 줄 T2 T3', c1: '줄 비었음' } },
+    stages: [
+      { from: 'c1', to: 'sched', label: '줄 비었음', title: '스케줄러', lines: ['코어 1이 할 일이 없음', '가장 바쁜 줄을 찾음'],
+        text: '코어 1의 줄이 비어 할 일이 없습니다. 코어 1이 부하 분산을 시작합니다.', holds: { sched: '가장 바쁜 줄: 코어 0' },
+        ask: { q: '노는 코어 1은 어떻게 할까요?', choices: ['일이 올 때까지 계속 논다', '바쁜 코어의 줄에서 일을 당겨 온다', '코어 0이 끝날 때까지 기다린다'], answer: '바쁜 코어의 줄에서 일을 당겨 온다', why: '리눅스에서는 한가한 코어가 가장 바쁜 줄을 찾아 기다리는 일을 자기 줄로 옮겨 옵니다.' } },
+      { from: 'c0', to: 'c1', label: 'T3 이동', title: '코어 1', lines: ['코어 0 줄의 T3을 코어 1 줄로 옮김', '코어 0 줄: T2 하나만 기다림'],
+        text: '코어 0의 줄에서 기다리던 T3을 코어 1의 줄로 옮겨 실행합니다. 이제 두 코어가 모두 일을 합니다.', holds: { c0: 'T1 · 줄 T2', c1: 'T3 옮겨 와 실행', sched: '2 : 1로 나뉨' } },
+    ],
+  },
+  {
+    label: 'CPU 고정',
+    readingStage: 4,
+    title: 'CPU를 고정한 프로세스는 부하 분산도 옮기지 않는다',
+    body: 'taskset이나 sched_setaffinity로 프로세스가 달릴 수 있는 코어를 정할 수 있습니다. 고정하면 캐시를 옮겨 다니지 않고, 다른 일과 코어를 나눠 쓰지 않게 떼어 둘 수 있습니다. 대신 스케줄러는 그 약속을 지킵니다. 다른 코어가 놀아도 고정된 프로세스는 옮기지 않고, 옮길 수 있는 일만 당겨 옵니다. fork로 만든 자식도 같은 고정을 물려받습니다.',
+    takeaway: '셸의 "taskset -c 1 db"로 DB가 코어 1에 고정됩니다. 코어 0이 "줄 비었음"을 알려도 스케줄러 이름표는 "DB는 코어 1만"이고, 고정이 없는 웹만 코어 0으로 옮겨 가 스케줄러 이름표가 "DB 못 옮김 → 웹"이 됩니다.',
+    description: '왼쪽 사용자 영역에 관리자 셸이, 경계 너머에 스케줄러와 코어 0, 코어 1이 있습니다. 코어 1의 줄에 웹과 DB가 있습니다.',
+    note: ['taskset -c 1 db → DB는 코어 1만', ' → ', '코어 0이 놂', ' → ', 'DB는 못 옮김', ' → ', '고정 없는 웹만 코어 0으로'],
+    kernelFrom: 1,
+    stations: [['th', '관리자 셸', 'user'], ['sched', '스케줄러', 'kernel'], ['c0', '코어 0', 'cpu'], ['c1', '코어 1', 'cpu']],
+    start: { title: '관리자 셸', lines: ['$ taskset -c 1 ./db', 'DB를 코어 1에만 둠'], holds: { th: '$', c0: '빔', c1: '줄: 웹' } },
+    stages: [
+      { from: 'th', to: 'sched', label: 'taskset -c 1 db', title: '스케줄러', lines: ['DB 허용 코어: 1'],
+        text: '관리자가 DB를 코어 1에만 두라고 정합니다.', holds: { th: 'DB 고정', sched: 'DB 허용: 코어 1' } },
+      { from: 'sched', to: 'c1', label: 'DB', title: '코어 1', lines: ['코어 1 줄: 웹, DB'],
+        text: 'DB가 코어 1의 줄에 들어갑니다. 코어 1에는 이제 일이 둘입니다.', holds: { c1: '줄: 웹 DB' } },
+      { from: 'c0', to: 'sched', label: '줄 비었음', title: '스케줄러', lines: ['코어 0이 일을 찾음', 'DB는 코어 0에서 못 달림'],
+        text: '코어 0이 놀게 되어 코어 1의 줄에서 일을 찾습니다.', holds: { sched: 'DB는 코어 1만' },
+        ask: { q: '코어 0이 DB를 당겨 올 수 있을까요?', choices: ['당겨 온다', '못 당겨 온다', 'DB가 둘로 나뉜다'], answer: '못 당겨 온다', why: 'DB의 허용 코어는 1뿐입니다. 스케줄러는 놀고 있는 코어가 있어도 이 약속을 깨지 않습니다.' } },
+      { from: 'c1', to: 'c0', label: '웹 이동', title: '코어 0', lines: ['고정 없는 웹만 옮김', '코어 1: DB · 코어 0: 웹'],
+        text: '고정이 없는 웹은 코어 0으로 옮겨 갑니다. DB는 코어 1에 그대로 남습니다.', holds: { c0: '웹 실행', c1: 'DB 실행', sched: 'DB 못 옮김 → 웹' } },
+    ],
+  },
+];
+
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const storageKey = 'multicore-lab:v1:step';
+const state = { index: 0, s: 0, playing: !motion.matches, wait: 0, busy: false, wrong: '', solvedText: '' };
+const progress = lesson.map(() => 0);
+const answered = lesson.map(() => new Set());
+let packets = [];
+let frame = null;
+let lastFrame = null;
+let timers = [];
+
+const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
+const flat = (u, v, z = 0) => [14 * u, 7 * v - z];
+const mix = (a, b, t) => a + (b - a) * t;
+const laneHeight = 4;
+const gap = 8.5;   // u between stations (wider than 1.2: two user-space badges such as "PID 101 · fork → 0" sit side by side)
+
+const gridLines = [];
+for (let i = -24; i <= 40; i += 2) gridLines.push(`M${point(i, -24, 0)}L${point(i, 40, 0)}M${point(-24, i, 0)}L${point(40, i, 0)}`);
+byId('grid').setAttribute('d', gridLines.join(''));
+
+
+let plates = [];
+matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
+
+// ---------- Scene: stations in a row ----------
+const shapeOf = { user: [1.1, 12], gate: [.9, 18], kernel: [1.15, 13], ssd: [1.3, 12], screen: [1.2, 22], cpu: [1.15, 9] };
+let views = {};
+const stationU = (id) => lesson[state.index].stations.findIndex(([sid]) => sid === id) * gap;
+function buildScene() {
+  for (const id of ['casings', 'links', 'nodes', 'packets']) byId(id).replaceChildren();
+  plates = [];
+  packets = [];
+  views = {};
+  const stations = lesson[state.index].stations;
+  const far = (stations.length - 1) * gap;
+  // User space and kernel space, split between the first station and the system-call gate.
+  const border = (lesson[state.index].kernelFrom - .5) * gap;
+  const zone = (u0, u1, cls, label) => {
+    svg('polygon', { class: 'zone ' + cls, points: [[u0, -4.6], [u1, -4.6], [u1, 4.6], [u0, 4.6]].map(([u, v]) => flat(u, v).join(',')).join(' ') }, byId('casings'));
+    const t = svg('text', { class: 'zone-label', x: 14 * (u0 + u1) / 2, y: flat(0, 4.6)[1] + 26, 'text-anchor': 'middle' }, byId('casings'));
+    t.textContent = label;
+  };
+  zone(-2.6, border, 'user-zone', '사용자 영역');
+  zone(border, far + 2.6, 'kernel-zone', '커널 영역 · 하드웨어');
+  svg('path', { class: 'border-line', d: `M${flat(border, -4.6).join(' ')}L${flat(border, 4.6).join(' ')}` }, byId('casings'));
+  const d = 'M' + [[0, 0], [far, 0]].map(([u, v]) => flat(u, v, laneHeight).join(' ')).join('L');
+  svg('path', { class: 'casing', d }, byId('casings'));
+  svg('path', { class: 'bus', d }, byId('links'));
+  stations.forEach(([id, name, kind], k) => {
+    const [h, H] = shapeOf[kind];
+    const node = svg('g', { class: `node station ${kind}`, transform: `translate(${flat(k * gap, 0).join(' ')})` }, byId('nodes'));
+    drawShadow(node, h);
+    drawBox(node, h, H);
+    if (kind === 'file') {
+      // Lines of text on a sheet.
+      for (let r = 0; r < 3; r++) {
+        const y = -h + .45 + r * .5;
+        svg('path', { class: 'sheet-line', d: `M${point(-h + .35, y, H)}L${point(h - .35 - (r === 2 ? .5 : 0), y, H)}` }, node);
+      }
+    }
+    if (kind === 'cpu') {
+      const mark = [[-.45, -.45, H], [.45, -.45, H], [.45, .45, H], [-.45, .45, H]];
+      svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, node);
+    }
+    addPlate(node, 'tag station-tag', 0, 14 * h + 16, name, { round: true });
+    const holds = addPlate(node, 'tag holds', 0, -H - 14 * h - 14, '', { pad: 1.2 });
+    views[id] = { node, holds };
+  });
+  const left = -60, right = 14 * far + 60, top = -104, bottom = 70;
+  const scale = Math.min(1.9, 590 / (right - left), 268 / (bottom - top));
+  const x = 310 - scale * (left + right) / 2, y = 140 - scale * (top + bottom) / 2;
+  byId('world').setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+}
+
+// ---------- The moving dot ----------
+function travel(fromU, toU, label, done) {
+  if (motion.matches) { done(); return; }
+  const group = svg('g', { class: 'packet-group' }, byId('packets'));
+  svg('circle', { class: 'packet-halo', r: 8.5 }, group);
+  svg('circle', { class: 'packet', r: 4.4 }, group);
+  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
+  packets.push({ group, fromU, toU, start: performance.now(), ms: 950, done });
+  kick();
+}
+// Callbacks run after the list is updated, so a callback that starts a new trip is not lost.
+function movePackets(now) {
+  const finished = [];
+  packets = packets.filter((packet) => {
+    const t = (now - packet.start) / packet.ms;
+    if (t >= 1) { packet.group.remove(); finished.push(packet.done); return false; }
+    const ease = t * t * (3 - 2 * t);
+    const [x, y] = flat(mix(packet.fromU + 1.3, packet.toU - 1.3, ease), 0, laneHeight);
+    packet.group.setAttribute('transform', `translate(${x} ${y})`);
+    return true;
+  });
+  finished.forEach((done) => done());
+}
+
+// ---------- State after s stages ----------
+function paint() {
+  const step = lesson[state.index];
+  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview');
+  const shown = preview ? step.readingStage : state.s;
+  const { holds, errors, view } = snapshot(shown);
+  const last = step.stages[shown - 1];
+  for (const [id] of step.stations) {
+    setPlate(views[id].holds, holds[id] ?? '');
+    views[id].holds.group.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('error', errors.has(id));
+    views[id].node.classList.toggle('active', last ? last.to === id : id === step.stations[0][0]);
+  }
+  // The still picture says in one line what happened up to the reading stage, so the badges read as its result.
+  byId('example-note')?.remove();
+  if (preview) exampleNote(step.note, step.noteTone);
+  byId('work-title').textContent = view.title;
+  byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
+  byId('work-panel').classList.toggle('error', Boolean(last?.error));
+  byId('readout').textContent = last ? last.text : '"다음 단계"를 누르면 신호가 한 정거장씩 움직입니다.';
+  const finished = state.s >= step.stages.length;
+  const blocked = !state.playing && (finished || state.busy || Boolean(pendingAsk()));
+  byId('run-stage').disabled = blocked;
+  byId('run-stage').textContent = finished ? '끝까지 왔습니다' : '다음 단계';
+  [...byId('stage-list').children].forEach((li, k) => {
+    li.classList.toggle('done', k < state.s);
+    li.classList.toggle('current', k === state.s);
+  });
+}
+
+function runStage(done) {
+  const step = lesson[state.index];
+  const stage = step.stages[state.s];
+  if (!stage || state.busy) return;
+  state.busy = true;
+  views[stage.from].node.classList.add('active');
+  travel(stationU(stage.from), stationU(stage.to), stage.label, () => {
+    state.s++;
+    state.busy = false;
+    paint();
+    byId('announcement').textContent = stage.text;
+    done?.();
+  });
+  paint();
+}
+
+// ---------- Predictions ----------
+function pendingAsk() {
+  if (state.playing) return null;
+  const stage = lesson[state.index].stages[state.s];
+  return stage?.ask && !answered[state.index].has(state.s) ? stage.ask : null;
+}
+const asksCount = () => lesson[state.index].stages.filter((stage) => stage.ask).length;
+function syncTask() {
+  const choices = byId('try-choices');
+  choices.replaceChildren();
+  const ask = pendingAsk();
+  if (ask && !state.busy) {
+    byId('try').classList.remove('solved');
+    byId('try-text').textContent = ask.q;
+    byId('try-result').textContent = state.wrong || state.solvedText;
+    for (const choice of ask.choices) {
+      const button = Object.assign(document.createElement('button'), { type: 'button', className: 'action choice-button', textContent: choice });
+      button.addEventListener('click', () => answer(choice));
+      choices.append(button);
+    }
+  } else if (state.solvedText) {
+    byId('try').classList.add('solved');
+    byId('try-text').textContent = state.solvedText;
+    byId('try-result').textContent = '';
+  } else {
+    byId('try').classList.remove('solved');
+    byId('try-result').textContent = '';
+    byId('try-text').textContent = state.s >= lesson[state.index].stages.length
+      ? (progress[state.index] >= asksCount() ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
+      : '"다음 단계"를 눌러 신호를 한 정거장씩 옮겨 보세요. 중간에 예측 문제가 나옵니다.';
+  }
+}
+function answer(choice) {
+  const ask = pendingAsk();
+  if (!ask) return;
+  if (choice !== ask.answer) {
+    state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`;
+    byId('announcement').textContent = state.wrong;
+    syncTask();
+    return;
+  }
+  state.wrong = '';
+  answered[state.index].add(state.s);
+  progress[state.index] = answered[state.index].size;
+  state.solvedText = `✓ 맞았습니다. ${ask.why}`;
+  byId('announcement').textContent = state.solvedText;
+  runStage(() => syncTask());
+  syncTask();
+}
+
+// Taking over from the demo starts the learner's own run from the beginning, so no prediction is skipped.
+byId('run-stage').onclick = () => {
+  takeOver();
+  if (state.busy || pendingAsk()) { syncTask(); return; }
+  state.solvedText = '';
+  runStage(() => syncTask());
+  syncTask();
+};
+byId('restart').onclick = () => {
+  state.playing = false;
+  resetRun();
+  syncPlayback();
+  byId('announcement').textContent = '처음부터 다시 시작합니다.';
+};
+
+// ---------- Demo ----------
+
+// ---------- Steps and routing ----------
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', `#/multicore/${index + 1}`);
+  showStep(index);
+}
+function routeIndex() {
+  const match = /^#\/multicore\/(\d+)$/.exec(location.hash);
+  const routed = match ? Number(match[1]) - 1 : -1;
+  if (routed >= 0 && routed < lesson.length) return routed;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    const index = Number(stored);
+    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
+  } catch {}
+  return 0;
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const listItem = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.addEventListener('click', () => goToStep(index));
+  listItem.append(button);
+  byId('steps').append(listItem);
+  return button;
+});
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+motion.addEventListener('change', () => {
+  if (!motion.matches) state.playing = true;
+  syncPlayback();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+const initial = routeIndex();
+history.replaceState(null, '', `#/multicore/${initial + 1}`);
+state.index = -1;
+showStep(initial, false);
+</script>
+</body>
+</html>

@@ -33,7 +33,7 @@ window.lessonText = {
   '스케줄러 · 컴파일러 실행': 'Scheduler · run the compiler', '타이머 · 11 · 10': 'Timer · 11 · 10', '타이머 · A 12 · B 12.2': 'Timer · A 12 · B 12.2', '프로세스 B · 4ms 실행': 'Process B · ran 4 ms',
   '마감 11 < 13': 'Deadline 11 < 13', '1ms 실행': 'Ran 1 ms', '11 · 10': '11 · 10',
   '+4ms': '+4 ms', '+12ms': '+12 ms', '+1ms': '+1 ms', 'B 고름': 'Pick B', 'A 고름': 'Pick A', '몫 약 3 : 1': 'Share ≈ 3 : 1',
-  '실행 · 약 100': 'Running · ~100', '잠듦 · 약 101': 'Asleep · ~101', 'vruntime 100': 'vruntime 100', '컴파일러 차례': 'Compiler\'s turn',
+  '실행 · 약 100': 'Running · ~100', '20 → 약 101': '20 → ~101', 'vruntime 100': 'vruntime 100', '컴파일러 차례': 'Compiler\'s turn',
   '실행 · 마감 11': 'Running · deadline 11', '일괄 작업 차례': 'Batch job\'s turn', '11 > 평균 10.5': '11 > average 10.5', '10 · 마감 13': '10 · deadline 13',
   // Step 1
   '가상 실행 시간': 'Virtual runtime',

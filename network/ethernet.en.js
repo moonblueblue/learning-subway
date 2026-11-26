@@ -44,7 +44,7 @@ window.lessonText = {
   'C의 MAC 모름': 'Does not know C\'s MAC', '보냄 · 목적지 ff': 'Sent · to ff', 'ff ← aa': 'ff ← aa',
   'ff → 받음 · 답 안 함': 'ff → take · silent', 'ff → 받음 · 나를 찾음': 'ff → take · looking for me', 'aa ← cc': 'aa ← cc',
   '답장 보냄 · 출발지 cc': 'Reply from cc', '답 받음 · C는 cc': 'Reply: C is cc',
-  '보냄 · FCS 7c3e91a0': 'Sent · FCS 7c3e91a0', '복사 · 잡음': 'Copy · noise', 'FCS 다름 → 버림': 'FCS differs → drop', '버려진 줄 모름': 'Unaware of drop',
+  '보냄 · FCS 7c3e91a0': 'Sent · FCS 7c3e91a0', '복사 · 잡음': 'Copy · noise', '잡음 · FCS 다름 → 버림': 'Noise · FCS differs → drop', '버려진 줄 모름': 'Unaware of drop',
   '보낼 프레임 있음': 'Has a frame to send', '보내는 중': 'Sending', 'A 신호': 'A\'s signal', 'cc ← bb': 'cc ← bb', 'A·B 신호 섞임 · 충돌': 'A and B signals mixed · collision',
   '섞인 신호': 'Mixed signals', '충돌 · 51µs 기다림': 'Collision · waits 51µs', '충돌 · 154µs 기다림': 'Collision · waits 154µs', '깨진 신호 → 버림': 'Broken signal → drop',
   'cc ← aa · 다시': 'cc ← aa · again', '다시 보냄': 'Sent again', 'A 신호만': 'Only A\'s signal', '선이 바쁨 · 더 기다림': 'Busy · waits more',
@@ -86,8 +86,8 @@ window.lessonText = {
   'FCS가 맞지 않는 프레임은 받는 쪽이 조용히 버린다': 'The receiver quietly drops a frame whose FCS does not match',
   '프레임 끝의 FCS는 보내는 쪽이 프레임 앞부분 전체로 계산한 CRC-32 검사값입니다. 받는 쪽은 같은 계산을 다시 해서 FCS와 비교합니다. 케이블의 잡음으로 비트 하나만 바뀌어도 값이 달라지므로, 맞지 않으면 그 프레임을 버립니다. 이더넷은 버렸다고 알리지도 다시 보내지도 않습니다. 잃어버린 데이터를 다시 보내는 일은 5.9 TCP 같은 위 계층이 맡습니다.':
     'The FCS at the end of the frame is a CRC-32 check value the sender computes over everything before it. The receiver does the same computation again and compares the result with the FCS. If noise on the cable flips even one bit the value changes, so a frame that does not match is dropped. Ethernet neither reports the drop nor sends again. Sending lost data again is the job of a higher layer such as 5.9 TCP.',
-  'A의 이름표에 "FCS 7c3e91a0"이 적혀 나가고, 허브에서 C로 가는 길에 잡음이 끼어 C 이름표가 경고 색 "FCS 다름 → 버림"이 됩니다. A 이름표는 "버려진 줄 모름"입니다.':
-    'The frame leaves with "FCS 7c3e91a0" on A\'s badge, noise gets in on the way from the hub to C, and C\'s badge turns to the warning colour "FCS differs → drop". A\'s badge reads "unaware of drop".',
+  'A의 이름표에 "FCS 7c3e91a0"이 적혀 나가고, 허브에서 C로 가는 길에 잡음이 끼어 C 이름표가 경고 색 "잡음 · FCS 다름 → 버림"이 됩니다. A 이름표는 "버려진 줄 모름"입니다.':
+    'The frame leaves with "FCS 7c3e91a0" on A\'s badge, noise gets in on the way from the hub to C, and C\'s badge turns to the warning colour "noise · FCS differs → drop". A\'s badge reads "unaware of drop".',
   'PC A가 FCS 7c3e91a0을 붙여 C에게 프레임을 보냅니다. 허브에서 C로 가는 길에 잡음으로 비트 하나가 바뀌어, C가 다시 계산한 값 5d02b4f1과 맞지 않아 프레임을 버립니다. A에게는 아무 알림도 가지 않습니다.':
     'PC A sends C a frame with FCS 7c3e91a0. On the way from the hub to C, noise flips one bit, so the value C recomputes, 5d02b4f1, does not match and C drops the frame. A gets no notice.',
   'A: FCS 7c3e91a0 붙여 보냄': 'A: sends with FCS 7c3e91a0', '가는 길에 잡음 · 비트 1개 바뀜': 'Noise on the way · 1 bit flipped',

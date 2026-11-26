@@ -1,5 +1,23 @@
 // English for 5.6 Concurrency and locks. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  // Chapter 5 reading diagrams
+  "둘 다 0을 읽으면 마지막 쓰기도 1이다": "If both read 0, the final write is still 1",
+  "T1 · 시각 1": "T1 · t = 1",
+  "0 읽기": "Read 0",
+  "T2 · 시각 2": "T2 · t = 2",
+  "T1 · 시각 3": "T1 · t = 3",
+  "1 쓰기": "Write 1",
+  "T2 · 시각 4": "T2 · t = 4",
+  "공유 count: 0 → 0 → 1 → 1": "Shared count: 0 → 0 → 1 → 1",
+  "T2는 잠금이 풀린 뒤 1을 읽는다": "T2 reads 1 after the lock is released",
+  "T1 · 잠금 보유": "T1 · lock held",
+  "0 읽기 → 1 쓰기": "Read 0 → write 1",
+  "T2 · 대기": "T2 · waiting",
+  "아직 읽지 않음": "No read yet",
+  "T1 · 잠금 해제": "T1 · unlock",
+  "T2 · 잠금 획득": "T2 · lock acquired",
+  "1 읽기 → 2 쓰기": "Read 1 → write 2",
+  "공유 count: 0 → 1 → 2": "Shared count: 0 → 1 → 2",
   // Page
   '동시성과 락 · 레슨 5.6': 'Concurrency and locks · Lesson 5.6',
   '두 스레드가 같은 count에 1씩 더할 때 걸음을 섞어 경쟁 상태를 만들고, 잠금으로 막고, 교착 상태까지 살펴보세요.':

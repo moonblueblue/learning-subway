@@ -415,6 +415,13 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: "시험 요청 한 건이 열린 차단기의 다음 상태를 정한다",
+      description: "시험 요청 한 건이 열린 차단기의 다음 상태를 정한다",
+      nodes: [["test", 114, 155, 158, 61, ["반쯤 열림", "30초 뒤 시험 1개"], "plain"], ["ok", 413, 104, 210, 61, ["성공 → 닫힘", "추천 5개 · 실패 0"], "active"], ["bad", 413, 214, 210, 61, ["실패 → 다시 열림", "대체 상품 · 30초 대기"], "blocked"]],
+      edges: [["test", "ok", "active", "", 0], ["test", "bad", "blocked", "", 0]],
+      labels: [],
+    },
     label: '살짝 열어 보기',
     readingStage: 3,
     note: ['30초 뒤 반쯤 열어 한 번만 시험', ' → ', '추천 5개가 옴', ' → ', '차단기 닫힘'],
@@ -433,6 +440,13 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: "재시도 사이를 벌리고 세 번에서 멈춘다",
+      description: "재시도 사이를 벌리고 세 번에서 멈춘다",
+      nodes: [["t0", 76, 102, 88, 61, ["첫 실패", "0 s"], "plain"], ["t1", 211, 102, 116, 61, ["재시도 1", "≈ 1 s"], "active"], ["t2", 346, 102, 116, 61, ["재시도 2", "≈ 3 s"], "active"], ["t3", 523, 102, 142, 61, ["재시도 3", "≈ 7 s"], "active"]],
+      edges: [["t0", "t1", "plain", "", 0], ["t1", "t2", "plain", "", 0], ["t2", "t3", "plain", "", 0]],
+      labels: [[31, 169, "간격 1·2·4초 · 요청마다 다른 작은 지연 추가"], [31, 196, "A: 1.0 s → 3.1 s → 7.2 s"], [31, 222, "B: 1.2 s → 3.3 s → 7.6 s"], [31, 249, "세 번째까지 실패하면 다시 보내지 않는다."]],
+    },
     label: '다시 시도의 함정',
     readingStage: 3,
     note: ['추천이 잠깐 느려질 때', ' · ', '실패하자마자 3번씩 다시 보내면 400/초 몰림', ' → ', '1초, 2초, 4초…로 늘리고 흩뜨림', ' → ', '추천 서비스 회복'],
@@ -580,7 +594,7 @@ function paint() {
   }
   // The still picture names what failed and what the breaker did, so the badges read as the result of that run.
   byId('example-note')?.remove();
-  if (preview) exampleNote(step.note, step.noteTone);
+  if (preview && !viewport.querySelector('.course-diagram')) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

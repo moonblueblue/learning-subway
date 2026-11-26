@@ -437,6 +437,13 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: "샤드 수가 3 → 4로 늘면 12명 중 9명이 이동한다",
+      description: "샤드 수가 3 → 4로 늘면 12명 중 9명이 이동한다",
+      nodes: [["1", 64, 98, 80, 61, ["1번", "1 → 1"], "muted"], ["2", 162, 98, 80, 61, ["2번", "2 → 2"], "muted"], ["3", 260, 98, 80, 61, ["3번", "0 → 3"], "active"], ["4", 358, 98, 80, 61, ["4번", "1 → 0"], "active"], ["5", 456, 98, 80, 61, ["5번", "2 → 1"], "active"], ["6", 554, 98, 80, 61, ["6번", "0 → 2"], "active"], ["7", 64, 180, 80, 61, ["7번", "1 → 3"], "active"], ["8", 162, 180, 80, 61, ["8번", "2 → 0"], "active"], ["9", 260, 180, 80, 61, ["9번", "0 → 1"], "active"], ["10", 358, 180, 80, 61, ["10번", "1 → 2"], "active"], ["11", 456, 180, 80, 61, ["11번", "2 → 3"], "active"], ["12", 554, 180, 80, 61, ["12번", "0 → 0"], "muted"]],
+      edges: [],
+      labels: [[30, 233, "각 칸: 기존 mod 3 → 새 mod 4"], [30, 257, "1·2·12는 유지 · 이동 9 ÷ 12 = 75%"]],
+    },
     label: '샤드 늘리기',
     readingStage: 2,
     note: ['mod 3을 mod 4로 바꾸면', ' → ', '사용자 7은 샤드 1 → 3', ' · ', '전체 데이터의 약 75%가 이사'],
@@ -615,7 +622,7 @@ function paint() {
   }
   // The still picture names the rule and its result, so the badges read as the result of that run.
   byId('example-note')?.remove();
-  if (preview) exampleNote(step.note, step.noteTone);
+  if (preview && !viewport.querySelector('.course-diagram')) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

@@ -435,6 +435,14 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: "느린 일꾼이 끝날 때까지 모으기는 기다린다",
+      description: "느린 일꾼이 끝날 때까지 모으기는 기다린다",
+      nodes: [],
+      edges: [],
+      bars: [[145, 117, 200, 18, "", "active"], [345, 117, 200, 18, "", "muted"], [145, 159, 200, 18, "", "active"], [345, 159, 200, 18, "", "muted"], [145, 201, 400, 18, "", "active"]],
+      labels: [[30, 67, "준비 시간 0초 · 사진 9장 · 3장씩"], [145, 101, "0"], [340, 101, "3초"], [548, 101, "6초"], [30, 131, "일꾼 1"], [30, 173, "일꾼 2"], [30, 215, "일꾼 3"], [391, 131, "대기 3초"], [391, 173, "대기 3초"], [285, 253, "6초에 사진 9장 모음"]],
+    },
     label: '가장 느린 일꾼',
     readingStage: 5,
     note: ['일꾼 3만 한 장에 2초', ' → ', '일꾼 1·2는 3초에 끝나고 기다림', ' → ', '전체는 가장 느린 6초'],
@@ -582,7 +590,7 @@ function paint() {
   }
   // The still picture names how the work was split and timed, so the badges read as the result of that run.
   byId('example-note')?.remove();
-  if (preview) exampleNote(step.note, step.noteTone);
+  if (preview && !viewport.querySelector('.course-diagram')) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

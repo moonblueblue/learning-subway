@@ -2,6 +2,16 @@
 // Hangul syllables this lesson encodes (가, 각, 쁁 …) are data and stay as they are.
 window.lessonKeep = ['[가-힣](?=$|\\s|[’”"·,)])', '^[가-힣]$'];
 window.lessonText = {
+  "A와 a는 32 자리 하나만 다르다": "A and a differ only in the 32 place",
+  "ASCII에서 A는 65번, a는 97번입니다. 같은 글자표를 쓰고 32 자리만 켜면 65에 32가 더해져 97이 됩니다. 숫자 글자 0도 48번이라는 문자 번호가 있습니다.": "In ASCII, A is 65 and a is 97. The same character table is used, and turning on the 32 place adds 32 to 65, making 97. The character 0 has its own number, 48.",
+  "같은 ASCII 표 · 32 자리만 달라짐": "Same ASCII table · only the 32 place changes",
+  "‘가’의 문자 번호는 8비트에 들어가지 않는다": "The character number for 가 does not fit in 8 bits",
+  "유니코드": "Unicode",
+  "문자 번호": "Character number",
+  "8비트 최댓값": "8-bit maximum",
+  "같은 문자 번호도 UTF-8에 맞게 부호화한다": "UTF-8 encodes the character number for storage",
+  "1바이트": "1 byte",
+  "3바이트": "3 bytes",
   // Page
   '문자의 표현 · 레슨 0.2': 'Representing text · Lesson 0.2',
   '글자에 번호를 붙이고, 그 번호를 비트로 바꾸는 방법(ASCII, 유니코드, UTF-8)을 스위치로 살펴보세요.':

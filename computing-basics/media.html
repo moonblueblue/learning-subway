@@ -111,7 +111,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .timeline{padding:15px 18px}
 .timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:0;margin:0;gap:8px}
 .steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
 .steps button:hover{border-color:var(--accent)}
 .steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
@@ -149,6 +149,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .mode-group{transition:opacity .37s}
 .mode-group.hidden{opacity:0;pointer-events:none}
 .pixel{stroke:#14231f;stroke-width:.5;cursor:pointer;transition:fill .15s}
+.pixel.rgb-focus{stroke:#fff;stroke-width:1.8}
 .row-label{font:600 10.5px var(--mono);fill:#43574f;text-anchor:end;dominant-baseline:central}
 @media(max-width:600px){.row-label{font-size:11.5px}}
 .wave{fill:none;stroke:var(--response);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
@@ -385,14 +386,14 @@ const lesson = [
   },
   {
     label: '색',
-    example: ["R 255 · G 0 · B 0", "빨강 빛만 켬", "빨간 픽셀"],
+    example: ["R 255 · G 160 · B 0", "빨강과 초록 빛을 함께 켬", "주황 픽셀 하나"],
     mode: 'color',
     title: '색은 빛 세 가지의 세기다',
     body: '화면의 색은 빨강, 초록, 파랑 빛을 얼마나 세게 켜는지로 만듭니다. 세 빛의 세기를 각각 0–255(8비트)로 정하므로 픽셀 하나의 색은 3바이트입니다. 빨강과 초록을 함께 켜면 노랑, 셋을 모두 켜면 흰색이 됩니다.',
     takeaway: '세 기둥의 높이가 빛의 세기이고, 화면 전체가 세 빛을 섞은 색으로 칠해집니다. 아래 줄에서 세 값이 3바이트로 바뀌는 것을 볼 수 있습니다.',
     description: '빨강, 초록, 파랑 세 기둥이 화면으로 이어져 있습니다. 기둥 높이는 각 빛의 세기(0–255)이고, 화면은 세 빛을 섞은 색으로 칠해집니다.',
     initial: () => ({ color: [...colors.orange] }),
-    demo: { frames: ['red', 'green', 'blue', 'yellow', 'white'].map((name) => ({ color: [...colors[name]] })), interval: 2400 },
+    demo: { frames: ['orange', 'red', 'green', 'blue', 'yellow', 'white'].map((name) => ({ color: [...colors[name]] })), interval: 2400 },
     tasks: [
       { text: '노란색을 만들어 보세요. 빨강과 초록만 255로 켭니다.', check: (s) => sameColor(s.color, [255, 255, 0]) },
       { text: '자홍색(빨강 + 파랑)을 만들어 보세요.', check: (s) => sameColor(s.color, [255, 0, 255]) },
@@ -400,8 +401,23 @@ const lesson = [
     ],
   },
   {
-    label: '소리',
-    example: ["연속인 소리 파형", "일정 간격으로 높이 측정", "가까운 단계 값으로 기록"],
+    label: "측정 시각",
+    example: ["연속인 소리 파형", "일정 간격으로 높이 측정", "측정점 16개"],
+    mode: 'sound',
+    showSampleTimes: true,
+    title: "같은 간격으로 파형을 잰다",
+    body: '소리는 공기가 떨리는 파동입니다. 컴퓨터는 아주 짧은 간격마다 파동의 높이를 재서 수로 적는데, 이것을 샘플링이라고 합니다. 자주 잴수록(샘플 수), 높이를 잘게 나눌수록(샘플 크기) 원래 소리에 가까워지지만 비트도 그만큼 늘어납니다. 음악 CD는 1초에 44,100번, 16비트씩 잽니다.',
+    takeaway: "시간은 왼쪽에서 오른쪽으로 흐릅니다. 자주 재면 같은 파형에서 더 많은 점을 얻습니다.",
+    description: '부드러운 소리 파형 곡선 아래에 같은 간격으로 막대가 서 있습니다. 막대 높이는 그 순간 잰 파형의 높이를 정해진 단계로 반올림한 값입니다.',
+    initial: () => ({ samples: 16, depth: 4 }),
+    demo: { sweep: true, interval: 90 },
+    tasks: [
+      { text: '샘플을 32개로 늘려 보세요. 막대가 곡선에 더 가까워집니다.', check: (s) => s.samples === 32 },
+    ],
+  },
+  {
+    label: "높이 기록",
+    example: ["같은 측정점 16개", "각 높이를 0~15로 기록", "16 × 4비트 = 64비트"],
     mode: 'sound',
     title: '소리는 잘게 나눠 높이를 적는다',
     body: '소리는 공기가 떨리는 파동입니다. 컴퓨터는 아주 짧은 간격마다 파동의 높이를 재서 수로 적는데, 이것을 샘플링이라고 합니다. 자주 잴수록(샘플 수), 높이를 잘게 나눌수록(샘플 크기) 원래 소리에 가까워지지만 비트도 그만큼 늘어납니다. 음악 CD는 1초에 44,100번, 16비트씩 잽니다.',
@@ -559,7 +575,7 @@ const soundSpan = 17;           // floor units covered by the samples
 const soundStart = -10.5;
 const waveHeight = 92;          // pixels from the floor to the highest point
 const wave = (t) => .5 + .34 * Math.sin(2 * Math.PI * 1.5 * t) + .12 * Math.sin(2 * Math.PI * 4.5 * t + .6);
-let soundGroup, soundBars, wavePath, playheadLine;
+let soundGroup, soundBars, wavePath, playheadLine, timeAxis;
 function buildSound() {
   soundGroup = svg('g', { class: 'mode-group', 'data-mode': 'sound' }, byId('nodes'));
   soundBars = svg('g', {}, soundGroup);
@@ -569,6 +585,7 @@ function buildSound() {
     curve.push(project(c, c, 4 + waveHeight * wave(t)).join(' '));
   }
   wavePath = svg('path', { class: 'wave', d: 'M' + curve.join('L') }, soundGroup);
+  timeAxis = svg('g', {}, soundGroup);
   playheadLine = svg('path', { class: 'playhead' }, soundGroup);
   const [x, y] = project(soundStart + soundSpan + 1.2, soundStart + soundSpan + 1.2, 0);
   addPlate(soundGroup, 'tag', x, y + 10, '소리 파형');
@@ -576,10 +593,24 @@ function buildSound() {
 }
 function drawSamples() {
   soundBars.replaceChildren();
+  timeAxis.replaceChildren();
+  const showTimes = step().showSampleTimes;
+  if (showTimes) {
+    const [x1, y1] = project(soundStart, soundStart, -16);
+    const [x2, y2] = project(soundStart + soundSpan, soundStart + soundSpan, -16);
+    svg('path', { d: `M${x1},${y1} H${x2} m-5,-4 l5,4 -5,4`, class: 'wave' }, timeAxis);
+    svg('text', { x: x2 - 12, y: y2 + 20, class: 'sample-value' }, timeAxis).textContent = '시간';
+  }
   const n = state.samples, levels = 2 ** state.depth;
   const w = Math.min(.36, soundSpan / n * .3);
   for (let k = 0; k < n; k++) {
     const t = (k + .5) / n, c = soundStart + soundSpan * t;
+    if (showTimes) {
+      const [x, y] = project(c, c, 4 + waveHeight * wave(t));
+      svg('line', { x1: x, x2: x, y1: y, y2: project(c, c, -16)[1], stroke: '#54746b', 'stroke-dasharray': '3 3' }, soundBars);
+      svg('circle', { cx: x, cy: y, r: 4, fill: '#08796b' }, timeAxis);
+      continue;
+    }
     const level = Math.round(wave(t) * (levels - 1));
     const H = 4 + waveHeight * level / (levels - 1);
     const node = svg('g', { class: 'node sample' + (k === state.playhead ? ' active' : ''), transform: `translate(${project(c, c)})` }, soundBars);
@@ -617,7 +648,9 @@ function paintSummary() {
     parts = [['칸 하나의 색 = '], [state.color.join(' · '), 'bits now'], [' → 8비트 × 3 = 3바이트']];
   } else {
     const levels = 2 ** state.depth;
-    parts = [[`샘플 ${state.samples}개`, 'now'], [' × '], [`${state.depth}비트`, 'now'], [` (높이 0~${levels - 1}) = ${state.samples * state.depth}비트`]];
+    parts = s.showSampleTimes
+      ? [[`샘플 ${state.samples}개`, 'now'], [' · 일정 간격']]
+      : [[`샘플 ${state.samples}개`, 'now'], [' × '], [`${state.depth}비트`, 'now'], [` (높이 0~${levels - 1}) = ${state.samples * state.depth}비트`]];
     const c = soundStart + soundSpan / 2;
     const [x, y] = project(c, c, waveHeight + 34);
     at = [x, y];
@@ -647,6 +680,7 @@ function paint() {
   if (s.mode === 'pixels') {
     const shades = pixelShades[s.levels];
     pixelViews.forEach((pixel, i) => {
+      pixel.classList.remove('rgb-focus');
       pixel.setAttribute('fill', shades[state.image[i]]);
       pixel.classList.toggle('lit', state.image[i] > 0);
     });
@@ -658,7 +692,11 @@ function paint() {
     });
   } else if (s.mode === 'color') {
     const fill = `rgb(${state.color.join(',')})`;
-    pixelViews.forEach((pixel) => { pixel.setAttribute('fill', fill); pixel.classList.remove('lit'); });
+    pixelViews.forEach((pixel, index) => {
+      pixel.setAttribute('fill', fill);
+      pixel.classList.remove('lit');
+      pixel.classList.toggle('rgb-focus', index === 27);
+    });
     rowLabels.forEach((label) => { label.textContent = ''; });
     towers.forEach((tower, i) => {
       tower.target = 6 + state.color[i] / 255 * 70;

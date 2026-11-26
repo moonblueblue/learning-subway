@@ -1,5 +1,11 @@
 // English for 0.4 Compression. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "평균 하나로 펼치면 원래 무늬가 사라진다": "Expanding the average loses the original pattern",
+  "저장: 평균 1": "Stored: mean 1",
+  "원본 · 8비트": "Original · 8 bits",
+  "저장값 · 2비트": "Stored · 2 bits",
+  "펼친 뒤": "Expanded",
+  "8×8 전체: 16묶음 × 2비트 = 32비트": "Full 8×8: 16 groups × 2 bits = 32 bits",
   // Page
   '압축 · 레슨 0.4': 'Compression · Lesson 0.4',
   '반복을 세어 적는 압축, 압축이 안 되는 경우, 조금 버리는 손실 압축을 픽셀 화면으로 직접 살펴보세요.':

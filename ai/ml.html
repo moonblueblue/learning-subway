@@ -391,9 +391,16 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: "같은 세 행에서 가중치만 바꾼다",
+      description: "같은 세 행에서 가중치만 바꾼다",
+      nodes: [["data", 112, 124, 161, 80, ["기온 → 실제", "20→40 · 25→50", "30→60"], "plain"], ["old", 313, 124, 178, 80, ["w = 1", "20, 25, 30", "평균제곱오차 641.67"], "plain"], ["new", 513, 124, 178, 80, ["w = 1.64", "32.8, 41, 49.2", "평균제곱오차 83.16"], "active"]],
+      edges: [["data", "old", "active", "", 0], ["old", "new", "active", "", 0]],
+      labels: [[30, 218, "각 예측과 실제의 차이를 제곱한 뒤 평균 낸다."], [30, 245, "같은 계산을 반복하며 w는 2에 가까워지고 오차는 줄어든다."]],
+    },
     label: '틀린 만큼 고치기',
     readingStage: 6,
-    note: ['w = 1로 예측 20, 25, 30', ' → ', '정답 40, 50, 60과 비교해 오차 642', ' → ', 'w를 1.64로 키우니 오차 82'],
+    note: ['w = 1로 예측 20, 25, 30', ' → ', '정답 40, 50, 60과 비교해 오차 642', ' → ', "w = 1.64에서 평균제곱오차 83.16"],
     title: '예측하고, 틀린 정도를 재고, w를 조금 고친다',
     body: '컴퓨터는 w = 1처럼 아무 값에서 시작합니다. 예시마다 예측하고 정답과 비교해 오차를 잽니다. 오차가 줄어드는 방향으로 w를 조금 옮기고 다시 예측합니다. 이것을 되풀이하는 것이 학습이고, 오차가 줄어드는 쪽으로 내려가는 방법을 경사 하강법이라 합니다. 한 번에 얼마나 옮길지(학습률)는 사람이 정합니다.',
     takeaway: 'w가 1 → 1.64 → 1.87로 2에 다가갑니다. 2와의 차이는 매번 3분의 1쯤으로, 오차(차이 제곱의 평균)는 8분의 1쯤으로 줄어듭니다. 컴퓨터는 "두 배"라는 규칙을 몰랐지만, 틀린 만큼 고치기를 되풀이해 찾아냈습니다.',
@@ -407,8 +414,8 @@ const lesson = [
       { from: 'pred', to: 'loss', label: '비교', title: '오차 재기', lines: ['차이: −20, −25, −30 → 모두 너무 작게 예측', '오차(차이 제곱의 평균) ≈ 642'], text: '예측이 모두 정답보다 작습니다.', holds: { loss: '오차 642' },
         ask: { q: '오차를 줄이려면 w를 어느 쪽으로 고쳐야 할까요?', choices: ['키운다', '줄인다'], answer: '키운다', why: '예측이 모두 너무 작으니 w를 키워야 예측이 커집니다.' } },
       { from: 'loss', to: 'model', label: 'w를 키워', title: 'w 고치기', lines: ['w: 1 → 1.64'], text: '오차가 줄어드는 쪽으로 w를 조금 옮깁니다.', holds: { model: 'w = 1.64' } },
-      { from: 'model', to: 'pred', label: 'w = 1.64', title: '예측 (2회)', lines: ['예측: 32.8, 41.0, 49.3개'], text: '다시 예측하니 정답에 가까워졌습니다.', holds: { pred: '32.8, 41.0, 49.3' } },
-      { from: 'pred', to: 'loss', label: '비교', title: '오차 재기', lines: ['오차 ≈ 82 (642에서 줄어듦)'], text: '오차가 크게 줄었습니다.', holds: { loss: '오차 82' } },
+      { from: 'model', to: 'pred', label: 'w = 1.64', title: '예측 (2회)', lines: ["예측: 32.8, 41.0, 49.2개"], text: '다시 예측하니 정답에 가까워졌습니다.', holds: { pred: "32.8, 41.0, 49.2" } },
+      { from: 'pred', to: 'loss', label: '비교', title: '오차 재기', lines: ["오차 83.16 (약 642에서 줄어듦)"], text: '오차가 크게 줄었습니다.', holds: { loss: "오차 83.16" } },
       { from: 'loss', to: 'model', label: 'w를 키워', title: 'w 고치기', lines: ['w: 1.64 → 1.87 → (되풀이) → 2에 가까워짐'], text: '되풀이할수록 w가 2에 다가갑니다.', holds: { model: 'w = 1.87' },
         ask: { q: '학습률을 너무 크게 하면 어떻게 될까요?', choices: ['w가 2를 지나쳐 왔다 갔다 하거나 멀어진다', '언제나 더 빨리 정확해진다'], answer: 'w가 2를 지나쳐 왔다 갔다 하거나 멀어진다', why: '한 번에 너무 많이 옮기면 목표를 건너뛰어 오차가 오히려 커질 수 있습니다.' } },
     ],
@@ -432,21 +439,50 @@ const lesson = [
     ],
   },
   {
-    label: '외우기와 치우침',
-    readingStage: 4,
-    note: ['여름(20–33°C) 예시로만 배운 w = 2', ' → ', '−5°C에 그대로 쓰면 −10개', ' → ', '본 적 없는 겨울에서는 엉뚱함'],
+    readingDiagram: {
+      title: "여름 범위 안에서도 외우면 새 점에서 틀린다",
+      description: "여름 범위 안에서도 외우면 새 점에서 틀린다",
+      nodes: [["axisY", 74, 65, 0, 0, [], "plain"], ["axisO", 74, 230, 0, 0, [], "plain"], ["axisX", 320, 230, 0, 0, [], "plain"], ["x20", 90, 210, 8, 8, [], "active"], ["x30", 312, 90, 8, 8, [], "active"], ["x25low", 201, 186, 10, 10, [], "blocked"], ["hold22", 134, 186, 9, 9, [], "plain"], ["hold28", 268, 114, 9, 9, [], "plain"], ["fit", 464, 102, 252, 61, ["학습점을 잇는 꺾은선", "학습 MSE 0 · 시험 MSE 5.76"], "blocked"], ["line", 464, 193, 252, 61, ["단순한 직선 y=2x", "학습 MSE 12 · 시험 MSE 0"], "active"]],
+      edges: [["axisO", "axisY", "plain", "", 0], ["axisO", "axisX", "plain", "", 0], ["x20", "x30", "active", "", 0], ["x20", "x25low", "blocked", "", 0], ["x25low", "x30", "blocked", "", 0]],
+      labels: [[30, 73, "판매량"], [80, 249, "20°"], [190, 249, "25°"], [299, 249, "30°"], [97, 205, "40"], [174, 196, "44"], [288, 86, "60"], [342, 255, "흰 점은 학습에 쓰지 않은 시험점"]],
+    },
+    label: "과적합",
+    readingStage: 2,
+    note: ["같은 여름 학습점", " → ", "외운 모델의 학습 오차 0", " → ", "새 여름 점에서는 오차 발생"],
     noteTone: 'bad',
-    title: '너무 외우거나 치우친 예시로 배우면 틀린다',
-    body: '모델을 아주 복잡하게 만들면, 예시의 작은 우연(그날 비가 와서 덜 팔림)까지 외워 학습 예시는 완벽히 맞히지만 처음 보는 데이터는 틀립니다. 이것을 과적합이라 합니다. 또 예시가 여름 데이터뿐이라면 모델은 겨울을 본 적이 없어 영하의 기온에 음수 판매량을 예측합니다. 모델은 보여 준 예시만큼만 압니다.',
-    takeaway: '과적합은 시험 데이터 점수로 알아채고, 모델을 단순하게 하거나 예시를 늘려 막습니다. 데이터의 치우침은 모델에 그대로 옮겨지므로, 어떤 예시로 배웠는지가 결과만큼 중요합니다(0.8 컴퓨팅의 영향).',
-    description: '같은 고리 장면입니다. 너무 복잡한 모델과 여름 예시만으로 배운 모델을 시험합니다.',
+    title: "학습점에 꼭 맞는 규칙도 처음 보는 점에서 틀릴 수 있다",
+    body: "한날의 우연까지 따라가도록 모델이 너무 복잡하면, 학습 오차가 작아도 처음 보는 데이터에서 더 틀릴 수 있습니다. 이를 과적합이라 합니다. 같은 여름 기온 범위 안에서 두 모델을 비교합니다.",
+    takeaway: "두 모델은 같은 학습점에서 시작합니다. 학습 오차와 별도로, 학습에 쓰지 않은 여름 점의 오차를 비교해야 합니다.",
+    description: "같은 축과 입력에서 학습점 오차와 새 점 오차를 비교합니다.",
     stations: LOOP,
     links: LOOP_LINKS,
-    start: { title: '두 가지 문제', lines: ['① 점마다 꺾이는 복잡한 모델 (예시 12개를 모두 정확히 통과)', '② 예시가 여름(20–33°C)뿐인 모델'], holds: { data: '여름 예시 12개' } },
+    start: {"title": "같은 여름 범위", "lines": ["학습: 20→40, 25→44, 30→60"], "holds": {"data": "학습점 3개"}},
     stages: [
-      { from: 'data', to: 'model', label: '예시 12개', title: '① 복잡한 모델', lines: ['학습 예시 12개: 오차 0 (모두 정확히 맞힘)', '비 온 날 덜 팔린 것까지 외움'], text: '복잡한 모델이 학습 예시를 완벽히 맞힙니다.', holds: { model: '학습 오차 0' } },
+      { from: 'data', to: 'model', label: "학습점 3개", title: '① 복잡한 모델', lines: ["학습점 3개: 오차 0 (모두 정확히 맞힘)", '비 온 날 덜 팔린 것까지 외움'], text: '복잡한 모델이 학습 예시를 완벽히 맞힙니다.', holds: { model: '학습 오차 0' } },
       { from: 'model', to: 'pred', label: '시험 데이터', title: '① 시험해 보니', lines: ['시험 오차: 단순한 모델보다 훨씬 큼'], error: 'pred', text: '처음 보는 데이터에서는 크게 틀립니다.', holds: { pred: '시험 오차 큼' },
         ask: { q: '학습 오차는 0인데 시험 오차가 크다면?', choices: ['예시를 외웠다(과적합)', '완벽한 모델이다'], answer: '예시를 외웠다(과적합)', why: '본 것만 맞히고 처음 보는 것을 못 맞히면 규칙이 아니라 우연까지 외운 것입니다.' } },
+    ],
+  },
+  {
+    readingDiagram: {
+      title: "여름 범위 밖에서는 같은 직선이 음수를 낸다",
+      description: "여름 범위 밖에서는 같은 직선이 음수를 낸다",
+      nodes: [["start", 66, 167, 0, 0, [], "plain"], ["end", 578, 167, 0, 0, [], "plain"], ["winter", 86, 167, 12, 26, [""], "blocked"], ["summer", 456, 167, 190, 26, [""], "active"], ["neg", 86, 230, 118, 61, ["판매량 예측", "−10"], "blocked"]],
+      edges: [["start", "end", "plain", "", 0], ["winter", "neg", "blocked", "", 0]],
+      labels: [[30, 82, "같은 식: 판매량 = 2 × 기온"], [60, 138, "겨울 −5°C"], [363, 138, "여름 학습 범위"], [354, 198, "20°C"], [518, 198, "33°C"]],
+    },
+    label: "학습 범위 밖",
+    readingStage: 2,
+    note: ['여름(20–33°C) 예시로만 배운 w = 2', ' → ', '−5°C에 그대로 쓰면 −10개', ' → ', '본 적 없는 겨울에서는 엉뚱함'],
+    noteTone: 'bad',
+    title: "여름만 본 모델에 겨울 기온을 주면",
+    body: "이번에는 단순한 식이어도 예측이 틀립니다. 여름 자료에서 배운 식에 겨울 기온을 넣으면, 학습에서 보지 못한 입력 범위로 계산이 나갑니다.",
+    takeaway: "예측 −10개는 판매량으로 해석할 수 없습니다. 어떤 범위의 예시로 배웠는지 확인하고 겨울 예시를 따로 모아 평가해야 합니다.",
+    description: "여름 기온 범위와 그 밖에 놓인 겨울 기온을 한 축에 표시합니다.",
+    stations: LOOP,
+    links: LOOP_LINKS,
+    start: {"title": "여름 자료만", "lines": ["학습 범위: 20~33°C"], "holds": {"data": "여름만"}},
+    stages: [
       { from: 'data', to: 'model', label: '여름 예시', title: '② 여름만 본 모델', lines: ['판매량 = 2 × 기온을 배움'], reset: 'pred', text: '여름 예시만으로 배웠습니다.', holds: { model: 'w = 2' } },
       { from: 'model', to: 'pred', label: '−5°C?', title: '② 겨울을 예측', lines: ['−5°C → 2 × (−5) = −10개 ???', '팔린 개수가 음수일 수는 없음'], error: 'pred', text: '본 적 없는 겨울에서는 엉뚱한 답을 냅니다.', holds: { pred: '−10개 ???' },
         ask: { q: '이 엉뚱한 예측의 원인은?', choices: ['예시가 여름에 치우쳐 겨울을 배운 적이 없어서', '계산 실수'], answer: '예시가 여름에 치우쳐 겨울을 배운 적이 없어서', why: '모델은 보여 준 범위 안에서만 믿을 만합니다. 데이터의 치우침은 모델의 치우침이 됩니다.' } },
@@ -619,7 +655,7 @@ function paint() {
   }
   // The still picture names the examples, the rule learned and the result, so the badges read as the result of that run.
   byId('example-note')?.remove();
-  if (preview) exampleNote(step.note, step.noteTone);
+  if (preview && !viewport.querySelector('.course-diagram')) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

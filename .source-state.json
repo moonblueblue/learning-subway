@@ -1,0 +1,28 @@
+{
+  "base_source": "76c46fd92f5d60ba7e8edac255225a20b33ccc0f",
+  "lessons": {
+    "ai/ml": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "ai/neural": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "computing-basics/bits": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "computing-basics/compress": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "computing-basics/computer": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "computing-basics/impact": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "computing-basics/internet": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "computing-basics/media": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "computing-basics/search": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "computing-basics/text": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "projects/capstone": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "projects/tinydb": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "projects/trackproject": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "system-design/breaker": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "system-design/cache": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "system-design/consensus": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "system-design/loadbalancing": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "system-design/parallel": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "system-design/queue": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "system-design/ratelimit": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "system-design/replication": "6948c631d27cf02ddc17090753609254d12b0b3b",
+    "system-design/sharding": "6948c631d27cf02ddc17090753609254d12b0b3b"
+  },
+  "source_tip": "6948c631d27cf02ddc17090753609254d12b0b3b"
+}

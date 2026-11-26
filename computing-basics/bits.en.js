@@ -1,5 +1,20 @@
 // English for 0.1 Bits and binary. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "1 자리에서 2 자리로 올림이 간다": "A carry moves from the ones place to the twos place",
+  "5에서 1을 더합니다. 오른쪽 1 자리는 이미 켜져 있으므로 0으로 바꾸고, 바로 왼쪽 2 자리를 켭니다. 켜져 있던 4 자리는 그대로입니다.": "Add 1 to 5. The ones place is already on, so turn it off and turn on the twos place just to its left. The fours place stays on.",
+  "결과는 4 + 2 = 6입니다. 4 자리는 그대로이고 오른쪽 두 자리만 바뀌었습니다.": "The result is 4 + 2 = 6. The fours place stays the same and only the two rightmost places change.",
+  "1 자리를 끄고 2 자리를 켬": "Turn off ones and turn on twos",
+  "더하기 전": "Before",
+  "더한 뒤": "After",
+  "올림": "Carry",
+  "4 자리": "Fours",
+  "2 자리": "Twos",
+  "1 자리": "Ones",
+  "5에서 1을 더해 6을 만들어 보세요.": "Add 1 to 5 to make 6.",
+  "여덟 자리가 모두 1이면 255": "Eight ones make 255",
+  "전체 256가지": "256 possible values",
+  "0도 포함 · 8비트 = 1바이트": "Includes 0 · 8 bits = 1 byte",
+  "켜진 여덟 자릿값을 모두 더함": "Add all eight place values that are on",
   // Page
   '비트와 이진수 · 레슨 0.1': 'Bits and binary · Lesson 0.1',
   '스위치 8개를 켜고 끄며 비트와 이진수가 숫자를 나타내는 방법을 살펴보세요.': 'Turn eight switches on and off to see how bits and binary represent numbers.',

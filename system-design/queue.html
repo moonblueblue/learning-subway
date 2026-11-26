@@ -394,6 +394,13 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: "주문 완료가 메일 발송보다 먼저다",
+      description: "주문 완료가 메일 발송보다 먼저다",
+      nodes: [["order", 109, 105, 154, 61, ["주문 #501 저장", "0.05 s"], "plain"], ["queued", 310, 105, 174, 61, ["쪽지 #501 대기", "사용자 완료 · 0.06초"], "active"], ["mail", 512, 105, 150, 61, ["일꾼이 발송", "약 3초 뒤"], "active"]],
+      edges: [["order", "queued", "active", "", 0], ["queued", "mail", "active", "", 0]],
+      labels: [[29, 210, "0.06초에는 주문은 완료, 메일은 아직 대기 중이다."]],
+    },
     label: '큐에 넣기',
     readingStage: 5,
     note: ['주문 저장', ' → ', '큐에 쪽지 "메일 501"을 넣고 바로 답 (0.06초)', ' → ', '일꾼 1이 나중에 꺼내 보냄'],
@@ -414,23 +421,28 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: "들어온 양에서 처리한 양을 빼면 큐 잔량이다",
+      description: "들어온 양에서 처리한 양을 빼면 큐 잔량이다",
+      nodes: [["in", 104, 124, 145, 61, ["누적 유입", "10,000"], "active"], ["done", 310, 124, 145, 61, ["이미 처리", "2,000"], "active"], ["left", 511, 124, 145, 61, ["큐 잔량", "8,000"], "blocked"]],
+      edges: [["in", "done", "plain", "−", 0], ["done", "left", "plain", "=", 0]],
+      labels: [[30, 196, "세일 10초 동안 1,000개/초 유입 · 200개/초 처리"], [30, 236, "10초 후 유입 0 · 8,000 ÷ 200 = 40초 더 처리"]],
+    },
     label: '몰려도 버티기',
-    readingStage: 4,
-    note: ['세일 10초 동안 쪽지 1만 개가 큐에 쌓임', ' → ', '일꾼 2를 더해 200/초', ' → ', '세일이 끝나면 큐가 줄어듦'],
+    readingStage: 3,
+    note: ["10초 동안 들어온 주문 10,000개", " → ", "동시에 2,000개 처리", " → ", "잔량 8,000개 · 40초 더 처리"],
     title: '큐가 몰린 요청을 담아 두고 일꾼은 제 속도로 처리한다',
-    body: '반짝 세일로 1초에 주문이 1,000개 들어옵니다. 일꾼 하나는 1초에 메일 100개를 보낼 수 있습니다. 바로 부르는 방식이라면 메일 서비스가 넘쳐 주문까지 실패했겠지만, 큐는 넘치는 쪽지를 담아 두고 일꾼은 제 속도로 꺼내 갑니다. 큐 길이를 보고 일꾼을 늘리면 더 빨리 비웁니다.',
-    takeaway: '10초 세일 동안 쪽지 10,000개가 쌓였고, 일꾼 하나라면 100초, 둘이면 50초 만에 모두 보냅니다. 주문은 세일 내내 빠르게 성공했습니다. 큐가 갑작스러운 몰림을 흡수하는 완충기 역할을 합니다.',
+    body: "세일이 시작되면 초당 주문 1,000개가 들어옵니다. 일꾼 둘은 시작부터 각각 초당 100개를 처리합니다. 초당 800개가 큐에 새로 남으므로, 큐 길이는 전체 주문 수보다 적습니다.",
+    takeaway: "10초 동안 들어온 10,000개 중 2,000개가 이미 처리되어 8,000개가 남습니다. 유입이 끝나면 초당 200개씩 줄어 40초 더 걸립니다.",
     description: '사용자, 주문 API, 메시지 큐 뒤에 일꾼 둘이 위아래로 놓이고, 둘 다 메일 서비스로 이어집니다.',
     stations: FAN,
     links: FAN_LINKS,
-    start: { title: '반짝 세일 10초', lines: ['주문 1,000/초 · 일꾼 하나 메일 100/초'], holds: { user: '1,000/초', q: '비어 있음' } },
+    start: {"title": "세일 시작", "lines": ["초당 1,000개 유입 · 일꾼 둘은 각각 100개 처리"], "holds": {"user": "1,000/s", "q": "잔량 0", "w1": "100/s", "w2": "100/s"}},
     stages: [
-      { from: 'user', to: 'api', label: '주문 1만 개', title: '세일 10초', lines: ['10초 동안 주문 10,000개 · 모두 0.06초 만에 성공'], text: '주문은 빠르게 저장되고 쪽지만 쌓입니다.', holds: { api: '1만 개 저장' } },
-      { from: 'api', to: 'q', label: '쪽지 1만 개', title: '큐가 담아 둠', lines: ['큐: 쪽지 10,000개'], text: '큐에 쪽지 1만 개가 쌓였습니다.', holds: { q: '쪽지 10,000' },
-        ask: { q: '일꾼 하나(100/초)가 쪽지 10,000개를 모두 처리하는 데 걸리는 시간은?', choices: ['100초', '10초', '1,000초'], answer: '100초', why: '10,000 ÷ 100 = 100초입니다.' } },
-      { from: 'q', to: 'w1', label: '100/초', title: '일꾼 1', lines: ['일꾼 1이 1초에 100개씩 꺼냄'], text: '일꾼 1이 제 속도로 꺼냅니다.', holds: { w1: '100/초' } },
-      { from: 'q', to: 'w2', label: '100/초', title: '일꾼 2 추가', lines: ['큐가 길어서 일꾼 2를 더 띄움', '둘이 합쳐 200/초 → 50초면 다 비움'], text: '큐 길이를 보고 일꾼을 늘립니다.', holds: { w2: '100/초', q: '줄어드는 중' } },
-      { from: 'w2', to: 'mail', label: '메일', title: '메일 발송', lines: ['메일 서비스는 200/초만 받음 → 넘치지 않음'], text: '메일 서비스는 감당할 수 있는 속도로만 일을 받습니다.', holds: { mail: '200/초' } },
+      {"from": "api", "to": "q", "label": "10,000개 유입", "title": "10초간 받은 총량", "lines": ["세일 10초 동안 들어온 총량은 10,000개입니다."], "text": "세일 10초 동안 들어온 총량은 10,000개입니다.", "holds": {"api": "총 10,000개"}},
+      {"from": "q", "to": "w1", "label": "100/s", "title": "일꾼 1 처리", "lines": ["일꾼 1이 세일 중 1,000개를 처리합니다."], "text": "일꾼 1이 세일 중 1,000개를 처리합니다.", "holds": {"w1": "1,000"}},
+      {"from": "q", "to": "w2", "label": "100/s", "title": "일꾼 2도 동시 처리", "lines": ["두 일꾼이 이미 2,000개를 처리해 잔량은 8,000개입니다."], "text": "두 일꾼이 이미 2,000개를 처리해 잔량은 8,000개입니다.", "holds": {"w2": "1,000", "q": "잔량 8,000"}},
+      {"from": "w2", "to": "mail", "label": "200/s", "title": "유입이 없으면 줄이 비워짐", "lines": ["유입이 끝나면 8,000 ÷ 200 = 40초 더 걸립니다."], "text": "유입이 끝나면 8,000 ÷ 200 = 40초 더 걸립니다.", "holds": {"q": "40초 뒤 0"}, "ask": {"q": "세일이 끝날 때 큐 잔량은?", "choices": ["8,000", "10,000"], "answer": "8,000", "why": "전체 유입에서 이미 처리한 2,000개를 뺍니다."}},
     ],
   },
   {
@@ -578,7 +590,7 @@ function paint() {
   }
   // The still picture names what was queued and handled, so the badges read as the result of that run.
   byId('example-note')?.remove();
-  if (preview) exampleNote(step.note, step.noteTone);
+  if (preview && !viewport.querySelector('.course-diagram')) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

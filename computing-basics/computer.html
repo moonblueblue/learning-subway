@@ -166,6 +166,23 @@ const lesson = [
     links: [['keyboard', 'cpu', 'request'], ['cpu', 'screen', 'request']],
   },
   {
+    readingDiagram: {
+      title: "CPU는 메모리에 쓰고 읽은 뒤 계산한다",
+      description: "CPU는 메모리에 쓰고 읽은 뒤 계산한다",
+      nodes: [
+        ["input", 76, 101, 92, 48, ["키보드", "2, 3"], "plain"],
+        ["recv", 260, 101, 104, 48, ["CPU", "2, 3"], "plain"],
+        ["write", 485, 101, 134, 50, ["메모리", "2, 3"], "active"],
+        ["cpu", 485, 201, 134, 52, ["CPU", "2 + 3 = 5"], "active"],
+        ["out", 260, 201, 104, 52, ["화면", "5"], "plain"],
+      ],
+      edges: [
+        ["input", "recv", "active", "① 입력"],
+        ["recv", "write", "active", "② 쓰기"],
+        ["write", "cpu", "active", "③ 읽기"],
+        ["cpu", "out", "active", "④ 표시"],
+      ],
+    },
     label: '메모리',
     example: ["숫자 2와 3 입력", "메모리에서 읽고 더함", "화면에 5"],
     title: '처리하는 동안 값은 메모리에 둔다',
@@ -207,7 +224,7 @@ const lesson = [
     takeaway: '점선을 따라 저장장치 → 메모리 → CPU로 데이터가 돌아오고, 실선으로 화면에 갑니다.',
     description: '저장장치의 파일이 메모리로 올라오고, CPU가 메모리에서 읽어 화면에 보냅니다.',
     nodes: ['keyboard', 'cpu', 'screen', 'memory', 'disk'],
-    badges: { disk: { text: '파일 5', tone: 'ok' }, memory: { text: '5 불러옴', tone: 'ok' }, screen: { text: '5 다시 표시', tone: 'ok' } },
+    badges: { keyboard: { text: '다시 켬 · 파일 열기', tone: 'ok' }, disk: { text: '파일 5', tone: 'ok' }, memory: { text: '5 불러옴', tone: 'ok' }, screen: { text: '5 다시 표시', tone: 'ok' } },
     links: [['disk', 'memory', 'response'], ['memory', 'cpu', 'response'], ['cpu', 'screen', 'request']],
   },
 ];

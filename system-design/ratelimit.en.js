@@ -112,4 +112,12 @@ window.lessonText = {
   '토큰 봇 0 · 지우 5': 'Tokens Bot 0 · Jiwoo 5',
   '토큰 봇 0 · 지우 4': 'Tokens Bot 0 · Jiwoo 4',
   '토큰 봇 3 · 지우 5': 'Tokens Bot 3 · Jiwoo 5',
+  "두 제한기가 하나의 잔량을 함께 차감한다": "Both limiters debit the same balance",
+  "제한기 A": "Limiter A",
+  "제한기 B": "Limiter B",
+  "공유 저장소": "Shared store",
+  "같은 키 · 5 → 0": "Same key · 5 → 0",
+  "5개 통과": "5 allowed",
+  "5개 거절 · 429": "5 blocked · 429",
+  "요청마다 한 개씩 원자적으로 차감 · 다른 사용자 잔량 유지": "Debit one atomically per request · other users stay unchanged",
 };

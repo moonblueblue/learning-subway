@@ -1,5 +1,17 @@
 // English for 0.3 Images and sound. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "시간": "Time",
+  "· 일정 간격": "· equal intervals",
+  "빨강과 초록 빛을 함께 켬": "Red and green light mix",
+  "주황 픽셀 하나": "One orange pixel",
+  "측정 시각": "Sample times",
+  "같은 간격으로 파형을 잰다": "Measure the wave at equal time intervals",
+  "측정점 16개": "16 samples",
+  "시간은 왼쪽에서 오른쪽으로 흐릅니다. 자주 재면 같은 파형에서 더 많은 점을 얻습니다.": "Time moves from left to right. Measuring more often gives more points from the same wave.",
+  "높이 기록": "Record heights",
+  "같은 측정점 16개": "The same 16 samples",
+  "각 높이를 0~15로 기록": "Record each height as 0–15",
+  "16 × 4비트 = 64비트": "16 × 4 bits = 64 bits",
   // Page
   '이미지와 소리 · 레슨 0.3': 'Images and sound · Lesson 0.3',
   '픽셀과 색, 소리 샘플이 어떻게 숫자가 되는지 직접 칠하고 바꿔 보며 살펴보세요.': 'Paint and change pixels, colours and sound samples to see how they become numbers.',

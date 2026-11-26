@@ -432,6 +432,13 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: "두 제한기가 하나의 잔량을 함께 차감한다",
+      description: "두 제한기가 하나의 잔량을 함께 차감한다",
+      nodes: [["a", 110, 103, 148, 61, ["제한기 A", "5 req"], "plain"], ["b", 110, 196, 148, 61, ["제한기 B", "5 req"], "plain"], ["store", 311, 150, 183, 61, ["공유 저장소", "같은 키 · 5 → 0"], "active"], ["result", 511, 150, 145, 61, ["5개 통과", "5개 거절 · 429"], "blocked"]],
+      edges: [["a", "store", "active", "", 0], ["b", "store", "active", "", 0], ["store", "result", "active", "", 0]],
+      labels: [[30, 257, "요청마다 한 개씩 원자적으로 차감 · 다른 사용자 잔량 유지"]],
+    },
     label: '어디서 셀까',
     readingStage: 4,
     note: ['리미터가 여러 대여도 공유 저장소에서 함께 셈', ' → ', '봇 10개 중 5개만 통과 · 5개는 429'],
@@ -575,7 +582,7 @@ function paint() {
   }
   // The still picture names what was sent, passed and refused, so the badges read as the result of that run.
   byId('example-note')?.remove();
-  if (preview) exampleNote(step.note, step.noteTone);
+  if (preview && !viewport.querySelector('.course-diagram')) exampleNote(step.note, step.noteTone);
   byId('work-title').textContent = view.title;
   byId('work').replaceChildren(...view.lines.map((line) => Object.assign(document.createElement('li'), { textContent: line })));
   byId('work-panel').classList.toggle('error', Boolean(last?.error));

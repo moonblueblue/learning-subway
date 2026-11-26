@@ -432,17 +432,25 @@ const lesson = [
   {
     label: '트랜잭션',
     readingDiagram: {
-      title: "COMMIT이 기록된 묶음만 확정된다",
-      description: "7번은 두 변경과 COMMIT까지 기록되어 확정됩니다. 8번은 민지 변경만 기록된 채 전원이 꺼져 확정되지 않습니다.",
+      title: "COMMIT이 디스크에 남은 뒤에 두 키를 공개한다",
+      description: "로그 0과 1은 보류되고 줄 2의 커밋이 지속화되면 둘을 공개합니다. 전원이 꺼져 줄 3만 남은 8번은 미확정입니다.",
       nodes: [
-        ["7", 155, 95, 248, 26, ["#7 · 민지 70000 · 서준 130000"]],
-        ["c", 454, 95, 221, 46, ["COMMIT #7", "두 변경 모두 확정"], "active"],
-        ["8", 155, 206, 248, 26, ["#8 · 민지 40000 한 줄만 기록"]],
-        ["x", 454, 206, 221, 46, ["전원 꺼짐 · COMMIT 없음", "#8은 확정되지 않음"], "blocked"],
+        ["l0", 103, 78, 168, 26, ["0 · #7 민지 70000"]],
+        ["l1", 103, 117, 168, 26, ["1 · #7 서준 130000"]],
+        ["l2", 103, 156, 168, 26, ["2 · COMMIT #7"], "active"],
+        ["l3", 103, 224, 168, 26, ["3 · #8 민지 40000"], "blocked"],
+        ["wait", 319, 98, 162, 26, ["#7 두 줄 보류"]],
+        ["commit", 319, 157, 174, 26, ["디스크에 확정"], "active"],
+        ["idx", 524, 153, 164, 68, ["인덱스 함께 공개", "민지→0 · 서준→1", "완료 응답 #7"], "active"],
+        ["cut", 423, 224, 264, 48, ["전원 꺼짐 · 디스크 줄 3 남음", "COMMIT 없음 · #8 미확정"], "blocked"],
       ],
       edges: [
-        ["7", "c", "active"],
-        ["8", "x", "blocked"],
+        ["l0", "wait", "plain"],
+        ["l1", "wait", "plain"],
+        ["wait", "commit", "plain"],
+        ["l2", "commit", "active"],
+        ["commit", "idx", "active"],
+        ["l3", "cut", "blocked"],
       ],
     },
     readingStage: 3,
@@ -453,42 +461,55 @@ const lesson = [
     stations: ST,
     start: { title: '계좌', lines: ['민지=100000 · 서준=100000 (확정된 줄)'], holds: { log: '확정된 줄들' } },
     stages: [
-      { from: 'cmd', to: 'log', label: '#7 두 줄', title: '트랜잭션 #7', lines: ['#7 민지=70000', '#7 서준=130000'], text: '트랜잭션 #7의 두 줄을 붙입니다.', holds: { log: '#7 두 줄' } },
-      { from: 'eng', to: 'log', label: 'COMMIT #7', title: '확정', lines: ['COMMIT #7 (디스크에 확실히 씀)', '→ 인덱스 고치고 "완료"'], text: 'COMMIT 줄을 쓴 뒤에야 확정입니다.', holds: { log: '#7 확정', idx: '민지, 서준 → #7 줄' } },
-      { from: 'cmd', to: 'log', label: '#8 첫 줄', title: '트랜잭션 #8', lines: ['#8 민지=40000', '(서준 줄과 COMMIT을 쓰기 전에 전원이 꺼짐)'], error: 'log', text: '#8은 첫 줄만 쓰고 꺼졌습니다.', holds: { log: '#8 COMMIT 없음' },
+      { from: 'cmd', to: 'log', label: '줄 0·1 보류', title: '트랜잭션 #7', lines: ['줄 0 · #7 민지=70000', '줄 1 · #7 서준=130000'], text: '트랜잭션 #7의 두 줄을 붙입니다.', holds: { log: '줄 0·1 보류' } },
+      { from: 'eng', to: 'log', label: 'COMMIT #7', title: '확정', lines: ['줄 2 · COMMIT #7을 디스크에 확실히 씀', '인덱스: 민지→0, 서준→1 · 완료 응답'], text: 'COMMIT 줄을 쓴 뒤에야 확정입니다.', holds: { log: '#7 확정', idx: '민지→0 · 서준→1' } },
+      { from: 'cmd', to: 'log', label: '#8 첫 줄', title: '트랜잭션 #8', lines: ['줄 3 · #8 민지=40000', '(서준 줄과 COMMIT을 쓰기 전에 전원이 꺼짐)'], error: 'log', text: '#8은 첫 줄만 쓰고 꺼졌습니다.', holds: { log: '#8 COMMIT 없음' },
         ask: { q: '다시 켰을 때 민지의 값은?', choices: ['70000 (#8은 COMMIT이 없어 무시)', '40000 (마지막 줄)'], answer: '70000 (#8은 COMMIT이 없어 무시)', why: '"나중 줄이 이긴다"는 확정된 줄끼리의 규칙입니다. COMMIT 없는 #8의 줄은 없었던 일입니다.' } },
     ],
   },
   {
     label: '다시 켜기',
     readingDiagram: {
-      title: "재시작 때 로그를 읽고 확정된 줄로 복구한다",
-      description: "디스크 로그를 다시 읽어 7번의 확정된 값만 인덱스에 반영하고 미확정 8번은 건너뜁니다.",
+      title: "디스크 로그에서 빈 RAM 인덱스를 재건한다",
+      description: "스캔은 줄 0부터 3까지 읽습니다. 줄 2에서 7번을 반영하고 파일 끝에서 8번의 보류만 버립니다.",
       nodes: [
-        ["7", 137, 91, 198, 26, ["#7 · COMMIT 있음"], "active"],
-        ["8", 137, 201, 198, 26, ["#8 · COMMIT 없음"], "blocked"],
-        ["inc", 344, 91, 135, 26, ["반영"], "active"],
-        ["skip", 344, 201, 135, 26, ["건너뜀"], "blocked"],
-        ["idx", 527, 91, 138, 66, ["복구한 최신 값", "민지 70000", "서준 130000"], "active"],
+        ["l0", 103, 78, 168, 26, ["0 · #7 민지 70000"]],
+        ["l1", 103, 117, 168, 26, ["1 · #7 서준 130000"]],
+        ["l2", 103, 156, 168, 26, ["2 · COMMIT #7"], "active"],
+        ["l3", 103, 224, 168, 26, ["3 · #8 민지 40000"], "blocked"],
+        ["pending", 309, 97, 174, 48, ["스캔 0 → 1 · 보류표", "#7 → 줄 0, 1"]],
+        ["apply", 309, 156, 174, 26, ["스캔 2 · #7 반영"], "active"],
+        ["discard", 309, 224, 174, 48, ["스캔 3 → EOF", "#8 보류만 버림"], "blocked"],
+        ["empty", 519, 87, 169, 26, ["RAM 인덱스 처음 ∅"]],
+        ["index", 519, 156, 169, 26, ["민지→0 · 서준→1"], "active"],
+        ["get", 519, 224, 169, 48, ["GET 민지", "줄 0 → 70000"], "active"],
       ],
       edges: [
-        ["7", "inc", "active"],
-        ["inc", "idx", "active"],
-        ["8", "skip", "blocked"],
+        ["l0", "pending", "plain"],
+        ["l1", "pending", "plain"],
+        ["pending", "apply", "plain"],
+        ["l2", "apply", "active"],
+        ["apply", "index", "active"],
+        ["empty", "index", "active"],
+        ["index", "get", "active"],
+        ["l3", "discard", "blocked"],
+      ],
+      labels: [
+        [25, 265, "파일에는 줄 3도 그대로 남음"],
       ],
     },
     readingStage: 2,
     title: '파일을 처음부터 읽어 인덱스를 다시 만든다',
     body: '전원이 꺼지면 메모리의 해시 인덱스는 사라집니다. 하지만 데이터 파일이 디스크에 남아 있으니, 켤 때 파일을 처음부터 끝까지 한 번 읽으며 인덱스를 다시 만듭니다. 확정된 줄만 반영하고, COMMIT 없는 트랜잭션의 줄은 버립니다. 파일이 너무 커지면 키마다 최신 줄만 모아 새 파일로 다시 쓰고(8A.3의 합치기) 옛 파일을 지웁니다.',
-    takeaway: '파일을 한 번 훑어 인덱스가 민지 → 70000(#7), 서준 → 130000(#7)으로 다시 만들어졌고 #8의 줄은 버려졌습니다. 파일에 붙이기, 해시 인덱스, COMMIT 줄, 다시 읽기, 이 네 가지가 작은 데이터베이스의 전부입니다. 실제 데이터베이스도 이 생각을 크게 키운 것입니다.',
+    takeaway: '파일을 한 번 훑어 인덱스가 민지 → 줄 0, 서준 → 줄 1로 다시 만들어졌습니다. 줄 3은 디스크에 남고 그 줄의 변경만 무시합니다. 파일에 붙이기, 해시 인덱스, COMMIT 줄, 다시 읽기, 이 네 가지가 작은 데이터베이스의 전부입니다. 실제 데이터베이스도 이 생각을 크게 키운 것입니다.',
     description: '같은 장면입니다. 다시 켠 작은 DB가 데이터 파일을 읽어 인덱스를 되살립니다.',
     stations: ST,
     start: { title: '다시 켬', lines: ['해시 인덱스: 비어 있음 (메모리라 사라짐)', '데이터 파일: 그대로 (디스크)'], holds: { idx: '비어 있음', log: '모든 줄 남음' } },
     stages: [
-      { from: 'log', to: 'eng', label: '처음부터 읽기', title: '파일 훑기', lines: ['… 민지=100000, 서준=100000', '#7 민지=70000, #7 서준=130000, COMMIT #7 → 반영', '#8 민지=40000, COMMIT 없음 → 버림'], text: '파일을 처음부터 읽으며 확정된 줄만 반영합니다.', holds: { eng: '훑는 중' } },
-      { from: 'eng', to: 'idx', label: '다시 만들기', title: '인덱스 복구', lines: ['민지 → #7 줄 (70000)', '서준 → #7 줄 (130000)'], text: '인덱스가 다시 만들어졌습니다.', holds: { idx: '민지, 서준 → #7' },
+      { from: 'log', to: 'eng', label: '처음부터 읽기', title: '파일 훑기', lines: ['… 민지=100000, 서준=100000', '#7 민지=70000, #7 서준=130000, COMMIT #7 → 반영', '줄 3 · #8 민지=40000, COMMIT 없음 → 버림'], text: '파일을 처음부터 읽으며 확정된 줄만 반영합니다.', holds: { eng: '로그를 읽음' } },
+      { from: 'eng', to: 'idx', label: '다시 만들기', title: '인덱스 복구', lines: ['민지 → 줄 0 (70000)', '서준 → 줄 1 (130000)'], text: '인덱스가 다시 만들어졌습니다.', holds: { idx: '민지→0 · 서준→1' },
         ask: { q: '인덱스를 다시 만드는 시간은 무엇에 비례할까요?', choices: ['데이터 파일의 줄 수', '키의 길이'], answer: '데이터 파일의 줄 수', why: '파일을 처음부터 끝까지 한 번 읽기 때문입니다. 그래서 옛 줄을 치우는 합치기가 켜는 시간도 줄여 줍니다.' } },
-      { from: 'cmd', to: 'out', label: 'GET 민지', title: '확인', lines: ['GET 민지 → 70000 ✓', '전원이 꺼져도 확정된 값은 남고, 반쪽 트랜잭션은 사라짐'], text: '확정된 값이 그대로 돌아옵니다.', holds: { out: '70000 ✓' } },
+      { from: 'cmd', to: 'out', label: 'GET 민지', title: '확인', lines: ['GET 민지 → 줄 0 → 70000 ✓', '확정된 값은 남고, 디스크 줄 3은 조회에서 제외'], text: '확정된 값이 그대로 돌아옵니다.', holds: { out: '70000 ✓' } },
     ],
   },
 ];
@@ -519,7 +540,7 @@ let plates = [];
 matchMedia('(max-width: 600px)').addEventListener('change', () => { plates.forEach(sizePlate); restagger(); });
 addEventListener('course:lang', () => requestAnimationFrame(restagger));
 // When neighbouring badges come within 8 of each other, every other station's badge moves up one row
-// (3.8 staggerRow). Otherwise "#8 COMMIT 없음" covered the end of "민지, 서준 → #7" (9.2 scene review).
+// (3.8 staggerRow). Otherwise "#8 COMMIT 없음" covered the end of "민지→0 · 서준→1" (9.2 scene review).
 function staggerRow(row, shift) {
   const boxes = row.map((plate, k) => {
     plate.group.removeAttribute('transform');

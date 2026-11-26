@@ -328,8 +328,26 @@ function makeNumbers(seed) {
 }
 
 const sizes = [16, 1000, 1000000];
+const workedSorted = [1, 4, 9, 10, 16, 24, 26, 30, 35, 37, 41, 43, 61, 81, 84, 99];
+const workedShuffled = [61, 4, 99, 35, 26, 81, 16, 43, 9, 1, 30, 10, 41, 24, 37, 84];
 const lesson = [
   {
+    readingDiagram: {
+      title: "정렬되지 않으면 앞에서부터 확인한다",
+      description: "정렬되지 않으면 앞에서부터 확인한다",
+      nodes: [
+        ["start", 87, 143, 104, 48, ["첫 상자", "61"], "plain"],
+        ["middle", 300, 143, 158, 48, ["4 → 99 → … → 37", "차례대로 확인"], "plain"],
+        ["end", 526, 143, 116, 48, ["16번째 상자", "84"], "active"],
+      ],
+      edges: [
+        ["start", "middle", "active", ""],
+        ["middle", "end", "active", ""],
+      ],
+      labels: [
+        [30, 226, "찾는 수 84 · 연 상자 16개"],
+      ],
+    },
     label: '하나씩 찾기',
     example: ["목표가 마지막 상자에 있음", "첫 칸부터 하나씩 열기", "16칸이면 최대 16회"],
     mode: 'linear',
@@ -343,12 +361,59 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: "30보다 큰 84는 오른쪽 절반에 있다",
+      description: "30보다 큰 84는 오른쪽 절반에 있다",
+      nodes: [
+        ["left", 134, 151, 177, 50, ["1–8", "모두 30 이하"], "blocked"],
+        ["mid", 309, 98, 101, 45, ["8번 상자", "30 < 84"], "active"],
+        ["right", 482, 151, 176, 50, ["9–16", "여기서 계속 찾기"], "active"],
+      ],
+      edges: [
+        ["mid", "left", "blocked", "제외"],
+        ["mid", "right", "active", "유지"],
+      ],
+      labels: [
+        [34, 222, "같은 수 16개를 오름차순으로 정렬 · 목표 84"],
+      ],
+    },
     label: '반씩 줄이기',
     example: ["정렬된 16칸", "가운데보다 큰 값 찾기", "왼쪽 범위를 한꺼번에 제외"],
     mode: 'binary',
     title: '정렬되어 있으면 반씩 버릴 수 있다',
     body: '이번에는 수가 작은 것부터 차례로 놓여 있습니다. 가운데 상자를 열었는데 찾는 수보다 작으면, 그 왼쪽 상자는 볼 필요도 없이 모두 버릴 수 있습니다. 매번 남은 상자의 가운데를 열면 16개가 8개, 4개, 2개, 1개로 줄어, 많아야 5번이면 찾습니다. 이것을 이진 탐색이라고 합니다.',
     takeaway: '상자를 열면 찾는 수보다 작은지 큰지 표시되고, 볼 필요 없는 쪽 상자들이 가라앉아 흐려집니다. 남은 상자의 가운데를 열어 보세요.',
+    description: '닫힌 상자 16개가 작은 수부터 차례로 놓여 있습니다. 상자를 열면 찾는 수가 그보다 작은지 큰지 알려 주고, 남은 범위 밖의 상자는 가라앉습니다.',
+    tasks: [
+      { text: '5번 이내로 찾는 수를 찾아 보세요. 남은 상자의 가운데를 여세요.', check: (s) => s.found && s.opened <= 5, result: (s) => `${s.opened}번 만에 찾았습니다` },
+      { text: '새 문제로 바꿔 다시 5번 이내로 찾아 보세요.', check: (s) => s.found && s.opened <= 5 && s.round > 0, result: (s) => `${s.opened}번 만에 찾았습니다` },
+    ],
+  },
+  {
+    readingDiagram: {
+      title: "9–16 → 13–16 → 15–16 → 발견",
+      description: "9–16 → 13–16 → 15–16 → 발견",
+      nodes: [
+        ["s1", 98, 150, 128, 64, ["9–16", "12번: 43 < 84"], "plain"],
+        ["s2", 245, 150, 123, 64, ["13–16", "14번: 81 < 84"], "plain"],
+        ["s3", 393, 150, 121, 64, ["15–16", "15번: 84 = 84"], "active"],
+        ["res", 543, 150, 124, 58, ["발견", "총 4회"], "active"],
+      ],
+      edges: [
+        ["s1", "s2", "active", ""],
+        ["s2", "s3", "active", ""],
+        ["s3", "res", "active", ""],
+      ],
+      labels: [
+        [33, 231, "처음 비교까지: 8번 → 12번 → 14번 → 15번"],
+      ],
+    },
+    label: "판단 반복",
+    example: ["남은 상자 9~16번", "남은 범위의 가운데 비교를 반복", "15번의 84를 4번 만에 발견"],
+    mode: 'binary',
+    title: "남은 범위만 다시 반으로 줄인다",
+    body: "남은 9~16번에서 가운데인 12번을 엽니다. 43은 84보다 작으므로 13~16번만 남깁니다. 14번의 81도 작아서 15~16번만 남고, 15번에서 84를 찾습니다.",
+    takeaway: "남은 9~16번에서 가운데인 12번을 엽니다. 43은 84보다 작으므로 13~16번만 남깁니다. 14번의 81도 작아서 15~16번만 남고, 15번에서 84를 찾습니다.",
     description: '닫힌 상자 16개가 작은 수부터 차례로 놓여 있습니다. 상자를 열면 찾는 수가 그보다 작은지 큰지 알려 주고, 남은 범위 밖의 상자는 가라앉습니다.',
     tasks: [
       { text: '5번 이내로 찾는 수를 찾아 보세요. 남은 상자의 가운데를 여세요.', check: (s) => s.found && s.opened <= 5, result: (s) => `${s.opened}번 만에 찾았습니다` },
@@ -609,9 +674,10 @@ function readout() {
 
 // ---------- Searching ----------
 function newRound() {
-  const { sorted, shuffled, random } = makeNumbers(state.round * 7919 + state.index * 104729 + 17);
-  state.numbers = step().mode === 'binary' ? sorted : shuffled;
-  state.target = sorted[Math.floor(random() * count)];
+  const { sorted, shuffled, random } = makeNumbers(state.round * 7919 + 17);
+  const binary = step().mode === 'binary';
+  state.numbers = state.round === 0 ? (binary ? workedSorted : workedShuffled) : (binary ? sorted : shuffled);
+  state.target = state.round === 0 ? 84 : sorted[Math.floor(random() * count)];
   state.openedSet = new Set();
   state.opened = 0;
   state.lo = 0;
@@ -625,8 +691,8 @@ function newRound() {
     while (lo <= hi) {
       const mid = (lo + hi) >> 1;
       state.plan.push(mid);
-      if (sorted[mid] === state.target) break;
-      if (sorted[mid] < state.target) lo = mid + 1; else hi = mid - 1;
+      if (state.numbers[mid] === state.target) break;
+      if (state.numbers[mid] < state.target) lo = mid + 1; else hi = mid - 1;
     }
   } else state.plan = [...Array(count).keys()];
 }

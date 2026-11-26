@@ -1,5 +1,17 @@
 // English for 0.5 Parts of a computer. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "① 입력": "① Input",
+  "② 쓰기": "② Write",
+  "③ 읽기": "③ Read",
+  "④ 표시": "④ Display",
+  "CPU는 메모리에 쓰고 읽은 뒤 계산한다": "The CPU writes, reads, then calculates",
+  "키보드": "Keyboard",
+  "메모리": "Memory",
+  "화면": "Screen",
+  "① 쓰기": "① Write",
+  "② 읽기": "② Read",
+  "③ 표시": "③ Display",
+  "다시 켬 · 파일 열기": "Power on · open file",
   // Page
   '컴퓨터의 구성 · 레슨 0.5': 'Parts of a computer · Lesson 0.5',
   '키보드에서 CPU, 메모리, 저장장치, 화면까지 데이터가 오가는 길을 단계별로 살펴보세요.':

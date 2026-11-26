@@ -541,6 +541,10 @@ const courseCatalog = {
             {
               "id": "1.3",
               "ref": "os/interrupts"
+            },
+            {
+              "id": "1.4",
+              "ref": "os/exec"
             }
           ],
           "tracks": []
@@ -1117,6 +1121,18 @@ const courseCatalog = {
             "computer-architecture/cpu"
           ],
           "page": "os/interrupts.html"
+        },
+        {
+          "id": "exec",
+          "title": "프로그램 실행",
+          "titleEn": "Running a program",
+          "question": "셸에 명령을 치면 새 프로세스는 어떻게 태어날까?",
+          "format": "실험",
+          "requires": [
+            "os/process",
+            "os/syscall"
+          ],
+          "page": "os/exec.html"
         },
         {
           "id": "virtual",

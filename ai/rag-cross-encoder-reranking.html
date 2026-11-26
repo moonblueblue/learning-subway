@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 후보에서 문장과 질의를 함께 읽으면 순위가 왜 바뀌나요?">
+<title>교차 인코더 재정렬 · F10</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-cross-encoder-reranking.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F10</p><h1>교차 인코더 재정렬</h1><p>같은 후보에서 문장과 질의를 함께 읽으면 순위가 왜 바뀌나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">교차 인코더 재정렬</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-cross-encoder-reranking-1"><svg><g>
+<text x="308" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">Q1 · G7 reset time</text>
+<text x="125" y="119" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">1 · B · FAQ-02 v1</text>
+<rect x="233" y="94" width="359" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="412.5" y="121" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">reset reset reset training</text>
+<text x="125" y="183" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">2 · A · OPS-17 v2</text>
+<rect x="233" y="158" width="359" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="412.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">reset → wait 30 seconds</text>
+<text x="310" y="249" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">reset 빈도 · B 3 &gt; A 1</text>
+</g></svg></template>
+<template id="figure-rag-cross-encoder-reranking-2"><svg><g>
+<text x="308" y="78" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">Q1 + 구절 쌍</text>
+<text x="140" y="112" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">이전</text>
+<text x="491" y="112" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">재정렬 뒤</text>
+<line x1="214.0" y1="146.0" x2="412.0" y2="211.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="412.0,211.0 399.15146941026,212.9787020201423 402.8241736742717,201.79107980053732" fill="#a34123" stroke="none" stroke-width="1"/>
+<line x1="214.0" y1="216.0" x2="412.0" y2="141.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="412.0,141.0 403.2466589456111,150.61140054235332 399.0756199028928,139.59985746957702" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="127" y="152" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1 · B #training</text>
+<text x="127" y="223" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2 · A #reset</text>
+<text x="511" y="148" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">1 · A #reset · .91</text>
+<text x="511" y="218" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">2 · B #training · .12</text>
+<text x="308" y="259" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">순위만 교환 · 같은 후보 2개</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "초기 순위",
+    "title": "질의 용어가 많이 등장하는 FAQ가 먼저 나옵니다",
+    "body": "이 예시 후보의 첫 점수는 키워드 일치 빈도입니다. B에는 reset이 세 번 나오지만 교육 항목이며, A에는 한 번만 나오지만 30초 대기 절차가 있습니다.",
+    "takeaway": "첫 순위 B와 둘째 A는 모두 후보에 남습니다.",
+    "example": [
+      "Q1 · G7 reset time",
+      "reset 출현 수",
+      "B 3 > A 1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "초기 순위",
+      "description": "첫 순위 B와 둘째 A는 모두 후보에 남습니다.",
+      "figure": "figure-rag-cross-encoder-reranking-1"
+    },
+    "quiz": [
+      "출현 빈도 검색에서 A도 후보 목록에 있으면 다시 평가할 수 있나요?",
+      "예, A도 다시 점수를 받음",
+      "아니요, 초기 1위만 가능",
+      "재정렬 순서에 들어가는 것은 가져온 후보 전체입니다."
+    ]
+  },
+  {
+    "label": "같이 읽기",
+    "title": "질의에 답하는 30초 구절이 새 1위입니다",
+    "body": "교차 인코더는 질의와 각 구절을 한 입력으로 읽습니다. 가정한 모델 점수가 A .91, B .12이면 A가 앞섭니다. 이 숫자는 실제 모델 실행 결과 대신 순서 변화를 보여 주는 예시 점수입니다.",
+    "takeaway": "같은 두 후보의 연결선이 교차하고 A가 #reset을 유지합니다.",
+    "example": [
+      "초기 B→A",
+      "질의·구절을 묶은 모형 점수",
+      "A .91 > B .12"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "같이 읽기",
+      "description": "같은 두 후보의 연결선이 교차하고 A가 #reset을 유지합니다.",
+      "figure": "figure-rag-cross-encoder-reranking-2"
+    },
+    "quiz": [
+      "첫 후보 목록에서 C가 빠지면 재정렬 점수로 C를 1위에 올릴 수 있나요?",
+      "불가 · 후보에 없음",
+      "가능 · 점수만 높으면 됨",
+      "재정렬은 받은 집합 안에서 순서를 바꿉니다."
+    ]
+  }
+];
+const slug = 'rag-cross-encoder-reranking';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

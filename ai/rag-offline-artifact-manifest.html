@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="외부망 차단 전에 무엇을 반입 목록에 닫아 둬야 하나요?">
+<title>모델·런타임·의존성의 반입 목록 · F23</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-offline-artifact-manifest.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F23</p><h1>모델·런타임·의존성의 반입 목록</h1><p>외부망 차단 전에 무엇을 반입 목록에 닫아 둬야 하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">모델·런타임·의존성의 반입 목록</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-offline-artifact-manifest-1"><svg><g>
+<text x="310" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B1 · 반입 목록</text>
+<rect x="46" y="120" width="167" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="129.5" y="147" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">runner R1</text>
+<rect x="385" y="118" width="177" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="473.5" y="145" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">encoder E1 ∅</text>
+<line x1="220" y1="140" x2="287" y2="140" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="308" y="147" font-size="27" font-weight="650" fill="#a34123" text-anchor="middle">×</text>
+<rect x="46" y="194" width="167" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="129.5" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">docs D2</text>
+<rect x="385" y="194" width="177" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="473.5" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">policy P1</text>
+<text x="310" y="266" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">색인 시작 불가</text>
+</g></svg></template>
+<template id="figure-rag-offline-artifact-manifest-2"><svg><g>
+<text x="310" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B1 · 반입 목록</text>
+<rect x="46" y="120" width="167" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="129.5" y="147" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">runner R1</text>
+<rect x="385" y="118" width="177" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="473.5" y="145" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">encoder E1 ✓</text>
+<line x1="220.0" y1="139.0" x2="374.0" y2="139.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="374.0,139.0 362.40961225346075,144.88752170992788 362.40961225346075,133.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<rect x="46" y="194" width="167" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="129.5" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">docs D2</text>
+<rect x="385" y="194" width="177" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="473.5" y="221" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">policy P1</text>
+<text x="310" y="266" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">재시작에 필요한 네 파일</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "초기 반입",
+    "title": "실행기의 전이 의존성이 비면 인덱싱이 멈춥니다",
+    "body": "runner R1과 문서 D2를 복사해도 R1이 호출하는 encoder E1이 없으면 색인을 만들 수 없습니다. 망 차단 뒤에는 그 파일을 추가로 받을 수 없습니다.",
+    "takeaway": "R1에서 비어 있는 E1로 이어지는 경로가 끊깁니다.",
+    "example": [
+      "B1 · R1 · D2 · P1",
+      "R1의 의존성 확인",
+      "E1 누락 · 색인 시작 못 함"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "초기 반입",
+      "description": "R1에서 비어 있는 E1로 이어지는 경로가 끊깁니다.",
+      "figure": "figure-rag-offline-artifact-manifest-1"
+    },
+    "quiz": [
+      "생성 모델 파일은 있고 필요한 토크나이저 파일이 빠졌다면 충분한가요?",
+      "토크나이저도 반입",
+      "모델만 충분",
+      "실제 실행이 참조하는 파일을 함께 확인합니다."
+    ]
+  },
+  {
+    "label": "닫힌 목록",
+    "title": "필요한 파일을 각 버전과 함께 기록합니다",
+    "body": "B1에 R1, E1, D2, P1을 함께 넣습니다. 문서판 D2와 권한 P1은 색인 구축과 재시작에도 필요합니다.",
+    "takeaway": "이전의 E1 빈칸이 채워져 R1과 연결됩니다.",
+    "example": [
+      "B1 · E1 추가",
+      "파일 및 버전 확인",
+      "R1 → E1, D2와 P1 보존"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "닫힌 목록",
+      "description": "이전의 E1 빈칸이 채워져 R1과 연결됩니다.",
+      "figure": "figure-rag-offline-artifact-manifest-2"
+    },
+    "quiz": [
+      "실행 코드와 색인만 복사하고 권한표를 빼면 동일한 권한 판정을 재현할 수 있나요?",
+      "재현할 수 없음",
+      "색인만으로 가능",
+      "권한 판정에는 같은 권한표가 필요합니다."
+    ]
+  }
+];
+const slug = 'rag-offline-artifact-manifest';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="클릭이 없을 때 어떤 행을 불호로 읽으면 안 되나요?">
+<title>명시·암묵 피드백과 노출 편향 · F28</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rec-feedback-exposure-bias.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F28</p><h1>명시·암묵 피드백과 노출 편향</h1><p>클릭이 없을 때 어떤 행을 불호로 읽으면 안 되나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">명시·암묵 피드백과 노출 편향</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rec-feedback-exposure-bias-1"><svg><g>
+<text x="213" y="87" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">노출</text>
+<text x="342" y="87" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">클릭</text>
+<text x="469" y="87" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">별점</text>
+<text x="96" y="132" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<text x="96" y="184" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<text x="96" y="236" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">C</text>
+<rect x="149" y="104" width="124" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="211.0" y="131" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<rect x="277" y="104" width="124" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="339.0" y="131" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<rect x="405" y="104" width="124" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="467.0" y="131" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="149" y="156" width="124" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="211.0" y="183" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<rect x="277" y="156" width="124" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="339.0" y="183" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<rect x="405" y="156" width="124" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="467.0" y="183" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">∅</text>
+<rect x="149" y="208" width="124" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="211.0" y="235" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<rect x="277" y="208" width="124" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="339.0" y="235" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">∅</text>
+<rect x="405" y="208" width="124" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="467.0" y="235" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">∅</text>
+<text x="310" y="271" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">∅ = 미관측</text>
+</g></svg></template>
+<template id="figure-rec-feedback-exposure-bias-2"><svg><g>
+<rect x="36" y="91" width="264" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="168.0" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A · 노출 1 · 클릭 1</text>
+<rect x="36" y="155" width="264" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="168.0" y="182" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B · 노출 1 · 클릭 0</text>
+<rect x="36" y="219" width="264" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="168.0" y="246" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">C · 노출 0 · 클릭 ∅</text>
+<line x1="306.0" y1="110.0" x2="428.0" y2="138.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="428.0,138.0 415.386321193576,141.14564889464322 418.02030904248306,129.6689875529769" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="306.0" y1="174.0" x2="428.0" y2="155.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="428.0,155.0 417.4536519175361,162.6009566584417 415.6416760728003,150.96616439224363" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="307" y1="237" x2="378" y2="237" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="397" y="244" font-size="25" font-weight="650" fill="#a34123" text-anchor="middle">⊘</text>
+<text x="505" y="148" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">CTR = 1/2</text>
+<text x="505" y="181" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">분모 A+B</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "관측 구분",
+    "title": "별점과 클릭은 다른 행동을 기록합니다",
+    "body": "U1은 A를 보고 클릭했으며 별점 4를 직접 줬습니다. B는 봤지만 클릭이나 별점이 없고, C는 아예 노출되지 않았습니다.",
+    "takeaway": "A에는 노출·클릭·별점이 있고 C의 나머지 칸은 미관측입니다.",
+    "example": [
+      "U1 · A B C",
+      "노출·클릭·별점을 따로 기록",
+      "A (1,1,4) · B (1,0,∅) · C (0,∅,∅)"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "관측 구분",
+      "description": "A에는 노출·클릭·별점이 있고 C의 나머지 칸은 미관측입니다.",
+      "figure": "figure-rec-feedback-exposure-bias-1"
+    },
+    "quiz": [
+      "노출된 별점 입력 창에 답을 안 하면 별점 0으로 저장하나요?",
+      "미관측으로 기록",
+      "0점으로 기록",
+      "사용자가 0점을 준 경우와 다릅니다."
+    ]
+  },
+  {
+    "label": "노출 분모",
+    "title": "노출된 항목만 클릭률의 분모에 넣습니다",
+    "body": "A와 B가 한 번씩 노출됐고 A만 클릭했습니다. 관측 클릭률은 1/2입니다. 노출되지 않은 C는 불호도 클릭 0도 관측되지 않았습니다.",
+    "takeaway": "A와 B만 분모로 이어지고 C의 선은 거기까지 닿지 않습니다.",
+    "example": [
+      "A 노출·클릭 1, B 노출 1·클릭 0, C 노출 0",
+      "노출 수로 나눔",
+      "CTR 1/2 · C 미관측"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "노출 분모",
+      "description": "A와 B만 분모로 이어지고 C의 선은 거기까지 닿지 않습니다.",
+      "figure": "figure-rec-feedback-exposure-bias-2"
+    },
+    "quiz": [
+      "노출 5회에 클릭 2회라면 CTR은?",
+      "2/5",
+      "5/2",
+      "클릭을 노출로 나눕니다."
+    ]
+  }
+];
+const slug = 'rec-feedback-exposure-bias';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="모델 둘을 같이 올리면 어디에서 장비 예산을 넘나요?">
+<title>로컬 생성·임베딩 모델과 장비 예산 · F22</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-local-model-device-budget.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F22</p><h1>로컬 생성·임베딩 모델과 장비 예산</h1><p>모델 둘을 같이 올리면 어디에서 장비 예산을 넘나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">로컬 생성·임베딩 모델과 장비 예산</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-local-model-device-budget-1"><svg><g>
+<text x="309" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">동시 탑재 · GiB</text>
+<rect x="60" y="126" width="250" height="50" fill="#c9e8f6" stroke="#12649c" stroke-width="2"/>
+<rect x="310" y="126" width="100" height="50" fill="#cbe7d9" stroke="#11664f" stroke-width="2"/>
+<rect x="410" y="126" width="100" height="50" fill="#f6dacb" stroke="#a34123" stroke-width="2"/>
+<line x1="460" y1="107" x2="460" y2="189" stroke="#a34123" stroke-width="3" stroke-dasharray="5 3" stroke-linecap="round"/>
+<text x="184" y="157" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">생성 5</text>
+<text x="362" y="157" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">임베딩 2</text>
+<text x="458" y="213" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">한도 8</text>
+<text x="222" y="251" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">5 + 2 + 여유 2 = 9 GiB</text>
+<text x="509" y="251" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">초과 1</text>
+</g></svg></template>
+<template id="figure-rag-local-model-device-budget-2"><svg><g>
+<text x="306" y="76" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">교대 탑재 · GiB</text>
+<rect x="111" y="97" width="100" height="28" fill="#cbe7d9" stroke="#11664f" stroke-width="2"/>
+<rect x="211" y="97" width="100" height="28" fill="#f6dacb" stroke="#a34123" stroke-width="2"/>
+<text x="159" y="118" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">임베딩 2</text>
+<text x="259" y="118" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">여유 2</text>
+<text x="342" y="119" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<line x1="130.0" y1="137.0" x2="130.0" y2="173.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="130.0,173.0 124.11247829007212,161.40961225346072 135.88752170992788,161.40961225346072" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="290" y="159" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">벡터 저장 · 임베딩 내림</text>
+<rect x="111" y="187" width="250" height="28" fill="#c9e8f6" stroke="#12649c" stroke-width="2"/>
+<rect x="361" y="187" width="100" height="28" fill="#f6dacb" stroke="#a34123" stroke-width="2"/>
+<text x="227" y="209" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">생성 5</text>
+<text x="411" y="209" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">여유 2</text>
+<text x="477" y="209" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">7</text>
+<line x1="511" y1="92" x2="511" y2="220" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="537" y="237" font-size="18" font-weight="650" fill="#a34123" text-anchor="middle">한도 8</text>
+<text x="285" y="266" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">max(4,7) = 7 GiB</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "동시 탑재",
+    "title": "모델과 실행 여유의 합이 장치 예산을 넘습니다",
+    "body": "생성 모델 5 GiB, 임베딩 2 GiB, 실행 여유 2 GiB를 동시에 확보하면 총 9 GiB입니다. 8 GiB 장치에서는 1 GiB 넘칩니다.",
+    "takeaway": "8 GiB 선 위로 여유 막대 마지막 1 GiB가 나갑니다.",
+    "example": [
+      "8 GiB 장치 · 5+2+2 GiB",
+      "동시 탑재 합계",
+      "9 GiB · 1 GiB 초과"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "동시 탑재",
+      "description": "8 GiB 선 위로 여유 막대 마지막 1 GiB가 나갑니다.",
+      "figure": "figure-rag-local-model-device-budget-1"
+    },
+    "quiz": [
+      "한도가 10 GiB이면 9 GiB는 맞나요?",
+      "맞음 · 1 GiB 남음",
+      "1 GiB 초과",
+      "10−9는 1 GiB입니다."
+    ]
+  },
+  {
+    "label": "교대 탑재",
+    "title": "둘을 교대로 올리면 최대 7 GiB입니다",
+    "body": "문서 임베딩을 만든 뒤 그 모델을 내립니다. 저장된 벡터를 다시 읽고 생성만 올립니다. 여유 2 GiB를 각 순간에 더해도 최대 7 GiB입니다.",
+    "takeaway": "임베딩 단계 4와 생성 단계 7이 둘 다 8 GiB 선 앞에서 끝납니다.",
+    "example": [
+      "같은 장치와 두 모델",
+      "벡터 저장 후 모델 교대",
+      "max(4,7) = 7 GiB"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "교대 탑재",
+      "description": "임베딩 단계 4와 생성 단계 7이 둘 다 8 GiB 선 앞에서 끝납니다.",
+      "figure": "figure-rag-local-model-device-budget-2"
+    },
+    "quiz": [
+      "교대로 3 GiB와 6 GiB를 쓰면 최고 메모리 사용은?",
+      "6 GiB",
+      "9 GiB",
+      "동시에 상주하지 않으므로 최댓값을 구합니다."
+    ]
+  }
+];
+const slug = 'rag-local-model-device-budget';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

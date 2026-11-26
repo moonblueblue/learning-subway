@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="외부망 단절 시험에서 어떤 판정들이 그대로여야 할까요?">
+<title>외부 통신 없이 전체 시험셋 재실행 · F27</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-disconnected-suite-replay.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F27</p><h1>외부 통신 없이 전체 시험셋 재실행</h1><p>외부망 단절 시험에서 어떤 판정들이 그대로여야 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">외부 통신 없이 전체 시험셋 재실행</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-disconnected-suite-replay-1"><svg><g>
+<text x="310" y="80" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S1 · 기준 실행</text>
+<rect x="47" y="103" width="518" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="306.0" y="130" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q1 · OPS-17 v2 #reset</text>
+<rect x="47" y="146" width="518" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="306.0" y="173" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q2 · 근거 부족으로 보류</text>
+<rect x="47" y="189" width="518" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="306.0" y="216" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q3 · 권한 거절 · 실행 0</text>
+<rect x="47" y="232" width="518" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="306.0" y="259" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q4 · G7 READY · 실행 1</text>
+</g></svg></template>
+<template id="figure-rag-disconnected-suite-replay-2"><svg><g>
+<text x="153" y="84" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">기준 S1</text>
+<text x="464" y="84" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">복원 S1 · 망 ⊘</text>
+<text x="155" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q1 · v2 #reset</text>
+<text x="465" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q1 · v2 #reset</text>
+<line x1="235.0" y1="111.0" x2="381.0" y2="111.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="381.0,111.0 369.40961225346075,116.88752170992788 369.40961225346075,105.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="155" y="164" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q2 · 보류</text>
+<text x="465" y="164" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q2 · 보류</text>
+<line x1="235.0" y1="157.0" x2="381.0" y2="157.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="381.0,157.0 369.40961225346075,162.88752170992788 369.40961225346075,151.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="155" y="210" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">Q3 · 거절 · 실행 0</text>
+<text x="465" y="210" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">Q3 · 거절 · 실행 0</text>
+<line x1="249.0" y1="205.0" x2="373.0" y2="205.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="373.0,205.0 361.40961225346075,210.88752170992788 361.40961225346075,199.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="155" y="256" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q4 · READY · 1</text>
+<text x="465" y="256" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q4 · READY · 1</text>
+<line x1="243.0" y1="250.0" x2="378.0" y2="250.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="378.0,250.0 366.40961225346075,255.88752170992788 366.40961225346075,244.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "처음 기준 기록",
+    "title": "질의별 실행 기준을 고정합니다",
+    "body": "Q1은 OPS-17 v2 #reset을 인용하고 Q2는 근거가 없어 보류합니다. Q3는 권한 거절, Q4는 G7 상태 도구 실행 한 번입니다.",
+    "takeaway": "시험 ID마다 확인할 인용이나 실행 수가 붙습니다.",
+    "example": [
+      "S1 · Q1–Q4",
+      "로컬 기준 실행",
+      "인용 · 보류 · 거절 · 실행 1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "처음 기준 기록",
+      "description": "시험 ID마다 확인할 인용이나 실행 수가 붙습니다.",
+      "figure": "figure-rag-disconnected-suite-replay-1"
+    },
+    "quiz": [
+      "시험에 허용 사례만 두면 권한 회귀를 확인할 수 있나요?",
+      "차단 사례도 필요",
+      "허용 사례로 충분",
+      "거절과 실행 수 0을 별도로 확인합니다."
+    ]
+  },
+  {
+    "label": "단절 후 재실행",
+    "title": "같은 상태와 질의로 네 결과를 비교합니다",
+    "body": "네트워크를 끊고 새 프로세스에서 같은 S1과 시험셋을 읽습니다. 인용 ID, 보류와 권한 거절, G7 READY와 실행 수를 각각 맞춥니다.",
+    "takeaway": "열 사이의 네 선이 같은 판정을 연결합니다.",
+    "example": [
+      "같은 S1 · Q1–Q4 · 망 ⊘",
+      "재시작 후 결과 비교",
+      "Q1–Q4 각각 동일"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "단절 후 재실행",
+      "description": "열 사이의 네 선이 같은 판정을 연결합니다.",
+      "figure": "figure-rag-disconnected-suite-replay-2"
+    },
+    "quiz": [
+      "재시작 후 보류가 거절로 바뀌고 나머지는 같다면 같은 시험 결과인가요?",
+      "아니요, 판정이 달라짐",
+      "네, 답변은 둘 다 비어 있음",
+      "보류와 거절을 별도 결과로 채점합니다."
+    ]
+  }
+];
+const slug = 'rag-disconnected-suite-replay';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

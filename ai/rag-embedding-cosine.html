@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="벡터가 길어도 방향이 다르면 어떻게 순위가 바뀌나요?">
+<title>검색 임베딩과 코사인 유사도 · F07</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-embedding-cosine.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F07</p><h1>검색 임베딩과 코사인 유사도</h1><p>벡터가 길어도 방향이 다르면 어떻게 순위가 바뀌나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">검색 임베딩과 코사인 유사도</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-embedding-cosine-1"><svg><g>
+<line x1="92" y1="211" x2="567" y2="211" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="121" y1="246" x2="121" y2="69" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="575" y="218" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">x</text>
+<text x="112" y="75" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">y</text>
+<line x1="321" y1="211" x2="321" y2="103" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="121.0" y1="211.0" x2="321.0" y2="103.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="321.0,103.0 313.5990048118306,113.68762229051408 308.00410570993,103.32669802773518" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="121.0" y1="211.0" x2="221.0" y2="211.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="221.0,211.0 209.40961225346072,216.88752170992788 209.40961225346072,205.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="357" y="96" font-size="22" font-weight="650" fill="#12649c" text-anchor="middle">A=(2,1)</text>
+<text x="248" y="266" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">B=q=(1,0)</text>
+<text x="221" y="243" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<text x="321" y="243" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<text x="468" y="144" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">q·A=2 &gt; q·B=1</text>
+</g></svg></template>
+<template id="figure-rag-embedding-cosine-2"><svg><g>
+<line x1="70" y1="194" x2="339" y2="194" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="155" y1="257" x2="155" y2="83" stroke="#17354b" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="155" cy="194" r="77" fill="none" stroke="#566d7c" stroke-width="2"/>
+<line x1="155.0" y1="194.0" x2="224.0" y2="160.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="224.0,160.0 216.2056015620532,170.40419881540777 211.00096210737004,159.84184227502135" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="155.0" y1="194.0" x2="232.0" y2="194.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="232.0,194.0 220.40961225346072,199.88752170992788 220.40961225346072,188.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="281" y="143" font-size="19" font-weight="650" fill="#12649c" text-anchor="middle">A/√5</text>
+<text x="273" y="224" font-size="19" font-weight="650" fill="#11664f" text-anchor="middle">B=q</text>
+<text x="449" y="113" font-size="20" font-weight="650" fill="#12649c" text-anchor="middle">A · 2÷(1·√5)=0.8944</text>
+<text x="449" y="163" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">B · 1÷(1·1)=1</text>
+<text x="450" y="230" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">코사인 순위 B → A</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "내적",
+    "title": "내적은 x방향 성분이 큰 A에 높은 점수를 줍니다",
+    "body": "A의 질의 방향 성분은 2, B는 1입니다. 두 축 임베딩에서 내적이 길이와 방향의 영향을 함께 받는 예입니다.",
+    "takeaway": "x축에 내린 발이 각각 2와 1입니다.",
+    "example": [
+      "q=(1,0) · A=(2,1) · B=(1,0)",
+      "q·d 계산",
+      "A 2 > B 1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "내적",
+      "description": "x축에 내린 발이 각각 2와 1입니다.",
+      "figure": "figure-rag-embedding-cosine-1"
+    },
+    "quiz": [
+      "q=(1,0), C=(3,4)의 내적은?",
+      "3",
+      "4",
+      "C의 y 성분에는 0을 곱합니다."
+    ]
+  },
+  {
+    "label": "방향 정규화",
+    "title": "길이를 나눠 제거하면 B가 앞섭니다",
+    "body": "q와 B는 길이 1, A는 √5입니다. 두 코사인은 각각 A 2/√5≈0.8944와 B 1입니다.",
+    "takeaway": "A는 단위원에서 q와 각도가 남고 B는 q와 겹칩니다.",
+    "example": [
+      "q=(1,0) · A=(2,1) · B=(1,0)",
+      "q·d/(‖q‖‖d‖)",
+      "B 1 > A 0.8944"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "방향 정규화",
+      "description": "A는 단위원에서 q와 각도가 남고 B는 q와 겹칩니다.",
+      "figure": "figure-rag-embedding-cosine-2"
+    },
+    "quiz": [
+      "q=(1,0), C=(3,0)의 코사인 값은?",
+      "1",
+      "3",
+      "내적 3을 길이의 곱 1×3으로 나눕니다."
+    ]
+  }
+];
+const slug = 'rag-embedding-cosine';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

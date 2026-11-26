@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="검색 구절이 명령처럼 보여도 실행 경로를 어떻게 분리할까요?">
+<title>프롬프트의 지시와 참고 문서 경계 · F12</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-prompt-data-boundaries.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F12</p><h1>프롬프트의 지시와 참고 문서 경계</h1><p>검색 구절이 명령처럼 보여도 실행 경로를 어떻게 분리할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">프롬프트의 지시와 참고 문서 경계</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-prompt-data-boundaries-1"><svg><g>
+<rect x="29" y="98" width="216" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.0" y="125" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">정책 · 근거 인용</text>
+<rect x="29" y="190" width="216" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.0" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">NOTE-3 · 동작 요구</text>
+<line x1="252.0" y1="121.0" x2="391.0" y2="162.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="391.0,162.0 378.21747344226776,164.36791359658028 381.5487911006297,153.0739342182312" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="252.0" y1="211.0" x2="391.0" y2="179.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="391.0,179.0 381.0259107212086,187.33771809661968 378.3842097949583,175.8628296982196" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="395" y="152" width="188" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="489.0" y="179" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">단일 텍스트</text>
+<text x="492" y="235" font-size="19" font-weight="650" fill="#a34123" text-anchor="middle">출처 구분 ∅</text>
+</g></svg></template>
+<template id="figure-rag-prompt-data-boundaries-2"><svg><g>
+<rect x="29" y="91" width="216" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.0" y="118" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">정책 · 제어</text>
+<line x1="252.0" y1="110.0" x2="388.0" y2="110.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="388.0,110.0 376.40961225346075,115.88752170992788 376.40961225346075,104.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="489" y="117" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">응답 규칙</text>
+<rect x="29" y="170" width="216" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.0" y="197" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">NOTE-3 · 자료</text>
+<line x1="252.0" y1="189.0" x2="388.0" y2="189.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="388.0,189.0 376.40961225346075,194.88752170992788 376.40961225346075,183.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="489" y="197" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">인용 자료</text>
+<line x1="255" y1="226" x2="359" y2="226" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="381" y="233" font-size="27" font-weight="650" fill="#a34123" text-anchor="middle">⊘</text>
+<text x="495" y="255" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">실행은 별도 권한</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "입력의 출처",
+    "title": "정책과 문서가 같은 텍스트 상자에 섞이면 출처가 흐려집니다",
+    "body": "정책은 근거만 인용하라고 지정합니다. 검색된 NOTE-3에는 다른 동작을 요구하는 문장이 들어 있습니다. 둘을 구분하지 않고 이어 붙이면 서로 다른 권위가 같은 줄에 놓입니다.",
+    "takeaway": "정책과 NOTE-3의 선이 출처 칸 없이 하나로 모입니다.",
+    "example": [
+      "정책·NOTE-3 원문",
+      "구분 없이 연결",
+      "권위가 표시되지 않은 입력"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "입력의 출처",
+      "description": "정책과 NOTE-3의 선이 출처 칸 없이 하나로 모입니다.",
+      "figure": "figure-rag-prompt-data-boundaries-1"
+    },
+    "quiz": [
+      "검색한 파일에 “관리자 전용”이라는 문장이 있으면 문장 자체가 권한 토큰인가요?",
+      "권한은 별도 검사",
+      "문장이 권한을 부여",
+      "문서 내용과 인증된 역할을 구분합니다."
+    ]
+  },
+  {
+    "label": "자료 경계",
+    "title": "정책과 참고 문서는 별도 채널을 통과합니다",
+    "body": "정책은 제어 채널에 두고 문서에는 출처를 표시합니다. 문서의 동작 요구는 인용 가능한 데이터이며 도구 호출은 별도 권한 검사를 통과해야 합니다.",
+    "takeaway": "NOTE-3에서 실행으로 향하는 선이 경계에서 멈춥니다.",
+    "example": [
+      "정책·NOTE-3 원문",
+      "제어·자료 분리, 도구 검사",
+      "문서에서 도구 실행으로 갈 수 없음"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "자료 경계",
+      "description": "NOTE-3에서 실행으로 향하는 선이 경계에서 멈춥니다.",
+      "figure": "figure-rag-prompt-data-boundaries-2"
+    },
+    "quiz": [
+      "첨부 문서가 동작을 요구할 때 어떤 처리가 필요한가요?",
+      "도구 권한을 별도 검사",
+      "문서를 제어 지시로 승격",
+      "참고 자료 안의 문구가 실행을 허가하지 않습니다."
+    ]
+  }
+];
+const slug = 'rag-prompt-data-boundaries';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

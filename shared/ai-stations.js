@@ -919,29 +919,132 @@ const aiStationMap = {
         "ref": "ai/llm"
       },
       {
+        "id": "7.7",
+        "ref": "security/threatmodel"
+      },
+      {
+        "id": "7.8",
+        "ref": "ai/rag-document-registry"
+      },
+      {
         "id": "7.2",
-        "title": "문서 분할",
-        "titleEn": "Chunking"
+        "ref": "ai/rag-structure-preserving-parse"
+      },
+      {
+        "id": "7.9",
+        "ref": "ai/rag-chunk-boundaries"
       },
       {
         "id": "7.3",
-        "title": "검색과 재정렬",
-        "titleEn": "Retrieval and reranking"
+        "ref": "ai/rag-inverted-index-bm25"
+      },
+      {
+        "id": "7.10",
+        "ref": "ai/rag-evidence-test-set"
+      },
+      {
+        "id": "7.11",
+        "ref": "ai/rag-embedding-cosine"
+      },
+      {
+        "id": "7.12",
+        "ref": "ai/rag-exact-approx-neighbors"
+      },
+      {
+        "id": "7.13",
+        "ref": "ai/rag-hybrid-rrf"
+      },
+      {
+        "id": "7.14",
+        "ref": "ai/rag-cross-encoder-reranking"
+      },
+      {
+        "id": "7.15",
+        "ref": "ai/rag-recall-rank-metrics"
       },
       {
         "id": "7.4",
-        "title": "문맥과 인용",
-        "titleEn": "Context and citations"
+        "ref": "ai/rag-prompt-data-boundaries"
       },
       {
-        "id": "7.5",
-        "title": "도구 권한",
-        "titleEn": "Tool permissions"
+        "id": "7.16",
+        "ref": "ai/rag-context-passage-budget"
+      },
+      {
+        "id": "7.17",
+        "ref": "ai/rag-citation-source-ids"
+      },
+      {
+        "id": "7.18",
+        "ref": "ai/rag-conflicting-documents-abstention"
       },
       {
         "id": "7.6",
-        "title": "분리 평가",
-        "titleEn": "Component evaluation"
+        "ref": "ai/rag-gold-context-diagnosis"
+      },
+      {
+        "id": "7.5",
+        "ref": "ai/rag-tool-input-schema"
+      },
+      {
+        "id": "7.19",
+        "ref": "ai/rag-document-tool-authorization"
+      },
+      {
+        "id": "7.20",
+        "ref": "ai/rag-tool-state-persistence"
+      },
+      {
+        "id": "7.21",
+        "ref": "ai/rag-retries-idempotency-stop"
+      },
+      {
+        "id": "7.22",
+        "ref": "ai/rag-trace-blocked-tool"
+      },
+      {
+        "id": "7.23",
+        "ref": "ai/rag-local-model-device-budget"
+      },
+      {
+        "id": "7.24",
+        "ref": "ai/rag-offline-artifact-manifest"
+      },
+      {
+        "id": "7.25",
+        "ref": "ai/rag-offline-hash-installation"
+      },
+      {
+        "id": "7.26",
+        "ref": "ai/rag-offline-index-build"
+      },
+      {
+        "id": "7.27",
+        "ref": "ai/rag-offline-restart-access-restore"
+      },
+      {
+        "id": "7.28",
+        "ref": "ai/rag-disconnected-suite-replay"
+      },
+      {
+        "id": "7.29",
+        "ref": "ai/rec-feedback-exposure-bias"
+      },
+      {
+        "id": "7.30",
+        "ref": "ai/rec-collaborative-factorization"
+      },
+      {
+        "id": "7.31",
+        "ref": "ai/rec-cold-start-content"
+      },
+      {
+        "id": "7.32",
+        "ref": "ai/rec-personalization-diversity"
+      },
+      {
+        "id": "7.33",
+        "ref": "ai/rec-exposure-log-offline-evaluation"
       }
     ],
     "transfer": {

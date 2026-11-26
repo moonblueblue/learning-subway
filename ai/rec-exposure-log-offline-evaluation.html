@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="로그에 없던 노출을 새 정책이 만들면 어떤 효과를 모를까요?">
+<title>노출 로그로 오프라인 평가의 한계 찾기 · F32</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rec-exposure-log-offline-evaluation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F32</p><h1>노출 로그로 오프라인 평가의 한계 찾기</h1><p>로그에 없던 노출을 새 정책이 만들면 어떤 효과를 모를까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">노출 로그로 오프라인 평가의 한계 찾기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rec-exposure-log-offline-evaluation-1"><svg><g>
+<text x="308" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">정책 X · 위치 1</text>
+<rect x="48" y="103" width="234" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="165.0" y="130" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A · 노출 10</text>
+<rect x="329" y="103" width="234" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="446.0" y="130" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B · 노출 0</text>
+<line x1="168.0" y1="146.0" x2="168.0" y2="180.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="168.0,180.0 162.11247829007212,168.40961225346072 173.88752170992788,168.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="48" y="185" width="234" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="165.0" y="212" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">클릭 2 · CTR .20</text>
+<line x1="447" y1="146" x2="447" y2="174" stroke="#a34123" stroke-width="3" stroke-dasharray="6 4" stroke-linecap="round"/>
+<rect x="329" y="185" width="234" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="446.0" y="212" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">클릭 ∅</text>
+<text x="310" y="263" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">CTR(A)=2/10=.20</text>
+</g></svg></template>
+<template id="figure-rec-exposure-log-offline-evaluation-2"><svg><g>
+<rect x="48" y="90" width="515" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="305.5" y="117" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">정책 Y · 위치 1에 B</text>
+<line x1="307.0" y1="131.0" x2="307.0" y2="157.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="307.0,157.0 301.1124782900721,145.40961225346072 312.8875217099279,145.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="48" y="161" width="515" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="305.5" y="188" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">로그 X · 위치 1의 B 노출 0</text>
+<line x1="307" y1="203" x2="307" y2="224" stroke="#a34123" stroke-width="3" stroke-dasharray="6 4" stroke-linecap="round"/>
+<text x="307" y="258" font-size="23" font-weight="650" fill="#a34123" text-anchor="middle">Y의 CTR · 미정</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "관측된 위치",
+    "title": "A의 위치 1 클릭률은 계산할 수 있습니다",
+    "body": "정책 X는 A를 첫 자리에 10회 노출했고 2회 클릭을 얻었습니다. B는 이 자리에 한 번도 노출되지 않았습니다.",
+    "takeaway": "A에 노출 10·클릭 2가 있고 B에는 노출 0·클릭 ∅입니다.",
+    "example": [
+      "로그 X · 첫 자리",
+      "클릭 수÷노출 수",
+      "A 2/10=.20 · B 미관측"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "관측된 위치",
+      "description": "A에 노출 10·클릭 2가 있고 B에는 노출 0·클릭 ∅입니다.",
+      "figure": "figure-rec-exposure-log-offline-evaluation-1"
+    },
+    "quiz": [
+      "노출 0인 B를 클릭률 0으로 두어도 되나요?",
+      "정의되지 않음",
+      "관측 0%",
+      "분모가 0이라 관측 CTR을 만들 수 없습니다."
+    ]
+  },
+  {
+    "label": "새 정책의 공백",
+    "title": "B를 첫 자리에 놓는 정책은 이 로그만으로 비교할 수 없습니다",
+    "body": "정책 Y는 B를 첫 자리에 놓습니다. X 로그에는 같은 자리에 B가 나온 기록이 없어 Y의 첫 자리 클릭률을 재생할 수 없습니다. 접근 가능한 대안은 무작위 노출이나 새 통제 시험입니다.",
+    "takeaway": "정책 Y의 B가 그 위치의 빈 로그 칸에 닿고 결과는 미정입니다.",
+    "example": [
+      "같은 로그 · 새 정책 Y: B 우선",
+      "위치 1의 B 노출 확인",
+      "노출 0 · Y의 CTR 미정"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "새 정책의 공백",
+      "description": "정책 Y의 B가 그 위치의 빈 로그 칸에 닿고 결과는 미정입니다.",
+      "figure": "figure-rec-exposure-log-offline-evaluation-2"
+    },
+    "quiz": [
+      "일부 슬롯에서 무작위 노출과 배정 확률을 기록하면 무엇이 가능해지나요?",
+      "겹치는 노출 범위에서 정책 비교",
+      "노출 없는 항목 평가도 자동 완료",
+      "대안은 실제로 관측될 수 있는 행동에 한정합니다."
+    ]
+  }
+];
+const slug = 'rec-exposure-log-offline-evaluation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

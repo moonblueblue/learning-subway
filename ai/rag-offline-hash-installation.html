@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="복사된 파일이 승인을 받은 바이트와 같은지 어떻게 확인하나요?">
+<title>파일 해시·버전 검증과 오프라인 설치 · F24</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-offline-hash-installation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F24</p><h1>파일 해시·버전 검증과 오프라인 설치</h1><p>복사된 파일이 승인을 받은 바이트와 같은지 어떻게 확인하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">파일 해시·버전 검증과 오프라인 설치</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-offline-hash-installation-1"><svg><g>
+<text x="310" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">runner R1 · SHA-256</text>
+<rect x="42" y="109" width="246" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="165.0" y="136" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">목록 기대 67aa…</text>
+<rect x="327" y="109" width="246" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="450.0" y="136" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">파일 91be…</text>
+<line x1="170.0" y1="151.0" x2="252.0" y2="177.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="252.0,177.0 239.17222000542057,179.10904253410587 242.73115458894745,167.8847103860596" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="455.0" y1="151.0" x2="365.0" y2="177.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="365.0,177.0 374.5010291613803,168.12698220025447 377.7690706240766,179.43943341728018" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="310" y="218" font-size="25" font-weight="650" fill="#a34123" text-anchor="middle">67aa… ≠ 91be…</text>
+<text x="310" y="259" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">설치 중단</text>
+</g></svg></template>
+<template id="figure-rag-offline-hash-installation-2"><svg><g>
+<text x="310" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">runner R1 · SHA-256</text>
+<rect x="42" y="109" width="246" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="165.0" y="136" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">목록 기대 67aa…</text>
+<rect x="327" y="109" width="246" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="450.0" y="136" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">파일 67aa…</text>
+<line x1="170.0" y1="151.0" x2="252.0" y2="177.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="252.0,177.0 239.17222000542057,179.10904253410587 242.73115458894745,167.8847103860596" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="455.0" y1="151.0" x2="365.0" y2="177.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="365.0,177.0 374.5010291613803,168.12698220025447 377.7690706240766,179.43943341728018" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="310" y="218" font-size="25" font-weight="650" fill="#11664f" text-anchor="middle">67aa… = 67aa…</text>
+<text x="310" y="259" font-size="22" font-weight="650" fill="#11664f" text-anchor="middle">로컬 상태에 R1 기록</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "변경 감지",
+    "title": "설치 전에 계산한 해시를 신뢰된 목록과 비교합니다",
+    "body": "실행기 R1의 해시 접두가 승인 목록에서는 67aa, 수신 파일에서는 91be입니다. 이 그림에는 축약 접두만 적지만 실제 검사는 SHA-256 전체 64자리입니다.",
+    "takeaway": "같은 R1에서 오는 두 해시가 비교 상자에서 달라집니다.",
+    "example": [
+      "R1 수신 파일 · 승인 B1",
+      "SHA-256 전체 값 대조",
+      "67aa… ≠ 91be… · 설치 중단"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "변경 감지",
+      "description": "같은 R1에서 오는 두 해시가 비교 상자에서 달라집니다.",
+      "figure": "figure-rag-offline-hash-installation-1"
+    },
+    "quiz": [
+      "파일명과 버전 이름이 같은데 해시가 다를 때 설치하나요?",
+      "중단",
+      "이름이 맞으니 진행",
+      "파일명은 바이트의 동일성을 확인하지 않습니다."
+    ]
+  },
+  {
+    "label": "검증 후 설치",
+    "title": "다시 가져온 R1이 승인된 해시와 일치합니다",
+    "body": "신뢰된 목록은 바꾸지 않고 R1을 다시 반입합니다. 전체 SHA-256이 같고 버전 기대값도 R1이면 오프라인 상태에 기록합니다.",
+    "takeaway": "실제 해시만 바뀌고 기대값은 고정되어 설치 경로가 열립니다.",
+    "example": [
+      "같은 승인 B1과 새 사본 R1",
+      "해시·예상 버전 재검사",
+      "67aa… = 67aa… · R1 기록"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "검증 후 설치",
+      "description": "실제 해시만 바뀌고 기대값은 고정되어 설치 경로가 열립니다.",
+      "figure": "figure-rag-offline-hash-installation-2"
+    },
+    "quiz": [
+      "검증에서 승인 목록까지 같은 출처에서 바뀌면 해시 대조는 무엇에 의존하나요?",
+      "기대 해시 목록의 신뢰성",
+      "파일명 길이",
+      "바이트 검증은 비교하는 기대값이 신뢰된다는 조건이 필요합니다."
+    ]
+  }
+];
+const slug = 'rag-offline-hash-installation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

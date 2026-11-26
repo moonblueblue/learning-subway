@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="정답 문서를 찾아도 어떤 구절을 따로 채점하나요?">
+<title>정답 문서·근거 구절 시험셋 만들기 · F06</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-evidence-test-set.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F06</p><h1>정답 문서·근거 구절 시험셋 만들기</h1><p>정답 문서를 찾아도 어떤 구절을 따로 채점하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">정답 문서·근거 구절 시험셋 만들기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-evidence-test-set-1"><svg><g>
+<text x="306" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">Q1 · G7 reset</text>
+<text x="130" y="132" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">OPS-17@v2</text>
+<line x1="207.0" y1="130.0" x2="320.0" y2="123.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="320.0,123.0 308.79580300117203,129.59287263728453 308.0677710768236,117.84035728708743" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="207.0" y1="146.0" x2="320.0" y2="213.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="320.0,213.0 307.0276199532117,212.1530313337033 313.0330219995091,202.02451743472406" fill="#566d7c" stroke="none" stroke-width="1"/>
+<rect x="330" y="104" width="235" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="447.5" y="131" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">#reset · 30 seconds</text>
+<rect x="330" y="195" width="235" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="447.5" y="222" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">#safe · gloves</text>
+<text x="456" y="168" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">정답 근거</text>
+<text x="456" y="258" font-size="19" font-weight="650" fill="#17354b" text-anchor="middle">다른 절</text>
+</g></svg></template>
+<template id="figure-rag-evidence-test-set-2"><svg><g>
+<text x="142" y="81" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">검색</text>
+<text x="457" y="81" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">정답</text>
+<rect x="45" y="100" width="191" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="140.5" y="127" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">OPS-17 v2</text>
+<rect x="365" y="100" width="191" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="460.5" y="127" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">OPS-17 v2</text>
+<line x1="242.0" y1="119.0" x2="359.0" y2="119.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="359.0,119.0 347.40961225346075,124.88752170992788 347.40961225346075,113.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="303" y="155" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">문서 1</text>
+<rect x="45" y="176" width="191" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="140.5" y="203" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">#safe · gloves</text>
+<rect x="365" y="176" width="191" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="460.5" y="203" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">#reset · 30 s</text>
+<line x1="243" y1="195" x2="286" y2="195" stroke="#a34123" stroke-width="3" stroke-dasharray="6 4" stroke-linecap="round"/>
+<line x1="320" y1="195" x2="360" y2="195" stroke="#a34123" stroke-width="3" stroke-dasharray="6 4" stroke-linecap="round"/>
+<text x="302" y="203" font-size="24" font-weight="650" fill="#a34123" text-anchor="middle">×</text>
+<text x="303" y="255" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">구절 0</text>
+</g></svg></template>
+<template id="figure-rag-evidence-test-set-3"><svg><g>
+<rect x="57" y="86" width="500" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="307.0" y="113" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">Q2 · G7 warranty</text>
+<line x1="307.0" y1="127.0" x2="307.0" y2="156.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="307.0,156.0 301.1124782900721,144.40961225346072 312.8875217099279,144.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="120" y="159" width="375" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="307.5" y="186" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">근거 ∅ · 보증 기간 미기재</text>
+<line x1="307.0" y1="201.0" x2="307.0" y2="227.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="307.0,227.0 301.1124782900721,215.40961225346072 312.8875217099279,215.40961225346072" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="307" y="260" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">기대 결과 · 보류</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "정답 구절",
+    "title": "문서판과 답이 있는 절을 지정합니다",
+    "body": "Q1의 문서 정답은 OPS-17@v2입니다. 그중 30 seconds를 담는 #reset만 근거 정답입니다.",
+    "takeaway": "같은 문서의 #safe는 보호구만 다룹니다.",
+    "example": [
+      "Q1 G7 reset",
+      "판·절·문구 지정",
+      "OPS-17@v2#reset · 30 seconds"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "정답 구절",
+      "description": "같은 문서의 #safe는 보호구만 다룹니다.",
+      "figure": "figure-rag-evidence-test-set-1"
+    },
+    "quiz": [
+      "정답이 p.3에만 있다면 구절 정답을 어디로 지정하나요?",
+      "p.3의 구절",
+      "p.2와 p.3 모두",
+      "직접 답을 지지하는 구절만 지정합니다."
+    ]
+  },
+  {
+    "label": "두 채점 결과",
+    "title": "문서는 적중해도 구절은 빗나갈 수 있습니다",
+    "body": "검색은 OPS-17@v2#safe를 반환했습니다. 문서판은 정답과 같고 절은 다르므로 문서 적중은 1, 구절 적중은 0입니다.",
+    "takeaway": "같은 판은 연결되고 서로 다른 절의 비교는 ×입니다.",
+    "example": [
+      "Q1 검색 OPS-17@v2#safe",
+      "OPS-17@v2#reset과 대조",
+      "문서 1 · 구절 0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "두 채점 결과",
+      "description": "같은 판은 연결되고 서로 다른 절의 비교는 ×입니다.",
+      "figure": "figure-rag-evidence-test-set-2"
+    },
+    "quiz": [
+      "올바른 판과 구절을 모두 찾았다면?",
+      "문서 1 · 구절 1",
+      "문서 1 · 구절 0",
+      "두 식별자가 모두 일치합니다."
+    ]
+  },
+  {
+    "label": "근거 없는 질의",
+    "title": "답이 없는 질의에는 보류를 기대합니다",
+    "body": "허용된 매뉴얼과 FAQ에 G7 보증 기간은 없습니다. Q2에 후보가 나오더라도 정답 행동은 보류입니다.",
+    "takeaway": "Q2의 근거 자리 ∅에서 보류로 이어집니다.",
+    "example": [
+      "Q2 G7 warranty",
+      "허용 문서의 답 확인",
+      "정답 구절 ∅ · 보류"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "근거 없는 질의",
+      "description": "Q2의 근거 자리 ∅에서 보류로 이어집니다.",
+      "figure": "figure-rag-evidence-test-set-3"
+    },
+    "quiz": [
+      "정답 근거가 없고 비슷한 결과 하나만 검색되면 예상 동작은?",
+      "근거 부족으로 보류",
+      "후보가 있으므로 답변",
+      "후보가 실제 답을 지지하는지 검사합니다."
+    ]
+  }
+];
+const slug = 'rag-evidence-test-set';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

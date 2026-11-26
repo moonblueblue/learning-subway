@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="실행되지 않았음을 어떤 기록으로 확인하나요?">
+<title>에이전트 추적으로 권한 밖 호출 차단 확인 · F21</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-trace-blocked-tool.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F21</p><h1>에이전트 추적으로 권한 밖 호출 차단 확인</h1><p>실행되지 않았음을 어떤 기록으로 확인하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">에이전트 추적으로 권한 밖 호출 차단 확인</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-trace-blocked-tool-1"><svg><g>
+<text x="310" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">T1 tech · read_status(G7)</text>
+<rect x="50" y="127" width="127" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="113.5" y="154" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">schema ✓</text>
+<rect x="181" y="127" width="127" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="244.5" y="154" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">auth ✓</text>
+<rect x="312" y="127" width="127" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="375.5" y="154" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">execute 1</text>
+<rect x="443" y="127" width="127" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="506.5" y="154" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">READY</text>
+<line x1="157.0" y1="183.0" x2="218.0" y2="183.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="218.0,183.0 206.40961225346072,188.88752170992788 206.40961225346072,177.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="287.0" y1="183.0" x2="348.0" y2="183.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="348.0,183.0 336.40961225346075,188.88752170992788 336.40961225346075,177.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="418.0" y1="183.0" x2="479.0" y2="183.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="479.0,183.0 467.40961225346075,188.88752170992788 467.40961225346075,177.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="310" y="251" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">실행 이벤트 1개</text>
+</g></svg></template>
+<template id="figure-rag-trace-blocked-tool-2"><svg><g>
+<text x="310" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">T2 viewer · read_status(G7)</text>
+<rect x="50" y="127" width="127" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="113.5" y="154" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">schema ✓</text>
+<rect x="181" y="127" width="127" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="244.5" y="154" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">auth ⊘</text>
+<rect x="312" y="127" width="127" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="375.5" y="154" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">execute ∅</text>
+<line x1="288" y1="183" x2="350" y2="183" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="310" y="217" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">권한 거절</text>
+<text x="310" y="258" font-size="21" font-weight="650" fill="#11664f" text-anchor="middle">기대 실행 0 · 관찰 0</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "허용 추적",
+    "title": "실행 이벤트와 결과가 순서대로 남습니다",
+    "body": "T1에 schema ok, auth allow, tool execute, result READY가 차례로 쌓입니다. 결과 문자열과 별개로 실행 이벤트를 셉니다.",
+    "takeaway": "허용 뒤 실행에서 결과로 이어지는 네 칸을 읽습니다.",
+    "example": [
+      "T1 tech · read_status(G7)",
+      "스키마 → 권한 → 실행 → 결과",
+      "READY · execute 1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "허용 추적",
+      "description": "허용 뒤 실행에서 결과로 이어지는 네 칸을 읽습니다.",
+      "figure": "figure-rag-trace-blocked-tool-1"
+    },
+    "quiz": [
+      "결과 메시지만으로 승인 전에 도구가 실행됐는지 알 수 있나요?",
+      "추적의 순서를 확인",
+      "결과만으로 항상 가능",
+      "권한과 실행 이벤트의 순서를 대조합니다."
+    ]
+  },
+  {
+    "label": "차단 추적",
+    "title": "거절 기록 뒤에 실행 이벤트가 없어야 합니다",
+    "body": "T2에서도 형식은 맞습니다. 권한에서 차단되고 tool execute나 도구 결과가 나오지 않습니다. 이 시험의 기대 실행 수는 0입니다.",
+    "takeaway": "T1과 달리 권한 칸에서 끝나고 실행 자리는 ∅입니다.",
+    "example": [
+      "T2 viewer · read_status(G7)",
+      "스키마 통과 · 권한 차단",
+      "execute 0 · 응답 권한 거절"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "차단 추적",
+      "description": "T1과 달리 권한 칸에서 끝나고 실행 자리는 ∅입니다.",
+      "figure": "figure-rag-trace-blocked-tool-2"
+    },
+    "quiz": [
+      "차단 응답 뒤 execute 1이 보이면 시험 결과는?",
+      "실패",
+      "거절 문구가 있으므로 통과",
+      "권한 밖 호출은 실행 자체가 없어야 합니다."
+    ]
+  }
+];
+const slug = 'rag-trace-blocked-tool';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

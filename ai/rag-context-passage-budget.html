@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="정답 구절이 후보에 있어도 예산 때문에 언제 사라지나요?">
+<title>문맥 예산과 근거 구절 배치 · F13</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-context-passage-budget.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F13</p><h1>문맥 예산과 근거 구절 배치</h1><p>정답 구절이 후보에 있어도 예산 때문에 언제 사라지나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">문맥 예산과 근거 구절 배치</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-context-passage-budget-1"><svg><g>
+<text x="308" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">자료 예산 10 토큰</text>
+<rect x="51" y="106" width="48" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="75.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<rect x="103" y="106" width="48" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="127.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<rect x="155" y="106" width="48" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="179.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">3</text>
+<rect x="207" y="106" width="48" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="231.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="259" y="106" width="48" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="283.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<rect x="311" y="106" width="48" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="335.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<rect x="363" y="106" width="48" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="387.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">7</text>
+<rect x="415" y="106" width="48" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="439.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<rect x="467" y="106" width="48" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="491.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">9</text>
+<rect x="519" y="106" width="48" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="543.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">10</text>
+<text x="254" y="174" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">#intro · 8</text>
+<text x="520" y="174" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">남음 2</text>
+<rect x="51" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="75.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">G7</text>
+<rect x="103" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="127.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">wait</text>
+<rect x="155" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="179.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">30</text>
+<rect x="207" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="231.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">s</text>
+<text x="359" y="229" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">#reset 4 &gt; 2 · 제외</text>
+</g></svg></template>
+<template id="figure-rag-context-passage-budget-2"><svg><g>
+<text x="308" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">자료 예산 10 토큰</text>
+<rect x="51" y="106" width="48" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="75.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">G7</text>
+<rect x="103" y="106" width="48" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="127.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">wait</text>
+<rect x="155" y="106" width="48" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="179.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">30</text>
+<rect x="207" y="106" width="48" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="231.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">s</text>
+<rect x="259" y="106" width="48" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="283.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<rect x="311" y="106" width="48" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="335.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<rect x="363" y="106" width="48" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="387.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">7</text>
+<rect x="415" y="106" width="48" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="439.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<rect x="467" y="106" width="48" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="491.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">9</text>
+<rect x="519" y="106" width="48" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="543.0" y="133" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">10</text>
+<text x="151" y="174" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">#reset · 4</text>
+<text x="407" y="174" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">남음 6</text>
+<rect x="51" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="75.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1</text>
+<rect x="103" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="127.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2</text>
+<rect x="155" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="179.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">3</text>
+<rect x="207" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="231.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">4</text>
+<rect x="259" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="283.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<rect x="311" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="335.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">6</text>
+<rect x="363" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="387.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">7</text>
+<rect x="415" y="203" width="48" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="439.0" y="230" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">8</text>
+<text x="307" y="270" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">#intro 8 &gt; 6 · 제외</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "순위 앞부터 채우기",
+    "title": "첫 구절을 채우면 다음 근거가 예산을 넘습니다",
+    "body": "자료 슬롯은 10토큰입니다. #intro가 8을 사용해 두 칸만 남습니다. 네 토큰인 #reset은 절을 자르지 않는 정책 때문에 빠집니다.",
+    "takeaway": "8칸 뒤 남은 2칸과 4칸짜리 #reset을 대조합니다.",
+    "example": [
+      "예산 10 · #intro 8 · #reset 4",
+      "앞에서부터 절 전체 추가",
+      "#intro만 · #reset 빠짐"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "순위 앞부터 채우기",
+      "description": "8칸 뒤 남은 2칸과 4칸짜리 #reset을 대조합니다.",
+      "figure": "figure-rag-context-passage-budget-1"
+    },
+    "quiz": [
+      "9토큰을 사용한 뒤 3토큰을 더할 때 총 예산이 11이면 절 전체가 들어가나요?",
+      "아니요, 2개만 남음",
+      "예, 3개 남음",
+      "남은 예산은 11−9=2입니다."
+    ]
+  },
+  {
+    "label": "근거 먼저",
+    "title": "근거를 앞에 넣으면 예산 안에 정답이 남습니다",
+    "body": "#reset이 먼저 네 토큰을 사용합니다. 남은 여섯 칸에 #intro의 여덟 토큰이 맞지 않으므로 이 경우 #intro를 빼고 근거만 유지합니다.",
+    "takeaway": "같은 10칸에서 30초의 네 칸이 먼저 채워집니다.",
+    "example": [
+      "같은 10토큰과 두 절",
+      "질의 관련 근거를 먼저 추가",
+      "#reset 포함 · #intro 생략"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "근거 먼저",
+      "description": "같은 10칸에서 30초의 네 칸이 먼저 채워집니다.",
+      "figure": "figure-rag-context-passage-budget-2"
+    },
+    "quiz": [
+      "예산이 12라면 길이 8과 4인 두 절을 넣을 수 있나요?",
+      "둘 다 들어감",
+      "하나만 들어감",
+      "합계가 예산과 같은 12입니다."
+    ]
+  }
+];
+const slug = 'rag-context-passage-budget';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

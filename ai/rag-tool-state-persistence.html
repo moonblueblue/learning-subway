@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="후속 질의가 어느 도구 결과인지 어떻게 알까요?">
+<title>호출 결과와 대화 상태 저장 · F19</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-tool-state-persistence.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F19</p><h1>호출 결과와 대화 상태 저장</h1><p>후속 질의가 어느 도구 결과인지 어떻게 알까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">호출 결과와 대화 상태 저장</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-tool-state-persistence-1"><svg><g>
+<rect x="86" y="92" width="444" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="308.0" y="119" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">call-12 · read_status(G7)</text>
+<line x1="310.0" y1="133.0" x2="310.0" y2="176.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="310.0,176.0 304.1124782900721,164.40961225346072 315.8875217099279,164.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="86" y="182" width="444" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="308.0" y="209" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">C7 · call-12 · G7 READY</text>
+<text x="310" y="260" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">인자와 결과 저장</text>
+</g></svg></template>
+<template id="figure-rag-tool-state-persistence-2"><svg><g>
+<text x="309" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">C7 · 그 장치는?</text>
+<rect x="86" y="105" width="444" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="308.0" y="132" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">C7 · call-12 · G7 READY</text>
+<line x1="310.0" y1="147.0" x2="310.0" y2="185.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="310.0,185.0 304.1124782900721,173.40961225346072 315.8875217099279,173.40961225346072" fill="#11664f" stroke="none" stroke-width="1"/>
+<rect x="86" y="190" width="444" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="308.0" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">G7 READY · 이전 결과</text>
+<text x="310" y="263" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">새 도구 호출 0회</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "결과 기록",
+    "title": "결과를 호출 ID와 대화 ID에 묶습니다",
+    "body": "read_status(G7)의 실제 결과 READY를 대화 C7과 호출 call-12에 씁니다. args=G7도 결과와 함께 유지합니다.",
+    "takeaway": "G7에서 읽은 READY가 C7 / call-12로 저장됩니다.",
+    "example": [
+      "C7 · call-12 · read_status(G7)",
+      "실행 결과와 인자를 상태에 기록",
+      "C7 → call-12 → G7 READY"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "결과 기록",
+      "description": "G7에서 읽은 READY가 C7 / call-12로 저장됩니다.",
+      "figure": "figure-rag-tool-state-persistence-1"
+    },
+    "quiz": [
+      "G8 결과가 READY라면 G7 호출과 같은 레코드를 사용하나요?",
+      "각 호출과 인자를 유지",
+      "READY로 같은 레코드 사용",
+      "값이 같아도 다른 장치의 결과입니다."
+    ]
+  },
+  {
+    "label": "후속 질문",
+    "title": "같은 대화의 저장 결과를 정확한 장치와 함께 읽습니다",
+    "body": "C7에서 “그 장치는?”이 오면 C7의 call-12를 조회합니다. 기록된 G7 READY를 이전 결과로 표시하며, 신규 조회로 다루지 않습니다.",
+    "takeaway": "기록에서 후속 답으로 읽기 화살표가 이어집니다.",
+    "example": [
+      "C7 후속 “그 장치는?”",
+      "동일 대화의 call-12 참조",
+      "G7 READY · 이전 결과"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "후속 질문",
+      "description": "기록에서 후속 답으로 읽기 화살표가 이어집니다.",
+      "figure": "figure-rag-tool-state-persistence-2"
+    },
+    "quiz": [
+      "다른 대화 C8에서 C7의 call-12를 요청하면 자동으로 불러오나요?",
+      "C8의 접근 범위부터 확인",
+      "호출 번호가 맞으니 반환",
+      "상태 조회에서도 호출의 소유 범위를 유지합니다."
+    ]
+  }
+];
+const slug = 'rag-tool-state-persistence';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

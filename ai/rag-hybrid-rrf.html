@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="점수 단위가 다른 두 순위를 어떻게 합칠까요?">
+<title>키워드·벡터의 혼합 검색 · F09</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-hybrid-rrf.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F09</p><h1>키워드·벡터의 혼합 검색</h1><p>점수 단위가 다른 두 순위를 어떻게 합칠까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">키워드·벡터의 혼합 검색</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-hybrid-rrf-1"><svg><g>
+<text x="306" y="78" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">Q1 · G7 reset</text>
+<line x1="275.0" y1="88.0" x2="152.0" y2="112.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="152.0,112.0 162.24833513239898,104.0017735082059 164.50337792991752,115.55886784548845" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="337.0" y1="88.0" x2="459.0" y2="112.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="459.0,112.0 446.4911554015454,115.53960545989426 448.76399618748076,103.98599813138956" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="149" y="145" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">키워드</text>
+<text x="471" y="145" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">벡터</text>
+<rect x="57" y="159" width="193" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="153.5" y="186" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1 · A · OPS-17 v2</text>
+<rect x="367" y="159" width="193" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="463.5" y="186" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">1 · C · STAT-04 v1</text>
+<rect x="57" y="216" width="193" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="153.5" y="243" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2 · B · FAQ-02 v1</text>
+<rect x="367" y="216" width="193" height="39" fill="#ebf4f7" stroke="#566d7c" stroke-width="1.4"/>
+<text x="463.5" y="243" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">2 · B · FAQ-02 v1</text>
+</g></svg></template>
+<template id="figure-rag-hybrid-rrf-2"><svg><g>
+<text x="305" y="82" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">RRF k=10 · 1/(k+rank)</text>
+<text x="104" y="124" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1 · B</text>
+<text x="104" y="174" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2 · A</text>
+<text x="104" y="224" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">3 · C</text>
+<rect x="153" y="105" width="133" height="23" fill="#c9e8f6" stroke="#12649c" stroke-width="2"/>
+<rect x="286" y="105" width="133" height="23" fill="#cbe7d9" stroke="#11664f" stroke-width="2"/>
+<rect x="153" y="155" width="145" height="23" fill="#c9e8f6" stroke="#12649c" stroke-width="2"/>
+<rect x="153" y="205" width="145" height="23" fill="#cbe7d9" stroke="#11664f" stroke-width="2"/>
+<text x="219" y="124" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">1/12</text>
+<text x="353" y="124" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">1/12</text>
+<text x="218" y="174" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">1/11</text>
+<text x="218" y="224" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">1/11</text>
+<text x="505" y="124" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">0.1667</text>
+<text x="505" y="174" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">0.0909</text>
+<text x="505" y="224" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">0.0909</text>
+<text x="305" y="266" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A=C · ID순</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "두 후보 목록",
+    "title": "단어와 의미 검색의 1위가 다릅니다",
+    "body": "장치 ID를 포함한 A는 키워드 1위, 절차를 바꿔 말한 C는 벡터 1위입니다. B는 두 목록 모두 2위입니다.",
+    "takeaway": "B는 양쪽 2위 칸에 나타납니다.",
+    "example": [
+      "Q1 · G7 reset",
+      "두 방법으로 상위 2개씩",
+      "키워드 A→B · 벡터 C→B"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "두 후보 목록",
+      "description": "B는 양쪽 2위 칸에 나타납니다.",
+      "figure": "figure-rag-hybrid-rrf-1"
+    },
+    "quiz": [
+      "문서가 두 목록에 모두 없다면 순위 점수가 있나요?",
+      "없음",
+      "각 목록의 3위 점수",
+      "목록에 실제로 나온 순위만 합칩니다."
+    ]
+  },
+  {
+    "label": "순위 합치기",
+    "title": "B는 두 2위의 합으로 앞섭니다",
+    "body": "RRF의 상수 k를 10으로 두고 목록 안 순위마다 1/(k+순위)를 더합니다. B는 2/12, A와 C는 각각 1/11입니다. 정확한 동점은 ID순으로 풉니다.",
+    "takeaway": "B의 두 색 조각은 각각 1/12이며 합이 다른 막대보다 큽니다.",
+    "example": [
+      "A(1,∅) · B(2,2) · C(∅,1)",
+      "목록별 1/(10+rank) 합",
+      "B 0.1667 > A=C 0.0909"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "순위 합치기",
+      "description": "B의 두 색 조각은 각각 1/12이며 합이 다른 막대보다 큽니다.",
+      "figure": "figure-rag-hybrid-rrf-2"
+    },
+    "quiz": [
+      "k=10일 때 두 목록에서 모두 1위면 합은?",
+      "2/11",
+      "1/11",
+      "두 1위의 기여도 1/11을 모두 더합니다."
+    ]
+  }
+];
+const slug = 'rag-hybrid-rrf';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

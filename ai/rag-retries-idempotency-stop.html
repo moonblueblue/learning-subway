@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="응답을 잃었을 때 어떻게 같은 작업을 두 번 실행하지 않나요?">
+<title>재시도·중복 실행 방지·종료 조건 · F20</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-retries-idempotency-stop.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F20</p><h1>재시도·중복 실행 방지·종료 조건</h1><p>응답을 잃었을 때 어떻게 같은 작업을 두 번 실행하지 않나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">재시도·중복 실행 방지·종료 조건</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-retries-idempotency-stop-1"><svg><g>
+<rect x="68" y="85" width="480" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="308.0" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">r7 · 시도 1 · K7 ∅</text>
+<line x1="310.0" y1="127.0" x2="310.0" y2="149.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="310.0,149.0 304.1124782900721,137.40961225346072 315.8875217099279,137.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="68" y="153" width="480" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="308.0" y="180" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">K7 ← READY</text>
+<text x="310" y="252" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">실행 누계 1</text>
+</g></svg></template>
+<template id="figure-rag-retries-idempotency-stop-2"><svg><g>
+<text x="151" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">클라이언트</text>
+<text x="474" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">서버</text>
+<rect x="38" y="115" width="231" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="153.5" y="142" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">r7 · 시간 초과</text>
+<rect x="352" y="115" width="231" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="467.5" y="142" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">K7 · READY</text>
+<line x1="349" y1="170" x2="330" y2="170" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="289" y1="170" x2="252" y2="170" stroke="#a34123" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+<text x="310" y="178" font-size="26" font-weight="650" fill="#a34123" text-anchor="middle">×</text>
+<text x="471" y="221" font-size="21" font-weight="650" fill="#11664f" text-anchor="middle">실행 누계 1</text>
+</g></svg></template>
+<template id="figure-rag-retries-idempotency-stop-3"><svg><g>
+<text x="151" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">클라이언트</text>
+<text x="474" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">서버</text>
+<text x="307" y="126" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">시도 2/2 · K7</text>
+<line x1="120.0" y1="143.0" x2="505.0" y2="143.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="505.0,143.0 493.40961225346075,148.88752170992788 493.40961225346075,137.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="352" y="158" width="231" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="467.5" y="185" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">K7 · READY</text>
+<line x1="505.0" y1="207.0" x2="120.0" y2="207.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="120.0,207.0 131.59038774653928,201.11247829007212 131.59038774653928,212.88752170992788" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="155" y="244" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">READY · 종료</text>
+<text x="472" y="244" font-size="21" font-weight="650" fill="#11664f" text-anchor="middle">실행 누계 1</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "최초 실행",
+    "title": "한 번 실행하고 멱등 키로 결과를 보관합니다",
+    "body": "r7은 시도 1에서 K7을 조회합니다. 키가 없어 실행한 뒤 READY를 저장합니다. 기록에는 실행 1회가 남습니다.",
+    "takeaway": "K7이 빈 상태에서 READY로 채워집니다.",
+    "example": [
+      "r7 시도 1 · K7 비어 있음",
+      "실행 후 K7에 기록",
+      "K7 READY · 실행 1회"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "최초 실행",
+      "description": "K7이 빈 상태에서 READY로 채워집니다.",
+      "figure": "figure-rag-retries-idempotency-stop-1"
+    },
+    "quiz": [
+      "처음 실행이 완료됐을 때 재시도가 읽을 값은 어디에 두나요?",
+      "같은 멱등 키 K7",
+      "시도마다 새 임의 키",
+      "재시도는 첫 작업의 실행 상태를 찾아야 합니다."
+    ]
+  },
+  {
+    "label": "응답 유실",
+    "title": "요청자가 못 받은 응답과 완료된 실행을 구분합니다",
+    "body": "서버는 K7에 READY를 저장했습니다. 응답만 전달되지 않아 클라이언트는 시도 1에서 시간 초과를 관찰합니다.",
+    "takeaway": "서버의 K7은 남고 반환 선만 끊깁니다.",
+    "example": [
+      "r7 시도 1 · K7 READY",
+      "응답 경로 유실",
+      "클라이언트 시간 초과 · 실행 1회"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "응답 유실",
+      "description": "서버의 K7은 남고 반환 선만 끊깁니다.",
+      "figure": "figure-rag-retries-idempotency-stop-2"
+    },
+    "quiz": [
+      "응답이 안 왔으면 서버에서 실행하지 않았다고 단정할 수 있나요?",
+      "완료됐을 수도 있음",
+      "언제나 실행 0회",
+      "성공 결과와 응답 전송은 두 단계입니다."
+    ]
+  },
+  {
+    "label": "재시도 후 종료",
+    "title": "같은 키로 찾아 반환하고 시도를 끝냅니다",
+    "body": "시도 2가 K7을 보내면 서버는 저장된 READY를 돌려줍니다. 실행은 총 1회입니다. 최대 2회 정책이라 응답을 또 잃으면 추가 시도 없이 종료합니다.",
+    "takeaway": "같은 K7의 저장 응답만 돌아오며 실행 수가 1에 고정됩니다.",
+    "example": [
+      "r7 시도 2 · K7 적중",
+      "재실행 없이 저장 응답 반환",
+      "READY · 실행 누계 1 · 종료"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "재시도 후 종료",
+      "description": "같은 K7의 저장 응답만 돌아오며 실행 수가 1에 고정됩니다.",
+      "figure": "figure-rag-retries-idempotency-stop-3"
+    },
+    "quiz": [
+      "최대 2회에서 두 번째 응답까지 유실되면?",
+      "재시도를 종료",
+      "세 번째로 계속 시도",
+      "두 번의 시도로 상한을 소진했습니다."
+    ]
+  }
+];
+const slug = 'rag-retries-idempotency-stop';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

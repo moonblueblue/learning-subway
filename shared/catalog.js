@@ -1447,11 +1447,140 @@ const courseCatalog = {
             {
               "id": "7.1",
               "ref": "ai/llm"
+            },
+            {
+              "id": "7.7",
+              "ref": "security/threatmodel"
+            },
+            {
+              "id": "7.8",
+              "ref": "ai/rag-document-registry"
+            },
+            {
+              "id": "7.2",
+              "ref": "ai/rag-structure-preserving-parse"
+            },
+            {
+              "id": "7.9",
+              "ref": "ai/rag-chunk-boundaries"
+            },
+            {
+              "id": "7.3",
+              "ref": "ai/rag-inverted-index-bm25"
+            },
+            {
+              "id": "7.10",
+              "ref": "ai/rag-evidence-test-set"
+            },
+            {
+              "id": "7.11",
+              "ref": "ai/rag-embedding-cosine"
+            },
+            {
+              "id": "7.12",
+              "ref": "ai/rag-exact-approx-neighbors"
+            },
+            {
+              "id": "7.13",
+              "ref": "ai/rag-hybrid-rrf"
+            },
+            {
+              "id": "7.14",
+              "ref": "ai/rag-cross-encoder-reranking"
+            },
+            {
+              "id": "7.15",
+              "ref": "ai/rag-recall-rank-metrics"
+            },
+            {
+              "id": "7.4",
+              "ref": "ai/rag-prompt-data-boundaries"
+            },
+            {
+              "id": "7.16",
+              "ref": "ai/rag-context-passage-budget"
+            },
+            {
+              "id": "7.17",
+              "ref": "ai/rag-citation-source-ids"
+            },
+            {
+              "id": "7.18",
+              "ref": "ai/rag-conflicting-documents-abstention"
+            },
+            {
+              "id": "7.6",
+              "ref": "ai/rag-gold-context-diagnosis"
+            },
+            {
+              "id": "7.5",
+              "ref": "ai/rag-tool-input-schema"
+            },
+            {
+              "id": "7.19",
+              "ref": "ai/rag-document-tool-authorization"
+            },
+            {
+              "id": "7.20",
+              "ref": "ai/rag-tool-state-persistence"
+            },
+            {
+              "id": "7.21",
+              "ref": "ai/rag-retries-idempotency-stop"
+            },
+            {
+              "id": "7.22",
+              "ref": "ai/rag-trace-blocked-tool"
+            },
+            {
+              "id": "7.23",
+              "ref": "ai/rag-local-model-device-budget"
+            },
+            {
+              "id": "7.24",
+              "ref": "ai/rag-offline-artifact-manifest"
+            },
+            {
+              "id": "7.25",
+              "ref": "ai/rag-offline-hash-installation"
+            },
+            {
+              "id": "7.26",
+              "ref": "ai/rag-offline-index-build"
+            },
+            {
+              "id": "7.27",
+              "ref": "ai/rag-offline-restart-access-restore"
+            },
+            {
+              "id": "7.28",
+              "ref": "ai/rag-disconnected-suite-replay"
+            },
+            {
+              "id": "7.29",
+              "ref": "ai/rec-feedback-exposure-bias"
+            },
+            {
+              "id": "7.30",
+              "ref": "ai/rec-collaborative-factorization"
+            },
+            {
+              "id": "7.31",
+              "ref": "ai/rec-cold-start-content"
+            },
+            {
+              "id": "7.32",
+              "ref": "ai/rec-personalization-diversity"
+            },
+            {
+              "id": "7.33",
+              "ref": "ai/rec-exposure-log-offline-evaluation"
             }
           ],
           "tracks": [],
           "destination": "문서 지원 에이전트",
-          "destinationEn": "A manual-based support agent"
+          "destinationEn": "Document Support Agent",
+          "projectRef": "projects/document-support-agent"
         },
         {
           "id": "8",
@@ -5504,6 +5633,347 @@ const courseCatalog = {
             "ai/diffusion-noise-prediction-reverse"
           ],
           "page": "ai/conditional-generation-quality-diversity.html"
+        },
+        {
+          "id": "rag-document-registry",
+          "title": "문서 수집·버전·이용 권한",
+          "titleEn": "Document ingest, versioning, and access",
+          "question": "이전 판과 권한 밖 문서를 색인에서 어떻게 구분하나요?",
+          "format": "실험",
+          "requires": [
+            "security/threatmodel"
+          ],
+          "page": "ai/rag-document-registry.html"
+        },
+        {
+          "id": "rag-structure-preserving-parse",
+          "title": "제목·표·쪽 번호를 보존하는 파싱",
+          "titleEn": "Parse headings, tables, and page numbers",
+          "question": "표의 숫자를 원래 항목과 어떻게 묶어 둘까요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-document-registry"
+          ],
+          "page": "ai/rag-structure-preserving-parse.html"
+        },
+        {
+          "id": "rag-chunk-boundaries",
+          "title": "문서 분할과 청크 경계",
+          "titleEn": "Chunking and passage boundaries",
+          "question": "지침이 경계에 걸리면 어떻게 근거를 보존하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-structure-preserving-parse"
+          ],
+          "page": "ai/rag-chunk-boundaries.html"
+        },
+        {
+          "id": "rag-inverted-index-bm25",
+          "title": "역색인과 BM25 검색",
+          "titleEn": "Inverted indexes and BM25 retrieval",
+          "question": "검색어 하나가 어떻게 후보와 점수를 만드나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-chunk-boundaries"
+          ],
+          "page": "ai/rag-inverted-index-bm25.html"
+        },
+        {
+          "id": "rag-evidence-test-set",
+          "title": "정답 문서·근거 구절 시험셋 만들기",
+          "titleEn": "Build a document and passage test set",
+          "question": "정답 문서를 찾아도 어떤 구절을 따로 채점하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-inverted-index-bm25"
+          ],
+          "page": "ai/rag-evidence-test-set.html"
+        },
+        {
+          "id": "rag-embedding-cosine",
+          "title": "검색 임베딩과 코사인 유사도",
+          "titleEn": "Search embeddings and cosine similarity",
+          "question": "벡터가 길어도 방향이 다르면 어떻게 순위가 바뀌나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-evidence-test-set"
+          ],
+          "page": "ai/rag-embedding-cosine.html"
+        },
+        {
+          "id": "rag-exact-approx-neighbors",
+          "title": "정확 최근접 검색과 근사 인덱스",
+          "titleEn": "Exact neighbors and approximate indexing",
+          "question": "언제 한 버킷만 훑으면 가장 가까운 점을 놓치나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-embedding-cosine"
+          ],
+          "page": "ai/rag-exact-approx-neighbors.html"
+        },
+        {
+          "id": "rag-hybrid-rrf",
+          "title": "키워드·벡터의 혼합 검색",
+          "titleEn": "Hybrid keyword and vector retrieval",
+          "question": "점수 단위가 다른 두 순위를 어떻게 합칠까요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-exact-approx-neighbors"
+          ],
+          "page": "ai/rag-hybrid-rrf.html"
+        },
+        {
+          "id": "rag-cross-encoder-reranking",
+          "title": "교차 인코더 재정렬",
+          "titleEn": "Cross-encoder reranking",
+          "question": "같은 후보에서 문장과 질의를 함께 읽으면 순위가 왜 바뀌나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-hybrid-rrf"
+          ],
+          "page": "ai/rag-cross-encoder-reranking.html"
+        },
+        {
+          "id": "rag-recall-rank-metrics",
+          "title": "Recall@k와 순위 지표로 검색 비교",
+          "titleEn": "Recall@k and rank metrics",
+          "question": "찾은 정답 수가 같아도 어떤 검색기가 먼저 답을 주나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-cross-encoder-reranking"
+          ],
+          "page": "ai/rag-recall-rank-metrics.html"
+        },
+        {
+          "id": "rag-prompt-data-boundaries",
+          "title": "프롬프트의 지시와 참고 문서 경계",
+          "titleEn": "Separate prompt instructions from source data",
+          "question": "검색 구절이 명령처럼 보여도 실행 경로를 어떻게 분리할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-recall-rank-metrics"
+          ],
+          "page": "ai/rag-prompt-data-boundaries.html"
+        },
+        {
+          "id": "rag-context-passage-budget",
+          "title": "문맥 예산과 근거 구절 배치",
+          "titleEn": "Context budgets and evidence placement",
+          "question": "정답 구절이 후보에 있어도 예산 때문에 언제 사라지나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-prompt-data-boundaries"
+          ],
+          "page": "ai/rag-context-passage-budget.html"
+        },
+        {
+          "id": "rag-citation-source-ids",
+          "title": "근거 구절과 인용 ID 연결",
+          "titleEn": "Connect evidence spans to citation IDs",
+          "question": "답에 붙인 인용이 실제 문구와 판을 가리키는지 어떻게 확인할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-context-passage-budget"
+          ],
+          "page": "ai/rag-citation-source-ids.html"
+        },
+        {
+          "id": "rag-conflicting-documents-abstention",
+          "title": "문서 간 충돌과 답변 보류",
+          "titleEn": "Conflicting documents and abstention",
+          "question": "같은 질문에 적용되는 활성 문서가 다른 값을 주면 어떻게 하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-citation-source-ids"
+          ],
+          "page": "ai/rag-conflicting-documents-abstention.html"
+        },
+        {
+          "id": "rag-gold-context-diagnosis",
+          "title": "정답 문맥 주입으로 검색·생성 오류 분해",
+          "titleEn": "Separate retrieval and answer errors with gold context",
+          "question": "틀린 응답의 원인을 어느 단계에 돌릴 수 있나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-conflicting-documents-abstention"
+          ],
+          "page": "ai/rag-gold-context-diagnosis.html"
+        },
+        {
+          "id": "rag-tool-input-schema",
+          "title": "도구 입력 스키마와 유효성 검사",
+          "titleEn": "Validate tool inputs with a schema",
+          "question": "도구 호출의 어떤 입력을 실행 전에 걸러내나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-gold-context-diagnosis"
+          ],
+          "page": "ai/rag-tool-input-schema.html"
+        },
+        {
+          "id": "rag-document-tool-authorization",
+          "title": "사용자·문서·도구별 권한 판정",
+          "titleEn": "Authorize the user, document, and tool separately",
+          "question": "문서를 읽을 수 있으면 도구도 호출할 수 있나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-tool-input-schema"
+          ],
+          "page": "ai/rag-document-tool-authorization.html"
+        },
+        {
+          "id": "rag-tool-state-persistence",
+          "title": "호출 결과와 대화 상태 저장",
+          "titleEn": "Store tool results and conversation state",
+          "question": "후속 질의가 어느 도구 결과인지 어떻게 알까요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-document-tool-authorization"
+          ],
+          "page": "ai/rag-tool-state-persistence.html"
+        },
+        {
+          "id": "rag-retries-idempotency-stop",
+          "title": "재시도·중복 실행 방지·종료 조건",
+          "titleEn": "Retry, prevent duplicate execution, and stop",
+          "question": "응답을 잃었을 때 어떻게 같은 작업을 두 번 실행하지 않나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-tool-state-persistence"
+          ],
+          "page": "ai/rag-retries-idempotency-stop.html"
+        },
+        {
+          "id": "rag-trace-blocked-tool",
+          "title": "에이전트 추적으로 권한 밖 호출 차단 확인",
+          "titleEn": "Verify blocked tool use from agent traces",
+          "question": "실행되지 않았음을 어떤 기록으로 확인하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-retries-idempotency-stop"
+          ],
+          "page": "ai/rag-trace-blocked-tool.html"
+        },
+        {
+          "id": "rag-local-model-device-budget",
+          "title": "로컬 생성·임베딩 모델과 장비 예산",
+          "titleEn": "Budget local generation and embedding models",
+          "question": "모델 둘을 같이 올리면 어디에서 장비 예산을 넘나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-trace-blocked-tool"
+          ],
+          "page": "ai/rag-local-model-device-budget.html"
+        },
+        {
+          "id": "rag-offline-artifact-manifest",
+          "title": "모델·런타임·의존성의 반입 목록",
+          "titleEn": "Inventory models, runtime, and dependencies",
+          "question": "외부망 차단 전에 무엇을 반입 목록에 닫아 둬야 하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-local-model-device-budget"
+          ],
+          "page": "ai/rag-offline-artifact-manifest.html"
+        },
+        {
+          "id": "rag-offline-hash-installation",
+          "title": "파일 해시·버전 검증과 오프라인 설치",
+          "titleEn": "Verify hashes and versions for offline installation",
+          "question": "복사된 파일이 승인을 받은 바이트와 같은지 어떻게 확인하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-offline-artifact-manifest"
+          ],
+          "page": "ai/rag-offline-hash-installation.html"
+        },
+        {
+          "id": "rag-offline-index-build",
+          "title": "외부 연결 없는 로컬 색인 구축",
+          "titleEn": "Build an index without external connectivity",
+          "question": "연결을 끊은 장비에서 무엇으로 색인을 만들고 저장하나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-offline-hash-installation"
+          ],
+          "page": "ai/rag-offline-index-build.html"
+        },
+        {
+          "id": "rag-offline-restart-access-restore",
+          "title": "재시작 뒤 도구·권한·문서판 복원",
+          "titleEn": "Restore tool, access policy, and document versions after restart",
+          "question": "새 프로세스가 같은 판과 권한을 어디서 읽나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-offline-index-build"
+          ],
+          "page": "ai/rag-offline-restart-access-restore.html"
+        },
+        {
+          "id": "rag-disconnected-suite-replay",
+          "title": "외부 통신 없이 전체 시험셋 재실행",
+          "titleEn": "Rerun the full test suite while disconnected",
+          "question": "외부망 단절 시험에서 어떤 판정들이 그대로여야 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-offline-restart-access-restore"
+          ],
+          "page": "ai/rag-disconnected-suite-replay.html"
+        },
+        {
+          "id": "rec-feedback-exposure-bias",
+          "title": "명시·암묵 피드백과 노출 편향",
+          "titleEn": "Explicit feedback, implicit feedback, and exposure bias",
+          "question": "클릭이 없을 때 어떤 행을 불호로 읽으면 안 되나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rag-disconnected-suite-replay"
+          ],
+          "page": "ai/rec-feedback-exposure-bias.html"
+        },
+        {
+          "id": "rec-collaborative-factorization",
+          "title": "협업 필터링과 행렬 분해",
+          "titleEn": "Collaborative filtering and matrix factorization",
+          "question": "빈 평점 칸에 사용자·항목 벡터를 어떻게 붙이나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rec-feedback-exposure-bias"
+          ],
+          "page": "ai/rec-collaborative-factorization.html"
+        },
+        {
+          "id": "rec-cold-start-content",
+          "title": "콜드 스타트와 콘텐츠 기반 후보",
+          "titleEn": "Cold start and content-based candidates",
+          "question": "새 사용자가 평점을 전혀 주지 않았을 때 어떻게 후보를 만드나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rec-collaborative-factorization"
+          ],
+          "page": "ai/rec-cold-start-content.html"
+        },
+        {
+          "id": "rec-personalization-diversity",
+          "title": "개인화 순위와 다양성 재정렬",
+          "titleEn": "Personalized ranking and diversity reranking",
+          "question": "같은 길이의 목록에서 관련성과 다양성이 어떻게 바뀌나요?",
+          "format": "실험",
+          "requires": [
+            "ai/rec-cold-start-content"
+          ],
+          "page": "ai/rec-personalization-diversity.html"
+        },
+        {
+          "id": "rec-exposure-log-offline-evaluation",
+          "title": "노출 로그로 오프라인 평가의 한계 찾기",
+          "titleEn": "Find offline evaluation limits in exposure logs",
+          "question": "로그에 없던 노출을 새 정책이 만들면 어떤 효과를 모를까요?",
+          "format": "실험",
+          "requires": [
+            "ai/rec-personalization-diversity"
+          ],
+          "page": "ai/rec-exposure-log-offline-evaluation.html"
         }
       ]
     },
@@ -5613,6 +6083,17 @@ const courseCatalog = {
             "ai/training-token-compute-budget"
           ],
           "page": "projects/small-language-model.html"
+        },
+        {
+          "id": "document-support-agent",
+          "title": "문서 지원 에이전트",
+          "titleEn": "Document Support Agent",
+          "question": "같은 문서판과 권한을 다시 읽으면 인용과 로컬 도구 실행을 재현할까요?",
+          "format": "프로젝트",
+          "requires": [
+            "ai/rag-trace-blocked-tool"
+          ],
+          "page": "projects/document-support-agent.html"
         }
       ]
     }

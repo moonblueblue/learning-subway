@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="새 사용자가 평점을 전혀 주지 않았을 때 어떻게 후보를 만드나요?">
+<title>콜드 스타트와 콘텐츠 기반 후보 · F30</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rec-cold-start-content.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F30</p><h1>콜드 스타트와 콘텐츠 기반 후보</h1><p>새 사용자가 평점을 전혀 주지 않았을 때 어떻게 후보를 만드나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">콜드 스타트와 콘텐츠 기반 후보</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rec-cold-start-content-1"><svg><g>
+<rect x="51" y="93" width="511" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="306.5" y="120" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">U9 · 평점 0 · 클릭 0</text>
+<line x1="310.0" y1="134.0" x2="310.0" y2="167.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="310.0,167.0 304.1124782900721,155.40961225346072 315.8875217099279,155.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="51" y="171" width="511" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="306.5" y="198" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">협업 사용자 요인 ∅</text>
+<text x="310" y="261" font-size="23" font-weight="650" fill="#a34123" text-anchor="middle">협업 후보 ∅</text>
+</g></svg></template>
+<template id="figure-rec-cold-start-content-2"><svg><g>
+<text x="310" y="82" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">U9 · 가입 시 고른 태그</text>
+<rect x="52" y="97" width="228" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="166.0" y="124" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">안전</text>
+<rect x="338" y="97" width="228" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="452.0" y="124" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">점검</text>
+<line x1="166.0" y1="139.0" x2="108.0" y2="177.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="108.0,177.0 114.46839233920927,165.72348012257066 120.92142531426586,175.5728462423939" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="166.0" y1="139.0" x2="308.0" y2="177.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="308.0,177.0 295.2816044535025,179.69117348434338 298.32556366218995,168.31637854661656" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="453.0" y1="139.0" x2="108.0" y2="177.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="108.0,177.0 118.87613188789904,169.87892177005295 120.16529675435397,181.58318174181483" fill="#11664f" stroke="none" stroke-width="1"/>
+<rect x="28" y="180" width="163" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="109.5" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A · 2</text>
+<rect x="227" y="180" width="163" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="308.5" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B · 1</text>
+<rect x="426" y="180" width="163" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="507.5" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">C · 0</text>
+<text x="509" y="248" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">교육만</text>
+<text x="310" y="248" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">안전</text>
+<text x="107" y="248" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">안전·점검</text>
+<text x="310" y="275" font-size="17" font-weight="650" fill="#17354b" text-anchor="middle">활동 이력 0</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "협업 이력 없음",
+    "title": "이력 없이 사용자 유사도를 계산할 근거가 없습니다",
+    "body": "U9에는 평점이나 클릭이 없습니다. 기존 이력 기반 사용자 벡터를 이 입력에서 추정할 수 없어 협업 경로가 비어 있습니다.",
+    "takeaway": "U9의 이력 칸 0에서 협업 후보 ∅로 이어집니다.",
+    "example": [
+      "U9 · 평점 0 · 클릭 0",
+      "이력 기반 사용자 요인 조회",
+      "협업 후보 ∅"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "협업 이력 없음",
+      "description": "U9의 이력 칸 0에서 협업 후보 ∅로 이어집니다.",
+      "figure": "figure-rec-cold-start-content-1"
+    },
+    "quiz": [
+      "처음 가입한 U10에게 과거 활동이 있는 것처럼 기록해도 되나요?",
+      "이력 없음 유지",
+      "임의 클릭 채우기",
+      "실제 기록과 초기 후보 정책을 구분합니다."
+    ]
+  },
+  {
+    "label": "태그 기반 후보",
+    "title": "직접 고른 관심 태그로 첫 후보를 만듭니다",
+    "body": "U9가 안전과 점검을 고릅니다. A는 두 태그, B는 안전 하나, C는 교육만 가집니다. 교집합 크기로 A 2, B 1, C 0입니다.",
+    "takeaway": "같은 U9에 새 태그 입력이 채워지고 A가 두 개를 연결합니다.",
+    "example": [
+      "U9 · 안전, 점검",
+      "태그 교집합 수",
+      "A 2 > B 1 > C 0"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "태그 기반 후보",
+      "description": "같은 U9에 새 태그 입력이 채워지고 A가 두 개를 연결합니다.",
+      "figure": "figure-rec-cold-start-content-2"
+    },
+    "quiz": [
+      "새 사용자가 교육만 고르면 어떤 후보가 일치하나요?",
+      "C",
+      "A",
+      "C의 콘텐츠 태그가 교육입니다."
+    ]
+  }
+];
+const slug = 'rec-cold-start-content';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

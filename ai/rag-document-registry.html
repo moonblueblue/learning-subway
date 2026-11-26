@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="이전 판과 권한 밖 문서를 색인에서 어떻게 구분하나요?">
+<title>문서 수집·버전·이용 권한 · F02</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-document-registry.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F02</p><h1>문서 수집·버전·이용 권한</h1><p>이전 판과 권한 밖 문서를 색인에서 어떻게 구분하나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">문서 수집·버전·이용 권한</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-document-registry-1"><svg><g>
+<text x="150" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">원본 대장</text>
+<text x="495" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">색인 대상</text>
+<rect x="35" y="102" width="232" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="151.0" y="129" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">OPS-17 v1 · 20 s</text>
+<line x1="277.0" y1="122.0" x2="392.0" y2="122.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="392.0,122.0 380.40961225346075,127.88752170992788 380.40961225346075,116.11247829007212" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="487" y="130" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">보관 · 비활성</text>
+<rect x="35" y="182" width="232" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="151.0" y="209" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">OPS-17 v2 · 30 s</text>
+<line x1="277.0" y1="202.0" x2="392.0" y2="202.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="392.0,202.0 380.40961225346075,207.88752170992788 380.40961225346075,196.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="493" y="209" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">추가 · 활성</text>
+</g></svg></template>
+<template id="figure-rag-document-registry-2"><svg><g>
+<text x="126" y="89" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">활성 색인</text>
+<text x="326" y="89" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">tech 권한</text>
+<text x="525" y="89" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">검색 후보</text>
+<rect x="27" y="109" width="180" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="117.0" y="136" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">OPS-17 v2</text>
+<text x="120" y="170" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">tech 허용</text>
+<line x1="215.0" y1="128.0" x2="280.0" y2="128.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="280.0,128.0 268.40961225346075,133.88752170992788 268.40961225346075,122.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="360.0" y1="128.0" x2="427.0" y2="128.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="427.0,128.0 415.40961225346075,133.88752170992788 415.40961225346075,122.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="325" y="135" font-size="24" font-weight="650" fill="#11664f" text-anchor="middle">✓</text>
+<text x="524" y="135" font-size="22" font-weight="650" fill="#11664f" text-anchor="middle">OPS-17 v2</text>
+<rect x="27" y="190" width="180" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="117.0" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">SAF-09 v1</text>
+<text x="123" y="252" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">supervisor만</text>
+<line x1="215" y1="209" x2="280" y2="209" stroke="#a34123" stroke-width="3" stroke-dasharray="6 4" stroke-linecap="round"/>
+<text x="325" y="217" font-size="26" font-weight="650" fill="#a34123" text-anchor="middle">⊘</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "판 선택",
+    "title": "활성 판을 검색에 넣습니다",
+    "body": "OPS-17 v1은 20초를, v2는 30초를 안내합니다. 원본 대장에는 두 판을 남기고 활성 v2만 색인에 넣습니다.",
+    "takeaway": "v1은 보관되고 v2가 검색으로 갑니다.",
+    "example": [
+      "OPS-17 v1·v2",
+      "활성 판 v2",
+      "OPS-17@v2 · 30 s"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "판 선택",
+      "description": "v1은 보관되고 v2가 검색으로 갑니다.",
+      "figure": "figure-rag-document-registry-1"
+    },
+    "quiz": [
+      "v3가 승인되고 v2가 비활성이 되면 검색할 판은?",
+      "v3",
+      "v2와 v3 모두",
+      "과거 판은 대장에만 보존합니다."
+    ]
+  },
+  {
+    "label": "이용 권한",
+    "title": "검색 전에 이용 권한을 검사합니다",
+    "body": "SAF-09는 supervisor만 읽을 수 있습니다. tech의 검색 후보에는 OPS-17@v2만 남습니다.",
+    "takeaway": "SAF-09는 활성 판이어도 tech 문에서 막힙니다.",
+    "example": [
+      "tech · OPS-17@v2 · SAF-09@v1",
+      "문서별 허용 역할 확인",
+      "tech 후보 OPS-17@v2"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "이용 권한",
+      "description": "SAF-09는 활성 판이어도 tech 문에서 막힙니다.",
+      "figure": "figure-rag-document-registry-2"
+    },
+    "quiz": [
+      "tech 권한을 제거하면 OPS-17@v2도 반환하나요?",
+      "반환하지 않음",
+      "활성이므로 반환",
+      "활성 판도 사용자별 읽기 권한이 필요합니다."
+    ]
+  }
+];
+const slug = 'rag-document-registry';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

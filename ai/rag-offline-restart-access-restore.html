@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="새 프로세스가 같은 판과 권한을 어디서 읽나요?">
+<title>재시작 뒤 도구·권한·문서판 복원 · F26</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rag-offline-restart-access-restore.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">검색·RAG·AI 응용 · F26</p><h1>재시작 뒤 도구·권한·문서판 복원</h1><p>새 프로세스가 같은 판과 권한을 어디서 읽나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">재시작 뒤 도구·권한·문서판 복원</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-rag-offline-restart-access-restore-1"><svg><g>
+<text x="135" y="80" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">프로세스 1 실행 중</text>
+<text x="460" y="80" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">로컬 상태 S1</text>
+<rect x="30" y="98" width="214" height="39" fill="#c9e8f6" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.0" y="125" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">RAM · I1, P1, T1</text>
+<line x1="252.0" y1="117.0" x2="345.0" y2="117.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="345.0,117.0 333.40961225346075,122.88752170992788 333.40961225346075,111.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<rect x="352" y="98" width="223" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="463.5" y="125" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">OPS-17 v2 · I1</text>
+<text x="300" y="153" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">① 저장</text>
+<rect x="352" y="174" width="223" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="463.5" y="201" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">권한 P1 · 도구 T1</text>
+<line x1="135.0" y1="143.0" x2="135.0" y2="170.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="135.0,170.0 129.11247829007212,158.40961225346072 140.88752170992788,158.40961225346072" fill="#a34123" stroke="none" stroke-width="1"/>
+<rect x="30" y="174" width="214" height="39" fill="#f6dacb" stroke="#566d7c" stroke-width="1.4"/>
+<text x="137.0" y="201" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">② 종료 · RAM ∅</text>
+<text x="466" y="251" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">파일과 SHA-256 유지</text>
+</g></svg></template>
+<template id="figure-rag-offline-restart-access-restore-2"><svg><g>
+<text x="150" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">프로세스 2</text>
+<text x="465" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">로컬 상태 S1</text>
+<rect x="32" y="112" width="214" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="139.0" y="139" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">SHA-256 확인</text>
+<line x1="345.0" y1="131.0" x2="256.0" y2="131.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="256.0,131.0 267.59038774653925,125.11247829007212 267.59038774653925,136.88752170992788" fill="#11664f" stroke="none" stroke-width="1"/>
+<rect x="352" y="112" width="223" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="463.5" y="139" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">OPS-17 v2 · I1</text>
+<rect x="352" y="175" width="223" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="463.5" y="202" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">권한 P1 · 도구 T1</text>
+<line x1="142.0" y1="154.0" x2="142.0" y2="185.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="142.0,185.0 136.11247829007212,173.40961225346072 147.88752170992788,173.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<rect x="29" y="190" width="259" height="39" fill="#cbe7d9" stroke="#566d7c" stroke-width="1.4"/>
+<text x="158.5" y="217" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">v2 인용 · G7 READY</text>
+<text x="309" y="264" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">같은 S1로 재실행</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "닫기 전 저장",
+    "title": "파일에 재시작에 필요한 입력이 남습니다",
+    "body": "첫 프로세스는 문서판 OPS-17 v2와 색인 I1, 권한 P1, 로컬 도구 T1을 S1에 기록하고 종료합니다. 프로세스 메모리는 사라집니다.",
+    "takeaway": "왼쪽 프로세스의 종료 뒤에도 오른쪽 S1이 남습니다.",
+    "example": [
+      "프로세스 1 · OPS-17 v2 · I1 · P1 · T1",
+      "SHA-256과 같이 저장한 뒤 종료",
+      "로컬 상태 S1 보존"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "닫기 전 저장",
+      "description": "왼쪽 프로세스의 종료 뒤에도 오른쪽 S1이 남습니다.",
+      "figure": "figure-rag-offline-restart-access-restore-1"
+    },
+    "quiz": [
+      "재시작하기 전에 프로세스 메모리에만 있던 값을 복구하려면 무엇을 해야 하나요?",
+      "파일에 기록",
+      "창을 새로 열기만 함",
+      "프로세스가 종료되면 RAM의 이전 값을 사용할 수 없습니다."
+    ]
+  },
+  {
+    "label": "열기와 재실행",
+    "title": "새 실행기는 S1을 열어 판과 권한을 검증합니다",
+    "body": "프로세스 2는 S1의 SHA-256을 재계산합니다. 확인 후 OPS-17 v2와 P1 및 T1을 읽어 같은 인용과 승인된 상태 읽기를 재현합니다.",
+    "takeaway": "파일에서 새 프로세스로 방향이 바뀌고 두 결과가 돌아옵니다.",
+    "example": [
+      "S1 · 새 프로세스 2",
+      "해시 검사 후 저장 입력 열기",
+      "OPS-17 v2 인용 · G7 READY"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "열기와 재실행",
+      "description": "파일에서 새 프로세스로 방향이 바뀌고 두 결과가 돌아옵니다.",
+      "figure": "figure-rag-offline-restart-access-restore-2"
+    },
+    "quiz": [
+      "S1이 바뀌고 SHA-256이 틀리면 같은 상태를 복원하나요?",
+      "복원 중단",
+      "계속 복원",
+      "다른 바이트를 같은 상태로 판정할 수 없습니다."
+    ]
+  }
+];
+const slug = 'rag-offline-restart-access-restore';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

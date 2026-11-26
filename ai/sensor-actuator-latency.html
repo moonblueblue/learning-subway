@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="센서 시각에서 구동 명령과 실제 정지까지 무엇을 따로 재야 할까요?">
+<title>센서에서 구동기까지 지연 측정 · D30</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./sensor-actuator-latency.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D30</p><h1>센서에서 구동기까지 지연 측정</h1><p>센서 시각에서 구동 명령과 실제 정지까지 무엇을 따로 재야 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">센서에서 구동기까지 지연 측정</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-sensor-actuator-latency-1"><svg><g>
+<text x="308" y="80" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">합성 기록 · 공통 시계</text>
+<line x1="86" y1="160" x2="536" y2="160" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="86" cy="160" r="6" fill="#12649c"/>
+<circle cx="423" cy="160" r="6" fill="#12649c"/>
+<circle cx="536" cy="160" r="6" fill="#11664f"/>
+<text x="84" y="117" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">센서</text>
+<text x="406" y="113" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">송신</text>
+<text x="544" y="113" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">적용</text>
+<text x="86" y="193" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">100 ms</text>
+<text x="408" y="193" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">145 ms</text>
+<text x="538" y="193" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">160 ms</text>
+<line x1="86.0" y1="213.0" x2="423.0" y2="213.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="423.0,213.0 411.40961225346075,218.88752170992788 411.40961225346075,207.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="423.0" y1="213.0" x2="536.0" y2="213.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="536.0,213.0 524.4096122534608,218.88752170992788 524.4096122534608,207.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="254" y="254" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">45 ms</text>
+<text x="482" y="254" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">15 ms</text>
+</g></svg></template>
+<template id="figure-sensor-actuator-latency-2"><svg><g>
+<text x="309" y="80" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">합성 기록 · 공통 시계</text>
+<line x1="87" y1="156" x2="535" y2="156" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="87" cy="156" r="6" fill="#12649c"/>
+<circle cx="279" cy="156" r="6" fill="#12649c"/>
+<circle cx="535" cy="156" r="6" fill="#11664f"/>
+<text x="88" y="115" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">센서</text>
+<text x="279" y="115" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">STOP 적용</text>
+<text x="530" y="115" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">바퀴 v = 0</text>
+<text x="87" y="192" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">100 ms</text>
+<text x="279" y="192" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">160 ms</text>
+<text x="535" y="192" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">240 ms</text>
+<line x1="88.0" y1="212.0" x2="278.0" y2="212.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="278.0,212.0 266.40961225346075,217.88752170992788 266.40961225346075,206.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="279.0" y1="212.0" x2="535.0" y2="212.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="535.0,212.0 523.4096122534608,217.88752170992788 523.4096122534608,206.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="184" y="253" font-size="21" font-weight="650" fill="#12649c" text-anchor="middle">지연 60 ms</text>
+<text x="411" y="253" font-size="21" font-weight="650" fill="#11664f" text-anchor="middle">제동 80 ms</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "입력에서 출력까지",
+    "title": "동일 시계에서 적용 시각과 센서 시각을 뺍니다",
+    "body": "예시 합성 로그의 센서 샘플은 100 ms, 제어 송신은 145 ms, 구동기 적용은 160 ms입니다. 센서부터 적용까지 60 ms이며 송신 이후는 15 ms입니다.",
+    "takeaway": "100→145와 145→160이 45 ms와 15 ms로 나뉩니다.",
+    "example": [
+      "100 → 145 → 160 ms",
+      "160 − 100",
+      "60 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "입력에서 출력까지",
+      "description": "100→145와 145→160이 45 ms와 15 ms로 나뉩니다.",
+      "figure": "figure-sensor-actuator-latency-1"
+    },
+    "quiz": [
+      "센서 100 ms, 적용 170 ms이면 전체 지연은?",
+      "70 ms",
+      "170 ms",
+      "두 시각의 차이를 같은 단위로 계산합니다."
+    ]
+  },
+  {
+    "label": "속도 0은 이후",
+    "title": "정지 명령 적용 뒤에도 바퀴가 잠시 움직입니다",
+    "body": "같은 합성 기록에 속도 0이 된 240 ms를 더합니다. 적용 후 80 ms에 멈췄고 입력부터 정지까지는 140 ms입니다.",
+    "takeaway": "60 ms 제어 지연 옆에 80 ms 물리 제동 구간이 붙습니다.",
+    "example": [
+      "센서 100 · 적용 160 · v=0은 240 ms",
+      "240 − 160 · 240 − 100",
+      "제동 80 · 전체 140 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "속도 0은 이후",
+      "description": "60 ms 제어 지연 옆에 80 ms 물리 제동 구간이 붙습니다.",
+      "figure": "figure-sensor-actuator-latency-2"
+    },
+    "quiz": [
+      "정지 명령 적용 뒤 속도 0이 될 때까지 시간은 어느 두 사건의 차이인가요?",
+      "적용과 속도 0",
+      "센서와 송신",
+      "제동 구간은 명령 적용부터 속도 0까지입니다."
+    ]
+  }
+];
+const slug = 'sensor-actuator-latency';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

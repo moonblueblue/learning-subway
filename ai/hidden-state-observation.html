@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 거리 관측이 왜 다른 행동 결과를 낳을까요?">
+<title>관측과 숨은 상태 · D01</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./hidden-state-observation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D01</p><h1>관측과 숨은 상태</h1><p>같은 거리 관측이 왜 다른 행동 결과를 낳을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">관측과 숨은 상태</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-hidden-state-observation-1"><svg><g>
+<text x="156" y="85" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">지도 A</text>
+<rect x="84" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="156" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="192" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="84" y="134" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="134" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="138.0" y="157.76" font-size="20.88" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="156" y="134" width="36" height="36" fill="#c9e8f6" stroke="#78909c" stroke-width="1"/>
+<rect x="192" y="134" width="36" height="36" fill="#c9e8f6" stroke="#78909c" stroke-width="1"/>
+<rect x="84" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="156" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="192" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="84" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="156" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="192" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="464" y="85" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">지도 B</text>
+<rect x="392" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="428" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="500" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="392" y="134" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="428" y="134" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="446.0" y="157.76" font-size="20.88" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="464" y="134" width="36" height="36" fill="#c9e8f6" stroke="#78909c" stroke-width="1"/>
+<rect x="500" y="134" width="36" height="36" fill="#c9e8f6" stroke="#78909c" stroke-width="1"/>
+<rect x="392" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="428" y="170" width="36" height="36" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="500" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="392" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="428" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="500" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="156" y="267" font-size="21" font-weight="650" fill="#12649c" text-anchor="middle">동쪽 2칸 비어 있음</text>
+<text x="464" y="267" font-size="21" font-weight="650" fill="#12649c" text-anchor="middle">동쪽 2칸 비어 있음</text>
+</g></svg></template>
+<template id="figure-hidden-state-observation-2"><svg><g>
+<text x="156" y="85" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">지도 A</text>
+<rect x="84" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="156" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="192" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="84" y="134" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="134" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="138.0" y="157.76" font-size="20.88" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="156" y="134" width="36" height="36" fill="#c9e8f6" stroke="#78909c" stroke-width="1"/>
+<rect x="192" y="134" width="36" height="36" fill="#c9e8f6" stroke="#78909c" stroke-width="1"/>
+<rect x="84" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="156" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="192" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="84" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="156" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="192" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="464" y="85" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">지도 B</text>
+<rect x="392" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="428" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="500" y="98" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="392" y="134" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="428" y="134" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="446.0" y="157.76" font-size="20.88" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="464" y="134" width="36" height="36" fill="#c9e8f6" stroke="#78909c" stroke-width="1"/>
+<rect x="500" y="134" width="36" height="36" fill="#c9e8f6" stroke="#78909c" stroke-width="1"/>
+<rect x="392" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="428" y="170" width="36" height="36" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="500" y="170" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="392" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="428" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="500" y="206" width="36" height="36" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<line x1="138.0" y1="167.0" x2="138.0" y2="190.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="138.0,190.0 132.11247829007212,178.40961225346072 143.88752170992788,178.40961225346072" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="138" cy="190" r="5" fill="#12649c"/>
+<line x1="446.0" y1="164.0" x2="446.0" y2="176.0" stroke="#a34123" stroke-width="3" stroke-dasharray="3 3" stroke-linecap="round"/>
+<polygon points="446.0,176.0 440.1124782900721,164.40961225346072 451.8875217099279,164.40961225346072" fill="#a34123" stroke="none" stroke-width="1"/>
+<line x1="439" y1="182" x2="453" y2="182" stroke="#a34123" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="435" cy="159" r="4" fill="#a34123"/>
+<text x="156" y="267" font-size="21" font-weight="650" fill="#12649c" text-anchor="middle">남쪽 이동 성공</text>
+<text x="464" y="267" font-size="21" font-weight="650" fill="#a34123" text-anchor="middle">벽 충돌 · 제자리</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "같은 시야",
+    "title": "동쪽 센서는 두 지도를 구별하지 못합니다",
+    "body": "수레 S에서 동쪽 두 칸만 읽습니다. 지도 B의 남쪽 벽은 센서 시야 밖이므로 두 관측은 모두 ‘2칸 비어 있음’입니다.",
+    "takeaway": "S 오른쪽의 파란 두 칸은 같고 B에서 S 바로 아래는 막혀 있습니다.",
+    "example": [
+      "지도 A·B",
+      "동쪽 2칸 측정",
+      "둘 다 2칸 비어 있음"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "같은 시야",
+      "description": "S 오른쪽의 파란 두 칸은 같고 B에서 S 바로 아래는 막혀 있습니다.",
+      "figure": "figure-hidden-state-observation-1"
+    },
+    "quiz": [
+      "벽이 두 지도에서 모두 시야 밖이면 관측으로 구별할 수 있나요?",
+      "아니요",
+      "예",
+      "관측은 센서 범위에 든 칸만 담습니다."
+    ]
+  },
+  {
+    "label": "남쪽 이동",
+    "title": "같은 관측에서 이동 결과가 갈립니다",
+    "body": "두 지도에서 남쪽 이동을 한 번 시도합니다. A는 한 칸 내려가지만 B는 벽 때문에 원래 칸에 머뭅니다.",
+    "takeaway": "A의 화살표는 열린 칸에 도착하고 B의 점선은 벽 입구에서 끊깁니다.",
+    "example": [
+      "두 관측 2칸",
+      "남쪽 이동 1회",
+      "A 이동 · B 제자리"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "남쪽 이동",
+      "description": "A의 화살표는 열린 칸에 도착하고 B의 점선은 벽 입구에서 끊깁니다.",
+      "figure": "figure-hidden-state-observation-2"
+    },
+    "quiz": [
+      "남쪽 벽이 있는 B에서 어느 관측을 추가해야 두 지도가 구별되나요?",
+      "남쪽 한 칸",
+      "동쪽 첫 칸 반복",
+      "다른 칸은 출발점의 바로 남쪽입니다."
+    ]
+  }
+];
+const slug = 'hidden-state-observation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

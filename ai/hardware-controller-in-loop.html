@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="실제 제어기만 연결한 모의 시험에서 무엇을 검증할 수 있을까요?">
+<title>실제 제어기를 연결한 모의 시험 · D29</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./hardware-controller-in-loop.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D29</p><h1>실제 제어기를 연결한 모의 시험</h1><p>실제 제어기만 연결한 모의 시험에서 무엇을 검증할 수 있을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">실제 제어기를 연결한 모의 시험</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-hardware-controller-in-loop-1"><svg><g>
+<text x="310" y="81" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">제어 주기 Δt = 20 ms</text>
+<rect x="39" y="129" width="190" height="87" fill="#c9e8f6" stroke="#12649c" stroke-width="2"/>
+<rect x="391" y="129" width="190" height="87" fill="#cbe7d9" stroke="#11664f" stroke-width="2"/>
+<text x="134" y="155" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">모의 수레</text>
+<text x="486" y="155" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">제어기</text>
+<line x1="230.0" y1="174.0" x2="383.0" y2="174.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="383.0,174.0 371.40961225346075,179.88752170992788 371.40961225346075,168.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="306" y="156" font-size="20" font-weight="650" fill="#12649c" text-anchor="middle">0.30 m</text>
+<line x1="390.0" y1="199.0" x2="234.0" y2="199.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="234.0,199.0 245.59038774653928,193.11247829007212 245.59038774653928,204.88752170992788" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="310" y="230" font-size="20" font-weight="650" fill="#11664f" text-anchor="middle">+0.20 m/s</text>
+<text x="310" y="268" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">다음 모의 거리 0.296 m</text>
+</g></svg></template>
+<template id="figure-hardware-controller-in-loop-2"><svg><g>
+<text x="309" y="84" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">모의 입력 .10 m ≤ 문턱 .15 m</text>
+<rect x="37" y="145" width="190" height="59" fill="#cbe7d9" stroke="#11664f" stroke-width="2"/>
+<text x="132" y="182" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">제어기</text>
+<line x1="229.0" y1="175.0" x2="383.0" y2="175.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="383.0,175.0 371.40961225346075,180.88752170992788 371.40961225346075,169.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="310" y="154" font-size="22" font-weight="650" fill="#12649c" text-anchor="middle">0 m/s</text>
+<line x1="394" y1="175" x2="429" y2="175" stroke="#566d7c" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="round"/>
+<line x1="442" y1="175" x2="475" y2="175" stroke="#566d7c" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="round"/>
+<text x="530" y="182" font-size="23" font-weight="650" fill="#566d7c" text-anchor="middle">바퀴</text>
+<text x="310" y="257" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">실물 바퀴 연결 없음</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "모의 플랜트 닫힌 고리",
+    "title": "실제 제어기를 넣어도 수레는 모의로 움직입니다",
+    "body": "모의 센서가 0.30 m를 보내면 연결된 제어기가 이동 명령 +0.20 m/s를 회신합니다. 모의 운동 모델이 이를 받아 다음 거리를 0.296 m로 계산합니다.",
+    "takeaway": "거리 입력 0.30과 속도 출력 0.20의 선이 서로 다른 방향으로 돕니다.",
+    "example": [
+      "모의 거리 0.30 m",
+      "20 ms 동안 +0.20 m/s",
+      "모의 거리 0.296 m"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "모의 플랜트 닫힌 고리",
+      "description": "거리 입력 0.30과 속도 출력 0.20의 선이 서로 다른 방향으로 돕니다.",
+      "figure": "figure-hardware-controller-in-loop-1"
+    },
+    "quiz": [
+      "모의 센서를 실제 거리 센서처럼 표시해도 되나요?",
+      "아니요",
+      "예",
+      "모의 센서는 수식으로 생성한 값을 보냅니다."
+    ]
+  },
+  {
+    "label": "실물 운동 경계",
+    "title": "시간을 재어도 모의 수레의 거리를 실물 정지거리로 볼 수 없습니다",
+    "body": "센서 입력을 0.10 m로 바꿉니다. 예시 규칙은 0.15 m 이하면 정지 명령을 내므로 구동기 인터페이스에 0 m/s가 찍힙니다. 실제 바퀴는 이 시험에 연결되지 않았습니다.",
+    "takeaway": "선은 제어기 출력 0까지 이어지며 실물 바퀴 연결이 끊겨 있습니다.",
+    "example": [
+      "모의 거리 0.10 m",
+      "0.10 ≤ 0.15 m",
+      "출력 0 m/s"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "실물 운동 경계",
+      "description": "선은 제어기 출력 0까지 이어지며 실물 바퀴 연결이 끊겨 있습니다.",
+      "figure": "figure-hardware-controller-in-loop-2"
+    },
+    "quiz": [
+      "시험에서 확인된 것은 무엇인가요?",
+      "제어기가 0 명령을 출력함",
+      "실물의 정지거리",
+      "실물 바퀴 센서는 이 닫힌 고리에 없습니다."
+    ]
+  }
+];
+const slug = 'hardware-controller-in-loop';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

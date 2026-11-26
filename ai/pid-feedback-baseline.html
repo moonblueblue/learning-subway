@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="목표에 다가갈수록 피드백 명령이 왜 줄어들까요?">
+<title>피드백 제어와 PID 기준기 · D25</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./pid-feedback-baseline.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D25</p><h1>피드백 제어와 PID 기준기</h1><p>목표에 다가갈수록 피드백 명령이 왜 줄어들까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">피드백 제어와 PID 기준기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-pid-feedback-baseline-1"><svg><g>
+<text x="310" y="79" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">비례 이득 Kp = 2 s⁻¹</text>
+<line x1="75" y1="164" x2="535" y2="164" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="75" cy="164" r="6" fill="#566d7c"/>
+<circle cx="259" cy="164" r="6" fill="#12649c"/>
+<circle cx="535" cy="164" r="6" fill="#11664f"/>
+<line x1="259.0" y1="132.0" x2="535.0" y2="132.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="535.0,132.0 523.4096122534608,137.88752170992788 523.4096122534608,126.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="397" y="113" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">오차 +0.6 m</text>
+<text x="75" y="197" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0 m</text>
+<text x="259" y="197" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0.4 m</text>
+<text x="535" y="197" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1.0 m</text>
+<text x="310" y="250" font-size="25" font-weight="650" fill="#12649c" text-anchor="middle">명령 +1.2 m/s</text>
+</g></svg></template>
+<template id="figure-pid-feedback-baseline-2"><svg><g>
+<text x="310" y="79" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">비례 이득 Kp = 2 s⁻¹</text>
+<line x1="75" y1="164" x2="535" y2="164" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="75" cy="164" r="6" fill="#566d7c"/>
+<circle cx="443" cy="164" r="6" fill="#12649c"/>
+<circle cx="535" cy="164" r="6" fill="#11664f"/>
+<line x1="443.0" y1="132.0" x2="535.0" y2="132.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="535.0,132.0 523.4096122534608,137.88752170992788 523.4096122534608,126.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="488" y="110" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">오차 +0.2 m</text>
+<text x="75" y="197" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0 m</text>
+<text x="443" y="197" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0.8 m</text>
+<text x="535" y="197" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1.0 m</text>
+<text x="310" y="250" font-size="25" font-weight="650" fill="#12649c" text-anchor="middle">명령 +0.4 m/s</text>
+</g></svg></template>
+<template id="figure-pid-feedback-baseline-3"><svg><g>
+<text x="311" y="81" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">항의 출력 (m/s)</text>
+<line x1="270" y1="98" x2="270" y2="231" stroke="#566d7c" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
+<text x="31" y="125" font-size="23" font-weight="650" fill="#17354b" text-anchor="start">P</text>
+<text x="31" y="173" font-size="23" font-weight="650" fill="#17354b" text-anchor="start">I</text>
+<text x="31" y="221" font-size="23" font-weight="650" fill="#17354b" text-anchor="start">D</text>
+<text x="129" y="125" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">2×.20</text>
+<text x="129" y="173" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">1×.20</text>
+<text x="129" y="221" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">.2×(−.50)</text>
+<line x1="270.0" y1="119.0" x2="486.0" y2="119.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="486.0,119.0 474.40961225346075,124.88752170992788 474.40961225346075,113.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="270.0" y1="167.0" x2="378.0" y2="167.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="378.0,167.0 366.40961225346075,172.88752170992788 366.40961225346075,161.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="270.0" y1="215.0" x2="216.0" y2="215.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="216.0,215.0 227.59038774653928,209.11247829007212 227.59038774653928,220.88752170992788" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="533" y="126" font-size="24" font-weight="650" fill="#12649c" text-anchor="middle">+.40</text>
+<text x="422" y="175" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">+.20</text>
+<text x="372" y="222" font-size="23" font-weight="650" fill="#a34123" text-anchor="middle">−.10</text>
+<text x="310" y="265" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">합 +.50 m/s</text>
+</g></svg></template>
+<template id="figure-pid-feedback-baseline-4"><svg><g>
+<text x="313" y="81" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">Δt=.20 s · 오차 (m)</text>
+<text x="151" y="114" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">이전</text>
+<text x="256" y="114" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">현재</text>
+<text x="389" y="114" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">누적 m·s</text>
+<text x="528" y="114" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">명령 m/s</text>
+<text x="52" y="156" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<text x="151" y="156" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.30</text>
+<text x="256" y="156" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.20</text>
+<text x="389" y="156" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.20</text>
+<text x="528" y="156" font-size="24" font-weight="650" fill="#12649c" text-anchor="middle">.50</text>
+<text x="52" y="202" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<text x="151" y="202" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.20</text>
+<text x="256" y="202" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.20</text>
+<text x="389" y="202" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.30</text>
+<text x="528" y="202" font-size="24" font-weight="650" fill="#11664f" text-anchor="middle">.70</text>
+<text x="306" y="248" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">P + I + D    A .40+.20−.10    B .40+.30+0</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "비례 제어",
+    "title": "목표와 현재 위치의 차이를 속도로 바꿉니다",
+    "body": "x=0.4 m이면 오차 목표−현재는 0.6 m입니다. 비례 이득 2 s⁻¹을 곱하면 속도 명령은 +1.2 m/s입니다.",
+    "takeaway": "위치축에서 목표까지 남은 0.6 m와 +1.2 m/s 명령이 보입니다.",
+    "example": [
+      "x 0.4 · 목표 1.0 m",
+      "2×(1.0−0.4)",
+      "+1.2 m/s"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "비례 제어",
+      "description": "위치축에서 목표까지 남은 0.6 m와 +1.2 m/s 명령이 보입니다.",
+      "figure": "figure-pid-feedback-baseline-1"
+    },
+    "quiz": [
+      "같은 이득으로 현재가 1.1 m이면 명령은?",
+      "−0.2 m/s",
+      "+0.2 m/s",
+      "목표보다 앞이어서 오차가 음수입니다."
+    ]
+  },
+  {
+    "label": "작아진 오차",
+    "title": "목표에 접근하면 비례 명령이 작아집니다",
+    "body": "x=0.8 m이면 남은 오차는 0.2 m이고 명령은 +0.4 m/s입니다. 실제 PID에서는 적분항이 누적 오차를, 미분항이 오차의 변화율을 반영합니다. 이 그림은 두 항을 0으로 둡니다.",
+    "takeaway": "목표는 같은 위치에 있고 화살표 길이는 이전의 3분의 1입니다.",
+    "example": [
+      "x 0.8 · 목표 1.0 m",
+      "2×(1.0−0.8)",
+      "+0.4 m/s"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "작아진 오차",
+      "description": "목표는 같은 위치에 있고 화살표 길이는 이전의 3분의 1입니다.",
+      "figure": "figure-pid-feedback-baseline-2"
+    },
+    "quiz": [
+      "적분항과 미분항을 0으로 두고 목표에 정확히 도착했다면 P 명령은?",
+      "0 m/s",
+      "+0.4 m/s",
+      "목표와 현재 위치가 같아 오차가 0입니다."
+    ]
+  },
+  {
+    "label": "세 항의 합",
+    "title": "오차의 크기·누적·변화를 따로 적용합니다",
+    "body": "같은 모의 수레에서 현재 오차 0.20 m, 적분 오차 0.20 m·s, 변화율 −0.50 m/s를 씁니다. 이득 Kp=2 s⁻¹, Ki=1 s⁻², Kd=0.2를 적용하면 명령은 +0.4+0.2−0.1=+0.5 m/s입니다.",
+    "takeaway": "같은 속도 눈금에서 P·I는 오른쪽, D는 왼쪽을 향합니다.",
+    "example": [
+      "오차 .20 m · 적분 .20 m·s · 변화율 −.50 m/s",
+      "2×.20 + 1×.20 + .2×(−.50)",
+      "명령 +.50 m/s"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "세 항의 합",
+      "description": "같은 속도 눈금에서 P·I는 오른쪽, D는 왼쪽을 향합니다.",
+      "figure": "figure-pid-feedback-baseline-3"
+    },
+    "quiz": [
+      "D가 0이고 나머지 항이 같다면 명령은?",
+      "+.60 m/s",
+      "+.50 m/s",
+      "남은 P와 I의 +.40, +.20을 더합니다."
+    ]
+  },
+  {
+    "label": "오차 이력 비교",
+    "title": "이전 오차와 누적량이 다르면 같은 위치에서도 명령이 달라집니다",
+    "body": "두 제어 주기의 간격은 0.2 s입니다. A는 오차 .30→.20 m, 누적 .20 m·s, 변화율 −.50 m/s입니다. B는 .20→.20 m, 누적 .30 m·s, 변화율 0입니다. 두 P 항은 .40 m/s로 같고 명령은 각각 .50, .70 m/s입니다.",
+    "takeaway": "현재 오차 열은 같지만 이전 오차와 누적 열이 다르고 두 속도 합이 갈립니다.",
+    "example": [
+      "두 현재 오차 .20 m",
+      "Δt=.2 s · 이력 A/B",
+      "A .50 · B .70 m/s"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "오차 이력 비교",
+      "description": "현재 오차 열은 같지만 이전 오차와 누적 열이 다르고 두 속도 합이 갈립니다.",
+      "figure": "figure-pid-feedback-baseline-4"
+    },
+    "quiz": [
+      "이전·현재 오차가 같다면 미분항은 얼마인가요?",
+      "0",
+      "현재 오차 × Kd",
+      "오차 변화량이 0이므로 변화율도 0입니다."
+    ]
+  }
+];
+const slug = 'pid-feedback-baseline';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

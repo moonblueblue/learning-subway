@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 미사용 지도에서 두 정책의 이동과 정지를 어떻게 확인할까요?">
+<title>이동 정책 평가 · 졸업 과제</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="stylesheet" href="./motion-policy-evaluation/workbench.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./motion-policy-evaluation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · 졸업 과제</p><h1>이동 정책 평가</h1><p>같은 미사용 지도에서 두 정책의 이동과 정지를 어떻게 확인할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">이동 정책 평가</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <div class="motion-actions">
+          <button id="motion-results" class="action primary" type="button">시험 결과</button>
+          <button id="motion-edit" class="action" type="button">입력 편집</button>
+        </div>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<dialog id="motion-dialog" class="motion-dialog" aria-labelledby="motion-heading">
+  <header>
+    <h2 id="motion-heading">시험 결과</h2>
+    <form method="dialog"><button class="action">닫기</button></form>
+  </header>
+  <section data-motion-panel="results">
+    <div class="motion-fields">
+      <label>사례<select id="motion-case"></select></label>
+      <label>보기<select id="motion-view">
+        <option value="compare">짝 비교</option>
+        <option value="trace">이동 기록</option>
+        <option value="summary">시험 집계</option>
+      </select></label>
+    </div>
+    <section data-motion-view="compare">
+      <p id="motion-case-meta"></p>
+      <table><thead><tr><th scope="col">정책</th><th scope="col">종료</th><th scope="col">충돌</th><th scope="col">틱</th><th scope="col">원점수</th></tr></thead>
+      <tbody id="motion-comparison"></tbody></table>
+    </section>
+    <section data-motion-view="trace" hidden>
+      <div class="motion-fields">
+        <label>정책<select id="motion-policy"></select></label>
+        <label>기록 틱<select id="motion-tick"></select></label>
+      </div>
+      <div class="motion-trace">
+        <svg id="motion-map" role="img" aria-label="수레 이동 지도"></svg>
+        <div id="motion-record" aria-live="polite">
+          <p id="motion-move"></p>
+          <p id="motion-sensor"></p>
+          <p id="motion-observation"></p>
+          <p id="motion-event"></p>
+        </div>
+      </div>
+    </section>
+    <section data-motion-view="summary" hidden>
+      <p id="motion-split"></p>
+      <table><thead><tr><th scope="col">정책</th><th scope="col">성공률</th><th scope="col">충돌률</th><th scope="col">평균 틱</th></tr></thead>
+      <tbody id="motion-summary"></tbody></table>
+    </section>
+    <div class="motion-actions">
+      <button class="action" id="motion-edit-from-results" type="button">입력 편집</button>
+      <button class="action" id="motion-downloads" type="button">파일 받기</button>
+    </div>
+  </section>
+  <section data-motion-panel="edit" hidden>
+    <form id="motion-form">
+      <label for="motion-input">실험 설정 JSON</label>
+      <textarea id="motion-input" rows="5" spellcheck="false" aria-describedby="motion-format"></textarea>
+      <p id="motion-format">지도 기호 # . S G B · 틱 100 ms</p>
+      <p id="motion-error" role="status"></p>
+      <div class="motion-actions">
+        <button type="submit" id="motion-run" class="action primary">학습하고 실행</button>
+        <button type="button" id="motion-reset" class="action">기본 입력</button>
+      </div>
+    </form>
+  </section>
+  <section data-motion-panel="downloads" hidden>
+    <p>설정, 실행 코드, 결과를 받아 같은 실험을 재생합니다.</p>
+    <div class="motion-actions">
+      <button class="action" id="motion-download-input" type="button">입력 JSON</button>
+      <button class="action" id="motion-download-code" type="button">실행 코드</button>
+      <button class="action" id="motion-download-report" type="button">보고서 JSON</button>
+      <button class="action" id="motion-back" type="button">시험 결과</button>
+    </div>
+  </section>
+</dialog>
+
+<template id="figure-motion-1"><svg><g>
+<text x="152" y="81" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">학습 train-west</text>
+<text x="463" y="81" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">시험 test-west</text>
+<rect x="62" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="77.0" y="115.8" font-size="17.4" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="92" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="122" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="182" y="96" width="30" height="30" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="212" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="62" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="77.0" y="145.8" font-size="17.4" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="92" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="122" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="182" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="212" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="62" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="92" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="122" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="182" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="212" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="62" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="92" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="122" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="182" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="212" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="62" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="92" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="122" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="182" y="216" width="30" height="30" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="212" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="373" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="388.0" y="115.8" font-size="17.4" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="403" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="433" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="493" y="96" width="30" height="30" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="523" y="96" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="373" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="388.0" y="145.8" font-size="17.4" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="403" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="433" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="493" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="523" y="126" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="373" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="403" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="433" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="493" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="523" y="156" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="373" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="403" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="433" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="493" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="523" y="186" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="373" y="216" width="30" height="30" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="403" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="433" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="493" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="523" y="216" width="30" height="30" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="197" y="116" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="508" y="116" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="310" y="270" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">시험 S (0,0) → G (4,0) · 시드 11</text>
+</g></svg></template>
+<template id="figure-motion-2"><svg><g>
+<text x="152" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">규칙 정책</text>
+<text x="462" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">원본 Q 정책</text>
+<rect x="56" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="72.0" y="118.12" font-size="18.56" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="88" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="184" y="97" width="32" height="32" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="216" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="56" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="72.0" y="150.12" font-size="18.56" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="88" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="184" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="216" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="56" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="88" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="184" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="216" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="56" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="88" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="184" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="216" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="56" y="225" width="32" height="32" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="88" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="120" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="152" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="184" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="216" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="367" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="383.0" y="118.12" font-size="18.56" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="399" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="431" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="495" y="97" width="32" height="32" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="527" y="97" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="367" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="383.0" y="150.12" font-size="18.56" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="399" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="431" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="495" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="527" y="129" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="367" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="399" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="431" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="495" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="527" y="161" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="367" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="399" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="431" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="495" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="527" y="193" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="367" y="225" width="32" height="32" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="399" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="431" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="463" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="495" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="527" y="225" width="32" height="32" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="200" y="118" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="511" y="118" font-size="18" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<line x1="72.0" y1="122.0" x2="104.0" y2="122.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="104.0,122.0 92.40961225346072,127.88752170992788 92.40961225346072,116.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="104.0" y1="122.0" x2="136.0" y2="122.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="136.0,122.0 124.40961225346072,127.88752170992788 124.40961225346072,116.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="136.0" y1="122.0" x2="168.0" y2="122.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="168.0,122.0 156.40961225346072,127.88752170992788 156.40961225346072,116.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="168.0" y1="122.0" x2="200.0" y2="122.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="200.0,122.0 188.40961225346072,127.88752170992788 188.40961225346072,116.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="72.0" cy="122.0" r="5" fill="#12649c"/>
+<line x1="378.0" y1="121.0" x2="378.0" y2="153.0" stroke="#a34123" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="378.0,153.0 372.1124782900721,141.40961225346072 383.8875217099279,141.40961225346072" fill="#a34123" stroke="none" stroke-width="1"/>
+<line x1="393.0" y1="154.0" x2="393.0" y2="123.0" stroke="#a34123" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="393.0,123.0 398.8875217099279,134.59038774653928 387.1124782900721,134.59038774653928" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="467" y="162" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">B 진입 ×5</text>
+<text x="152" y="278" font-size="24" font-weight="650" fill="#12649c" text-anchor="middle">4점 · 도착</text>
+<text x="462" y="278" font-size="24" font-weight="650" fill="#a34123" text-anchor="middle">25점 · 미도달</text>
+</g></svg></template>
+<template id="figure-motion-3"><svg><g>
+<text x="306" y="81" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B 입장 보상 +7 → 0</text>
+<text x="90" y="135" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">원본 Q</text>
+<text x="90" y="211" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">수정 Q</text>
+<text x="284" y="109" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">도착</text>
+<text x="475" y="109" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">충돌 경험</text>
+<rect x="202" y="118" width="164" height="24" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<rect x="393" y="118" width="164" height="24" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<rect x="202" y="194" width="164" height="24" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<rect x="202" y="194" width="82" height="24" fill="#12649c" stroke="#12649c" stroke-width="2"/>
+<rect x="393" y="194" width="164" height="24" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<text x="284" y="166" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0/6</text>
+<text x="475" y="166" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0/6</text>
+<text x="284" y="240" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">3/6</text>
+<text x="475" y="240" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0/6</text>
+<text x="309" y="274" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">수정 Q · west 3/3 · east 0/3</text>
+</g></svg></template>
+<template id="figure-motion-4"><svg><g>
+<text x="310" y="81" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">정지 기준 · 관측 나이 ≥ 200 ms</text>
+<line x1="102" y1="150" x2="521" y2="150" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="102" cy="150" r="6" fill="#12649c"/>
+<circle cx="311" cy="150" r="6" fill="#566d7c"/>
+<circle cx="521" cy="150" r="6" fill="#a34123"/>
+<text x="102" y="114" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">관측 수신</text>
+<text x="311" y="114" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">단절 시작</text>
+<text x="521" y="114" font-size="21" font-weight="650" fill="#a34123" text-anchor="middle">감시 STOP</text>
+<text x="102" y="181" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0 ms</text>
+<text x="311" y="181" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">100 ms</text>
+<text x="521" y="181" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">200 ms</text>
+<line x1="102.0" y1="211.0" x2="521.0" y2="211.0" stroke="#a34123" stroke-width="4" stroke-dasharray="7 5" stroke-linecap="round"/>
+<polygon points="521.0,211.0 509.40961225346075,216.88752170992788 509.40961225346075,205.11247829007212" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="310" y="253" font-size="23" font-weight="650" fill="#a34123" text-anchor="middle">STOP 전후 (2,0) → (2,0)</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "같은 조건",
+    "title": "훈련 지도와 시험 지도를 분리합니다",
+    "body": "훈련 두 지도의 센서 관측으로 Q 표를 만듭니다. 시험에서는 처음 보는 지도, 같은 출발과 목표, 같은 시드로 규칙과 학습 정책을 각각 실행합니다.",
+    "takeaway": "위 두 격자는 벽 위치가 다릅니다. 세 정책은 오른쪽 지도와 시드 11을 공유합니다.",
+    "example": [
+      "훈련 지도 2개",
+      "훈련 격자로 Q 표 학습",
+      "시험 west · 시드 11"
+    ],
+    "quiz": [
+      "시험 지도만 고쳤다면 기존 학습 설정에서 어떤 값이 그대로인가요?",
+      "학습한 Q 표",
+      "모든 시험 결과",
+      "시험 지도는 학습에 들어가지 않습니다."
+    ],
+    "readingDiagram": {
+      "figure": "figure-motion-1",
+      "staticOnly": true,
+      "title": "같은 조건",
+      "description": "위 두 격자는 벽 위치가 다릅니다. 세 정책은 오른쪽 지도와 시드 11을 공유합니다."
+    }
+  },
+  {
+    "label": "고보상 실패",
+    "title": "같은 보상으로 비교해도 왕복 경로가 더 높은 점수를 받습니다",
+    "body": "test-west와 시드 11의 원본 Q 정책은 표식 B로 다섯 번 들어가 25점을 받지만 제한 10틱에 목표에 닿지 못합니다. 규칙 정책은 같은 원래 보상으로 4점을 받고 목표에 닿습니다.",
+    "takeaway": "왼쪽은 G까지 4번 이동하고, 오른쪽은 B를 5번 밟고 S에서 끝납니다.",
+    "example": [
+      "test-west · 시드 11",
+      "같은 원래 보상으로 채점",
+      "규칙 4 · 원본 Q 25점"
+    ],
+    "quiz": [
+      "표식 보상 없이도 비교할 목표 지표는 무엇인가요?",
+      "목표 도착 여부",
+      "개별 학습 보상 합 차이",
+      "도착은 보상 설정이 달라도 같은 사건입니다."
+    ],
+    "readingDiagram": {
+      "figure": "figure-motion-2",
+      "staticOnly": true,
+      "title": "고보상 실패",
+      "description": "왼쪽은 G까지 4번 이동하고, 오른쪽은 B를 5번 밟고 S에서 끝납니다."
+    }
+  },
+  {
+    "label": "보상 바꿔 재학습",
+    "title": "표식 보상을 빼고 같은 시험에서 다시 비교합니다",
+    "body": "표식 입장 보상만 +7에서 0으로 바꾸고 같은 900회 한도로 재학습합니다. 기본 정상 시험 여섯 번에서 원본 Q는 0회, 수정 Q는 3회 도착합니다. 수정 Q는 test-west에서 도착하지만 첫 행이 막힌 test-east에서는 새로운 관측에서 규칙으로 전환해 벽 앞에서 멈춥니다.",
+    "takeaway": "도착은 test-west에서만 늘고, 벽이 추가된 test-east는 0/3입니다.",
+    "example": [
+      "B 보상 +7",
+      "B 보상 0 · 다시 900회 학습",
+      "도착 0/6 → 3/6"
+    ],
+    "quiz": [
+      "보상 수정 전후를 일관되게 비교하려면 무엇을 고정하나요?",
+      "학습 예산과 시험 지도·시드",
+      "학습 결과 Q 표",
+      "보상 변경만 시험 결과 차이의 후보가 되도록 나머지 조건을 고정합니다."
+    ],
+    "readingDiagram": {
+      "figure": "figure-motion-3",
+      "staticOnly": true,
+      "title": "보상 바꿔 재학습",
+      "description": "도착은 test-west에서만 늘고, 벽이 추가된 test-east는 0/3입니다."
+    }
+  },
+  {
+    "label": "단절 후 정지",
+    "title": "마지막 관측의 나이가 한도에 닿으면 정지합니다",
+    "body": "시드 11의 규칙 시험에서 0 ms 관측을 받은 뒤 100 ms부터 끊깁니다. 100 ms에는 이전 관측으로 한 번 더 이동합니다. 200 ms에는 나이가 한도 200 ms에 닿아 위치 (2,0)에서 STOP이 실행됩니다.",
+    "takeaway": "200 ms의 STOP 앞뒤 좌표가 (2,0)으로 같고 관측 시각은 0 ms에 머뭅니다.",
+    "example": [
+      "마지막 관측 0 ms",
+      "200 − 0 ≥ 200 ms",
+      "STOP · (2,0) 유지"
+    ],
+    "quiz": [
+      "한도가 300 ms라면 같은 단절에서 시간 초과가 처음 되는 시각은?",
+      "300 ms",
+      "100 ms",
+      "나이는 마지막 새 관측 0 ms부터 잽니다."
+    ],
+    "readingDiagram": {
+      "figure": "figure-motion-4",
+      "staticOnly": true,
+      "title": "단절 후 정지",
+      "description": "200 ms의 STOP 앞뒤 좌표가 (2,0)으로 같고 관측 시각은 0 ms에 머뭅니다."
+    }
+  }
+];
+const slug = 'motion-policy-evaluation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+<script id="motion-default" type="application/json">
+{
+  "version": 1,
+  "train": [
+    {
+      "id": "train-west",
+      "grid": [
+        "S...G.",
+        "B.....",
+        "......",
+        "......",
+        "....#."
+      ]
+    },
+    {
+      "id": "train-east",
+      "grid": [
+        "S...G.",
+        "B.....",
+        "......",
+        "......",
+        ".....#"
+      ]
+    }
+  ],
+  "test": [
+    {
+      "id": "test-west",
+      "grid": [
+        "S...G.",
+        "B.....",
+        "......",
+        "......",
+        "#....."
+      ]
+    },
+    {
+      "id": "test-east",
+      "grid": [
+        "S..#G.",
+        "B.....",
+        "......",
+        "......",
+        "..##.."
+      ]
+    }
+  ],
+  "seeds": [
+    11,
+    17,
+    1972
+  ],
+  "episodes": 900,
+  "maxSteps": 10,
+  "sensorTimeout": 2,
+  "faultAt": 1,
+  "reward": {
+    "step": -1,
+    "collision": -3,
+    "goal": 8,
+    "beacon": 7
+  },
+  "revisedReward": {
+    "step": -1,
+    "collision": -3,
+    "goal": 8,
+    "beacon": 0
+  }
+}
+</script>
+<script src="./motion-policy-evaluation/motion-policy.js"></script>
+<script src="./motion-policy-evaluation/workbench.js"></script>
+</body>
+</html>

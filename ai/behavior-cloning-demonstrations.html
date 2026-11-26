@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="전문가가 방문하지 않은 칸에 가면 복제 정책은 무엇을 놓칠까요?">
+<title>시연에서 배우는 행동 복제 · D17</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./behavior-cloning-demonstrations.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D17</p><h1>시연에서 배우는 행동 복제</h1><p>전문가가 방문하지 않은 칸에 가면 복제 정책은 무엇을 놓칠까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">시연에서 배우는 행동 복제</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-behavior-cloning-demonstrations-1"><svg><g>
+<rect x="74" y="96" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="101.0" y="131.64" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="128" y="96" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="155.0" y="131.64" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="182" y="96" width="54" height="54" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="236" y="96" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="74" y="150" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="128" y="150" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="182" y="150" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="236" y="150" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="74" y="204" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="128" y="204" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="182" y="204" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="236" y="204" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="209" y="132" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<line x1="103.0" y1="109.0" x2="157.0" y2="109.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="157.0,109.0 145.40961225346072,114.88752170992788 145.40961225346072,103.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="157.0" y1="109.0" x2="211.0" y2="109.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="211.0,109.0 199.40961225346072,114.88752170992788 199.40961225346072,103.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="447" y="125" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S → 동쪽</text>
+<text x="447" y="177" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A → 동쪽</text>
+<text x="447" y="232" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">시연 2쌍</text>
+</g></svg></template>
+<template id="figure-behavior-cloning-demonstrations-2"><svg><g>
+<rect x="74" y="96" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="101.0" y="131.64" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="128" y="96" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="155.0" y="131.64" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<rect x="182" y="96" width="54" height="54" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="236" y="96" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="74" y="150" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="101.0" y="185.64000000000001" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="128" y="150" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="182" y="150" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="236" y="150" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="74" y="204" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="128" y="204" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="182" y="204" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="236" y="204" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="209" y="132" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<line x1="103.0" y1="109.0" x2="157.0" y2="109.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="157.0,109.0 145.40961225346072,114.88752170992788 145.40961225346072,103.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="157.0" y1="109.0" x2="211.0" y2="109.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="211.0,109.0 199.40961225346072,114.88752170992788 199.40961225346072,103.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="87.0" y1="134.0" x2="87.0" y2="174.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="87.0,174.0 81.11247829007212,162.40961225346072 92.88752170992788,162.40961225346072" fill="#a34123" stroke="none" stroke-width="1"/>
+<line x1="112.0" y1="175.0" x2="112.0" y2="136.0" stroke="#11664f" stroke-width="4" stroke-dasharray="5 5" stroke-linecap="round"/>
+<polygon points="112.0,136.0 117.88752170992788,147.59038774653928 106.11247829007212,147.59038774653928" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="439" y="120" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B · 시연 없음</text>
+<text x="439" y="172" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">복귀는 북쪽</text>
+<text x="439" y="229" font-size="23" font-weight="650" fill="#11664f" text-anchor="middle">B → 북쪽 수집</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "시연에서 행동 읽기",
+    "title": "관측을 입력으로, 전문가 행동을 정답으로 기록합니다",
+    "body": "전문가는 S와 A를 차례로 지나며 동쪽을 골랐습니다. 행동 복제는 이 두 관측에서 동쪽이라고 예측하도록 학습합니다.",
+    "takeaway": "S와 A의 실선에 각각 동쪽 정답이 붙습니다.",
+    "example": [
+      "전문가 S→A→G",
+      "두 관측에 동쪽 정답",
+      "두 훈련 쌍"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "시연에서 행동 읽기",
+      "description": "S와 A의 실선에 각각 동쪽 정답이 붙습니다.",
+      "figure": "figure-behavior-cloning-demonstrations-1"
+    },
+    "quiz": [
+      "관측 A에서 전문가가 서쪽을 골랐다면 훈련 정답은 무엇인가요?",
+      "서쪽",
+      "동쪽",
+      "정답은 실제 시연에서 그 관측에 붙은 행동입니다."
+    ]
+  },
+  {
+    "label": "시연 밖의 이탈",
+    "title": "작은 오차 뒤에는 정답 데이터가 없는 칸에 갈 수 있습니다",
+    "body": "S에서 남쪽으로 밀리면 시연에 없던 B에 도착합니다. B에서 북쪽으로 복귀하는 시연을 모으면 그 관측의 정답을 채울 수 있습니다.",
+    "takeaway": "파란 원래 경로와 붉은 이탈선이 S에서 갈라지고 B의 복귀가 점선입니다.",
+    "example": [
+      "시연 S, A",
+      "S에서 남쪽 이탈",
+      "B 정답 없음"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "시연 밖의 이탈",
+      "description": "파란 원래 경로와 붉은 이탈선이 S에서 갈라지고 B의 복귀가 점선입니다.",
+      "figure": "figure-behavior-cloning-demonstrations-2"
+    },
+    "quiz": [
+      "복귀 훈련 데이터를 늘리려면 어디에서 전문가 행동을 기록하나요?",
+      "B",
+      "A",
+      "B는 이탈 후 관측이며 기존 기록에 없었습니다."
+    ]
+  }
+];
+const slug = 'behavior-cloning-demonstrations';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

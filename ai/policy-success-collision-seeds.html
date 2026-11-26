@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="성공률이 같아도 충돌 차이나 시드 변동을 볼 수 있나요?">
+<title>성공률·충돌률과 시드별 변동 · D21</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./policy-success-collision-seeds.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D21</p><h1>성공률·충돌률과 시드별 변동</h1><p>성공률이 같아도 충돌 차이나 시드 변동을 볼 수 있나요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">성공률·충돌률과 시드별 변동</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-policy-success-collision-seeds-1"><svg><g>
+<text x="79" y="91" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">시드</text>
+<text x="257" y="91" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">정책 A</text>
+<text x="478" y="91" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">정책 B</text>
+<text x="79" y="137" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">11</text>
+<text x="257" y="137" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">도착 · 충돌 0</text>
+<text x="478" y="137" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">도착 · 충돌 0</text>
+<text x="79" y="194" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">17</text>
+<rect x="145" y="164" width="222" height="44" fill="#f6dacb" stroke="#a34123" stroke-width="2"/>
+<text x="257" y="194" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">도착 · 충돌 1</text>
+<text x="478" y="194" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">실패 · 충돌 0</text>
+<text x="79" y="248" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">23</text>
+<text x="257" y="248" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">실패 · 충돌 1</text>
+<text x="478" y="248" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">도착 · 충돌 0</text>
+</g></svg></template>
+<template id="figure-policy-success-collision-seeds-2"><svg><g>
+<text x="263" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">성공률</text>
+<text x="475" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">충돌 경험률</text>
+<text x="70" y="132" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<text x="70" y="215" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<rect x="191" y="100" width="144" height="19" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<rect x="191" y="100" width="96" height="19" fill="#12649c" stroke="#12649c" stroke-width="2"/>
+<rect x="403" y="100" width="144" height="19" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<rect x="403" y="100" width="96" height="19" fill="#a34123" stroke="#a34123" stroke-width="2"/>
+<rect x="191" y="183" width="144" height="19" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<rect x="191" y="183" width="96" height="19" fill="#12649c" stroke="#12649c" stroke-width="2"/>
+<rect x="403" y="183" width="144" height="19" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<text x="263" y="149" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2/3</text>
+<text x="475" y="149" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2/3</text>
+<text x="263" y="232" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2/3</text>
+<text x="475" y="232" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0/3</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "같은 시드의 결과",
+    "title": "성공과 충돌을 서로 다른 사건으로 셉니다",
+    "body": "각 행은 같은 시드의 두 실행입니다. A는 시드 17에서 충돌한 뒤에도 도착하므로 같은 실행이 성공과 충돌 양쪽에 잡힙니다.",
+    "takeaway": "시드 17의 A 행에 목표 도착과 충돌 1이 함께 있습니다.",
+    "example": [
+      "시드 11,17,23",
+      "도착 여부와 충돌 수 기록",
+      "시드 17 A는 둘 다 해당"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "같은 시드의 결과",
+      "description": "시드 17의 A 행에 목표 도착과 충돌 1이 함께 있습니다.",
+      "figure": "figure-policy-success-collision-seeds-1"
+    },
+    "quiz": [
+      "한 실행에서 두 번 충돌하면 충돌 경험 실행 수는 몇 번 늘어나나요?",
+      "1회",
+      "2회",
+      "분자는 사건 수가 아니라 충돌을 겪은 실행 수입니다."
+    ]
+  },
+  {
+    "label": "같은 성공률 다른 충돌",
+    "title": "같은 성공률이어도 A는 더 많은 실행에서 충돌합니다",
+    "body": "세 실행 중 각각 두 번 도착했습니다. 충돌을 한 번 이상 경험한 실행은 A는 두 번, B는 0번입니다. 세 시드만 비교했으므로 다른 시드의 결과까지 보장하지 않습니다.",
+    "takeaway": "공통 분모 3에서 성공 막대는 같고 충돌 막대는 다릅니다.",
+    "example": [
+      "A·B 각 3회",
+      "성공 및 충돌 경험 집계",
+      "성공 2/3씩 · 충돌 A 2/3 B 0/3"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "같은 성공률 다른 충돌",
+      "description": "공통 분모 3에서 성공 막대는 같고 충돌 막대는 다릅니다.",
+      "figure": "figure-policy-success-collision-seeds-2"
+    },
+    "quiz": [
+      "시드 17만 보면 성공률이 어떤가요?",
+      "A 1/1 · B 0/1",
+      "A 2/3 · B 2/3",
+      "집계가 같아도 특정 시드의 순서는 다를 수 있습니다."
+    ]
+  }
+];
+const slug = 'policy-success-collision-seeds';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

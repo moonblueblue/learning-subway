@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="위치만 기록할 때 어떤 과거 정보가 전이에 남을까요?">
+<title>전이 확률과 마르코프 가정 · D03</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./transition-probability-markov.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D03</p><h1>전이 확률과 마르코프 가정</h1><p>위치만 기록할 때 어떤 과거 정보가 전이에 남을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">전이 확률과 마르코프 가정</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-transition-probability-markov-1"><svg><g>
+<text x="110" y="97" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">마른 S</text>
+<text x="110" y="183" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">동쪽 명령</text>
+<line x1="144.0" y1="135.0" x2="360.0" y2="108.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="360.0,108.0 349.229371849255,115.27966820936088 347.7688574638968,103.59555312649515" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="144.0" y1="135.0" x2="360.0" y2="208.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polygon points="360.0,208.0 347.1347165575789,209.86667671174325 350.9047599876233,198.7114797132556" fill="#566d7c" stroke="none" stroke-width="1"/>
+<text x="251" y="104" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0.8</text>
+<text x="247" y="207" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0.2</text>
+<rect x="362" y="84" width="208" height="54" fill="#c9e8f6" stroke="#12649c" stroke-width="2"/>
+<rect x="362" y="181" width="208" height="54" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<text x="466" y="119" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">동쪽 칸</text>
+<text x="466" y="216" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">제자리 S</text>
+</g></svg></template>
+<template id="figure-transition-probability-markov-2"><svg><g>
+<text x="312" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S · 동쪽 명령</text>
+<text x="89" y="134" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">마른 S</text>
+<line x1="150.0" y1="126.0" x2="271.0" y2="126.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="271.0,126.0 259.40961225346075,131.88752170992788 259.40961225346075,120.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="331" y="134" font-size="22" font-weight="650" fill="#12649c" text-anchor="middle">0.8 동쪽</text>
+<line x1="150.0" y1="141.0" x2="428.0" y2="141.0" stroke="#566d7c" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polygon points="428.0,141.0 416.40961225346075,146.88752170992788 416.40961225346075,135.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<text x="511" y="134" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">0.2 제자리</text>
+<text x="89" y="222" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">젖은 S</text>
+<line x1="150.0" y1="214.0" x2="271.0" y2="214.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="271.0,214.0 259.40961225346075,219.88752170992788 259.40961225346075,208.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="331" y="222" font-size="22" font-weight="650" fill="#12649c" text-anchor="middle">0.3 동쪽</text>
+<line x1="150.0" y1="229.0" x2="428.0" y2="229.0" stroke="#566d7c" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polygon points="428.0,229.0 416.40961225346075,234.88752170992788 416.40961225346075,223.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<text x="511" y="222" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">0.7 제자리</text>
+<text x="312" y="267" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">상태 = (위치, 바닥)</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "확률 분기",
+    "title": "한 명령에서 두 다음 상태가 가능합니다",
+    "body": "마른 바닥에서 동쪽 명령을 주면 예시 장치가 80% 확률로 한 칸 이동하고 20% 확률로 제자리에 남습니다. 분기 확률은 같은 상태와 명령에서 합이 1입니다.",
+    "takeaway": "S에서 나가는 두 가지에 0.8과 0.2가 붙습니다.",
+    "example": [
+      "마른 바닥 S",
+      "동쪽 명령",
+      "80% 이동 · 20% 제자리"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "확률 분기",
+      "description": "S에서 나가는 두 가지에 0.8과 0.2가 붙습니다.",
+      "figure": "figure-transition-probability-markov-1"
+    },
+    "quiz": [
+      "다른 결과가 없다면 이동 확률이 0.65일 때 제자리 확률은 얼마인가요?",
+      "0.35",
+      "0.65",
+      "두 확률의 합은 1입니다."
+    ]
+  },
+  {
+    "label": "숨은 바닥",
+    "title": "같은 위치라도 바닥이 다르면 전이가 바뀝니다",
+    "body": "젖은 바닥 예시에서는 이동 확률이 0.3으로 내려갑니다. 직전 이동 경로가 젖은 구역 진입을 알려준다면 위치 S만으로는 그 과거 정보를 대체할 수 없습니다.",
+    "takeaway": "같은 S·동쪽 명령 아래 마른 경우 0.8, 젖은 경우 0.3이 동쪽 칸으로 향합니다.",
+    "example": [
+      "위치 S · 동쪽 명령",
+      "마름 → 젖음",
+      "이동 0.8 → 0.3"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "숨은 바닥",
+      "description": "같은 S·동쪽 명령 아래 마른 경우 0.8, 젖은 경우 0.3이 동쪽 칸으로 향합니다.",
+      "figure": "figure-transition-probability-markov-2"
+    },
+    "quiz": [
+      "지난 경로가 바닥 상태를 완전히 알려준다면 현재 입력에 넣을 값은 무엇인가요?",
+      "바닥 상태",
+      "행동 이름 반복",
+      "이 예시에서 위치와 바닥을 함께 기록하면 전이 확률의 두 경우를 바로 구별합니다."
+    ]
+  }
+];
+const slug = 'transition-probability-markov';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

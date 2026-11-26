@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="늦게 도착한 센서 위치를 현재 위치처럼 쓰면 어떤 오차가 날까요?">
+<title>센서 시간표와 상태 추정 · D24</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./sensor-timestamps-state-estimation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D24</p><h1>센서 시간표와 상태 추정</h1><p>늦게 도착한 센서 위치를 현재 위치처럼 쓰면 어떤 오차가 날까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">센서 시간표와 상태 추정</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-sensor-timestamps-state-estimation-1"><svg><g>
+<text x="151" y="92" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">촬영 x = 0.10 m</text>
+<text x="474" y="92" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">메시지 도착</text>
+<line x1="152.0" y1="130.0" x2="473.0" y2="130.0" stroke="#12649c" stroke-width="4" stroke-dasharray="7 5" stroke-linecap="round"/>
+<polygon points="473.0,130.0 461.40961225346075,135.88752170992788 461.40961225346075,124.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="151" y1="192" x2="474" y2="192" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="151" cy="192" r="6" fill="#12649c"/>
+<circle cx="474" cy="192" r="6" fill="#566d7c"/>
+<text x="151" y="222" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">100 ms</text>
+<text x="474" y="222" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">200 ms</text>
+<text x="310" y="168" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">전달 100 ms</text>
+</g></svg></template>
+<template id="figure-sensor-timestamps-state-estimation-2"><svg><g>
+<line x1="89.0" y1="229.0" x2="89.0" y2="83.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="89.0,83.0 94.88752170992788,94.59038774653928 83.11247829007212,94.59038774653928" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="89.0" y1="229.0" x2="514.0" y2="229.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="514.0,229.0 502.40961225346075,234.88752170992788 502.40961225346075,223.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<text x="12" y="89" font-size="21" font-weight="650" fill="#17354b" text-anchor="start">x (m)</text>
+<text x="510" y="257" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">t (ms)</text>
+<line x1="89" y1="167" x2="259" y2="167" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="89" y1="105" x2="429" y2="105" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="259" y1="228" x2="259" y2="167" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="429" y1="228" x2="429" y2="105" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+<line x1="259.0" y1="167.0" x2="429.0" y2="105.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="429.0,105.0 420.1284185293555,114.50237034690382 416.0939313388346,103.44006675999158" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="259" cy="167" r="6" fill="#12649c"/>
+<circle cx="429" cy="105" r="6" fill="#12649c"/>
+<text x="51" y="174" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.10</text>
+<text x="51" y="112" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">0.20</text>
+<text x="259" y="258" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">100</text>
+<text x="429" y="258" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">200</text>
+<text x="351" y="167" font-size="21" font-weight="650" fill="#12649c" text-anchor="middle">1 m/s</text>
+<text x="495" y="87" font-size="20" font-weight="650" fill="#12649c" text-anchor="middle">0.20 추정</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "촬영과 도착 구분",
+    "title": "측정값은 받은 시각보다 촬영 시각에 속합니다",
+    "body": "센서가 100 ms의 위치 0.10 m를 찍고 200 ms에 전달합니다. 받은 시각의 위치에 그대로 두면 이미 지나온 위치를 읽습니다.",
+    "takeaway": "100 ms의 0.10 m 점에서 200 ms 수신으로 이어지는 전달선이 있습니다.",
+    "example": [
+      "x=0.10 m 측정",
+      "200 ms에 도착",
+      "관측 나이 100 ms"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "촬영과 도착 구분",
+      "description": "100 ms의 0.10 m 점에서 200 ms 수신으로 이어지는 전달선이 있습니다.",
+      "figure": "figure-sensor-timestamps-state-estimation-1"
+    },
+    "quiz": [
+      "관측 시각 120 ms, 수신 시각 180 ms라면 전달 지연은?",
+      "60 ms",
+      "180 ms",
+      "받은 시각에서 촬영 시각을 뺍니다."
+    ]
+  },
+  {
+    "label": "현재로 예측",
+    "title": "일정 속도로 측정 당시에서 지금까지 옮깁니다",
+    "body": "1 m/s로 100 ms, 즉 0.1 s 동안 움직이면 0.10 m를 더 갑니다. 따라서 200 ms 위치 추정은 0.20 m입니다.",
+    "takeaway": "100 ms의 0.10 m와 200 ms의 0.20 m가 같은 기울기의 선으로 이어집니다.",
+    "example": [
+      "x=0.10 m · v=1 m/s",
+      "+1×0.10 s",
+      "현재 추정 0.20 m"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "현재로 예측",
+      "description": "100 ms의 0.10 m와 200 ms의 0.20 m가 같은 기울기의 선으로 이어집니다.",
+      "figure": "figure-sensor-timestamps-state-estimation-2"
+    },
+    "quiz": [
+      "속도 추정이 0 m/s이면 같은 구간 끝의 예측 위치는?",
+      "0.10 m",
+      "0.20 m",
+      "속도에 의한 예측 이동량이 0입니다."
+    ]
+  }
+];
+const slug = 'sensor-timestamps-state-estimation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

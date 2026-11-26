@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="센서가 본 한 점을 세계 좌표에서 어디에 놓을까요?">
+<title>카메라·차체·세계 좌표계 연결 · D23</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./camera-body-world-frames.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D23</p><h1>카메라·차체·세계 좌표계 연결</h1><p>센서가 본 한 점을 세계 좌표에서 어디에 놓을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">카메라·차체·세계 좌표계 연결</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-camera-body-world-frames-1"><svg><g>
+<text x="91" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">차체 원점</text>
+<text x="245" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">센서 원점</text>
+<text x="511" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">P</text>
+<line x1="91" y1="155" x2="529" y2="155" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="91.0" y1="154.0" x2="188.0" y2="154.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="188.0,154.0 176.40961225346072,159.88752170992788 176.40961225346072,148.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="91.0" y1="154.0" x2="91.0" y2="104.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="91.0,104.0 96.88752170992788,115.59038774653928 85.11247829007212,115.59038774653928" fill="#566d7c" stroke="none" stroke-width="1"/>
+<circle cx="91" cy="154" r="6" fill="#566d7c"/>
+<circle cx="188" cy="154" r="6" fill="#12649c"/>
+<circle cx="511" cy="154" r="6" fill="#11664f"/>
+<text x="139" y="198" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">0.3 m</text>
+<text x="352" y="198" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">1.0 m</text>
+<text x="310" y="253" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">P 차체 (1.3, 0) m</text>
+</g></svg></template>
+<template id="figure-camera-body-world-frames-2"><svg><g>
+<line x1="83.0" y1="236.0" x2="83.0" y2="73.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="83.0,73.0 88.88752170992788,84.59038774653928 77.11247829007212,84.59038774653928" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="83.0" y1="236.0" x2="346.0" y2="236.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="346.0,236.0 334.40961225346075,241.88752170992788 334.40961225346075,230.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<text x="69" y="76" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">y</text>
+<text x="357" y="242" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">x</text>
+<line x1="86" y1="194" x2="259" y2="194" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>
+<line x1="259" y1="234" x2="259" y2="107" stroke="#566d7c" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>
+<circle cx="259" cy="194" r="6" fill="#566d7c"/>
+<line x1="259.0" y1="186.0" x2="259.0" y2="112.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="259.0,112.0 264.8875217099279,123.59038774653928 253.11247829007212,123.59038774653928" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="259" cy="107" r="6" fill="#11664f"/>
+<text x="407" y="112" font-size="24" font-weight="650" fill="#11664f" text-anchor="middle">P · (2, 2.3) m</text>
+<text x="412" y="159" font-size="23" font-weight="650" fill="#12649c" text-anchor="middle">+1.3 m · +y</text>
+<text x="415" y="204" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">차체 원점 (2,1)</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "센서에서 차체로",
+    "title": "센서 원점의 오프셋부터 더합니다",
+    "body": "센서 축과 차체 축이 같은 방향인 가상 시험대입니다. 센서는 차체 원점에서 x로 0.3 m 앞이고 점 P는 센서 앞 1 m이므로 차체 좌표는 (1.3,0) m입니다.",
+    "takeaway": "한 x축에서 차체 원점, 센서 원점, P가 나란히 있고 간격 0.3 m와 1 m가 표시됩니다.",
+    "example": [
+      "P 센서 (1,0) m",
+      "x 방향으로 +0.3 m",
+      "P 차체 (1.3,0) m"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "센서에서 차체로",
+      "description": "한 x축에서 차체 원점, 센서 원점, P가 나란히 있고 간격 0.3 m와 1 m가 표시됩니다.",
+      "figure": "figure-camera-body-world-frames-1"
+    },
+    "quiz": [
+      "센서가 차체에서 x로 0.5 m 앞이라면 점 P의 차체 x는 얼마인가요?",
+      "1.5 m",
+      "0.5 m",
+      "정렬된 같은 방향 축에서 오프셋을 더합니다."
+    ]
+  },
+  {
+    "label": "차체에서 세계로",
+    "title": "차체 축을 돌리고 세계 원점을 더합니다",
+    "body": "수레 정면은 세계 y가 증가하는 쪽입니다. 따라서 차체의 (1.3,0)은 세계 벡터 (0,1.3)으로 회전하고, 차체 원점 (2,1)을 더해 세계 (2,2.3) m가 됩니다.",
+    "takeaway": "같은 P까지의 1.3 m가 이번에는 세계 +y를 따라갑니다.",
+    "example": [
+      "차체 (1.3,0) m",
+      "+90° 회전 후 (2,1) 이동",
+      "세계 (2,2.3) m"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "차체에서 세계로",
+      "description": "같은 P까지의 1.3 m가 이번에는 세계 +y를 따라갑니다.",
+      "figure": "figure-camera-body-world-frames-2"
+    },
+    "quiz": [
+      "차체가 세계 +x를 향한다면 같은 P는 세계에서 어디인가요?",
+      "(3.3, 1) m",
+      "(2, 2.3) m",
+      "이 경우 회전이 없어 +1.3 m를 세계 x에 더합니다."
+    ]
+  }
+];
+const slug = 'camera-body-world-frames';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

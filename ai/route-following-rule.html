@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="경로의 다음 칸이 막히면 기준 정책은 무엇을 할까요?">
+<title>경로 추종 규칙을 기준 정책으로 만들기 · D05</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./route-following-rule.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D05</p><h1>경로 추종 규칙을 기준 정책으로 만들기</h1><p>경로의 다음 칸이 막히면 기준 정책은 무엇을 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">경로 추종 규칙을 기준 정책으로 만들기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-route-following-rule-1"><svg><g>
+<rect x="67" y="77" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="119" y="77" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="171" y="77" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="223" y="77" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="67" y="129" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="93.0" y="163.32" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="119" y="129" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="171" y="129" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="223" y="129" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="67" y="181" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="119" y="181" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="171" y="181" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="223" y="181" width="52" height="52" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<text x="249" y="217" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="145" y="122" font-size="20" font-weight="650" fill="#12649c" text-anchor="middle">1</text>
+<text x="197" y="122" font-size="20" font-weight="650" fill="#566d7c" text-anchor="middle">2</text>
+<line x1="101.0" y1="155.0" x2="139.0" y2="155.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="139.0,155.0 127.40961225346072,160.88752170992788 127.40961225346072,149.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="154" y1="155" x2="248" y2="155" stroke="#566d7c" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
+<line x1="248" y1="155" x2="248" y2="188" stroke="#566d7c" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
+<text x="455" y="121" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">다음 칸 1</text>
+<text x="455" y="176" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">열림 → 동쪽</text>
+</g></svg></template>
+<template id="figure-route-following-rule-2"><svg><g>
+<rect x="67" y="77" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="119" y="77" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="171" y="77" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="223" y="77" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="67" y="129" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="93.0" y="163.32" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="119" y="129" width="52" height="52" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="171" y="129" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="223" y="129" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="67" y="181" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="119" y="181" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="171" y="181" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="223" y="181" width="52" height="52" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<text x="249" y="217" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="145" y="119" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">1</text>
+<text x="197" y="122" font-size="20" font-weight="650" fill="#566d7c" text-anchor="middle">2</text>
+<line x1="100.0" y1="155.0" x2="115.0" y2="155.0" stroke="#a34123" stroke-width="4" stroke-dasharray="5 4" stroke-linecap="round"/>
+<polygon points="115.0,155.0 103.40961225346072,160.88752170992788 103.40961225346072,149.11247829007212" fill="#a34123" stroke="none" stroke-width="1"/>
+<line x1="154" y1="155" x2="248" y2="155" stroke="#566d7c" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
+<line x1="248" y1="155" x2="248" y2="188" stroke="#566d7c" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
+<text x="455" y="121" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">다음 칸 1</text>
+<text x="455" y="176" font-size="24" font-weight="650" fill="#a34123" text-anchor="middle">차단 → 정지</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "열린 다음 칸",
+    "title": "기준 정책은 열린 다음 경유지로 이동합니다",
+    "body": "단순한 기준 정책은 지도와 경유지 목록을 받습니다. 다음 한 칸을 확인한 뒤 열려 있으면 그 방향의 이동을 시도합니다.",
+    "takeaway": "S와 다음 경유지 1이 파란 실선 한 칸으로 연결됩니다.",
+    "example": [
+      "S · 경유지 1",
+      "앞 칸 열림",
+      "동쪽 1칸"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "열린 다음 칸",
+      "description": "S와 다음 경유지 1이 파란 실선 한 칸으로 연결됩니다.",
+      "figure": "figure-route-following-rule-1"
+    },
+    "quiz": [
+      "다음 경유지가 남쪽 열린 칸이면 어떤 명령을 고르나요?",
+      "남쪽",
+      "동쪽",
+      "기준 정책은 지금 위치에서 다음 경유지로 향합니다."
+    ]
+  },
+  {
+    "label": "다음 칸 차단",
+    "title": "차단된 경유지 앞에서 멈춥니다",
+    "body": "동일한 경로에서 첫 경유지가 막혔습니다. 이 기준 정책은 계획을 다시 계산할 때까지 STOP을 반환합니다.",
+    "takeaway": "첫 칸이 벽으로 바뀌고 이동 화살표는 그 경계에 닿기 전에 끊깁니다.",
+    "example": [
+      "S · 경유지 1",
+      "앞 칸 차단",
+      "S에서 정지"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "다음 칸 차단",
+      "description": "첫 칸이 벽으로 바뀌고 이동 화살표는 그 경계에 닿기 전에 끊깁니다.",
+      "figure": "figure-route-following-rule-2"
+    },
+    "quiz": [
+      "다음 칸이 막혀도 그 뒤 목표가 보이면 이 기준 정책은 어떻게 하나요?",
+      "현재 칸에서 정지",
+      "목표로 건너뜀",
+      "다음 칸이 열려 있어야 한 칸 이동합니다."
+    ]
+  }
+];
+const slug = 'route-following-rule';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

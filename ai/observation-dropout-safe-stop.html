@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="새 관측이 없을 때 언제 기존 이동 명령을 끊어야 할까요?">
+<title>관측 지연·단절과 안전 정지 · D22</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./observation-dropout-safe-stop.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D22</p><h1>관측 지연·단절과 안전 정지</h1><p>새 관측이 없을 때 언제 기존 이동 명령을 끊어야 할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">관측 지연·단절과 안전 정지</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-observation-dropout-safe-stop-1"><svg><g>
+<text x="310" y="78" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">허용 나이 &lt; 100 ms</text>
+<text x="140" y="119" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">마지막 센서</text>
+<text x="318" y="119" font-size="22" font-weight="650" fill="#12649c" text-anchor="middle">제어 · 이동</text>
+<line x1="140" y1="157" x2="496" y2="157" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="140" cy="157" r="6" fill="#12649c"/>
+<circle cx="318" cy="157" r="6" fill="#12649c"/>
+<circle cx="496" cy="157" r="6" fill="#566d7c"/>
+<text x="140" y="192" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">100 ms</text>
+<text x="318" y="192" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">150 ms</text>
+<text x="496" y="192" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">200 ms</text>
+<line x1="141.0" y1="220.0" x2="316.0" y2="220.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="316.0,220.0 304.40961225346075,225.88752170992788 304.40961225346075,214.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="230" y="254" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">나이 50 ms</text>
+</g></svg></template>
+<template id="figure-observation-dropout-safe-stop-2"><svg><g>
+<text x="310" y="78" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">허용 나이 &lt; 100 ms</text>
+<text x="140" y="119" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">마지막 센서</text>
+<text x="496" y="119" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">제어 · STOP</text>
+<line x1="140" y1="157" x2="496" y2="157" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<circle cx="140" cy="157" r="6" fill="#12649c"/>
+<circle cx="318" cy="157" r="6" fill="#566d7c"/>
+<circle cx="496" cy="157" r="6" fill="#a34123"/>
+<text x="140" y="192" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">100 ms</text>
+<text x="318" y="192" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">150 ms</text>
+<text x="496" y="192" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">200 ms</text>
+<line x1="141.0" y1="221.0" x2="494.0" y2="221.0" stroke="#a34123" stroke-width="4" stroke-dasharray="7 5" stroke-linecap="round"/>
+<polygon points="494.0,221.0 482.40961225346075,226.88752170992788 482.40961225346075,215.11247829007212" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="318" y="255" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">새 샘플 없음 · 나이 100 ms</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "관측 나이",
+    "title": "제어 시각에서 마지막 관측 시각을 빼면 나이가 됩니다",
+    "body": "장치가 100 ms에 관측을 받았고 제어기는 150 ms에 다시 실행합니다. 나이 50 ms는 한도 100 ms보다 작아 이동을 계속합니다.",
+    "takeaway": "센서 시각과 제어 시각의 눈금 간격이 50 ms입니다.",
+    "example": [
+      "관측 100 ms · 제어 150 ms",
+      "150 − 100 = 50 ms",
+      "50 \u003c 100 · 이동"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "관측 나이",
+      "description": "센서 시각과 제어 시각의 눈금 간격이 50 ms입니다.",
+      "figure": "figure-observation-dropout-safe-stop-1"
+    },
+    "quiz": [
+      "마지막 관측 100 ms, 제어 175 ms이면 나이는?",
+      "75 ms",
+      "175 ms",
+      "현재 제어 시각에서 관측 시각을 뺍니다."
+    ]
+  },
+  {
+    "label": "단절에서 정지",
+    "title": "나이가 100 ms에 닿는 제어 주기에서 정지를 냅니다",
+    "body": "150과 200 ms에 새 관측이 오지 않습니다. 제어기 200 ms에서 나이는 100 ms이므로 다음 이동을 선택하는 대신 정지 명령으로 바뀝니다.",
+    "takeaway": "같은 100 ms 센서에서 200 ms까지 점선이 연장되고 끝에 STOP이 붙습니다.",
+    "example": [
+      "마지막 센서 100 ms",
+      "200 − 100 = 100 ms",
+      "한도 도달 · STOP"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "단절에서 정지",
+      "description": "같은 100 ms 센서에서 200 ms까지 점선이 연장되고 끝에 STOP이 붙습니다.",
+      "figure": "figure-observation-dropout-safe-stop-2"
+    },
+    "quiz": [
+      "150 ms에 새 관측이 왔다면 200 ms 제어 틱에서도 정지를 내나요?",
+      "그 틱의 나이 50 ms로 계속",
+      "나이 100 ms로 정지",
+      "나이는 가장 최근 관측 시각부터 계산합니다."
+    ]
+  }
+];
+const slug = 'observation-dropout-safe-stop';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

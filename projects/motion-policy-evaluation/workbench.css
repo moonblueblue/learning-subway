@@ -1,0 +1,62 @@
+.motion-dialog {
+  width: min(650px, calc(100% - 16px));
+  max-height: calc(100dvh - 12px);
+  margin: auto;
+  padding: 12px;
+  border: 1px solid #9baeaf;
+  border-radius: 10px;
+  background: #fff;
+  color: #17354b;
+  font: 15px/1.25 system-ui, sans-serif;
+  overflow: clip;
+}
+.motion-dialog::backdrop { background: #142938bf; }
+.motion-dialog [hidden] { display: none !important; }
+.motion-dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.motion-dialog h2 { font-size: 1.2em; }
+.motion-dialog p { margin-block: 4px; overflow-wrap: anywhere; }
+.motion-dialog .action { padding: 5px 9px; min-height: 44px; }
+.motion-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.motion-fields, .motion-trace {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-block: 4px;
+}
+.motion-trace { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: center; }
+.motion-dialog label { display: block; min-width: 0; font-weight: 650; }
+.motion-dialog select, .motion-dialog textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 5px;
+  color: inherit;
+  background: #f1f6f9;
+  border: 1px solid #9baeaf;
+  border-radius: 5px;
+  font: inherit;
+}
+.motion-dialog textarea {
+  display: block;
+  height: clamp(100px, 35dvh, 300px);
+  resize: none;
+  font-family: ui-monospace, monospace;
+}
+.motion-dialog table { width: 100%; border-collapse: collapse; }
+.motion-dialog td, .motion-dialog th {
+  text-align: left;
+  padding: 5px 4px;
+  border-bottom: 1px solid #d4dfe4;
+}
+#motion-map { width: 100%; height: clamp(88px, 23dvh, 180px); }
+#motion-record { font-size: .92em; }
+#motion-error { color: #a34123; }
+@media (max-width: 370px), (max-height: 440px) {
+  .motion-dialog { padding: 7px; font-size: 13px; }
+  .motion-dialog .action { padding-inline: 7px; }
+}

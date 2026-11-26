@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="다음에 고른 행동과 가장 높은 가치의 행동이 다르면 갱신은 어떻게 갈릴까요?">
+<title>SARSA와 Q 학습 · D14</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./sarsa-q-learning.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D14</p><h1>SARSA와 Q 학습</h1><p>다음에 고른 행동과 가장 높은 가치의 행동이 다르면 갱신은 어떻게 갈릴까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">SARSA와 Q 학습</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-sarsa-q-learning-1"><svg><g>
+<text x="310" y="80" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">r = 0 · γ = 0.5</text>
+<text x="73" y="157" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<line x1="97.0" y1="150.0" x2="201.0" y2="150.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="201.0,150.0 189.40961225346072,155.88752170992788 189.40961225346072,144.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="227" y="157" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">E</text>
+<line x1="249.0" y1="140.0" x2="426.0" y2="104.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polygon points="426.0,104.0 415.815591074514,112.07946872253865 413.46871715987265,100.5406719755522" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="249.0" y1="158.0" x2="426.0" y2="206.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="426.0,206.0 413.2726908268162,208.64869802170625 416.3546079158318,197.28412875596098" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="509" y="109" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">동쪽 8</text>
+<text x="509" y="218" font-size="24" font-weight="650" fill="#12649c" text-anchor="middle">남쪽 2</text>
+<text x="309" y="251" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">SARSA 목표 = 1</text>
+</g></svg></template>
+<template id="figure-sarsa-q-learning-2"><svg><g>
+<text x="310" y="80" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">r = 0 · γ = 0.5</text>
+<text x="73" y="157" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<line x1="97.0" y1="150.0" x2="201.0" y2="150.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="201.0,150.0 189.40961225346072,155.88752170992788 189.40961225346072,144.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="227" y="157" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">E</text>
+<line x1="249.0" y1="140.0" x2="426.0" y2="104.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="426.0,104.0 415.815591074514,112.07946872253865 413.46871715987265,100.5406719755522" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="249.0" y1="158.0" x2="426.0" y2="206.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polygon points="426.0,206.0 413.2726908268162,208.64869802170625 416.3546079158318,197.28412875596098" fill="#566d7c" stroke="none" stroke-width="1"/>
+<text x="510" y="109" font-size="22" font-weight="650" fill="#12649c" text-anchor="middle">최대 동쪽 8</text>
+<text x="507" y="217" font-size="22" font-weight="650" fill="#566d7c" text-anchor="middle">실제 남쪽 2</text>
+<text x="309" y="251" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">Q 목표 = 4</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "실제로 고른 행동",
+    "title": "SARSA는 실제로 고른 다음 행동을 사용합니다",
+    "body": "E에 도착한 뒤 탐험으로 남쪽을 골랐습니다. SARSA의 목표는 남쪽 가치 2를 할인한 1입니다.",
+    "takeaway": "E에서 남쪽 실선 Q=2가 목표값 1로 연결됩니다.",
+    "example": [
+      "E에서 남쪽 선택",
+      "0 + 0.5×2",
+      "SARSA 목표 1"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "실제로 고른 행동",
+      "description": "E에서 남쪽 실선 Q=2가 목표값 1로 연결됩니다.",
+      "figure": "figure-sarsa-q-learning-1"
+    },
+    "quiz": [
+      "실제 다음 행동이 동쪽으로 바뀌면 SARSA 목표는?",
+      "4",
+      "1",
+      "SARSA는 실제로 고른 동쪽의 Q=8을 사용합니다."
+    ]
+  },
+  {
+    "label": "최대값으로 갱신",
+    "title": "Q 학습은 실제 선택과 별도로 최대값을 사용합니다",
+    "body": "동일한 경험에서 남쪽을 고른 기록은 유지됩니다. Q 학습의 목표는 두 후보의 최대값 8을 사용하므로 4입니다.",
+    "takeaway": "E의 남쪽 점선 옆에 실제 선택이 남고 동쪽 최대값이 목표 4로 이어집니다.",
+    "example": [
+      "E에서 남쪽 선택",
+      "0 + 0.5×max(8,2)",
+      "Q 학습 목표 4"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "최대값으로 갱신",
+      "description": "E의 남쪽 점선 옆에 실제 선택이 남고 동쪽 최대값이 목표 4로 이어집니다.",
+      "figure": "figure-sarsa-q-learning-2"
+    },
+    "quiz": [
+      "두 행동의 가치가 2로 같으면 두 목표는 어떻게 되나요?",
+      "두 목표 1",
+      "SARSA 1 · Q 학습 2",
+      "같은 값 2를 할인해 두 목표가 일치합니다."
+    ]
+  }
+];
+const slug = 'sarsa-q-learning';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

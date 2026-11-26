@@ -1141,10 +1141,140 @@ const courseCatalog = {
           "id": "5",
           "title": "강화학습·로봇",
           "titleEn": "Reinforcement learning and robotics",
-          "lessons": [],
+          "lessons": [
+            {
+              "id": "5.1",
+              "ref": "ai/hidden-state-observation"
+            },
+            {
+              "id": "5.6",
+              "ref": "ai/action-space-control-period"
+            },
+            {
+              "id": "5.7",
+              "ref": "ai/transition-probability-markov"
+            },
+            {
+              "id": "5.2",
+              "ref": "ai/reward-discount-return"
+            },
+            {
+              "id": "5.8",
+              "ref": "ai/route-following-rule"
+            },
+            {
+              "id": "5.3",
+              "ref": "ai/state-action-value"
+            },
+            {
+              "id": "5.9",
+              "ref": "ai/bellman-expectation"
+            },
+            {
+              "id": "5.10",
+              "ref": "algorithms/dynamic"
+            },
+            {
+              "id": "5.11",
+              "ref": "ai/grid-value-iteration"
+            },
+            {
+              "id": "5.12",
+              "ref": "ai/policy-evaluation-improvement"
+            },
+            {
+              "id": "5.4",
+              "ref": "ai/epsilon-greedy-exploration"
+            },
+            {
+              "id": "5.13",
+              "ref": "ai/monte-carlo-episode-return"
+            },
+            {
+              "id": "5.14",
+              "ref": "ai/temporal-difference-bootstrap"
+            },
+            {
+              "id": "5.15",
+              "ref": "ai/sarsa-q-learning"
+            },
+            {
+              "id": "5.16",
+              "ref": "ai/experience-replay-target-network"
+            },
+            {
+              "id": "5.17",
+              "ref": "ai/policy-gradient-actor-critic"
+            },
+            {
+              "id": "5.18",
+              "ref": "ai/behavior-cloning-demonstrations"
+            },
+            {
+              "id": "5.19",
+              "ref": "ai/navigation-map-splits"
+            },
+            {
+              "id": "5.20",
+              "ref": "ai/paired-navigation-policy-tests"
+            },
+            {
+              "id": "5.21",
+              "ref": "ai/high-reward-failed-trajectory"
+            },
+            {
+              "id": "5.22",
+              "ref": "ai/policy-success-collision-seeds"
+            },
+            {
+              "id": "5.5",
+              "ref": "ai/observation-dropout-safe-stop"
+            },
+            {
+              "id": "5.23",
+              "ref": "ai/camera-body-world-frames"
+            },
+            {
+              "id": "5.24",
+              "ref": "ai/sensor-timestamps-state-estimation"
+            },
+            {
+              "id": "5.25",
+              "ref": "ai/pid-feedback-baseline"
+            },
+            {
+              "id": "5.26",
+              "ref": "ai/actuator-saturation-speed-limits"
+            },
+            {
+              "id": "5.27",
+              "ref": "ai/simulation-to-hardware-error"
+            },
+            {
+              "id": "5.28",
+              "ref": "ai/dynamics-randomization-transfer"
+            },
+            {
+              "id": "5.29",
+              "ref": "ai/hardware-controller-in-loop"
+            },
+            {
+              "id": "5.30",
+              "ref": "ai/sensor-actuator-latency"
+            },
+            {
+              "id": "5.31",
+              "ref": "ai/independent-stop-handover"
+            },
+            {
+              "id": "5.32",
+              "ref": "ai/replay-physical-simulation-gap"
+            }
+          ],
           "tracks": [],
           "destination": "이동 정책 평가",
-          "destinationEn": "Navigation policy evaluation"
+          "destinationEn": "Navigation policy evaluation",
+          "projectRef": "projects/motion-policy-evaluation"
         },
         {
           "id": "6",
@@ -4492,6 +4622,347 @@ const courseCatalog = {
             "ai/early-late-multimodal-fusion"
           ],
           "page": "ai/missing-modality-performance.html"
+        },
+        {
+          "id": "hidden-state-observation",
+          "title": "관측과 숨은 상태",
+          "titleEn": "Observations and hidden state",
+          "question": "같은 거리 관측이 왜 다른 행동 결과를 낳을까요?",
+          "format": "실험",
+          "requires": [
+            "algorithms/shortest"
+          ],
+          "page": "ai/hidden-state-observation.html"
+        },
+        {
+          "id": "action-space-control-period",
+          "title": "행동 공간과 제어 주기",
+          "titleEn": "Action space and control period",
+          "question": "같은 속도 명령을 오래 유지하면 도착점이 어떻게 달라질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/hidden-state-observation"
+          ],
+          "page": "ai/action-space-control-period.html"
+        },
+        {
+          "id": "transition-probability-markov",
+          "title": "전이 확률과 마르코프 가정",
+          "titleEn": "Transition probabilities and the Markov assumption",
+          "question": "위치만 기록할 때 어떤 과거 정보가 전이에 남을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/action-space-control-period"
+          ],
+          "page": "ai/transition-probability-markov.html"
+        },
+        {
+          "id": "reward-discount-return",
+          "title": "보상·할인율·누적 수익",
+          "titleEn": "Rewards, discounting, and return",
+          "question": "같은 보상들을 다른 순서로 받으면 누적 수익이 어떻게 달라질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/transition-probability-markov"
+          ],
+          "page": "ai/reward-discount-return.html"
+        },
+        {
+          "id": "route-following-rule",
+          "title": "경로 추종 규칙을 기준 정책으로 만들기",
+          "titleEn": "A route-following baseline",
+          "question": "경로의 다음 칸이 막히면 기준 정책은 무엇을 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/reward-discount-return"
+          ],
+          "page": "ai/route-following-rule.html"
+        },
+        {
+          "id": "state-action-value",
+          "title": "상태 가치와 행동 가치",
+          "titleEn": "State value and action value",
+          "question": "한 상태의 가치는 그 상태에서 고르는 행동 가치와 어떻게 이어질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/route-following-rule"
+          ],
+          "page": "ai/state-action-value.html"
+        },
+        {
+          "id": "bellman-expectation",
+          "title": "벨만 기대 방정식",
+          "titleEn": "The Bellman expectation equation",
+          "question": "지금 보상과 다음 상태의 가치가 어떻게 현재 가치로 모일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/state-action-value"
+          ],
+          "page": "ai/bellman-expectation.html"
+        },
+        {
+          "id": "grid-value-iteration",
+          "title": "가치 반복",
+          "titleEn": "Value iteration",
+          "question": "한 칸씩 퍼지는 값이 언제 출발 행동을 바꿀까요?",
+          "format": "실험",
+          "requires": [
+            "algorithms/dynamic"
+          ],
+          "page": "ai/grid-value-iteration.html"
+        },
+        {
+          "id": "policy-evaluation-improvement",
+          "title": "정책 평가와 정책 개선",
+          "titleEn": "Policy evaluation and improvement",
+          "question": "현재 정책의 가치로 더 좋은 첫 행동을 찾을 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/grid-value-iteration"
+          ],
+          "page": "ai/policy-evaluation-improvement.html"
+        },
+        {
+          "id": "epsilon-greedy-exploration",
+          "title": "탐험·활용과 ε-탐욕 정책",
+          "titleEn": "Exploration, exploitation, and ε-greedy",
+          "question": "ε가 0.2일 때 가장 좋은 행동을 몇 번쯤 고를까요?",
+          "format": "실험",
+          "requires": [
+            "ai/policy-evaluation-improvement"
+          ],
+          "page": "ai/epsilon-greedy-exploration.html"
+        },
+        {
+          "id": "monte-carlo-episode-return",
+          "title": "에피소드 반환과 몬테카를로 추정",
+          "titleEn": "Episode returns and Monte Carlo estimation",
+          "question": "끝까지 관찰한 두 에피소드로 가치 평균을 어떻게 구할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/epsilon-greedy-exploration"
+          ],
+          "page": "ai/monte-carlo-episode-return.html"
+        },
+        {
+          "id": "temporal-difference-bootstrap",
+          "title": "시간차 학습과 부트스트래핑",
+          "titleEn": "Temporal difference and bootstrapping",
+          "question": "다음 상태 가치가 이미 있으면 현재 상태를 언제 갱신할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/monte-carlo-episode-return"
+          ],
+          "page": "ai/temporal-difference-bootstrap.html"
+        },
+        {
+          "id": "sarsa-q-learning",
+          "title": "SARSA와 Q 학습",
+          "titleEn": "SARSA and Q-learning",
+          "question": "다음에 고른 행동과 가장 높은 가치의 행동이 다르면 갱신은 어떻게 갈릴까요?",
+          "format": "실험",
+          "requires": [
+            "ai/temporal-difference-bootstrap"
+          ],
+          "page": "ai/sarsa-q-learning.html"
+        },
+        {
+          "id": "experience-replay-target-network",
+          "title": "경험 재생과 목표 네트워크",
+          "titleEn": "Experience replay and target networks",
+          "question": "다시 뽑는 전이와 목표 계산용 값을 왜 따로 관리할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/sarsa-q-learning"
+          ],
+          "page": "ai/experience-replay-target-network.html"
+        },
+        {
+          "id": "policy-gradient-actor-critic",
+          "title": "정책 경사와 액터·크리틱",
+          "titleEn": "Policy gradient and actor–critic",
+          "question": "같은 행동을 했어도 기대보다 잘했는지에 따라 확률은 어떻게 달라질까요?",
+          "format": "실험",
+          "requires": [
+            "ai/experience-replay-target-network"
+          ],
+          "page": "ai/policy-gradient-actor-critic.html"
+        },
+        {
+          "id": "behavior-cloning-demonstrations",
+          "title": "시연에서 배우는 행동 복제",
+          "titleEn": "Behavior cloning from demonstrations",
+          "question": "전문가가 방문하지 않은 칸에 가면 복제 정책은 무엇을 놓칠까요?",
+          "format": "실험",
+          "requires": [
+            "ai/policy-gradient-actor-critic"
+          ],
+          "page": "ai/behavior-cloning-demonstrations.html"
+        },
+        {
+          "id": "navigation-map-splits",
+          "title": "학습·검증 지도를 분리하는 법",
+          "titleEn": "Separating training and evaluation maps",
+          "question": "지도 이름만 바꾸면 처음 보는 시험 사례가 될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/behavior-cloning-demonstrations"
+          ],
+          "page": "ai/navigation-map-splits.html"
+        },
+        {
+          "id": "paired-navigation-policy-tests",
+          "title": "같은 시작점에서 정책 짝지어 비교",
+          "titleEn": "Paired tests from the same start",
+          "question": "어떻게 시험 조건을 고정해 정책 차이를 읽을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/navigation-map-splits"
+          ],
+          "page": "ai/paired-navigation-policy-tests.html"
+        },
+        {
+          "id": "high-reward-failed-trajectory",
+          "title": "보상은 높고 목표는 실패한 궤적",
+          "titleEn": "High reward, failed goal",
+          "question": "보상 합이 높아도 목표 도착에 실패하는 이유는 무엇일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/paired-navigation-policy-tests"
+          ],
+          "page": "ai/high-reward-failed-trajectory.html"
+        },
+        {
+          "id": "policy-success-collision-seeds",
+          "title": "성공률·충돌률과 시드별 변동",
+          "titleEn": "Success, collisions, and seed variation",
+          "question": "성공률이 같아도 충돌 차이나 시드 변동을 볼 수 있나요?",
+          "format": "실험",
+          "requires": [
+            "ai/high-reward-failed-trajectory"
+          ],
+          "page": "ai/policy-success-collision-seeds.html"
+        },
+        {
+          "id": "observation-dropout-safe-stop",
+          "title": "관측 지연·단절과 안전 정지",
+          "titleEn": "Observation delay, dropout, and safe stop",
+          "question": "새 관측이 없을 때 언제 기존 이동 명령을 끊어야 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/policy-success-collision-seeds"
+          ],
+          "page": "ai/observation-dropout-safe-stop.html"
+        },
+        {
+          "id": "camera-body-world-frames",
+          "title": "카메라·차체·세계 좌표계 연결",
+          "titleEn": "Camera, body, and world frames",
+          "question": "센서가 본 한 점을 세계 좌표에서 어디에 놓을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/observation-dropout-safe-stop"
+          ],
+          "page": "ai/camera-body-world-frames.html"
+        },
+        {
+          "id": "sensor-timestamps-state-estimation",
+          "title": "센서 시간표와 상태 추정",
+          "titleEn": "Sensor timestamps and state estimation",
+          "question": "늦게 도착한 센서 위치를 현재 위치처럼 쓰면 어떤 오차가 날까요?",
+          "format": "실험",
+          "requires": [
+            "ai/camera-body-world-frames"
+          ],
+          "page": "ai/sensor-timestamps-state-estimation.html"
+        },
+        {
+          "id": "pid-feedback-baseline",
+          "title": "피드백 제어와 PID 기준기",
+          "titleEn": "Feedback control and a PID baseline",
+          "question": "목표에 다가갈수록 피드백 명령이 왜 줄어들까요?",
+          "format": "실험",
+          "requires": [
+            "ai/sensor-timestamps-state-estimation"
+          ],
+          "page": "ai/pid-feedback-baseline.html"
+        },
+        {
+          "id": "actuator-saturation-speed-limits",
+          "title": "액추에이터 포화와 속도 제한",
+          "titleEn": "Actuator saturation and speed limits",
+          "question": "제어기의 요청이 장치의 속도 한도를 넘으면 어떻게 될까요?",
+          "format": "실험",
+          "requires": [
+            "ai/pid-feedback-baseline"
+          ],
+          "page": "ai/actuator-saturation-speed-limits.html"
+        },
+        {
+          "id": "simulation-to-hardware-error",
+          "title": "모의 환경에서 실물로 옮길 때의 오차",
+          "titleEn": "Simulation-to-hardware error",
+          "question": "같은 멈춤 명령인데 제동 모형이 다르면 어디에 멈출까요?",
+          "format": "실험",
+          "requires": [
+            "ai/actuator-saturation-speed-limits"
+          ],
+          "page": "ai/simulation-to-hardware-error.html"
+        },
+        {
+          "id": "dynamics-randomization-transfer",
+          "title": "동역학 무작위화와 전이 검증",
+          "titleEn": "Dynamics randomization and transfer checks",
+          "question": "훈련 때 감속 조건을 여러 가지로 바꾸면 무엇을 새로 시험해야 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/simulation-to-hardware-error"
+          ],
+          "page": "ai/dynamics-randomization-transfer.html"
+        },
+        {
+          "id": "hardware-controller-in-loop",
+          "title": "실제 제어기를 연결한 모의 시험",
+          "titleEn": "A real controller in a simulated loop",
+          "question": "실제 제어기만 연결한 모의 시험에서 무엇을 검증할 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/dynamics-randomization-transfer"
+          ],
+          "page": "ai/hardware-controller-in-loop.html"
+        },
+        {
+          "id": "sensor-actuator-latency",
+          "title": "센서에서 구동기까지 지연 측정",
+          "titleEn": "Measuring sensor-to-actuator latency",
+          "question": "센서 시각에서 구동 명령과 실제 정지까지 무엇을 따로 재야 할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/hardware-controller-in-loop"
+          ],
+          "page": "ai/sensor-actuator-latency.html"
+        },
+        {
+          "id": "independent-stop-handover",
+          "title": "독립 정지 장치와 제어권 인계",
+          "titleEn": "Independent stop and control handover",
+          "question": "주 제어기에 이동 명령이 남아도 정지 장치가 어떻게 우선할까요?",
+          "format": "실험",
+          "requires": [
+            "ai/sensor-actuator-latency"
+          ],
+          "page": "ai/independent-stop-handover.html"
+        },
+        {
+          "id": "replay-physical-simulation-gap",
+          "title": "실측 로그로 시뮬레이션 차이 재현",
+          "titleEn": "Replaying the physical–simulation gap from logs",
+          "question": "동일 시점과 입력을 맞추면 정지거리 차이가 어디서 생겼는지 찾을 수 있을까요?",
+          "format": "실험",
+          "requires": [
+            "ai/independent-stop-handover"
+          ],
+          "page": "ai/replay-physical-simulation-gap.html"
         }
       ]
     },
@@ -4579,6 +5050,17 @@ const courseCatalog = {
             "ai/lighting-pair-first-failure"
           ],
           "page": "projects/defect-inspection-retrieval.html"
+        },
+        {
+          "id": "motion-policy-evaluation",
+          "title": "이동 정책 평가",
+          "titleEn": "Navigation policy evaluation",
+          "question": "같은 미사용 지도에서 두 정책의 이동과 정지를 어떻게 확인할까요?",
+          "format": "프로젝트",
+          "requires": [
+            "ai/observation-dropout-safe-stop"
+          ],
+          "page": "projects/motion-policy-evaluation.html"
         }
       ]
     }

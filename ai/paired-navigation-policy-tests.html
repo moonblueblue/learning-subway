@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="어떻게 시험 조건을 고정해 정책 차이를 읽을까요?">
+<title>같은 시작점에서 정책 짝지어 비교 · D19</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./paired-navigation-policy-tests.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D19</p><h1>같은 시작점에서 정책 짝지어 비교</h1><p>어떻게 시험 조건을 고정해 정책 차이를 읽을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">같은 시작점에서 정책 짝지어 비교</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-paired-navigation-policy-tests-1"><svg><g>
+<text x="155" y="80" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">기준 정책</text>
+<text x="466" y="80" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">학습 정책</text>
+<rect x="67" y="98" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="89.0" y="127.04" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="111" y="98" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="155" y="98" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="199" y="98" width="44" height="44" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="67" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="111" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="155" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="199" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="67" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="111" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="155" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="199" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="378" y="98" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="400.0" y="127.04" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="422" y="98" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="466" y="98" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="510" y="98" width="44" height="44" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="378" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="422" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="466" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="510" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="378" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="422" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="466" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="510" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="221" y="126" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="532" y="126" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="310" y="253" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">지도 M · 시드 17 · 최대 6칸 이동</text>
+</g></svg></template>
+<template id="figure-paired-navigation-policy-tests-2"><svg><g>
+<text x="155" y="80" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">기준 · 시드 17</text>
+<text x="466" y="80" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">학습 · 시드 17</text>
+<rect x="67" y="98" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="89.0" y="127.04" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="111" y="98" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="155" y="98" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="199" y="98" width="44" height="44" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="67" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="111" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="155" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="199" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="67" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="111" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="155" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="199" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="378" y="98" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="400.0" y="127.04" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="422" y="98" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="466" y="98" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="510" y="98" width="44" height="44" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="378" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="422" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="466" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="510" y="142" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="378" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="422" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="466" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="510" y="186" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="221" y="126" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="542" y="126" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<circle cx="78" cy="133" r="5" fill="#a34123"/>
+<line x1="389.0" y1="132.0" x2="400.0" y2="165.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="400.0,165.0 390.74940406252455,155.866190564635 401.9201910887613,152.14259488922272" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="400.0" y1="165.0" x2="444.0" y2="165.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="444.0,165.0 432.40961225346075,170.88752170992788 432.40961225346075,159.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="444.0" y1="165.0" x2="488.0" y2="165.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="488.0,165.0 476.40961225346075,170.88752170992788 476.40961225346075,159.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="488.0" y1="165.0" x2="532.0" y2="165.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="532.0,165.0 520.4096122534608,170.88752170992788 520.4096122534608,159.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="532.0" y1="165.0" x2="532.0" y2="133.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="532.0,133.0 537.8875217099279,144.59038774653928 526.1124782900721,144.59038774653928" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="389.0" cy="132.0" r="5" fill="#12649c"/>
+<text x="155" y="245" font-size="20" font-weight="650" fill="#a34123" text-anchor="middle">정지 · 미도달 · 1단계</text>
+<text x="466" y="245" font-size="20" font-weight="650" fill="#12649c" text-anchor="middle">도달 · 5단계</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "시험 조건 고정",
+    "title": "정책을 바꾸기 전에 지도와 시드를 맞춥니다",
+    "body": "좌우 지도는 같은 S와 G, 같은 벽, 같은 시험 시드 17을 가집니다. 좌우에서 각각 정책만 바꿉니다.",
+    "takeaway": "같은 출발과 정면 벽이 두 격자에서 같은 칸에 있습니다.",
+    "example": [
+      "지도 M · 시드 17",
+      "출발·목표·한도 동일",
+      "정책만 교체"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "시험 조건 고정",
+      "description": "같은 출발과 정면 벽이 두 격자에서 같은 칸에 있습니다.",
+      "figure": "figure-paired-navigation-policy-tests-1"
+    },
+    "quiz": [
+      "새 시드를 추가한다면 어느 정책에 실행하나요?",
+      "두 정책 모두",
+      "학습 정책만",
+      "하나의 시드가 양쪽의 한 쌍을 이룹니다."
+    ]
+  },
+  {
+    "label": "같은 지도 두 자취",
+    "title": "벽에서 멈춘 정책과 우회한 정책의 결과가 다릅니다",
+    "body": "기준 정책은 동쪽 벽을 봐서 한 스텝에 정지합니다. 학습 정책은 남·동·동·동·북 다섯 스텝으로 G에 도착합니다.",
+    "takeaway": "왼쪽은 S에 정지가 남고 오른쪽 파란 자취는 벽 아래로 돌아갑니다.",
+    "example": [
+      "같은 시드 17",
+      "정지 대 우회",
+      "미도달 1 · 도달 5"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "같은 지도 두 자취",
+      "description": "왼쪽은 S에 정지가 남고 오른쪽 파란 자취는 벽 아래로 돌아갑니다.",
+      "figure": "figure-paired-navigation-policy-tests-2"
+    },
+    "quiz": [
+      "오른쪽 정책에만 최대 10단계를 준다면 어떤 문제가 생기나요?",
+      "정책과 시간 한도가 함께 바뀜",
+      "정책 차이를 더 잘 분리함",
+      "한도의 영향과 정책의 영향을 구별할 수 없습니다."
+    ]
+  }
+];
+const slug = 'paired-navigation-policy-tests';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

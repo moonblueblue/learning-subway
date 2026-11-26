@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="한 상태의 가치는 그 상태에서 고르는 행동 가치와 어떻게 이어질까요?">
+<title>상태 가치와 행동 가치 · D06</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./state-action-value.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D06</p><h1>상태 가치와 행동 가치</h1><p>한 상태의 가치는 그 상태에서 고르는 행동 가치와 어떻게 이어질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">상태 가치와 행동 가치</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-state-action-value-1"><svg><g>
+<rect x="95" y="86" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="122.0" y="121.64" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="149" y="86" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="203" y="86" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="95" y="140" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="149" y="140" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="203" y="140" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="95" y="194" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="149" y="194" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="203" y="194" width="54" height="54" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<line x1="142.0" y1="113.0" x2="171.0" y2="113.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="171.0,113.0 159.40961225346072,118.88752170992788 159.40961225346072,107.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="122.0" y1="131.0" x2="122.0" y2="168.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="122.0,168.0 116.11247829007212,156.40961225346072 127.88752170992788,156.40961225346072" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="267" y="120" font-size="24" font-weight="650" fill="#12649c" text-anchor="start">Q(동) = 6</text>
+<text x="267" y="178" font-size="24" font-weight="650" fill="#11664f" text-anchor="start">Q(남) = 2</text>
+<line x1="182" y1="113" x2="251" y2="113" stroke="#12649c" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="143" y1="171" x2="251" y2="171" stroke="#11664f" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+</g></svg></template>
+<template id="figure-state-action-value-2"><svg><g>
+<rect x="63" y="92" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="89.0" y="126.32" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="115" y="92" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="167" y="92" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="63" y="144" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="115" y="144" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="167" y="144" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="63" y="196" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="115" y="196" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="167" y="196" width="52" height="52" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<line x1="110.0" y1="118.0" x2="139.0" y2="118.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="139.0,118.0 127.40961225346072,123.88752170992788 127.40961225346072,112.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="89.0" y1="137.0" x2="89.0" y2="172.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="89.0,172.0 83.11247829007212,160.40961225346072 94.88752170992788,160.40961225346072" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="239" y="125" font-size="24" font-weight="650" fill="#12649c" text-anchor="middle">0.75 × 6</text>
+<text x="239" y="181" font-size="24" font-weight="650" fill="#11664f" text-anchor="middle">0.25 × 2</text>
+<line x1="312.0" y1="118.0" x2="425.0" y2="142.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="425.0,142.0 412.43934132084945,145.3510973644286 414.88566810264354,133.83297543348144" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="312.0" y1="174.0" x2="425.0" y2="150.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="425.0,150.0 414.88566810264354,158.16702456651856 412.43934132084945,146.6489026355714" fill="#11664f" stroke="none" stroke-width="1"/>
+<text x="510" y="155" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">V(S) = 5</text>
+<text x="310" y="243" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">정책의 선택 확률 × 행동 가치</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "행동별 기대 수익",
+    "title": "Q는 첫 행동을 정해 둔 수익입니다",
+    "body": "이 예시에서 동쪽을 먼저 가면 이후까지 기대 수익이 6점, 남쪽부터 가면 2점입니다. 첫 행동 뒤에는 같은 정책을 따릅니다.",
+    "takeaway": "S의 서로 다른 화살표 위에 Q동=6과 Q남=2가 붙습니다.",
+    "example": [
+      "같은 S",
+      "첫 행동 동쪽·남쪽",
+      "Q 6점 · 2점"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "행동별 기대 수익",
+      "description": "S의 서로 다른 화살표 위에 Q동=6과 Q남=2가 붙습니다.",
+      "figure": "figure-state-action-value-1"
+    },
+    "quiz": [
+      "같은 상태에서 동쪽부터 시작한다면 어느 값을 쓰나요?",
+      "Q(동) = 6",
+      "Q(남) = 2",
+      "Q는 선택한 첫 행동을 조건으로 합니다."
+    ]
+  },
+  {
+    "label": "정책의 평균",
+    "title": "V는 정책이 고르는 비율로 Q를 평균합니다",
+    "body": "정책이 동쪽을 75%, 남쪽을 25% 고르면 V(S)는 0.75×6과 0.25×2의 합인 5점입니다.",
+    "takeaway": "같은 두 행동에 선택 확률이 추가되고 그 곱이 V(S)로 모입니다.",
+    "example": [
+      "Q 6, 2",
+      "0.75×6 + 0.25×2",
+      "V(S) = 5"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "정책의 평균",
+      "description": "같은 두 행동에 선택 확률이 추가되고 그 곱이 V(S)로 모입니다.",
+      "figure": "figure-state-action-value-2"
+    },
+    "quiz": [
+      "동쪽을 100% 고르면 이 상태의 V는 얼마인가요?",
+      "6점",
+      "4점",
+      "동쪽의 행동 가치만 평균에 들어갑니다."
+    ]
+  }
+];
+const slug = 'state-action-value';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

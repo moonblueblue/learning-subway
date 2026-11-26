@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "train": [
+    {"id": "train-west", "grid": ["S...G.", "B.....", "......", "......", "....#."]},
+    {"id": "train-east", "grid": ["S...G.", "B.....", "......", "......", ".....#"]}
+  ],
+  "test": [
+    {"id": "test-west", "grid": ["S...G.", "B.....", "......", "......", "#....."]},
+    {"id": "test-east", "grid": ["S..#G.", "B.....", "......", "......", "..##.."]}
+  ],
+  "seeds": [11, 17, 1972],
+  "episodes": 900,
+  "maxSteps": 10,
+  "sensorTimeout": 2,
+  "faultAt": 1,
+  "reward": {"step": -1, "collision": -3, "goal": 8, "beacon": 7},
+  "revisedReward": {"step": -1, "collision": -3, "goal": 8, "beacon": 0}
+}

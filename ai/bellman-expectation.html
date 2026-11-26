@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="지금 보상과 다음 상태의 가치가 어떻게 현재 가치로 모일까요?">
+<title>벨만 기대 방정식 · D07</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./bellman-expectation.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D07</p><h1>벨만 기대 방정식</h1><p>지금 보상과 다음 상태의 가치가 어떻게 현재 가치로 모일까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">벨만 기대 방정식</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-bellman-expectation-1"><svg><g>
+<text x="310" y="86" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">할인율 γ = 0.5</text>
+<rect x="68" y="126" width="92" height="60" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<text x="114" y="165" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<line x1="160.0" y1="156.0" x2="372.0" y2="156.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="372.0,156.0 360.40961225346075,161.88752170992788 360.40961225346075,150.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="267" y="142" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">r = +1</text>
+<rect x="374" y="126" width="170" height="60" fill="#c9e8f6" stroke="#12649c" stroke-width="2"/>
+<text x="459" y="165" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">V(E) = 6</text>
+<text x="310" y="248" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">1 + 0.5 × 6 = 4</text>
+</g></svg></template>
+<template id="figure-bellman-expectation-2"><svg><g>
+<text x="312" y="81" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">같은 행동 → 환경 결과</text>
+<text x="75" y="160" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<line x1="100.0" y1="148.0" x2="266.0" y2="113.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="266.0,113.0 255.87359409317125,121.15204903138736 253.4443138293517,109.63031978012889" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="100.0" y1="158.0" x2="266.0" y2="198.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polygon points="266.0,198.0 253.3529192852286,201.00854605981985 256.1113275017767,189.5611519611453" fill="#566d7c" stroke="none" stroke-width="1"/>
+<text x="178" y="115" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">0.75</text>
+<text x="177" y="201" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">0.25</text>
+<text x="397" y="119" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">E · 1 + 0.5×6 = 4</text>
+<text x="397" y="205" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">F · 0 + 0.5×0 = 0</text>
+<text x="310" y="255" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">V(S) = 0.75×4 + 0.25×0 = 3</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "한 번의 백업",
+    "title": "먼저 보상에 할인된 다음 가치를 더합니다",
+    "body": "확실히 동쪽 칸 E에 도착하면 지금 보상은 1점이고 E 이후의 가치는 6점입니다. 할인율 0.5를 적용한 현재 목표값은 4점입니다.",
+    "takeaway": "동쪽 간선의 보상 1과 E의 가치 6이 1 + 0.5×6으로 모입니다.",
+    "example": [
+      "r = 1 · V(E) = 6",
+      "1 + 0.5×6",
+      "4점"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "한 번의 백업",
+      "description": "동쪽 간선의 보상 1과 E의 가치 6이 1 + 0.5×6으로 모입니다.",
+      "figure": "figure-bellman-expectation-1"
+    },
+    "quiz": [
+      "즉시 보상 2, γ=0.5, 다음 가치 8이면 목표는 얼마인가요?",
+      "6점",
+      "10점",
+      "즉시 보상은 그대로 두고 다음 가치만 할인합니다."
+    ]
+  },
+  {
+    "label": "두 결과의 평균",
+    "title": "확률 분기마다 백업하고 기대값을 구합니다",
+    "body": "같은 행동에서 E와 F가 각각 0.75, 0.25 확률로 나옵니다. F의 보상과 다음 가치가 0이면 현재 기대값은 0.75×4 + 0.25×0 = 3점입니다.",
+    "takeaway": "각 가지에 확률·즉시 보상·다음 가치가 붙습니다.",
+    "example": [
+      "E 0.75 · F 0.25",
+      "0.75×4 + 0.25×0",
+      "V(S) = 3"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "두 결과의 평균",
+      "description": "각 가지에 확률·즉시 보상·다음 가치가 붙습니다.",
+      "figure": "figure-bellman-expectation-2"
+    },
+    "quiz": [
+      "두 가지 목표값 4와 0이 같은 확률이면 기대값은 얼마인가요?",
+      "2점",
+      "4점",
+      "각 값에 0.5를 곱해 더합니다."
+    ]
+  }
+];
+const slug = 'bellman-expectation';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

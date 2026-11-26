@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="다음 상태 가치가 이미 있으면 현재 상태를 언제 갱신할까요?">
+<title>시간차 학습과 부트스트래핑 · D13</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./temporal-difference-bootstrap.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D13</p><h1>시간차 학습과 부트스트래핑</h1><p>다음 상태 가치가 이미 있으면 현재 상태를 언제 갱신할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">시간차 학습과 부트스트래핑</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-temporal-difference-bootstrap-1"><svg><g>
+<text x="310" y="81" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">γ = 0.5</text>
+<rect x="109" y="130" width="116" height="64" fill="#ebf4f7" stroke="#566d7c" stroke-width="2"/>
+<rect x="398" y="130" width="116" height="64" fill="#c9e8f6" stroke="#12649c" stroke-width="2"/>
+<text x="166" y="171" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">V(S)=2</text>
+<text x="457" y="171" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">V(E)=6</text>
+<line x1="226.0" y1="162.0" x2="391.0" y2="162.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="391.0,162.0 379.40961225346075,167.88752170992788 379.40961225346075,156.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="307" y="143" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">r = +1</text>
+<text x="310" y="245" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">추정 목표 1 + .5×6 = 4</text>
+</g></svg></template>
+<template id="figure-temporal-difference-bootstrap-2"><svg><g>
+<text x="310" y="82" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">갱신량 .25×(4 − 2) = +.5</text>
+<text x="110" y="140" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">현재 2</text>
+<text x="525" y="140" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">목표 4</text>
+<line x1="110" y1="177" x2="526" y2="177" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="110.0" y1="177.0" x2="214.0" y2="177.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="214.0,177.0 202.40961225346072,182.88752170992788 202.40961225346072,171.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="110" cy="177" r="6" fill="#566d7c"/>
+<circle cx="526" cy="177" r="6" fill="#11664f"/>
+<circle cx="214" cy="177" r="6" fill="#12649c"/>
+<line x1="214" y1="187" x2="214" y2="213" stroke="#12649c" stroke-width="2" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="216" y="244" font-size="24" font-weight="650" fill="#12649c" text-anchor="middle">새 값 2.5</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "한 전이로 목표",
+    "title": "다음 가치 추정으로 현재 목표를 만듭니다",
+    "body": "한 전이에서 보상 1과 다음 상태의 기존 가치 6을 봅니다. 종료까지 기다리지 않고 1+0.5×6=4를 목표값으로 삼습니다.",
+    "takeaway": "E의 기존 값 6이 목표 4의 연산에 들어갑니다.",
+    "example": [
+      "r = 1 · V(E) = 6",
+      "1 + 0.5×6",
+      "목표 4"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "한 전이로 목표",
+      "description": "E의 기존 값 6이 목표 4의 연산에 들어갑니다.",
+      "figure": "figure-temporal-difference-bootstrap-1"
+    },
+    "quiz": [
+      "다음 상태 가치가 4이고 다른 값이 같으면 목표는?",
+      "3",
+      "5",
+      "보상 1에 할인한 다음 가치 2를 더합니다."
+    ]
+  },
+  {
+    "label": "오차의 일부",
+    "title": "현재 값은 목표와의 차이의 일부만 움직입니다",
+    "body": "현재 값 2에 대해 오차는 4−2=2입니다. 학습률 0.25를 적용하면 갱신량은 +0.5이므로 새 값은 2.5입니다.",
+    "takeaway": "가로 눈금이 2, 2.5, 4를 같은 척도로 보여 줍니다.",
+    "example": [
+      "현재 2 · 목표 4",
+      "0.25×(4 − 2)",
+      "새 값 2.5"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "오차의 일부",
+      "description": "가로 눈금이 2, 2.5, 4를 같은 척도로 보여 줍니다.",
+      "figure": "figure-temporal-difference-bootstrap-2"
+    },
+    "quiz": [
+      "오차가 −2이고 α=0.25라면 갱신량은?",
+      "−0.5",
+      "+0.5",
+      "학습률이 양수이므로 오차의 부호를 보존합니다."
+    ]
+  }
+];
+const slug = 'temporal-difference-bootstrap';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

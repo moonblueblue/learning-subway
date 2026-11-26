@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="제어기의 요청이 장치의 속도 한도를 넘으면 어떻게 될까요?">
+<title>액추에이터 포화와 속도 제한 · D26</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./actuator-saturation-speed-limits.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D26</p><h1>액추에이터 포화와 속도 제한</h1><p>제어기의 요청이 장치의 속도 한도를 넘으면 어떻게 될까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">액추에이터 포화와 속도 제한</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-actuator-saturation-speed-limits-1"><svg><g>
+<text x="312" y="80" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">요청과 제한 출력 (m/s)</text>
+<line x1="95.0" y1="163.0" x2="550.0" y2="163.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="550.0,163.0 538.4096122534608,168.88752170992788 538.4096122534608,157.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="310.0" y1="247.0" x2="310.0" y2="86.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="310.0,86.0 315.8875217099279,97.59038774653928 304.1124782900721,97.59038774653928" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="116" y1="213" x2="181" y2="213" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="181" y1="213" x2="439" y2="113" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="439" y1="113" x2="524" y2="113" stroke="#12649c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="504" y1="113" x2="504" y2="162" stroke="#a34123" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
+<line x1="310" y1="113" x2="504" y2="113" stroke="#a34123" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
+<circle cx="504" cy="113" r="6" fill="#a34123"/>
+<text x="279" y="117" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">+.8</text>
+<text x="279" y="230" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">−.8</text>
+<text x="504" y="197" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">+1.2</text>
+<text x="101" y="196" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">요청</text>
+<text x="209" y="104" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">출력</text>
+<text x="312" y="265" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">+1.2 → +0.8</text>
+</g></svg></template>
+<template id="figure-actuator-saturation-speed-limits-2"><svg><g>
+<text x="310" y="82" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">이번 틱 최대 증가 +0.2 m/s</text>
+<line x1="103" y1="168" x2="539" y2="168" stroke="#566d7c" stroke-width="3" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="103.0" y1="168.0" x2="278.0" y2="168.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="278.0,168.0 266.40961225346075,173.88752170992788 266.40961225346075,162.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="103" cy="168" r="6" fill="#566d7c"/>
+<circle cx="278" cy="168" r="6" fill="#12649c"/>
+<circle cx="539" cy="168" r="6" fill="#11664f"/>
+<text x="103" y="133" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">직전</text>
+<text x="278" y="133" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">새 출력</text>
+<text x="539" y="133" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">목표</text>
+<text x="103" y="205" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0.3</text>
+<text x="278" y="205" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0.5</text>
+<text x="539" y="205" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0.8</text>
+<text x="310" y="257" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">속도 명령 (m/s)</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "출력 포화",
+    "title": "요청이 한도를 넘으면 실제 명령은 한도에서 잘립니다",
+    "body": "제어기가 +1.2 m/s를 요청해도 구동기에는 +0.8 m/s만 보냅니다. 음수 쪽에서도 −0.8 m/s보다 작은 요청을 자릅니다.",
+    "takeaway": "가로축 +1.2에서 꺾인 출력선은 세로축 +0.8 평탄부에 닿습니다.",
+    "example": [
+      "요청 +1.2 m/s",
+      "clip(−0.8,+0.8)",
+      "출력 +0.8 m/s"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "출력 포화",
+      "description": "가로축 +1.2에서 꺾인 출력선은 세로축 +0.8 평탄부에 닿습니다.",
+      "figure": "figure-actuator-saturation-speed-limits-1"
+    },
+    "quiz": [
+      "요청이 −1.1 m/s이면 제한 출력은?",
+      "−0.8 m/s",
+      "+0.8 m/s",
+      "음수 방향의 최대 크기에서 자릅니다."
+    ]
+  },
+  {
+    "label": "변화율 제한",
+    "title": "크기 한도 안에 있어도 한 주기에 바꿀 수 있는 속도는 제한됩니다",
+    "body": "직전 출력은 0.3 m/s이고 이번 속도 목표는 0.8 m/s입니다. 한 주기에 +0.2 m/s까지만 허용하면 새 출력은 0.5 m/s입니다.",
+    "takeaway": "한 축에서 직전 0.3부터 이번 0.5까지의 화살표가 0.8 목표 앞에서 멈춥니다.",
+    "example": [
+      "직전 0.3 · 목표 0.8 m/s",
+      "한 주기 +0.2 m/s로 제한",
+      "이번 출력 0.5 m/s"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "변화율 제한",
+      "description": "한 축에서 직전 0.3부터 이번 0.5까지의 화살표가 0.8 목표 앞에서 멈춥니다.",
+      "figure": "figure-actuator-saturation-speed-limits-2"
+    },
+    "quiz": [
+      "직전이 0.5 m/s고 한 틱에 0.2 m/s까지 늘리면 다음 출력은?",
+      "0.7 m/s",
+      "0.8 m/s",
+      "0.5에서 최대 0.2만 늘어납니다."
+    ]
+  }
+];
+const slug = 'actuator-saturation-speed-limits';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

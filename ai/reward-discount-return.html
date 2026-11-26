@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 보상들을 다른 순서로 받으면 누적 수익이 어떻게 달라질까요?">
+<title>보상·할인율·누적 수익 · D04</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./reward-discount-return.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D04</p><h1>보상·할인율·누적 수익</h1><p>같은 보상들을 다른 순서로 받으면 누적 수익이 어떻게 달라질까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">보상·할인율·누적 수익</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-reward-discount-return-1"><svg><g>
+<text x="310" y="81" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">할인율 γ = 1</text>
+<line x1="92.0" y1="166.0" x2="260.0" y2="166.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="260.0,166.0 248.40961225346072,171.88752170992788 248.40961225346072,160.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="272.0" y1="166.0" x2="452.0" y2="166.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="452.0,166.0 440.40961225346075,171.88752170992788 440.40961225346075,160.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="179" y="136" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">+2</text>
+<text x="364" y="136" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">+6</text>
+<text x="92" y="209" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">출발</text>
+<text x="267" y="209" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">t = 1</text>
+<text x="454" y="209" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">t = 2</text>
+<text x="310" y="253" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">2 + 6 = 8점</text>
+</g></svg></template>
+<template id="figure-reward-discount-return-2"><svg><g>
+<text x="163" y="87" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">첫 이동 ×1</text>
+<text x="358" y="87" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">다음 이동 ×0.5</text>
+<text x="544" y="87" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">수익</text>
+<text x="65" y="146" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<text x="163" y="146" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">+2</text>
+<line x1="200.0" y1="139.0" x2="311.0" y2="139.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="311.0,139.0 299.40961225346075,144.88752170992788 299.40961225346075,133.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="358" y="146" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">+6</text>
+<line x1="405.0" y1="139.0" x2="491.0" y2="139.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="491.0,139.0 479.40961225346075,144.88752170992788 479.40961225346075,133.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="544" y="146" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">5</text>
+<text x="65" y="225" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<text x="163" y="225" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">+6</text>
+<line x1="200.0" y1="218.0" x2="311.0" y2="218.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="311.0,218.0 299.40961225346075,223.88752170992788 299.40961225346075,212.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="358" y="225" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">+2</text>
+<line x1="405.0" y1="218.0" x2="491.0" y2="218.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="491.0,218.0 479.40961225346075,223.88752170992788 479.40961225346075,212.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="544" y="225" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">7</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "시간에 붙는 보상",
+    "title": "수익은 이후에 받은 보상까지 합칩니다",
+    "body": "A는 첫 이동에서 2점, 다음 이동에서 6점을 얻습니다. 할인하지 않으면 8점입니다.",
+    "takeaway": "보상 2점과 6점은 서로 다른 이동 화살표에 붙고 도착점의 합은 8점입니다.",
+    "example": [
+      "+2, +6",
+      "γ = 1 · 2 + 6",
+      "8점"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "시간에 붙는 보상",
+      "description": "보상 2점과 6점은 서로 다른 이동 화살표에 붙고 도착점의 합은 8점입니다.",
+      "figure": "figure-reward-discount-return-1"
+    },
+    "quiz": [
+      "2점 뒤에 3점을 받고 γ가 1이면 수익은 얼마인가요?",
+      "5점",
+      "3점",
+      "γ = 1에서는 두 보상을 그대로 더합니다."
+    ]
+  },
+  {
+    "label": "순서와 할인",
+    "title": "같은 보상도 일찍 받으면 더 크게 반영됩니다",
+    "body": "할인율 0.5에서 첫 보상의 가중치는 1, 두 번째 보상의 가중치는 0.5입니다. 보상 순서가 뒤집히면 A는 5점, B는 7점입니다.",
+    "takeaway": "두 궤적에서 ×1과 ×0.5의 위치가 같고 +2와 +6의 순서만 바뀝니다.",
+    "example": [
+      "A 2, 6 · B 6, 2",
+      "γ = 0.5",
+      "A 5점 · B 7점"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "순서와 할인",
+      "description": "두 궤적에서 ×1과 ×0.5의 위치가 같고 +2와 +6의 순서만 바뀝니다.",
+      "figure": "figure-reward-discount-return-2"
+    },
+    "quiz": [
+      "γ가 0이면 6점 뒤 2점을 받을 때 수익은 얼마인가요?",
+      "6점",
+      "8점",
+      "두 번째 보상은 가중치가 0입니다."
+    ]
+  }
+];
+const slug = 'reward-discount-return';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="지도 이름만 바꾸면 처음 보는 시험 사례가 될까요?">
+<title>학습·검증 지도를 분리하는 법 · D18</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./navigation-map-splits.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D18</p><h1>학습·검증 지도를 분리하는 법</h1><p>지도 이름만 바꾸면 처음 보는 시험 사례가 될까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">학습·검증 지도를 분리하는 법</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-navigation-map-splits-1"><svg><g>
+<text x="157" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">학습 A</text>
+<text x="464" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">시험 B</text>
+<rect x="69" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="91.0" y="128.04" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="113" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="157" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="201" y="99" width="44" height="44" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="69" y="143" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="113" y="143" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="157" y="143" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="201" y="143" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="69" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="113" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="157" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="201" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="376" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="398.0" y="128.04" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="420" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="508" y="99" width="44" height="44" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="376" y="143" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="420" y="143" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="143" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="508" y="143" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="376" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="420" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="508" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<line x1="107.0" y1="124.0" x2="133.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="133.0,124.0 121.40961225346072,129.88752170992788 121.40961225346072,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="133.0" y1="124.0" x2="177.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="177.0,124.0 165.40961225346072,129.88752170992788 165.40961225346072,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="177.0" y1="124.0" x2="213.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="213.0,124.0 201.40961225346072,129.88752170992788 201.40961225346072,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="107.0" cy="124.0" r="5" fill="#12649c"/>
+<line x1="414.0" y1="124.0" x2="440.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="440.0,124.0 428.40961225346075,129.88752170992788 428.40961225346075,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="440.0" y1="124.0" x2="484.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="484.0,124.0 472.40961225346075,129.88752170992788 472.40961225346075,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="484.0" y1="124.0" x2="520.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="520.0,124.0 508.40961225346075,129.88752170992788 508.40961225346075,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="414.0" cy="124.0" r="5" fill="#12649c"/>
+<text x="225" y="118" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="532" y="118" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="310" y="265" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">이름만 변경 · 벽 위치 동일</text>
+</g></svg></template>
+<template id="figure-navigation-map-splits-2"><svg><g>
+<text x="157" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">학습 A</text>
+<text x="464" y="83" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">미사용 B</text>
+<rect x="69" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="91.0" y="128.04" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="113" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="157" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="201" y="99" width="44" height="44" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="69" y="143" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="113" y="143" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="157" y="143" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="201" y="143" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="69" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="113" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="157" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="201" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="376" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<text x="398.0" y="128.04" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">S</text>
+<rect x="420" y="99" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="99" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="508" y="99" width="44" height="44" fill="#cbe7d9" stroke="#78909c" stroke-width="1"/>
+<rect x="376" y="143" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="420" y="143" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="143" width="44" height="44" fill="#465b67" stroke="#78909c" stroke-width="1"/>
+<rect x="508" y="143" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="376" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="420" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="464" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<rect x="508" y="187" width="44" height="44" fill="#ebf4f7" stroke="#78909c" stroke-width="1"/>
+<line x1="107.0" y1="124.0" x2="133.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="133.0,124.0 121.40961225346072,129.88752170992788 121.40961225346072,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="133.0" y1="124.0" x2="177.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="177.0,124.0 165.40961225346072,129.88752170992788 165.40961225346072,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="177.0" y1="124.0" x2="213.0" y2="124.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="213.0,124.0 201.40961225346072,129.88752170992788 201.40961225346072,118.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<circle cx="107.0" cy="124.0" r="5" fill="#12649c"/>
+<line x1="413.0" y1="123.0" x2="419.0" y2="123.0" stroke="#a34123" stroke-width="3" stroke-dasharray="3 3" stroke-linecap="round"/>
+<polygon points="419.0,123.0 407.40961225346075,128.88752170992788 407.40961225346075,117.11247829007212" fill="#a34123" stroke="none" stroke-width="1"/>
+<line x1="389.0" y1="137.0" x2="398.0" y2="165.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="398.0,165.0 388.84814612197283,155.76725552204334 400.05832376804966,152.16398413580436" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="398.0" y1="165.0" x2="398.0" y2="209.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="398.0,209.0 392.1124782900721,197.40961225346072 403.8875217099279,197.40961225346072" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="398.0" y1="209.0" x2="442.0" y2="209.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="442.0,209.0 430.40961225346075,214.88752170992788 430.40961225346075,203.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="442.0" y1="209.0" x2="486.0" y2="209.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="486.0,209.0 474.40961225346075,214.88752170992788 474.40961225346075,203.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="486.0" y1="209.0" x2="530.0" y2="209.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="530.0,209.0 518.4096122534608,214.88752170992788 518.4096122534608,203.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="530.0" y1="209.0" x2="530.0" y2="165.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="530.0,165.0 535.8875217099279,176.59038774653928 524.1124782900721,176.59038774653928" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="530.0" y1="165.0" x2="530.0" y2="133.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="530.0,133.0 535.8875217099279,144.59038774653928 524.1124782900721,144.59038774653928" fill="#11664f" stroke="none" stroke-width="1"/>
+<circle cx="389.0" cy="137.0" r="5" fill="#11664f"/>
+<text x="225" y="118" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="540" y="117" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">G</text>
+<text x="309" y="264" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">같은 출발 · 다른 벽</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "학습에서 본 지도",
+    "title": "훈련 경로를 다시 주면 익숙한 배치에서만 확인합니다",
+    "body": "훈련 지도 A의 오른쪽 윗길로 목적지까지 이동했습니다. 이름만 B로 바꿔도 벽과 경로가 같은 배치입니다.",
+    "takeaway": "두 격자의 벽과 위쪽 경로가 같은 위치에 있습니다.",
+    "example": [
+      "A 학습 · B 복사",
+      "이름만 수정",
+      "같은 지도 내용"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "학습에서 본 지도",
+      "description": "두 격자의 벽과 위쪽 경로가 같은 위치에 있습니다.",
+      "figure": "figure-navigation-map-splits-1"
+    },
+    "quiz": [
+      "시험 파일을 복사해 파일명만 바꾸면 독립 시험인가요?",
+      "아니요",
+      "예",
+      "같은 지도 내용을 다시 평가합니다."
+    ]
+  },
+  {
+    "label": "보지 않은 벽 배치",
+    "title": "벽 배치가 다른 지도는 같은 정책을 새 경로에서 시험합니다",
+    "body": "학습은 A로 끝내고 B의 윗길에만 벽을 추가했습니다. 성공하려면 A에서 택한 동쪽 첫 이동 대신 아래쪽 통로를 찾아야 합니다.",
+    "takeaway": "오른쪽 지도에서는 첫 동쪽 화살표가 벽 앞에서 끊기며 가능한 우회로는 아래로 향합니다.",
+    "example": [
+      "A에서만 학습",
+      "B의 윗길 차단",
+      "B에서 아래로 우회"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "보지 않은 벽 배치",
+      "description": "오른쪽 지도에서는 첫 동쪽 화살표가 벽 앞에서 끊기며 가능한 우회로는 아래로 향합니다.",
+      "figure": "figure-navigation-map-splits-2"
+    },
+    "quiz": [
+      "새 지도의 성적을 보고 정책을 고쳤다면 그 지도는 마지막 시험용으로 쓸 수 있나요?",
+      "새 미사용 지도가 필요",
+      "같은 지도면 충분",
+      "수정 결정에 사용한 지도는 검증에 이미 쓰였습니다."
+    ]
+  }
+];
+const slug = 'navigation-map-splits';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

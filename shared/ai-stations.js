@@ -612,28 +612,131 @@ const aiStationMap = {
     "stations": [
       {
         "id": "5.1",
-        "title": "관측·상태·행동",
-        "titleEn": "Observations and actions"
+        "ref": "ai/hidden-state-observation"
+      },
+      {
+        "id": "5.6",
+        "ref": "ai/action-space-control-period"
+      },
+      {
+        "id": "5.7",
+        "ref": "ai/transition-probability-markov"
       },
       {
         "id": "5.2",
-        "title": "보상 설계",
-        "titleEn": "Reward design"
+        "ref": "ai/reward-discount-return"
+      },
+      {
+        "id": "5.8",
+        "ref": "ai/route-following-rule"
       },
       {
         "id": "5.3",
-        "title": "가치와 정책",
-        "titleEn": "Values and policies"
+        "ref": "ai/state-action-value"
+      },
+      {
+        "id": "5.9",
+        "ref": "ai/bellman-expectation"
+      },
+      {
+        "id": "5.10",
+        "ref": "algorithms/dynamic"
+      },
+      {
+        "id": "5.11",
+        "ref": "ai/grid-value-iteration"
+      },
+      {
+        "id": "5.12",
+        "ref": "ai/policy-evaluation-improvement"
       },
       {
         "id": "5.4",
-        "title": "탐험과 학습",
-        "titleEn": "Exploration"
+        "ref": "ai/epsilon-greedy-exploration"
+      },
+      {
+        "id": "5.13",
+        "ref": "ai/monte-carlo-episode-return"
+      },
+      {
+        "id": "5.14",
+        "ref": "ai/temporal-difference-bootstrap"
+      },
+      {
+        "id": "5.15",
+        "ref": "ai/sarsa-q-learning"
+      },
+      {
+        "id": "5.16",
+        "ref": "ai/experience-replay-target-network"
+      },
+      {
+        "id": "5.17",
+        "ref": "ai/policy-gradient-actor-critic"
+      },
+      {
+        "id": "5.18",
+        "ref": "ai/behavior-cloning-demonstrations"
+      },
+      {
+        "id": "5.19",
+        "ref": "ai/navigation-map-splits"
+      },
+      {
+        "id": "5.20",
+        "ref": "ai/paired-navigation-policy-tests"
+      },
+      {
+        "id": "5.21",
+        "ref": "ai/high-reward-failed-trajectory"
+      },
+      {
+        "id": "5.22",
+        "ref": "ai/policy-success-collision-seeds"
       },
       {
         "id": "5.5",
-        "title": "지연과 안전 정지",
-        "titleEn": "Delay and safe stop"
+        "ref": "ai/observation-dropout-safe-stop"
+      },
+      {
+        "id": "5.23",
+        "ref": "ai/camera-body-world-frames"
+      },
+      {
+        "id": "5.24",
+        "ref": "ai/sensor-timestamps-state-estimation"
+      },
+      {
+        "id": "5.25",
+        "ref": "ai/pid-feedback-baseline"
+      },
+      {
+        "id": "5.26",
+        "ref": "ai/actuator-saturation-speed-limits"
+      },
+      {
+        "id": "5.27",
+        "ref": "ai/simulation-to-hardware-error"
+      },
+      {
+        "id": "5.28",
+        "ref": "ai/dynamics-randomization-transfer"
+      },
+      {
+        "id": "5.29",
+        "ref": "ai/hardware-controller-in-loop"
+      },
+      {
+        "id": "5.30",
+        "ref": "ai/sensor-actuator-latency"
+      },
+      {
+        "id": "5.31",
+        "ref": "ai/independent-stop-handover"
+      },
+      {
+        "id": "5.32",
+        "ref": "ai/replay-physical-simulation-gap"
       }
     ],
     "transfer": {

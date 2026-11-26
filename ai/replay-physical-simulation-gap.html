@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="동일 시점과 입력을 맞추면 정지거리 차이가 어디서 생겼는지 찾을 수 있을까요?">
+<title>실측 로그로 시뮬레이션 차이 재현 · D32</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="stylesheet" href="../shared/course.css">
+<script src="../shared/engine.js"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./replay-physical-simulation-gap.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=f434a855a63bd8ea"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">강화학습·로봇 · D32</p><h1>실측 로그로 시뮬레이션 차이 재현</h1><p>동일 시점과 입력을 맞추면 정지거리 차이가 어디서 생겼는지 찾을 수 있을까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">실측 로그로 시뮬레이션 차이 재현</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<template id="figure-replay-physical-simulation-gap-1"><svg><g>
+<line x1="95.0" y1="232.0" x2="95.0" y2="90.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="95.0,90.0 100.88752170992788,101.59038774653928 89.11247829007212,101.59038774653928" fill="#566d7c" stroke="none" stroke-width="1"/>
+<line x1="95.0" y1="232.0" x2="550.0" y2="232.0" stroke="#566d7c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="550.0,232.0 538.4096122534608,237.88752170992788 538.4096122534608,226.11247829007212" fill="#566d7c" stroke="none" stroke-width="1"/>
+<text x="310" y="78" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">합성 로그 · STOP 적용점 정렬</text>
+<text x="61" y="111" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">m</text>
+<text x="559" y="238" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">s</text>
+<line x1="95" y1="231" x2="208" y2="168" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="208" y1="168" x2="321" y2="143" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="321" y1="143" x2="490" y2="143" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="95" y1="231" x2="208" y2="159" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="208" y1="159" x2="321" y2="125" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="321" y1="125" x2="433" y2="112" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<line x1="433" y1="112" x2="490" y2="112" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<text x="533" y="116" font-size="21" font-weight="650" fill="#a34123" text-anchor="middle">.33</text>
+<text x="533" y="151" font-size="21" font-weight="650" fill="#12649c" text-anchor="middle">.25</text>
+<text x="95" y="263" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">0</text>
+<text x="321" y="263" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.50</text>
+<text x="433" y="263" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">.75</text>
+</g></svg></template>
+<template id="figure-replay-physical-simulation-gap-2"><svg><g>
+<text x="310" y="78" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">정지거리 공통 눈금 (m)</text>
+<text x="56" y="121" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A</text>
+<text x="56" y="169" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">A′</text>
+<text x="56" y="218" font-size="24" font-weight="650" fill="#17354b" text-anchor="middle">B</text>
+<line x1="106.0" y1="113.0" x2="406.0" y2="113.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="406.0,113.0 394.40961225346075,118.88752170992788 394.40961225346075,107.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<line x1="106.0" y1="161.0" x2="478.0" y2="161.0" stroke="#11664f" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="478.0,161.0 466.40961225346075,166.88752170992788 466.40961225346075,155.11247829007212" fill="#11664f" stroke="none" stroke-width="1"/>
+<line x1="106.0" y1="210.0" x2="502.0" y2="210.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="502.0,210.0 490.40961225346075,215.88752170992788 490.40961225346075,204.11247829007212" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="443" y="122" font-size="22" font-weight="650" fill="#12649c" text-anchor="middle">.25</text>
+<text x="516" y="171" font-size="22" font-weight="650" fill="#11664f" text-anchor="middle">.31</text>
+<text x="540" y="220" font-size="22" font-weight="650" fill="#a34123" text-anchor="middle">.33</text>
+<text x="310" y="264" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">잔차 B − A′ = .33 − .31 = .02 m</text>
+</g></svg></template>
+<template id="figure-replay-physical-simulation-gap-3"><svg><g>
+<text x="310" y="79" font-size="22" font-weight="650" fill="#17354b" text-anchor="middle">합성 로그 예시 · t ms / x m / v m/s</text>
+<text x="295" y="116" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">STOP 적용</text>
+<text x="487" y="116" font-size="21" font-weight="650" fill="#17354b" text-anchor="middle">속도 0</text>
+<text x="109" y="160" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">A 모의 형식</text>
+<text x="295" y="160" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">0 / 0 / 1</text>
+<line x1="359.0" y1="152.0" x2="409.0" y2="152.0" stroke="#12649c" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="409.0,152.0 397.40961225346075,157.88752170992788 397.40961225346075,146.11247829007212" fill="#12649c" stroke="none" stroke-width="1"/>
+<text x="489" y="160" font-size="21" font-weight="650" fill="#12649c" text-anchor="middle">500 / .25 / 0</text>
+<text x="109" y="207" font-size="20" font-weight="650" fill="#17354b" text-anchor="middle">B 실측 형식</text>
+<text x="295" y="207" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">0 / 0 / 1</text>
+<line x1="359.0" y1="200.0" x2="409.0" y2="200.0" stroke="#a34123" stroke-width="4" stroke-dasharray="none" stroke-linecap="round"/>
+<polygon points="409.0,200.0 397.40961225346075,205.88752170992788 397.40961225346075,194.11247829007212" fill="#a34123" stroke="none" stroke-width="1"/>
+<text x="489" y="207" font-size="21" font-weight="650" fill="#a34123" text-anchor="middle">750 / .33 / 0</text>
+<text x="310" y="264" font-size="23" font-weight="650" fill="#17354b" text-anchor="middle">B − A = .33 − .25 = .08 m</text>
+</g></svg></template>
+<script>
+const lesson = [
+  {
+    "label": "시점 맞춰 비교",
+    "title": "명령 적용 시점을 맞추면 두 위치 곡선의 차이가 보입니다",
+    "body": "연습용 합성 로그에서 STOP이 적용된 순간을 두 시계에서 각각 t=0으로 맞춥니다. 모의 A는 0.25 m에서, 장비 형식을 흉내 낸 합성 B는 0.33 m에서 정지합니다.",
+    "takeaway": "같은 원점에서 출발한 곡선이 평평해지는 위치에 .25 m와 .33 m가 붙습니다.",
+    "example": [
+      "합성 A와 B",
+      "STOP 적용점 정렬",
+      "거리 차이 .08 m"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "시점 맞춰 비교",
+      "description": "같은 원점에서 출발한 곡선이 평평해지는 위치에 .25 m와 .33 m가 붙습니다.",
+      "figure": "figure-replay-physical-simulation-gap-1"
+    },
+    "quiz": [
+      "두 로그를 맞출 때 부팅 시간을 그대로 비교해야 하나요?",
+      "공통 사건을 기준으로 맞춤",
+      "부팅 시각을 그대로 사용",
+      "공통 명령 적용 시점을 0으로 맞춥니다."
+    ]
+  },
+  {
+    "label": "가정 바꿔 재생",
+    "title": "같은 기록의 입력을 유지하고 감속 한 가정만 바꿉니다",
+    "body": "모의 입력과 시작 속도는 그대로 두고 감속 모형만 낮춘 재생 A′가 0.31 m에서 멈췄습니다. 합성 B와 차이는 .33−.31=.02 m입니다. 가까워졌다는 결과는 감속이 유일한 원인임을 증명하지 않습니다.",
+    "takeaway": "같은 거리 눈금에서 A′가 A보다 B 쪽에 놓이지만 .02 m가 남습니다.",
+    "example": [
+      "A .25 m · B .33 m",
+      "감속 가정만 낮춤",
+      "A′ .31 m · 잔차 .02 m"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "가정 바꿔 재생",
+      "description": "같은 거리 눈금에서 A′가 A보다 B 쪽에 놓이지만 .02 m가 남습니다.",
+      "figure": "figure-replay-physical-simulation-gap-2"
+    },
+    "quiz": [
+      "다음에 다른 원인 후보를 확인하려면 어떻게 하나요?",
+      "입력을 고정하고 후보 하나를 바꿈",
+      "모든 모형을 한 번에 변경",
+      "후보를 하나씩 바꾸어 차이를 추적합니다."
+    ]
+  },
+  {
+    "label": "제출할 기록",
+    "title": "시간과 위치를 같은 사건에서 맞춰 제출합니다",
+    "body": "실물 선택 과제는 실측 로그와 모의 재생 로그를 따로 냅니다. 각 행에 출처, 사건, t_ms, x_m, velocity_m_s를 적습니다. 두 기록에서 STOP 적용 시각과 위치를 0으로 맞추고 정지 시간, 거리, 실측−재생 거리 차이를 계산합니다. 그림의 수치는 형식을 보여 주는 합성입니다.",
+    "takeaway": "두 로그의 STOP 적용 열은 0 ms와 0 m로 같고 정지 열에서 시간과 거리가 갈립니다.",
+    "example": [
+      "실측·모의 형식의 합성 두 로그",
+      "STOP 적용에서 t, x를 각각 0으로 정렬",
+      "정지 시간·거리·거리 잔차"
+    ],
+    "readingDiagram": {
+      "staticOnly": true,
+      "title": "제출할 기록",
+      "description": "두 로그의 STOP 적용 열은 0 ms와 0 m로 같고 정지 열에서 시간과 거리가 갈립니다.",
+      "figure": "figure-replay-physical-simulation-gap-3"
+    },
+    "quiz": [
+      "실제 B 로그에서 적용 위치 1.0 m, 정지 위치 1.3 m이면 정지거리는?",
+      "0.3 m",
+      "1.3 m",
+      "명령을 적용한 위치가 거리 측정의 시작입니다."
+    ]
+  }
+];
+const slug = 'replay-physical-simulation-gap';
+const storageKey = 'learning-subway:step:' + slug;
+const byId = (id) => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = [
+  "✓ 맞았습니다.",
+  "✗ 다시 생각해 보세요."
+];
+
+</script>
+<script src="../shared/reading-lesson.js"></script>
+</body>
+</html>

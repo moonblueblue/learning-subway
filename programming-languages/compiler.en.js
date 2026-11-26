@@ -1,5 +1,19 @@
 // English for 8A.1 Compilers. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "정수식은 통과하고 타입 오류는 멈춘다": "Valid types pass and type errors stop",
+  "정상식은 곱셈을 덧셈의 자식으로 묶고 타입을 확인합니다. 문자열과 정수를 더하는 별도 식은 진단에서 멈춥니다.": "The valid tree binds multiplication under addition and passes the type check. The separate text-plus-integer example stops at diagnosis.",
+  "의미 분석 통과": "Type check passes",
+  "타입 오류 · 중단": "Type error · stop",
+  "자식을 먼저 계산해 IR 세 줄을 만든다": "Evaluate children first to make three IR lines",
+  "곱셈, 곱셈 결과에 y를 더하는 덧셈, x에 대입이 순서대로 IR 세 줄에 대응합니다.": "The multiply, the add using its result, and the assignment to x correspond to three ordered IR lines.",
+  "먼저 접고, 쓰지 않는 줄을 지운다": "Fold constants and drop unused lines",
+  "곱셈을 6으로, 두 복사를 x = 6 + y로 줄이고 미사용 z를 삭제합니다. y가 4일 때 결과는 양쪽 모두 10입니다.": "Fold the multiply to 6, combine the assignments into x = 6 + y, and drop unused z. Both versions produce 10 for y = 4.",
+  "상수 접기": "Fold constants",
+  "대입 합치기": "Combine assignments",
+  "z는 읽는 곳 없음": "z has no readers",
+  "미사용 줄 삭제": "Remove unused line",
+  "x = 6 + y를 CPU 명령 네 개로 옮긴다": "Encode x = 6 + y in four instructions",
+  "y가 든 5번지를 A로, 상수 6이 든 7번지를 B로 읽고, 더한 A를 x가 있는 6번지에 씁니다. 명령마다 오른쪽의 한 바이트가 대응합니다.": "Read y from address 5 into A and constant 6 from address 7 into B, add, then store A at address 6. Each instruction maps to one byte.",
   // Page
   '컴파일러 · 레슨 8A.1': 'Compilers · Lesson 8A.1',
   '소스 코드가 앞단에서 토큰, 구문 트리, 의미 분석을 거치고, 중간 표현(3주소 코드)으로 펼쳐지고, 상수 접기와 죽은 코드 제거로 짧아지고, 뒷단에서 레지스터를 골라 기계어가 되기까지를 따라가 보세요.':

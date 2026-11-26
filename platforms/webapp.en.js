@@ -93,3 +93,17 @@ window.lessonText = {
   '결제 회사에 2,400원 결제 · 승인': 'pay company charges 2,400 · approved', 'DB에 주문 #502 저장': 'DB saves order #502',
   'price 무시': 'price ignored', '1,200원 · 재고 40': '1,200 won · 40 in stock', '주문 #502': 'Order #502',
 };
+
+Object.assign(window.lessonText, {
+  "주문은 결제 승인을 받은 뒤 기록한다": "Save the order after payment approval",
+  "API만 결제 키를 가진다. 재고와 2,400원 확인 뒤 결제를 요청하고 승인 응답이 돌아오면 주문 #502를 저장한다. 브라우저에는 결과만 반환한다.": "Only the API holds the payment key. After verifying stock and 2,400 won, it requests payment. Once approval returns, it saves order #502 and returns the result.",
+  "① API: 재고 확인": "① API: verify stock",
+  "서버만 결제 키 보유": "Key stays on API",
+  "② API → 결제사": "② API → processor",
+  "2,400원 승인 요청": "Request 2,400 won",
+  "③ 결제사 → API": "③ Processor → API",
+  "승인 수신": "Approval received",
+  "④ API: 승인 확인": "④ API: approval OK",
+  "⑤ DB에 주문 기록": "⑤ Write order to DB",
+  "⑥ 브라우저 응답": "⑥ Respond to browser",
+});

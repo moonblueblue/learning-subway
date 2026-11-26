@@ -208,6 +208,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .station.outside .left{fill:#d3cae6;stroke:#7a64a8}.station.outside .right{fill:#b1a4d0;stroke:#7a64a8}.station.outside .top{fill:#efebf7;stroke:#7a64a8}
 .work li{white-space:pre-wrap}
 .dot.appdot{background:#e2f5e8;border-color:#4f8f6b}.dot.layerdot{background:#eef1fb;border-color:#5362a0}.dot.routerdot{background:#fdf2e7;border-color:#c26a1e}.dot.outsidedot{background:#efebf7;border-color:#7a64a8}
+.course-diagram-open #example-note{visibility:hidden}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -437,6 +438,25 @@ const lesson = [
   },
   {
     label: '다른 서비스 부르기',
+    readingDiagram: {
+      title: "주문은 결제 승인을 받은 뒤 기록한다",
+      description: "API만 결제 키를 가진다. 재고와 2,400원 확인 뒤 결제를 요청하고 승인 응답이 돌아오면 주문 #502를 저장한다. 브라우저에는 결과만 반환한다.",
+      nodes: [
+        ["a0", 107, 100, 179, 48, ["① API: 재고 확인", "서버만 결제 키 보유"], "plain"],
+        ["a1", 310, 100, 179, 48, ["② API → 결제사", "2,400원 승인 요청"], "active"],
+        ["a2", 513, 100, 179, 48, ["③ 결제사 → API", "승인 수신"], "active"],
+        ["b0", 107, 198, 179, 28, ["④ API: 승인 확인"], "plain"],
+        ["b1", 310, 198, 179, 48, ["⑤ DB에 주문 기록", "#502"], "active"],
+        ["b2", 513, 198, 179, 48, ["⑥ 브라우저 응답", "#502 · 201 Created"], "active"],
+      ],
+      edges: [
+        ["a0", "a1", "active"],
+        ["a1", "a2", "active"],
+        ["a2", "b0", "plain"],
+        ["b0", "b1", "active"],
+        ["b1", "b2", "active"],
+      ],
+    },
     readingStage: 5,
     note: ['POST /api/orders', ' → ', '재고 확인', ' → ', '결제 회사에 2,400원 결제 · 승인', ' → ', 'DB에 주문 #502 저장'],
     title: '백엔드는 다른 회사의 API도 부른다',

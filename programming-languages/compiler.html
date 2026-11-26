@@ -201,6 +201,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
 .packet-tag rect{fill:#fff;stroke:var(--request);stroke-width:.9}.packet-tag .packet-label{stroke:none;dominant-baseline:central}
+/* The diagram explains the step itself. Keep the caption on the simulation only. */
+.course-diagram-open #scene #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -364,6 +366,26 @@ const kinds = { file: '파일', tool: '도구', ssd: '저장장치', ram: '메�
 const lesson = [
   {
     label: '앞단',
+    readingDiagram: {
+      title: "정수식은 통과하고 타입 오류는 멈춘다",
+      description: "정상식은 곱셈을 덧셈의 자식으로 묶고 타입을 확인합니다. 문자열과 정수를 더하는 별도 식은 진단에서 멈춥니다.",
+      nodes: [
+        ["src", 125, 105, 166, 48, ["int y = 4", "x = 2 × 3 + y"], "plain"],
+        ["plus", 315, 80, 50, 28, ["+"], "active"],
+        ["mult", 267, 150, 92, 28, ["2 × 3"], "plain"],
+        ["y", 360, 150, 52, 28, ["y"], "plain"],
+        ["pass", 510, 80, 162, 48, ["의미 분석 통과", "x: int"], "active"],
+        ["bad", 125, 236, 166, 28, ["\"hi\" + 1"], "plain"],
+        ["stop", 510, 236, 164, 28, ["타입 오류 · 중단"], "blocked"],
+      ],
+      edges: [
+        ["src", "plus", "active", "", 0],
+        ["plus", "mult", "undirected", "", 0],
+        ["plus", "y", "undirected", "", 0],
+        ["plus", "pass", "active", "", 0],
+        ["bad", "stop", "blocked", "", 0],
+      ],
+    },
     readingStage: 4,
     note: ['int x = 2 * 3 + y', ' → ', '토큰·트리 (노드 6개)', ' → ', '의미 분석 통과', ' · ', 'int z = "hi" + 1은 타입 오류'],
     title: '토큰, 트리, 그리고 뜻 검사',
@@ -371,7 +393,7 @@ const lesson = [
     takeaway: '"int x = 2 * 3 + y;"는 트리가 되고 타입 검사를 통과합니다. "int z = "hi" + 1;"은 문법은 맞지만 정수 칸에 글자를 넣으려 해 실행 전에 오류가 납니다. 인터프리터라면 실행하다가야 알았을 오류입니다(6.3의 이름 오류).',
     description: '왼쪽부터 소스 코드, 앞단, 구문 트리, 의미 분석이 놓여 있습니다.',
     stations: [['src', '소스 코드', 'file'], ['front', '앞단 (렉서·파서)', 'tool'], ['ast', '구문 트리', 'file'], ['sema', '의미 분석', 'tool']],
-    start: { title: '소스 코드 (C 비슷한 언어)', lines: ['int y = 5;', 'int x = 2 * 3 + y;'], holds: { src: '2줄' } },
+    start: { title: '소스 코드 (C 비슷한 언어)', lines: ['int y = 4;', 'int x = 2 * 3 + y;'], holds: { src: '2줄' } },
     stages: [
       { from: 'src', to: 'front', label: '글자들', title: '토큰과 트리', lines: ['토큰: int x = 2 * 3 + y ;', '트리: 대입 x ← (더하기 (곱하기 2 3) y)'], text: '앞단이 토큰으로 자르고 구문 트리로 엮습니다.', holds: { front: '트리 만듦' } },
       { from: 'front', to: 'ast', label: '트리', title: '구문 트리', lines: ['대입 x', '└ 더하기 +', '   ├ 곱하기 *', '   │  ├ 2', '   │  └ 3', '   └ y'], text: '구문 트리가 만들어졌습니다.', holds: { ast: '노드 6개' } },
@@ -382,6 +404,23 @@ const lesson = [
   },
   {
     label: '중간 표현',
+    readingDiagram: {
+      title: "자식을 먼저 계산해 IR 세 줄을 만든다",
+      description: "곱셈, 곱셈 결과에 y를 더하는 덧셈, x에 대입이 순서대로 IR 세 줄에 대응합니다.",
+      nodes: [
+        ["a0", 150, 82, 244, 28, ["1. × (2, 3)"], "plain"],
+        ["b0", 470, 82, 230, 28, ["t1 = 2 × 3"], "active"],
+        ["a1", 150, 139, 244, 28, ["2. + (×, y)"], "plain"],
+        ["b1", 470, 139, 230, 28, ["t2 = t1 + y"], "active"],
+        ["a2", 150, 196, 244, 28, ["3. x ← +"], "plain"],
+        ["b2", 470, 196, 230, 28, ["x = t2"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+        ["a2", "b2", "active", "", 0],
+      ],
+    },
     readingStage: 2,
     note: ['x = 2 * 3 + y의 트리', ' → ', 'IR 3줄: t1 = 2 * 3 · t2 = t1 + y · x = t2'],
     title: '트리를 기계와 상관없는 단순한 명령 줄로 펼친다',
@@ -398,6 +437,26 @@ const lesson = [
   },
   {
     label: '최적화',
+    readingDiagram: {
+      title: "먼저 접고, 쓰지 않는 줄을 지운다",
+      description: "곱셈을 6으로, 두 복사를 x = 6 + y로 줄이고 미사용 z를 삭제합니다. y가 4일 때 결과는 양쪽 모두 10입니다.",
+      nodes: [
+        ["a0", 150, 82, 244, 28, ["t1 = 2 × 3"], "plain"],
+        ["b0", 470, 82, 230, 48, ["t1 = 6", "상수 접기"], "active"],
+        ["a1", 150, 139, 244, 28, ["t2 = t1 + y · x = t2"], "plain"],
+        ["b1", 470, 139, 230, 48, ["x = 6 + y", "대입 합치기"], "active"],
+        ["a2", 150, 196, 244, 28, ["z = x × 0"], "plain"],
+        ["b2", 470, 196, 230, 48, ["z는 읽는 곳 없음", "미사용 줄 삭제"], "blocked"],
+        ["a3", 150, 253, 244, 28, ["y = 4 → x = 10"], "plain"],
+        ["b3", 470, 253, 230, 28, ["y = 4 → x = 10"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+        ["a2", "b2", "blocked", "", 0],
+        ["a3", "b3", "active", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['IR 4줄 (안 쓰이는 z = x * 0 포함)', ' → ', '6으로 접고 t1·t2를 합치고 z 줄을 지움', ' → ', 'x = 6 + y 1줄'],
     title: '같은 결과를 내는 더 짧은 코드로 바꾼다',
@@ -416,6 +475,26 @@ const lesson = [
   },
   {
     label: '코드 생성',
+    readingDiagram: {
+      title: "x = 6 + y를 CPU 명령 네 개로 옮긴다",
+      description: "y가 든 5번지를 A로, 상수 6이 든 7번지를 B로 읽고, 더한 A를 x가 있는 6번지에 씁니다. 명령마다 오른쪽의 한 바이트가 대응합니다.",
+      nodes: [
+        ["a0", 150, 82, 244, 48, ["LOAD A, [5]", "A ← y"], "plain"],
+        ["b0", 470, 82, 230, 28, ["0010 0101"], "active"],
+        ["a1", 150, 139, 244, 48, ["LOAD B, [7]", "B ← 6"], "plain"],
+        ["b1", 470, 139, 230, 28, ["0011 0111"], "active"],
+        ["a2", 150, 196, 244, 48, ["ADD A, B", "A ← A + B"], "plain"],
+        ["b2", 470, 196, 230, 28, ["0110 0000"], "active"],
+        ["a3", 150, 253, 244, 48, ["STORE A, [6]", "x ← A"], "plain"],
+        ["b3", 470, 253, 230, 28, ["0100 0110"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+        ["a2", "b2", "active", "", 0],
+        ["a3", "b3", "active", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['x = 6 + y', ' → ', '레지스터 A, B로 명령 4개', ' → ', '명령마다 1바이트, 기계어 4바이트'],
     title: '뒷단이 CPU 명령과 레지스터를 고른다',

@@ -81,3 +81,23 @@ const text = {
 for (const [ko, en] of Object.entries(text)) if (ko.includes('\n')) text[ko.replace(/\n/g, '\\n')] = en.replace(/\n/g, '\\n');
 return text;
 })();
+
+Object.assign(window.lessonText, {
+  "입력": "Input",
+  "기대": "Expected",
+  "실제": "Actual",
+  "판정": "Result",
+  "실패": "Fail",
+  "통과": "Pass",
+  "점수": "Score",
+  "기대 등급": "Expected grade",
+  "조건 > 90": "Condition > 90",
+  "같은 테스트": "Same tests",
+  "수정 전": "Before fix",
+  "== 0으로 수정 후": "After fix to == 0",
+  "실행 시각": "Run time",
+  "고정한 호출": "Fixed call",
+  "결과": "Result",
+  "좋은 아침": "Good morning",
+  "이 단계의 비교 예시": "Worked comparison for this step",
+});

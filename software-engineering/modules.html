@@ -81,6 +81,41 @@ header p.lead{color:var(--muted);margin-top:10px}
 .truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
 .truth td.blank{color:#9aa8a2}
 .truth td.filled{background:#d2f4dd;color:#0f5a3c}
+
+.worked-example{margin:0 0 8px;padding:0 12px}
+.worked-example table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.83rem;line-height:1.3}
+.worked-example th,.worked-example td{padding:4px 5px;border:1px solid var(--border);overflow-wrap:anywhere;vertical-align:top}
+.worked-example th{background:#e8f2eb;text-align:left}
+.worked-example td:last-child{background:#f0f7f2;font-weight:700}
+.worked-example--guide{margin:0;padding:0}
+.worked-example th:nth-child(2){width:41%}
+@media(min-width:960px) and (min-height:550px){
+  .course-shell .worked-example--guide{display:none}
+}
+
+@media(min-width:620px) and (max-height:549px){
+  .course-shell .course-explanation-body .course-fit-content:has(> .worked-example--guide){
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    grid-template-rows:auto auto;
+    column-gap:10px;row-gap:4px
+  }
+  .course-shell .course-explanation-body .course-fit-content:has(> .worked-example--guide) > .course-prose{
+    grid-column:1;grid-row:1
+  }
+  .course-shell .course-explanation-body .course-fit-content:has(> .worked-example--guide) > .takeaway{
+    grid-column:1;grid-row:2;padding:4px 6px
+  }
+  .course-shell .course-explanation-body .course-fit-content:has(> .worked-example--guide) > .course-example{
+    grid-column:2;grid-row:1
+  }
+  .course-shell .course-explanation-body .course-prose p,
+  .course-shell .course-explanation-body .takeaway p{font-size:.9rem;line-height:1.38}
+  .course-shell .worked-example--guide{grid-column:2;grid-row:2}
+  .course-shell .course-activity .course-fit-content > .case{grid-column:1;grid-row:1 / span 2}
+  .course-shell .course-activity .worked-example{grid-column:2;grid-row:1;margin-bottom:0;padding-inline:0}
+  .course-shell .course-activity .course-fit-content > .course-quiz{grid-column:2;grid-row:2}
+  .worked-example th,.worked-example td{padding:3px 4px}
+}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -104,6 +139,7 @@ header p.lead{color:var(--muted);margin-top:10px}
       <section class="panel" aria-labelledby="practice-heading">
         <div class="stage-top"><h2 id="practice-heading">문제 풀기</h2><span class="score" id="score" aria-live="polite"></span></div>
         <div class="case"><strong>문제</strong><p id="case"></p></div>
+        <figure class="worked-example"><table aria-label="이 단계의 비교 예시"></table></figure>
         <div class="truth" id="table" hidden></div>
         <ol class="items" id="items"></ol>
         <p class="done" id="done" role="status" hidden></p>
@@ -121,6 +157,7 @@ header p.lead{color:var(--muted);margin-top:10px}
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2><p id="body"></p>
+      <figure class="worked-example worked-example--guide"><table aria-label="이 단계의 비교 예시"></table></figure>
       <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
       <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
     </section>
@@ -207,6 +244,29 @@ const lesson = [
   },
 ];
 
+const workedExamples = [
+  [
+    ["구조", "기준 50,000 → 30,000", "수정 범위"],
+    ["total_a / total_b", "두 복제본의 기준 변경", "2곳"],
+    ["final_price(price)", "두 호출은 유지", "함수 안 1곳"],
+  ],
+  [
+    ["호출", "구현", "반환값"],
+    ["find_user(7)", "목록에서 찾기", "id: 7 · Minji"],
+    ["find_user(7)", "해시로 찾기", "id: 7 · Minji"],
+  ],
+  [
+    ["모듈", "함수", "할인 규칙 변경"],
+    ["주문", "add_to_cart / order_total", "order_total 수정"],
+    ["화면", "draw_product_list", "수정 0곳"],
+  ],
+  [
+    ["호출 방식", "결제사 교체", "결과"],
+    ["화면: _last_card", "_last_card 이름 변경", "화면 실패"],
+    ["주문: pay(amount)", "공개 약속 유지", "주문 성공"],
+  ],
+];
+
 const byId = (id) => document.getElementById(id);
 const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
 
@@ -217,6 +277,22 @@ function showStep(index, announce = true) {
   byId('body').textContent = step.body;
   byId('takeaway').textContent = step.link;
   byId('case').textContent = step.case;
+  const [headings, ...rows] = workedExamples[index];
+  for (const table of document.querySelectorAll('.worked-example table')) {
+    table.replaceChildren();
+    const header = table.createTHead().insertRow();
+    for (const label of headings) {
+      const cell = document.createElement('th');
+      cell.scope = 'col';
+      cell.textContent = label;
+      header.append(cell);
+    }
+    const body = table.createTBody();
+    for (const values of rows) {
+      const row = body.insertRow();
+      for (const value of values) row.insertCell().textContent = value;
+    }
+  }
   byId('question').textContent = step.question;
   byId('sample').textContent = step.sample;
   byId('sample').hidden = true;

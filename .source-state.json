@@ -73,6 +73,8 @@
     "security/memorybug": "e3885046d03910d2025b0556725a7444cb43a98a",
     "security/netdefense": "e3885046d03910d2025b0556725a7444cb43a98a",
     "security/publickey": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "software-engineering/modules": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "software-engineering/testing": "e3885046d03910d2025b0556725a7444cb43a98a",
     "system-design/breaker": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "system-design/cache": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "system-design/consensus": "6948c631d27cf02ddc17090753609254d12b0b3b",

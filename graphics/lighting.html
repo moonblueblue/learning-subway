@@ -201,6 +201,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
 .packet-tag rect{fill:#fff;stroke:var(--request);stroke-width:.9}.packet-tag .packet-label{stroke:none;dominant-baseline:central}
+.course-diagram .diagram-node.rgb-swatch{fill:#ffb6b6;stroke:#a66767}
+.course-diagram-open #scene #example-note{display:none}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -367,6 +369,21 @@ const ST = [['pt', '표면의 점', 'file'], ['dir', '법선과 빛', 'tool'], [
 const lesson = [
   {
     label: '비치는 각도',
+    readingDiagram: {
+      title: "표면 기준 각도가 밝기를 정한다",
+      description: "단위 법선과 광원 방향의 각도가 0도일 때 밝기 1, 60도일 때 0.5입니다.",
+      nodes: [
+        ["p", 150, 211, 107, 28, ["표면 점"], "plain"],
+        ["n", 150, 89, 121, 28, ["법선 ↑"], "plain"],
+        ["l", 299, 141, 141, 48, ["빛 방향 ↗", "60°"], "active"],
+        ["result", 492, 145, 189, 68, ["max(0, n·ℓ)", "cos 0° = 1", "cos 60° = 0.5"], "active"],
+      ],
+      edges: [
+        ["p", "n", "plain", "", 0],
+        ["p", "l", "active", "", 0],
+        ["l", "result", "active", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['법선 n (0, 1)과 빛 l의 내적', ' → ', '정면이면 1.0', ' · ', '60° 기울면 0.5 (절반 밝기)'],
     title: '빛을 정면으로 받을수록 밝다',
@@ -384,6 +401,20 @@ const lesson = [
   },
   {
     label: '반짝임',
+    readingDiagram: {
+      title: "반사 방향에서 벗어나면 반짝임이 줄어든다",
+      description: "반사 방향에서 벗어나면 반짝임이 줄어든다",
+      nodes: [
+        ["a0", 150, 103, 244, 48, ["시선과 반사 10°", "cos(10°)³²"], "plain"],
+        ["b0", 470, 103, 230, 48, ["≈ 0.61", "확산광 그대로"], "active"],
+        ["a1", 150, 195, 244, 48, ["시선과 반사 30°", "cos(30°)³²"], "plain"],
+        ["b1", 470, 195, 230, 48, ["≈ 0.01", "확산광 그대로"], "active"],
+      ],
+      edges: [
+        ["a0", "b0", "active", "", 0],
+        ["a1", "b1", "active", "", 0],
+      ],
+    },
     readingStage: 3,
     note: ['반짝임 = cos(거울 방향과 눈의 각도)³²', ' → ', '10°면 0.62', ' · ', '30°면 0.01 (거의 없음)'],
     title: '거울 방향 근처에서만 밝게 반짝인다',
@@ -401,6 +432,24 @@ const lesson = [
   },
   {
     label: '색 합치기',
+    readingDiagram: {
+      title: "세 채널별로 더하고 255에서 자른다",
+      description: "바탕색에 주변과 확산 합 0.6을 곱한 뒤 각 채널에 158을 더합니다. R은 255에서 멈추고 G와 B는 182입니다.",
+      nodes: [
+        ["r", 160, 79, 248, 28, ["R 200 × .6 + 158 = 278"], "plain"],
+        ["g", 160, 137, 248, 28, ["G 40 × .6 + 158 = 182"], "plain"],
+        ["b", 160, 195, 248, 28, ["B 40 × .6 + 158 = 182"], "plain"],
+        ["out", 461, 139, 217, 28, ["RGB (255, 182, 182)"], "rgb-swatch"],
+      ],
+      edges: [
+        ["r", "out", "active", "", 0],
+        ["g", "out", "active", "", 0],
+        ["b", "out", "active", "", 0],
+      ],
+      labels: [
+        [347, 233, "158 ≈ .62 × 255"],
+      ],
+    },
     readingStage: 2,
     note: ['(200, 40, 40) × (주변광 0.1 + 확산광 0.5) = (120, 24, 24)', ' → ', '+ 0.62 × 흰색', ' → ', '(255, 182, 182) (255에서 자름)'],
     title: '바탕색 × (주변광 + 확산광) + 반짝임',
@@ -417,6 +466,21 @@ const lesson = [
   },
   {
     label: '그림자',
+    readingDiagram: {
+      title: "빛에서 같은 방향의 두 깊이를 비교한다",
+      description: "그림자 지도는 광원에서 가장 가까운 깊이 6을 저장합니다. 같은 광선의 바닥점은 깊이 10이라 가려집니다.",
+      nodes: [
+        ["light", 88, 115, 107, 28, ["광원"], "plain"],
+        ["object", 270, 115, 140, 48, ["앞 물체", "d = 6"], "active"],
+        ["shadow", 499, 115, 170, 48, ["가려진 바닥", "d = 10 > 6"], "blocked"],
+        ["direct", 499, 214, 202, 48, ["옆의 열린 점", "직접광 유지"], "plain"],
+      ],
+      edges: [
+        ["light", "object", "active", "", 0],
+        ["object", "shadow", "blocked", "", 0],
+        ["light", "direct", "plain", "", 0],
+      ],
+    },
     readingStage: 4,
     note: ['빛 자리에서 본 이 칸의 거리 6', ' · ', '바닥 점은 빛에서 10', ' → ', '10 > 6이라 가린 것이 있음: 그림자'],
     title: '빛의 자리에서 본 깊이와 비교해 그림자를 정한다',

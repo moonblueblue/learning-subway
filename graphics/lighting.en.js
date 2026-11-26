@@ -1,5 +1,23 @@
 // English for 8D.3 Light and shadow. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "표면 기준 각도가 밝기를 정한다": "Angle to the surface normal sets brightness",
+  "단위 법선과 광원 방향의 각도가 0도일 때 밝기 1, 60도일 때 0.5입니다.": "The unit normal and light direction make a 0° angle at brightness 1 and a 60° angle at brightness 0.5.",
+  "표면 점": "Surface point",
+  "법선 ↑": "Normal ↑",
+  "빛 방향 ↗": "Light direction ↗",
+  "시선과 반사 10°": "View to reflection: 10°",
+  "시선과 반사 30°": "View to reflection: 30°",
+  "확산광 그대로": "Diffuse light unchanged",
+  "반사 방향에서 벗어나면 반짝임이 줄어든다": "Highlights fade away from the reflection direction",
+  "세 채널별로 더하고 255에서 자른다": "Add per channel and clamp at 255",
+  "바탕색에 주변과 확산 합 0.6을 곱한 뒤 각 채널에 158을 더합니다. R은 255에서 멈추고 G와 B는 182입니다.": "Multiply by ambient plus diffuse 0.6, then add 158 per channel. Clamp R to 255; G and B reach 182.",
+  "빛에서 같은 방향의 두 깊이를 비교한다": "Compare depths in the same direction from the light",
+  "그림자 지도는 광원에서 가장 가까운 깊이 6을 저장합니다. 같은 광선의 바닥점은 깊이 10이라 가려집니다.": "The shadow map stores nearest depth 6. The floor sample at depth 10 on the same ray is occluded.",
+  "광원": "Light",
+  "앞 물체": "Nearest object",
+  "가려진 바닥": "Occluded floor",
+  "옆의 열린 점": "Adjacent unblocked point",
+  "직접광 유지": "Direct light kept",
   // Page
   '빛과 그림자 · 레슨 8D.3': 'Light and shadow · Lesson 8D.3',
   '법선과 빛 방향의 내적으로 확산광을, 거울 방향과의 각도를 거듭제곱해 반짝임을 구하고, 바탕색과 주변광으로 픽셀의 최종 색을 합치고, 빛에서 본 깊이와 비교해 그림자를 정하는 과정을 계산해 보세요.':

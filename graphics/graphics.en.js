@@ -76,3 +76,24 @@ window.lessonText = {
   'A (깊이 9) 먼저 칠함': 'A (depth 9) drawn first', '깊이는 작을수록 가까움: 3 < 9라 B가 덮어씀': 'smaller depth is nearer: 3 < 9, so B overwrites',
   '프레임 버퍼 · 읽기': 'Frame buffer · read', '픽셀 색칠 · 색 20개': 'Pixel shading · 20 colors', '3번 계산': '3 computed', '깊이 3': 'Depth 3',
 };
+
+Object.assign(window.lessonText, {
+  "좌표와 화면의 한 칸을 맞춘다": "Coordinates pick a single screen pixel",
+  "x는 오른쪽, y는 아래로 커진다. 왼쪽부터 0, 위에서부터 0으로 센 (3, 2) 칸에 빨강 값을 쓴다.": "x grows right and y grows down. Both axes start at zero. Write red to pixel (3, 2).",
+  "프레임 버퍼 (3, 2)": "Frame buffer (3, 2)",
+  "화면의 같은 칸이 켜짐": "Same pixel lights up",
+  "비스듬한 선에서 가까운 여덟 칸을 고른다": "A sloped line selects eight nearby pixels",
+  "기준선의 높이를 각 열마다 반올림해 칠할 칸을 고른다.": "Round the line height in each column to pick a pixel.",
+  "각 x에서 가장 가까운 y": "Nearest y at each x",
+  "0 0 1 1 2 2 3 3 · 8칸": "0 0 1 1 2 2 3 3 · 8 pixels",
+  "중심이 삼각형 안에 있는 칸을 채운다": "Fill pixels with centers inside the triangle",
+  "A, B, C를 잇는다. 삼각형 안에 중심이 들어가는 20칸을 초록색으로 표시한다.": "Connect A, B and C. The 20 cells whose centers fall inside are green.",
+  "중심이 내부인 칸만 기록": "Pixel centers inside count",
+  "겹친 칸은 더 가까운 색을 남긴다": "Overlapping pixels keep the nearer color",
+  "칸 (4, 2)에서 B의 깊이 3이 A의 9보다 작아 깊이와 색을 함께 교체한다. B가 겹치지 않는 곳에는 A가 남는다.": "At (4, 2), B at depth 3 replaces both depth and color because A is at 9. A remains wherever B does not cover it.",
+  "같은 칸 (4, 2)": "Same pixel (4, 2)",
+  "기존 A 9 · 후보 B 3": "Stored A 9 · incoming B 3",
+  "3 < 9 → 깊이 3, B로 갱신": "3 < 9 → store depth 3 and B",
+  "초록 A: 겹치지 않은 칸": "Green A: pixels outside B",
+  "주황 B: 그린 뒤의 색": "Orange B: final drawn color",
+});

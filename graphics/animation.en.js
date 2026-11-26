@@ -1,5 +1,23 @@
 // English for 8D.4 Animation and physics. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  "같은 0.25초의 위치를 비교한다": "Compare both positions at 0.25 seconds",
+  "0에서 100까지 1초에 이동합니다. 0.25초에서 직선은 25, 이징은 15.625입니다.": "Move from 0 to 100 in one second. At 0.25 seconds the linear position is 25 and the eased position is 15.625.",
+  "직선": "Linear",
+  "먼저 속도를 바꾸고 새 속도로 위치를 바꾼다": "Update velocity before position",
+  "고정 간격 세 번": "Three fixed ticks",
+  "충돌 표본 사이": "Between collision samples",
+  "세 걸음 진행": "Advance three steps",
+  "다음 프레임으로 이월": "Carry into next frame",
+  "얇은 벽은 놓칠 수 있음": "A thin wall can still be missed",
+  "33ms는 세 걸음과 남은 8ms다": "33 ms yields three steps and 8 ms left",
+  "8⅓ms씩 3걸음 실행": "Run 3 steps of 8⅓ ms",
+  "남은 8ms는 이월": "Carry over 8 ms",
+  "잔여 0ms에서 시작 → 3걸음 25ms → 잔여 8ms": "Start with 0 ms accumulated → 3 steps use 25 ms → 8 ms remain",
+  "3걸음": "3 steps",
+  "잔여 시간이 0이면 33ms 프레임에서 3걸음을 실행하고 8ms를 이월합니다. 간격을 줄이면 충돌을 더 자주 확인하지만 샘플 사이의 얇은 벽을 여전히 놓칠 수 있습니다.": "With an empty accumulator, 33 ms runs 3 steps and carries 8 ms. Smaller steps check collisions more often but may still miss a thin wall between samples.",
+  "8⅓ms × 3": "8⅓ ms × 3",
+  "남은 시간 없이 시작하는 별도 16.7ms 예에서는 몇 걸음일까요?": "How many steps in a separate 16.7 ms example with no carried time?",
+  "작은 걸음은 이 예의 충돌을 잡지만 모든 벽을 보장하지는 않습니다.": "The smaller steps catch this example, but do not guarantee detection of every wall.",
   // Page
   '애니메이션과 물리 · 레슨 8D.4': 'Animation and physics · Lesson 8D.4',
   '키프레임 사이를 직선과 이징 곡선으로 채우고, 떨어지는 공을 속도와 위치를 조금씩 고치는 오일러 방법으로 계산하고, 바닥에 부딪혀 튀기며 생기는 간격 오차를 보고, 고정된 물리 간격으로 어디서나 같은 결과를 얻는 방법을 따라가 보세요.':

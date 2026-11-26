@@ -203,6 +203,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
+.course-diagram-open #example-note{visibility:hidden}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -395,7 +396,7 @@ const lesson = [
     stations: ST,
     start: { title: '이체 전', lines: ['민지 100,000원 · 서준 100,000원'], holds: { a: '100,000', b: '100,000' } },
     stages: [
-      { from: 'app', to: 'db', label: 'BEGIN', title: '트랜잭션 시작', lines: ['BEGIN;', '민지 −30000', '서준 +30000', 'COMMIT;'], text: '두 고치기를 하나의 트랜잭션으로 묶어 보냅니다.', holds: { db: '트랜잭션 #41' } },
+      { from: 'app', to: 'db', label: 'BEGIN', title: '트랜잭션 시작', lines: ['BEGIN;', '민지 −30000', '서준 +30000', 'COMMIT;'], text: '두 고치기를 하나의 트랜잭션으로 묶어 보냅니다.', holds: { db: '#41' } },
       { from: 'db', to: 'a', label: '−30,000 (임시)', title: '민지 −3만 (임시)', lines: ['민지 70,000원 (아직 확정 아님)', '다른 사용자에게는 여전히 100,000원으로 보임'], text: '민지 계좌를 임시로 고칩니다.', holds: { a: '70,000 임시' },
         ask: { q: '이때 다른 사용자가 민지 잔액을 조회하면?', choices: ['100,000원 (확정된 값)', '70,000원 (임시 값)'], answer: '100,000원 (확정된 값)', why: '격리성 때문에 COMMIT 전의 임시 값은 다른 트랜잭션에 보이지 않습니다.' } },
       { from: 'db', to: 'b', label: '+30,000 (임시)', title: '서준 +3만 (임시)', lines: ['서준 130,000원 (아직 확정 아님)'], text: '서준 계좌도 임시로 고칩니다.', holds: { b: '130,000 임시' } },
@@ -405,6 +406,24 @@ const lesson = [
   },
   {
     label: '꺼져도 되돌리기',
+    readingDiagram: {
+      title: "COMMIT이 없으면 변경을 되돌린다",
+      description: "전원이 꺼졌을 때 잔액은 70,000 / 100,000이다. COMMIT이 없으므로 복구가 기존 잔액 100,000 / 100,000을 되돌려 놓는다.",
+      nodes: [
+        ["a0", 107, 100, 174, 48, ["시작 잔액", "100,000 / 100,000"], "plain"],
+        ["a1", 310, 100, 174, 48, ["전원 꺼짐", "70,000 / 100,000"], "blocked"],
+        ["a2", 513, 100, 174, 48, ["#42 · COMMIT", "—"], "plain"],
+        ["b0", 107, 198, 174, 48, ["재시작", "#42 · —"], "plain"],
+        ["b1", 310, 198, 174, 28, ["변경 전 값 복구"], "active"],
+        ["b2", 513, 198, 174, 48, ["복구된 잔액", "100,000 / 100,000"], "active"],
+      ],
+      edges: [
+        ["a0", "a1", "blocked"],
+        ["a1", "a2", "plain"],
+        ["b0", "b1", "active"],
+        ["b1", "b2", "active"],
+      ],
+    },
     readingStage: 5,
     note: ['새 이체 #42 (각 100,000): 로그에 먼저', ' → ', '민지 −30,000', ' → ', 'COMMIT 전에 꺼짐', ' → ', '로그 보고 되돌림: 100,000 · 100,000'],
     title: '로그를 먼저 쓰면 꺼져도 되돌릴 수 있다',
@@ -424,6 +443,24 @@ const lesson = [
   },
   {
     label: '확정은 남는다',
+    readingDiagram: {
+      title: "COMMIT이 있으면 남은 변경을 반영한다",
+      description: "전원이 꺼졌을 때 잔액은 70,000 / 100,000이다. COMMIT이 있으므로 로그에 남은 130,000을 반영한다.",
+      nodes: [
+        ["a0", 107, 100, 174, 48, ["시작 잔액", "100,000 / 100,000"], "plain"],
+        ["a1", 310, 100, 174, 48, ["전원 꺼짐", "70,000 / 100,000"], "blocked"],
+        ["a2", 513, 100, 174, 48, ["#43 · COMMIT", "COMMIT"], "plain"],
+        ["b0", 107, 198, 174, 48, ["재시작", "#43 · COMMIT"], "plain"],
+        ["b1", 310, 198, 174, 28, ["기록된 새 값 반영"], "active"],
+        ["b2", 513, 198, 174, 48, ["복구된 잔액", "70,000 / 130,000"], "active"],
+      ],
+      edges: [
+        ["a0", "a1", "blocked"],
+        ["a1", "a2", "plain"],
+        ["b0", "b1", "active"],
+        ["b1", "b2", "active"],
+      ],
+    },
     readingStage: 6,
     note: ['새 이체 #43 (각 100,000): COMMIT · 완료 알림', ' → ', '서준에 쓰기 전에 꺼짐', ' → ', '로그대로 서준 반영: 70,000 · 130,000'],
     title: 'COMMIT한 것은 꺼져도 남는다',

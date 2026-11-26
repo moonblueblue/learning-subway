@@ -60,6 +60,7 @@
     "os/scheduling": "e3885046d03910d2025b0556725a7444cb43a98a",
     "os/syscall": "e3885046d03910d2025b0556725a7444cb43a98a",
     "os/virtual": "e3885046d03910d2025b0556725a7444cb43a98a",
+    "platforms/mobile": "e3885046d03910d2025b0556725a7444cb43a98a",
     "projects/capstone": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "projects/tinydb": "6948c631d27cf02ddc17090753609254d12b0b3b",
     "projects/trackproject": "6948c631d27cf02ddc17090753609254d12b0b3b",

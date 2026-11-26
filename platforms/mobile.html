@@ -201,6 +201,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work li{padding-left:16px}
 @media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
 .packet-tag rect{fill:#fff;stroke:var(--request);stroke-width:.9}.packet-tag .packet-label{stroke:none;dominant-baseline:central}
+.course-diagram-open #example-note{visibility:hidden}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -383,6 +384,29 @@ const lesson = [
   },
   {
     label: '배터리 아끼기',
+    readingDiagram: {
+      title: "센서를 깨우는 시간은 1초뿐이다",
+      description: "600초 주기 중 한 번 1초 동안 깨어 20 mA로 센서 값을 읽고, 650이 300 이상이어서 펌프를 켜지 않고 599초 동안 0.01 mA 수면으로 돌아간다. 아래 시간띠는 구간 길이를 실제 비율로 표시한다.",
+      nodes: [
+        ["read", 123, 111, 180, 48, ["타이머: 1초 깸", "20 mA · ADC 650"], "active"],
+        ["compare", 310, 111, 137, 48, ["650 ≥ 300", "펌프 꺼짐"], "plain"],
+        ["sleep", 502, 111, 185, 48, ["599초 다시 잠", "0.01 mA"], "plain"],
+      ],
+      edges: [
+        ["read", "compare", "active"],
+        ["compare", "sleep", "active"],
+      ],
+      labels: [
+        [33, 191, "실제 600초 비율"],
+        [34, 250, "0 s"],
+        [532, 250, "600 s"],
+        [187, 229, "599초 · 대기 0.01 mA"],
+      ],
+      bars: [
+        [34, 204, 0.9, 12, "", "active"],
+        [34.9, 204, 539.1, 12, "", "muted"],
+      ],
+    },
     readingStage: 3,
     note: ['잠 (0.01mA)', ' → ', '타이머로 깨어남', ' → ', '센서를 잠깐 켜 습도 650', ' → ', '할 일 없어 다시 잠'],
     title: '대부분의 시간을 잠자며 보낸다',
@@ -402,6 +426,24 @@ const lesson = [
   },
   {
     label: '끊겨도 쓰기',
+    readingDiagram: {
+      title: "오프라인에서는 먼저 기기에 남겨 둔다",
+      description: "연결이 끊겨도 메모를 기기에 저장해 화면에 표시한다. 보낼 목록에 한 건을 두고 연결이 돌아오면 서버에 전송한다. 서버 확인을 받은 뒤에만 대기열을 비운다.",
+      nodes: [
+        ["a0", 107, 100, 179, 48, ["연결 끊김", "우유 사기"], "plain"],
+        ["a1", 310, 100, 179, 48, ["기기 저장·표시", "우유 사기"], "active"],
+        ["a2", 513, 100, 182, 48, ["전송 대기 1건", "서버 메모 3개"], "blocked"],
+        ["b0", 107, 198, 179, 48, ["연결 회복", "같은 메모 전송"], "plain"],
+        ["b1", 310, 198, 179, 48, ["서버 저장 확인", "서버 메모 4개"], "active"],
+        ["b2", 513, 198, 182, 48, ["확인 뒤 대기열 비움", "전송 대기 0건"], "active"],
+      ],
+      edges: [
+        ["a0", "a1", "active"],
+        ["a1", "a2", "blocked"],
+        ["b0", "b1", "active"],
+        ["b1", "b2", "active"],
+      ],
+    },
     readingStage: 3,
     note: ['지하철: "우유 사기"를 기기에 먼저 저장', ' → ', '보내기 실패', ' → ', '연결이 돌아오자 동기화: 서버 메모 3개 + 1 = 4개'],
     title: '휴대폰 앱은 네트워크가 끊겨도 동작해야 한다',

@@ -85,3 +85,26 @@ window.lessonText = {
   '앱은 잠': 'app asleep', '서버 → 푸시 서비스 → OS가 알림 표시': 'server → push service → OS shows it', '누르면 앱이 깨어나 새 메시지 1개': 'tap: app wakes, 1 new message',
   '보낼 것 0': '0 to send',
 };
+
+Object.assign(window.lessonText, {
+  "센서를 깨우는 시간은 1초뿐이다": "The sensor wakes for just one second",
+  "600초 주기 중 한 번 1초 동안 깨어 20 mA로 센서 값을 읽고, 650이 300 이상이어서 펌프를 켜지 않고 599초 동안 0.01 mA 수면으로 돌아간다. 아래 시간띠는 구간 길이를 실제 비율로 표시한다.": "In a 600-second cycle, spend one second awake at 20 mA. Reading 650 is at least 300, so the pump stays off. Sleep for the remaining 599 seconds at 0.01 mA. The bottom band is drawn to time scale.",
+  "타이머: 1초 깸": "Timer: awake for 1 s",
+  "펌프 꺼짐": "Pump stays off",
+  "599초 다시 잠": "Sleep for 599 s",
+  "실제 600초 비율": "600 s at actual scale",
+  "599초 · 대기 0.01 mA": "599 s · 0.01 mA asleep",
+  "오프라인에서는 먼저 기기에 남겨 둔다": "Save it on the phone before going online",
+  "연결이 끊겨도 메모를 기기에 저장해 화면에 표시한다. 보낼 목록에 한 건을 두고 연결이 돌아오면 서버에 전송한다. 서버 확인을 받은 뒤에만 대기열을 비운다.": "Save and show the note on the phone even while offline. Queue it, send after reconnecting, and remove it from the queue only after the server acknowledges it.",
+  "연결 끊김": "Offline",
+  "우유 사기": "Buy milk",
+  "기기 저장·표시": "Save & show on phone",
+  "전송 대기 1건": "1 queued",
+  "서버 메모 3개": "3 server notes",
+  "연결 회복": "Reconnected",
+  "같은 메모 전송": "Send that note",
+  "서버 저장 확인": "Server confirms save",
+  "서버 메모 4개": "4 server notes",
+  "확인 뒤 대기열 비움": "Clear after confirmation",
+  "전송 대기 0건": "0 queued",
+});

@@ -3650,9 +3650,9 @@ const courseCatalog = {
         },
         {
           "id": "method-choice",
-          "title": "규칙·탐색·학습 중 방법 고르기",
-          "titleEn": "Choosing rules, search or learning",
-          "question": "설비 점검에 규칙·탐색·학습을 각각 어디에 쓸 수 있을까요?",
+          "title": "사람이 정한 규칙과 사례로 배운 규칙",
+          "titleEn": "Human-set and learned rules",
+          "question": "같은 온도를 두 규칙에 줬을 때 왜 다른 경보가 나올까요?",
           "format": "실험",
           "requires": [
             "ai/decision-owner"

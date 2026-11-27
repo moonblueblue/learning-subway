@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="사진을 띄우거나 음악을 틀 때 앱은 누구에게 어떤 일을 부탁할까요?">
+<title>운영체제는 어떤 일을 할까? · 0.1</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<style>
+.os-text{fill:#182f28;font-size:16px;font-weight:700}
+.os-small{font-size:13px}
+.os-card{fill:#fbfdf9;stroke:#638176;stroke-width:1.2}
+.os-app{fill:#edf0fc;stroke:#6d82ab}
+.os-system{fill:#e3f2e9;stroke:#47826b}
+.os-device,.os-monitor{fill:#f6f3e5;stroke:#7e7753}
+.os-picked{fill:#e1f4e9;stroke:#358068}
+.os-retry{fill:#faede5;stroke:#a45330}
+.os-file{cursor:pointer}
+.hands-on .action{min-height:44px}
+.hands-on[data-file-step] #choices,.hands-on:not([data-file-step]) #file-actions{display:none}
+.os-file:hover .os-card{stroke:#358068;stroke-width:2}
+.os-empty{fill:#fdfdfb;stroke:#75897d;stroke-dasharray:4 3}
+.os-line,.os-device-line{fill:none;stroke:#327263;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.os-tip{fill:#327263}
+.os-line.os-reply{stroke:#53649a;stroke-dasharray:5 4}
+.os-tip.os-reply{fill:#53649a}
+.os-trial,body.course-shell .workspace:not(.course-reading) .os-reading{display:none}
+body.course-shell .workspace:not(.course-reading) .os-trial{display:inline}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
+<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./what-os-does.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=42f6f4d09f421784"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">운영체제 입문 · 0.1</p><h1>운영체제는 어떤 일을 할까?</h1><p>사진을 띄우거나 음악을 틀 때 앱은 누구에게 어떤 일을 부탁할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">앱과 장치 사이</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">운영체제는 어떤 일을 할까?</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+        <div id="file-actions">
+          <button class="action" id="request-file" type="button">앱에서 파일 요청</button>
+          <button class="action" id="deliver-file" type="button" disabled>운영체제에서 파일 건네기</button>
+        </div>
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    label: '사진 고르기', title: '파일을 두 번 누르면 앱에 열기 요청이 들어갑니다',
+    body: '폴더에서 바다 사진 파일을 두 번 누릅니다. 컴퓨터가 사진 앱에 이 파일을 열라고 알려 줍니다. 앱 창에 사진을 표시하려면 파일부터 읽어야 합니다.',
+    takeaway: '왼쪽은 선택한 파일이고 오른쪽은 사진 앱에 전달된 열기 요청입니다.',
+    description: '폴더에서 바다.jpg를 선택해 두 번 누릅니다. 화살표가 사진 앱의 바다.jpg 열기 요청에 닿습니다. 아직 사진 앱에는 그린 사진이 없습니다.',
+    example: ['폴더의 바다.jpg', '파일을 두 번 누름', '사진 앱에 열기 요청'],
+    practiceDescription: '새 폴더에 숲.jpg와 바다.jpg가 있습니다. 오른쪽 사진 앱은 열 파일 선택을 기다립니다.',
+    quiz: ['숲 사진을 두 번 누르세요. 키보드로는 아래에서 파일을 열 수 있습니다.', '숲.jpg 열기', '바다.jpg 열기', '나무 미리보기가 있는 숲.jpg를 고르면 사진 앱에 그 파일을 열라는 요청이 들어갑니다.'],
+  },
+  {
+    label: '파일 읽기', title: '사진 앱이 운영체제에 파일을 부탁합니다',
+    body: '사진 앱이 운영체제에 바다.jpg를 달라고 부탁합니다. 운영체제가 저장 장치에 읽기 요청을 보내고, 읽은 내용을 앱에 돌려줍니다. 운영체제는 앱이 파일이나 장치를 사용할 수 있게 요청을 받아 처리합니다.',
+    takeaway: '윗줄 실선은 오른쪽으로 가는 요청입니다. 아랫줄 점선으로 같은 파일의 내용이 앱으로 돌아옵니다.',
+    description: '바다.jpg를 달라는 요청이 사진 앱에서 운영체제를 거쳐 저장 장치로 갑니다. 저장 장치에 있던 바다.jpg의 내용은 운영체제를 거쳐 사진 앱으로 왼쪽으로 돌아오며 원본도 남아 있습니다.',
+    example: ['앱에서 바다.jpg 요청', '운영체제가 저장 장치에 읽기 요청', '파일 내용이 앱으로 돌아옴'],
+    practiceDescription: '사진 앱은 숲.jpg를 열라는 요청을 받았습니다. 오른쪽 저장 장치에 숲.jpg가 있습니다.',
+    quiz: ['앱에서 사진 파일을 요청하고 운영체제에서 건네 보세요.', '운영체제에서 파일 건네기', '앱에서 파일 요청', '운영체제가 숲.jpg의 내용을 사진 앱에 건넸습니다.'],
+    fileActions: true,
+  },
+  {
+    label: '창에 사진 띄우기', title: '앱이 만든 그림이 화면에 뜹니다',
+    body: '파일을 받은 앱이 사진을 그립니다. 앱은 그 그림을 표시하도록 운영체제에 맡깁니다. 우리가 보는 화면에는 앱이 그린 같은 사진이 뜹니다.',
+    takeaway: '앱이 만든 바다 그림이 운영체제를 거쳐 같은 모습으로 화면에 나타납니다.',
+    description: '왼쪽 앱에 작은 바다 그림이 있습니다. 앱의 표시 요청이 운영체제를 거쳐 오른쪽 화면으로 이어집니다. 오른쪽에는 같은 바다 그림이 크게 나타납니다.',
+    example: ['앱이 사진을 그림', '운영체제에 화면 표시 요청', '화면에 바다 사진'],
+    practiceDescription: '이번에는 사진 앱이 숲 사진을 그렸습니다. 운영체제에 표시 요청을 보냈고 결과 칸이 비어 있습니다.',
+    quiz: ['앱이 그린 숲 사진은 어느 장치에 나타날까요?', '화면', '저장 장치', '운영체제가 앱의 그림을 화면에 표시합니다.'],
+  },
+  {
+    label: '음악 재생하기', title: '음악 앱의 재생 요청이 스피커로 이어집니다',
+    body: '음악 앱에서는 재생 단추를 눌러 소리를 듣습니다. 음악 앱이 운영체제에 소리 재생을 부탁하면 운영체제가 스피커에 소리를 보냅니다. 사진과 음악은 같은 운영체제에 서로 다른 장치를 쓰도록 부탁합니다.',
+    takeaway: '이번에는 화면의 그림 대신, 스피커 옆 소리 표시가 켜집니다.',
+    description: '왼쪽의 음악 앱에서 재생 단추를 눌렀습니다. 소리 재생 요청이 운영체제를 거쳐 오른쪽 스피커에 닿습니다. 스피커가 소리를 냅니다.',
+    example: ['음악 앱 재생 단추', '운영체제에 소리 재생 요청', '스피커에서 소리'],
+    practiceDescription: '다른 곡의 재생 단추를 눌렀습니다. 파형이 소리를 나타내고 앱이 운영체제에 재생을 부탁합니다. 장치 결과 칸은 비어 있습니다.',
+    quiz: ['음악 앱이 부탁한 소리는 어느 장치에서 들릴까요?', '스피커', '화면', '운영체제가 스피커로 소리를 보내고 스피커가 소리를 냅니다.'],
+  },
+].map((step, index) => ({...step, readingDiagram: {
+  figure: `os-intro-${index}`, staticOnly: true, title: step.label, description: step.description,
+}}));
+
+const slug = 'what-os-does';
+const byId = id => document.getElementById(id);
+const state = {index: -1, answers: new Map(), file: 'waiting'};
+const feedbackMessages = ['✓ 맞았습니다.', '✗ 다시 생각해 보세요.'];
+const scene = byId('scene');
+const handsOn = byId('prompt').closest('.hands-on');
+const request = byId('request-file');
+const deliver = byId('deliver-file');
+const workspace = scene.closest('.workspace');
+
+function caption(group, x, y, value, tone = '') {
+  svg('text', {x, y, class: 'os-text ' + tone, 'text-anchor': 'middle'}, group).textContent = value;
+}
+
+function panel(group, x, y, width, height, tone = '') {
+  svg('rect', {x, y, width, height, rx: 8, class: 'os-card ' + tone}, group);
+}
+
+function arrow(group, x1, y1, x2, y2, reply = false) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const tipLength = 8;
+  const inset = (tipLength - 1) / Math.hypot(dx, dy);
+  const tone = reply ? 'os-reply' : '';
+  svg('line', {x1, y1, x2: x2 - dx * inset, y2: y2 - dy * inset, class: 'os-line ' + tone}, group);
+  svg('polygon', {'data-arrowhead': '', points: `${-tipLength},-5 0,0 ${-tipLength},5`, class: 'os-tip ' + tone,
+    transform: `translate(${x2} ${y2}) rotate(${Math.atan2(dy, dx) * 180 / Math.PI})`}, group);
+}
+
+function picture(group, x, y, kind, size = 1) {
+  const image = svg('g', {transform: `translate(${x} ${y}) scale(${size})`}, group);
+  svg('rect', {x: -33, y: -23, width: 66, height: 46, rx: 4, fill: '#d9ecfa', stroke: '#638178'}, image);
+  svg('circle', {cx: 15, cy: -12, r: 5, fill: '#f4bd67'}, image);
+  if (kind === 'sea') {
+    svg('path', {d: 'M-31 5Q-17 -1 -2 5Q14 1 31 6V18Q31 21 28 21H-28Q-31 21-31 18Z', fill: '#458abe'}, image);
+    svg('path', {d: 'M-23 12q8 -4 16 0m11 2q8 -4 16 0', fill: 'none', stroke: '#fff', 'stroke-width': 1.5}, image);
+  } else {
+    svg('path', {d: 'M-31 13L-14 3 1 11 15 4 31 13V18Q31 21 28 21H-28Q-31 21-31 18Z', fill: '#85ad66'}, image);
+    svg('path', {d: 'M-17 -12L-28 9H-6ZM3 -9L-6 10H12Z', fill: '#306953'}, image);
+    svg('path', {d: 'M-19 9h4v6h-4zM1 9h4v5H1z', fill: '#6b4f3b'}, image);
+  }
+}
+
+const filename = kind => kind === 'sea' ? '바다.jpg' : '숲.jpg';
+const openFileLabel = kind => kind === 'sea' ? '바다.jpg 열기' : '숲.jpg 열기';
+const fileRequested = '운영체제가 저장 장치에 숲.jpg를 요청했습니다.';
+const fileDelivered = '운영체제가 숲.jpg의 내용을 사진 앱에 건넸습니다.';
+
+function folderWindow(group, trial, correct) {
+  panel(group, 26, 64, 211, 153);
+  caption(group, 131.5, 90, '사진 폴더');
+  for (const [index, kind] of ['sea', 'woods'].entries()) {
+    const x = 84 + index * 94;
+    const tile = svg('g', trial ? {class: 'os-file', 'data-file': kind} : {}, group);
+    panel(tile, x - 42, 103, 84, 92, (!trial && index === 0) || (correct && index === 1) ? 'os-picked' : '');
+    picture(tile, x, 134, kind, .86);
+    caption(tile, x, 179, filename(kind), 'os-small');
+  }
+  panel(group, 381, 69, 210, 143, 'os-app');
+  caption(group, 486, 98, '사진 앱');
+  panel(group, 399, 119, 174, 67, 'os-empty');
+  caption(group, 486, 159, trial && !correct ? '파일 선택 대기' : '파일 열기', 'os-small');
+  if (!trial || correct) {
+    caption(group, 310, 134, '두 번 누름', 'os-small');
+    arrow(group, 243, 155, 373, 155);
+    caption(group, 486, 143, filename(trial ? 'woods' : 'sea'), 'os-small');
+  }
+}
+
+function readFile(group, trial, delivered, requested) {
+  const kind = trial ? 'woods' : 'sea';
+  const cards = [[125,'사진 앱','os-app'],[310,'운영체제','os-system'],[496,'저장 장치','os-device']];
+  for (const [x, label, color] of cards) {
+    const width = color === 'os-system' ? 156 : 144;
+    panel(group, x - width / 2, 99, width, 88, color);
+    caption(group, x, 124, label);
+  }
+  if (!trial || requested) {
+    caption(group, 310, 74, '파일 요청 · {0}'.replace('{0}', filename(kind)), 'os-small');
+    arrow(group, 201, 114, 227, 114);
+    arrow(group, 392, 114, 419, 114);
+  }
+  picture(group, 496, 146, kind, .65);
+  caption(group, 496, 177, filename(kind), 'os-small');
+  if (!trial || delivered) {
+    arrow(group, 419, 167, 392, 167, true);
+    arrow(group, 227, 167, 201, 167, true);
+    caption(group, 310, 163, '파일 반환', 'os-small');
+    caption(group, 125, 162, '파일 도착', 'os-small');
+    caption(group, 125, 178, filename(kind), 'os-small');
+    caption(group, 496, 211, '원본이 남음', 'os-small');
+  } else {
+    caption(group, 125, 163, requested ? '파일 기다림' : '열기 요청 받음', 'os-small');
+  }
+}
+
+function screen(group, x, y, kind) {
+  panel(group, x - 69, y - 43, 138, 83, 'os-monitor');
+  picture(group, x, y - 2, kind, 1.35);
+  svg('path', {d: `M${x} ${y + 40}v10m-25 2h50`, class: 'os-device-line'}, group);
+}
+
+function waveform(group, x, y) {
+  svg('path', {d: `M${x - 42} ${y}h12l5 -9 6 17 5 -22 8 28 7 -19 5 6 5 -11 5 18 6 -10h13`, class: 'os-device-line'}, group);
+}
+
+function speaker(group, x, y) {
+  svg('path', {d: `M${x-40} ${y-12}h15l20 -15v54l-20 -15h-15z`, fill: '#326c5d'}, group);
+  svg('path', {d: `M${x + 6} ${y-13}q18 13 0 26m12 -36q34 23 0 46`, class: 'os-device-line'}, group);
+}
+
+function output(group, trial, correct, music = false) {
+  const kind = trial ? 'woods' : 'sea';
+  panel(group, 27, 83, 151, 121, 'os-app');
+  caption(group, 102.5, 109, music ? '음악 앱' : '사진 앱');
+  if (music) {
+    svg('polygon', {points: '65,136 65,156 83,146', fill: '#327263'}, group);
+    caption(group, 120, 152, '재생', 'os-small');
+    waveform(group, 102, 175);
+  } else {
+    picture(group, 102.5, 147, kind);
+    caption(group, 102.5, 186, filename(kind), 'os-small');
+  }
+  arrow(group, 185, 146, 226, 146);
+  panel(group, 232.5, 100, 152, 90, 'os-system');
+  caption(group, 308.5, 133, '운영체제');
+  caption(group, 308.5, 161, music ? '소리 재생 요청' : '화면 표시 요청', 'os-small');
+  if (!trial || correct) {
+    arrow(group, 391, 146, 434, 146);
+    if (music) speaker(group, 518, 144);
+    else screen(group, 518, 146, kind);
+    caption(group, 518, 221, music ? '스피커' : '화면');
+  } else {
+    panel(group, 441, 103, 148, 83, 'os-empty');
+    caption(group, 515, 150, '장치 선택 대기', 'os-small');
+  }
+}
+
+function addFigure(parent, draw, trial, status) {
+  const group = svg('g', {class: trial ? 'os-trial' : 'os-reading'}, parent);
+  if (trial) group.dataset.status = status;
+  draw(group, trial, status === 'correct' || status === 'delivered',
+    status === 'requested' || status === 'delivered');
+  if (trial && (status === 'correct' || status === 'retry')) {
+    const correct = status === 'correct';
+    panel(group, 193, 234, 234, 29, correct ? 'os-picked' : 'os-retry');
+    caption(group, 310, 254, correct ? '✓ 맞았습니다.' : '다시 선택', 'os-small');
+  }
+  return group;
+}
+
+const drawers = [folderWindow, readFile, (group, trial, correct) => output(group, trial, correct), (group, trial, correct) => output(group, trial, correct, true)];
+for (const [index, step] of lesson.entries()) {
+  const template = document.createElement('template');
+  template.id = step.readingDiagram.figure;
+  const canvas = svg('svg', {viewBox: '0 0 620 280'}, template.content);
+  const group = svg('g', {}, canvas);
+  addFigure(group, drawers[index], false);
+  addFigure(group, drawers[index], true, 'waiting');
+  document.body.append(template);
+}
+
+function updatePractice() {
+  const step = lesson[state.index];
+  if (!step) return;
+  const reading = workspace.classList.contains('course-reading');
+  handsOn.toggleAttribute('data-file-step', Boolean(step.fileActions));
+  if (reading || !step.fileActions) state.file = 'waiting';
+  request.disabled = state.file !== 'waiting';
+  deliver.disabled = state.file === 'waiting';
+  deliver.setAttribute('aria-disabled', String(state.file !== 'requested'));
+  const practice = scene.querySelector('.os-trial');
+  if (!practice) return;
+  const answer = state.answers.get(state.index);
+  const status = step.fileActions ? state.file :
+    answer === undefined ? 'waiting' : answer === step.quiz[1] ? 'correct' : 'retry';
+  if (practice.dataset.status !== status) {
+    const figure = addFigure(practice.parentElement, drawers[state.index], true, status);
+    practice.replaceWith(figure);
+  }
+  const parts = reading ? [step.description] : [step.practiceDescription,
+    status === 'correct' ? step.quiz[3] : status === 'retry' ? feedbackMessages[1] :
+    status === 'requested' ? fileRequested : status === 'delivered' ? fileDelivered : ''];
+  const localized = parts.filter(Boolean).map(part => window.courseI18n?.translate(part) ?? part).join(' ');
+  for (const id of ['scene-desc', 'course-diagram-desc']) {
+    const node = byId(id);
+    if (node && node.textContent !== localized) node.textContent = localized;
+  }
+}
+
+request.onclick = () => {
+  state.file = 'requested';
+  byId('feedback').textContent = fileRequested;
+  updatePractice();
+  deliver.focus();
+};
+deliver.onclick = () => {
+  if (state.file !== 'requested') return;
+  state.file = 'delivered';
+  byId('feedback').textContent = fileDelivered;
+  updatePractice();
+};
+
+scene.addEventListener('dblclick', event => {
+  const kind = event.target.closest('.os-trial [data-file]')?.dataset.file;
+  if (!kind || workspace.classList.contains('course-reading')) return;
+  const button = [...byId('choices').children].find(choice => choice.dataset.answer === openFileLabel(kind));
+  button?.click();
+});
+
+const practiceChanges = new MutationObserver(updatePractice);
+practiceChanges.observe(scene, {childList: true});
+practiceChanges.observe(byId('steps'), {subtree: true, attributes: true, attributeFilter: ['aria-current']});
+practiceChanges.observe(workspace, {attributes: true, attributeFilter: ['class']});
+practiceChanges.observe(byId('choices'), {childList: true, subtree: true, attributes: true, attributeFilter: ['aria-pressed']});
+window.addEventListener('course:lang', updatePractice);
+</script>
+<script src="../shared/reading-lesson.js?v=b4d45e8ddc5bfaac"></script>
+</body>
+</html>

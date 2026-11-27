@@ -2936,6 +2936,18 @@ const courseCatalog = {
       "titleEn": "Operating systems",
       "chapters": [
         {
+          "id": "0",
+          "title": "운영체제 입문",
+          "titleEn": "Operating systems foundations",
+          "lessons": [
+            {
+              "id": "0.1",
+              "ref": "os/what-os-does"
+            }
+          ],
+          "tracks": []
+        },
+        {
           "id": "1",
           "title": "시작과 실행",
           "titleEn": "Starting and running",
@@ -3659,6 +3671,15 @@ const courseCatalog = {
       "title": "운영체제",
       "titleEn": "Operating systems",
       "lessons": [
+        {
+          "id": "what-os-does",
+          "title": "운영체제는 어떤 일을 할까?",
+          "titleEn": "What does an operating system do?",
+          "question": "사진을 띄우거나 음악을 틀 때 앱은 누구에게 어떤 일을 부탁할까요?",
+          "format": "실습",
+          "requires": [],
+          "page": "os/what-os-does.html"
+        },
         {
           "id": "process",
           "title": "프로세스와 스레드",

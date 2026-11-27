@@ -368,9 +368,11 @@ addEventListener('DOMContentLoaded', () => {
     for (const roadmap of roadmaps) {
       if (!pos.has(roadmap.id)) continue;
       const list = stations.get(roadmap.id);
+      // Keep chapter 1 on its usual side when a branch opens with an introductory chapter.
+      const startsWithIntro = roadmap.branch && roadmap.chapters[0].id === '0';
       list.forEach((s, i) => {
         const [x, y] = pos.get(roadmap.id)[i];
-        let place = i % 2 ? 'down' : 'up';
+        let place = (i + (startsWithIntro ? 1 : 0)) % 2 ? 'down' : 'up';
         if (s.children.length) {
           // A line leaves this station: keep its name off that side, or beside the station away from the branch.
           const side = s.children[0].branch.side, dirs = new Set(s.children.map((child) => child.branch.dir));

@@ -46,7 +46,7 @@ h1, h2, p, ol { margin: 0; }
 
 main { min-width: 0; min-height: 0; }
 .sheet { height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto; border: 1px solid var(--border); border-radius: 12px; background: var(--map); overflow: hidden; }
-.map-scroll { min-height: 0; overflow: auto; display: grid; place-items: start center; scrollbar-width: thin; }
+.map-scroll { min-height: 0; overflow: auto; display: grid; place-items: start safe center; scrollbar-width: thin; }
 .map-scroll:not(.fits) { border-bottom: 1px solid var(--border); margin-bottom: 10px; }
 .map-scroll.fits { place-items: center; overflow: hidden; }
 .map-scroll[hidden], .line-list[hidden] { display: none; }
@@ -75,12 +75,15 @@ main { min-width: 0; min-height: 0; }
 .map-legend span { display: flex; align-items: center; gap: 7px; }
 .map-legend svg { flex: none; }
 
-@media (max-width: 1500px) {
-  .map-workspace { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 6px; }
-  .subject-list { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; border: 0; padding: 0; overflow: visible; }
-  .subject-list h2 { margin: 0 2px 0 8px; }
-  .subject-list h2:first-child { margin: 0 2px 0 0; }
-  .subject-list a { margin: 0; padding: 4px 9px; font-size: 13px; }
+/* The subject list stays on the left at every width, like the hub and the AI map. A narrow window scrolls the map. */
+@media (max-height: 760px) {
+  .subject-list a { margin-block: 1px; padding-block: 4px; }
+  .subject-list h2 { margin-top: 8px; }
+}
+@media (max-width: 740px) {
+  .map-workspace { grid-template-columns: clamp(96px, 24vw, 155px) minmax(0, 1fr); gap: 6px; }
+  .subject-list { padding-inline-end: 4px; }
+  .subject-list a { padding: 7px 5px; font-size: 13px; }
   .subject-list p { display: none; }
 }
 @media (max-width: 720px) {

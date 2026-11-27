@@ -37,7 +37,7 @@ main {min-height:0; display:grid; grid-template-rows:minmax(0,1fr) auto; gap:6px
 #enter:hover {background:#114e46}
 #planned {color:var(--muted); background:#e5ece6}
 [hidden] {display:none!important}
-@media(max-width:720px),(max-height:480px) {
+@media(max-width:720px) {
   header {padding:3px 0; gap:10px}
   .lang-long {display:none}.lang-short {display:inline}
   .home {font-size:.86rem}
@@ -50,11 +50,6 @@ main {min-height:0; display:grid; grid-template-rows:minmax(0,1fr) auto; gap:6px
   .summary {gap:2px 5px}.summary h2,.summary strong {font-size:.81rem}.summary span {font-size:.72rem}
   .boarding {display:grid; grid-template-columns:auto minmax(0,1fr) auto}
   #lessons {width:100%}
-}
-@media(max-height:480px) and (min-width:651px) {
-  main {gap:2px;padding-top:3px}
-  .summary {display:block;font-size:.75rem}.summary h2 {font-size:.88rem}
-  #lessons,#enter,#planned {min-height:30px}
 }
 
 .sheet.compact {grid-template-rows:minmax(0,1fr)}

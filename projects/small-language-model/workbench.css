@@ -42,14 +42,3 @@
 .lm-content-line { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
 .lm-command { display: block; margin: 8px 0; overflow-wrap: anywhere; font-size: .93em; }
 #lm-error { color: #a34123; }
-@media (max-width: 420px) { .lm-restore { grid-template-columns: 1fr; } }
-@media (max-width: 370px), (max-height: 440px) {
-  #lm-dialog { padding: 7px; font-size: 13px; }
-  #lm-dialog .action { padding-inline: 7px; }
-  #lm-dialog textarea { height: clamp(88px, 30dvh, 150px); }
-}
-
-@media (max-width: 640px) and (min-height: 550px) {
-  .course-shell .timeline .steps > li { flex: 1 1 0; min-width: 0; }
-  .course-shell .timeline .steps button { width: 100%; }
-}

@@ -50,12 +50,3 @@
 .serving-result [data-pass="false"], #project-error { color: #943c23; }
 .serving-subtle { color: #415c6c; }
 #project-summary-status, #project-budget-status { font-weight: 700; }
-@media (max-width: 520px), (max-height: 480px) {
-  #project-dialog { padding: 7px; font-size: 13px; }
-  #project-dialog .action { min-height: 36px; padding-inline: 7px; }
-  .serving-result td, .serving-result th { padding-inline: 2px; }
-}
-@media (max-width: 640px) and (min-height: 550px) {
-  .course-shell .timeline .steps > li { flex: 1 1 0; min-width: 0; }
-  .course-shell .timeline .steps button { width: 100%; min-width: 0; }
-}

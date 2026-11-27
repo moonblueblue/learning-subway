@@ -26,7 +26,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .status{color:var(--accent);font-size:.875rem;font-weight:700}
 .stage{background:#eaf3eb;border-block:1px solid var(--border)}
 svg{display:block;width:100%;height:auto;max-height:520px}
-#scene{touch-action:pan-y;user-select:none}
+#scene{user-select:none}
 #scene:focus-visible{outline-offset:-4px}
 #scene.is-zoomed{cursor:grab;touch-action:none}
 #scene.is-dragging{cursor:grabbing}
@@ -42,8 +42,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
 .view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
 .view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
-.touch-hint{display:none}
-@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
 .iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
 .node .face{stroke-width:.8;stroke-linejoin:round}
 .node .shadow{fill:#1f4434;opacity:.16}
@@ -95,8 +93,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .takeaway strong{display:block;color:var(--accent);font-size:.875rem}
 .navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
-@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .truth{border-collapse:collapse;font:600 .9375rem var(--mono);text-align:center}
 .truth caption{font:700 .8125rem system-ui,sans-serif;color:var(--muted);text-align:left;margin-bottom:4px}
 .truth th,.truth td{border:1px solid var(--border);padding:3px 12px;min-width:44px}
@@ -146,21 +142,18 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .walk-line b{font:800 1rem var(--mono);color:var(--accent);margin-left:6px}
 .try-choices{display:flex;gap:6px;flex-wrap:wrap}
 .try-choices:empty{display:none}
-@media(max-width:600px){.place-name{font-size:16px}.order text{font-size:12px}}
-@media(max-width:600px){.weight text{font-size:13px}.dist text{font-size:12px}.dist-table{font-size:.75rem}.dist-table th,.dist-table td{padding:2px 3px;min-width:0}}
 .sample.cutl{border-top:2px dashed #c0392b}
 .dist-table tr.hot td{background:#fff7d6;font-weight:800}
 .truth td{font-family:system-ui,sans-serif}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
-<link rel="stylesheet" href="../shared/course.css">
-<script src="../shared/engine.js"></script>
+<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
+<script src="../shared/engine.js?v=630ee01668668e5c"></script>
 <script defer blocking="render" src="../shared/catalog.js"></script>
 <script defer blocking="render" src="./routing.en.js"></script>
 <script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=9934ed5f733c4e29"></script>
 </head>
 </style>
 </head>
@@ -205,7 +198,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
           <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
           <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
-          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+          <span class="view-hint">확대 후 드래그로 이동</span>
         </div>
         <div class="controls">
           <div class="legend" aria-label="범례"><span><i class="dot settleddot"></i>패킷이 지난 라우터</span><span><i class="sample path"></i>패킷이 지난 링크</span><span><i class="sample cutl"></i>끊긴 링크</span></div>
@@ -232,7 +225,6 @@ const viewHeight = 280;
 const maxZoom = 3;
 const center = { x: viewWidth / 2, y: viewHeight / 2 };
 const camera = { x: 0, y: 0, zoom: 1 };
-const pointers = new Map();
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 
@@ -241,11 +233,11 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 
 // A press that starts on a switch and ends without moving toggles that switch.
-// Tracked separately from the camera pointers so it also works when the pointer is captured.
+// Track the press separately so clicking still works after a drag captures the pointer.
 let tap = null;
 viewport.addEventListener('pointerdown', (event) => {
   const target = event.target.closest?.('[data-input]');
-  tap = target && event.button === 0 && pointers.size === 0
+  tap = target && event.button === 0 && event.isPrimary
     ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
     : null;
 });
@@ -257,28 +249,7 @@ viewport.addEventListener('pointerup', (event) => {
 });
 viewport.addEventListener('pointercancel', () => { tap = null; });
 
-viewport.addEventListener('pointerdown', (event) => {
-  if (event.button !== 0 || pointers.size >= 2) return;
-  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
-  pointers.set(event.pointerId, viewportPoint(event));
-  viewport.setPointerCapture(event.pointerId);
-});
-viewport.addEventListener('pointermove', (event) => {
-  if (!pointers.has(event.pointerId)) return;
-  const before = pointerGeometry();
-  pointers.set(event.pointerId, viewportPoint(event));
-  const after = pointerGeometry();
-  const pinch = pointers.size === 2;
-  if (pinch && (before.distance < 1 || after.distance < 1)) return;
-  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
-  zoomBetween(zoom, before.point, after.point);
-  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
-});
-for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-  viewport.addEventListener(eventName, (event) => {
-    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
-  });
-}
+enableCameraDrag();
 
 
 

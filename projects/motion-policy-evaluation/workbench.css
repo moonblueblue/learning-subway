@@ -56,7 +56,3 @@
 #motion-map { width: 100%; height: clamp(88px, 23dvh, 180px); }
 #motion-record { font-size: .92em; }
 #motion-error { color: #a34123; }
-@media (max-width: 370px), (max-height: 440px) {
-  .motion-dialog { padding: 7px; font-size: 13px; }
-  .motion-dialog .action { padding-inline: 7px; }
-}

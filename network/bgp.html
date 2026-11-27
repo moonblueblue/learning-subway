@@ -26,7 +26,7 @@ header p.lead{color:var(--muted);margin-top:10px}
 .status{color:var(--accent);font-size:.875rem;font-weight:700}
 .stage{background:#eaf3eb;border-block:1px solid var(--border)}
 svg{display:block;width:100%;height:auto;max-height:520px}
-#scene{touch-action:pan-y;user-select:none}
+#scene{user-select:none}
 #scene:focus-visible{outline-offset:-4px}
 #scene.is-zoomed{cursor:grab;touch-action:none}
 #scene.is-dragging{cursor:grabbing}
@@ -42,8 +42,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
 .view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
 .view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
-.touch-hint{display:none}
-@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
 .iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
 .node .face{stroke-width:.8;stroke-linejoin:round}
 .node .shadow{fill:#1f4434;opacity:.16}
@@ -95,9 +93,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .takeaway strong{display:block;color:var(--accent);font-size:.875rem}
 .navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
-@media(max-width:560px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
 .cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
 .cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
@@ -167,11 +162,9 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .memory-list .mark{margin-left:auto;color:#9fe3b6;font-size:.8125rem}
 .memory-list li.current::after{content:none}
 @media(prefers-reduced-motion:reduce){.clock.tick{animation:none}}
-@media(max-width:600px){.part-tag text{font-size:14px}.cell.code .cell-value{font-size:12px}}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
 .packet-halo{opacity:.22;fill:var(--request)}
 .packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
-@media(max-width:600px){.packet-label{font-size:13px}}
 .casing{fill:none;stroke:#eaf3eb;stroke-width:8;stroke-linecap:round;opacity:.9}
 .bus{fill:none;stroke:#9fbfae;stroke-width:3.5;stroke-linecap:round}
 .station .face{stroke-width:.8;transition:fill .2s}
@@ -200,7 +193,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .work-panel.error .work-title{color:#a24c14}
 .work-panel.error .work{box-shadow:inset 4px 0 #e0773a}
 .work li{padding-left:16px}
-@media(max-width:600px){.packet-label{font-size:13px}.tag.holds text{font-size:14px}}
 .zone{stroke-width:1.2;stroke-dasharray:6 4}
 .zone.user-zone{fill:#e2ece5;stroke:#9fb7a9}
 .zone.kernel-zone{fill:#ece4f2;stroke:#b39ac4}
@@ -236,7 +228,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .cost.down .cost-tag rect{fill:#fff6ef;stroke:#a24c14}.cost.down .cost-tag text{fill:#a24c14}
 .bus.down{stroke:#a24c14;stroke-dasharray:5 5;stroke-width:2}
 .sample.down{border-top-color:#a24c14;border-top-style:dashed}
-@media(max-width:600px){.cost-tag text{font-size:14px}}
 .station.router .left{fill:#eadcf0;stroke:#9a77ad}.station.router .right{fill:#d9c4e3;stroke:#9a77ad}.station.router .top{fill:#f7f0fa;stroke:#9a77ad}
 .antenna{stroke:#6f4f86;stroke-width:1.6;stroke-linecap:round}
 .dot.routerdot{background:#eadcf0;border-color:#9a77ad}
@@ -250,13 +241,12 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
-<link rel="stylesheet" href="../shared/course.css">
-<script src="../shared/engine.js"></script>
+<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
+<script src="../shared/engine.js?v=630ee01668668e5c"></script>
 <script defer blocking="render" src="../shared/catalog.js"></script>
 <script defer blocking="render" src="./bgp.en.js"></script>
 <script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=9934ed5f733c4e29"></script>
 </head>
 <body>
 <main class="shell">
@@ -307,7 +297,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
           <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
           <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
-          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대</span></span>
+          <span class="view-hint">확대 후 드래그로 이동</span>
         </div>
         <div class="controls">
           <div class="legend" aria-label="범례"><span><i class="sample"></i>AS 사이 연결</span><span><i class="dot hubdot"></i>스위치</span><span><i class="dot routerdot"></i>AS (자율 시스템)</span><span><i class="dot activedot"></i>신호가 막 닿은 곳</span><span><i class="dot errordot"></i>오류</span></div>
@@ -334,7 +324,6 @@ const viewHeight = 280;
 const maxZoom = 3;
 const center = { x: viewWidth / 2, y: viewHeight / 2 };
 const camera = { x: 0, y: 0, zoom: 1 };
-const pointers = new Map();
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 
@@ -343,11 +332,11 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 
 // A press that starts on a switch and ends without moving toggles that switch.
-// Tracked separately from the camera pointers so it also works when the pointer is captured.
+// Track the press separately so clicking still works after a drag captures the pointer.
 let tap = null;
 viewport.addEventListener('pointerdown', (event) => {
   const target = event.target.closest?.('[data-input]');
-  tap = target && event.button === 0 && pointers.size === 0
+  tap = target && event.button === 0 && event.isPrimary
     ? { input: target.dataset.input, x: event.clientX, y: event.clientY, id: event.pointerId }
     : null;
 });
@@ -359,28 +348,7 @@ viewport.addEventListener('pointerup', (event) => {
 });
 viewport.addEventListener('pointercancel', () => { tap = null; });
 
-viewport.addEventListener('pointerdown', (event) => {
-  if (event.button !== 0 || pointers.size >= 2) return;
-  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
-  pointers.set(event.pointerId, viewportPoint(event));
-  viewport.setPointerCapture(event.pointerId);
-});
-viewport.addEventListener('pointermove', (event) => {
-  if (!pointers.has(event.pointerId)) return;
-  const before = pointerGeometry();
-  pointers.set(event.pointerId, viewportPoint(event));
-  const after = pointerGeometry();
-  const pinch = pointers.size === 2;
-  if (pinch && (before.distance < 1 || after.distance < 1)) return;
-  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
-  zoomBetween(zoom, before.point, after.point);
-  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
-});
-for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-  viewport.addEventListener(eventName, (event) => {
-    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
-  });
-}
+enableCameraDrag();
 
 
 
@@ -526,7 +494,6 @@ function sizePlate(plate) {
   Object.entries({ x: x - width / 2, y: plate.y - height / 2, width, height, rx: plate.round ? height / 2 : 6 })
     .forEach(([key, value]) => plate.rect.setAttribute(key, value));
 }
-matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
 
 // ---------- Scene: a star of cables around one switch ----------
 const shapeOf = { pc: [1.1, 12], switch: [1.5, 7], router: [1.3, 10], server: [1.1, 17], firewall: [.7, 15], net: [1.4, 5] };

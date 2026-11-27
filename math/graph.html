@@ -33,8 +33,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
 .view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
 .view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
-.touch-hint{display:none}
-@media(pointer:coarse){.mouse-hint{display:none}.touch-hint{display:inline}}
 .iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
 .node .face{stroke-width:.8;stroke-linejoin:round}
 .node .shadow{fill:#1f4434;opacity:.16}
@@ -58,7 +56,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .badge.ok text{fill:#2f6b4f}
 .packet{stroke:white;stroke-width:1.6}
 .packet-halo{opacity:.22}
-@media(max-width:600px){.tag text{font-size:17px}.badge text{font-size:15px}}
 @media(prefers-reduced-motion:reduce){.badge{transition:none}}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -75,7 +72,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
 .steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
-@media(max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
 .steps button:hover{border-color:var(--accent)}
 .steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
@@ -88,18 +84,15 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .takeaway strong{display:block;color:var(--accent);font-size:.875rem}
 .navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-@media(max-width:980px){.workspace{grid-template-columns:1fr}.navigation{margin-top:0}}
-@media(max-width:420px){.shell{padding:18px 12px}.stage-top,.controls,.timeline,.view-controls{padding-inline:12px}.view-hint{flex-basis:100%;margin-inline-start:0}.steps{gap:5px}.steps button{padding-inline:6px}}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
-<link rel="stylesheet" href="../shared/course.css">
-<script src="../shared/engine.js"></script>
+<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
+<script src="../shared/engine.js?v=630ee01668668e5c"></script>
 <script defer blocking="render" src="../shared/catalog.js"></script>
 <script defer blocking="render" src="./graph.en.js"></script>
 <script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=9934ed5f733c4e29"></script>
 </head>
 <body>
 <main class="shell">
@@ -127,7 +120,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
           <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
           <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
-          <span class="view-hint"><span class="mouse-hint">확대 후 드래그로 이동</span><span class="touch-hint">두 손가락으로 확대 · 확대 후 드래그</span></span>
+          <span class="view-hint">확대 후 드래그로 이동</span>
         </div>
         <div class="controls">
           <div class="legend" aria-label="범례"><span><i class="sample plain"></i>방향 없는 관계(화살표 없음)</span><span><i class="sample"></i>› 화살표 쪽으로 가는 관계</span><span><i class="sample muted"></i>경로 밖의 관계</span></div>
@@ -297,7 +290,6 @@ const viewHeight = 280;
 const maxZoom = 3;
 const center = { x: viewWidth / 2, y: viewHeight / 2 };
 const camera = { x: 0, y: 0, zoom: 1 };
-const pointers = new Map();
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 
@@ -305,28 +297,7 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 // Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
 
 
-viewport.addEventListener('pointerdown', (event) => {
-  if (event.button !== 0 || pointers.size >= 2) return;
-  if (event.pointerType !== 'touch' && camera.zoom === 1) return;
-  pointers.set(event.pointerId, viewportPoint(event));
-  viewport.setPointerCapture(event.pointerId);
-});
-viewport.addEventListener('pointermove', (event) => {
-  if (!pointers.has(event.pointerId)) return;
-  const before = pointerGeometry();
-  pointers.set(event.pointerId, viewportPoint(event));
-  const after = pointerGeometry();
-  const pinch = pointers.size === 2;
-  if (pinch && (before.distance < 1 || after.distance < 1)) return;
-  const zoom = pinch ? camera.zoom * after.distance / before.distance : camera.zoom;
-  zoomBetween(zoom, before.point, after.point);
-  viewport.classList.toggle('is-dragging', !pinch && camera.zoom > 1);
-});
-for (const eventName of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-  viewport.addEventListener(eventName, (event) => {
-    if (pointers.delete(event.pointerId)) viewport.classList.remove('is-dragging');
-  });
-}
+enableCameraDrag();
 
 
 
@@ -469,7 +440,6 @@ function addPlate(node, className, x, y, text, centered = true) {
   sizePlate(plate);
   return plate;
 }
-matchMedia('(max-width: 600px)').addEventListener('change', () => plates.forEach(sizePlate));
 
 function createNode(id) {
   const node = svg('g', { class: 'node ' + id, 'data-node': id }, byId('nodes'));

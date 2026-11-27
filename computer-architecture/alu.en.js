@@ -8,7 +8,6 @@ window.lessonText = {
     'How does a calculator circuit pick one of several operations? Start from a selector and build up to an ALU that takes two numbers and one operation.',
   '입력과 연산 신호가 선택기와 ALU를 지나 출력으로 가는 장면': 'Inputs and an operation signal passing through a selector and an ALU to the output',
   '입력, 계산 회로, 출력': 'Inputs, computing circuit, output', '연산 고르기': 'Choose the operation', '장면의 스위치와 연산 다이얼을 눌러도 됩니다 · 확대 후 드래그로 이동': 'You can also press the switches and the operation dial in the scene · zoom in, then drag to move',
-  '장면의 스위치와 연산 다이얼을 눌러도 됩니다 · 두 손가락으로 확대': 'You can also press the switches and the operation dial in the scene · pinch to zoom',
   // Nodes, readouts and announcements
   '선택 S': 'Select S', '출력': 'Output', '연산': 'Operation', '플래그': 'Flags', 'Z 결과가 0': 'Z result is 0', 'C 올림·빌림': 'C carry or borrow',
   '연산 {0}': 'Operation {0}', '연산 {0}.': 'Operation {0}.', '연산 {0}. {1}': 'Operation {0}. {1}',

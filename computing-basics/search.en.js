@@ -33,7 +33,6 @@ window.lessonText = {
     'How much does the amount of work change with the method that solves the same problem? Open the boxes yourself to find a number.',
   '상자와 찾는 수': 'Boxes and the target', '상자를 열어 수를 찾는 장면': 'Opening boxes to find a number',
   '장면의 상자를 눌러도 됩니다 · 확대 후 드래그로 이동': 'You can also press the boxes in the scene · zoom in, then drag to move',
-  '장면의 상자를 눌러도 됩니다 · 두 손가락으로 확대': 'You can also press the boxes in the scene · pinch to zoom',
   '닫힌 상자': 'Closed box', '열어 본 상자': 'Opened box', '찾은 상자': 'Found box', '버린 범위': 'Discarded range',
   '찾는 수': 'Target', '찾는 수 {0}': 'Target {0}', '찾는 수 {#0} · 연 상자 {#1}개': 'Target {0} · {1} {1|box|boxes} opened',
   '정렬됨 · 열어 본 가운데 {0}': (list) => `Sorted · middles opened: ${list.replace(/(\d+)번 (\d+)/g, 'box $1 ($2)')}`,

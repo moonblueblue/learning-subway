@@ -105,23 +105,21 @@
     handsOn.prepend(prompt, inputs);
   }
 
-  // All views share one timeline, including the guide on a phone.
+  // Keep a single timeline when switching between the reading and practice views.
   if (timeline) {
     workspace.after(timeline);
     const navigation = explanation.querySelector('.navigation');
-    for (const [button, caption] of [[navigation.querySelector('#prev'), ['‹ 이전 단계', '‹ 이전']], [navigation.querySelector('#next'), ['다음 단계 ›', '다음 ›']]]) {
+    for (const [button, caption] of [[navigation.querySelector('#prev'), '‹ 이전 단계'], [navigation.querySelector('#next'), '다음 단계 ›']]) {
       const label = '타임라인 ' + button.textContent.trim();
       button.setAttribute('aria-label', label);
       button.title = label;
-      // A low landscape screen shows the short caption; both say which way the step goes.
-      button.replaceChildren(element('span', 'course-step-long', caption[0]), element('span', 'course-step-short', caption[1]));
+      button.textContent = caption;
     }
     timeline.append(navigation);
     timeline.style.setProperty('--step-count', timeline.querySelector('.steps').children.length);
   }
 
-  // Previous and next lesson in course order: a row of two cards under the timeline, shown where the sidebar is not
-  // (phones). Step buttons stay in the timeline, so moving a step and moving a lesson are always separate.
+  // Expose adjacent lessons when the desktop sidebar collapses.
   const ordered = aiLine ? chapters.find(chapter => chapter.id === aiLine.id).lessons : chapters.flatMap((chapter) => [...chapter.lessons, ...chapter.tracks.flatMap((track) => track.lessons)]);
   const at = ordered.findIndex((lesson) => lesson.ref === pageRef);
   if (at >= 0 && ordered.length > 1) {
@@ -250,7 +248,7 @@
   const langSwitch = element('div');
   window.courseI18n?.buildSwitch(langSwitch);
   bar.append(langSwitch);
-  // A reflection or file tree can use the whole mobile pane without resetting its state.
+  // A reflection or file tree can use the whole detail panel without resetting its state.
   const detail = canvas.querySelector('.think, .side');
   const detailAnchor = document.createComment('lesson detail');
   let detailSlot;
@@ -290,7 +288,7 @@
   close.type = 'button';
   drawerTop.append(drawerTitle, close);
   drawer.append(drawerTop);
-  // On a phone the brand is hidden in the bar, so the drawer starts with the way back to the home page.
+  // Keep the home link accessible when the sidebar collapses.
   const home = element('a', 'course-home', '첫 화면으로');
   home.href = '../index.html';
   drawer.append(home);
@@ -327,7 +325,6 @@
     document.body.style.setProperty('--course-sidebar-top', bar.offsetHeight + 'px');
   });
   barSize.observe(bar);
-  const landscape = matchMedia('(min-width: 620px) and (max-height: 549px)');
   const hasScene = Boolean(canvas.querySelector('#scene'));
   const example = element('figure', 'course-example');
   example.setAttribute('aria-label', '이 단계의 예시');
@@ -505,7 +502,6 @@
   let selectedView = hasScene ? 'canvas' : 'guide';
   function placeViews() {
     if (fitted.matches) rail.prepend(views);
-    else if (landscape.matches) bar.append(views);
     else workspace.before(views);
     if (detail) {
       if (fitted.matches) detailAnchor.after(detail);
@@ -538,7 +534,6 @@
     placeViews();
   });
   fitted.addEventListener('change', placeViews);
-  landscape.addEventListener('change', placeViews);
 
   let fitFrame = null;
   function scheduleFit() {

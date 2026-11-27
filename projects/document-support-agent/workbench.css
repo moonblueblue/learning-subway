@@ -45,12 +45,3 @@
 #rag-command { display: block; margin-top: 6px; overflow-wrap: anywhere; font-size: .92em; }
 #rag-error, #rag-load-error { color: #96351e; }
 #rag-load-error:empty, #rag-error:empty { display: none; }
-@media (max-width: 520px), (max-height: 480px) {
-  #rag-dialog { padding: 7px; font-size: 13px; }
-  #rag-dialog .action { min-height: 38px; padding-inline: 7px; }
-}
-
-@media (max-width: 640px) and (min-height: 550px) {
-  .course-shell .timeline .steps > li { flex: 1 1 0; min-width: 0; }
-  .course-shell .timeline .steps button { width: 100%; min-width: 0; }
-}

@@ -439,25 +439,6 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .course-shell .navigation button { min-height: 32px; padding: 2px 8px; font-size: .8rem; }
   .course-shell .steps button { min-height: 36px; }
 }
-/* A phone keeps the step buttons in one row, one control high, so the scene keeps its room (0.4 review: two rows
-   plus the lesson pager left the scene 106px high on 390 × 750). Long step names end in an ellipsis; the current
-   step's full title is in the explanation. */
-@media (max-width: 640px) and (min-height: 550px) {
-  .course-shell .timeline .steps { grid-template-columns: repeat(var(--step-count), minmax(0, 1fr)); gap: 4px; }
-  .course-shell .timeline .steps button {
-    display: block;
-    height: var(--course-control-height);
-    min-height: 0;
-    padding: 0 6px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    text-align: start;
-    line-height: calc(var(--course-control-height) - 2px);
-    font-size: .75rem;
-  }
-  .course-shell .timeline .steps .step-number { margin-inline-end: 4px; }
-}
 @media screen {
   .course-shell .controls .actions { align-items: center; }
   .course-shell .navigation button {
@@ -491,32 +472,6 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .course-shell .course-practice .try { padding: 6px 8px; }
   .course-shell .course-practice .action { padding: 3px 9px; min-height: 36px; }
   .course-shell .course-practice :is(.memory-list, .work, .code) { line-height: 1.4; }
-}
-@media (min-width: 620px) and (max-height: 549px) {
-  .course-bar > .course-views { align-self: center; }
-  .course-bar > .course-views button { white-space: nowrap; }
-  .course-shell .course-explanation-body > .course-fit-content {
-    display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; align-items: start;
-  }
-  .course-explanation-body .course-fit-content:has(> .course-example) > .course-prose {
-    grid-row: 1 / span 2;
-  }
-  .course-explanation-body .course-fit-content:has(> .course-example) > :is(.course-example, .takeaway) {
-    grid-column: 2;
-  }
-  .course-shell .course-activity .course-fit-content:has(> .case) { display: grid; grid-template-columns: 1fr 1.3fr; gap: 8px; }
-  .course-shell .course-activity .course-fit-content > :is(.case, .truth) { grid-column: 1; }
-  .course-shell .course-activity .course-fit-content > .course-quiz { grid-column: 2; grid-row: 1 / span 2; }
-  .course-shell .course-practice .hands-on {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
-    align-items: start;
-    gap: 8px 16px;
-  }
-  .course-prompt, .course-inputs { display: grid; align-content: start; gap: 7px; min-width: 0; }
-  .course-inputs { grid-column: 2; grid-row: 1 / span 2; }
-  .course-shell .course-practice .hands-on > :is(table, .tables) { grid-column: 1; }
-  .course-shell .course-practice .pixel-grid { grid-template-columns: repeat(8, 24px); }
-  .course-shell .course-practice .pixel-button { width: 24px; height: 24px; }
 }
 .course-log-pages:not([hidden]) { display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; background: #e9f5f3; }
 .course-log-pages .course-button { min-height: 32px; }
@@ -565,14 +520,6 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .course-summary-open .explanation .course-prose { gap: 3px; }
   .course-summary-open .explanation h2 { font-size: 1rem; }
   .course-summary-open .explanation p { font-size: .9375rem; }
-}
-@media (min-width: 620px) and (max-height: 549px) {
-  .course-shell .workspace.course-summary-open {
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr);
-  }
-  .course-summary-open .explanation { max-height: none; }
-  .course-shell .course-summary-open .course-explanation-body > .course-fit-content { display: block; }
 }
 .course-shell .action.primary:hover:not(:disabled):not([aria-disabled=true]) {
   background: #115e59;
@@ -673,7 +620,7 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 .course-home:hover { background: var(--course-active); }
 
 /* Lesson pager: one row of two links under the timeline where there is no sidebar: "← 0.1 비트와 이진수" and
-   "0.3 이미지와 소리 →", each one control high so the scene keeps its room on a phone. "이전 레슨"/"다음 레슨"
+   "0.3 이미지와 소리 →", each one control high to leave room for the scene. "이전 레슨"/"다음 레슨"
    stays for screen readers; the next link is tinted so going forward reads as the main way on. */
 .course-pager { display: none; }
 @media (max-width: 959px) {
@@ -686,21 +633,9 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .course-pager-next::after { content: "→"; flex: none; }
   .course-pager-next { grid-column: 2; justify-content: flex-end; background: var(--course-active); border-color: #9fcab4; color: #0f766e; }
 }
-/* A low landscape screen has no room for another row: the two links join the end of the timeline row,
-   showing only "← 이전 레슨" and "다음 레슨 →" (the lesson name stays in the title). */
-@media (max-width: 959px) and (max-height: 549px) {
-  .course-shell .timeline:has(> .course-pager) { grid-template-columns: auto minmax(0, 1fr) auto auto; }
-  .course-pager { grid-column: auto; display: flex; gap: 6px; margin: 0; padding: 0 0 0 6px; border-top: 0; border-inline-start: 1px solid var(--course-border); }
-  .course-pager-link { display: inline-flex; align-items: center; padding: 0 10px; white-space: nowrap; }
-  .course-pager-prev::before, .course-pager-next::after { content: none; }
-  .course-pager-title { display: none; }
-  .course-pager-label { position: static; width: auto; height: auto; overflow: visible; clip: auto; font-size: .8rem; font-weight: 700; color: var(--course-muted); }
-  .course-pager-next .course-pager-label { color: #0f766e; }
-}
 
 /* One control height per screen: the bar buttons, language switch and timeline step buttons line up. */
 .course-shell { --course-control-height: 40px; }
-@media (max-height: 549px) { .course-shell { --course-control-height: 32px; } }
 /* Every one-line control on a screen shares this height: bar, language, tabs, zoom, timeline, and the lesson's own
    action buttons and text inputs. Answer choices may wrap, so they only share the minimum. Cells that are part of
    a drawing (pixels, bit switches, boxes) follow the drawing instead. */
@@ -715,20 +650,16 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 .course-shell main input:not([type]) { height: var(--course-control-height); min-height: var(--course-control-height); box-sizing: border-box; }
 .course-shell .course-camera .action { width: var(--course-control-height); }
 .course-shell main .action.choice { min-height: var(--course-control-height); height: auto; box-sizing: border-box; }
-@media (max-width: 959px) and (max-height: 549px) { .course-shell .course-pager-link { height: var(--course-control-height); } }
 
+
+/* Previously cached course.js also emits a second caption in the same button. */
 .course-step-short { display: none; }
-@media (max-height: 549px) {
-  .course-step-long { display: none; }
-  .course-step-short { display: inline; }
-}
 
 /* Example note on still pictures (engine.js exampleNote): one line at the top centre of the scene. */
 .example-note rect { fill: #f1f7f2; stroke: #7fa891; stroke-width: .8; }
 .example-note text { fill: #2f6b4f; font: 700 12px system-ui, sans-serif; text-anchor: middle; dominant-baseline: central; }
 .example-note.bad rect { fill: #fff6ef; stroke: #a24c14; }
 .example-note.bad text { fill: #a24c14; }
-@media (max-width: 600px) { .example-note text { font-size: 15px; } }
 
 /* The AI map is the return point, including on narrow screens. */
 .ai-journey .course-brand { display: inline-flex; align-items: center; min-height: 36px; white-space: nowrap; }
@@ -737,19 +668,6 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
   .ai-journey .course-brand { font-size: .82rem; }
 }
 
-/* Phone portrait: the page scrolls instead of squeezing the scene. The lesson panel keeps a fixed share of the
-   screen so the picture stays readable, the explanation shows in full below it, and the timeline (step and lesson
-   buttons) stays pinned to the bottom of the screen. On a 375 × 667 phone the scene went from 63px to about 250px. */
-@media screen and (max-width: 640px) and (min-height: 550px) {
-  html:has(> body.course-shell:not(.ai-journey)) { overflow: auto; }
-  body.course-shell:not(.ai-journey) { height: auto; min-height: 100dvh; overflow: visible; }
-  .course-shell:not(.ai-journey) > main.shell { flex: 1 0 auto; }
-  .course-shell:not(.ai-journey) > main .workspace { flex: 1 0 auto; }
-  .course-shell:not(.ai-journey) > main .workspace.course-summary-open { grid-template-rows: auto auto; }
-  .course-shell:not(.ai-journey) .course-reading .course-lesson-panel { height: max(380px, 60dvh); }
-  .course-shell:not(.ai-journey) .course-summary-open .explanation { max-height: none; }
-  .course-shell:not(.ai-journey) .timeline { position: sticky; bottom: 0; z-index: 5; }
-}
 
 /* Moving between lessons (DESIGN.md "레슨 사이 이동"). Lesson scripts are render-blocking, so a page is first painted
    with its shell already built. Between pages the browser keeps the top bar and sidebar as they are (same names in

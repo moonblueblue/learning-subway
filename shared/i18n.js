@@ -27,7 +27,7 @@
     '원래 보기로 돌아왔습니다': 'Back to the original view',
     // Circuit lessons (chapter 3): switches, lines and lamps.
     '스위치 {0}': 'Switch {0}', '스위치 {0}, 켜짐 1': 'Switch {0}, on 1', '스위치 {0}, 꺼짐 0': 'Switch {0}, off 0', '스위치 {0} 켜짐. {1}': 'Switch {0} on. {1}', '스위치 {0} 꺼짐. {1}': 'Switch {0} off. {1}', '{0}의 {#1} 자리, {#2}': '{0} {1}s place, {2}', '1이 흐르는 선': 'Line carrying 1', '0인 선': 'Line at 0', '여러 비트를 나르는 버스': 'Bus carrying several bits', '연산 신호': 'Operation signal', '입력 스위치 켜고 끄기': 'Turn the input switches on and off', '진리표 · 직접 만든 줄에 ✓': 'Truth table · ✓ on rows you made', '이 단계의 문제를 모두 풀었습니다. 스위치를 자유롭게 눌러 보세요.': 'You solved every problem in this step. Press the switches as you like.', '램프': 'Lamp', '램프 켜짐': 'Lamp on', '스위치': 'Switches',
-    '첫 화면으로': 'Home', '이전 레슨': 'Previous lesson', '다음 레슨': 'Next lesson', '← 이전 레슨': '← Previous lesson', '다음 레슨 →': 'Next lesson →', '레슨 이동': 'Lesson navigation', '다음 단계 ›': 'Next step ›', '‹ 이전 단계': '‹ Previous step', '‹ 이전': '‹ Back', '다음 ›': 'Next ›',
+    '첫 화면으로': 'Home', '이전 레슨': 'Previous lesson', '다음 레슨': 'Next lesson', '← 이전 레슨': '← Previous lesson', '다음 레슨 →': 'Next lesson →', '레슨 이동': 'Lesson navigation', '다음 단계 ›': 'Next step ›', '‹ 이전 단계': '‹ Previous step',
     '처음 상태로': 'Reset', '처음 상태로 되돌렸습니다.': 'Reset to the starting state.', '버튼을 눌러 보세요.': 'Press a button.',
     '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.': 'You solved every problem in this step. Try anything you like.',
     // Station lessons (3.8, 5.3 …): code or a message carried from station to station.
@@ -39,7 +39,7 @@
     '"다음 단계"를 누르면 패킷이 오갑니다.': 'Press "Next step" and packets travel.',
     '"다음 단계"를 눌러 요청을 하나씩 보내 보세요. 중간에 예측 문제가 나옵니다.': 'Press "Next step" to send the requests one at a time. Prediction questions come up along the way.',
     '"한 줄 실행"을 눌러 다음 줄을 실행해 보세요. 예측 문제가 나오면 먼저 답을 고릅니다.': 'Press "Run one line" to run the next line. When a prediction question appears, choose your answer first.',
-    '확대 후 드래그로 이동': 'Zoom in, then drag to move', '두 손가락으로 확대 · 확대 후 드래그': 'Pinch to zoom · drag after zooming',
+    '확대 후 드래그로 이동': 'Zoom in, then drag to move',
     '타임라인': 'Timeline', '타임라인 {0}': 'Timeline: {0}', '{#0}장': 'Ch. {0}', '{#0}개 레슨': '{0} {0|lesson|lessons}',
     '관찰 포인트': 'What to notice', '해 보기': 'Try', '확대': 'Zoom in', '축소': 'Zoom out',
     '언어': 'Language', '한국어': '한국어',
@@ -61,9 +61,7 @@
     '모두 지우기': 'Clear all', '반전': 'Invert', '화면': 'Screen', '픽셀 칠하기': 'Painting pixels',
     '이 단계의 문제를 모두 풀었습니다. 자유롭게 바꿔 보세요.': 'You solved every problem in this step. Change anything you like.',
     '장면의 픽셀을 눌러도 됩니다 · 확대 후 드래그로 이동': 'You can also press the pixels in the scene · zoom in, then drag to move',
-    '장면의 픽셀을 눌러도 됩니다 · 두 손가락으로 확대': 'You can also press the pixels in the scene · pinch to zoom',
     '장면의 스위치를 눌러도 됩니다 · 확대 후 드래그로 이동': 'You can also press the switches in the scene · zoom in, then drag to move',
-    '장면의 스위치를 눌러도 됩니다 · 두 손가락으로 확대': 'You can also press the switches in the scene · pinch to zoom',
     '값이 흐르는 선': 'Line a value flows along', '켜짐 = 1': 'On = 1', '꺼짐 = 0': 'Off = 0',
     // Practice lessons (questions, answers, reflection)
     '{#0}장 {1} · 레슨 {#2} · 실습': 'Chapter {0}: {1} · Lesson {2} · Practice',
@@ -78,7 +76,7 @@
     '메모리와 CPU': 'Memory and CPU', '읽기 · 칸 → CPU': 'Read · cell → CPU', '쓰기 · CPU → 칸': 'Write · CPU → cell', '빈 칸': 'Empty cell',
     '프로그램': 'Program', '한 줄 실행': 'Run one line', '처음부터': 'From the start', '메모리': 'Memory', '결과': 'Result',
     '대기': 'Waiting', '읽는 중': 'Reading', '예측 고르기': 'Make a prediction', '확대 후 드래그로 이동': 'Zoom in, then drag to move',
-    '두 손가락으로 확대': 'Pinch to zoom', '{#0}번지': 'address {0}', '{0} 적기': 'Write {0}', '읽은 값 {0}': 'Value read {0}',
+    '{#0}번지': 'address {0}', '{0} 적기': 'Write {0}', '읽은 값 {0}': 'Value read {0}',
     '{#0}번째 줄 실행: {1}': 'Ran line {0}: {1}', '{#0}번째 줄 "{1}" · {2}': 'Line {0} "{1}" · {2}', '{#0}번째': 'line {0}',
     '✗ {0}이(가) 아닙니다. 다시 골라 보세요.': '✗ Not {0}. Choose again.', '메모리가 비어 있습니다.': 'Memory is empty.',
     '끝까지 실행했습니다': 'Ran to the end', '처음부터 다시 시작합니다.': 'Starting again from the beginning.',

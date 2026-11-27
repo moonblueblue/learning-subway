@@ -80,17 +80,41 @@ function zoomBetween(nextZoom, from, to = from) {
             camera.y + from.y / camera.zoom - to.y / zoom, zoom);
 }
 
+// Cached lesson HTML used this global before camera binding moved into the engine.
 function pointerGeometry() {
   const [a, b] = pointers.values();
   if (!b) return { point: a, distance: 0 };
-  return {
-    point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
-    distance: Math.hypot(a.x - b.x, a.y - b.y),
-  };
+  return { point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, distance: Math.hypot(a.x - b.x, a.y - b.y) };
+}
+
+let cameraDrag = null;
+
+function enableCameraDrag() {
+  viewport.addEventListener('pointerdown', event => {
+    if (!event.isPrimary || event.button !== 0 || camera.zoom === 1) return;
+    cameraDrag = {id: event.pointerId, point: viewportPoint(event)};
+    viewport.setPointerCapture(event.pointerId);
+  });
+  viewport.addEventListener('pointermove', event => {
+    if (cameraDrag?.id !== event.pointerId) return;
+    const point = viewportPoint(event);
+    zoomBetween(camera.zoom, cameraDrag.point, point);
+    cameraDrag.point = point;
+    viewport.classList.add('is-dragging');
+  });
+  for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+    viewport.addEventListener(name, event => {
+      if (cameraDrag?.id !== event.pointerId) return;
+      cameraDrag = null;
+      viewport.classList.remove('is-dragging');
+    });
+  }
 }
 
 function resetView() {
-  pointers.clear();
+  if (typeof pointers !== 'undefined') pointers.clear();
+  if (cameraDrag && viewport.hasPointerCapture(cameraDrag.id)) viewport.releasePointerCapture(cameraDrag.id);
+  cameraDrag = null;
   viewport.classList.remove('is-dragging');
   setCamera(0, 0, 1);
   byId('announcement').textContent = '원래 보기로 돌아왔습니다';
@@ -179,7 +203,7 @@ function kick() {
 // tspan, so the page translation finds every piece in the dictionary). `tone` 'ok' (green) or 'bad' (warning).
 // The box is sized to the text, again after translation. A line too long for 560px (box 580 of the 620 scene) breaks into two lines between
 // pieces (the split that leaves the longer line shortest); only a line still too long is set smaller. Shrinking alone
-// left phone-width notes touching both edges in letters too small to read (2026-11-26 scene review).
+// left long notes touching both edges in letters too small to read (2026-11-26 scene review).
 function exampleNote(content, tone = 'ok') {
   document.getElementById('example-note')?.remove();
   const g = svg('g', { id: 'example-note', class: 'example-note ' + tone }, document.getElementById('scene'));

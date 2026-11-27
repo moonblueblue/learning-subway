@@ -2789,7 +2789,7 @@ const courseCatalog = {
             },
             {
               "id": "1.1",
-              "ref": "network/layers"
+              "ref": "network/layer-roles"
             },
             {
               "id": "1.2",
@@ -4038,6 +4038,17 @@ const courseCatalog = {
           "format": "실험",
           "requires": [],
           "page": "network/layers.html"
+        },
+        {
+          "id": "layer-roles",
+          "title": "네트워크 계층",
+          "titleEn": "Network layers",
+          "question": "그림을 보낼 때 받을 기기, 가는 길, 내용을 누가 정할까?",
+          "format": "실험",
+          "requires": [
+            "network/connections"
+          ],
+          "page": "network/layer-roles.html"
         },
         {
           "id": "ethernet",

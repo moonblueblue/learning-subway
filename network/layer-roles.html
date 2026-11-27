@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="받을 기기, 가는 길, 보내는 그림을 하나씩 바꾸며 네트워크 계층의 역할을 살펴봅니다.">
+<title>네트워크 계층 · 레슨 1.1</title>
+<style>
+:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--limit:#a24c14;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
+:focus-visible{outline:3px solid var(--limit);outline-offset:3px}
+.shell{max-width:1280px;margin:auto;padding:24px}
+h1,h2,p{margin:0}
+.eyebrow{color:var(--accent);font-weight:700}
+.lead{color:var(--muted)}
+.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.stage-top,.view-controls,.navigation,.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.stage-top,.explanation,.timeline{padding:14px 18px}
+.stage-top h2,.timeline h2{font-size:1rem}
+.stage{background:#eaf3eb;border-block:1px solid var(--border)}
+#scene{display:block;width:100%;height:auto;user-select:none}
+#scene:focus-visible{outline-offset:-4px}
+#scene.is-zoomed{cursor:grab;touch-action:none}
+#scene.is-dragging{cursor:grabbing}
+.view-scale{font:700 .875rem var(--mono);color:var(--muted)}
+.action,.steps button,select{min-height:44px;padding:6px 10px;border:1px solid #9fb7a9;border-radius:8px;background:#fff}
+.action:hover,.steps button:hover{border-color:var(--accent)}
+.action.primary{background:var(--accent);border-color:var(--accent);color:white}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:8px 0 0;padding:0;list-style:none}
+.steps button{width:100%}
+.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:700}
+.step-number{margin-inline-end:6px}
+.hands-on{display:grid;gap:10px;padding:14px}
+.try,.takeaway{padding:10px 12px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 8px 8px 0}
+.lab-field{display:grid;gap:4px}
+.lab-field label{font-weight:650}
+.hands-on [hidden]{display:none}
+.readout{padding-top:6px;min-height:2.2em;font-weight:650;color:var(--accent)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.intro-text{font:650 15px system-ui,sans-serif;text-anchor:middle;dominant-baseline:central;fill:#142620}
+.intro-caption{font-weight:750;font-size:16px}
+.intro-tablet{fill:#dce6f6;stroke:#5362a0;stroke-width:1.5}
+.intro-screen{fill:#fff;stroke:#a7b3cc;stroke-width:1}
+.intro-router{fill:#d5efeb;stroke:#0f766e;stroke-width:1.5}
+.intro-router.inactive{fill:#f1f5f2;stroke:#768e82}
+.intro-line{fill:none;stroke:#768e82;stroke-width:2;stroke-linejoin:round}
+.intro-line.sent{stroke:#187959;stroke-width:3}
+.intro-tip{fill:#187959}
+.intro-drawing{fill:#ffd477;stroke:#855006;stroke-width:1.35;stroke-linejoin:round}
+.intro-role{fill:#fff;stroke:#9bbfaf;stroke-width:1.2}
+.intro-role.intro-identified{fill:#d5efeb;stroke:#0f766e;stroke-width:2}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
+<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./layer-roles.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=42f6f4d09f421784"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">1장 링크와 LAN · 레슨 1.1</p>
+    <h1>네트워크 계층</h1>
+    <p class="lead">같은 그림을 누구에게 어떤 길로 보낼지 바꿔 보고, 전송에 필요한 일을 나눠 맡는 계층을 알아봅니다.</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">그림의 내용과 길</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">그림을 보낼 때 나누어 맡는 일</title>
+            <desc id="scene-desc"></desc>
+            <g id="world" aria-hidden="true"><g id="intro-figure"></g></g>
+          </svg>
+        </div>
+        <div class="hands-on">
+          <p class="try" id="intro-task"></p>
+          <div class="lab-field">
+            <label for="intro-choice" id="intro-label"></label>
+            <select id="intro-choice"></select>
+          </div>
+          <button class="action primary" id="intro-run" type="button"></button>
+          <p class="readout" id="intro-result" role="status"></p>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const byId = (id) => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const maxZoom = 3;
+const center = { x: viewWidth / 2, y: viewHeight / 2 };
+const camera = { x: 0, y: 0, zoom: 1 };
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+const workspace = document.querySelector('.workspace');
+
+const firstPicture = { destination: 'b', path: 'classroom', drawing: 'star' };
+const schoolNames = {
+  a: '태블릿 A', b: '태블릿 B', c: '태블릿 C',
+  club: '동아리방 노트북', display: '복도 안내 화면', relay: '동아리방 공유기',
+  classroom: '교실 공유기', hall: '복도 공유기',
+  star: '별', triangle: '세모', app: '응용 계층의 역할', network: '네트워크 계층의 역할', link: '링크 계층의 역할',
+};
+const lesson = [
+  {
+    intro: 'destination', label: '받을 기기', title: '같은 그림을 서로 다른 기기에 보낼 수 있습니다',
+    body: '앞 레슨에서 보았던 별을 보냅니다. 태블릿 A와 교실 공유기는 그대로 두고, 받을 태블릿만 B에서 C로 바꿉니다.',
+    takeaway: '별이 위에서는 B에, 아래에서는 C에 생깁니다. A의 별과 공유기까지의 길은 같습니다.',
+    description: '두 줄 모두 태블릿 A의 별이 교실 공유기를 지납니다. 위 줄에서는 B에만, 아래 줄에서는 C에만 별이 도착합니다.',
+    example: ['태블릿 A의 별', '받을 기기를 B에서 C로 바꿈', '아래에서는 C에만 별 도착'],
+    task: '태블릿 C를 골라 별을 보내세요. B를 골랐을 때와 받는 화면을 비교해 보세요.',
+    legend: '받을 태블릿', options: ['b', 'c'],
+    captions: ['받을 기기 · 태블릿 B', '받을 기기 · 태블릿 C'],
+    outcomes: ['태블릿 B에 별이 도착했습니다.', '태블릿 C에 별이 도착했습니다.'],
+  },
+  {
+    intro: 'path', label: '거치는 길', title: '받을 기기가 같아도 그곳까지 가는 길은 달라질 수 있습니다',
+    body: '이번에는 두 길이 모두 태블릿 B에 이어집니다. 교실 공유기를 지나는 길과 복도 공유기를 지나는 길로 별을 보내 봅니다.',
+    takeaway: '그림이 거치는 가운데 기기가 바뀝니다. 원본은 A에 있고 받은 별은 두 경우 모두 B에 있습니다.',
+    description: '두 줄에서 같은 A와 B 사이에 서로 다른 경유 기기가 있습니다. 위쪽은 교실 공유기, 아래쪽은 복도 공유기를 거칩니다. B에는 두 줄 모두 같은 별이 있습니다.',
+    example: ['태블릿 B로 보낼 별', '교실 또는 복도 공유기를 지남', '두 길 모두 태블릿 B에 도착'],
+    task: '복도 공유기를 지나는 길을 골라 별을 보내세요. 교실 공유기를 지날 때와 받는 화면을 비교해 보세요.',
+    legend: '지나는 기기', options: ['classroom', 'hall'],
+    captions: ['지나는 기기 · 교실 공유기', '지나는 기기 · 복도 공유기'],
+    outcomes: ['교실 공유기를 지나 B에 별이 도착했습니다.', '복도 공유기를 지나 B에 별이 도착했습니다.'],
+  },
+  {
+    intro: 'drawing', label: '보내는 내용', title: '같은 길로 다른 그림을 보낼 수 있습니다',
+    body: '받을 태블릿 B와 교실 공유기를 지나는 길을 그대로 둡니다. A에서 별 대신 세모를 골라 같은 길로 보냅니다.',
+    takeaway: '화살표는 두 줄에서 같은 기기를 잇습니다. B에 도착하는 모양만 별에서 세모로 바뀝니다.',
+    description: '두 줄의 길은 태블릿 A에서 교실 공유기를 거쳐 B로 이어집니다. 위에서는 별이, 아래에서는 세모가 보내는 화면과 받는 화면에 똑같이 나타납니다.',
+    example: ['태블릿 B로 가는 같은 길', '보낼 그림을 별에서 세모로 바꿈', '태블릿 B에 세모 도착'],
+    task: '세모를 골라 보내세요. 별을 보낼 때와 목적지, 지나가는 길, 도착한 모양을 비교해 보세요.',
+    legend: '보낼 그림', options: ['star', 'triangle'],
+    captions: ['보내는 그림 · 별', '보내는 그림 · 세모'],
+    outcomes: ['태블릿 B에 별이 도착했습니다.', '태블릿 B에 세모가 도착했습니다.'],
+  },
+  {
+    intro: 'role', label: '계층의 역할', title: '전송에 필요한 일을 나눠 맡은 것이 계층입니다',
+    body: '그림 앱은 보낼 내용을 정합니다. 네트워크 계층은 마지막에 받을 기기를 주소로 찾아 그쪽으로 가는 방향을 정합니다. 링크 계층은 그 길의 한 구간에서 다음 기기까지 전달합니다.',
+    takeaway: '위쪽 전체 경로에서 별은 내용, B는 마지막 목적지, A에서 공유기까지는 첫 구간입니다.',
+    description: '별이 태블릿 A에서 교실 공유기를 거쳐 태블릿 B로 갑니다. 세 칸이 각각 응용 계층의 별, 네트워크 계층의 최종 목적지 B, 링크 계층의 첫 구간 A에서 공유기까지를 가리킵니다.',
+    example: ['태블릿 B로 보내는 별', '내용·최종 목적지·한 구간으로 나눔', '응용·네트워크·링크 계층이 맡음'],
+    task: '같은 별을 태블릿 C로 보냅니다. 어느 계층에서 마지막 목적지 정보를 바꿀까요?',
+    legend: '바꿀 계층', options: ['app', 'network', 'link'],
+    outcomes: [
+      '응용 계층은 보낼 내용을 정합니다. 별은 그대로입니다.',
+      '맞았습니다. 네트워크 계층이 마지막 목적지를 C로 삼습니다.',
+      '링크 계층은 바로 다음 기기까지 전달합니다. 첫 구간은 그대로입니다.',
+    ],
+  },
+  {
+    intro: 'transfer', label: '새 예에 적용', title: '안내 화면에 세모를 띄울 때 바뀌는 일을 찾습니다',
+    body: '동아리방 노트북에서 공유기를 거쳐 복도 안내 화면에 별을 보내고 있습니다. 이제 같은 화면에 세모를 띄웁니다.',
+    takeaway: '두 줄에서 끝점과 선은 같습니다. 노트북에서 고른 모양과 안내 화면의 모양이 함께 바뀝니다.',
+    description: '위아래 모두 동아리방 노트북에서 공유기를 지나 복도 안내 화면으로 갑니다. 위에는 별, 아래에는 세모가 표시됩니다.',
+    example: ['복도 안내 화면에 별이 떠 있음', '응용 계층에서 세모를 보냄', '같은 안내 화면에 세모가 뜸'],
+    task: '복도 안내 화면의 별을 세모로 바꿉니다. 받는 화면과 거치는 길은 그대로입니다. 어느 계층에서 값을 바꿀까요?',
+    legend: '바꿀 계층', options: ['app', 'network', 'link'],
+    outcomes: [
+      '맞았습니다. 응용 계층이 세모를 보내고 같은 안내 화면에 세모가 나타났습니다.',
+      '마지막 목적지는 같은 안내 화면입니다. 바뀌어야 할 값을 다시 살펴보세요.',
+      '첫 구간은 같은 공유기로 이어집니다. 바뀌어야 할 값을 다시 살펴보세요.',
+    ],
+  },
+];
+const introState = { choice: '', submitted: false };
+const introFigure = byId('intro-figure');
+const labOptions = byId('intro-choice');
+
+function introText(group, x, y, value, style = '') {
+  svg('text', { x, y, class: 'intro-text ' + style }, group).textContent = value;
+}
+function introBox(group, x, y, width, height, style) {
+  svg('rect', { x, y, width, height, rx: 8, class: style }, group);
+}
+function introDrawing(group, x, y, shape) {
+  const points = shape === 'star'
+    ? '0,-11 3,-4 11,-3.5 5,2 6,9 0,5 -6,9 -5,2 -11,-3.5 -3,-4'
+    : '0,-10 10,8 -10,8';
+  svg('polygon', { points, transform: 'translate(' + x + ' ' + y + ')', class: 'intro-drawing', 'data-picture': shape }, group);
+}
+function introDevice(group, x, y, id, picture) {
+  const node = svg('g', { 'data-device': id }, group);
+  introBox(node, x - 32, y - 17, 64, 34, 'intro-tablet');
+  introBox(node, x - 25, y - 12, 50, 24, 'intro-screen');
+  if (id === 'club' || id === 'display') {
+    const foot = id === 'club'
+      ? 'M ' + (x - 36) + ' ' + (y + 16) + ' h 72 l -6 6 h -60 Z'
+      : 'M ' + (x - 2) + ' ' + (y + 15) + ' h 4 v 7 h 12 v 3 h -28 v -3 h 12 Z';
+    svg('path', { d: foot, class: 'intro-tablet' }, node);
+  }
+  if (picture) introDrawing(node, x, y, picture);
+  introText(svg('g', {}, node), x, y + (id === 'club' || id === 'display' ? 42 : 29), schoolNames[id]);
+}
+function introArrow(group, x1, y1, x2, y2, sent) {
+  const start = 'M ' + x1 + ' ' + y1;
+  const origin = y1 === y2 ? start : start + ' V ' + y2;
+  // The stroke ends before the tip, inside the filled triangle.
+  introLine(group, origin + ' H ' + (x2 - (sent ? 3 : 0)), sent);
+  if (sent) {
+    svg('polygon', { points: x2 + ',' + y2 + ' ' + (x2 - 11) + ',' + (y2 - 6) + ' ' + (x2 - 11) + ',' + (y2 + 6), class: 'intro-tip' }, group);
+  }
+}
+function introLine(group, d, sent) {
+  svg('path', { d, class: 'intro-line' + (sent ? ' sent' : '') }, group);
+}
+function introRoute(parent, y, { destination, path, drawing, sender = 'a' }, { caption = '', sent, comparison }) {
+  const group = svg('g', { 'data-delivery': sent ? destination : '' }, parent);
+  if (caption) introText(svg('g', {}, group), 310, y - 50, caption, 'intro-caption');
+  const multipleRecipients = comparison === 'destination';
+  const multiplePaths = comparison === 'path';
+  const recipients = multipleRecipients ? [['b', y - 30], ['c', y + 30]] : [[destination, y]];
+  const routers = multiplePaths ? [['classroom', y - 24], ['hall', y + 24]] : [[path, y]];
+  const start = multiplePaths ? 152 : 109;
+  const junction = multipleRecipients ? 400 : 362;
+  if (multiplePaths) introLine(group, 'M 109 ' + y + ' H ' + start, sent);
+  for (const [id, row] of routers) {
+    const active = sent && path === id;
+    introArrow(group, start, y, 216, row, active);
+    if (multiplePaths) introLine(group, 'M 362 ' + row + ' H 428 V ' + y, active);
+    const router = svg('g', { class: 'node', 'data-router': id, 'data-active': active }, group);
+    introBox(router, 216, row - 13, 146, 26, 'intro-router' + (multiplePaths && !active ? ' inactive' : ''));
+    introText(router, 289, row, schoolNames[id]);
+  }
+  if (multipleRecipients) introLine(group, 'M 362 ' + y + ' H ' + junction, sent);
+  for (const [id, row] of recipients) {
+    introArrow(group, multiplePaths ? 428 : junction, y, 490, row, sent && destination === id);
+    introDevice(group, 522, row, id, (sent || comparison === 'display') && destination === id ? drawing : '');
+  }
+  introDevice(group, 77, y, sender, drawing);
+  if (sent) introDrawing(group, multiplePaths ? 132 : 170, y - 19, drawing);
+}
+function drawLayerRoles(parent, inPractice) {
+  const corrected = inPractice && introState.submitted && introState.choice === 'network';
+  introRoute(parent, 55, { ...firstPicture, destination: corrected ? 'c' : 'b' }, { sent: !inPractice || corrected });
+  const roles = [
+    ['app', '무슨 내용?', '별 그림'],
+    ['network', '마지막에 받을 기기?', corrected ? '최종 목적지 · C' : '최종 목적지 · B'],
+    ['link', '바로 다음 기기?', '첫 구간 · A → 공유기'],
+  ];
+  roles.forEach(([id, question, value], i) => {
+    const x = 110 + 200 * i;
+    const active = corrected && id === 'network' ? ' intro-identified' : '';
+    introBox(parent, x - 91, 125, 182, 109, 'intro-role' + active);
+    introText(parent, x, 150, question);
+    introText(parent, x, 180, value);
+    introText(parent, x, 212, schoolNames[id], 'intro-caption');
+  });
+}
+function drawTransfer(parent, inPractice) {
+  const route = { sender: 'club', destination: 'display', path: 'relay', drawing: 'star' };
+  if (inPractice) {
+    const correct = introState.submitted && introState.choice === 'app';
+    introRoute(parent, 137, { ...route, drawing: correct ? 'triangle' : 'star' }, { sent: correct, comparison: 'display' });
+    return;
+  }
+  introRoute(parent, 70, route, { caption: '안내 화면의 별', sent: true });
+  introRoute(parent, 198, { ...route, drawing: 'triangle' }, { caption: '같은 화면의 세모', sent: true });
+}
+function paintIntro() {
+  const step = lesson[state.index];
+  const inPractice = coursePracticeStarted && !workspace.classList.contains('course-reading');
+  introFigure.replaceChildren();
+  if (step.intro === 'role') {
+    drawLayerRoles(introFigure, inPractice);
+  } else if (step.intro === 'transfer') {
+    drawTransfer(introFigure, inPractice);
+  } else if (inPractice) {
+    const example = { ...firstPicture, [step.intro]: introState.choice };
+    introRoute(introFigure, 140, example, { sent: introState.submitted, comparison: step.intro });
+  } else {
+    step.options.forEach((option, i) => {
+      const example = { ...firstPicture, [step.intro]: option };
+      introRoute(introFigure, 73 + i * 130, example, { caption: step.captions[i], sent: true, comparison: step.intro });
+    });
+  }
+  const outcome = introState.submitted ? step.outcomes[step.options.indexOf(introState.choice)] : '';
+  byId('intro-result').textContent = outcome || '실행 전';
+  byId('scene-desc').textContent = inPractice ? (outcome || step.task) : step.description;
+}
+labOptions.onchange = () => {
+  introState.choice = labOptions.value;
+  introState.submitted = false;
+  byId('intro-run').disabled = !introState.choice;
+  paintIntro();
+};
+byId('intro-run').onclick = () => {
+  introState.submitted = true;
+  paintIntro();
+};
+
+const state = { index: 0 };
+function showStep(index, announce = true) {
+  state.index = index;
+  const step = lesson[index];
+  const isQuestion = step.intro === 'role' || step.intro === 'transfer';
+  introState.choice = isQuestion ? '' : step.options[0];
+  introState.submitted = false;
+  const options = step.options.map(id => new Option(schoolNames[id], id));
+  if (isQuestion) options.unshift(new Option('계층을 고르세요', ''));
+  labOptions.replaceChildren(...options);
+  labOptions.value = introState.choice;
+  byId('intro-task').textContent = step.task;
+  byId('intro-label').textContent = step.legend;
+  byId('intro-run').textContent = isQuestion ? '확인하기' : '그림 보내기';
+  byId('intro-run').disabled = !introState.choice;
+  byId('step-title').textContent = step.title;
+  byId('body').textContent = step.body;
+  byId('takeaway').textContent = step.takeaway;
+  byId('count').textContent = (index + 1) + ' / ' + lesson.length;
+  byId('prev').disabled = index === 0;
+  byId('next').disabled = index === lesson.length - 1;
+  stepButtons.forEach((button, i) => {
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  paintIntro();
+  if (announce) byId('announcement').textContent = (index + 1) + '단계. ' + step.title;
+};
+new MutationObserver(paintIntro).observe(workspace, { attributes: true, attributeFilter: ['class'] });
+function fragmentForStep(index) {
+  return `#/layer-roles/${index + 1}`;
+}
+function goToStep(index) {
+  if (index < 0 || index >= lesson.length || index === state.index) return;
+  history.pushState(null, '', fragmentForStep(index));
+  showStep(index);
+}
+const stepButtons = lesson.map(({ label }, index) => {
+  const item = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  const number = document.createElement('span');
+  number.className = 'step-number';
+  number.textContent = index + 1;
+  button.append(number, document.createTextNode(label));
+  button.onclick = () => goToStep(index);
+  item.append(button);
+  byId('steps').append(item);
+  return button;
+});
+
+byId('prev').onclick = () => goToStep(state.index - 1);
+byId('next').onclick = () => goToStep(state.index + 1);
+window.addEventListener('hashchange', syncRoute);
+window.addEventListener('popstate', syncRoute);
+enableCameraDrag();
+byId('zoom-in').onclick = () => zoomBy(.25);
+byId('zoom-out').onclick = () => zoomBy(-.25);
+const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+viewport.addEventListener('keydown', event => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const direction = directions[event.key];
+  if (direction && camera.zoom > 1) {
+    event.preventDefault();
+    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
+  } else if (['+', '=', '-'].includes(event.key)) {
+    event.preventDefault();
+    zoomBy(event.key === '-' ? -.25 : .25);
+  } else if (event.key === '0') {
+    event.preventDefault();
+    resetView();
+  }
+});
+window.addEventListener('keydown', event => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+setCamera(0, 0, 1);
+const initial = routeIndex();
+history.replaceState(null, '', fragmentForStep(initial));
+showStep(initial, false);
+</script>
+</body>
+</html>

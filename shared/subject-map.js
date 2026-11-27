@@ -161,7 +161,11 @@
       [[svg('rect', {x: 7, y: 1, width: 16, height: 16, rx: 5, fill: '#fff', stroke: INK, 'stroke-width': 2.5}),
         svg('path', {d: 'M12.5,5 L19,9 L12.5,13 Z', fill: INK})], text('다른 주제로 갈아타는 곳', 'Change to another subject')],
     ];
-    document.querySelector('.map-legend').replaceChildren(...legend.map(([shapes, words]) => html('span', {}, icon(shapes), words)));
+    // Only the marks this map uses.
+    const used = [true, subject.stations.some(station => station.kind === 'planned'), subject.stations.some(station => station.capsule),
+      subject.stations.some(station => station.kind === 'transfer')];
+    document.querySelector('.map-legend').replaceChildren(
+      ...legend.filter((entry, i) => used[i]).map(([shapes, words]) => html('span', {}, icon(shapes), words)));
   }
 
   function draw() {

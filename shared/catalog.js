@@ -2637,11 +2637,13 @@ const courseCatalog = {
         },
         {
           "id": "text",
-          "title": "문자의 표현",
-          "titleEn": "Representing text",
-          "question": "\"A\"와 \"가\"는 어떤 비트가 될까?",
+          "title": "글자의 번호표",
+          "titleEn": "Number tables for characters",
+          "question": "같은 번호를 받았는데 어떤 때 다른 글자가 나타날까?",
           "format": "실험",
-          "requires": [],
+          "requires": [
+            "computing-basics/bits"
+          ],
           "page": "computing-basics/text.html"
         },
         {

@@ -2,6 +2,42 @@
 // Hangul syllables this lesson encodes (가, 각, 쁁 …) are data and stay as they are.
 window.lessonKeep = ['[가-힣](?=$|\\s|[’”"·,)])', '^[가-힣]$'];
 window.lessonText = {
+  '44032를 쓴 16비트': '16 bits that write 44032',
+  '번호를 쓴 16비트': '16 bits for the number',
+  'UTF-8 예 ·': 'UTF-8 examples ·',
+  'A 65는 1바이트': 'A (65) uses 1 byte',
+  '가 44032는 3바이트': '가 (44032) uses 3 bytes',
+  '실행 장면에서도 같은 65를 두 번호표로 읽습니다. 같은 표는 A, 바꾼 예시 표는 B를 냅니다.':
+    'The live scene reads 65 with two tables. The same table gives A. The different example table gives B.',
+  '글자의 번호표': 'Number tables for characters',
+  '0장 컴퓨팅 둘러보기': 'Chapter 0 · A tour of computing',
+  '같은 번호표': 'Same number table',
+  '다른 예시 번호표': 'Different example table',
+  '번호표 선택 전': 'Choose a number table',
+  '보낸 글자': 'Sent letter',
+  '받은 번호': 'Received number',
+  '받는 번호표': 'Receiver’s table',
+  '나온 글자': 'Shown letter',
+  '같은 번호표를 쓰면 같은 글자를 읽습니다': 'The same number table gives the same letter',
+  '두 줄 모두 보내는 사람이 A에 해당하는 번호 65를 보냅니다. 같은 번호표는 65를 A로 읽습니다. 다른 예시 번호표는 65를 B로 읽어서 보내려던 글자와 달라집니다.':
+    'In both rows, the sender sends 65 for A. The matching table reads 65 as A. The different example table reads 65 as B, which changes the letter.',
+  '보낸 글자 A': 'Sent letter A',
+  '같은 번호 65를 두 표로 읽기': 'Read the same 65 with two tables',
+  '같은 표의 A · 다른 표의 B': 'A with the same table · B with the other table',
+  '보내는 쪽과 받는 쪽은 같은 번호표를 써야 합니다': 'Sender and receiver need to use the same number table',
+  '글자 A를 보낼 때 표에서 번호 65를 찾습니다. 받는 사람이 같은 표를 보면 65에서 A를 찾습니다. 번호표를 바꾸면 같은 65도 다른 글자가 됩니다. 실제 ASCII 표에서 A는 65번, a는 97번입니다.':
+    'To send A, find the number 65 in the table. A receiver with the same table finds A from 65. With a different table, the same 65 may give a different letter. In the real ASCII table, A is 65 and a is 97.',
+  '두 줄에서 받은 번호는 65로 같습니다. 달라진 받는 번호표를 지나 오른쪽에 나온 A와 B를 확인하세요.':
+    'Both rows receive 65. Follow the different tables to A and B on the right.',
+  '실행 장면은 ASCII의 65를 여덟 자리로 표시합니다. A와 a를 오가는 동안 값 32를 맡은 스위치 하나만 바뀝니다.':
+    'The live scene shows ASCII 65 in eight bits. When it switches between A and a, only the switch worth 32 changes.',
+  '보낸 번호 65를 어느 표로 읽을지 선택해 보세요.': 'Choose which table should read the number 65.',
+  '보낸 65를 같은 번호표에서 찾았습니다. 화면에 A가 나옵니다.': 'You read 65 in the matching table. The screen shows A.',
+  '보낸 65를 다른 예시 번호표에서 찾았습니다. 화면에 B가 나옵니다.': 'You read 65 in the different example table. The screen shows B.',
+  '보내는 쪽은 A의 번호 65를 보냈습니다. 받는 번호표를 고르기 전이라 화면 글자가 없습니다.':
+    'The sender sent 65 for A. The screen is blank while you choose the receiver’s table.',
+  '심화 · A의 UTF-8': 'More · UTF-8 for A',
+  '심화 · 가의 UTF-8': 'More · UTF-8 for 가',
   "A와 a는 32 자리 하나만 다르다": "A and a differ only in the 32 place",
   "ASCII에서 A는 65번, a는 97번입니다. 같은 글자표를 쓰고 32 자리만 켜면 65에 32가 더해져 97이 됩니다. 숫자 글자 0도 48번이라는 문자 번호가 있습니다.": "In ASCII, A is 65 and a is 97. The same character table is used, and turning on the 32 place adds 32 to 65, making 97. The character 0 has its own number, 48.",
   "같은 ASCII 표 · 32 자리만 달라짐": "Same ASCII table · only the 32 place changes",

@@ -244,7 +244,7 @@
   menu.setAttribute('aria-haspopup', 'dialog');
   menu.setAttribute('aria-expanded', 'false');
   const brand = element('a', 'course-brand', aiLine ? 'AI 노선도' : 'Learning Subway');
-  brand.href = aiLine ? '../ai-map.html?v=1bb1d8ccac5e9eca&' + new URLSearchParams({line: aiLine.id, lesson: pageRef}) : '../index.html';
+  brand.href = aiLine ? '../ai-map.html?v=f151c1fc27eab65c&' + new URLSearchParams({line: aiLine.id, lesson: pageRef}) : '../index.html';
   bar.append(menu, brand);
   // Language switch (Korean default, English second); CSS keeps it at the right end of the bar.
   const langSwitch = element('div');

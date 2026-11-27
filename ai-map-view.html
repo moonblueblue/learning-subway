@@ -18,14 +18,14 @@ addEventListener('pageshow', event => {
 <meta name="theme-color" content="#f4f7ef">
 <title>AI 노선도</title>
 <link rel="icon" href="./shared/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="./shared/ai-map.css?v=6f4062b634f816a8">
+<link rel="stylesheet" href="./shared/ai-map.css?v=bf303e55e5c8f094">
 <link rel="stylesheet" href="./shared/map-topics.css?v=583cfc9afb489968">
 <script defer src="./shared/catalog.js?v=16bf0993f50ecc50"></script>
-<script defer src="./shared/ai-stations.js?v=923d9a787dd1f044"></script>
-<script>window.lessonText = {"역 선택":"Station"};</script>
+<script defer src="./shared/ai-stations.js?v=51cf92e1b34b092b"></script>
+
 <script defer src="./shared/i18n.js?v=78a030e446786b47"></script>
 <script defer src="./shared/map-topics.js?v=d372269d6998bac6"></script>
-<script defer src="./shared/ai-map.js?v=c1845219de57cbc9"></script>
+<script defer src="./shared/ai-map.js?v=68a065ab7f7a662a"></script>
 </head>
 <body data-ai-map class="map-shell">
 <header class="map-mast">
@@ -35,16 +35,19 @@ addEventListener('pageshow', event => {
 </header>
 <div class="map-workspace">
 <nav class="map-topics" data-no-i18n aria-label="학습 주제"></nav>
-<main>
-  <div class="sheet">
-    <svg class="network" role="group" aria-label="AI 노선도"></svg>
-    <nav class="legend" aria-label="노선"><div id="trunk"></div><div id="branches"></div></nav>
-  </div>
-  <section class="stop" aria-label="선택한 노선">
-    <div class="summary"><h2 id="line-name"></h2><span>졸업 과제</span> <strong id="destination"></strong></div>
-    <div class="boarding"><label for="lessons">역 선택</label><select id="lessons"></select>
-      <a id="enter">레슨 열기</a><span id="planned" hidden>준비 중</span>
+<main data-no-i18n>
+  <section class="sheet" aria-labelledby="line-name part-name">
+    <div class="part-header">
+      <div class="part-heading">
+        <h2 id="line-name"></h2>
+        <details class="part-picker">
+          <summary><span id="part-name"></span></summary>
+          <nav class="parts"></nav>
+        </details>
+      </div>
+      <nav class="part-pager"><a id="prev-part"></a><span id="part-count"></span><a id="next-part"></a></nav>
     </div>
+    <svg class="network" role="group"></svg>
   </section>
 </main>
 </div>

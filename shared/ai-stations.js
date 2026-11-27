@@ -205,6 +205,58 @@ const aiStationMap = {
         "id": "1.50",
         "ref": "ai/inspection-release-report"
       }
+    ],
+    "parts": [
+      {
+        "start": "1.10",
+        "title": "문제를 AI로 표현하기",
+        "titleEn": "Framing an AI problem"
+      },
+      {
+        "start": "1.14",
+        "title": "데이터를 믿을 조건",
+        "titleEn": "When to trust the data"
+      },
+      {
+        "start": "1.2",
+        "title": "수치와 불확실성",
+        "titleEn": "Numbers and uncertainty"
+      },
+      {
+        "start": "1.22",
+        "title": "실험 설계",
+        "titleEn": "Designing experiments"
+      },
+      {
+        "start": "1.26",
+        "title": "손실에서 학습까지",
+        "titleEn": "From loss to learning"
+      },
+      {
+        "start": "1.6",
+        "title": "신경망과 일반화",
+        "titleEn": "Neural networks and generalization"
+      },
+      {
+        "start": "1.34",
+        "title": "판정과 오류 비용",
+        "titleEn": "Decisions and the cost of errors"
+      },
+      {
+        "start": "1.7",
+        "title": "이동 경로 결정",
+        "titleEn": "Choosing a route"
+      },
+      {
+        "start": "1.41",
+        "title": "재현 가능한 검증",
+        "titleEn": "Reproducible evaluation"
+      },
+      {
+        "start": "1.46",
+        "title": "경보를 점검으로 연결하기",
+        "titleEn": "From alerts to inspections"
+      }
     ]
   },
   "2": {
@@ -337,7 +389,41 @@ const aiStationMap = {
       "color": "#7162ae",
       "short": "탐색·계획",
       "shortEn": "Search"
-    }
+    },
+    "parts": [
+      {
+        "start": "2.1",
+        "title": "탐색 문제의 비용",
+        "titleEn": "The cost of a search"
+      },
+      {
+        "start": "2.3",
+        "title": "휴리스틱 탐색",
+        "titleEn": "Heuristic search"
+      },
+      {
+        "start": "2.4",
+        "title": "제약과 지식 표현",
+        "titleEn": "Constraints and knowledge"
+      },
+      {
+        "start": "2.5",
+        "title": "계획과 재계획",
+        "titleEn": "Planning and replanning"
+      },
+      {
+        "start": "2.21",
+        "title": "불확실한 관측",
+        "titleEn": "Uncertain observations",
+        "elective": true
+      },
+      {
+        "start": "2.26",
+        "title": "경쟁과 큰 탐색 공간",
+        "titleEn": "Adversarial and large-scale search",
+        "elective": true
+      }
+    ]
   },
   "3": {
     "stations": [
@@ -477,7 +563,40 @@ const aiStationMap = {
       "color": "#a06a00",
       "short": "응용 ML",
       "shortEn": "Applied ML"
-    }
+    },
+    "parts": [
+      {
+        "start": "3.6",
+        "title": "예측 표본 만들기",
+        "titleEn": "Building prediction samples"
+      },
+      {
+        "start": "3.2",
+        "title": "시간에 맞는 실험",
+        "titleEn": "Experiments over time"
+      },
+      {
+        "start": "3.15",
+        "title": "모델 후보와 선택",
+        "titleEn": "Choosing a model"
+      },
+      {
+        "start": "3.20",
+        "title": "실패를 읽는 지표",
+        "titleEn": "Measuring where predictions fail"
+      },
+      {
+        "start": "3.24",
+        "title": "현장 도입",
+        "titleEn": "Field deployment"
+      },
+      {
+        "start": "3.29",
+        "title": "정답이 적은 데이터",
+        "titleEn": "Learning with few labels",
+        "elective": true
+      }
+    ]
   },
   "4": {
     "stations": [
@@ -609,7 +728,41 @@ const aiStationMap = {
       "color": "#4c8140",
       "short": "비전",
       "shortEn": "Vision"
-    }
+    },
+    "parts": [
+      {
+        "start": "4.6",
+        "title": "영상과 정답 좌표",
+        "titleEn": "Images and labeled coordinates"
+      },
+      {
+        "start": "4.1",
+        "title": "특징과 학습",
+        "titleEn": "Learning visual features"
+      },
+      {
+        "start": "4.3",
+        "title": "검출과 분할",
+        "titleEn": "Detection and segmentation"
+      },
+      {
+        "start": "4.5",
+        "title": "영상과 작업 지침 연결",
+        "titleEn": "Connecting images to work instructions"
+      },
+      {
+        "start": "4.21",
+        "title": "움직이는 장면",
+        "titleEn": "Moving scenes",
+        "elective": true
+      },
+      {
+        "start": "4.26",
+        "title": "음성과 멀티모달",
+        "titleEn": "Audio and multimodal signals",
+        "elective": true
+      }
+    ]
   },
   "5": {
     "stations": [
@@ -749,7 +902,41 @@ const aiStationMap = {
       "color": "#b75a53",
       "short": "강화학습",
       "shortEn": "Robotics & RL"
-    }
+    },
+    "parts": [
+      {
+        "start": "5.1",
+        "title": "관측과 제어 문제",
+        "titleEn": "Observation and control"
+      },
+      {
+        "start": "5.3",
+        "title": "가치와 정책",
+        "titleEn": "Values and policies"
+      },
+      {
+        "start": "5.13",
+        "title": "경험에서 배우기",
+        "titleEn": "Learning from experience"
+      },
+      {
+        "start": "5.19",
+        "title": "정책 평가",
+        "titleEn": "Evaluating a policy"
+      },
+      {
+        "start": "5.23",
+        "title": "물리 장치에 연결하기",
+        "titleEn": "Connecting physical devices",
+        "elective": true
+      },
+      {
+        "start": "5.28",
+        "title": "실물 인수 시험",
+        "titleEn": "Acceptance tests on hardware",
+        "elective": true
+      }
+    ]
   },
   "6": {
     "stations": [
@@ -913,7 +1100,47 @@ const aiStationMap = {
       "color": "#337cb1",
       "short": "생성 모델",
       "shortEn": "Generative AI"
-    }
+    },
+    "parts": [
+      {
+        "start": "6.2",
+        "title": "텍스트에서 학습 표본까지",
+        "titleEn": "From text to training samples"
+      },
+      {
+        "start": "6.4",
+        "title": "언어 모델의 계산",
+        "titleEn": "How a language model computes"
+      },
+      {
+        "start": "6.6",
+        "title": "작은 모델 학습",
+        "titleEn": "Training a small model"
+      },
+      {
+        "start": "6.7",
+        "title": "생성과 평가",
+        "titleEn": "Generation and evaluation"
+      },
+      {
+        "start": "6.24",
+        "title": "도메인 파인튜닝",
+        "titleEn": "Domain fine-tuning",
+        "elective": true
+      },
+      {
+        "start": "6.29",
+        "title": "정렬과 모델 선택",
+        "titleEn": "Alignment and model selection",
+        "elective": true
+      },
+      {
+        "start": "6.34",
+        "title": "텍스트 밖의 생성",
+        "titleEn": "Generation beyond text",
+        "elective": true
+      }
+    ]
   },
   "7": {
     "stations": [
@@ -1057,7 +1284,41 @@ const aiStationMap = {
       "color": "#97628e",
       "short": "검색·RAG",
       "shortEn": "RAG"
-    }
+    },
+    "parts": [
+      {
+        "start": "7.1",
+        "title": "문서와 검색 기준선",
+        "titleEn": "Documents and retrieval baselines"
+      },
+      {
+        "start": "7.11",
+        "title": "후보를 찾고 재정렬하기",
+        "titleEn": "Finding and reranking candidates"
+      },
+      {
+        "start": "7.4",
+        "title": "근거로 응답하기",
+        "titleEn": "Answers grounded in evidence"
+      },
+      {
+        "start": "7.5",
+        "title": "도구를 쓰는 에이전트",
+        "titleEn": "Agents that use tools"
+      },
+      {
+        "start": "7.23",
+        "title": "폐쇄망 로컬 에이전트",
+        "titleEn": "Offline local agents",
+        "elective": true
+      },
+      {
+        "start": "7.29",
+        "title": "개인화와 추천",
+        "titleEn": "Personalization and recommendations",
+        "elective": true
+      }
+    ]
   },
   "8": {
     "stations": [
@@ -1213,6 +1474,39 @@ const aiStationMap = {
       "color": "#387d80",
       "short": "AI 서빙",
       "shortEn": "Serving"
-    }
+    },
+    "parts": [
+      {
+        "start": "8.3",
+        "title": "한 요청이 GPU를 지나는 길",
+        "titleEn": "Following a request through the GPU"
+      },
+      {
+        "start": "8.1",
+        "title": "대기열과 토큰 생성",
+        "titleEn": "Queues and token generation"
+      },
+      {
+        "start": "8.4",
+        "title": "정밀도와 자원 한계",
+        "titleEn": "Precision and resource limits"
+      },
+      {
+        "start": "8.20",
+        "title": "부하와 신뢰성",
+        "titleEn": "Load and reliability"
+      },
+      {
+        "start": "8.6",
+        "title": "실서비스 배포",
+        "titleEn": "Deploying a live service"
+      },
+      {
+        "start": "8.31",
+        "title": "분산 학습과 복구",
+        "titleEn": "Distributed training and recovery",
+        "elective": true
+      }
+    ]
   }
 };

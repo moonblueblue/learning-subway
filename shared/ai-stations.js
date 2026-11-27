@@ -7,6 +7,10 @@ const aiStationMap = {
         "ref": "ai/photo-search"
       },
       {
+        "id": "1.52",
+        "ref": "ai/rules-and-examples"
+      },
+      {
         "id": "1.10",
         "ref": "ai/decision-owner"
       },

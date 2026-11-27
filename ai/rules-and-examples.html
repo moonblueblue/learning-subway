@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="같은 장난감 사진에서 사람이 정한 규칙과 예시로 배운 기준은 왜 다르게 답할까요?">
+<title>사람이 규칙을 써 준 경우와 예시로 배운 경우 · 1.2</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<style>
+.rule-text{fill:#192f28;font-size:15px;font-weight:700}
+.rule-small{font-size:12px}
+.rule-card{fill:#fbfdf9;stroke:#658174;stroke-width:1.15}
+.rule-input{fill:#f7faf8}
+.rule-person{fill:#f0ecfa;stroke:#8673a6}
+.rule-learned{fill:#e6efff;stroke:#667da5}
+.rule-output{fill:#f3f3fb;stroke:#6f7b9a}
+.rule-match{fill:#e2f4e9;stroke:#36836a}
+.rule-miss{fill:#fbede3;stroke:#b45b37}
+.rule-pending{fill:#fff;stroke-dasharray:4 3}
+.rule-line{stroke:#327263;stroke-width:2;stroke-linecap:round}
+.rule-tip{fill:#327263}
+.rule-practice,body.course-shell .workspace:not(.course-reading) .rule-reading{display:none}
+body.course-shell .workspace:not(.course-reading) .rule-practice{display:inline}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
+<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./rules-and-examples.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=577926b68281a171"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · 1.2</p><h1>사람이 규칙을 써 준 경우와 예시로 배운 경우</h1><p>같은 장난감 사진에서 사람이 정한 규칙과 예시로 배운 기준은 왜 다르게 답할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">같은 사진, 두 가지 기준</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">사람이 규칙을 써 준 경우와 예시로 배운 경우</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    label: '사람이 쓴 규칙', title: '사람이 귀 모양을 기준으로 정합니다',
+    body: '사람이 “뾰족한 귀가 보이면 고양이, 안 보이면 고양이 아님”이라고 써 줍니다. 프로그램은 주어진 사진마다 그 규칙을 그대로 적용합니다.',
+    takeaway: '위쪽의 사람에서 규칙으로 이어지는 화살표와 아래 두 사진의 귀 모양을 보세요.',
+    description: '사람이 규칙을 써 줍니다. 뾰족귀가 보이는 사진 1은 고양이로, 둥근 귀가 보이는 사진 2는 고양이 아님으로 제안됩니다.',
+    example: ['사진 1과 2', '사람이 써 준 귀 기준', '고양이와 고양이 아님'],
+    practiceDescription: '연습 사진에는 접힌 귀의 고양이가 있습니다. 사람이 준 규칙은 뾰족한 귀가 보여야 고양이라고 답합니다.',
+    quiz: ['접힌 귀가 보이는 사진에 귀 기준을 그대로 적용하면 어떤 제안이 나올까요?', '고양이 아님', '고양이', '뾰족한 귀가 보이지 않으므로 규칙은 고양이 아님으로 답합니다.'],
+  },
+  {
+    label: '예시와 정답', title: '사람이 사진에 실제로 무엇이 있는지 표시합니다',
+    body: '이번에는 기준을 써 주는 대신, 사람이 고양이와 장난감 사진을 각각 두 장씩 골라 정답을 붙입니다. 뾰족한 귀는 고양이 사진과 장난감 사진에 모두 보입니다.',
+    takeaway: 'A와 C에 뾰족귀가 보입니다. 받침은 장난감 사진 C와 D에 있습니다.',
+    description: '사람이 예시 A의 뾰족귀 고양이와 B의 접힌 귀 고양이에 고양이 정답을 붙입니다. 받침이 보이는 장난감 C와 D에는 고양이 아님을 붙입니다.',
+    example: ['사진 A·B·C·D', '사람이 실제 물체 확인', '고양이 두 장 · 장난감 두 장'],
+    practiceDescription: '예시 E에 접힌 귀 고양이, F에 받침 위의 고양이 모양 장난감이 있습니다.',
+    quiz: ['사람은 예시 F에 어떤 실제 정답을 붙일까요?', '고양이 아님', '고양이', 'F에서 받침에 올라간 물체는 장난감입니다.'],
+  },
+  {
+    label: '기준 비교', title: '프로그램이 예시에 더 잘 맞는 기준을 고릅니다',
+    body: '이 예에서는 기준 후보를 두 개만 비교합니다. 프로그램이 귀 모양과 받침 여부를 각각 사용해서 A부터 D까지 답을 만들고, 사람이 붙인 정답과 맞춰 봅니다. 일치가 더 많은 받침 기준을 고릅니다.',
+    takeaway: '귀 기준은 A와 D만, 받침 기준은 A부터 D까지 모두 맞았습니다. 오른쪽에서 일치 수를 비교하세요.',
+    description: 'A·B·C·D의 실제 정답 바로 아래에 프로그램의 답이 있습니다. 귀 기준은 A와 D를 맞혀 2/4이고, 받침 기준은 모두 맞혀 4/4입니다. 프로그램이 받침 기준을 선택합니다.',
+    example: ['정답을 붙인 A·B·C·D', '귀 기준과 받침 기준 대조', '2/4보다 높은 4/4 선택'],
+    practiceDescription: '새 예시 E·F·G에서 귀 기준은 E만 맞혀 1/3, 받침 기준은 모두 맞혀 3/3입니다.',
+    quiz: ['예시 E·F·G에서 일치가 더 많은 기준을 고르면 어느 쪽일까요?', '받침 기준', '귀 기준', '일치 수가 3/3인 받침 기준이 1/3인 귀 기준보다 많이 맞았습니다.'],
+  },
+  {
+    label: '같은 새 사진', title: '같은 사진에서 두 기준이 다르게 답합니다',
+    body: '두 프로그램에 같은 장난감 사진 3을 줍니다. 사람이 써 준 규칙은 뾰족귀를 보고 고양이를 제안합니다. 예시에서 고른 기준은 받침을 보고 고양이 아님을 제안합니다.',
+    takeaway: '한 장에서 나온 두 화살표를 따라가면 각 기준이 주목한 부분과 제안이 보입니다.',
+    description: '사진 3에는 뾰족한 귀와 받침이 함께 보입니다. 위쪽의 사람이 쓴 귀 기준은 고양이를 제안합니다. 아래쪽의 예시에서 고른 받침 기준은 고양이 아님을 제안합니다.',
+    example: ['새 사진 3 한 장', '귀는 뾰족함 · 받침 보임', '귀는 고양이 · 받침은 아님'],
+    practiceDescription: '새 사진 4에는 귀가 접힌 고양이가 있고 받침은 보이지 않습니다. 위에는 귀 기준, 아래에는 받침 기준이 있습니다.',
+    quiz: ['사진 4에 두 기준을 적용하면 어떤 제안이 나올까요?', '귀는 아님 · 받침은 고양이', '귀는 고양이 · 받침은 아님', '귀가 뾰족하지 않아서 귀 기준은 아님이라고 답합니다. 받침이 안 보여 받침 기준은 고양이라고 답합니다.'],
+  },
+  {
+    label: '받침을 자른 사진', title: '사진에서 받침이 사라지면 제안이 바뀝니다',
+    body: '같은 장난감의 사진에서 받침만 잘라 냅니다. 뾰족귀는 계속 보이고 받침은 보이지 않으니, 이번에는 두 기준 모두 고양이를 제안합니다. 사람이 원본을 열어 확인하면 여전히 장난감입니다.',
+    takeaway: '윗줄과 아랫줄에서 받침 기준의 답만 바뀝니다. 오른쪽의 실제는 장난감 그대로입니다.',
+    description: '위에 받침까지 나온 사진 3, 아래에 받침만 잘라 낸 사진 3′이 있습니다. 귀 기준의 제안은 둘 다 고양이이고, 받침 기준은 아님에서 고양이로 바뀝니다. 사람이 원본에서 확인한 실제는 장난감입니다.',
+    example: ['받침을 자른 사진 3′', '예시 기준에서 받침이 안 보임', '제안은 고양이 · 실제는 장난감'],
+    practiceDescription: '사진 7′에는 사진 7과 같은 둥근 귀 장난감이 있지만 받침이 잘려 나갔습니다. 받침 기준은 받침이 안 보이면 고양이라고 제안합니다. 원본은 오른쪽에 남습니다.',
+    quiz: ['잘린 사진 7′의 받침 기준 제안과 실제 물체를 바르게 짝지으면 무엇일까요?', '제안은 고양이 · 실제는 장난감', '제안은 고양이 · 실제도 고양이', '사진의 아래쪽만 잘렸습니다. 원본을 보면 받침 위의 장난감입니다.'],
+  },
+].map((step, index) => ({...step, readingDiagram: {
+  figure: `rule-figure-${index}`, staticOnly: true, title: step.label, description: step.description,
+}}));
+
+const slug = 'rules-and-examples';
+const byId = id => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ['✓ 맞았습니다.', '✗ 다시 생각해 보세요.'];
+const scene = byId('scene');
+const workspace = scene.closest('.workspace');
+
+function ruleText(group, x, y, value, type = '') {
+  const text = svg('text', {x, y, class: 'rule-text ' + type, 'text-anchor': 'middle'}, group);
+  text.textContent = value;
+  return text;
+}
+
+function ruleCard(group, x, y, w, h, tone = '') {
+  svg('rect', {x, y, width: w, height: h, rx: 6, class: 'rule-card ' + tone}, group);
+}
+
+function ruleArrow(group, x1, y1, x2, y2, tone = '') {
+  svg('line', {x1, y1, x2, y2, class: 'rule-line ' + tone}, group);
+  svg('polygon', {points: '-8,-5 0,0 -8,5', class: 'rule-tip ' + tone,
+    transform: `translate(${x2} ${y2}) rotate(${Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI})`}, group);
+}
+
+const animals = {
+  amber: {fur: '#db9d62', shade: '#91532c', background: '#f9edd3', pointed: true},
+  gray: {fur: '#8293a7', shade: '#495971', background: '#e1ecf5'},
+  sampleToy: {fur: '#ca9c64', shade: '#73543c', background: '#dcf0e5', pointed: true, toy: true},
+  grayNew: {fur: '#a0a39a', shade: '#5b625f', background: '#f3e7d8'},
+  striped: {fur: '#efbc8d', shade: '#985d42', background: '#dae1f1', pointed: true, toy: true},
+  round: {fur: '#bd9dbb', shade: '#715f80', background: '#f0e5ec', toy: true},
+};
+
+function animal(group, x, y, type, crop = false, scale = 1) {
+  const {fur, shade, background, pointed, toy} = animals[type];
+  const image = svg('g', {transform: `translate(${x} ${y}) scale(${scale})`}, group);
+  svg('rect', {x: -32, y: -25, width: 64, height: 50, rx: 5, fill: background, stroke: '#89938a'}, image);
+  if (toy && !crop) {
+    svg('path', {d: 'M-20 16Q0 10 20 16V21Q0 26-20 21Z', fill: '#a34c2e'}, image);
+    svg('rect', {x: -3, y: 10, width: 6, height: 9, fill: '#674338'}, image);
+  }
+  const face = svg('g', {transform: (crop ? 'translate(0 3) scale(1.15)' : 'translate(0 -3)') + (type === 'striped' ? ' rotate(-10)' : '')}, image);
+  svg('path', {d: pointed ? 'M-19 -2L-19 -17L-9 -11Q0 -14 9 -11L19 -17L19 -2Q20 13 0 14Q-20 13-19 -2Z' :
+    'M-19 -2Q-25 -16-13 -16L-7 -11Q0 -15 7 -11L13 -16Q25 -16 19 -2Q20 13 0 14Q-20 13-19 -2Z', fill: fur, stroke: shade}, face);
+  if (type === 'gray' || type === 'grayNew') svg('path', {d: 'M-20 -12L-12 -7L-11 -12M20 -12L12 -7L11 -12', fill: 'none', stroke: shade, 'stroke-width': 1.7}, face);
+  if (type === 'striped') svg('path', {d: 'M-5 -11L-4 -5M0 -12V-5M5 -11L4 -5M18 1L13 0', fill: 'none', stroke: shade, 'stroke-width': 1.8}, face);
+  for (const eye of [-7, 7]) svg('circle', {cx: eye, cy: 0, r: 1.9, fill: '#302c2a'}, face);
+  svg('path', {d: 'M-3 5H3L0 8Z', fill: shade}, face);
+  svg('path', {d: 'M-6 8L-14 6M6 8L14 6', fill: 'none', stroke: shade}, face);
+}
+
+const cat = '고양이';
+const notCat = '고양이 아님';
+const earRule = '귀 기준';
+const standRule = '받침 기준';
+const personRule = '사람이 써 준 귀 기준';
+const learnedRule = '예시에서 고른 받침 기준';
+const training = [
+  {id: 'A', animal: 'amber'}, {id: 'B', animal: 'gray'},
+  {id: 'C', animal: 'sampleToy'}, {id: 'D', animal: 'round'},
+];
+const practiceTraining = [
+  {id: 'E', animal: 'amber'}, {id: 'F', animal: 'striped'}, {id: 'G', animal: 'gray'},
+];
+const actual = item => !animals[item.animal].toy;
+const byEar = item => Boolean(animals[item.animal].pointed);
+const showsStand = item => Boolean(animals[item.animal].toy && !item.crop);
+const byStand = item => !showsStand(item);
+const predictionName = value => value ? cat : notCat;
+
+function writtenRule(group, trial) {
+  ruleCard(group, 34, 48, 128, 37, 'rule-input');
+  ruleText(group, 98, 72, '사람이 씀');
+  ruleArrow(group, 166, 66.5, 188, 66.5);
+  ruleCard(group, 193, 48, 390, 37, 'rule-person');
+  ruleText(group, 388, 72, '뾰족귀가 보이면 고양이 · 안 보이면 아님');
+  const inputs = trial ? [{id:'4', animal:'grayNew'}] : [{id:'1', animal:'amber'}, {id:'2', animal:'round'}];
+  for (const [i, item] of inputs.entries()) {
+    const y = 122 + i * 68;
+    animal(group, 105, y, item.animal);
+    ruleText(group, 52, y + 5, item.id);
+    ruleArrow(group, 142, y, 205, y);
+    ruleCard(group, 212, y - 19, 166, 38, 'rule-person');
+    ruleText(group, 295, y + 5, byEar(item) ? '뾰족귀 보임' : '뾰족귀 안 보임');
+    ruleArrow(group, 385, y, 446, y);
+    ruleCard(group, 453, y - 19, 130, 38, trial ? 'rule-pending rule-response-panel' : 'rule-output');
+    ruleText(group, 518, y + 5, trial ? '선택 대기' : predictionName(byEar(item)), trial ? 'rule-response' : '');
+  }
+}
+
+function labeledPhotos(group, trial) {
+  ruleText(group, 310, 66, '사람이 확인하고 붙인 정답');
+  const items = trial ? [{id:'E', animal:'gray'}, {id:'F', animal:'striped'}] : training;
+  const start = trial ? 167 : 25;
+  for (const [i, item] of items.entries()) {
+    const x = start + i * 145;
+    const correct = actual(item);
+    ruleCard(group, x, 81, 135, 132, 'rule-input');
+    ruleText(group, x + 67.5, 104, item.id);
+    animal(group, x + 67.5, 135, item.animal);
+    const pending = trial && i === 1;
+    ruleCard(group, x + 10, 174, 115, 28, pending ? 'rule-pending rule-response-panel' : 'rule-match');
+    ruleText(group, x + 67.5, 193, pending ? '선택 대기' : predictionName(correct), pending ? 'rule-response rule-small' : 'rule-small');
+  }
+}
+
+function compareCriteria(group, trial) {
+  const items = trial ? practiceTraining : training;
+  const start = trial ? 212 : 184;
+  const gap = trial ? 95 : 80;
+  ruleText(group, 83, 107, '사람이 준 정답');
+  ruleText(group, 543, 107, '일치 수');
+  for (const [i, item] of items.entries()) {
+    const x = start + i * gap;
+    ruleText(group, x - 28, 70, item.id, 'rule-small');
+    animal(group, x + 3, 65, item.animal, false, .67);
+    ruleText(group, x, 106, predictionName(actual(item)), 'rule-small');
+  }
+  const criteria = [[earRule, byEar, 'rule-person'], [standRule, byStand, 'rule-learned']];
+  for (const [index, [name, predict, tone]] of criteria.entries()) {
+    const y = 119 + index * 47;
+    ruleCard(group, 26, y, 114, 38, tone);
+    ruleText(group, 83, y + 24, name);
+    for (const [i, item] of items.entries()) {
+      const x = start + i * gap;
+      const prediction = predict(item);
+      const match = prediction === actual(item);
+      ruleCard(group, x - 37, y, 74, 38, match ? 'rule-match' : 'rule-miss');
+      ruleText(group, x, y + 15, match ? '✓' : '×', 'rule-small');
+      ruleText(group, x, y + 30, predictionName(prediction), 'rule-small');
+    }
+    const correct = items.filter(item => predict(item) === actual(item)).length;
+    ruleCard(group, 494, y, 98, 38, tone);
+    ruleText(group, 543, y + 24, `${correct} / ${items.length}`);
+  }
+  if (!trial) ruleArrow(group, 543, 207, 543, 219);
+  ruleCard(group, 462, 222, 131, 30, trial ? 'rule-pending rule-response-panel' : 'rule-learned');
+  ruleText(group, 527.5, 242, trial ? '선택 대기' : '받침 기준 선택', trial ? 'rule-response rule-small' : 'rule-small');
+}
+
+function newPhoto(group, trial) {
+  const item = trial ? {id:'4', animal:'grayNew'} : {id:'3', animal:'striped'};
+  ruleText(group, 89, 81, '같은 새 사진');
+  animal(group, 89, 139, item.animal, false, 1.4);
+  ruleText(group, 89, 193, item.id);
+  const criteria = [
+    [personRule, byEar(item) ? '뾰족귀 보임' : '뾰족귀 안 보임', byEar(item), 'rule-person'],
+    [learnedRule, showsStand(item) ? '받침 보임' : '받침 안 보임', byStand(item), 'rule-learned'],
+  ];
+  for (const [index, [method, observation, prediction, tone]] of criteria.entries()) {
+    const y = 74 + index * 85;
+    ruleArrow(group, 140, 139, 208, y + 32);
+    ruleCard(group, 213, y, 223, 64, tone);
+    ruleText(group, 324.5, y + 24, method);
+    ruleText(group, 324.5, y + 47, observation);
+    ruleArrow(group, 441, y + 32, 460, y + 32);
+    ruleCard(group, 465, y + 10, 127, 44, trial ? 'rule-pending rule-response-panel' : 'rule-output');
+    ruleText(group, 528.5, y + 37, trial ? '선택 대기' : predictionName(prediction), trial ? 'rule-response rule-small' : '');
+  }
+}
+
+function cropPhoto(group, trial) {
+  const type = trial ? 'round' : 'striped';
+  const id = trial ? '7' : '3';
+  ruleText(group, 88, 69, '같은 장난감');
+  ruleText(group, 231, 69, earRule);
+  ruleText(group, 375, 69, standRule);
+  ruleText(group, 524, 69, '사람이 확인한 실제');
+  ruleCard(group, 459, 82, 131, 139, 'rule-match');
+  animal(group, 524, 137, type, false, 1.18);
+  ruleText(group, 524, 184, '실제는 장난감');
+  for (const [index, crop] of [false, true].entries()) {
+    const y = 116 + index * 67;
+    const item = {animal: type, crop};
+    animal(group, 88, y, type, crop);
+    ruleText(group, 44, y + 4, crop ? `${id}′` : id, 'rule-small');
+    ruleArrow(group, 122, y, 157, y);
+    ruleCard(group, 162, y - 18, 136, 36, 'rule-person');
+    ruleText(group, 230, y + 5, predictionName(byEar(item)), 'rule-small');
+    const pending = trial && crop;
+    ruleCard(group, 307, y - 18, 136, 36, pending ? 'rule-pending rule-response-panel' : 'rule-learned');
+    ruleText(group, 375, y + 5, pending ? '선택 대기' : predictionName(byStand(item)), pending ? 'rule-response rule-small' : 'rule-small');
+    if (!pending) ruleArrow(group, 445, y, 457, y);
+  }
+  ruleText(group, 88, 225, '아래쪽 자름', 'rule-small');
+}
+
+const draw = [writtenRule, labeledPhotos, compareCriteria, newPhoto, cropPhoto];
+for (const [index, step] of lesson.entries()) {
+  const template = document.createElement('template');
+  template.id = step.readingDiagram.figure;
+  const canvas = svg('svg', {viewBox: '0 0 620 280'}, template.content);
+  const figure = svg('g', {}, canvas);
+  draw[index](svg('g', {class: 'rule-reading'}, figure), false);
+  draw[index](svg('g', {class: 'rule-practice'}, figure), true);
+  document.body.append(template);
+}
+
+function syncRulePractice() {
+  const practice = scene.querySelector('.rule-practice');
+  if (!practice || state.index < 0) return;
+  const step = lesson[state.index];
+  const selected = state.answers.get(state.index);
+  const correct = selected === step.quiz[1];
+  const status = correct ? 'correct' : selected === undefined ? 'waiting' : 'retry';
+  if (practice.dataset.status !== status) {
+    practice.dataset.status = status;
+    const results = state.index === 3 ? [notCat, cat] : state.index === 4 ? [cat] : [step.quiz[1]];
+    practice.querySelectorAll('.rule-response').forEach((label, i) => {
+      label.textContent = correct ? results[i] : selected === undefined ? '선택 대기' : '다시 선택';
+    });
+    for (const card of practice.querySelectorAll('.rule-response-panel')) {
+      card.classList.toggle('rule-match', correct);
+      card.classList.toggle('rule-miss', status === 'retry');
+      card.classList.toggle('rule-pending', status === 'waiting');
+    }
+  }
+  const reading = workspace.classList.contains('course-reading');
+  const parts = reading ? [step.description] : [step.practiceDescription,
+    correct ? step.quiz[3] : status === 'retry' ? feedbackMessages[1] : ''];
+  const localized = parts.filter(Boolean).map(part => window.courseI18n?.translate(part) ?? part).join(' ');
+  for (const id of ['scene-desc', 'course-diagram-desc']) {
+    const node = byId(id);
+    if (node && node.textContent !== localized) node.textContent = localized;
+  }
+}
+
+const practiceChanges = new MutationObserver(syncRulePractice);
+practiceChanges.observe(scene, {childList: true});
+practiceChanges.observe(workspace, {attributes: true, attributeFilter: ['class']});
+practiceChanges.observe(byId('choices'), {childList: true, subtree: true, attributes: true, attributeFilter: ['aria-pressed']});
+window.addEventListener('course:lang', syncRulePractice);
+</script>
+<script src="../shared/reading-lesson.js?v=b4d45e8ddc5bfaac"></script>
+</body>
+</html>

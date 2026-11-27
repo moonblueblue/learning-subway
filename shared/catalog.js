@@ -2780,6 +2780,10 @@ const courseCatalog = {
           "titleEn": "Links and LANs",
           "lessons": [
             {
+              "id": "1.0",
+              "ref": "network/connections"
+            },
+            {
               "id": "1.1",
               "ref": "network/layers"
             },
@@ -3987,6 +3991,15 @@ const courseCatalog = {
       "title": "네트워크",
       "titleEn": "Networking",
       "lessons": [
+        {
+          "id": "connections",
+          "title": "네트워크로 그림 보내기",
+          "titleEn": "Send a drawing over a network",
+          "question": "같은 교실에 있는 기기끼리 어떻게 그림을 주고받을까요?",
+          "format": "실험",
+          "requires": [],
+          "page": "network/connections.html"
+        },
         {
           "id": "layers",
           "title": "네트워크 계층",

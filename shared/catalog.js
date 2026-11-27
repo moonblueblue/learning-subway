@@ -13,34 +13,38 @@ const courseCatalog = {
           "lessons": [
             {
               "id": "0.1",
-              "ref": "computing-basics/bits"
+              "ref": "computing-basics/computer-tasks"
             },
             {
               "id": "0.2",
-              "ref": "computing-basics/text"
+              "ref": "computing-basics/bits"
             },
             {
               "id": "0.3",
-              "ref": "computing-basics/media"
+              "ref": "computing-basics/text"
             },
             {
               "id": "0.4",
-              "ref": "computing-basics/compress"
+              "ref": "computing-basics/media"
             },
             {
               "id": "0.5",
-              "ref": "computing-basics/computer"
+              "ref": "computing-basics/compress"
             },
             {
               "id": "0.6",
-              "ref": "computing-basics/search"
+              "ref": "computing-basics/computer"
             },
             {
               "id": "0.7",
-              "ref": "computing-basics/internet"
+              "ref": "computing-basics/search"
             },
             {
               "id": "0.8",
+              "ref": "computing-basics/internet"
+            },
+            {
+              "id": "0.9",
               "ref": "computing-basics/impact"
             }
           ],
@@ -2561,6 +2565,15 @@ const courseCatalog = {
       "title": "컴퓨팅 기초",
       "titleEn": "Computing basics",
       "lessons": [
+        {
+          "id": "computer-tasks",
+          "title": "컴퓨터에 어떤 일을 맡길 수 있을까?",
+          "titleEn": "What can we ask a computer to do?",
+          "question": "같은 것을 주고 맡긴 일만 바꾸면 결과가 어떻게 달라질까?",
+          "format": "실험",
+          "requires": [],
+          "page": "computing-basics/computer-tasks.html"
+        },
         {
           "id": "bits",
           "title": "비트와 이진수",

@@ -543,7 +543,7 @@ const courseCatalog = {
             {
               "id": "1.3",
               "stationId": "1.1",
-              "ref": "math/logic"
+              "ref": "ai/two-sensor-alert"
             },
             {
               "id": "1.4",
@@ -3939,6 +3939,17 @@ const courseCatalog = {
             "ai/decision-owner"
           ],
           "page": "ai/method-choice.html"
+        },
+        {
+          "id": "two-sensor-alert",
+          "title": "온도와 진동, 두 조건으로 경보 내기",
+          "titleEn": "Two-sensor alert rules",
+          "question": "온도가 그대로일 때 진동이, 진동이 그대로일 때 온도가 경보를 바꾸는 이유는 무엇일까요?",
+          "format": "실험",
+          "requires": [
+            "ai/method-choice"
+          ],
+          "page": "ai/two-sensor-alert.html"
         },
         {
           "id": "rule-inference",

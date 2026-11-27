@@ -12,7 +12,10 @@ const aiStationMap = {
       },
       {
         "id": "1.1",
-        "ref": "math/logic"
+        "ref": "ai/two-sensor-alert",
+        "aliases": [
+          "math/logic"
+        ]
       },
       {
         "id": "1.12",

@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="온도가 그대로일 때 진동이, 진동이 그대로일 때 온도가 경보를 바꾸는 이유는 무엇일까요?">
+<title>온도와 진동, 두 조건으로 경보 내기 · T03</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<style>
+.sensor-text,.sensor-heading,.sensor-value{fill:#142620;font-size:13px;font-weight:700}
+.sensor-heading{font-size:14px}
+.sensor-note{fill:#43574f;font-size:11px;font-weight:600}
+.sensor-axis,.sensor-arrow,.sensor-divider{fill:none;stroke:#536b61;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.sensor-arrow{stroke:#0f766e;stroke-width:1.8}
+.sensor-divider{stroke:#b8c8bd;stroke-dasharray:4 4}
+.sensor-card{fill:#fcfdfb;stroke:#9aafa3}
+.sensor-range,.sensor-positive{fill:#d5efeb}
+.sensor-positive{stroke:#0f766e;stroke-dasharray:none}
+.sensor-negative{fill:#fae8df;stroke:#aa4e27;stroke-dasharray:none}
+.sensor-dot{fill:#263e5c;stroke:#fcfdfb;stroke-width:1.5}
+.sensor-pending{stroke:#73877c;stroke-dasharray:4 3}
+.sensor-practice-only,.course-reading .sensor-practice{display:none}
+.workspace:not(.course-reading) .sensor-practice-only{display:inline}
+.workspace:not(.course-reading) .sensor-reading-only{display:none}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
+<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./two-sensor-alert.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=577926b68281a171"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · T03</p><h1>온도와 진동, 두 조건으로 경보 내기</h1><p>온도가 그대로일 때 진동이, 진동이 그대로일 때 온도가 경보를 바꾸는 이유는 무엇일까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">온도·진동과 경보</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">온도와 진동, 두 조건으로 경보 내기</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    label: '두 조건 함께 보기',
+    title: '온도와 진동이 모두 기준에 닿을 때 경보가 납니다',
+    body: '설비 A의 온도와 진동을 따로 읽습니다. 온도는 80°C부터, 진동은 초당 4 mm부터 각 조건에 맞습니다. 83°C와 초당 5 mm는 두 조건에 맞아 A 경보를 보냅니다.',
+    takeaway: '두 센서 숫자를 더하지 않습니다. 각 조건의 표시가 둘 다 맞아야 합니다.',
+    example: ['A · 83°C와 5 mm/s', '두 조건 충족', 'A 경보'],
+    readingDiagram: {figure:'sensor-pair', staticOnly:true, title:'두 조건 함께 보기',
+      description:'A의 온도 83°C와 진동 5 mm/s가 각 기준선을 넘습니다. 두 조건이 모두 충족되어 A 경보가 납니다.'},
+    quiz: ['다른 예에서 A가 78°C·6 mm/s라면 어떻게 될까요?', '경보 없음', 'A 경보',
+      '진동 조건에는 맞지만 온도는 80°C선 아래입니다. 둘 다 맞아야 경보를 냅니다.'],
+    practice: ['A · 78°C와 6 mm/s', '경보 없음', '온도 기준 아래'],
+    practiceDescriptions: [
+      "실습의 A는 78°C와 6 mm/s입니다. 두 조건을 보고 판정을 고르세요.",
+      "실습의 A는 78°C와 6 mm/s입니다. 두 조건을 보고 다시 고르세요.",
+      "실습의 A는 78°C와 6 mm/s입니다. 온도가 80°C선 아래이므로 경보가 없습니다.",
+    ],
+  },
+  {
+    label: '진동만 바꾸기',
+    title: '83°C를 고정하고 진동 점만 옮깁니다',
+    body: '같은 A와 같은 83°C를 두 번 비교합니다. 진동이 3 mm/s일 때는 진동 표시만 기준 아래입니다. 5 mm/s가 되면 두 조건에 모두 맞습니다.',
+    takeaway: '온도 점은 그대로입니다. 진동 점이 기준선을 지나면서 경보가 바뀝니다.',
+    example: ['온도 83°C 유지', '진동 3 → 5 mm/s', '경보 없음 → A 경보'],
+    readingDiagram: {figure:'sensor-vibration', staticOnly:true, title:'진동만 바꾸기',
+      description:'왼쪽 83°C와 3 mm/s는 경보 없음, 오른쪽 83°C와 5 mm/s는 A 경보입니다. 두 온도점의 위치가 같습니다.'},
+    quiz: ['온도 83°C에서 진동이 정확히 4 mm/s라면 어떻게 될까요?', 'A 경보', '경보 없음',
+      '진동 점이 시작선에 닿아도 조건에 맞습니다. 온도 조건도 이미 맞습니다.'],
+    practice: ['83°C · 진동 4 mm/s', 'A 경보', '진동이 시작선에 닿음'],
+    practiceDescriptions: [
+      "실습의 A는 83°C와 4 mm/s입니다. 두 조건을 보고 판정을 고르세요.",
+      "실습의 A는 83°C와 4 mm/s입니다. 두 조건을 보고 다시 고르세요.",
+      "실습의 A는 83°C와 4 mm/s입니다. 진동 점이 시작선에 닿고 온도도 조건에 맞아 A 경보가 납니다.",
+    ],
+    pair: [[83,3], [83,5]], exercise: [83,4],
+  },
+  {
+    label: '온도만 바꾸기',
+    title: '진동 5 mm/s를 고정하고 온도 점만 옮깁니다',
+    body: '같은 A와 같은 진동 5 mm/s를 비교합니다. 74°C에서는 온도 조건이 맞지 않아 경보가 없습니다. 83°C에서는 온도와 진동이 모두 맞습니다.',
+    takeaway: '진동 점은 그대로입니다. 이번에는 온도 점이 기준선을 지납니다.',
+    example: ['진동 5 mm/s 유지', '온도 74 → 83°C', '경보 없음 → A 경보'],
+    readingDiagram: {figure:'sensor-temperature', staticOnly:true, title:'온도만 바꾸기',
+      description:'왼쪽 74°C와 5 mm/s는 경보 없음, 오른쪽 83°C와 5 mm/s는 A 경보입니다. 두 진동점의 위치가 같습니다.'},
+    quiz: ['진동 5 mm/s에서 온도가 정확히 80°C라면 어떻게 될까요?', 'A 경보', '경보 없음',
+      '온도 점이 시작선에 닿아도 조건에 맞습니다. 진동 조건도 이미 맞습니다.'],
+    practice: ['80°C · 진동 5 mm/s', 'A 경보', '온도가 시작선에 닿음'],
+    practiceDescriptions: [
+      "실습의 A는 80°C와 5 mm/s입니다. 두 조건을 보고 판정을 고르세요.",
+      "실습의 A는 80°C와 5 mm/s입니다. 두 조건을 보고 다시 고르세요.",
+      "실습의 A는 80°C와 5 mm/s입니다. 온도 점이 시작선에 닿고 진동도 조건에 맞아 A 경보가 납니다.",
+    ],
+    pair: [[74,5], [83,5]], exercise: [80,5],
+  },
+  {
+    label: '실제 결과 대조',
+    title: '경보 기록과 현장에서 본 실제 상태를 대조합니다',
+    body: '08:00에 A의 두 관측값으로 경보가 났고 B에는 경보가 없었습니다. 각각을 직접 점검한 후 14:20에 A 고장과 B 정상을 기록했습니다. 경보가 먼저이고 실제 확인은 나중입니다.',
+    takeaway: '두 센서 조건은 경보를 결정합니다. 실제 고장은 현장 점검에서 확인합니다.',
+    example: ['08:00 A 경보 · B 경보 없음', 'A와 B 각각 현장 점검', '14:20 A 고장 · B 정상'],
+    readingDiagram: {figure:'sensor-confirmation', staticOnly:true, title:'실제 결과 대조',
+      description:'A 경보와 B 경보 없음에서 각 현장 점검으로 이어집니다. 14:20에만 A 고장, B 정상을 기록합니다.'},
+    quiz: ['다른 날 A에 경보가 나고 점검 결과는 정상이었습니다. 이 경보를 어떻게 기록할까요?', '오경보', '확인된 고장',
+      '경보는 기록에 남지만 실제 설비가 정상이므로 오경보입니다.'],
+    practice: ['A 경보 · 실제 정상', '오경보', '14:20 확인 기준'],
+    practiceDescriptions: [
+      "다른 날 08:00에 A 경보가 났고 14:20 점검에서는 A가 정상이었습니다. 경보의 분류를 고르세요.",
+      "다른 날 08:00에 A 경보가 났고 14:20 점검에서는 A가 정상이었습니다. 경보의 분류를 다시 고르세요.",
+      "다른 날 08:00에 A 경보가 났고 14:20 점검에서는 A가 정상이었습니다. A 경보는 오경보입니다.",
+    ],
+  },
+];
+
+const slug = 'two-sensor-alert';
+const byId = id => document.getElementById(id);
+const state = {index:-1, answers:new Map()};
+const feedbackMessages = ['✓ 맞았습니다.', '✗ 다시 생각해 보세요.'];
+const sensorWorkspace = byId('scene').closest('.workspace');
+
+function sensorText(parent, x, y, value, css = 'sensor-text', anchor = 'start') {
+  svg('text', {x,y,class:css,'text-anchor':anchor}, parent).textContent = value;
+}
+function sensorCard(parent, x, y, width, label, tone = '') {
+  const card = svg('g', {}, parent);
+  svg('rect', {x,y,width,height:30,rx:5,class:'sensor-card ' + tone}, card);
+  sensorText(card, x + width/2, y + 20, label, 'sensor-text', 'middle');
+  return card;
+}
+function sensorArrow(parent, x, end, y) {
+  svg('path', {d:`M${x} ${y}H${end}m-4 -4 4 4-4 4`,class:'sensor-arrow'}, parent);
+}
+function sensorReadings(parent, x, firstY, readings) {
+  const ranges = [
+    {name:'온도', unit:'°C', low:60, high:90, cut:80},
+    {name:'진동', unit:' mm/s', low:0, high:8, cut:4},
+  ];
+  for (const [row, value] of readings.entries()) {
+    const {name,unit,low,high,cut} = ranges[row];
+    const y = firstY + row * 68;
+    const position = point => x + 74 + (point - low) * 120 / (high - low);
+    const line = position(cut);
+    const meets = value >= cut;
+    sensorText(parent, x, y - 5, name);
+    sensorText(parent, x, y + 15, value + unit, 'sensor-value');
+    svg('rect', {x:line,y:y - 8,width:position(high)-line,height:16,rx:2,class:'sensor-range'}, parent);
+    svg('path', {d:`M${position(low)} ${y}H${position(high)}M${line} ${y - 12}v24`,class:'sensor-axis'}, parent);
+    for (const point of [low, high]) {
+      svg('path', {d:`M${position(point)} ${y-4}v8`,class:'sensor-axis'}, parent);
+      sensorText(parent, position(point), y + 26, String(point), 'sensor-note', 'middle');
+    }
+    svg('circle', {cx:position(value),cy:y,r:6,class:'sensor-dot'}, parent);
+    sensorText(parent, line, y + 26, cut + unit, 'sensor-note', 'middle');
+    sensorCard(parent, x + 204, y - 15, 67, meets ? '충족' : '미충족', meets ? 'sensor-positive' : 'sensor-negative');
+  }
+}
+function buildSensorFigure(step, index) {
+  const template = document.createElement('template');
+  template.id = step.readingDiagram.figure;
+  const canvas = svg('svg', {viewBox:'0 0 620 280'}, template.content);
+  const scene = svg('g', {class:'sensor-diagram'}, canvas);
+
+  if (index === 0) {
+    sensorText(scene, 24, 60, '설비 A의 두 관측값', 'sensor-heading');
+    sensorText(scene, 368, 60, '각 시작선부터 충족', 'sensor-heading');
+    sensorReadings(svg('g', {class:'sensor-reading-only'}, scene), 24, 106, [83,5]);
+    sensorReadings(svg('g', {class:'sensor-practice-only'}, scene), 24, 106, [78,6]);
+    svg('path', {d:'M298 106h30q15 0 25 15l10 14m-5 -1 5 1-1 -5 M298 174h30q15 0 25 -15l10 -14m-5 1 5 -1-1 5',class:'sensor-arrow'}, scene);
+    sensorCard(scene, 368, 125, 101, '둘 다 충족?');
+    sensorArrow(scene, 472, 494, 140);
+    sensorCard(svg('g', {class:'sensor-reading-only'}, scene), 498, 125, 98, 'A 경보', 'sensor-positive');
+    sensorCard(svg('g', {class:'sensor-practice-only sensor-changing-result'}, scene), 498, 125, 98, '', 'sensor-pending');
+  } else if (index < 3) {
+    sensorText(scene, 24, 58, 'A · 바꾸기 전', 'sensor-heading');
+    sensorText(scene, 335, 58, 'A · 한 값만 바꾼 뒤', 'sensor-heading');
+    sensorReadings(scene, 24, 104, step.pair[0]);
+    sensorReadings(svg('g', {class:'sensor-reading-only'}, scene), 324, 104, step.pair[1]);
+    sensorReadings(svg('g', {class:'sensor-practice-only'}, scene), 324, 104, step.exercise);
+    svg('path', {d:'M310 72v148',class:'sensor-divider'}, scene);
+    for (const x of [0, 300]) {
+      svg('path', {d:`M${296 + x} 104h6V221H${242 + x}m4 -4 -4 4 4 4 M${296 + x} 172h6`,class:'sensor-arrow'},scene);
+    }
+    sensorCard(scene, 111, 206, 128, '경보 없음');
+    sensorCard(svg('g', {class:'sensor-reading-only'}, scene), 411, 206, 128, 'A 경보', 'sensor-positive');
+    sensorCard(svg('g', {class:'sensor-practice-only sensor-changing-result'}, scene), 411, 206, 128, '', 'sensor-pending');
+  } else {
+    sensorText(svg('g', {class:'sensor-reading-only'}, scene), 24, 61, '오늘 08:00 센서', 'sensor-heading');
+    sensorText(svg('g', {class:'sensor-practice-only'}, scene), 24, 61, '다른 날 08:00 센서', 'sensor-heading');
+    sensorText(scene, 250, 61, '08:00 경보', 'sensor-heading');
+    sensorText(scene, 397, 61, '현장 점검', 'sensor-heading');
+    sensorText(scene, 508, 61, '14:20 실제 상태', 'sensor-heading');
+    const units = [
+      ['A · 83°C · 5 mm/s','A 경보','A 점검','A 고장','sensor-negative'],
+      ['B · 74°C · 5 mm/s','경보 없음','B 점검','B 정상','sensor-positive'],
+    ];
+    for (const [row,[reading,alert,check,result,tone]] of units.entries()) {
+      const y = 103 + row*78;
+      sensorCard(scene, 24, y-15, 200, reading);
+      sensorArrow(scene, 227, 245, y);
+      sensorCard(scene, 250, y-15, 117, alert, row ? '' : 'sensor-positive');
+      sensorArrow(scene, 369, 391, y);
+      sensorCard(scene, 396, y-15, 86, check);
+      sensorArrow(scene, 485, 504, y);
+      sensorCard(row ? scene : svg('g', {class:'sensor-reading-only'}, scene), 508, y-15, 89, result, tone);
+      if (!row) sensorCard(svg('g', {class:'sensor-practice-only'}, scene), 508, y-15, 89, 'A 정상', 'sensor-positive');
+    }
+    sensorText(scene, 24, 223, '08:00에는 실제 상태 미확인', 'sensor-note');
+  }
+
+  const practice = svg('g', {class:'sensor-practice'}, scene);
+  sensorCard(practice, 24, 246, 201, step.practice[0]);
+  sensorArrow(practice, 230, 251, 261);
+  sensorCard(practice, 255, 246, 166, '선택 대기', 'sensor-pending').classList.add('sensor-feedback');
+  sensorText(practice, 435, 265, '', 'sensor-note sensor-reason');
+  document.body.append(template);
+}
+lesson.forEach(buildSensorFigure);
+
+function updateSensorPractice() {
+  const practice = byId('scene').querySelector('.sensor-practice');
+  if (!practice || !lesson[state.index]) return;
+  const {quiz,practice:result,practiceDescriptions,readingDiagram} = lesson[state.index];
+  const answer = state.answers.get(state.index);
+  const status = answer === undefined ? 'waiting' : answer === quiz[1] ? 'correct' : 'retry';
+  const reading = !document.body.classList.contains('course-shell') || sensorWorkspace.classList.contains('course-reading');
+  const description = reading ? readingDiagram.description : practiceDescriptions[['waiting','retry','correct'].indexOf(status)];
+  const localizedDescription = window.courseI18n?.translate(description) ?? description;
+  for (const id of ['scene-desc','course-diagram-desc']) {
+    const node = byId(id);
+    if (node && node.textContent !== description && node.textContent !== localizedDescription) node.textContent = description;
+  }
+  if (practice.dataset.status === status) return;
+  practice.dataset.status = status;
+  const correct = status === 'correct';
+  const feedback = practice.querySelector('.sensor-feedback');
+  feedback.querySelector('text').textContent = correct ? result[1] : status === 'retry' ? '다시 선택' : '선택 대기';
+  feedback.querySelector('rect').classList.toggle('sensor-positive', correct);
+  feedback.querySelector('rect').classList.toggle('sensor-negative', status === 'retry');
+  practice.querySelector('.sensor-reason').textContent = correct ? result[2] : '';
+  const output = practice.parentElement.querySelector('.sensor-changing-result');
+  if (output) {
+    output.querySelector('text').textContent = correct ? result[1] : '';
+    output.querySelector('rect').classList.toggle('sensor-pending', !correct);
+  }
+}
+const sensorUpdates = new MutationObserver(updateSensorPractice);
+sensorUpdates.observe(byId('scene'), {childList:true});
+sensorUpdates.observe(sensorWorkspace, {attributes:true, attributeFilter:['class']});
+sensorUpdates.observe(byId('choices'), {attributes:true, childList:true, subtree:true, attributeFilter:['aria-pressed']});
+</script>
+<script src="../shared/reading-lesson.js?v=b4d45e8ddc5bfaac"></script>
+</body>
+</html>

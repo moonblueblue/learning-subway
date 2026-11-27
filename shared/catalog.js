@@ -2951,6 +2951,10 @@ const courseCatalog = {
             {
               "id": "0.1",
               "ref": "os/what-os-does"
+            },
+            {
+              "id": "0.2",
+              "ref": "os/sharing-cpu"
             }
           ],
           "tracks": []
@@ -3698,6 +3702,17 @@ const courseCatalog = {
           "format": "실습",
           "requires": [],
           "page": "os/what-os-does.html"
+        },
+        {
+          "id": "sharing-cpu",
+          "title": "여러 앱은 CPU를 어떻게 나눠 쓸까?",
+          "titleEn": "How do apps share the CPU?",
+          "question": "사진 앱과 음악 앱은 CPU 코어 하나를 어떻게 번갈아 쓸까요?",
+          "format": "실습",
+          "requires": [
+            "os/what-os-does"
+          ],
+          "page": "os/sharing-cpu.html"
         },
         {
           "id": "process",

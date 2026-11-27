@@ -9,9 +9,12 @@ window.lessonText = {
   "유니코드": "Unicode",
   "문자 번호": "Character number",
   "8비트 최댓값": "8-bit maximum",
-  "같은 문자 번호도 UTF-8에 맞게 부호화한다": "UTF-8 encodes the character number for storage",
-  "1바이트": "1 byte",
-  "3바이트": "3 bytes",
+  '유니코드에서 가의 번호는 44032입니다. 8비트의 최댓값 255보다 크며 번호 비트는 1010 1100 0000 0000입니다.':
+    'In Unicode the number for 가 is 44032. It is greater than the 8-bit maximum of 255 and its bits are 1010 1100 0000 0000.',
+  '8비트 문자 번호': '8-bit character number', '16비트 문자 번호': '16-bit character number',
+  'UTF-8 · 1바이트': 'UTF-8 · 1 byte', 'UTF-8 · 3바이트': 'UTF-8 · 3 bytes',
+  '16비트': '16 bits', '24비트': '24 bits',
+  '고정 머리': 'Fixed prefix', '16진수': 'Hex',
   // Page
   '문자의 표현 · 레슨 0.2': 'Representing text · Lesson 0.2',
   '글자에 번호를 붙이고, 그 번호를 비트로 바꾸는 방법(ASCII, 유니코드, UTF-8)을 스위치로 살펴보세요.':
@@ -73,15 +76,29 @@ window.lessonText = {
   '"가" 다음 글자인 "각"을 만들어 보세요. +1을 써도 됩니다.': 'Make "각", the character after "가". You can use +1.',
   '1바이트에 들어가는 가장 큰 번호(127)를 만들어 보세요.': 'Make the largest number that fits in 1 byte (127).',
   // Step 4
-  '바이트로 저장': 'Stored as bytes',
-  '저장할 때는 바이트 단위로 나눈다': 'Storing splits the number into bytes',
-  '파일이나 웹 페이지에 글자를 저장할 때는 번호를 바이트(8비트) 단위로 나눠 적습니다. 가장 널리 쓰는 방식인 UTF-8은 번호가 0–127이면 1바이트, 128–2047이면 2바이트, 2048–65535면 3바이트를 씁니다. 그래서 영어 글자는 1바이트, 한글은 3바이트를 차지합니다.':
-    'When a character is stored in a file or web page, its number is written in bytes (8 bits each). UTF-8, the most widely used way, uses 1 byte for numbers 0–127, 2 bytes for 128–2047 and 3 bytes for 2048–65535. So an English letter takes 1 byte and a Hangul syllable takes 3.',
-  '번호 아래 줄에 UTF-8 바이트가 나타납니다. "A"는 1바이트, "가"는 3바이트입니다. 각 바이트 앞의 1과 0은 몇 바이트짜리 글자인지 알려 주는 표시입니다.':
-    'The UTF-8 bytes appear on the line under the number. "A" is 1 byte and "가" is 3. The 1s and 0s at the front of each byte tell how many bytes the character uses.',
-  '스위치 열여섯 개와 글자표가 있습니다. 만든 번호의 글자와 함께, 그 글자를 UTF-8로 저장할 때 쓰는 바이트 수가 표시됩니다. A는 1바이트, 가는 3바이트입니다.':
-    'There are sixteen switches and a character table. Along with the character for the number you made, it shows how many bytes storing it in UTF-8 takes. A is 1 byte and 가 is 3.',
-  '같은 문자 하나': 'One character', 'A는 1바이트 · 가는 3바이트': 'A is 1 byte · 가 is 3 bytes',
+  'A의 UTF-8': 'UTF-8 for A', '가의 UTF-8': 'UTF-8 for 가',
+  'A의 UTF-8은 한 바이트': 'UTF-8 for A takes one byte',
+  '가의 UTF-8은 세 바이트': 'UTF-8 for 가 takes three bytes',
+  'A의 번호 65를 나타내는 일곱 비트 1000001 앞에 고정 머리 0을 붙입니다. 저장하는 한 바이트는 01000001이고 16진수로 41입니다.':
+    'Put the fixed prefix 0 before the seven bits 1000001 for A’s number 65. The byte stored is 01000001, or 41 in hexadecimal.',
+  'UTF-8은 문자 번호를 저장 바이트로 바꾸는 규칙입니다. 0부터 127까지의 번호는 일곱 비트에 들어가므로, 앞에 고정 비트 0을 붙여 한 바이트로 저장합니다. A의 번호 65는 1000001이고 저장하는 바이트는 01000001입니다.':
+    'UTF-8 is a rule for turning character numbers into bytes for storage. Numbers from 0 to 127 fit in seven bits, so a fixed 0 at the front makes one byte. A’s number 65 gives 1000001, and UTF-8 stores 01000001.',
+  '41은 저장 바이트 01000001을 16진수 두 자리로 쓴 것입니다. 문자 번호는 그대로 65입니다.':
+    '41 writes the stored byte 01000001 as two hexadecimal digits. The character number is still 65.',
+  'A의 문자 번호 65가 들어 있고, UTF-8 저장 바이트에는 고정 머리 0과 번호 비트 1000001이 표시됩니다.':
+    'The character number is 65. The stored UTF-8 byte is shown with its fixed prefix 0 and the number bits 1000001.',
+  '0 뒤에 1000001을 넣음': 'Put 1000001 after 0', '한 바이트 41': 'One byte: 41',
+  'A 다음 문자 번호를 만들고 한 바이트가 어떻게 바뀌는지 보세요.': 'Make the character number after A and watch how the byte changes.',
+  '가의 16비트 문자 번호를 1010, 110000, 000000으로 나눕니다. 각각 머리 1110, 10, 10 뒤로 옮기면 11101010, 10110000, 10000000이 됩니다. 이 24비트는 세 바이트 EA B0 80으로 저장합니다.':
+    'Split the 16-bit number for 가 into 1010, 110000 and 000000. Place those after the prefixes 1110, 10 and 10 to get 11101010, 10110000 and 10000000. The three stored bytes are EA B0 80, 24 bits in total.',
+  '가의 문자 번호 44032를 나타내는 16비트를 왼쪽부터 4·6·6비트로 나눕니다. 첫 바이트는 머리 1110으로 시작하고, 뒤의 두 바이트는 머리 10으로 시작합니다. 각 머리 뒤에 번호 비트 한 묶음씩 채우면 저장 바이트 EA B0 80이 됩니다.':
+    'Split the 16 bits for 가’s character number 44032 into groups of 4, 6 and 6 from the left. The first byte starts with the prefix 1110. The next two start with 10. Fill each byte with a group of number bits after its prefix to get EA B0 80.',
+  '문자 번호의 비트는 16자리입니다. UTF-8에서는 머리 비트 8개를 더해 24비트, 즉 세 바이트를 저장합니다.':
+    'The character number has 16 bits. UTF-8 adds eight prefix bits and stores 24 bits, or three bytes.',
+  '가의 문자 번호 44032가 16개 스위치에 들어 있습니다. UTF-8 저장 바이트에는 고정 머리 1110, 10, 10과 번호 비트 세 묶음이 표시됩니다.':
+    'The 16 switches hold 가’s character number, 44032. The stored UTF-8 bytes show the fixed prefixes 1110, 10 and 10 and the three groups of number bits.',
+  '세 바이트 EA B0 80': 'Three bytes: EA B0 80',
+  '1을 더해 각을 만들고 세 바이트 중 어느 비트가 바뀌는지 보세요.': 'Add 1 to make 각 and see which bit in the three bytes changes.',
   '공백': 'space', '없음': 'none', '{0} → {1}': '{0} → {1}', 'UTF-8 {0}': 'UTF-8 {0}',
   '"나"를 만들어 보세요. 45208번입니다.': 'Make "나". It is number 45208.',
   '2바이트가 필요한 첫 번호를 만들어 보세요.': 'Make the first number that needs 2 bytes.',

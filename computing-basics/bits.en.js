@@ -11,10 +11,22 @@ window.lessonText = {
   "2 자리": "Twos",
   "1 자리": "Ones",
   "5에서 1을 더해 6을 만들어 보세요.": "Add 1 to 5 to make 6.",
-  "여덟 자리가 모두 1이면 255": "Eight ones make 255",
-  "전체 256가지": "256 possible values",
-  "0도 포함 · 8비트 = 1바이트": "Includes 0 · 8 bits = 1 byte",
-  "켜진 여덟 자릿값을 모두 더함": "Add all eight place values that are on",
+  '꺼짐': 'Off', '켜짐': 'On', '누르기': 'Press',
+  '모두 꺼짐': 'All off', '모두 켜짐': 'All on',
+  '1비트 · 2가지': '1 bit · 2 states', '새 2 자리': 'New twos place',
+  '왼쪽 꺼짐': 'Left off', '왼쪽 켜짐': 'Left on',
+  '2 × 2 = 4가지': '2 × 2 = 4 states',
+  '255 − 0 + 1 = 256가지': '255 − 0 + 1 = 256 values', '8비트 = 1바이트': '8 bits = 1 byte',
+  '같은 1 자리에서 스위치를 누르면 꺼진 0이 켜진 1로 바뀌고 합계도 0에서 1이 됩니다.':
+    'Pressing the switch in the same ones place changes off (0) to on (1) and the sum from 0 to 1.',
+  '왼쪽에 2 자리를 놓아도 오른쪽 스위치의 자릿값은 1입니다. 스위치 쌍 00, 01, 10, 11의 합계는 차례로 0, 1, 2, 3입니다.':
+    'Adding the twos place on the left keeps the right switch worth 1. Switch pairs 00, 01, 10 and 11 sum to 0, 1, 2 and 3 respectively.',
+  '여덟 스위치에서 켜진 4 자리와 1 자리의 선만 합계 5에 닿습니다. 꺼진 2 자리의 기여는 0입니다.':
+    'Only the lines from the lit fours and ones places reach the sum of 5. The twos place is off and contributes 0.',
+  '1 자리에 1을 더하면 1이 0으로 바뀌고 점선 화살표가 왼쪽 2 자리로 올림을 보냅니다. 2 자리는 0에서 1, 4 자리는 1을 유지하며 합계는 6이 됩니다.':
+    'Adding 1 at the ones place changes its 1 to 0. The dashed arrow carries into the twos place on the left. The twos place changes from 0 to 1, the fours place stays at 1, and the sum is 6.',
+  '같은 여덟 자리의 모두 꺼짐은 0, 모두 켜짐은 255입니다. 두 끝을 포함하면 255 빼기 0 더하기 1로 256가지입니다.':
+    'The same eight places show 0 with all switches off and 255 with them all on. Counting both endpoints gives 255 minus 0 plus 1, or 256 values.',
   // Page
   '비트와 이진수 · 레슨 0.1': 'Bits and binary · Lesson 0.1',
   '스위치 8개를 켜고 끄며 비트와 이진수가 숫자를 나타내는 방법을 살펴보세요.': 'Turn eight switches on and off to see how bits and binary represent numbers.',
@@ -34,8 +46,8 @@ window.lessonText = {
   // Step 1
   '스위치 하나': 'One switch',
   '스위치 하나는 두 가지를 나타낸다': 'One switch shows two things',
-  '컴퓨터는 전기가 흐르는지 아닌지만 구별합니다. 꺼진 상태를 0, 켜진 상태를 1이라고 부르고, 이 한 칸을 비트(bit)라고 합니다. 비트 하나로는 0과 1, 두 가지만 나타낼 수 있습니다.':
-    'A computer only tells whether current flows or not. We call the off state 0 and the on state 1, and this one slot is a bit. One bit can show only two things: 0 and 1.',
+  '컴퓨터는 비트 하나에 두 상태를 기록합니다. 스위치의 꺼짐을 0, 켜짐을 1이라고 부르고, 이 한 칸을 비트(bit)라고 합니다. 비트 하나로는 0과 1, 두 가지만 나타낼 수 있습니다.':
+    'A computer stores one of two states in a bit. Treat this switch as one bit, with off called 0 and on called 1. One bit has two possible values: 0 and 1.',
   '스위치가 켜지면 솟아오르며 불이 들어오고, 값 1이 선을 따라 합계로 갑니다. 꺼지면 선이 사라지고 합계는 0이 됩니다.':
     'When the switch turns on it pops up and lights, and the value 1 travels along the line to the sum. When it turns off the line disappears and the sum is 0.',
   '스위치 하나와 합계 화면이 있습니다. 스위치가 켜지면 값 1이 선을 따라 합계로 전달되고, 꺼지면 합계는 0입니다.':
@@ -46,10 +58,10 @@ window.lessonText = {
   // Step 2
   '스위치 둘': 'Two switches',
   '스위치가 늘면 가짓수는 두 배가 된다': 'Each new switch doubles the possibilities',
-  '스위치를 하나 더 놓으면 꺼짐과 켜짐의 조합이 00, 01, 10, 11 네 가지가 됩니다. 오른쪽 스위치는 1을, 왼쪽 스위치는 2를 맡습니다. 켜진 스위치의 값을 더하면 0부터 3까지 셀 수 있습니다.':
-    'Add one more switch and the on and off combinations become four: 00, 01, 10 and 11. The right switch is worth 1 and the left switch is worth 2. Adding the values of the switches that are on counts from 0 to 3.',
-  '1 다음에는 오른쪽 스위치가 꺼지고 왼쪽 스위치가 켜져 2가 됩니다. 한 자리가 가득 차면 옆자리로 넘어가는 자리올림이고, 그 순간 스위치 위에 점선 화살표가 나타납니다.':
-    'After 1, the right switch turns off and the left switch turns on to make 2. When one place is full it moves into the next place; that is a carry, and a dashed arrow appears above the switches at that moment.',
+  '오른쪽 1 자리는 그대로 두고 그 왼쪽에 값 2인 스위치를 놓습니다. 왼쪽이 꺼져 있을 때도 켜져 있을 때도 오른쪽은 0 또는 1일 수 있습니다. 그래서 두 자리로 0부터 3까지 셉니다.':
+    'Keep the ones place on the right and add a switch worth 2 to its left. With the left switch off or on, the right switch can be 0 or 1. The two places can count from 0 to 3.',
+  '왼쪽 스위치가 0이면 두 합계는 0과 1입니다. 왼쪽이 1이면 오른쪽 두 상태에 각각 2가 더해져 합계가 2와 3이 됩니다.':
+    'With the left switch at 0, the sums are 0 and 1. Turning it on adds 2 to each state on the right, giving sums of 2 and 3.',
   '스위치 두 개와 합계 화면이 있습니다. 왼쪽 스위치는 값 2, 오른쪽 스위치는 값 1을 맡고, 켜진 스위치의 값이 합계에 더해집니다.':
     'There are two switches and a sum display. The left switch is worth 2 and the right switch is worth 1, and the values of the switches that are on are added to the sum.',
   '스위치 두 개': 'Two switches', '각각 0 또는 1': 'Each 0 or 1', '조합 2 × 2 = 4개': '2 × 2 = 4 combinations',

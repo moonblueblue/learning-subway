@@ -11,6 +11,10 @@ const aiStationMap = {
         "ref": "ai/rules-and-examples"
       },
       {
+        "id": "1.53",
+        "ref": "ai/new-photo-errors"
+      },
+      {
         "id": "1.10",
         "ref": "ai/decision-owner"
       },

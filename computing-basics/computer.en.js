@@ -1,5 +1,24 @@
 // English for 0.5 Parts of a computer. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  '누른 A가 화면에 표시된다': 'Pressing A shows A on the screen',
+  '키보드에서 A를 누르면 번호 65가 같은 CPU를 거쳐 화면의 글자 A로 표시됩니다.':
+    'Pressing A sends the number 65 through the CPU and displays the letter A on the screen.',
+  '키보드에서 2와 3을 보내면 CPU가 RAM에 씁니다. 같은 CPU가 점선 방향으로 2와 3을 읽고 더해 화면에 5를 표시합니다.':
+    'The CPU writes the typed 2 and 3 to RAM. The same CPU reads them back along the dashed line, adds them, and displays 5.',
+  '이 예에서는 키보드에서 받은 2와 3을 CPU가 메모리(RAM)에 적어 둡니다. 입력할 때 쓴 CPU가 같은 두 값을 다시 읽어 더한 뒤, 결과 5를 화면에 보냅니다. RAM에 적어 둔 값은 전원이 꺼지면 사라집니다.':
+    'In this example the CPU writes the typed 2 and 3 into RAM. It reads those same numbers back, adds them, then sends the result 5 to the screen. Values in RAM disappear when the power goes off.',
+  '보이는 5를 파일에 복사한다': 'Save a copy of the displayed 5',
+  '저장을 실행하면 RAM의 결과 5가 저장장치의 result.txt에 복사됩니다. RAM과 화면에도 5가 남습니다.':
+    'Saving copies the result 5 from RAM into result.txt in storage. RAM and the screen still show 5.',
+  '저장 버튼': 'Save', '메모리 (RAM)': 'Memory (RAM)', '5 복사': 'Copy 5',
+  '전원을 끄면 파일만 5를 간직한다': 'The file keeps 5 after power off',
+  '전원이 꺼진 뒤 RAM의 5는 사라지고 화면이 꺼집니다. 저장장치의 result.txt에는 같은 5가 남습니다.':
+    'After power off, RAM loses its 5 and the screen goes blank. The same 5 stays in result.txt in storage.',
+  '5 → 비어 있음': '5 → Empty', '파일 그대로': 'File unchanged', '꺼짐': 'Off',
+  '다시 켜서 파일의 5를 읽는다': 'Power on and read the file’s 5',
+  '다시 켜고 result.txt를 열면 저장장치의 5가 빈 RAM으로 들어옵니다. 같은 CPU가 RAM에서 5를 읽어 화면에 표시합니다. 저장 파일은 그대로입니다.':
+    'Turn the computer back on and open result.txt. Storage loads its 5 into empty RAM. The same CPU reads the 5 from RAM and displays it. The file stays the same.',
+  '비어 있음 → 5': 'Empty → 5', '전원 켬': 'Power on', '읽은 값 5': 'Reads 5',
   "① 입력": "① Input",
   "② 쓰기": "② Write",
   "③ 읽기": "③ Read",
@@ -8,7 +27,7 @@ window.lessonText = {
   "키보드": "Keyboard",
   "메모리": "Memory",
   "화면": "Screen",
-  "① 쓰기": "① Write",
+  "① 읽기": "① Read",
   "② 읽기": "② Read",
   "③ 표시": "③ Display",
   "다시 켬 · 파일 열기": "Power on · open file",
@@ -41,8 +60,6 @@ window.lessonText = {
     'There is a keyboard, a CPU and a screen. A (65) typed on the keyboard goes through the CPU to the screen and is shown.',
   // Step 2
   '처리하는 동안 값은 메모리에 둔다': 'While processing, values stay in memory',
-  '2 + 3을 계산하려면 2와 3을 어딘가에 잠시 두어야 합니다. CPU는 계산 중인 값을 메모리(RAM)에 적어 두었다가 필요할 때 다시 읽어 옵니다. 메모리는 CPU 바로 옆에 있어 빠르지만, 전원이 꺼지면 내용이 사라집니다.':
-    'To calculate 2 + 3, the 2 and the 3 have to be kept somewhere for a moment. The CPU writes the values it is working on into memory (RAM) and reads them back when needed. Memory sits right next to the CPU and is fast, but its contents disappear when the power goes off.',
   'CPU가 메모리에 값을 적고(실선) 다시 읽어 옵니다(점선). 그다음 계산 결과 5가 화면으로 갑니다.':
     'The CPU writes values to memory (solid line) and reads them back (dashed line). Then the result, 5, goes to the screen.',
   '키보드, CPU, 메모리, 화면이 있습니다. 입력한 2와 3을 CPU가 메모리에 적고 다시 읽어 더한 뒤, 결과 5를 화면에 보냅니다.':
@@ -51,23 +68,23 @@ window.lessonText = {
   '오래 두려면 저장장치에 적는다': 'To keep data, write it to storage',
   '"저장"을 누르면 메모리에 있던 내용이 저장장치(SSD나 하드디스크)로 옮겨 적힙니다. 저장장치는 메모리보다 느리지만 전원이 꺼져도 내용이 남습니다. 우리가 파일이라고 부르는 것이 저장장치에 적힌 데이터입니다.':
     'Pressing "Save" copies what was in memory to storage (an SSD or hard disk). Storage is slower than memory, but its contents remain when the power goes off. What we call a file is data written in storage.',
-  '메모리에서 저장장치로 실선이 이어지고, 메모리의 "결과 5"가 저장장치 위에 "파일에 5 저장"으로 뜹니다.':
-    'A solid line runs from memory to storage, and the "Result 5" in memory appears above the storage as "5 saved to file".',
+  '메모리에서 저장장치로 실선이 이어집니다. 메모리와 화면의 5는 그대로이고, 저장장치에 result.txt의 5가 새로 생깁니다.':
+    'A solid line connects RAM to storage. The 5 in RAM and on the screen stays, and result.txt gets its own copy in storage.',
   'CPU가 메모리의 내용을 저장장치로 보내 파일로 적습니다.': 'The CPU sends the contents of memory to storage and writes them as a file.',
   // Step 4
   '전원 끄기': 'Power off',
   '전원이 꺼지면 메모리만 비워진다': 'Power off empties only the memory',
   '컴퓨터를 끄면 메모리는 전기가 끊겨 내용이 모두 사라집니다. 저장장치에 적어 둔 파일은 그대로 남습니다. 저장하지 않고 끄면 작업이 날아가는 이유가 이것입니다.':
     'When the computer is turned off, memory loses power and everything in it disappears. Files written in storage remain. This is why work is lost if you turn off without saving.',
-  '선이 모두 사라지고 저장장치 말고는 모두 회색이 됩니다. CPU 위에 "전원 꺼짐", 메모리 위에 "비어 있음", 저장장치 위에 "파일 5 그대로"가 뜹니다.':
-    'All the lines disappear and everything but the storage turns grey. "Power off" appears above the CPU, "Empty" above memory and "File 5 still there" above storage.',
+  'RAM의 5는 사라지고 화면이 꺼집니다. 같은 저장장치에는 result.txt와 그 안의 5가 그대로 남습니다.':
+    'The 5 in RAM disappears and the screen goes off. The same storage still holds result.txt with its 5.',
   '전원이 꺼져 데이터가 흐르지 않습니다. 메모리는 비어 있고 저장장치의 파일은 그대로 남아 있습니다.':
     'The power is off, so no data flows. Memory is empty and the file in storage remains.',
   // Step 5
   '다시 열기': 'Opening again',
   '파일을 열면 저장장치에서 메모리로 올린다': 'Opening a file loads it from storage into memory',
-  '다시 켜서 파일을 열면 저장장치의 내용이 메모리로 올라오고, CPU가 그것을 처리해 화면에 보여 줍니다. CPU는 저장장치를 직접 다루지 않고 항상 메모리를 거칩니다. 프로그램을 실행할 때도 같은 일이 일어납니다.':
-    'Turn it on again and open the file: the contents of storage are loaded into memory, and the CPU processes them and shows them on screen. The CPU never works on storage directly; it always goes through memory. The same happens when a program runs.',
+  '전원을 다시 켜고 result.txt를 엽니다. 저장장치에 남아 있던 5가 메모리로 올라오고, CPU가 메모리에서 그 값을 읽어 화면에 보냅니다. 이번에는 2와 3을 새로 더하지 않아도 5를 확인할 수 있습니다.':
+    'Turn the computer on and open result.txt. The 5 that stayed in storage loads into RAM. The CPU reads it from RAM and sends it to the screen. The original addition has already been done.',
   '점선을 따라 저장장치 → 메모리 → CPU로 데이터가 돌아오고, 실선으로 화면에 갑니다.':
     'Along the dashed lines, data comes back from storage → memory → CPU, then goes to the screen along a solid line.',
   '저장장치의 파일이 메모리로 올라오고, CPU가 메모리에서 읽어 화면에 보냅니다.':

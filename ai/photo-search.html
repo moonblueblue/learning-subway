@@ -153,9 +153,13 @@ function card(group, x, y, width, height, tone = '') {
 }
 
 function arrow(group, x1, y1, x2, y2, tone = '') {
-  svg('line', {x1, y1, x2, y2, class: 'photo-arrow ' + tone}, group);
-  svg('polygon', {points: '-8,-5 0,0 -8,5', class: 'photo-tip ' + tone,
-    transform: `translate(${x2} ${y2}) rotate(${Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI})`}, group);
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const tipLength = 8;
+  const shaftInset = (tipLength - 1) / Math.hypot(dx, dy);
+  svg('line', {x1, y1, x2: x2 - dx * shaftInset, y2: y2 - dy * shaftInset, class: 'photo-arrow ' + tone}, group);
+  svg('polygon', {'data-arrowhead': '', points: `${-tipLength},-5 0,0 ${-tipLength},5`, class: 'photo-tip ' + tone,
+    transform: `translate(${x2} ${y2}) rotate(${Math.atan2(dy, dx) * 180 / Math.PI})`}, group);
 }
 
 function icon(group, x, y, kind) {
@@ -298,9 +302,9 @@ function workAndMethods(group, trial) {
     const x = 25 + i * 194;
     card(group, x, 69, 182, 75, 'photo-input');
     label(group, x + 91, 94, name);
-    label(group, x + 42, 124, input, 'photo-small');
-    arrow(group, x + 76, 119, x + 95, 119);
-    label(group, x + 137, 124, result, 'photo-small');
+    label(group, x + 74, 124, input, 'photo-small', 'end');
+    arrow(group, x + 81, 119, x + 96, 119);
+    label(group, x + 104, 124, result, 'photo-small', 'start');
   }
   label(group, 310, 177, 'AI를 만드는 방법 두 가지');
   for (const [i, [method, how]] of [['사람이 정한 규칙', '규칙을 따라 처리'], ['머신러닝', '예시에서 배우기']].entries()) {

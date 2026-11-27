@@ -95,7 +95,7 @@ window.lessonText = {
   "다음 곡 후보": "Next song",
   "인식": "Recognition",
   "사진": "Photo",
-  "고양이 여부": "Cat or no cat",
+  "고양이 여부": "Cat?",
   "예측": "Prediction",
   "가는 길": "Route",
   "도착 시각": "Arrival",

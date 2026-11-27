@@ -6,15 +6,11 @@
   const subject = subjectMaps.find(map => map.id === new URLSearchParams(location.search).get('subject')) || subjectMaps[0];
   const network = document.querySelector('.network');
   const scroll = document.querySelector('.map-scroll');
-  const list = document.querySelector('.line-list');
-  const toggle = document.querySelector('#view-toggle');
   const text = (ko, en) => courseI18n.lang === 'en' ? en : ko;
   const name = entry => text(entry.ko, entry.en);
   const flat = entry => name(entry).replace('\n', ' ');
   let done = new Set();
   try { done = new Set(JSON.parse(localStorage.getItem('learning-subway:done') || '[]')); } catch { /* storage unavailable */ }
-  // A narrow window cannot show the map at a readable size, so it starts with the list.
-  let listed = innerWidth < 760;
 
   function svg(tag, attrs, label) {
     const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
@@ -91,7 +87,6 @@
   }
 
   function fit() {
-    if (scroll.hidden) return;
     const width = scroll.clientWidth, height = scroll.clientHeight;
     if (!width || !height) return;
     const both = Math.min(width / W, height / subject.height, MAX_SCALE);
@@ -101,32 +96,6 @@
     scroll.classList.toggle('fits', whole);
     network.setAttribute('width', Math.floor(W * scale));
     network.setAttribute('height', Math.floor(subject.height * scale));
-  }
-
-  function drawList() {
-    const sections = subject.lines.map((line, index) => {
-      const section = html('section', {});
-      section.style.setProperty('--rail', line.color);
-      const heading = html('h2', {});
-      if (line.num) heading.append(html('i', {textContent: line.num}));
-      heading.append(flat(line));
-      section.append(heading);
-      if (line.from !== undefined) {
-        const from = flat(subject.stations[line.from]);
-        section.append(html('small', {textContent: text(from + '에서 갈라짐', 'Leaves at ' + from)}));
-      }
-      const items = line.stations.map(at => {
-        const station = subject.stations[at];
-        const item = html('li', {className: station.kind});
-        if (station.href) item.append(html('a', {href: station.href, textContent: station.kind === 'transfer' ? leaving(station) : flat(station)}));
-        else item.append(flat(station));
-        if (station.kind === 'planned') item.append(html('em', {textContent: waiting()}));
-        return item;
-      });
-      section.append(html('ol', {}, ...items));
-      return section;
-    });
-    list.replaceChildren(...sections);
   }
 
   function drawChrome() {
@@ -148,8 +117,6 @@
     }
     nav.replaceChildren(...entries);
 
-    toggle.textContent = listed ? text('지도로 보기', 'Show map') : text('목록으로 보기', 'Show list');
-    toggle.setAttribute('aria-pressed', String(listed));
 
     const icon = children => { const picture = svg('svg', {width: 30, height: 18, viewBox: '0 0 30 18', 'aria-hidden': 'true'}); picture.append(...children); return picture; };
     const legend = [
@@ -168,13 +135,9 @@
 
   function draw() {
     drawChrome();
-    scroll.hidden = listed;
-    list.hidden = !listed;
-    document.querySelector('.map-legend').hidden = listed;
-    if (listed) drawList(); else drawMap();
+    drawMap();
   }
 
-  toggle.addEventListener('click', () => { listed = !listed; draw(); });
   addEventListener('course:lang', draw);
   new ResizeObserver(fit).observe(scroll);
   draw();

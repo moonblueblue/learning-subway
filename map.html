@@ -8,18 +8,15 @@
 <title>주제 지도</title>
 <link rel="icon" href="./shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="./shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="./shared/subject-map.css?v=5ce493d13fec3baa">
+<link rel="stylesheet" href="./shared/subject-map.css?v=88d02d295307fd82">
 <script defer src="./shared/subject-maps.js?v=1aef569aef4ea706"></script>
 <script defer src="./shared/i18n.js"></script>
-<script defer src="./shared/subject-map.js?v=1b47ddc65189cb50"></script>
+<script defer src="./shared/subject-map.js?v=b7d39af6c08e54fb"></script>
 </head>
 <body class="subject-map">
 <header class="map-mast">
   <h1><a href="./index.html" class="home" aria-label="전체 노선도">Learning Subway</a></h1>
   <div class="mast-center" data-no-i18n><p id="subject-name"></p></div>
-  <div class="mast-tools" data-no-i18n>
-    <button type="button" id="view-toggle" aria-pressed="false"></button>
-  </div>
   <div data-lang-switch></div>
 </header>
 <div class="map-workspace">
@@ -27,7 +24,6 @@
 <main data-no-i18n>
   <section class="sheet">
     <div class="map-scroll"><svg class="network" role="group"></svg></div>
-    <div class="line-list" hidden></div>
     <div class="map-legend"></div>
   </section>
 </main>

@@ -13,7 +13,7 @@ button { cursor: pointer; }
 h1, h2, p, ol { margin: 0; }
 
 .map-mast {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 14px;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px;
   height: 56px; padding: 0 0 4px; margin-bottom: 8px; border-bottom: 2px solid var(--ink);
 }
 .map-mast h1, .map-mast .home { font: 750 clamp(1.4rem, 2.6vw, 1.9rem)/1.1 system-ui, sans-serif; letter-spacing: -.045em; }
@@ -21,10 +21,7 @@ h1, h2, p, ol { margin: 0; }
 #subject-name { display: flex; align-items: baseline; gap: 12px; min-width: 0; white-space: nowrap; overflow: hidden; }
 #subject-name strong { font-size: 1.15rem; font-weight: 750; }
 #subject-name span { color: var(--muted); font-size: .9375rem; overflow: hidden; text-overflow: ellipsis; }
-#view-toggle, .lang-switch { border: 1px solid var(--border); border-radius: 8px; background: white; }
-#view-toggle { min-height: 36px; padding: 0 12px; font-size: .82rem; font-weight: 650; }
-#view-toggle:hover { background: #e5f1eb; }
-.lang-switch { display: flex; overflow: hidden; }
+.lang-switch { display: flex; overflow: hidden; border: 1px solid var(--border); border-radius: 8px; background: white; }
 .lang-switch button { border: 0; background: transparent; min-height: 34px; padding: 0 10px; font-size: .82rem; font-weight: 650; }
 .lang-switch button:focus-visible { outline-offset: -3px; }
 .lang-switch button[aria-pressed=true] { background: #d5efeb; }
@@ -46,7 +43,6 @@ main { min-width: 0; min-height: 0; }
 .map-scroll { min-height: 0; overflow: auto; display: grid; place-items: start safe center; scrollbar-width: thin; }
 .map-scroll:not(.fits) { border-bottom: 1px solid var(--border); margin-bottom: 10px; }
 .map-scroll.fits { place-items: center; overflow: hidden; }
-.map-scroll[hidden], .line-list[hidden] { display: none; }
 .network { display: block; font-family: system-ui, sans-serif; }
 .network a { cursor: pointer; }
 .network a:focus-visible { outline-offset: 0; }
@@ -57,16 +53,6 @@ main { min-width: 0; min-height: 0; }
 .network .title { font-size: 12.5px; font-weight: 700; }
 .network .badge text { font-size: 11.5px; font-weight: 700; fill: #fff; }
 
-.line-list { min-height: 0; overflow-y: auto; padding: 14px 18px 18px; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px 22px; align-content: start; }
-.line-list section { min-width: 0; }
-.line-list h2 { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: .95rem; font-weight: 750; }
-.line-list h2 i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--rail); color: #fff; font-size: .72rem; font-style: normal; }
-.line-list small { display: block; margin: -2px 0 6px; color: var(--muted); font-size: .78rem; }
-.line-list ol { padding: 0; list-style: none; border-inline-start: 4px solid var(--rail); }
-.line-list li { padding: 3px 0 3px 12px; font-size: .9rem; }
-.line-list li a:hover { text-decoration: underline; }
-.line-list li.planned, .line-list li.transfer { color: var(--muted); }
-.line-list li em { font-style: normal; font-size: .75rem; margin-inline-start: 6px; }
 
 .map-legend { display: flex; flex-wrap: wrap; justify-self: start; gap: 6px 18px; margin: 0 12px 12px; padding: 6px 12px; background: #fcfdfb; border: 1px solid var(--border); border-radius: 8px; font-size: .82rem; font-weight: 600; }
 .map-legend span { display: flex; align-items: center; gap: 7px; }

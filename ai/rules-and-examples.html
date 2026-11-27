@@ -131,9 +131,13 @@ function ruleCard(group, x, y, w, h, tone = '') {
 }
 
 function ruleArrow(group, x1, y1, x2, y2, tone = '') {
-  svg('line', {x1, y1, x2, y2, class: 'rule-line ' + tone}, group);
-  svg('polygon', {points: '-8,-5 0,0 -8,5', class: 'rule-tip ' + tone,
-    transform: `translate(${x2} ${y2}) rotate(${Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI})`}, group);
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const tipLength = 8;
+  const shaftInset = (tipLength - 1) / Math.hypot(dx, dy);
+  svg('line', {x1, y1, x2: x2 - dx * shaftInset, y2: y2 - dy * shaftInset, class: 'rule-line ' + tone}, group);
+  svg('polygon', {'data-arrowhead': '', points: `${-tipLength},-5 0,0 ${-tipLength},5`, class: 'rule-tip ' + tone,
+    transform: `translate(${x2} ${y2}) rotate(${Math.atan2(dy, dx) * 180 / Math.PI})`}, group);
 }
 
 const animals = {

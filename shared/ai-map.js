@@ -1,4 +1,4 @@
-// One overview per subject. A station on the map opens that chapter's lesson list.
+// One overview per subject. A station on the map opens its first published lesson.
 (() => {
   const lessons = new Map(courseCatalog.topics.flatMap(topic =>
     topic.lessons.map(lesson => [topic.id + '/' + lesson.id, lesson])));
@@ -14,57 +14,24 @@
   const electives = chapters.filter(chapter => chapter.elective);
   const lastRequired = required.at(-1);
   const project = {id:'end', ref:line.projectRef, title:line.destination, titleEn:line.destinationEn};
-  lastRequired.stops.push(project);
+
 
   const network = document.querySelector('.network');
-  const dialog = document.querySelector('.chapter-dialog');
-  const list = dialog.querySelector('.chapter-lessons');
-  const close = document.getElementById('close-chapter');
   const legend = document.querySelector('.map-legend');
   const text = (ko,en) => courseI18n.lang === 'en' ? en : ko;
   const name = entry => text(entry.title,entry.titleEn);
   const trunkColor = data.transfer?.color || '#008579';
   const branchColor = trunkColor === '#796bb5' ? '#a57415' : '#835888';
   const measure = document.createElement('canvas').getContext('2d');
-  let current, selected, focusOnDismiss;
+  let current;
 
   function match(key) {
     if (!key) return;
-    return chapters.flatMap(chapter => chapter.stops).find(stop =>
+    return [...stops,project].find(stop =>
       stop.id === key || stop.ref === key || stop.aliases?.includes(key));
-  }
-  function chapterURL(chapter) {
-    const url = new URL(location.href);
-    for (const key of ['part','chapter','stop','lesson']) url.searchParams.delete(key);
-    url.searchParams.set('line',line.id);
-    if (chapter) url.searchParams.set('chapter',chapter.number);
-    return url;
   }
   function lessonURL(ref) {
     return './'+ref+'.html?'+new URLSearchParams({roadmap:'ai',line:line.id});
-  }
-  function fillList() {
-    document.getElementById('chapter-name').textContent = name(selected);
-    close.textContent = text('닫기','Close');
-    const rows = selected.stops.map(stop => {
-      const item = document.createElement('li');
-      const link = document.createElement(stop.ref ? 'a' : 'span');
-      link.dataset.key = line.id + ':' + stop.id;
-      link.dataset.line = line.id;
-      link.dataset.ref = stop.ref || '';
-      link.textContent = name(stop);
-      if (stop === current) link.setAttribute('aria-current','location');
-      if (stop.ref) link.href = lessonURL(stop.ref);
-      else {
-        link.setAttribute('aria-disabled','true');
-        const status = document.createElement('small');
-        status.textContent = text('준비 중','Coming soon');
-        link.append(status);
-      }
-      item.append(link);
-      return item;
-    });
-    list.replaceChildren(...rows);
   }
   function svg(tag,attrs,label) {
     const element = document.createElementNS(network.namespaceURI,tag);
@@ -95,7 +62,7 @@
   function draw() {
     const w=network.clientWidth, h=network.clientHeight;
     if (!w || !h) return;
-    const focused=network.contains(document.activeElement) ? document.activeElement.dataset.chapter : '';
+    const focused=network.contains(document.activeElement) ? document.activeElement.getAttribute('href') : '';
     const frag=document.createDocumentFragment();
     const core=[...required, project];
     const columns=Math.max(2,Math.floor(w/112));
@@ -140,20 +107,23 @@
       const terminal=entry===project;
       const here=current && (terminal ? current===project : current!==project && entry.stops.includes(current));
       const color=branch ? branchColor : trunkColor;
-      const open=terminal ? Boolean(project.ref) : true;
+      const first=terminal ? project : entry.stops.find(stop=>stop.ref);
       const label=name(entry);
       const attrs={class:terminal?'capstone-stop':'chapter-stop','data-line':line.id,'aria-label':label};
-      if (!terminal) { attrs['data-chapter']=entry.number; attrs.href=chapterURL(entry); }
-      else if (open) attrs.href=lessonURL(project.ref);
-      else attrs['aria-disabled']='true';
-      const node=svg(open ? 'a':'g',attrs);
+      if (!terminal) attrs['data-chapter']=entry.number;
+      if (first?.ref) attrs.href=lessonURL(first.ref);
+      else {
+        attrs['aria-disabled']='true';
+        attrs['aria-label']=label+' · '+text('준비 중','Coming soon');
+      }
+      const node=svg(first?.ref ? 'a':'g',attrs);
       if (here) node.setAttribute('aria-current','location');
       const isJunction=entry===lastRequired && electives.length;
-      const available=terminal ? open : entry.stops.some(stop=>stop.ref);
+      const available=Boolean(first?.ref);
       const size=isJunction ? 12 : 7;
-      node.append(svg('title',{},label));
+      node.append(svg('title',{},attrs['aria-label']));
       if (isJunction) node.append(svg('rect',{x:x-size,y:y-8,width:2*size,height:16,rx:8,fill:'#fcfdfb',stroke:'#142620','stroke-width':2.6}));
-      else node.append(svg('circle',{cx:x,cy:y,r:size,fill:terminal && open ? color : '#fcfdfb',
+      else node.append(svg('circle',{cx:x,cy:y,r:size,fill:terminal && available ? color : '#fcfdfb',
         stroke:color,'stroke-width':3,...(available?{}:{'stroke-dasharray':'3 3'})}));
       const spacing=branch ? Math.abs(branches[0].x-interchange.x) : pitch;
       const max=Math.max(48,Math.min(2*(Math.min(x,w-x)-4),spacing*.94));
@@ -182,20 +152,17 @@
     branches.forEach((point,i)=>station(point,i,true));
     network.setAttribute('viewBox','0 0 '+w+' '+h);
     network.replaceChildren(frag);
-    if (focused) network.querySelector('[data-chapter="'+focused+'"]')?.focus({preventScroll:true});
+    if (focused) [...network.querySelectorAll('a')].find(link=>link.getAttribute('href')===focused)?.focus({preventScroll:true});
   }
   function show() {
     const query=params(), key=query.get('lesson') || query.get('stop');
     let last;
     try { last=JSON.parse(localStorage.getItem('learning-subway:here')); } catch {}
     const addressed=match(key);
-    current=addressed || (last?.roadmap==='ai' && last.line===line.id ? match(last.ref) : null);
+    const chapter=chapters[Number(query.get('chapter') || query.get('part'))-1];
+    current=addressed || chapter?.stops[0] ||
+      (last?.roadmap==='ai' && last.line===line.id ? match(last.ref) : null);
     if (!current && !last && line===subjects[0]) current=chapters[0].stops[0];
-    selected=addressed ? chapters.find(chapter=>chapter.stops.includes(addressed)) :
-      chapters[Number(query.get('chapter') || query.get('part'))-1];
-    const url=chapterURL(selected);
-    if (addressed) url.searchParams.set(addressed.ref?'lesson':'stop',addressed.ref || addressed.id);
-    if (url.href!==location.href) history.replaceState(history.state,'',url);
     document.getElementById('line-name').textContent=mapTopicName(topic);
     document.title=mapTopicName(topic)+' | Learning Subway';
     network.setAttribute('aria-label',mapTopicName(topic));
@@ -204,35 +171,7 @@
       const item=document.createElement('span'); item.textContent=label; item.style.setProperty('--rail',color); return item;
     }));
     draw();
-    if (selected) {
-      fillList();
-      if (!dialog.open) dialog.showModal();
-    } else if (dialog.open) {
-      dialog.close();
-      if (focusOnDismiss) network.querySelector('[data-chapter="'+focusOnDismiss+'"]')?.focus({preventScroll:true});
-      focusOnDismiss=null;
-    }
   }
-  network.addEventListener('click', event=>{
-    const link=event.target.closest('a[data-chapter]');
-    if (!link || event.button || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    history.pushState({chapterOpened:true},'',link.href.baseVal);
-    show();
-  });
-  function dismiss() {
-    const chapter=selected;
-    if (!chapter) return;
-    focusOnDismiss=chapter.number;
-    if (history.state?.chapterOpened) history.back();
-    else { history.replaceState(null,'',chapterURL()); show(); }
-  }
-  close.addEventListener('click',dismiss);
-  dialog.addEventListener('cancel',event=>{ event.preventDefault(); dismiss(); });
-  dialog.addEventListener('click', event=>{ if (event.target===dialog) {
-    const r=dialog.getBoundingClientRect();
-    if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom) dismiss();
-  } });
   addEventListener('popstate',show);
   addEventListener('course:lang',show);
   show();

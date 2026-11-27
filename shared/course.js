@@ -9,36 +9,70 @@
   const current = lessonsByRef.get(pageRef);
   if (!main || !current) return;
 
-  // The menu follows the roadmap the reader came through, else the first roadmap listing this lesson.
+  // An explicit course link wins. A direct AI lesson address otherwise opens its AI subject.
   const listsLesson = (roadmap) => roadmap.chapters.some((chapter) =>
     chapter.projectRef === pageRef || [chapter, ...chapter.tracks].some((group) => group.lessons.some((lesson) => lesson.ref === pageRef)));
   let storedRoadmap = null;
   try { storedRoadmap = sessionStorage.getItem('course-roadmap'); } catch { /* storage unavailable */ }
   const params = new URLSearchParams(location.search);
-  const wantedRoadmap = params.get('roadmap') || storedRoadmap;
-  const roadmap = courseCatalog.roadmaps.find((item) => item.id === wantedRoadmap && listsLesson(item)) ||
-    courseCatalog.roadmaps.find(listsLesson);
-  const aiChapters = roadmap?.id === 'ai' ? roadmap.chapters.filter(chapter =>
-    chapter.projectRef === pageRef || chapter.lessons.some(lesson => lesson.ref === pageRef)) : [];
-  const aiLine = aiChapters.find(chapter => chapter.id === params.get('line')) || aiChapters[0];
-  if (aiLine) document.body.classList.add('ai-journey');
+  const availableRoadmaps = courseCatalog.roadmaps.filter(listsLesson);
+  const aiRoadmap = availableRoadmaps.find(item => item.id === 'ai');
+  const aiLines = aiRoadmap?.chapters.filter(chapter =>
+    chapter.projectRef === pageRef || chapter.lessons.some(lesson => lesson.ref === pageRef)) ?? [];
+  const addressedLine = aiLines.find(chapter => chapter.id === params.get('line'));
+  const roadmap = availableRoadmaps.find(item => item.id === params.get('roadmap')) ||
+    ((addressedLine || current.topic.id === 'ai') && aiRoadmap) ||
+    availableRoadmaps.find(item => item.id === storedRoadmap) || availableRoadmaps[0];
+  const aiLine = roadmap === aiRoadmap ? (addressedLine || aiLines[0]) : undefined;
+  const aiTitle = aiLine?.subjectTitle ?? aiLine?.title;
+  const aiTitleEn = aiLine?.subjectTitleEn ?? aiLine?.titleEn;
+  if (aiLine) {
+    document.body.classList.add('ai-journey');
+    const lang = window.courseI18n?.lang;
+    if (lang && params.get('lang') === lang) {
+      try { localStorage.setItem('learning-subway:lang', lang); } catch { /* storage unavailable */ }
+    }
+  }
   try { if (roadmap) sessionStorage.setItem('course-roadmap', roadmap.id); } catch { /* storage unavailable */ }
   // The hub marks the last lesson opened ("현재 위치"), on the line it was opened through. It survives a reload.
   try { localStorage.setItem('learning-subway:here', JSON.stringify({ ref: pageRef, roadmap: roadmap?.id, line: aiLine?.id })); } catch { /* storage unavailable */ }
-  const resolve = (lesson, line) => ({
-    id: lesson.id, ref: lesson.ref, title: lessonsByRef.get(lesson.ref).title, page: '../' + lesson.ref + '.html' + (aiLine ? '?roadmap=ai&line=' + line : '')
+  const resolve = (lesson) => ({
+    id: lesson.id, ref: lesson.ref, title: lesson.title ?? lessonsByRef.get(lesson.ref).title,
+    titleEn: lesson.titleEn, capstone: lesson.capstone,
+    page: '../' + lesson.ref + '.html' + (aiLine ? '?roadmap=ai&line=' + aiLine.id : '')
   });
-  const chapters = roadmap
-    ? roadmap.chapters.map((chapter) => ({
+  const capstone = aiLine?.projectRef && resolve({
+    id: '졸업 과제', ref: aiLine.projectRef, title: aiLine.destination, titleEn: aiLine.destinationEn, capstone: true
+  });
+  const chapters = aiLine
+    ? (aiLine.parts ?? [{title: aiTitle, titleEn: aiTitleEn}]).map((part, index) => {
+      const id = String(index + 1);
+      const lessons = aiLine.lessons.filter(lesson => lesson.part === part.start).map((lesson, position) =>
+        resolve({...lesson, id: `${id}.${position + 1}`}));
+      return {id, title: part.title, titleEn: part.titleEn, tracks: [], lessons};
+    })
+    : roadmap ? roadmap.chapters.map((chapter) => ({
       ...chapter, lessons: [...chapter.lessons, ...(chapter.projectRef
-        ? [{id: chapter.id + '.P', ref: chapter.projectRef}] : [])].map(lesson => resolve(lesson, chapter.id)),
+        ? [{id: chapter.id + '.P', ref: chapter.projectRef}] : [])].map(resolve),
       tracks: chapter.tracks.map((track) => ({...track, lessons: track.lessons.map(resolve)}))
-    }))
-    : [{
+    })) : [{
       id: '', title: current.topic.title, tracks: [],
       lessons: current.topic.lessons.map((lesson, index) =>
         resolve({id: String(index + 1), ref: current.topic.id + '/' + lesson.id}))
     }];
+
+  // A subject and a chapter can share a Korean title but have different English titles.
+  const localizedLabels = [];
+  function labelInLanguage(node, ko, en) {
+    const render = () => { node.textContent = en && window.courseI18n?.lang === 'en' ? en : ko; };
+    if (en) {
+      node.setAttribute('data-no-i18n', '');
+      localizedLabels.push(render);
+    }
+    render();
+    return node;
+  }
+  addEventListener('course:lang', () => localizedLabels.forEach(render => render()));
 
   const fitSlots = [];
   function fitSlot(className, children) {
@@ -120,7 +154,8 @@
   }
 
   // Expose adjacent lessons when the desktop sidebar collapses.
-  const ordered = aiLine ? chapters.find(chapter => chapter.id === aiLine.id).lessons : chapters.flatMap((chapter) => [...chapter.lessons, ...chapter.tracks.flatMap((track) => track.lessons)]);
+  const ordered = chapters.flatMap(chapter => [...chapter.lessons, ...chapter.tracks.flatMap(track => track.lessons)]);
+  if (capstone) ordered.push(capstone);
   const at = ordered.findIndex((lesson) => lesson.ref === pageRef);
   if (at >= 0 && ordered.length > 1) {
     const pager = element('nav', 'course-pager');
@@ -129,8 +164,14 @@
       if (!lesson) continue;
       const link = element('a', 'course-pager-link ' + className);
       link.href = lesson.page;
-      link.title = `${lesson.id} ${lesson.title}`;
-      link.append(element('span', 'course-pager-label', label), element('span', 'course-pager-title', `${lesson.id} ${lesson.title}`));
+      const title = lesson.capstone ? `${lesson.id} · ${lesson.title}` : `${lesson.id} ${lesson.title}`;
+      const titleEn = lesson.capstone ? `Capstone · ${lesson.titleEn}` : undefined;
+      // The title attribute and the visible title both follow the same capstone label.
+      if (lesson.capstone) link.title = window.courseI18n?.lang === 'en' ? titleEn : title;
+      else link.title = title;
+      const caption = labelInLanguage(element('span', 'course-pager-title'), title, titleEn);
+      if (lesson.capstone) localizedLabels.push(() => { link.title = caption.textContent; });
+      link.append(element('span', 'course-pager-label', label), caption);
       pager.append(link);
     }
     (timeline ?? main).append(pager);
@@ -205,15 +246,19 @@
     queueMicrotask(showOutput);
   }
 
+  function lessonLink(lesson) {
+    const link = element('a', lesson.capstone ? 'course-lesson course-capstone' : 'course-lesson');
+    link.href = lesson.page;
+    link.append(element('span', 'course-number', lesson.id), labelInLanguage(element('span'), lesson.title, lesson.titleEn));
+    if (lesson.ref === pageRef) link.setAttribute('aria-current', 'page');
+    return link;
+  }
+
   function lessonList(lessons) {
     const list = element('ul', 'course-lessons');
     for (const lesson of lessons) {
       const item = element('li');
-      const link = element('a', 'course-lesson');
-      link.href = lesson.page;
-      link.append(element('span', 'course-number', lesson.id), element('span', '', lesson.title));
-      if (lesson.ref === pageRef && (!aiLine || lesson.id.split('.')[0] === aiLine.id)) link.setAttribute('aria-current', 'page');
-      item.append(link);
+      item.append(lessonLink(lesson));
       list.append(item);
     }
     return list;
@@ -226,7 +271,7 @@
     const prefix = isTrack || !group.id ? group.id : group.id + '장';
     const count = group.lessons.filter(lesson => lesson.ref !== group.projectRef).length
       + (group.tracks ?? []).reduce((total, track) => total + track.lessons.length, 0);
-    summary.append(element('span', 'course-number', prefix), element('span', '', group.title),
+    summary.append(element('span', 'course-number', prefix), labelInLanguage(element('span'), group.title, aiLine && group.titleEn),
       element('span', 'course-count', String(count)));
     details.append(summary);
     if (group.lessons.length) details.append(lessonList(group.lessons));
@@ -295,21 +340,23 @@
 
   const nav = element('nav', 'course-nav');
   nav.setAttribute('aria-label', '코스 목차');
-  const total = aiLine
-    ? new Set(roadmap.chapters.flatMap(chapter => chapter.lessons.map(lesson => lesson.ref))).size
-    : chapters.reduce((sum, chapter) =>
-      sum + chapter.lessons.length + chapter.tracks.reduce((n, track) => n + track.lessons.length, 0), 0);
+  const total = ordered.length - (capstone ? 1 : 0);
   const label = element('div', 'course-nav-heading');
-  label.append(element('strong', '', roadmap ? roadmap.title : current.topic.title),
+  label.append(labelInLanguage(element('strong'), aiTitle ?? roadmap?.title ?? current.topic.title, aiTitleEn),
     element('span', 'course-count', total + '개 레슨'));
-  nav.append(label, ...chapters.map((chapter) => section(chapter)));
+  nav.append(label, ...chapters.map(chapter => section(chapter)));
+  if (capstone) nav.append(lessonLink(capstone));
   document.body.classList.add('course-shell');
   document.body.prepend(bar, sidebar, drawer);
 
   const fitted = matchMedia('(min-width: 960px) and (min-height: 550px)');
   if (lessonHeader) {
-    const current = nav.querySelector('[aria-current="page"] .course-number').textContent;
-    const number = element('span', 'course-lesson-id', current);
+    const lessonNumber = nav.querySelector('[aria-current="page"] .course-number')?.textContent;
+    const number = element('span', 'course-lesson-id', lessonNumber);
+    if (aiTitle) {
+      const eyebrow = lessonHeader.querySelector('.eyebrow');
+      if (eyebrow) eyebrow.replaceChildren(labelInLanguage(element('span'), aiTitle, aiTitleEn), ' · ', element('span', '', lessonNumber));
+    }
     lessonHeader.prepend(number);
     bar.append(lessonHeader);
     const lead = lessonHeader.querySelector('p:not(.eyebrow)');

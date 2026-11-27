@@ -32,8 +32,7 @@ h1, h2, p, ol { margin: 0; }
 
 .map-workspace { display: grid; grid-template-columns: clamp(158px, 15vw, 230px) minmax(0, 1fr); gap: clamp(10px, 1.2vw, 18px); min-height: 0; }
 .subject-list { min-height: 0; overflow-y: auto; border-inline-end: 1px solid var(--border); padding-inline-end: 8px; scrollbar-width: thin; }
-.subject-list h2 { margin: 12px 10px 4px; color: var(--muted); font-size: .75rem; font-weight: 700; }
-.subject-list h2:first-child { margin-top: 4px; }
+.subject-list hr { margin: 12px 10px; border: 0; border-block-start: 1px solid #abbfb3; }
 .subject-list a {
   display: block; margin-block: 2px; padding: 6px 10px; border-radius: 7px; color: #334c42;
   font: 550 14px/1.4 system-ui, sans-serif; word-break: keep-all; overflow-wrap: anywhere;
@@ -78,7 +77,6 @@ main { min-width: 0; min-height: 0; }
 /* The subject list stays on the left at every width, like the hub and the AI map. A narrow window scrolls the map. */
 @media (max-height: 760px) {
   .subject-list a { margin-block: 1px; padding-block: 4px; }
-  .subject-list h2 { margin-top: 8px; }
 }
 @media (max-width: 740px) {
   .map-workspace { grid-template-columns: clamp(96px, 24vw, 155px) minmax(0, 1fr); gap: 6px; }

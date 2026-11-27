@@ -139,7 +139,8 @@
     const entries = [];
     let group;
     for (const map of subjectMaps) {
-      if (map.group !== group) entries.push(html('h2', {textContent: text(map.group, map.groupEn)}));
+      // Like the hub's list: no group headings, one rule before the AI subjects.
+      if (map.group === 'AI' && group && group !== 'AI') entries.push(document.createElement('hr'));
       group = map.group;
       const link = html('a', {href: './map.html?subject=' + map.id, textContent: name(map)});
       if (map === subject) link.setAttribute('aria-current', 'page');

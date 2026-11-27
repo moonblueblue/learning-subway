@@ -1,93 +1,130 @@
-// English for 0.5 Parts of a computer. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
-  '누른 A가 화면에 표시된다': 'Pressing A shows A on the screen',
-  '키보드에서 A를 누르면 번호 65가 같은 CPU를 거쳐 화면의 글자 A로 표시됩니다.':
-    'Pressing A sends the number 65 through the CPU and displays the letter A on the screen.',
-  '키보드에서 2와 3을 보내면 CPU가 RAM에 씁니다. 같은 CPU가 점선 방향으로 2와 3을 읽고 더해 화면에 5를 표시합니다.':
-    'The CPU writes the typed 2 and 3 to RAM. The same CPU reads them back along the dashed line, adds them, and displays 5.',
-  '이 예에서는 키보드에서 받은 2와 3을 CPU가 메모리(RAM)에 적어 둡니다. 입력할 때 쓴 CPU가 같은 두 값을 다시 읽어 더한 뒤, 결과 5를 화면에 보냅니다. RAM에 적어 둔 값은 전원이 꺼지면 사라집니다.':
-    'In this example the CPU writes the typed 2 and 3 into RAM. It reads those same numbers back, adds them, then sends the result 5 to the screen. Values in RAM disappear when the power goes off.',
-  '보이는 5를 파일에 복사한다': 'Save a copy of the displayed 5',
-  '저장을 실행하면 RAM의 결과 5가 저장장치의 result.txt에 복사됩니다. RAM과 화면에도 5가 남습니다.':
-    'Saving copies the result 5 from RAM into result.txt in storage. RAM and the screen still show 5.',
-  '저장 버튼': 'Save', '메모리 (RAM)': 'Memory (RAM)', '5 복사': 'Copy 5',
-  '전원을 끄면 파일만 5를 간직한다': 'The file keeps 5 after power off',
-  '전원이 꺼진 뒤 RAM의 5는 사라지고 화면이 꺼집니다. 저장장치의 result.txt에는 같은 5가 남습니다.':
-    'After power off, RAM loses its 5 and the screen goes blank. The same 5 stays in result.txt in storage.',
-  '5 → 비어 있음': '5 → Empty', '파일 그대로': 'File unchanged', '꺼짐': 'Off',
-  '다시 켜서 파일의 5를 읽는다': 'Power on and read the file’s 5',
-  '다시 켜고 result.txt를 열면 저장장치의 5가 빈 RAM으로 들어옵니다. 같은 CPU가 RAM에서 5를 읽어 화면에 표시합니다. 저장 파일은 그대로입니다.':
-    'Turn the computer back on and open result.txt. Storage loads its 5 into empty RAM. The same CPU reads the 5 from RAM and displays it. The file stays the same.',
-  '비어 있음 → 5': 'Empty → 5', '전원 켬': 'Power on', '읽은 값 5': 'Reads 5',
-  "① 입력": "① Input",
-  "② 쓰기": "② Write",
-  "③ 읽기": "③ Read",
-  "④ 표시": "④ Display",
-  "CPU는 메모리에 쓰고 읽은 뒤 계산한다": "The CPU writes, reads, then calculates",
-  "키보드": "Keyboard",
-  "메모리": "Memory",
-  "화면": "Screen",
-  "① 읽기": "① Read",
-  "② 읽기": "② Read",
-  "③ 표시": "③ Display",
-  "다시 켬 · 파일 열기": "Power on · open file",
-  // Page
-  '컴퓨터의 구성 · 레슨 0.5': 'Parts of a computer · Lesson 0.5',
-  '키보드에서 CPU, 메모리, 저장장치, 화면까지 데이터가 오가는 길을 단계별로 살펴보세요.':
-    'Follow, step by step, the paths data takes between the keyboard, CPU, memory, storage and screen.',
-  '입력, 처리, 저장, 출력은 어떻게 이어질까요? 글자 하나를 치고, 계산하고, 저장했다 다시 여는 동안 데이터가 지나는 길을 따라가 보세요.':
-    'How do input, processing, storage and output connect? Follow the path data takes as you type a character, calculate, save and open a file again.',
-  '데이터가 지나는 길': 'The path data takes', '컴퓨터 부품 사이의 데이터 경로': 'Data paths between the parts of a computer',
-  '보내는 데이터': 'Data sent', '돌려받는 데이터': 'Data read back',
-  // Parts
-  '키보드 · 입력': 'Keyboard · input', 'CPU · 처리': 'CPU · processing', '화면 · 출력': 'Screen · output',
-  // Badges
-  '키보드에서 A 입력': 'A typed on the keyboard', 'CPU가 65를 전달': 'CPU passes on 65', '화면에 A 표시': 'A shown on screen',
-  'A 표시': 'Shows A', '숫자 2와 3 입력': 'Numbers 2 and 3 typed', '메모리에서 읽고 더함': 'Reads from memory and adds',
-  '화면에 5': '5 on screen', '5 표시': 'Shows 5', '2, 3 입력': '2, 3 typed', '2 + 3 = 5': '2 + 3 = 5', '결과 5': 'Result 5', '메모리에만 있는 값': 'Values only in memory',
-  '저장 명령': 'Save command', '파일에 5 저장': '5 saved to file', '저장장치에 파일 생성': 'File created in storage',
-  '파일 5 그대로': 'File 5 still there', '전원 꺼짐': 'Power off', '메모리 내용 사라짐': 'Memory contents gone', '저장한 파일은 남음': 'The saved file remains',
-  '파일 열기': 'Open file', '파일 5': 'File 5', '5 불러옴': '5 loaded', '5 다시 표시': '5 shown again', '화면에 내용 표시': 'Contents shown on screen',
-  '저장장치 → 메모리 → CPU': 'Storage → memory → CPU',
-  // Step 1
-  '입력과 출력': 'Input and output',
-  '입력은 처리를 거쳐 출력된다': 'Input goes through processing to output',
-  '키보드에서 A를 누르면 0.2에서 본 번호 65가 CPU로 갑니다. CPU(중앙 처리 장치)는 그 번호로 무엇을 할지 처리하고, 화면에 A를 그리라는 신호를 보냅니다. 마우스, 마이크, 카메라도 입력 장치이고 스피커, 프린터도 출력 장치입니다.':
-    'Pressing A on the keyboard sends the number 65 from 0.2 to the CPU. The CPU (central processing unit) works out what to do with that number and sends a signal to draw A on the screen. A mouse, microphone and camera are input devices too, and speakers and printers are output devices.',
-  '실선을 따라 키보드에서 CPU로, CPU에서 화면으로 데이터가 한 방향으로 흐릅니다.':
-    'Along the solid lines, data flows one way: from the keyboard to the CPU and from the CPU to the screen.',
-  '키보드, CPU, 화면이 있습니다. 키보드에서 입력한 A(65)가 CPU를 거쳐 화면으로 가서 표시됩니다.':
-    'There is a keyboard, a CPU and a screen. A (65) typed on the keyboard goes through the CPU to the screen and is shown.',
-  // Step 2
-  '처리하는 동안 값은 메모리에 둔다': 'While processing, values stay in memory',
-  'CPU가 메모리에 값을 적고(실선) 다시 읽어 옵니다(점선). 그다음 계산 결과 5가 화면으로 갑니다.':
-    'The CPU writes values to memory (solid line) and reads them back (dashed line). Then the result, 5, goes to the screen.',
-  '키보드, CPU, 메모리, 화면이 있습니다. 입력한 2와 3을 CPU가 메모리에 적고 다시 읽어 더한 뒤, 결과 5를 화면에 보냅니다.':
-    'There is a keyboard, a CPU, memory and a screen. The CPU writes the typed 2 and 3 to memory, reads them back and adds them, then sends the result 5 to the screen.',
-  // Step 3
-  '오래 두려면 저장장치에 적는다': 'To keep data, write it to storage',
-  '"저장"을 누르면 메모리에 있던 내용이 저장장치(SSD나 하드디스크)로 옮겨 적힙니다. 저장장치는 메모리보다 느리지만 전원이 꺼져도 내용이 남습니다. 우리가 파일이라고 부르는 것이 저장장치에 적힌 데이터입니다.':
-    'Pressing "Save" copies what was in memory to storage (an SSD or hard disk). Storage is slower than memory, but its contents remain when the power goes off. What we call a file is data written in storage.',
-  '메모리에서 저장장치로 실선이 이어집니다. 메모리와 화면의 5는 그대로이고, 저장장치에 result.txt의 5가 새로 생깁니다.':
-    'A solid line connects RAM to storage. The 5 in RAM and on the screen stays, and result.txt gets its own copy in storage.',
-  'CPU가 메모리의 내용을 저장장치로 보내 파일로 적습니다.': 'The CPU sends the contents of memory to storage and writes them as a file.',
-  // Step 4
-  '전원 끄기': 'Power off',
-  '전원이 꺼지면 메모리만 비워진다': 'Power off empties only the memory',
-  '컴퓨터를 끄면 메모리는 전기가 끊겨 내용이 모두 사라집니다. 저장장치에 적어 둔 파일은 그대로 남습니다. 저장하지 않고 끄면 작업이 날아가는 이유가 이것입니다.':
-    'When the computer is turned off, memory loses power and everything in it disappears. Files written in storage remain. This is why work is lost if you turn off without saving.',
-  'RAM의 5는 사라지고 화면이 꺼집니다. 같은 저장장치에는 result.txt와 그 안의 5가 그대로 남습니다.':
-    'The 5 in RAM disappears and the screen goes off. The same storage still holds result.txt with its 5.',
-  '전원이 꺼져 데이터가 흐르지 않습니다. 메모리는 비어 있고 저장장치의 파일은 그대로 남아 있습니다.':
-    'The power is off, so no data flows. Memory is empty and the file in storage remains.',
-  // Step 5
-  '다시 열기': 'Opening again',
-  '파일을 열면 저장장치에서 메모리로 올린다': 'Opening a file loads it from storage into memory',
-  '전원을 다시 켜고 result.txt를 엽니다. 저장장치에 남아 있던 5가 메모리로 올라오고, CPU가 메모리에서 그 값을 읽어 화면에 보냅니다. 이번에는 2와 3을 새로 더하지 않아도 5를 확인할 수 있습니다.':
-    'Turn the computer on and open result.txt. The 5 that stayed in storage loads into RAM. The CPU reads it from RAM and sends it to the screen. The original addition has already been done.',
-  '점선을 따라 저장장치 → 메모리 → CPU로 데이터가 돌아오고, 실선으로 화면에 갑니다.':
-    'Along the dashed lines, data comes back from storage → memory → CPU, then goes to the screen along a solid line.',
-  '저장장치의 파일이 메모리로 올라오고, CPU가 메모리에서 읽어 화면에 보냅니다.':
-    'The file in storage is loaded into memory, and the CPU reads it from memory and sends it to the screen.',
-  '저장': 'Saving',
+  '일하는 동안의 기억과 저장': 'Working memory and saved files',
+  '같은 카드를 그리고 저장 여부를 바꿔 보며 메모리와 저장장치의 역할을 살펴보세요.':
+    'Draw the same card and change whether you save it to explore what memory and storage do.',
+  '0장 컴퓨팅 둘러보기': 'Chapter 0 · A tour of computing',
+  '창을 닫고 나서 어떤 그림을 다시 열 수 있을까요?': 'Which picture can you reopen after closing the window?',
+  '작업 창과 파일 목록': 'Work window and file list',
+  '작업 중인 카드와 저장한 파일': 'Cards in progress and saved files',
+  '작업 창': 'Work window',
+  '파일 목록': 'File list',
+  '별 카드': 'Star card',
+  '녹음 파일': 'Audio file',
+  '비어 있음': 'Empty',
+  '아직 열지 않음': 'Not opened yet',
+  '카드 그리기': 'Draw a card',
+  '별을 그리면 먼저 작업 창에 보입니다': 'The star first appears in the work window',
+  '자동 저장을 끈 그림 앱에서 새 카드를 엽니다. 별을 그리면 작업 창에 별이 생깁니다. 파일 목록은 비어 있습니다.':
+    'Open a new card in a drawing app with autosave off. When you draw a star, it appears in the work window. The file list is empty.',
+  '새로 생긴 별은 오른쪽 위 작업 창에 있습니다. 아래의 두 파일 목록은 그대로 비어 있습니다.':
+    'The new star appears in the upper-right work window. Both file lists below stay empty.',
+  '새 작업 창': 'New work window',
+  '별 그리기': 'Draw a star',
+  '작업 창에만 별': 'Star in the work window only',
+  '빈 카드에 별을 그려 보세요. 파일 목록에도 별이 생길까요?': 'Draw a star on the blank card. Will a star appear in the file list?',
+  '새 작업': 'New drawing',
+  '새 작업 창과 파일 목록이 비어 있습니다.': 'The new work window and the file list are empty.',
+  '별 그린 뒤': 'After drawing',
+  '작업 창에 별이 생겼습니다. 파일 목록은 비어 있습니다.': 'A star appeared in the work window. The file list is empty.',
+  '왼쪽 작업 창은 빈 카드입니다. 별을 그리면 오른쪽 작업 창에 별이 생깁니다. 아래 파일 목록은 두 시점 모두 비어 있습니다.':
+    'The left work window has a blank card. Drawing a star puts one in the work window on the right. The file lists beneath both windows are empty.',
+  '저장 없이 닫기': 'Close without saving',
+  '저장하지 않고 닫으면 새 창에 별이 돌아오지 않습니다': 'Close without saving and the star is gone from the new window',
+  '‘저장 안 함’을 고르고 창을 닫습니다. 별을 담은 파일을 만들지 않았으므로 앱에서 새 작업을 열면 빈 카드가 나옵니다.':
+    'Choose Don’t save and close the window. No file was made for the star, so the next drawing opens as a blank card.',
+  '위쪽 별 카드는 창을 닫을 때 없어집니다. 네 시점 모두 아래 파일 목록이 비어 있습니다.':
+    'The star card above disappears when the window closes. The file list below is empty at all four moments.',
+  '작업 창의 별': 'Star in the work window',
+  '저장 안 함 · 창 닫기': 'Don’t save · close the window',
+  '새 작업은 빈 카드': 'New drawing has a blank card',
+  '저장하지 않는 쪽을 따라가 보세요. 새 작업을 열고 별 카드가 있는지 확인합니다.':
+    'Follow the steps without saving. Open a new drawing and check whether the star card is there.',
+  '저장 안 함': 'Don’t save',
+  '창 닫기': 'Close window',
+  '새 작업 열기': 'Open a new drawing',
+  '그린 카드': 'Drawn card',
+  '작업 창에 별 카드가 있고 파일 목록은 비어 있습니다.': 'The star card is in the work window and the file list is empty.',
+  '저장하지 않기로 했습니다. 창을 닫기 전에는 별이 보입니다.': 'You chose not to save. The star is visible until the window closes.',
+  '창 닫힘': 'Window closed',
+  '창을 닫아 작업 중인 별이 사라졌습니다. 파일 목록은 비어 있습니다.':
+    'Closing the window clears the star from the work in progress. The file list is empty.',
+  '새 작업은 빈 카드입니다. 파일 목록에도 별 카드가 없습니다.':
+    'The new drawing is a blank card. The file list has no star card either.',
+  '별이 있는 작업 창에서 저장 안 함을 고르고 창을 닫습니다. 앱에서 새 작업을 열면 빈 카드입니다. 처음부터 끝까지 아래 파일 목록에는 별 카드가 없습니다.':
+    'The work window has a star. Choose Don’t save and close the window. A new drawing opens as a blank card. From start to finish, the file list below holds no star card.',
+  '저장하고 닫기': 'Save and close',
+  '저장한 별 카드는 파일 목록에서 다시 열 수 있습니다': 'Open a saved star card again from the file list',
+  '다시 같은 별 카드를 그리고 저장합니다. 별 카드 한 장이 파일로 복사됩니다. 창을 닫아도 파일 목록에 별 카드가 남아 있어서 다시 열 수 있습니다.':
+    'Draw the same star card and save it. A copy goes into a file. The file stays in the list after the window closes, so you can open it again.',
+  '둘째 열에는 별 카드가 두 곳에 보입니다. 셋째 열에서 창을 닫은 뒤에는 파일 목록에만 남습니다.':
+    'The second column shows the star card in two places. After closing the window in the third column, it stays in the file list.',
+  '같은 별 카드': 'Same star card',
+  '저장 · 창 닫기': 'Save · close the window',
+  '목록에서 별 카드 열기': 'Open star card from the list',
+  '저장하고 창을 닫아 보세요. 파일 목록의 별 카드를 열면 어디에 보일까요?':
+    'Save the card and close the window. Where will the star card appear when you open it from the list?',
+  '파일에 저장': 'Save to file',
+  '파일 열기': 'Open file',
+  '저장': 'Save',
+  '별 카드가 파일로 복사되었습니다. 작업 창에도 별이 남아 있습니다.':
+    'The star card was copied to a file. The star is still in the work window.',
+  '창을 닫았습니다. 작업 중인 별은 사라지고 파일 목록에는 별 카드가 남았습니다.':
+    'The window is closed. The working copy is gone, and the star card remains in the file list.',
+  '파일에서 작업 창으로 별 카드가 다시 들어왔습니다. 파일도 그대로 남아 있습니다.':
+    'The star card is back in the work window from the file. The file still holds it too.',
+  '같은 별 카드를 그립니다. 저장하면 별이 작업 창과 아래 파일 목록에 함께 있습니다. 창을 닫아도 목록에 파일이 남습니다. 저장 파일을 열면 같은 별이 위의 새 작업 창에도 보입니다.':
+    'Draw the same star card. Saving puts the star in the work window and the file list below. The file stays when the window closes. Open it and the same star appears in a new work window above.',
+  '파일로 복사': 'Copy to file',
+  '파일 불러오기': 'Load from file',
+  '메모리와 저장장치': 'Memory and storage',
+  '작업 중인 내용과 보관한 파일은 다른 곳에 있습니다': 'Work in progress and saved files live in different places',
+  '컴퓨터는 작업 중인 내용을 메모리에 둡니다. 전원을 끄면 이 메모리의 내용이 사라집니다. 저장장치에 둔 파일은 남으므로 다시 켠 뒤 열 수 있습니다.':
+    'A computer keeps its active work in memory. The contents of this memory disappear when the power goes off. A file on storage stays there, so you can open it after turning the computer back on.',
+  '전원을 끈 열에서 위 메모리는 비고 아래 저장장치에는 별 카드가 남습니다. 파일을 열면 같은 별이 위로 올라옵니다.':
+    'In the power-off column, memory is empty above and storage still holds the card below. Open the file and the same star returns to memory.',
+  '메모리와 저장장치에 별': 'Star in memory and storage',
+  '전원 끄기 · 다시 켜기': 'Turn off · turn on',
+  '남은 파일을 메모리로 열기': 'Open the saved file into memory',
+  '전원을 끈 뒤 다시 켜고 파일을 열어 보세요. 전원이 꺼진 동안 별은 어디에 남았나요?':
+    'Turn the computer off and back on, then open the file. Where did the star stay while the power was off?',
+  '전원 끄기': 'Turn off power',
+  '다시 켜고 파일 열기': 'Turn on and open file',
+  '저장 직후': 'Just saved',
+  '메모리의 작업 중인 별과 저장장치의 별 카드 파일이 함께 있습니다.':
+    'Memory holds the working star and storage holds the star card file.',
+  '전원 끔': 'Power off',
+  '전원을 껐습니다. 메모리는 비고 저장장치에는 별 카드 파일이 남았습니다.':
+    'Power is off. Memory is empty and storage still holds the star card file.',
+  '다시 켠 뒤 파일 열기': 'Restart and open file',
+  '전원을 다시 켜고 별 카드 파일을 열었습니다. 별 카드가 메모리와 화면에 다시 나타났습니다.':
+    'You turned the computer back on and opened the star card file. The star card returned to memory and the screen.',
+  '위는 작업 중인 내용을 두는 메모리이고 아래는 저장한 파일을 두는 저장장치입니다. 전원을 끄면 위 메모리는 비고 아래에 별 카드 파일이 남습니다. 다시 켜고 파일을 열면 아래 저장장치의 별 카드가 위 메모리로 읽힙니다.':
+    'Above, memory keeps active work. Below, storage keeps saved files. Turning off power clears memory, and the star card file stays in storage. Turn the computer back on and open the file to load it from storage into memory.',
+  '메모리 · 작업 중': 'Memory · active work',
+  '저장장치 · 보관': 'Storage · saved files',
+  '녹음에도 적용': 'Try a recording',
+  '녹음을 다시 열려면 소리도 파일로 저장합니다': 'Save sound to a file to open it again',
+  '자동 저장을 끈 녹음 앱에서도 같은 일이 일어납니다. 녹음을 끝내면 소리가 작업 창에 보입니다. 녹음 파일을 만들어야 창을 닫은 뒤에도 다시 열고 보낼 수 있습니다.':
+    'The same thing happens in a recording app with autosave off. Finish recording and the sound appears in the work window. Save a file so you can reopen and send the recording after closing the window.',
+  '두 줄의 왼쪽 소리 무늬는 같습니다. 아래 줄에서만 파일에 소리가 남아 다시 연 창에서도 같은 무늬를 볼 수 있습니다.':
+    'The sound patterns on the left match. Only the bottom row keeps the sound in a file, so the reopened window shows the same pattern.',
+  '작업 창에 같은 녹음': 'Same recording in both windows',
+  '한쪽만 파일로 저장': 'Save a file on one side',
+  '저장한 소리만 다시 열기': 'Reopen the saved sound',
+  '친구에게 소리 파일을 보내려고 합니다. 이 앱에서 녹음을 어떻게 닫아야 다시 열 수 있을까요?':
+    'You want to send a sound file to a friend. How should you close the recording so you can open it again in this app?',
+  '두 줄 모두 같은 녹음으로 시작합니다. 위에서는 저장하지 않고 닫아서 파일 목록과 새 작업 창이 비어 있습니다. 아래에서는 파일로 저장하고 닫아서 파일 목록에 소리가 남고 다시 연 창에도 같은 소리 무늬가 보입니다.':
+    'Both rows start with the same recording. The top row closes without saving, leaving the file list and new work window empty. The bottom row saves before closing, so the recording stays in the file list and the same sound pattern returns after opening it.',
+  '녹음한 소리': 'Recorded sound',
+  '다시 연 창': 'Reopened window',
+  '저장 안 하고 닫기': 'Close without saving',
+  '다시 열기': 'Open again',
+  '다시 녹음': 'Record again',
+  '작업 창에 녹음이 있습니다. 저장하고 닫을지 고르면 됩니다.': 'The work window holds a recording. Choose how to close it.',
+  '창을 닫았습니다. 파일 목록에 녹음이 남았습니다.': 'You closed the window. The recording remains in the file list.',
+  '창을 닫았습니다. 파일 목록에 녹음이 없습니다.': 'You closed the window. The file list has no recording.',
+  '다시 연 창에 녹음이 있습니다. 이 파일을 친구에게 보낼 수 있습니다.':
+    'The reopened window holds the recording. You can send this file to a friend.',
+  '다시 연 창이 비어 있고 보낼 파일이 없습니다. 다시 녹음하고 저장하는 쪽을 골라 보세요.':
+    'The reopened window is empty and there is no file to send. Record again and try saving.',
 };

@@ -21,23 +21,23 @@ const courseCatalog = {
             },
             {
               "id": "0.3",
-              "ref": "computing-basics/bits"
+              "ref": "computing-basics/computer"
             },
             {
               "id": "0.4",
-              "ref": "computing-basics/text"
+              "ref": "computing-basics/bits"
             },
             {
               "id": "0.5",
-              "ref": "computing-basics/media"
+              "ref": "computing-basics/text"
             },
             {
               "id": "0.6",
-              "ref": "computing-basics/compress"
+              "ref": "computing-basics/media"
             },
             {
               "id": "0.7",
-              "ref": "computing-basics/computer"
+              "ref": "computing-basics/compress"
             },
             {
               "id": "0.8",
@@ -2595,6 +2595,17 @@ const courseCatalog = {
           "page": "computing-basics/repeatable-instructions.html"
         },
         {
+          "id": "computer",
+          "title": "일하는 동안의 기억과 저장",
+          "titleEn": "Working memory and saved files",
+          "question": "저장하고 닫은 그림과 저장하지 않고 닫은 그림 중 무엇을 다시 열 수 있을까?",
+          "format": "실험",
+          "requires": [
+            "computing-basics/computer-tasks"
+          ],
+          "page": "computing-basics/computer.html"
+        },
+        {
           "id": "bits",
           "title": "비트와 이진수",
           "titleEn": "Bits and binary",
@@ -2629,15 +2640,6 @@ const courseCatalog = {
           "format": "실험",
           "requires": [],
           "page": "computing-basics/compress.html"
-        },
-        {
-          "id": "computer",
-          "title": "컴퓨터의 구성",
-          "titleEn": "Parts of a computer",
-          "question": "입력, 처리, 저장, 출력은 어떻게 이어질까?",
-          "format": "실험",
-          "requires": [],
-          "page": "computing-basics/computer.html"
         },
         {
           "id": "search",

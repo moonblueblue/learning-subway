@@ -3,6 +3,10 @@ const aiStationMap = {
   "1": {
     "stations": [
       {
+        "id": "1.51",
+        "ref": "ai/photo-search"
+      },
+      {
         "id": "1.10",
         "ref": "ai/decision-owner"
       },
@@ -207,6 +211,11 @@ const aiStationMap = {
       }
     ],
     "parts": [
+      {
+        "start": "1.51",
+        "title": "AI는 내 일을 어떻게 도울까?",
+        "titleEn": "How can AI help me?"
+      },
       {
         "start": "1.10",
         "title": "문제를 AI로 표현하기",

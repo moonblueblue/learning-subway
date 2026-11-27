@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="휴대폰은 어떻게 고양이 사진을 골라 주고, 사람은 그 제안을 어떻게 확인할까요?">
+<title>AI는 어떤 일을 도와줄까? · 1.1</title>
+<link rel="stylesheet" href="../shared/reading-lesson.css">
+<style>
+.photo-label,.photo-small,.photo-phrase,.photo-music{fill:#182f28;font-size:16px;font-weight:700}
+.photo-small{font-size:13px}
+.photo-phrase{font-size:17px}
+.photo-word{fill:#7e361a;text-decoration:underline;text-decoration-thickness:2px}
+.photo-music{font-size:24px;fill:#356954}
+.photo-card{fill:#fbfdf9;stroke:#638176;stroke-width:1.15}
+.photo-thumb{fill:#fff;stroke:#85968c}
+.photo-id{fill:#fff;stroke:#638176}
+.photo-panel{fill:#fff}
+.photo-input{fill:#f3f7f5}
+.photo-process{fill:#e8effd;stroke:#6a80aa}
+.photo-suggestion{fill:#edf0ff;stroke:#6a80aa}
+.photo-match{fill:#e2f4e9;stroke:#318068}
+.photo-error{fill:#fbeee5;stroke:#aa4e27}
+.photo-pending{fill:#fff;stroke-dasharray:4 3}
+.photo-human{fill:#d4e8e1;stroke:#356954;stroke-width:1.4}
+.photo-loop,.photo-arrow{fill:none;stroke:#327263;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.photo-tip{fill:#327263}
+.photo-card.photo-muted{fill:#f8f9f7;stroke:#84948b}
+.photo-arrow.photo-muted{stroke:#73847a;stroke-dasharray:4 3}
+.photo-tip.photo-muted{fill:#73847a}
+.photo-practice,body.course-shell .workspace:not(.course-reading) .photo-reading{display:none}
+body.course-shell .workspace:not(.course-reading) .photo-practice{display:inline}
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
+<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
+<script defer blocking="render" src="../shared/catalog.js"></script>
+<script defer blocking="render" src="./photo-search.en.js"></script>
+<script defer blocking="render" src="../shared/i18n.js"></script>
+<script defer blocking="render" src="../shared/course.js?v=577926b68281a171"></script>
+</head>
+<body>
+<main class="shell">
+  <header><p class="eyebrow">AI 공통 본선 · 1.1</p><h1>AI는 어떤 일을 도와줄까?</h1><p>휴대폰은 어떻게 고양이 사진을 골라 주고, 사람은 그 제안을 어떻게 확인할까요?</p></header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">사진첩에서 찾아보기</h2></div>
+        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">AI는 어떤 일을 도와줄까?</title><desc id="scene-desc"></desc></svg></div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+      <div class="hands-on">
+        <p class="try"><strong>다른 입력으로 확인</strong></p>
+        <p id="prompt" class="try"></p>
+        <p id="feedback" class="readout" role="status"></p>
+        <div id="choices"></div>
+
+      </div>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2><p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+    </section>
+  </div>
+  <div class="sr-only" id="announcement" role="status"></div>
+</main>
+<script>
+const lesson = [
+  {
+    label: '사진첩 열기', title: '사진첩에서 고양이 사진을 찾고 싶습니다',
+    body: '사진첩에는 고양이, 개, 나무 사진이 섞여 있습니다. 한 장씩 넘겨 볼 수도 있고, 사진첩 검색창에 찾고 싶은 대상을 적을 수도 있습니다.',
+    takeaway: '사람이 찾을 대상을 정하고 검색어를 적습니다. 아래 사진은 검색 전의 사진첩입니다.',
+    description: '왼쪽에서 사람이 고양이 사진을 찾으려 합니다. 오른쪽에 검색어 고양이와 여러 종류의 사진이 담긴 사진첩이 있습니다. 프로그램은 아직 사진을 고르지 않았습니다.',
+    example: ['섞여 있는 사진', '고양이 검색어 입력', '프로그램이 고르기 전'],
+    practiceDescription: '왼쪽 사람이 나무 사진을 찾으려 하고 오른쪽의 검색창이 비어 있습니다.',
+    quiz: ['이번에는 그림의 나무 사진을 찾으려 합니다. 검색창에 무엇을 적을까요?', '나무', '고양이', '찾으려는 대상은 나무입니다.'],
+    practice: ['나무 사진 찾기', '나무'],
+  },
+  {
+    label: '예시와 정답', title: '사람이 예시 사진에 정답을 붙입니다',
+    body: '프로그램이 사진을 고르기 전에, 사람은 예시 사진을 보며 고양이가 있는지 표시합니다. 사진과 답을 함께 주면 프로그램은 그 예시들에서 고양이 사진을 알아보는 데 쓸 단서를 배울 수 있습니다.',
+    takeaway: 'A와 B는 예시 사진입니다. 각각의 정답을 붙인 사람에서 프로그램 쪽으로 화살표가 이어집니다.',
+    description: '사람이 예시 A의 고양이 사진에 고양이 있음, 예시 B의 개 사진에 고양이 없음이라는 정답을 붙여 프로그램에 줍니다.',
+    example: ['예시 사진 A와 B', '사람이 정답 표시', '프로그램에 예시 전달'],
+    practiceDescription: '예시 C에 나무가 보이며 사람이 붙이는 정답 칸이 비어 있습니다.',
+    quiz: ['예시 C에 사람이 붙일 정답은 무엇일까요?', '고양이 없음', '고양이 있음', '예시 C에는 나무만 있습니다.'],
+    practice: ['예시 C에 붙일 정답', '고양이 없음'],
+  },
+  {
+    label: '프로그램의 제안', title: '프로그램이 새 사진에서 후보를 골라 줍니다',
+    body: '이제 프로그램이 예시 A와 B 대신 사진첩에서 처음 보는 사진을 살펴봅니다. 검색어가 고양이일 때 1번과 2번을 제안하고 3번을 제안에서 뺍니다.',
+    takeaway: '왼쪽은 새로 준 사진이고 오른쪽은 프로그램이 내놓은 제안입니다. 사진 번호를 따라가 보세요.',
+    description: '검색어 고양이와 처음 보는 사진 1, 2, 3이 프로그램에 들어갑니다. 프로그램은 1번과 2번을 제안하고 3번은 제외합니다. 실제로 고양이가 있는지는 아직 확인하지 않았습니다.',
+    example: ['새 사진 1·2·3', '프로그램이 사진 선별', '1·2를 제안'],
+    practiceDescription: '사진 4, 5, 6 중 제안함은 4와 6 옆에, 제외함은 5 옆에 있습니다.',
+    quiz: ['이번에 프로그램이 고른 사진 번호는 무엇일까요?', '4번과 6번', '4번과 5번', '프로그램에서 4번과 6번으로 이어지는 칸에 제안 표식이 있습니다.'],
+    practice: ['제안한 사진 번호', '4번과 6번'],
+  },
+  {
+    label: '사람이 확인', title: '사람이 후보를 열어 보고 실제와 맞댑니다',
+    body: '사람이 1번 사진을 열어 실제 고양이를 확인합니다. 2번에는 고양이 얼굴처럼 보이는 장난감이 있었습니다. 프로그램이 2번을 골랐다는 기록과 사람이 확인한 실제 결과를 둘 다 남깁니다.',
+    takeaway: '2번의 제안은 그대로 있습니다. 오른쪽에서 받침이 달린 장난감 전체가 보이고 실제 결과가 달라집니다.',
+    description: '프로그램이 추천한 1번은 사람이 열어 보니 실제 고양이입니다. 추천한 2번을 넓게 보니 받침이 있는 고양이 모양 장난감입니다. 제안과 실제가 달랐다는 결과가 2번에 표시됩니다.',
+    example: ['1·2를 제안', '사람이 원본 확인', '2는 장난감'],
+    practiceDescription: '프로그램이 제안한 사진 4와 6을 사람의 확인과 비교합니다. 4의 사진을 넓게 보면 받침 달린 장난감이고, 6에는 실제 고양이가 있습니다.',
+    quiz: ['이번 후보 중 실제로 고양이가 있는 사진은 어느 쪽일까요?', '6번만', '4번과 6번 모두', '4번은 장난감이고 6번은 고양이입니다.'],
+    practice: ['실제 고양이가 있는 사진', '6번만'],
+  },
+  {
+    label: 'AI가 돕는 일', title: '인공지능은 인식, 예측, 추천 같은 일을 돕습니다',
+    body: '인공지능(AI)은 컴퓨터가 사진 속 대상을 알아보거나, 앞으로 일어날 일을 예측하거나, 좋아할 만한 것을 추천하도록 만드는 기술입니다. 예시에서 단서를 배우게 하는 머신러닝은 AI를 만드는 방법 중 하나입니다.',
+    takeaway: '윗줄은 AI가 돕는 일입니다. 아랫줄에서 예시를 보고 배우는 방법에 머신러닝이라는 이름이 붙습니다.',
+    description: 'AI가 돕는 일의 예로 사진에서 고양이인지 인식하기, 길에서 도착 시각 예측하기, 들은 노래를 바탕으로 다음 곡 추천하기가 있습니다. AI를 만드는 방법으로는 사람이 정한 규칙을 적용하는 방법과 예시에서 배우는 머신러닝이 있습니다.',
+    example: ['사진·길·노래 기록', '인식·예측·추천', '고양이 여부·도착 시각·곡 후보'],
+    practiceDescription: '왼쪽의 들은 곡 기록이 오른쪽의 다음 곡 후보를 향합니다.',
+    quiz: ['전에 듣던 곡으로 좋아할 만한 다음 곡을 골라 준다면 어떤 일일까요?', '추천', '도착 시각 예측', '이전 노래 듣기 기록에서 다음 곡 후보를 골라 줍니다.'],
+    practice: ['들은 곡 → 다음 곡 후보', '추천'],
+  },
+  {
+    label: '음성에 적용', title: '음성 자막에서도 제안과 확인을 나눌 수 있습니다',
+    body: '이번에는 사진 대신 휴대폰에 녹음한 음성이 들어갑니다. 프로그램이 자막을 만들면, 말한 사람이 자기 말을 다시 듣고 자막이 맞는지 확인할 수 있습니다.',
+    takeaway: '왼쪽의 음성, 가운데의 첫 자막, 오른쪽에서 화자가 확인한 말을 각각 짚어 보세요.',
+    description: '왼쪽의 녹음 파형이 프로그램에 들어갑니다. 가운데 처음 나온 자막은 밤 먹었어?입니다. 오른쪽에서 말한 사람이 밥 먹었어?라고 확인합니다. 밤과 밥의 차이가 표시됩니다.',
+    example: ['휴대폰 음성 녹음', '프로그램이 첫 자막 생성', '화자가 실제 발화 확인'],
+    practiceDescription: '다른 녹음에서 처음 나온 자막은 비 먹었어?입니다. 오른쪽에서 말한 사람이 배 먹었어?라고 확인합니다.',
+    quiz: ['실습에서 프로그램이 먼저 제안한 내용은 무엇일까요?', '비 먹었어?', '배 먹었어?', '첫 자막은 비 먹었어?이며, 화자는 배 먹었어?라고 확인했습니다.'],
+    practice: ['프로그램이 제안한 자막', '비 먹었어?'],
+  },
+].map((step, index) => ({...step, readingDiagram: {
+  figure: `photo-figure-${index}`, staticOnly: true, title: step.label, description: step.description,
+}}));
+
+const slug = 'photo-search';
+const byId = id => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ['✓ 맞았습니다.', '✗ 다시 생각해 보세요.'];
+const scene = byId('scene');
+const workspace = scene.closest('.workspace');
+
+function label(group, x, y, value, className = 'photo-label', anchor = 'middle') {
+  svg('text', {x, y, class: className, 'text-anchor': anchor}, group).textContent = value;
+}
+
+function card(group, x, y, width, height, tone = '') {
+  svg('rect', {x, y, width, height, rx: 8, class: 'photo-card ' + tone}, group);
+}
+
+function arrow(group, x1, y1, x2, y2, tone = '') {
+  svg('line', {x1, y1, x2, y2, class: 'photo-arrow ' + tone}, group);
+  svg('polygon', {points: '-8,-5 0,0 -8,5', class: 'photo-tip ' + tone,
+    transform: `translate(${x2} ${y2}) rotate(${Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI})`}, group);
+}
+
+function icon(group, x, y, kind) {
+  const art = svg('g', {transform: `translate(${x} ${y})`}, group);
+  if (kind === 'tree') {
+    svg('circle', {cx: 17, cy: 13, r: 5, fill: '#f7dc91'}, art);
+    svg('path', {d: 'M-24 35Q-12 19 2 33Q15 23 25 31V46H-24Z', fill: '#bdd3a8'}, art);
+    svg('path', {d: 'M-18 39H-14V29H-18Z', fill: '#684735'}, art);
+    svg('path', {d: 'M-16 9L-27 28H-5Z', fill: '#356954'}, art);
+    return;
+  }
+  if (kind === 'toy') {
+    svg('path', {d: 'M-24 39Q0 33 24 39L24 44Q0 50-24 44Z', fill: '#aa4e27'}, art);
+    svg('path', {d: 'M-4 36H4V41H-4Z', fill: '#623f31'}, art);
+    const figure = svg('g', {transform: 'translate(0 3) scale(.74)'}, art);
+    icon(figure, 0, 0, 'crop');
+    return;
+  }
+  const dog = kind === 'dog' || kind === 'dog-spotted';
+  const crop = kind === 'crop';
+  const fur = kind === 'dog-spotted' ? '#e9c9a5' : dog ? '#b48160' : kind === 'cat-dark' ? '#677787' : crop ? '#f0bf91' : '#dcab73';
+  if (crop) art.setAttribute('transform', `translate(${x + 2} ${y}) rotate(-10 0 28)`);
+  const catShape = 'M-21 27L-20 8L-9 16Q0 13 9 16L20 8L21 27Q21 43 0 43Q-21 43-21 27Z';
+  svg('path', {d: dog ? 'M-18 20Q-15 11 0 11Q15 11 18 20Q23 44 0 44Q-23 44-18 20Z' : catShape, fill: fur, stroke: '#624834'}, art);
+  if (kind === 'dog-spotted') {
+    svg('path', {d: 'M-14 13Q-30 4-29 28Q-26 36-18 27M13 15Q32 13 29 38Q23 41 16 30M-16 21Q-2 16-3 29Q-5 35-20 31Z', fill: '#695449'}, art);
+  } else if (dog) svg('path', {d: 'M-14 14Q-33 11-28 36Q-23 39-16 28M14 14Q33 11 28 36Q23 39 16 28', fill: '#805b47'}, art);
+  else svg('path', {d: 'M-18 13L-11 19L-17 22ZM18 13L11 19L17 22Z', fill: '#efd2be'}, art);
+  if (crop) svg('path', {d: 'M-4 16L-2 22M1 16V22M6 16L4 22M16 29L21 28', fill: 'none', stroke: '#935d43', 'stroke-width': 2}, art);
+  for (const eye of [-8, 8]) svg('circle', {cx: eye, cy: 27, r: 2.2, fill: '#232521'}, art);
+  svg('path', {d: 'M-4 32H4L0 35Z', fill: '#53392f'}, art);
+  svg('path', {d: dog ? 'M-5 38Q0 43 5 38' : 'M-9 36L-18 35M9 36L18 35', fill: 'none', stroke: '#53392f'}, art);
+}
+
+function photo(group, x, y, kind, id = '') {
+  card(group, x, y, 66, 48, 'photo-thumb');
+  const fill = {tree: '#e4edff', cat: '#fbebd4', 'cat-dark': '#e0edf0', dog: '#ede3d9', 'dog-spotted': '#d9ead4', crop: '#dae1f1', toy: '#dae1f1'};
+  svg('rect', {x: x + 2, y: y + 2, width: 62, height: 44, rx: 6, fill: fill[kind]}, group);
+  icon(group, x + 33, y, kind);
+  if (id) {
+    svg('circle', {cx: x - 13, cy: y + 24, r: 10, class: 'photo-id'}, group);
+    label(group, x - 13, y + 29, id, 'photo-small');
+  }
+}
+
+function person(group, x, y) {
+  svg('circle', {cx: x, cy: y, r: 13, class: 'photo-human'}, group);
+  svg('path', {d: `M${x - 25} ${y + 39}q0 -20 25 -20t25 20Z`, class: 'photo-human'}, group);
+}
+
+function gallery(group, trial) {
+  const target = trial ? '나무' : '고양이';
+  const who = svg('g', {}, group);
+  label(who, 136, 89, trial ? '나무 사진 찾기' : '고양이 사진 찾기');
+  person(who, 136, 123);
+  label(who, 136, 181, '사람');
+  photo(who, 103, 192, trial ? 'tree' : 'cat');
+  arrow(group, 210, 151, 280, 151);
+  card(group, 293, 66, 296, 177, 'photo-panel');
+  label(group, 313, 88, '휴대폰 사진첩', 'photo-label', 'start');
+  card(group, 313, 99, 256, 31, 'photo-input');
+  svg('circle', {cx: 329, cy: 113, r: 5, class: 'photo-loop'}, group);
+  svg('path', {d: 'M333 117l4 4', class: 'photo-loop'}, group);
+  label(group, 349, 120, trial ? '검색어 입력 전' : target, 'photo-small', 'start');
+  for (const [i, kind] of ['dog', 'cat', 'tree', 'cat-dark', 'dog', 'tree'].entries()) {
+    const cell = svg('g', {transform: `translate(${321 + i % 3 * 88} ${137 + Math.floor(i / 3) * 51})`}, group);
+    photo(cell, 0, 0, kind);
+  }
+}
+
+function examples(group, trial) {
+  label(group, 168, 83, '사람이 붙인 정답');
+  const inputs = trial ? [['C', 'tree']] : [['A', 'cat'], ['B', 'dog']];
+  for (const [index, [id, kind]] of inputs.entries()) {
+    const y = 100 + index * 64;
+    photo(group, 55, y, kind, id);
+    card(group, 145, y + 6, 147, 36, trial ? 'photo-pending' : 'photo-input');
+    label(group, 218.5, y + 29, trial ? '정답 입력 전' : kind === 'cat' ? '고양이 있음' : '고양이 없음');
+    arrow(group, 123, y + 24, 142, y + 24);
+    if (!trial) arrow(group, 295, y + 24, 386, y + 24);
+  }
+  card(group, 391, 99, 196, 114, 'photo-process');
+  label(group, 489, 149, '프로그램');
+  label(group, 489, 175, '예시에서 배우기', 'photo-small');
+}
+
+function proposals(group, trial) {
+  label(group, 128, 72, '처음 보는 사진');
+  label(group, 492, 72, '프로그램의 제안');
+  card(group, 230, 87, 149, 147, 'photo-process');
+  label(group, 304.5, 152, '프로그램');
+  label(group, 304.5, 175, '검색어 · 고양이', 'photo-small');
+  const cases = trial ? [['4', 'crop', true], ['5', 'tree', false], ['6', 'cat-dark', true]] :
+    [['1', 'cat-dark', true], ['2', 'crop', true], ['3', 'dog-spotted', false]];
+  for (const [i, [id, kind, suggested]] of cases.entries()) {
+    const y = 86 + i * 53;
+    photo(group, 91, y, kind, id);
+    arrow(group, 166, y + 24, 224, y + 24);
+    arrow(group, 384, y + 24, 425, y + 24, suggested ? '' : 'photo-muted');
+    card(group, 430, y + 5, 145, 38, suggested ? 'photo-suggestion' : 'photo-muted');
+    label(group, 452, y + 30, id);
+    label(group, 515, y + 30, suggested ? '제안함' : '제외함');
+  }
+  label(group, 501, 254, '실제는 확인 전', 'photo-small');
+}
+
+function checked(group, trial) {
+  label(group, 145, 79, '프로그램의 제안');
+  person(group, 552, 51);
+  label(group, 437, 79, '사람이 확인한 실제');
+  const cases = trial ? [['4', false], ['6', true]] : [['1', true], ['2', false]];
+  for (const [i, [id, cat]] of cases.entries()) {
+    const y = 103 + i * 65;
+    card(group, 54, y - 3, 219, 54, 'photo-suggestion');
+    photo(group, 87, y, cat ? 'cat-dark' : 'crop', id);
+    label(group, 210, y + 29, '제안함');
+    arrow(group, 280, y + 24, 321, y + 24);
+    card(group, 328, y - 3, 232, 54, cat ? 'photo-match' : 'photo-error');
+    photo(group, 360, y, cat ? 'cat-dark' : 'toy', id);
+    label(group, 490, y + 22, cat ? '고양이 있음' : '장난감');
+    label(group, 490, y + 42, cat ? '✓ 일치' : '× 불일치', 'photo-small');
+  }
+}
+
+function workAndMethods(group, trial) {
+  if (trial) {
+    label(group, 310, 81, '들었던 곡에서 다음 곡 고르기');
+    card(group, 46, 101, 175, 86, 'photo-input');
+    card(group, 400, 101, 174, 86, 'photo-suggestion');
+    label(group, 133.5, 140, '♫ ♩ ♫', 'photo-music');
+    label(group, 133.5, 167, '들은 곡');
+    label(group, 487, 140, '♬', 'photo-music');
+    label(group, 487, 167, '다음 곡 후보');
+    arrow(group, 229, 144, 390, 144);
+    return;
+  }
+  label(group, 310, 58, 'AI가 돕는 일');
+  const tasks = [['인식', '사진', '고양이 여부'], ['예측', '가는 길', '도착 시각'], ['추천', '들은 곡', '다음 곡 후보']];
+  for (const [i, [name, input, result]] of tasks.entries()) {
+    const x = 25 + i * 194;
+    card(group, x, 69, 182, 75, 'photo-input');
+    label(group, x + 91, 94, name);
+    label(group, x + 42, 124, input, 'photo-small');
+    arrow(group, x + 76, 119, x + 95, 119);
+    label(group, x + 137, 124, result, 'photo-small');
+  }
+  label(group, 310, 177, 'AI를 만드는 방법 두 가지');
+  for (const [i, [method, how]] of [['사람이 정한 규칙', '규칙을 따라 처리'], ['머신러닝', '예시에서 배우기']].entries()) {
+    const x = 63 + i * 263;
+    card(group, x, 191, 231, 66, 'photo-process');
+    label(group, x + 115.5, 216, method);
+    label(group, x + 115.5, 241, how, 'photo-small');
+  }
+}
+
+function speech(group, trial) {
+  const lines = trial ? [['비 먹었어?', '비'], ['배 먹었어?', '배']] : [['밤 먹었어?', '밤'], ['밥 먹었어?', '밥']];
+  for (const [i, heading] of ['녹음한 음성', '프로그램의 첫 자막', '말한 사람이 확인'].entries()) {
+    const x = 25 + i * 197;
+    card(group, x, 98, 176, 93, ['photo-input', 'photo-suggestion', 'photo-match'][i]);
+    label(group, x + 88, 125, heading);
+    if (i === 0) {
+      svg('path', {d: `M${x + 34} 157h8l5 -9 6 17 6 -25 7 32 7 -24 8 9h13l5 -11 7 19 7 -24 6 23 6 -12 5 5h9`,
+        class: 'photo-loop'}, group);
+    } else {
+      const [phrase, word] = lines[i - 1];
+      const caption = svg('text', {x: x + 88, y: 165, class: 'photo-phrase', 'text-anchor': 'middle',
+        'data-caption': phrase, 'data-word': word, 'data-no-i18n': ''}, group);
+      caption.textContent = phrase;
+    }
+    if (i < 2) arrow(group, x + 178, 144, x + 194, 144);
+  }
+  if (!trial) label(group, 310, 220, '첫 자막 ≠ 실제로 한 말', 'photo-small');
+}
+
+const draw = [gallery, examples, proposals, checked, workAndMethods, speech];
+for (const [index, step] of lesson.entries()) {
+  const template = document.createElement('template');
+  template.id = step.readingDiagram.figure;
+  const canvas = svg('svg', {viewBox: '0 0 620 280'}, template.content);
+  const figure = svg('g', {}, canvas);
+  draw[index](svg('g', {class: 'photo-reading'}, figure), false);
+  const practice = svg('g', {class: 'photo-practice'}, figure);
+  const practiceEvidence = index === 0 || index === 2 || index === 3
+    ? svg('g', {transform: 'translate(0 17) scale(1 .77)'}, practice) : practice;
+  draw[index](practiceEvidence, true);
+  card(practice, 25, 220, 290, 37, 'photo-input');
+  label(practice, 170, 244, step.practice[0]);
+  arrow(practice, 321, 238.5, 349, 238.5);
+  card(practice, 357, 220, 238, 37, 'photo-pending photo-practice-result');
+  label(practice, 476, 244, '선택 대기', 'photo-label photo-answer');
+  document.body.append(template);
+}
+
+function updateCaptionHighlights() {
+  const language = window.courseI18n?.lang ?? 'ko';
+  for (const caption of scene.querySelectorAll('[data-caption]')) {
+    if (caption.dataset.language === language) continue;
+    caption.dataset.language = language;
+    const translate = word => window.courseI18n?.translate(word) ?? word;
+    const phrase = translate(caption.dataset.caption);
+    const word = translate(caption.dataset.word);
+    const offset = phrase.indexOf(word);
+    caption.replaceChildren(document.createTextNode(phrase.slice(0, offset)));
+    svg('tspan', {class: 'photo-word'}, caption).textContent = word;
+    caption.append(document.createTextNode(phrase.slice(offset + word.length)));
+  }
+}
+
+function updatePracticeFigure() {
+  updateCaptionHighlights();
+  const practice = scene.querySelector('.photo-practice');
+  if (!practice || state.index < 0) return;
+  const step = lesson[state.index];
+  const selected = state.answers.get(state.index);
+  const correct = selected === step.quiz[1];
+  const status = correct ? 'correct' : selected === undefined ? 'waiting' : 'retry';
+  if (practice.dataset.status !== status) {
+    practice.dataset.status = status;
+    practice.querySelector('.photo-answer').textContent = correct ? step.practice[1] : selected === undefined ? '선택 대기' : '다시 선택';
+    const result = practice.querySelector('.photo-practice-result');
+    result.classList.toggle('photo-match', correct);
+    result.classList.toggle('photo-error', status === 'retry');
+    result.classList.toggle('photo-pending', status === 'waiting');
+  }
+  const reading = workspace.classList.contains('course-reading');
+  const parts = reading ? [step.description] : [step.practiceDescription || step.quiz[0],
+    correct ? step.quiz[3] : status === 'retry' ? feedbackMessages[1] : ''];
+  const local = parts.filter(Boolean).map(part => window.courseI18n?.translate(part) ?? part).join(' ');
+  for (const id of ['scene-desc', 'course-diagram-desc']) {
+    const node = byId(id);
+    if (node && node.textContent !== local) node.textContent = local;
+  }
+}
+
+window.addEventListener('course:lang', updatePracticeFigure);
+const practiceChanges = new MutationObserver(updatePracticeFigure);
+practiceChanges.observe(scene, {childList: true});
+practiceChanges.observe(workspace, {attributes: true, attributeFilter: ['class']});
+practiceChanges.observe(byId('choices'), {childList: true, subtree: true, attributes: true, attributeFilter: ['aria-pressed']});
+</script>
+<script src="../shared/reading-lesson.js?v=b4d45e8ddc5bfaac"></script>
+</body>
+</html>

@@ -146,10 +146,7 @@
       if (map === subject) link.setAttribute('aria-current', 'page');
       entries.push(link);
     }
-    const note = html('p', {});
-    note.append(text('새 지도는 주제가 준비되는 대로 늘어납니다. 지금의 지도는 ', 'New maps are added one subject at a time. The current maps are on '),
-      html('a', {href: './index.html', textContent: text('전체 노선도', 'All lines')}), text('에 있습니다.', '.'));
-    nav.replaceChildren(...entries, note);
+    nav.replaceChildren(...entries);
 
     toggle.textContent = listed ? text('지도로 보기', 'Show map') : text('목록으로 보기', 'Show list');
     toggle.setAttribute('aria-pressed', String(listed));

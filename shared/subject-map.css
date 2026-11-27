@@ -40,8 +40,6 @@ h1, h2, p, ol { margin: 0; }
 .subject-list a:hover { background: #e5f1eb; }
 .subject-list a[aria-current=page] { background: #d5efeb; color: #124f47; font-weight: 750; }
 .subject-list a:focus-visible { outline-offset: -3px; }
-.subject-list p { margin: 14px 10px 0; color: var(--muted); font-size: .78rem; line-height: 1.5; word-break: keep-all; }
-.subject-list p a { display: inline; margin: 0; padding: 0; font: inherit; text-decoration: underline; }
 
 main { min-width: 0; min-height: 0; }
 .sheet { height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto; border: 1px solid var(--border); border-radius: 12px; background: var(--map); overflow: hidden; }
@@ -82,7 +80,6 @@ main { min-width: 0; min-height: 0; }
   .map-workspace { grid-template-columns: clamp(96px, 24vw, 155px) minmax(0, 1fr); gap: 6px; }
   .subject-list { padding-inline-end: 4px; }
   .subject-list a { padding: 7px 5px; font-size: 13px; }
-  .subject-list p { display: none; }
 }
 @media (max-width: 720px) {
   .lang-long { display: none; } .lang-short { display: inline; }

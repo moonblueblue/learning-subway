@@ -529,7 +529,8 @@
   }
   views.addEventListener('click', (event) => {
     const id = event.target.closest('button')?.dataset.view;
-    if (!id) return;
+    if (!id || id === selectedView) return;
+    if (id === 'practice') startCoursePractice();
     selectedView = id;
     placeViews();
   });

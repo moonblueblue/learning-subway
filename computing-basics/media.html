@@ -159,11 +159,11 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
 <link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=630ee01668668e5c"></script>
+<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
 <script defer blocking="render" src="../shared/catalog.js"></script>
 <script defer blocking="render" src="./media.en.js"></script>
 <script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=9934ed5f733c4e29"></script>
+<script defer blocking="render" src="../shared/course.js?v=577926b68281a171"></script>
 </head>
 <body>
 <main class="shell">
@@ -296,7 +296,6 @@ viewport.addEventListener('keydown', (event) => {
 setCamera(0, 0, 1);
 
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const storageKey = 'media-lab:v1:step';
 const size = 8;  // the picture is 8 × 8 pixels
 
 // Demo pictures, one byte per row (1 = lit).
@@ -888,7 +887,7 @@ function showStep(index, announce = true) {
   const keep = previous.mode === 'pixels' && lesson[index].mode === 'pixels' && index !== state.index && announce && state.drawn;
   const kept = keep ? state.image.map((v) => (v * (lesson[index].levels - 1) / (previous.levels - 1)) | 0) : null;
   state.index = index;
-  state.playing = !motion.matches;
+  state.playing = lessonDemoEnabled();
   startStep();
   if (kept && !state.playing) state.image = kept;
   else state.drawn = false;
@@ -906,7 +905,6 @@ function showStep(index, announce = true) {
     else button.removeAttribute('aria-current');
   });
   byId('world').setAttribute('transform', s.mode === 'sound' ? 'translate(330 182) scale(1.02)' : s.mode === 'color' ? 'translate(372 166) scale(.9)' : 'translate(366 158) scale(1.06)');
-  try { localStorage.setItem(storageKey, String(index)); } catch {}
   state.solved = '';
   syncTask();
   paint();
@@ -917,17 +915,6 @@ function goToStep(index) {
   if (index < 0 || index >= lesson.length || index === state.index) return;
   history.pushState(null, '', `#/media/${index + 1}`);
   showStep(index);
-}
-function routeIndex() {
-  const match = /^#\/media\/(\d+)$/.exec(location.hash);
-  const routed = match ? Number(match[1]) - 1 : -1;
-  if (routed >= 0 && routed < lesson.length) return routed;
-  try {
-    const stored = localStorage.getItem(storageKey);
-    const index = Number(stored);
-    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
-  } catch {}
-  return 0;
 }
 const stepButtons = lesson.map(({ label }, index) => {
   const listItem = document.createElement('li');
@@ -947,7 +934,7 @@ byId('next').onclick = () => goToStep(state.index + 1);
 window.addEventListener('hashchange', syncRoute);
 window.addEventListener('popstate', syncRoute);
 motion.addEventListener('change', () => {
-  if (!motion.matches) state.playing = true;
+  if (lessonDemoEnabled()) state.playing = true;
   syncPlayback();
 });
 window.addEventListener('keydown', (event) => {

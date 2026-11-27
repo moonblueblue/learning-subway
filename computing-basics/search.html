@@ -154,11 +154,11 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
 <link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=630ee01668668e5c"></script>
+<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
 <script defer blocking="render" src="../shared/catalog.js"></script>
 <script defer blocking="render" src="./search.en.js"></script>
 <script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=9934ed5f733c4e29"></script>
+<script defer blocking="render" src="../shared/course.js?v=577926b68281a171"></script>
 </head>
 <body>
 <main class="shell">
@@ -280,7 +280,6 @@ viewport.addEventListener('keydown', (event) => {
 setCamera(0, 0, 1);
 
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const storageKey = 'search-lab:v1:step';
 const count = 16;
 
 // Sixteen distinct numbers between 1 and 99, sorted. `shuffled` keeps the same numbers in a mixed order.
@@ -798,7 +797,7 @@ function showFinished() {
 }
 function showStep(index, announce = true) {
   state.index = index;
-  state.playing = !motion.matches;
+  state.playing = lessonDemoEnabled();
   startStep();
   const s = step();
   byId('step-title').textContent = s.title;
@@ -814,7 +813,6 @@ function showStep(index, announce = true) {
     else button.removeAttribute('aria-current');
   });
   byId('world').setAttribute('transform', s.mode === 'compare' ? 'translate(310 205) scale(.9)' : 'translate(310 150) scale(1.04)');
-  try { localStorage.setItem(storageKey, String(index)); } catch {}
   state.solved = '';
   syncTask();
   paint();
@@ -825,17 +823,6 @@ function goToStep(index) {
   if (index < 0 || index >= lesson.length || index === state.index) return;
   history.pushState(null, '', `#/search/${index + 1}`);
   showStep(index);
-}
-function routeIndex() {
-  const match = /^#\/search\/(\d+)$/.exec(location.hash);
-  const routed = match ? Number(match[1]) - 1 : -1;
-  if (routed >= 0 && routed < lesson.length) return routed;
-  try {
-    const stored = localStorage.getItem(storageKey);
-    const index = Number(stored);
-    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
-  } catch {}
-  return 0;
 }
 const stepButtons = lesson.map(({ label }, index) => {
   const listItem = document.createElement('li');
@@ -855,7 +842,7 @@ byId('next').onclick = () => goToStep(state.index + 1);
 window.addEventListener('hashchange', syncRoute);
 window.addEventListener('popstate', syncRoute);
 motion.addEventListener('change', () => {
-  if (!motion.matches) state.playing = true;
+  if (lessonDemoEnabled()) state.playing = true;
   syncPlayback();
 });
 window.addEventListener('keydown', (event) => {

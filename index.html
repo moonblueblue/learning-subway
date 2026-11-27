@@ -19,10 +19,9 @@ h1,h2{text-wrap:balance}
 .shell{display:flex;flex-direction:column}
 .map-pane{display:flex;flex-direction:column;min-height:0}
 .map-pane h2{font-size:clamp(1rem,1.6vw,1.35rem);line-height:1.25;margin:0 0 6px}
-.topic-heading small{font:500 .82rem system-ui,sans-serif;color:var(--muted);margin-inline-start:10px}
 .shell:has(.topic-heading:not([hidden])) .line-index{display:none}
-.map.topic-route{padding:0;display:flex}
-.map.topic-route svg{width:100%;height:100%}
+.map.topic-pending{display:grid;place-items:center;text-align:center;padding:16px}
+.topic-status{margin:0;color:var(--muted)}
 .lang-switch{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--panel)}
 .lang-switch button{border:0;background:none;padding:4px 12px;min-height:36px;font:600 13px system-ui,sans-serif;color:var(--muted);cursor:pointer}
 .lang-switch button+button{border-inline-start:1px solid var(--border)}
@@ -65,7 +64,7 @@ ul.line-index{margin:0;padding:0;list-style:none;font:600 13px/1.6 system-ui,san
 <link rel="stylesheet" href="./shared/map-topics.css?v=c313ec6c639ff811">
 <script defer src="./shared/catalog.js"></script>
 <script defer src="./shared/i18n.js"></script>
-<script defer src="./shared/map-topics.js?v=8da91746b40b6eeb"></script>
+<script defer src="./shared/map-topics.js?v=f14d199ef5481549"></script>
 </head>
 <body>
 <main class="shell map-shell">
@@ -89,7 +88,7 @@ addEventListener('DOMContentLoaded', () => {
   // One colour per line: the same lightness and chroma, hues spread round the wheel (DESIGN.md "허브 노선도").
   const LINE_COLOR = {
     'computer-science': '#009184', 'operating-systems': '#2b80bf', networking: '#7a6cbf', storage: '#a17000',
-    infrastructure: '#b95954', devops: '#4f8c41', ai: '#aa5a91',
+    infrastructure: '#b95954', devops: '#4f8c41',
   };
   const LINE_ORDER = Object.keys(LINE_COLOR);
   const colorOf = (id) => LINE_COLOR[id] || '#6b7d76';
@@ -102,10 +101,10 @@ addEventListener('DOMContentLoaded', () => {
   const tr = (text) => (window.courseI18n ? window.courseI18n.translate(text) : text);
   const groupsOf = (chapter) => [chapter, ...chapter.tracks];
   const refsOf = (chapter) => groupsOf(chapter).flatMap((group) => group.lessons.map((lesson) => lesson.ref));
-  const roadmaps = [...courseCatalog.roadmaps].sort((a, b) =>
+  const roadmaps = courseCatalog.roadmaps.filter((roadmap) => roadmap.id !== 'ai').sort((a, b) =>
     (LINE_ORDER.indexOf(a.id) + 1 || 99) - (LINE_ORDER.indexOf(b.id) + 1 || 99));
   const byId = new Map(roadmaps.map((roadmap) => [roadmap.id, roadmap]));
-  const trunk = courseCatalog.roadmaps.find((roadmap) => !roadmap.branch);
+  const trunk = roadmaps.find((roadmap) => !roadmap.branch);
   const branches = roadmaps.filter((roadmap) => roadmap.branch);
 
   // Which roadmaps pass through each lesson.
@@ -116,7 +115,6 @@ addEventListener('DOMContentLoaded', () => {
   // A station is an interchange when a line branches off it, or when it shares lessons with another line beyond the
   // junction it hangs from (sharing with the junction is what the branch itself already shows).
   function stationsOf(roadmap) {
-    if (roadmap.id === 'ai') return [{ label: 'AI 노선도', href: './ai-map.html?v=f151c1fc27eab65c', children: [], interchange: true }];
     const junction = roadmap.branch && byId.get(roadmap.branch.from).chapters.find((chapter) => chapter.id === roadmap.branch.chapter);
     const junctionRefs = new Set(junction ? refsOf(junction) : []);
     return roadmap.chapters.map((chapter) => {
@@ -141,7 +139,6 @@ addEventListener('DOMContentLoaded', () => {
       refsOf(chapter).includes(here?.ref) || (chapter.projectRef && chapter.projectRef === here?.ref));
     const roadmap = [byId.get(here?.roadmap), ...roadmaps].find((item) => item && through(item) >= 0);
     if (!roadmap) return { roadmap: trunk, index: 0, href: stationsOf(trunk)[0].href };
-    if (roadmap.id === 'ai') return { roadmap, index: 0, href: './ai-map.html?v=f151c1fc27eab65c' };
     return { roadmap, index: through(roadmap), href: './' + here.ref + '.html?roadmap=' + encodeURIComponent(roadmap.id) };
   }
   const PIN = '#d92d20', PIN_TEXT = '#b42318';
@@ -265,11 +262,10 @@ addEventListener('DOMContentLoaded', () => {
   }
 
   function lineHref(roadmap) {
-    if (roadmap.id === 'ai') return './ai-map.html?v=f151c1fc27eab65c';
     const first = roadmap.chapters.flatMap(refsOf)[0];
     return first ? './' + first + '.html?roadmap=' + encodeURIComponent(roadmap.id) : null;
   }
-  const lineTitle = (roadmap) => roadmap.id === 'ai' ? tr('AI 노선도') : tr(`${roadmap.title} 첫 레슨으로`);
+  const lineTitle = (roadmap) => tr(`${roadmap.title} 첫 레슨으로`);
 
   // The line index sits in the masthead, outside the map, so it never covers a station.
   function lineIndex() {
@@ -364,14 +360,7 @@ addEventListener('DOMContentLoaded', () => {
         placed = true;
       }
     }
-    for (const [roadmap, d] of paths) {
-      svg.append(make('svg:path', { d, ...strokeOf(roadmap) }));
-      if (roadmap.id === 'ai') {
-        const link = make('svg:a', { href: './ai-map.html?v=f151c1fc27eab65c', 'aria-label': tr('AI 노선도') });
-        link.append(make('svg:path', { d, stroke: 'transparent', 'stroke-width': 20, fill: 'none' }));
-        svg.append(link);
-      }
-    }
+    for (const [roadmap, d] of paths) svg.append(make('svg:path', { d, ...strokeOf(roadmap) }));
     const [[x0], [x1]] = [pos.get(trunk.id)[0], pos.get(trunk.id).at(-1)];
     svg.append(make('svg:path', { d: `M${x0} ${trunkY}H${x1}`, ...strokeOf(trunk) }));
     const spot = hereSpot();
@@ -405,7 +394,7 @@ addEventListener('DOMContentLoaded', () => {
   function drawNarrow(holder) {
     const width = holder.clientWidth - 16, x = 22;
     const spot = hereSpot();
-    const roadmap = byId.get(shownLine) || (spot.roadmap.id === 'ai' ? trunk : spot.roadmap);
+    const roadmap = byId.get(shownLine) || spot.roadmap;
     // The current line's name opens the list of lines, so the picker fits any width.
     const picker = make('label', { class: 'line-pick' });
     picker.style.setProperty('--line', colorOf(roadmap.id));
@@ -416,11 +405,6 @@ addEventListener('DOMContentLoaded', () => {
       select.append(option);
     }
     select.addEventListener('change', () => {
-      if (select.value === 'ai') {
-        select.value = roadmap.id;
-        location.assign('./ai-map.html?v=f151c1fc27eab65c');
-        return;
-      }
       shownLine = select.value;
       try { sessionStorage.setItem('hub-line', shownLine); } catch {}
       draw();
@@ -456,59 +440,17 @@ addEventListener('DOMContentLoaded', () => {
   const network = make('li', { class: 'map' });
   document.getElementById('roadmaps').append(network);
   const topicHeading = document.querySelector('.topic-heading');
-  const catalogLessons = new Map(courseCatalog.topics.flatMap(group =>
-    group.lessons.map(lesson => [group.id + '/' + lesson.id, lesson])));
-
-  // Short topic routes use real station links. Fold the rail across rows to leave room for long lesson names.
-  function drawTopic(topic) {
-    const width = network.clientWidth, height = network.clientHeight;
-    const stops = topic.refs.map(ref => catalogLessons.get(ref));
-    const rows = Math.ceil(stops.length / Math.max(1, Math.floor(width / 225)));
-    const cols = Math.ceil(stops.length / rows);
-    const gap = Math.min(height / rows, 130);
-    const side = cols === 1 ? 23 : Math.min(width * .13, 120);
-    const step = (width - 2 * side) / Math.max(1, cols - 1);
-    const points = stops.map((_, i) => {
-      const row = Math.floor(i / cols), col = i % cols;
-      const x = side + (row % 2 ? cols - 1 - col : col) * step;
-      return [x, (height - (rows - 1) * gap) / 2 + row * gap - (cols === 1 ? 0 : 12)];
-    });
-    const title = mapTopicName(topic), color = colorOf('computer-science');
-    const svg = make('svg:svg', { role:'group', 'aria-label':title, viewBox:`0 0 ${width} ${height}` });
-    let path = 'M' + points[0].join(' ');
-    for (let i = 1; i < points.length; i++) {
-      const [x,y] = points[i], [px,py] = points[i-1];
-      if (cols === 1) path += 'V' + y;
-      else if (y === py) path += 'H' + x;
-      else {
-        const r = Math.min(27, gap/4, side/2), bend = px + (px > width/2 ? r : -r);
-        path += `Q${bend} ${py} ${bend} ${py+r}V${y-r}Q${bend} ${y} ${x} ${y}`;
-      }
-    }
-    svg.append(make('svg:path', { d:path, fill:'none', stroke:color, 'stroke-width':7, 'stroke-linecap':'round' }));
-    stops.forEach((lesson, i) => {
-      const [x,y] = points[i];
-      const s = {label:courseI18n.lang === 'en' ? lesson.titleEn : lesson.title, href:'./' + lesson.page};
-      station(svg, s, x, y, color, i === stops.length-1, cols === 1 ? 'right' : 'down',
-        cols === 1 ? width-60 : Math.min(step-20,side*2-12), [6,width-6]);
-    });
-    network.replaceChildren(svg);
-    for (const link of svg.querySelectorAll('a')) {
-      const b = link.getBBox();
-      link.prepend(make('svg:rect', {x:b.x-3, y:b.y-3, width:b.width+6, height:b.height+6, fill:'transparent'}));
-    }
-  }
-
   // The whole map needs room in both directions; a narrow or short window shows one line at a time.
   const wide = matchMedia('(min-width: 720px) and (min-height: 600px)');
   function draw() {
     const topic = currentMapTopic();
-    network.classList.toggle('topic-route', Boolean(topic.refs));
-    topicHeading.hidden = !topic.refs;
-    if (topic.refs) {
-      const caption = make('small', {}, courseI18n.lang === 'en' ? 'Related lessons' : '관련 레슨');
-      topicHeading.replaceChildren(mapTopicName(topic), caption);
-      drawTopic(topic);
+    const pending = topic.id !== 'computer-science';
+    network.classList.toggle('topic-pending', pending);
+    topicHeading.hidden = !pending;
+    if (pending) {
+      topicHeading.textContent = mapTopicName(topic);
+      document.body.classList.remove('index-in-map');
+      network.replaceChildren(make('p', { class: 'topic-status', role: 'status', 'data-no-i18n': '' }, tr('준비 중')));
     } else if (wide.matches) drawWide(network);
     else drawNarrow(network);
   }

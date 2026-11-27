@@ -13,7 +13,6 @@ function showStep(index, announce = true) {
     if (position === index) button.setAttribute('aria-current', 'step');
     else button.removeAttribute('aria-current');
   }
-  try { localStorage.setItem(storageKey, String(index)); } catch {}
   renderPractice();
   if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
 }
@@ -49,17 +48,6 @@ function renderPractice() {
     return button;
   }));
   markAnswer(chosen);
-}
-
-function routeIndex() {
-  const match = new RegExp('^#/' + slug + '/(\\d+)$').exec(location.hash);
-  const index = match ? Number(match[1]) - 1 : -1;
-  if (index >= 0 && index < lesson.length) return index;
-  try {
-    const saved = Number(localStorage.getItem(storageKey));
-    if (Number.isInteger(saved) && saved >= 0 && saved < lesson.length) return saved;
-  } catch {}
-  return 0;
 }
 
 function goToStep(index) {

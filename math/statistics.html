@@ -91,11 +91,11 @@ header p.lead{color:var(--muted);margin-top:10px}
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
 <link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=630ee01668668e5c"></script>
+<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
 <script defer blocking="render" src="../shared/catalog.js"></script>
 <script defer blocking="render" src="./statistics.en.js"></script>
 <script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=9934ed5f733c4e29"></script>
+<script defer blocking="render" src="../shared/course.js?v=577926b68281a171"></script>
 </head>
 <body>
 <main class="shell">
@@ -136,7 +136,6 @@ header p.lead{color:var(--muted);margin-top:10px}
   <div class="sr-only" id="announcement" role="status"></div>
 </main>
 <script>
-const storageKey = 'statistics-lab:v1:step';
 const BENEFIT = 'true', RISK = 'false';
 const yes = '참', no = '거짓';
 // Each step is one exercise. `choices` are the two answers; items are statements or truth-table rows.
@@ -267,7 +266,6 @@ function showStep(index, announce = true) {
     else button.removeAttribute('aria-current');
   });
   buildItems();
-  try { localStorage.setItem(storageKey, String(index)); } catch {}
   if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
 }
 
@@ -372,17 +370,6 @@ function goToStep(index) {
   if (index < 0 || index >= lesson.length || index === state.index) return;
   history.pushState(null, '', `#/statistics/${index + 1}`);
   showStep(index);
-}
-function routeIndex() {
-  const match = /^#\/statistics\/(\d+)$/.exec(location.hash);
-  const routed = match ? Number(match[1]) - 1 : -1;
-  if (routed >= 0 && routed < lesson.length) return routed;
-  try {
-    const stored = localStorage.getItem(storageKey);
-    const index = Number(stored);
-    if (stored !== null && Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
-  } catch {}
-  return 0;
 }
 const stepButtons = lesson.map(({ label }, index) => {
   const listItem = document.createElement('li');

@@ -5,6 +5,27 @@
 // Functions read lesson globals (lesson, state, view, ...) at call time, so they must keep these names.
 
 // ---- Timeline routing --------------------------------------------------------------------------
+function routeIndex() {
+  const slug = location.pathname.split('/').at(-1).replace(/\.html$/, '');
+  const match = /^#\/([\w-]+)\/(\d+)$/.exec(location.hash);
+  const index = match?.[1] === slug ? Number(match[2]) - 1 : -1;
+  return index >= 0 && index < lesson.length ? index : 0;
+}
+
+let coursePracticeStarted = false;
+
+function lessonDemoEnabled() {
+  return !coursePracticeStarted && !motion.matches;
+}
+
+function startCoursePractice() {
+  coursePracticeStarted = true;
+  if ('playing' in state) state.playing = false;
+  state.answers?.delete(0);
+  if (state.index === 0) showStep(0);
+  else goToStep(0);
+}
+
 function syncRoute() {
   const index = routeIndex();
   if (index !== state.index) showStep(index);
@@ -13,7 +34,7 @@ function syncRoute() {
 function showStep(index, announce = true) {
   cancelAll();
   state.index = index;
-  state.playing = !motion.matches;
+  state.playing = lessonDemoEnabled();
   const s = lesson[index];
   buildScene();
   byId('stage-list').replaceChildren(...s.stages.map((stage) => {
@@ -31,7 +52,6 @@ function showStep(index, announce = true) {
     if (i === index) button.setAttribute('aria-current', 'step');
     else button.removeAttribute('aria-current');
   });
-  try { localStorage.setItem(storageKey, String(index)); } catch {}
   resetRun();
   state.wait = 1000;
   syncPlayback();

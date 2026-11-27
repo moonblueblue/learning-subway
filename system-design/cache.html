@@ -82,11 +82,11 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
 <link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=630ee01668668e5c"></script>
+<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
 <script defer blocking="render" src="../shared/catalog.js"></script>
 <script defer blocking="render" src="./cache.en.js"></script>
 <script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=9934ed5f733c4e29"></script>
+<script defer blocking="render" src="../shared/course.js?v=577926b68281a171"></script>
 </head>
 <body>
 <main class="shell">
@@ -245,7 +245,6 @@ viewport.addEventListener('keydown', (event) => {
 setCamera(0, 0, 1);
 
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const storageKey = 'cache-flow-lab:v1:step';
 const state = { index: 0, playing: !motion.matches, elapsed: 0, lastFrame: null, frame: null };
 const segmentMs = 850;
 const transitionMs = 370;
@@ -556,7 +555,6 @@ function showStep(index, announce = true) {
     if (i === index) button.setAttribute('aria-current', 'step');
     else button.removeAttribute('aria-current');
   });
-  try { localStorage.setItem(storageKey, String(index)); } catch {}
   renderScene(step, announce);
   syncPlayback();
   if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
@@ -571,10 +569,6 @@ function goToStep(index) {
 function routeIndex() {
   const match = /^#\/caching\/([123])$/.exec(location.hash);
   if (match) return Number(match[1]) - 1;
-  try {
-    const index = Number(localStorage.getItem(storageKey));
-    if (Number.isInteger(index) && index >= 0 && index < lesson.length) return index;
-  } catch {}
   return 0;
 }
 

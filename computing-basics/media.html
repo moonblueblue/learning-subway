@@ -145,7 +145,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .mode-group.hidden{opacity:0;pointer-events:none}
 .pixel{stroke:#14231f;stroke-width:.5;cursor:pointer;transition:fill .15s}
 .pixel.rgb-focus{stroke:#fff;stroke-width:1.8}
-.row-label{font:600 10.5px var(--mono);fill:#43574f;text-anchor:end;dominant-baseline:central}
+.row-label{font:650 12px var(--mono);fill:#43574f;text-anchor:end;dominant-baseline:central}
 .wave{fill:none;stroke:var(--response);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .playhead{stroke:#a24c14;stroke-width:1.6;stroke-dasharray:3 3}
 .sample .face{stroke:#4f8f6b;stroke-width:.6}
@@ -155,6 +155,29 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .swatch{width:13px;height:13px;border-radius:4px;background:var(--c)}
 .wave-line{width:22px;border-top:3px solid var(--response)}
 @media(prefers-reduced-motion:reduce){.mode-group,.pixel{transition:none}}
+/* The reading figures use the same colours, samples, and values as the live scene. */
+.media-figure .figure-number { font: 750 16px var(--mono); text-anchor: middle }
+.media-figure .figure-caption { fill: #344e43 }
+.media-figure .figure-chip { fill: #fff; stroke: #9aac9f }
+.media-figure .figure-wire { fill: none; stroke: #187959; stroke-width: 2; stroke-linecap: round }
+.media-figure .figure-zoom { fill: none; stroke: #8d6226; stroke-width: 1.6; stroke-dasharray: 5 3 }
+.media-figure .figure-focus { fill: none; stroke: #aa5919; stroke-width: 2.4 }
+.media-figure .figure-grid { fill: none; stroke: #8fa69a; stroke-width: .9; stroke-dasharray: 3 3 }
+.media-figure .figure-threshold { fill: none; stroke: #7687a4; stroke-width: .9; stroke-dasharray: 4 3 }
+.media-figure .figure-axis { fill: none; stroke: #536e61; stroke-width: 1.5 }
+.media-figure .figure-wave { fill: none; stroke: #187959; stroke-width: 2.8 }
+.media-figure .figure-dot { fill: #176347; stroke: #fff; stroke-width: 1.2 }
+.media-figure .figure-level { fill: none; stroke: #5362a0; stroke-width: 1.4 }
+.media-figure .figure-band { fill: #fae6c6; fill-opacity: .8 }
+.media-figure .figure-compare { fill: #874610; font-weight: 750 }
+#pixel-row-detail .expanded-bit { font: 750 15px var(--mono); fill: var(--ink); text-anchor: middle }
+#pixel-row-detail .expanded-label { font: 650 14px system-ui, sans-serif; fill: #344e43 }
+#pixel-row-detail .expanded-guide { fill: none; stroke: #aa5919; stroke-width: 2; stroke-dasharray: 5 3 }
+#pixel-row-detail .expanded-outline { fill: none; stroke: #aa5919; stroke-width: 2.8; pointer-events: none }
+#pixel-row-detail .expanded-arrow { fill: none; stroke: #187959; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
+.live-height-mark { fill: none; stroke: #5362a0; stroke-width: 1.3 }
+.live-rounding { font: 750 13px var(--mono); fill: #874610; text-anchor: middle }
+.live-height-key { font: 650 12px system-ui, sans-serif; fill: #344e43 }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -297,6 +320,7 @@ setCamera(0, 0, 1);
 
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const size = 8;  // the picture is 8 × 8 pixels
+const expandedRow = 1; // the heart's second row, also editable in practice
 
 // Demo pictures, one byte per row (1 = lit).
 const pictures = {
@@ -313,6 +337,7 @@ const shadedHeart = fromBytes(pictures.heart).map((on, i) => {
   return r <= 2 && c <= 3 ? 3 : r >= 5 ? 1 : 2;
 });
 
+const selectedPixel = 3 * size + 3; // row 4, column 4
 const colors = {
   red: [255, 0, 0], green: [0, 255, 0], blue: [0, 0, 255], yellow: [255, 255, 0], white: [255, 255, 255], orange: [255, 160, 0],
 };
@@ -321,14 +346,16 @@ const colors = {
 // `tasks` are try-it problems; `check` reads the state and says whether the learner made it.
 const lesson = [
   {
+    readingDiagram: { figure: 'media-pixel-row', title: '한 비트가 같은 열의 픽셀을 정한다',
+      description: '8×8 하트의 둘째 줄 0110 0110에서 각 비트의 화살표가 같은 열의 픽셀에 닿습니다. 0은 어둡고 1은 밝습니다. 그림 전체는 64비트입니다.' },
     label: '픽셀',
     example: ["8×8 흑백 화면", "픽셀마다 1비트", "그림 한 장 64비트"],
     mode: 'pixels',
     levels: 2,
     title: '그림은 작은 칸으로 나뉜다',
     body: '화면의 그림은 픽셀이라는 아주 작은 칸이 모여 만들어집니다. 칸마다 켜짐과 꺼짐만 정한다면 칸 하나가 비트 하나입니다. 8 × 8 그림은 64비트, 곧 8바이트이고, 한 줄 8칸은 0.1에서 본 바이트 하나와 같습니다.',
-    takeaway: '화면 왼쪽에 줄마다 그 줄의 비트와 수가 나옵니다. 칸을 켜고 끄면 해당 줄의 수가 바로 바뀝니다.',
-    description: '8 × 8 픽셀 화면이 있고, 왼쪽에 각 줄을 바이트로 나타낸 비트와 수가 적혀 있습니다. 켜진 칸은 밝고 꺼진 칸은 어둡습니다.',
+    takeaway: '화면 둘째 줄을 왼쪽에 펼쳤습니다. 그 줄에서 픽셀을 바꾸면 같은 열의 비트와 밝기가 함께 바뀝니다.',
+    description: '8 × 8 픽셀 화면 둘째 줄의 각 비트가 왼쪽에 펼친 행의 같은 열을 가리킵니다. 0은 어둡고 1은 밝습니다.',
     initial: () => ({ image: fromBytes(pictures.heart) }),
     demo: { frames: [pictures.heart, pictures.smile, pictures.letter].map((rows) => ({ image: fromBytes(rows) })), interval: 2800 },
     tasks: [
@@ -338,6 +365,8 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: { figure: 'media-four-shades', title: '2비트는 네 가지 밝기를 정한다',
+      description: '00, 01, 10, 11을 각각 다른 밝기에 연결합니다. 같은 64픽셀에서 픽셀당 1비트를 2비트로 늘리면 64비트가 128비트가 됩니다.' },
     label: '밝기',
     example: ["픽셀마다 2비트", "00 · 01 · 10 · 11", "네 가지 밝기"],
     mode: 'pixels',
@@ -354,13 +383,15 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: { figure: 'media-color-pixel', title: '초록 값을 올려 한 픽셀의 색을 바꾼다',
+      description: '선택한 4행 4열에서 빨강 255와 파랑 0은 유지하고 초록을 0에서 160으로 올립니다. 해당 픽셀만 빨강에서 주황으로 바뀝니다.' },
     label: '색',
     example: ["R 255 · G 160 · B 0", "빨강과 초록 빛을 함께 켬", "주황 픽셀 하나"],
     mode: 'color',
     title: '색은 빛 세 가지의 세기다',
     body: '화면의 색은 빨강, 초록, 파랑 빛을 얼마나 세게 켜는지로 만듭니다. 세 빛의 세기를 각각 0–255(8비트)로 정하므로 픽셀 하나의 색은 3바이트입니다. 빨강과 초록을 함께 켜면 노랑, 셋을 모두 켜면 흰색이 됩니다.',
-    takeaway: '세 기둥의 높이가 빛의 세기이고, 화면 전체가 세 빛을 섞은 색으로 칠해집니다. 아래 줄에서 세 값이 3바이트로 바뀌는 것을 볼 수 있습니다.',
-    description: '빨강, 초록, 파랑 세 기둥이 화면으로 이어져 있습니다. 기둥 높이는 각 빛의 세기(0–255)이고, 화면은 세 빛을 섞은 색으로 칠해집니다.',
+    takeaway: '초록을 0에서 160으로 올리면 같은 한 픽셀만 빨강에서 주황으로 바뀝니다. 세 채널 값은 각각 1바이트입니다.',
+    description: '빨강, 초록, 파랑 세 기둥이 화면으로 이어집니다. 세 값이 4행 4열의 선택한 한 픽셀에 함께 적용됩니다.',
     initial: () => ({ color: [...colors.orange] }),
     demo: { frames: ['orange', 'red', 'green', 'blue', 'yellow', 'white'].map((name) => ({ color: [...colors[name]] })), interval: 2400 },
     tasks: [
@@ -370,26 +401,30 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: { figure: 'media-sound-times', title: '같은 간격으로 파형을 잰다',
+      description: '연속 파형과 시간축이 있습니다. 축의 같은 간격 눈금 16개에서 수직선을 올리면 같은 시각의 파형에 측정점이 생깁니다.' },
     label: "측정 시각",
     example: ["연속인 소리 파형", "일정 간격으로 높이 측정", "측정점 16개"],
     mode: 'sound',
     showSampleTimes: true,
     title: "같은 간격으로 파형을 잰다",
-    body: '소리는 공기가 떨리는 파동입니다. 컴퓨터는 아주 짧은 간격마다 파동의 높이를 재서 수로 적는데, 이것을 샘플링이라고 합니다. 자주 잴수록(샘플 수), 높이를 잘게 나눌수록(샘플 크기) 원래 소리에 가까워지지만 비트도 그만큼 늘어납니다. 음악 CD는 1초에 44,100번, 16비트씩 잽니다.',
+    body: '소리가 이어지는 동안 진폭은 계속 달라집니다. 시간축을 같은 간격으로 나누고, 각 눈금의 시각에 파형의 진폭을 한 번씩 읽습니다. 이렇게 일정한 시각에 높이를 재는 것을 샘플링이라고 합니다.',
     takeaway: "시간은 왼쪽에서 오른쪽으로 흐릅니다. 자주 재면 같은 파형에서 더 많은 점을 얻습니다.",
-    description: '부드러운 소리 파형 곡선 아래에 같은 간격으로 막대가 서 있습니다. 막대 높이는 그 순간 잰 파형의 높이를 정해진 단계로 반올림한 값입니다.',
+    description: '연속 파형의 높이를 재는 시각마다 시간축에서 세로선이 올라가고 파형에 점이 찍힙니다.',
     initial: () => ({ samples: 16, depth: 4 }),
     demo: { sweep: true, interval: 90 },
     tasks: [
-      { text: '샘플을 32개로 늘려 보세요. 막대가 곡선에 더 가까워집니다.', check: (s) => s.samples === 32 },
+      { text: '샘플을 32개로 늘려 보세요. 같은 파형에 측정점이 더 촘촘해집니다.', check: (s) => s.samples === 32 },
     ],
   },
   {
+    readingDiagram: { figure: 'media-sound-levels', title: '같은 점을 가까운 정수 높이로 적는다',
+      description: '같은 16개 점의 높이를 가장 가까운 0부터 15까지의 정수로 기록합니다. 3.43은 경계 3.5 아래라 3으로 내리고, 7.54는 경계 7.5 위라 8로 올립니다. 4비트씩 16개가 64비트입니다.' },
     label: "높이 기록",
     example: ["같은 측정점 16개", "각 높이를 0~15로 기록", "16 × 4비트 = 64비트"],
     mode: 'sound',
     title: '소리는 잘게 나눠 높이를 적는다',
-    body: '소리는 공기가 떨리는 파동입니다. 컴퓨터는 아주 짧은 간격마다 파동의 높이를 재서 수로 적는데, 이것을 샘플링이라고 합니다. 자주 잴수록(샘플 수), 높이를 잘게 나눌수록(샘플 크기) 원래 소리에 가까워지지만 비트도 그만큼 늘어납니다. 음악 CD는 1초에 44,100번, 16비트씩 잽니다.',
+    body: '앞 단계와 같은 시각의 높이를 0부터 15까지의 정수 중 가장 가까운 값으로 기록합니다. 두 정수의 가운데가 반올림 경계입니다. 4비트는 이 16가지 높이를 담으므로 측정점 16개에는 64비트가 듭니다.',
     takeaway: '곡선이 원래 소리이고, 막대가 컴퓨터가 적어 둔 높이입니다. 샘플을 늘리면 막대가 촘촘해지고, 샘플 크기를 줄이면 높이가 계단처럼 거칠어집니다.',
     description: '부드러운 소리 파형 곡선 아래에 같은 간격으로 막대가 서 있습니다. 막대 높이는 그 순간 잰 파형의 높이를 정해진 단계로 반올림한 값입니다.',
     initial: () => ({ samples: 16, depth: 4 }),
@@ -457,6 +492,7 @@ const pixelShades = {
 
 const groups = {};
 const pixelViews = [];
+const expandedPixels = [];
 let rowLabels = [];
 function buildMonitor() {
   const group = svg('g', { class: 'mode-group node', 'data-mode': 'screen' }, byId('nodes'));
@@ -475,17 +511,40 @@ function buildMonitor() {
       pixelViews.push(pixel);
     }
   }
-  // Row labels to the left of the screen: bits and the row's value.
+  // Step 2 places a horizontal binary label beside the start of every row.
   rowLabels = [];
   for (let r = 0; r < size; r++) {
     const [x, y] = project(-h, -h, base + (size - 1 - r) * rowHeight + rowHeight / 2);
-    // The screen's rows run down to the right along the face (half as steep as they are wide), so each
-    // label leans the same way and sits on its row's line, 16px left of the screen.
-    rowLabels.push(svg('text', { class: 'row-label', transform: `translate(${x - 16} ${y - 8}) skewY(26.565)` }, group));
+    rowLabels.push(svg('text', { class: 'row-label', x: x - 12, y }, group));
   }
   const [lx, ly] = project(h, -h, 0);
   addPlate(group, 'tag', lx, ly + 16, '화면');
   groups.screen = group;
+}
+
+function buildPixelRowDetail() {
+  const group = svg('g', { id: 'pixel-row-detail', class: 'mode-group', 'data-mode': 'expanded-row' }, byId('nodes'));
+  const { h, margin, base } = monitor;
+  const left = -h + margin, right = h - margin;
+  const low = base + (size - expandedRow - 1) * rowHeight;
+  const high = low + rowHeight;
+  const corners = [[left, high], [right, high], [right, low], [left, low]];
+  svg('polygon', { points: corners.map(([x, z]) => point(x, -h, z)).join(' '), class: 'expanded-outline' }, group);
+  const x0 = -418, pitch = 31, stripY = -41, width = 26;
+  const stripRight = x0 + (size - 1) * pitch + width;
+  svg('path', { d: `M${stripRight + 4} ${stripY}L${point(left, -h, high)} M${stripRight + 4} ${stripY + width}L${point(left, -h, low)}`,
+    class: 'expanded-guide' }, group);
+  svg('text', { x: x0, y: -119, class: 'expanded-label' }, group).textContent = '둘째 줄의 비트';
+  for (let column = 0; column < size; column++) {
+    const x = x0 + pitch * column;
+    svg('rect', { x, y: -108, width, height: 28, rx: 4, fill: '#fff', stroke: '#9aac9f' }, group);
+    const digit = svg('text', { x: x + 13, y: -89, class: 'expanded-bit' }, group);
+    svg('path', { d: `M${x + 13} -75v28m-4 -4 4 4 4 -4`, class: 'expanded-arrow' }, group);
+    const pixel = svg('rect', { x, y: stripY, width, height: width, stroke: '#6f8a7b' }, group);
+    expandedPixels.push({ digit, pixel });
+  }
+  svg('text', { x: x0, y: 8, class: 'expanded-label' }, group).textContent = '0 어두움';
+  svg('text', { x: x0 + 104, y: 8, class: 'expanded-label' }, group).textContent = '1 밝음';
 }
 
 // ---------- Color: three light columns feeding the screen ----------
@@ -542,7 +601,28 @@ const soundSpan = 17;           // floor units covered by the samples
 const soundStart = -10.5;
 const waveHeight = 92;          // pixels from the floor to the highest point
 const wave = (t) => .5 + .34 * Math.sin(2 * Math.PI * 1.5 * t) + .12 * Math.sin(2 * Math.PI * 4.5 * t + .6);
-let soundGroup, soundBars, wavePath, playheadLine, timeAxis;
+const sampleTime = (index, count) => (index + .5) / count;
+const measuredLevel = (time, depth) => wave(time) * (2 ** depth - 1);
+const sampleLevel = (time, depth) => Math.round(measuredLevel(time, depth));
+
+function roundingChecks(samples, depth) {
+  const heights = Array.from({ length: samples }, (_, index) => measuredLevel(sampleTime(index, samples), depth));
+  const indices = samples === 16 && depth === 4 ? [6, 10] : [
+    heights.findIndex((height) => Math.round(height) < height),
+    heights.findIndex((height) => Math.round(height) > height),
+  ];
+  return indices.filter((index) => index >= 0).map((index, i) => {
+    const height = heights[index];
+    const level = Math.round(height);
+    const down = height > level;
+    const boundary = down ? level + .5 : level - .5;
+    const sign = down ? '<' : height === boundary ? '=' : '>';
+    const printed = height.toFixed(2);
+    const value = Number(printed) === boundary && height !== boundary ? height.toFixed(4) : printed;
+    return { index, id: down ? '①' : '②', text: `${value} ${sign} ${boundary} → ${level}`, i };
+  });
+}
+let soundGroup, soundBars, wavePath, playheadLine, timeAxis, soundWaveLabel;
 function buildSound() {
   soundGroup = svg('g', { class: 'mode-group', 'data-mode': 'sound' }, byId('nodes'));
   soundBars = svg('g', {}, soundGroup);
@@ -555,13 +635,15 @@ function buildSound() {
   timeAxis = svg('g', {}, soundGroup);
   playheadLine = svg('path', { class: 'playhead' }, soundGroup);
   const [x, y] = project(soundStart + soundSpan + 1.2, soundStart + soundSpan + 1.2, 0);
-  addPlate(soundGroup, 'tag', x, y + 10, '소리 파형');
+  soundWaveLabel = addPlate(soundGroup, 'tag', x, y + 10, '소리 파형').group;
   groups.sound = soundGroup;
 }
 function drawSamples() {
   soundBars.replaceChildren();
   timeAxis.replaceChildren();
   const showTimes = step().showSampleTimes;
+  if (showTimes) soundWaveLabel.setAttribute('transform', 'translate(0 -23)');
+  else soundWaveLabel.removeAttribute('transform');
   if (showTimes) {
     const [x1, y1] = project(soundStart, soundStart, -16);
     const [x2, y2] = project(soundStart + soundSpan, soundStart + soundSpan, -16);
@@ -570,15 +652,16 @@ function drawSamples() {
   }
   const n = state.samples, levels = 2 ** state.depth;
   const w = Math.min(.36, soundSpan / n * .3);
+  const checks = showTimes ? [] : roundingChecks(n, state.depth);
   for (let k = 0; k < n; k++) {
-    const t = (k + .5) / n, c = soundStart + soundSpan * t;
+    const t = sampleTime(k, n), c = soundStart + soundSpan * t;
     if (showTimes) {
       const [x, y] = project(c, c, 4 + waveHeight * wave(t));
       svg('line', { x1: x, x2: x, y1: y, y2: project(c, c, -16)[1], stroke: '#54746b', 'stroke-dasharray': '3 3' }, soundBars);
       svg('circle', { cx: x, cy: y, r: 4, fill: '#08796b' }, timeAxis);
       continue;
     }
-    const level = Math.round(wave(t) * (levels - 1));
+    const level = sampleLevel(t, state.depth);
     const H = 4 + waveHeight * level / (levels - 1);
     const node = svg('g', { class: 'node sample' + (k === state.playhead ? ' active' : ''), transform: `translate(${project(c, c)})` }, soundBars);
     const faces = {
@@ -589,11 +672,200 @@ function drawSamples() {
     for (const [name, corners] of Object.entries(faces)) svg('polygon', { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') }, node);
     // The value stands under the bar: the wave runs along the bar tops, and a value on top touched it.
     if (n <= 16) svg('text', { class: 'sample-value', x: 0, y: 14 * w + 14 }, node).textContent = level;
+    // Keep the unrounded point on the wave at exactly the same time as its stored bar.
+    const [x, rawY] = project(c, c, 4 + waveHeight * wave(t));
+    const [, levelY] = project(c, c, H);
+    svg('rect', { x: x - 4, y: levelY - 4, width: 8, height: 8, class: 'live-height-mark' }, timeAxis);
+    svg('circle', { cx: x, cy: rawY, r: 2.8, fill: '#fff', stroke: '#176347', 'stroke-width': 1.3 }, timeAxis);
+  }
+  if (!showTimes) {
+    svg('circle', { cx: -176, cy: 38, r: 2.8, fill: '#fff', stroke: '#176347', 'stroke-width': 1.3 }, timeAxis);
+    svg('text', { x: -166, y: 43, class: 'live-height-key' }, timeAxis).textContent = '측정 높이';
+    svg('rect', { x: -11, y: 34, width: 8, height: 8, class: 'live-height-mark' }, timeAxis);
+    svg('text', { x: 3, y: 43, class: 'live-height-key' }, timeAxis).textContent = '기록 높이';
+    for (const check of checks) {
+      const time = sampleTime(check.index, n), c = soundStart + soundSpan * time;
+      const [x, y] = project(c, c, 14 + waveHeight * wave(time));
+      svg('text', { x, y, class: 'live-rounding' }, timeAxis).textContent = check.id;
+      svg('text', { x: -173 + 232 * check.i, y: 65, class: 'live-rounding' }, timeAxis).textContent = `${check.id} ${check.text}`;
+    }
   }
   if (state.playhead >= 0) {
-    const t = (state.playhead + .5) / n, c = soundStart + soundSpan * t;
+    const t = sampleTime(state.playhead, n), c = soundStart + soundSpan * t;
     playheadLine.setAttribute('d', `M${project(c, c, 0).join(' ')}L${project(c, c, waveHeight + 18).join(' ')}`);
   } else playheadLine.setAttribute('d', '');
+}
+
+// ---------- Reading figures ----------
+function createReadingFigure(index) {
+  const template = document.createElement('template');
+  template.id = lesson[index].readingDiagram.figure;
+  document.body.append(template);
+  const drawing = svg('svg', {}, template.content);
+  const group = svg('g', { class: 'media-figure' }, drawing);
+  const defs = svg('defs', {}, group);
+  const arrow = svg('marker', { id: 'media-figure-tip', viewBox: '0 0 10 10', markerWidth: 8,
+    markerHeight: 8, markerUnits: 'userSpaceOnUse', refX: 8, refY: 5, orient: 'auto' }, defs);
+  svg('path', { d: 'M1 1 8 5 1 9', class: 'figure-wire' }, arrow);
+  return group;
+}
+
+function figureText(group, x, y, text, className = 'figure-caption', anchor = 'start') {
+  svg('text', { x, y, class: className, 'text-anchor': anchor }, group).textContent = String(text);
+}
+
+function figureArrow(group, d) {
+  svg('path', { d, class: 'figure-wire', 'marker-end': 'url(#media-figure-tip)' }, group);
+}
+
+function drawPixelGrid(group, image, x, y, cellSize) {
+  image.forEach((fill, index) => {
+    svg('rect', { x: x + index % size * cellSize, y: y + Math.floor(index / size) * cellSize,
+      width: cellSize - 1, height: cellSize - 1, fill, stroke: '#6f8a7b', 'stroke-width': .65 }, group);
+  });
+}
+
+function drawPixelRowFigure() {
+  const group = createReadingFigure(0);
+  const row = expandedRow;
+  const image = lesson[0].initial().image;
+  const shades = pixelShades[2];
+  drawPixelGrid(group, image.map((level) => shades[level]), 46, 79, 19);
+  figureText(group, 46, 67, '8 × 8 하트');
+  svg('rect', { x: 44, y: 97, width: 155, height: 20, class: 'figure-focus' }, group);
+  svg('path', { d: 'M200 97 271 146 M200 117 271 181', class: 'figure-zoom' }, group);
+  figureText(group, 274, 71, '둘째 줄의 비트');
+  const bits = image.slice(row * size, (row + 1) * size);
+  bits.forEach((bit, column) => {
+    const x = 274 + column * 40;
+    svg('rect', { x, y: 80, width: 34, height: 31, rx: 5, class: 'figure-chip' }, group);
+    figureText(group, x + 17, 102, bit, 'figure-number', 'middle');
+    figureArrow(group, `M${x + 17} 116v27`);
+    svg('rect', { x, y: 147, width: 34, height: 34, fill: shades[bit], stroke: '#688677' }, group);
+  });
+  figureText(group, 274, 204, '같은 줄의 픽셀');
+  figureText(group, 397, 204, '0 어두움');
+  figureText(group, 484, 204, '1 밝음');
+  figureText(group, 310, 260, '8 × 8 × 1비트 = 64비트', 'figure-caption', 'middle');
+}
+
+function drawShadesFigure() {
+  const group = createReadingFigure(1);
+  const shades = pixelShades[4];
+  const image = lesson[1].initial().image;
+  drawPixelGrid(group, image.map((level) => shades[level]), 46, 79, 19);
+  figureText(group, 46, 67, '8 × 8 픽셀');
+  figureText(group, 278, 67, '픽셀마다 2비트');
+  shades.forEach((shade, level) => {
+    const x = 278 + level * 78;
+    svg('rect', { x, y: 81, width: 54, height: 31, rx: 5, class: 'figure-chip' }, group);
+    figureText(group, x + 27, 103, level.toString(2).padStart(2, '0'), 'figure-number', 'middle');
+    figureArrow(group, `M${x + 27} 116v27`);
+    svg('rect', { x, y: 147, width: 54, height: 47, fill: shade, stroke: '#688677' }, group);
+  });
+  figureText(group, 278, 217, '어두움');
+  figureText(group, 566, 217, '밝음', 'figure-caption', 'end');
+  figureText(group, 155, 260, '64 × 1비트 = 64비트', 'figure-caption', 'middle');
+  figureArrow(group, 'M266 254h70');
+  figureText(group, 453, 260, '64 × 2비트 = 128비트', 'figure-caption', 'middle');
+}
+
+function drawColorFigure() {
+  const group = createReadingFigure(2);
+  const cellSize = 11.5, gridX = 375;
+  const positions = [96, 190, 284];
+  channelNames.forEach((name, channel) => figureText(group, positions[channel], 75, name, 'figure-caption', 'middle'));
+  [colors.red, lesson[2].initial().color].forEach((color, row) => {
+    const y = 106 + 105 * row;
+    const gridY = y - cellSize * 3.5;
+    svg('rect', { x: 52, y: y - 19, width: 276, height: 38, rx: 7, class: 'figure-chip' }, group);
+    color.forEach((value, channel) => figureText(group, positions[channel], y + 6, value, 'figure-number', 'middle'));
+    figureArrow(group, `M333 ${y}h37`);
+    const image = Array.from({ length: size * size }, (_, index) => index === selectedPixel
+      ? `rgb(${color.join(',')})` : pixelShades[2][0]);
+    drawPixelGrid(group, image, gridX, gridY, cellSize);
+    const cellX = gridX + selectedPixel % size * cellSize;
+    svg('rect', { x: cellX - 1, y: y - cellSize / 2 - 1, width: cellSize + 1, height: cellSize + 1,
+      class: 'figure-focus' }, group);
+    svg('path', { d: `M${cellX + cellSize + 2} ${y}H473l12 11`, class: 'figure-zoom' }, group);
+    figureText(group, 491, y + 17, '4행 4열');
+  });
+  figureArrow(group, 'M190 131v55');
+  figureText(group, 207, 164, '+160', 'figure-compare');
+  figureText(group, 190, 263, '3 × 8비트 = 3바이트', 'figure-caption', 'middle');
+}
+
+function drawSoundFigure(index, quantized) {
+  const group = createReadingFigure(index);
+  const { samples, depth } = lesson[index].initial();
+  const maxLevel = 2 ** depth - 1;
+  const left = 75, right = 587, top = 70, bottom = 201;
+  const x = (time) => left + (right - left) * time;
+  const y = (height) => bottom - (bottom - top) * height;
+  const samplePoints = Array.from({ length: samples }, (_, i) => {
+    const time = sampleTime(i, samples);
+    return { x: x(time), raw: wave(time), level: sampleLevel(time, depth) };
+  });
+  const examples = quantized ? roundingChecks(samples, depth) : [];
+
+  if (quantized) {
+    for (const { index } of examples) {
+      const { x, level } = samplePoints[index];
+      svg('rect', { x: x - 13, y: y((level + .5) / maxLevel), width: 26,
+        height: (bottom - top) / maxLevel, class: 'figure-band' }, group);
+    }
+    for (let level = 0; level < maxLevel; level++) {
+      const boundary = y((level + .5) / maxLevel);
+      svg('path', { d: `M${left} ${boundary}H${right}`, class: 'figure-threshold' }, group);
+    }
+    for (const level of [0, 5, 10, maxLevel]) {
+      figureText(group, 65, y(level / maxLevel) + 5, level, 'figure-caption', 'end');
+    }
+  }
+
+  svg('path', { d: `M${left} ${top}V${bottom}H${right + 9}m-6 -4 6 4 -6 4`, class: 'figure-axis' }, group);
+  figureText(group, 18, 55, '진폭');
+  for (const sample of samplePoints) {
+    const rawY = y(sample.raw);
+    svg('path', { d: `M${sample.x} ${bottom + 4}V${rawY}`, class: 'figure-grid' }, group);
+    svg('path', { d: `M${sample.x} ${bottom - 3}v7`, class: 'figure-axis' }, group);
+  }
+  const curve = Array.from({ length: 161 }, (_, i) => {
+    const time = i / 160;
+    return `${x(time)} ${y(wave(time))}`;
+  });
+  svg('path', { d: 'M' + curve.join('L'), class: 'figure-wave' }, group);
+  for (const sample of samplePoints) {
+    svg('circle', { cx: sample.x, cy: y(sample.raw), r: 3.35, class: 'figure-dot' }, group);
+    if (quantized) {
+      const recorded = y(sample.level / maxLevel);
+      svg('rect', { x: sample.x - 4.5, y: recorded - 4.5, width: 9, height: 9,
+        fill: 'none', class: 'figure-level' }, group);
+      figureText(group, sample.x, 222, sample.level, 'figure-number', 'middle');
+    }
+  }
+  if (quantized) {
+    svg('path', { d: 'M151 57h20', class: 'figure-threshold' }, group);
+    figureText(group, 176, 62, '반올림 경계');
+    svg('circle', { cx: 344, cy: 57, r: 3.35, class: 'figure-dot' }, group);
+    figureText(group, 353, 62, '측정점');
+    svg('rect', { x: 488, y: 53, width: 8, height: 8, class: 'figure-level' }, group);
+    figureText(group, 502, 62, '기록값');
+    figureText(group, 12, 222, '기록값');
+    examples.forEach(({ index, id, text }, order) => {
+      const sample = samplePoints[index];
+      figureText(group, sample.x + 6, y(sample.raw) - 11, id, 'figure-compare');
+      figureText(group, 100 + 283 * order, 246, `${id} ${text}`, 'figure-compare');
+    });
+    figureText(group, 310, 270, '16 × 4비트 = 64비트', 'figure-caption', 'middle');
+  } else {
+    const points = samplePoints.slice(0, 3).map((sample) => sample.x);
+    const intervals = points.slice(0, -1).map((from, i) => `M${from} 212v7H${points[i + 1]}v-7`);
+    svg('path', { d: intervals.join(' '), class: 'figure-axis' }, group);
+    figureText(group, 119, 245, '같은 간격', 'figure-caption', 'middle');
+    figureText(group, 587, 224, '시간', 'figure-caption', 'end');
+    figureText(group, 490, 245, '측정점 16개', 'figure-caption', 'middle');
+  }
 }
 
 // ---------- Size panel: how many bits the current scene takes ----------
@@ -641,7 +913,8 @@ function paint() {
   const s = step();
   for (const group of byId('world').querySelectorAll('.mode-group')) {
     const mode = group.dataset.mode;
-    const visible = mode === s.mode || (mode === 'screen' && s.mode !== 'sound');
+    const visible = mode === s.mode || (mode === 'screen' && s.mode !== 'sound') ||
+      (mode === 'expanded-row' && s.mode === 'pixels' && s.levels === 2);
     group.classList.toggle('hidden', !visible);
   }
   if (s.mode === 'pixels') {
@@ -653,16 +926,20 @@ function paint() {
     });
     rowLabels.forEach((label, r) => {
       const row = state.image.slice(r * size, r * size + size);
-      label.textContent = s.levels === 2
-        ? `${row.join('').replace(/(.{4})(.{4})/, '$1 $2')} = ${rowValue(state, r)}`
-        : row.map((v) => v.toString(2).padStart(2, '0')).join(' ');
+      label.textContent = s.levels === 2 ? '' : row.map((v) => v.toString(2).padStart(2, '0')).join(' ');
+    });
+    if (s.levels === 2) expandedPixels.forEach(({ digit, pixel }, column) => {
+      const bit = state.image[expandedRow * size + column];
+      digit.textContent = bit;
+      pixel.setAttribute('fill', shades[bit]);
     });
   } else if (s.mode === 'color') {
     const fill = `rgb(${state.color.join(',')})`;
     pixelViews.forEach((pixel, index) => {
-      pixel.setAttribute('fill', fill);
+      const selected = index === selectedPixel;
+      pixel.setAttribute('fill', selected ? fill : pixelShades[2][0]);
       pixel.classList.remove('lit');
-      pixel.classList.toggle('rgb-focus', index === 27);
+      pixel.classList.toggle('rgb-focus', selected);
     });
     rowLabels.forEach((label) => { label.textContent = ''; });
     towers.forEach((tower, i) => {
@@ -839,6 +1116,7 @@ function applyFrame(frameState) {
   paint();
 }
 function demoTick() {
+  if (viewport.querySelector('.course-diagram')) { state.wait = 400; return; }
   const demo = step().demo;
   if (demo.sweep) {
     state.playhead = (state.playhead + 1) % state.samples;
@@ -904,7 +1182,7 @@ function showStep(index, announce = true) {
     if (i === index) button.setAttribute('aria-current', 'step');
     else button.removeAttribute('aria-current');
   });
-  byId('world').setAttribute('transform', s.mode === 'sound' ? 'translate(330 182) scale(1.02)' : s.mode === 'color' ? 'translate(372 166) scale(.9)' : 'translate(366 158) scale(1.06)');
+  byId('world').setAttribute('transform', s.mode === 'sound' ? 'translate(330 182) scale(1.02)' : s.mode === 'color' ? 'translate(372 166) scale(.9)' : 'translate(365 171) scale(.8)');
   state.solved = '';
   syncTask();
   paint();
@@ -946,7 +1224,13 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
+drawPixelRowFigure();
+drawShadesFigure();
+drawColorFigure();
+drawSoundFigure(3, false);
+drawSoundFigure(4, true);
 buildMonitor();
+buildPixelRowDetail();
 buildTowers();
 buildSound();
 buildSummary();

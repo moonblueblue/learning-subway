@@ -1,5 +1,27 @@
 // English for 0.3 Images and sound. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  '한 비트가 같은 열의 픽셀을 정한다': 'Each bit sets the pixel in its column',
+  '8×8 하트의 둘째 줄 0110 0110에서 각 비트의 화살표가 같은 열의 픽셀에 닿습니다. 0은 어둡고 1은 밝습니다. 그림 전체는 64비트입니다.':
+    'In the second row of the 8×8 heart, each bit in 0110 0110 points to the pixel in its column. A 0 is dark and a 1 is bright. The whole image is 64 bits.',
+  '8 × 8 하트': '8 × 8 heart', '둘째 줄의 비트': 'Bits of the second row',
+  '같은 줄의 픽셀': 'Pixels in that row', '0 어두움': '0 dark', '1 밝음': '1 bright',
+  '어두움': 'Dark', '밝음': 'Bright', '8 × 8 픽셀': '8 × 8 pixels',
+  '8 × 8 × 1비트 = 64비트': '8 × 8 × 1 bit = 64 bits',
+  '64 × 1비트 = 64비트': '64 × 1 bit = 64 bits', '64 × 2비트 = 128비트': '64 × 2 bits = 128 bits',
+  '2비트는 네 가지 밝기를 정한다': 'Two bits give four brightness levels',
+  '00, 01, 10, 11을 각각 다른 밝기에 연결합니다. 같은 64픽셀에서 픽셀당 1비트를 2비트로 늘리면 64비트가 128비트가 됩니다.':
+    'Connect 00, 01, 10 and 11 to four brightness levels. In the same 64 pixels, going from one to two bits per pixel raises the total from 64 to 128 bits.',
+  '초록 값을 올려 한 픽셀의 색을 바꾼다': 'Increasing green changes one pixel',
+  '선택한 4행 4열에서 빨강 255와 파랑 0은 유지하고 초록을 0에서 160으로 올립니다. 해당 픽셀만 빨강에서 주황으로 바뀝니다.':
+    'In the selected pixel at row 4, column 4, keep red at 255 and blue at 0, and raise green from 0 to 160. Only that pixel changes from red to orange.',
+  '4행 4열': 'Row 4, col. 4', '3 × 8비트 = 3바이트': '3 × 8 bits = 3 bytes',
+  '연속 파형과 시간축이 있습니다. 축의 같은 간격 눈금 16개에서 수직선을 올리면 같은 시각의 파형에 측정점이 생깁니다.':
+    'A continuous wave sits above a time axis. Vertical lines from 16 equally spaced ticks meet the wave at the corresponding sample points.',
+  '진폭': 'Amplitude', '같은 간격': 'Equal intervals', '기록값': 'Stored', '측정점': 'Sampled point', '반올림 경계': 'Rounding boundary',
+  '측정 높이': 'Measured height', '기록 높이': 'Stored height',
+  '같은 점을 가까운 정수 높이로 적는다': 'Round the same points to integer heights',
+  '같은 16개 점의 높이를 가장 가까운 0부터 15까지의 정수로 기록합니다. 3.43은 경계 3.5 아래라 3으로 내리고, 7.54는 경계 7.5 위라 8로 올립니다. 4비트씩 16개가 64비트입니다.':
+    'Record the same 16 heights as the nearest integers from 0 to 15. The height 3.43 is below 3.5 and rounds down to 3. The height 7.54 is above 7.5 and rounds up to 8. Sixteen samples at four bits each take 64 bits.',
   "시간": "Time",
   "· 일정 간격": "· equal intervals",
   "빨강과 초록 빛을 함께 켬": "Red and green light mix",
@@ -42,10 +64,10 @@ window.lessonText = {
   '그림은 작은 칸으로 나뉜다': 'A picture is split into small squares',
   '화면의 그림은 픽셀이라는 아주 작은 칸이 모여 만들어집니다. 칸마다 켜짐과 꺼짐만 정한다면 칸 하나가 비트 하나입니다. 8 × 8 그림은 64비트, 곧 8바이트이고, 한 줄 8칸은 0.1에서 본 바이트 하나와 같습니다.':
     'A picture on screen is made of tiny squares called pixels. If each square is only on or off, one square is one bit. An 8 × 8 picture is 64 bits, which is 8 bytes, and a row of 8 squares is one byte, as in 0.1.',
-  '화면 왼쪽에 줄마다 그 줄의 비트와 수가 나옵니다. 칸을 켜고 끄면 해당 줄의 수가 바로 바뀝니다.':
-    'To the left of the screen, each row shows its bits and its number. Turning a square on or off changes that row\'s number at once.',
-  '8 × 8 픽셀 화면이 있고, 왼쪽에 각 줄을 바이트로 나타낸 비트와 수가 적혀 있습니다. 켜진 칸은 밝고 꺼진 칸은 어둡습니다.':
-    'There is an 8 × 8 pixel screen, and to its left each row is written as a byte: its bits and its number. Squares that are on are bright; squares that are off are dark.',
+  '화면 둘째 줄을 왼쪽에 펼쳤습니다. 그 줄에서 픽셀을 바꾸면 같은 열의 비트와 밝기가 함께 바뀝니다.':
+    'The second row is expanded on the left. Changing a pixel in that row changes the bit and brightness in the same column.',
+  '8 × 8 픽셀 화면 둘째 줄의 각 비트가 왼쪽에 펼친 행의 같은 열을 가리킵니다. 0은 어둡고 1은 밝습니다.':
+    'The bits of the second row of the 8 × 8 screen point to the same columns in the enlarged row on the left. A 0 is dark and a 1 is bright.',
   '8×8 흑백 화면': '8×8 black-and-white screen', '픽셀마다 1비트': '1 bit per pixel', '= 8바이트': '= 8 bytes',
   '맨 윗줄을 모두 켜 보세요. 그 줄은 11111111 = 255가 됩니다.': 'Turn on the whole top row. That row becomes 11111111 = 255.',
   '켜진 칸이 정확히 10개가 되게 해 보세요.': 'Make exactly 10 squares on.',
@@ -69,10 +91,10 @@ window.lessonText = {
   '색은 빛 세 가지의 세기다': 'A colour is the strength of three lights',
   '화면의 색은 빨강, 초록, 파랑 빛을 얼마나 세게 켜는지로 만듭니다. 세 빛의 세기를 각각 0–255(8비트)로 정하므로 픽셀 하나의 색은 3바이트입니다. 빨강과 초록을 함께 켜면 노랑, 셋을 모두 켜면 흰색이 됩니다.':
     'A colour on screen is made by how strongly red, green and blue light are turned on. Each light\'s strength is 0–255 (8 bits), so one pixel\'s colour is 3 bytes. Red and green together make yellow; all three make white.',
-  '세 기둥의 높이가 빛의 세기이고, 화면 전체가 세 빛을 섞은 색으로 칠해집니다. 아래 줄에서 세 값이 3바이트로 바뀌는 것을 볼 수 있습니다.':
-    'The height of each column is the strength of a light, and the whole screen is painted with the three lights mixed. The line below shows the three values turning into 3 bytes.',
-  '빨강, 초록, 파랑 세 기둥이 화면으로 이어져 있습니다. 기둥 높이는 각 빛의 세기(0–255)이고, 화면은 세 빛을 섞은 색으로 칠해집니다.':
-    'Three columns, red, green and blue, lead to a screen. Each column\'s height is that light\'s strength (0–255), and the screen is painted with the three lights mixed.',
+  '초록을 0에서 160으로 올리면 같은 한 픽셀만 빨강에서 주황으로 바뀝니다. 세 채널 값은 각각 1바이트입니다.':
+    'Raising green from 0 to 160 changes the same one pixel from red to orange. Each of the three channel values takes one byte.',
+  '빨강, 초록, 파랑 세 기둥이 화면으로 이어집니다. 세 값이 4행 4열의 선택한 한 픽셀에 함께 적용됩니다.':
+    'The red, green and blue columns lead to the screen. All three values apply to the selected pixel at row 4, column 4.',
   '빨강 빛만 켬': 'Only the red light on', '3바이트': '3 bytes',
   '노란색을 만들어 보세요. 빨강과 초록만 255로 켭니다.': 'Make yellow. Turn only red and green up to 255.',
   '자홍색(빨강 + 파랑)을 만들어 보세요.': 'Make magenta (red + blue).',
@@ -80,8 +102,14 @@ window.lessonText = {
   // Step 4
   '소리 샘플': 'Sound samples',
   '소리는 잘게 나눠 높이를 적는다': 'Sound is cut into slices and their heights written down',
-  '소리는 공기가 떨리는 파동입니다. 컴퓨터는 아주 짧은 간격마다 파동의 높이를 재서 수로 적는데, 이것을 샘플링이라고 합니다. 자주 잴수록(샘플 수), 높이를 잘게 나눌수록(샘플 크기) 원래 소리에 가까워지지만 비트도 그만큼 늘어납니다. 음악 CD는 1초에 44,100번, 16비트씩 잽니다.':
-    'Sound is a wave of vibrating air. A computer measures the wave\'s height at very short intervals and writes it down as a number; this is called sampling. Measuring more often (samples) and dividing height more finely (sample size) gets closer to the original sound, but takes more bits too. A music CD measures 44,100 times a second, 16 bits each.',
+  '소리가 이어지는 동안 진폭은 계속 달라집니다. 시간축을 같은 간격으로 나누고, 각 눈금의 시각에 파형의 진폭을 한 번씩 읽습니다. 이렇게 일정한 시각에 높이를 재는 것을 샘플링이라고 합니다.':
+    'Amplitude varies continuously as sound plays. Divide the time axis into equal intervals and read the wave’s amplitude at each tick. Measuring at regularly spaced times is called sampling.',
+  '연속 파형의 높이를 재는 시각마다 시간축에서 세로선이 올라가고 파형에 점이 찍힙니다.':
+    'At each sample time, a vertical line rises from the time axis to a point on the continuous wave.',
+  '샘플을 32개로 늘려 보세요. 같은 파형에 측정점이 더 촘촘해집니다.':
+    'Increase the samples to 32. The points are closer together on the same wave.',
+  '앞 단계와 같은 시각의 높이를 0부터 15까지의 정수 중 가장 가까운 값으로 기록합니다. 두 정수의 가운데가 반올림 경계입니다. 4비트는 이 16가지 높이를 담으므로 측정점 16개에는 64비트가 듭니다.':
+    'Record the heights at the same times as in the previous step using the nearest integer from 0 to 15. The midpoint between adjacent integers is the rounding boundary. Four bits hold 16 possible heights, so 16 samples take 64 bits.',
   '곡선이 원래 소리이고, 막대가 컴퓨터가 적어 둔 높이입니다. 샘플을 늘리면 막대가 촘촘해지고, 샘플 크기를 줄이면 높이가 계단처럼 거칠어집니다.':
     'The curve is the original sound, and the bars are the heights the computer wrote down. More samples make the bars denser; a smaller sample size makes the heights rough, like stairs.',
   '부드러운 소리 파형 곡선 아래에 같은 간격으로 막대가 서 있습니다. 막대 높이는 그 순간 잰 파형의 높이를 정해진 단계로 반올림한 값입니다.':

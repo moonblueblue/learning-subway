@@ -18,37 +18,32 @@ addEventListener('pageshow', event => {
 <meta name="theme-color" content="#f4f7ef">
 <title>AI 노선도</title>
 <link rel="icon" href="./shared/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="./shared/ai-map.css?v=bf303e55e5c8f094">
+<link rel="stylesheet" href="./shared/ai-map.css?v=2db2bad5bd250591">
 <link rel="stylesheet" href="./shared/map-topics.css?v=583cfc9afb489968">
 <script defer src="./shared/catalog.js?v=432db8e6e288092c"></script>
 <script defer src="./shared/ai-stations.js?v=f860b170bb07de75"></script>
 
 <script defer src="./shared/i18n.js?v=78a030e446786b47"></script>
 <script defer src="./shared/map-topics.js?v=d372269d6998bac6"></script>
-<script defer src="./shared/ai-map.js?v=68a065ab7f7a662a"></script>
+<script defer src="./shared/ai-map.js?v=362d565227b561fd"></script>
 </head>
 <body data-ai-map class="map-shell">
 <header class="map-mast">
   <h1><a href="./index.html" class="home" aria-label="전체 노선도">Learning Subway</a></h1>
-  <div class="mast-center"><p class="tagline">AI 노선도</p></div>
+  <div class="mast-center"><p id="line-name" class="tagline" data-no-i18n></p></div>
   <div data-lang-switch></div>
 </header>
 <div class="map-workspace">
 <nav class="map-topics" data-no-i18n aria-label="학습 주제"></nav>
 <main data-no-i18n>
-  <section class="sheet" aria-labelledby="line-name part-name">
-    <div class="part-header">
-      <div class="part-heading">
-        <h2 id="line-name"></h2>
-        <details class="part-picker">
-          <summary><span id="part-name"></span></summary>
-          <nav class="parts"></nav>
-        </details>
-      </div>
-      <nav class="part-pager"><a id="prev-part"></a><span id="part-count"></span><a id="next-part"></a></nav>
-    </div>
+  <section class="sheet" aria-labelledby="line-name">
     <svg class="network" role="group"></svg>
+    <div class="map-legend" hidden></div>
   </section>
+  <dialog class="chapter-dialog" aria-labelledby="chapter-name">
+    <header><h2 id="chapter-name"></h2><button type="button" id="close-chapter" autofocus></button></header>
+    <ol class="chapter-lessons"></ol>
+  </dialog>
 </main>
 </div>
 </body>

@@ -162,7 +162,7 @@
         svg('path', {d: 'M12.5,5 L19,9 L12.5,13 Z', fill: INK})], text('다른 주제로 갈아타는 곳', 'Change to another subject')],
     ];
     // Only the marks this map uses.
-    const used = [true, subject.stations.some(station => station.kind === 'planned'), subject.stations.some(station => station.capsule),
+    const used = [subject.stations.some(station => station.kind === 'lesson'), subject.stations.some(station => station.kind === 'planned'), subject.stations.some(station => station.capsule),
       subject.stations.some(station => station.kind === 'transfer')];
     document.querySelector('.map-legend').replaceChildren(
       ...legend.filter((entry, i) => used[i]).map(([shapes, words]) => html('span', {}, icon(shapes), words)));

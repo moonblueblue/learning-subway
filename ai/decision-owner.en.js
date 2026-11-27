@@ -81,5 +81,17 @@ window.lessonText = {
   "프로그램 · A 경보": "Program · alert A",
   "반장 · A 배정": "Lead · assign A",
   "선택 대기": "Choose an answer",
-  "다시 선택": "Choose again"
+  "다시 선택": "Choose again",
+  "실습은 어제 08:00 온도 기록과 14:20 현장 점검 기록을 대조합니다. 오전에 알았던 정보를 고르세요.": "Practice compares yesterday's 08:00 record with the 14:20 on-site check. Choose what was known in the morning.",
+  "실습은 어제 08:00 기록과 14:20 점검 기록을 대조합니다. 오전에 있던 정보를 다시 고르세요.": "Practice compares yesterday's 08:00 record with the 14:20 check. Choose again which information was available in the morning.",
+  "어제 08:00에는 두 설비의 온도만 알았습니다. 실제 상태는 14:20에 확인되었습니다.": "At 08:00 yesterday, only the temperatures were known. The actual conditions were confirmed at 14:20.",
+  "다른 날 A는 76°C, B는 85°C입니다. 그림은 어제 고장이 확인된 86°C까지 두 온도의 거리를 비교합니다. 먼저 점검할 설비를 고르세요.": "On another day, A is 76°C and B is 85°C. The diagram compares their distances from yesterday's 86°C fault reading. Choose which unit to check first.",
+  "다른 날 A는 76°C, B는 85°C입니다. 두 점과 어제 86°C 사이의 거리를 다시 비교하세요.": "On another day, A is 76°C and B is 85°C. Compare both distances from yesterday's 86°C fault reading again.",
+  "다른 날 B의 85°C가 어제 고장이 확인된 86°C에 더 가까워 B를 먼저 점검합니다. 실제 상태는 빈칸입니다.": "On another day, B at 85°C is closer to yesterday's 86°C fault reading, so B is checked first. The actual outcome slots are empty.",
+  "실습에 A 경보가 도착했습니다. 경보 프로그램과 점검 반장의 역할을 보고 점검을 배정하는 쪽을 고르세요.": "Alert A has arrived. Compare the roles of the program and the inspection lead, then choose who assigns the check.",
+  "실습에 A 경보가 도착했습니다. 프로그램이 알림을 전하는 일과 점검을 배정하는 일을 다시 구분하세요.": "Alert A has arrived. Distinguish sending the alert from assigning the check, then choose again.",
+  "실습에서 점검 반장이 A 점검을 배정했습니다. 두 실제 상태 칸은 아직 비어 있습니다.": "In practice, the inspection lead assigns A for inspection. Both actual outcome slots remain empty.",
+  "다른 날에도 A에 경보가 났지만 14:20 현장 점검에서는 정상이었습니다. A의 실제 상태 칸에 기록할 결과를 고르세요.": "On another day, A raised an alert, but the 14:20 check found it normal. Choose what to record in A's actual outcome slot.",
+  "다른 날 A에 경보가 났지만 14:20 현장 점검에서는 정상이었습니다. 실제 상태 칸에 남길 결과를 다시 고르세요.": "On another day, A raised an alert, but the 14:20 check found it normal. Choose the actual outcome again.",
+  "다른 날 A에 경보가 난 기록은 남아 있습니다. 14:20 점검에서 확인한 A 정상도 실제 상태 칸에 기록됐습니다.": "The alert from the other day stays in the record. A's normal condition, confirmed at 14:20, now fills the actual outcome slot."
 };

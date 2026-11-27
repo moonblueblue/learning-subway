@@ -7,6 +7,20 @@
 <meta name="description" content="펌프의 기록과 모델의 입력, 맞힐 정답을 어떻게 나누나요?">
 <title>관측값·특징·정답 구분하기 · T05</title>
 <link rel="stylesheet" href="../shared/reading-lesson.css">
+<style>
+.record-card{fill:#fff;stroke:#99afa3;stroke-width:1.25}
+.record-card.feature{fill:#d5efeb;stroke:#278276}
+.record-card.field{fill:#edf2fb;stroke:#677f9f}
+.record-card.outcome{fill:#f7f0d8;stroke:#947235}
+.record-card.pending{fill:#f9fbf9;stroke:#73877c;stroke-dasharray:5 4}
+.record-label,.record-detail{fill:#142620;font-size:16px;font-weight:700}
+.record-detail{fill:#43574f;font-size:14px;font-weight:600}
+.record-line,.record-boundary{fill:none;stroke:#41645a;stroke-width:2;stroke-linecap:round}
+.record-boundary{stroke:#7b9285;stroke-dasharray:5 4}
+.record-tip{fill:#41645a}
+.record-practice,body.course-shell .workspace:not(.course-reading) .record-reading{display:none}
+body.course-shell .workspace:not(.course-reading) .record-practice{display:inline}
+</style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
 <link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
@@ -22,7 +36,7 @@
   <div class="workspace">
     <div>
       <section class="panel" aria-labelledby="stage-heading">
-        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage-top"><h2 id="stage-heading">센서 기록과 예측</h2></div>
         <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">관측값·특징·정답 구분하기</title><desc id="scene-desc"></desc></svg></div>
         <div class="controls"></div>
         <nav class="timeline" aria-labelledby="timeline-heading">
@@ -35,7 +49,6 @@
         <p id="prompt" class="try"></p>
         <p id="feedback" class="readout" role="status"></p>
         <div id="choices"></div>
-
       </div>
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
@@ -49,218 +62,181 @@
 <script>
 const lesson = [
   {
-    "label": "특징 계산",
-    "title": "두 관측값을 모델 입력 하나로 바꿉니다",
-    "body": "08:00의 펌프 C를 평가합니다. 07:55의 68°C와 08:00의 74°C를 기록에서 골라 5분 상승량을 구합니다. 이 6°C가 모델에 넣을 특징입니다.",
-    "takeaway": "관측 두 칸이 빼기 칸에 모여 5분 상승량 +6°C를 냅니다.",
-    "example": [
-      "68°C · 74°C",
-      "74 − 68",
-      "+6°C"
-    ],
-    "readingDiagram": {
-      "nodes": [
-        [
-          "s1",
-          107,
-          89,
-          147,
-          59,
-          [
-            "07:55",
-            "68°C"
-          ],
-          "plain"
-        ],
-        [
-          "s2",
-          107,
-          204,
-          147,
-          59,
-          [
-            "08:00",
-            "74°C"
-          ],
-          "plain"
-        ],
-        [
-          "delta",
-          311,
-          144,
-          122,
-          37,
-          [
-            "74 − 68"
-          ],
-          "plain"
-        ],
-        [
-          "out",
-          507,
-          144,
-          156,
-          59,
-          [
-            "+6°C",
-            "특징"
-          ],
-          "active"
-        ]
-      ],
-      "edges": [
-        [
-          "s1",
-          "delta",
-          "plain",
-          "",
-          0
-        ],
-        [
-          "s2",
-          "delta",
-          "plain",
-          "",
-          0
-        ],
-        [
-          "delta",
-          "out",
-          "active",
-          "",
-          0
-        ]
-      ],
-      "labels": [],
-      "bars": [],
-      "staticOnly": true,
-      "title": "특징 계산",
-      "description": "관측 두 칸이 빼기 칸에 모여 5분 상승량 +6°C를 냅니다."
-    },
-    "quiz": [
-      "5분 전 70°C, 현재 73°C라면 5분 상승량은?",
-      "+3°C",
-      "+73°C",
-      "두 값의 차이는 73−70=3°C입니다."
-    ]
+    label: '특징 고르기',
+    title: '온도계 기록에서 온도값을 골라 모델에 넣습니다',
+    body: '온도계는 어느 펌프에서 언제 몇 도를 읽었는지 한 건의 기록으로 남깁니다. 월요일 08:00에 펌프 C가 24시간 안에 멈출지 예측합니다. 이 모델이 입력으로 쓰는 74°C를 특징이라고 합니다.',
+    takeaway: '출발점은 원기록의 온도 칸입니다. 펌프 이름과 기록 시각으로 어느 기록인지 찾습니다.',
+    example: ['월 08:00 · C · 74°C', '온도값 고르기', '특징 74°C'],
+    readingDiagram: {figure: 'feature-from-record', staticOnly: true, title: '특징 고르기',
+      description: '왼쪽 원기록의 펌프 C, 월요일 08:00, 74°C 중 온도값만 오른쪽 모델 입력 칸으로 옮겨 특징으로 씁니다.'},
+    quiz: ['화요일 08:00의 온도계 기록에서 이 모델에 입력할 값은 무엇일까요?',
+      '73°C', '화요일 08:00', '이 모델은 온도를 입력으로 씁니다. 화요일 기록에서 고른 온도값은 73°C입니다.'],
+    practiceDescription: '화요일 08:00에 펌프 C의 온도계가 73°C를 기록했습니다. 원기록에서 모델에 넣을 값을 골라 보세요.',
+    result: ['73°C'],
   },
   {
-    "label": "정답 연결",
-    "title": "이후 고장 여부를 같은 행의 정답으로 붙입니다",
-    "body": "다음 24시간 안에 펌프 C가 멈췄는지 맞히기로 합니다. 14:20에 정지가 확인되어 정답은 1입니다. 08:00에 예측할 때는 특징 +6°C까지만 사용합니다.",
-    "takeaway": "08:00의 특징과 14:20에 정해진 정답이 시간 경계 양쪽에 있습니다.",
-    "example": [
-      "C · 08:00",
-      "14:20 정지 확인",
-      "y = 1"
-    ],
-    "readingDiagram": {
-      "nodes": [
-        [
-          "p114_0",
-          118,
-          114,
-          155,
-          59,
-          [
-            "+6°C",
-            "모델 입력"
-          ],
-          "plain"
-        ],
-        [
-          "p114_1",
-          310,
-          114,
-          155,
-          59,
-          [
-            "08:00",
-            "예측"
-          ],
-          "plain"
-        ],
-        [
-          "p114_2",
-          502,
-          114,
-          155,
-          59,
-          [
-            "14:20",
-            "고장 확인"
-          ],
-          "blocked"
-        ],
-        [
-          "m212_0",
-          130.0,
-          212,
-          173,
-          37,
-          [
-            "C · 08:00"
-          ],
-          "plain"
-        ],
-        [
-          "m212_1",
-          310.0,
-          212,
-          173,
-          59,
-          [
-            "x = +6°C",
-            "특징"
-          ],
-          "active"
-        ],
-        [
-          "m212_2",
-          490.0,
-          212,
-          173,
-          59,
-          [
-            "y = 1",
-            "정답"
-          ],
-          "blocked"
-        ]
-      ],
-      "edges": [
-        [
-          "p114_0",
-          "p114_1",
-          "active",
-          ""
-        ],
-        [
-          "p114_1",
-          "p114_2",
-          "muted",
-          ""
-        ]
-      ],
-      "labels": [],
-      "bars": [],
-      "staticOnly": true,
-      "title": "정답 연결",
-      "description": "08:00의 특징과 14:20에 정해진 정답이 시간 경계 양쪽에 있습니다."
-    },
-    "quiz": [
-      "추적 기간이 끝났고 C가 멈추지 않았다면 정답은?",
-      "y = 0",
-      "+6°C",
-      "정답은 창 안에 고장이 있었는지를 나타냅니다. 상승량은 여전히 특징입니다."
-    ]
-  }
+    label: '나중에 정답 붙이기',
+    title: '예측 뒤 현장에서 확인한 결과를 정답으로 붙입니다',
+    body: '월요일 08:00에는 74°C로 예측합니다. 같은 날 14:20에 현장에서 펌프가 멈췄음을 확인했습니다. 24시간 안에 멈추는지를 맞히는 문제의 정답은 이때 ‘멈춤’이 됩니다.',
+    takeaway: '시간 경계 왼쪽의 74°C는 예측에 쓴 특징입니다. 오른쪽의 14:20 확인 기록이 정답을 정합니다.',
+    example: ['월 08:00 · 특징 74°C', '월 14:20 · 정지 확인', '정답 · 멈춤'],
+    readingDiagram: {figure: 'later-field-label', staticOnly: true, title: '나중에 정답 붙이기',
+      description: '월요일 08:00 예측에는 특징 74°C를 씁니다. 같은 날 14:20의 현장 기록에서 펌프 정지가 확인되어 정답 멈춤을 붙입니다.'},
+    quiz: ['화요일 08:00 예측의 정답을 ‘안 멈춤’으로 확정하는 때는 언제일까요?',
+      '수요일 08:00', '화요일 08:00', '24시간 동안 멈추지 않았다는 것을 확인할 수 있는 때는 수요일 08:00입니다.'],
+    practiceDescription: '화요일 08:00에 특징 73°C로 예측합니다. 수요일 08:00까지 24시간 내내 펌프가 가동됐습니다.',
+    result: ['안 멈춤', '수 08:00에 붙임'],
+  },
+  {
+    label: '날짜별로 짝 맞추기',
+    title: '같은 예측의 특징과 정답을 한 행에 넣습니다',
+    body: '같은 펌프라도 월요일과 화요일 08:00에 각각 예측했습니다. 각 행의 왼쪽에는 그때 입력한 온도가, 오른쪽에는 그 예측 이후 현장에서 확인한 정답이 들어갑니다. 이렇게 모은 행으로 모델을 학습시키거나 예측을 대조할 수 있습니다.',
+    takeaway: '월요일 74°C는 그날 14:20에 확인한 ‘멈춤’과, 화요일 73°C는 수요일 08:00에 확인한 ‘안 멈춤’과 같은 행에 있습니다.',
+    example: ['월·화 08:00 예측', '74°C와 73°C', '각각 멈춤과 안 멈춤'],
+    readingDiagram: {figure: 'dated-feature-label-pairs', staticOnly: true, title: '날짜별로 짝 맞추기',
+      description: '월요일 행은 08:00 특징 74°C와 당일 14:20에 확인한 정답 멈춤을 연결합니다. 화요일 행은 08:00 특징 73°C와 수요일 08:00에 확인한 정답 안 멈춤을 연결합니다.'},
+    quiz: ['수요일 같은 펌프의 기록에서 특징과 정답이 어떻게 한 행을 이룰까요?',
+      '특징 76°C · 정답 멈춤', '특징 멈춤 · 정답 76°C', '08:00에 쓸 수 있는 온도 76°C가 특징이고, 16:10에 확인한 정지가 정답입니다.'],
+    practiceDescription: '수요일 08:00에 펌프 C의 온도는 76°C였습니다. 같은 날 16:10 현장 점검에서 정지를 확인했습니다.',
+    result: ['76°C', '멈춤'],
+  },
 ];
-const slug = 'observations-features-labels';
-const byId = (id) => document.getElementById(id);
-const state = {index: -1, answers: new Map()};
-const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
 
+const slug = 'observations-features-labels';
+const byId = id => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ['✓ 맞았습니다.', '✗ 다시 생각해 보세요.'];
+const scene = byId('scene');
+const workspace = scene.closest('.workspace');
+
+function startCoursePractice() {
+  state.answers.clear();
+  if (state.index === 0) showStep(0);
+  else goToStep(0);
+}
+
+function recordText(parent, x, y, value, detail = false, anchor = 'middle') {
+  svg('text', {x, y, class: detail ? 'record-detail' : 'record-label', 'text-anchor': anchor}, parent).textContent = value;
+}
+
+function recordCard(parent, x, y, width, height, lines, tone = '') {
+  const card = svg('g', {}, parent);
+  svg('rect', {x, y, width, height, rx: 7, class: 'record-card ' + tone}, card);
+  for (const [index, line] of lines.entries()) {
+    const baseline = y + height / 2 + 5 + (index - (lines.length - 1) / 2) * 19;
+    recordText(card, x + width / 2, baseline, line, index > 0);
+  }
+  return card;
+}
+
+function recordArrow(parent, x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  const inset = 7 / Math.hypot(dx, dy);
+  svg('line', {x1, y1, x2: x2 - dx * inset, y2: y2 - dy * inset, class: 'record-line'}, parent);
+  svg('polygon', {points: '-9,-5 0,0 -9,5', transform: `translate(${x2} ${y2}) rotate(${angle})`,
+    'data-arrowhead': '', class: 'record-tip'}, parent);
+}
+
+function recordResult(parent, x, y, width, height, lines, tone, practice) {
+  const card = recordCard(parent, x, y, width, height, practice ? lines.map(() => '') : lines, practice ? 'pending' : tone);
+  if (practice) {
+    card.classList.add('record-practice-result');
+    card.dataset.tone = tone;
+  }
+}
+
+function featureFigure(parent, practice) {
+  recordText(parent, 28, 84, '온도계 원기록', false, 'start');
+  recordCard(parent, 28, 96, 236, 128, []);
+  recordText(parent, 47, 126, '펌프 C', true, 'start');
+  recordText(parent, 47, 151, practice ? '화 08:00' : '월 08:00', true, 'start');
+  recordCard(parent, 46, 169, 198, 40, [practice ? '온도 73°C' : '온도 74°C'], 'feature');
+  recordArrow(parent, 247, 189, 340, 189);
+  recordText(parent, 465, 147, '모델 입력 · 특징');
+  recordResult(parent, 346, 163, 238, 52, ['74°C'], 'feature', practice);
+}
+
+function labelFigure(parent, practice) {
+  recordText(parent, 134, 89, '예측에 사용');
+  recordText(parent, 347, 89, '예측 이후 확인');
+  svg('line', {x1: 255, y1: 98, x2: 255, y2: 216, class: 'record-boundary'}, parent);
+  recordCard(parent, 28, 113, 214, 64, [practice ? '73°C' : '74°C', '모델 입력 · 특징'], 'feature');
+  recordCard(parent, 278, 113, 138, 64,
+    practice ? ['수 08:00', '24시간 내내 가동'] : ['월 14:20', '펌프 정지 확인'], 'field');
+  recordArrow(parent, 420, 145, 437, 145);
+  recordResult(parent, 441, 113, 151, 64, ['멈춤', '월 14:20에 붙임'], 'outcome', practice);
+  recordText(parent, 516.5, 89, '정답');
+  recordArrow(parent, 28, 215, 590, 215);
+  svg('circle', {cx: 255, cy: 215, r: 5, class: 'record-tip'}, parent);
+  recordText(parent, 255, 242, practice ? '화 08:00 예측' : '월 08:00 예측');
+}
+
+function pairFigure(parent, practice) {
+  if (practice) {
+    recordText(parent, 28, 76, '수 08:00 예측 · 펌프 C', true, 'start');
+    recordCard(parent, 28, 90, 263, 58, ['온도계 76°C', '수 08:00 기록'], 'feature');
+    recordCard(parent, 329, 90, 263, 58, ['펌프 정지 확인', '수 16:10 현장 기록'], 'field');
+    recordArrow(parent, 159.5, 151, 159.5, 173);
+    recordArrow(parent, 460.5, 151, 460.5, 173);
+    recordResult(parent, 28, 179, 263, 42, [''], 'feature', true);
+    recordResult(parent, 329, 179, 263, 42, [''], 'outcome', true);
+    recordText(parent, 159.5, 242, '모델 입력 · 특징', true);
+    recordText(parent, 460.5, 242, '정답', true);
+    return;
+  }
+
+  recordText(parent, 93, 85, '펌프 C의 예측');
+  recordText(parent, 246, 85, '모델 입력 · 특징');
+  recordText(parent, 474, 85, '정답 · 확인 시각');
+  const rows = [
+    ['월 08:00', '74°C', '멈춤', '월 14:20 · 정지 확인'],
+    ['화 08:00', '73°C', '안 멈춤', '수 08:00 · 24시간 가동'],
+  ];
+  for (const [index, [date, input, result, checkedAt]] of rows.entries()) {
+    const y = 104 + index * 72;
+    recordCard(parent, 28, y, 564, 56, []);
+    recordText(parent, 93, y + 33, date);
+    recordCard(parent, 159, y, 174, 56, [input], 'feature');
+    recordCard(parent, 354, y, 238, 56, [result, checkedAt], 'outcome');
+  }
+}
+
+lesson.forEach((step, index) => {
+  const template = document.createElement('template');
+  template.id = step.readingDiagram.figure;
+  const canvas = svg('svg', {viewBox: '0 0 620 280'}, template.content);
+  const figure = svg('g', {}, canvas);
+  const draw = [featureFigure, labelFigure, pairFigure][index];
+  draw(svg('g', {class: 'record-reading'}, figure), false);
+  draw(svg('g', {class: 'record-practice'}, figure), true);
+  document.body.append(template);
+});
+
+function updateRecordPractice() {
+  const practice = scene.querySelector('.record-practice');
+  if (!practice || workspace.classList.contains('course-reading')) return;
+  const step = lesson[state.index];
+  const correct = state.answers.get(state.index) === step.quiz[1];
+  if (practice.dataset.correct === String(correct)) return;
+  practice.dataset.correct = String(correct);
+
+  const labels = practice.querySelectorAll('.record-practice-result text');
+  labels.forEach((label, index) => { label.textContent = correct ? step.result[index] : ''; });
+  for (const card of practice.querySelectorAll('.record-practice-result')) {
+    card.querySelector('rect').setAttribute('class', 'record-card ' + (correct ? card.dataset.tone : 'pending'));
+  }
+  for (const id of ['course-diagram-desc', 'scene-desc']) {
+    const description = byId(id);
+    description.textContent = step.practiceDescription;
+    if (correct) description.append(' ', step.quiz[3]);
+  }
+}
+const practiceChanges = new MutationObserver(updateRecordPractice);
+practiceChanges.observe(scene, {childList: true});
+practiceChanges.observe(workspace, {attributes: true, attributeFilter: ['class']});
+practiceChanges.observe(byId('choices'), {childList: true, subtree: true, attributes: true, attributeFilter: ['aria-pressed']});
 </script>
 <script src="../shared/reading-lesson.js?v=b4d45e8ddc5bfaac"></script>
 </body>

@@ -1,5 +1,36 @@
 // English for 0.4 Compression. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  '값 비트': 'Value bit', '값 1비트': '1 value bit', '길이−1 (3비트)': 'Length − 1 (3 bits)',
+  '값 1비트 · 길이−1 3비트': '1 value bit · 3 bits for length − 1',
+  '값 1비트 · 길이−1 3비트 · 최대 길이 8': '1 value bit · 3 bits for length − 1 · maximum length 8',
+  '원본 8비트': 'Original 8 bits', '길이 1 → 000': 'Length 1 → 000',
+  '저장 4비트': 'Stored 4 bits', '저장 0111 · 4비트': 'Stored 0111 · 4 bits',
+  '값 0 · 길이−1은 111': 'Value 0 · length − 1 is 111',
+  '저장 8 × 4비트 = 32비트': 'Stored 8 × 4 bits = 32 bits',
+  '같은 0이 여덟 개 이어집니다. 값 0을 첫 비트에 두고, 길이 8에서 1을 뺀 7을 3비트 111로 적습니다. 저장하는 네 비트는 0111입니다.':
+    'Eight zeroes form one run. The first bit is the value 0. Subtract 1 from the length 8 and write 7 in three bits as 111. The four stored bits are 0111.',
+  '원래대로 복원': 'Restore the row',
+  '두 필드로 같은 여덟 칸을 복원한다': 'Two fields restore the same eight pixels',
+  '저장한 0111을 값 0과 길이 필드 111로 나눕니다. 111은 7이고 1을 더하면 길이 8입니다. 값 0을 여덟 칸 펼쳐 원래 행을 복원합니다.':
+    'Split the stored 0111 into value 0 and length field 111. The field means 7, so adding 1 gives a length of 8. Repeat 0 across eight pixels to restore the original row.',
+  '111 = 7 · 길이는 7 + 1': '111 = 7 · length is 7 + 1',
+  '저장된 0111에서 첫 비트 0은 반복할 값입니다. 뒤의 111은 7을 뜻합니다. 저장할 때 1을 뺐으므로 다시 1을 더해 8칸을 만듭니다. 0을 여덟 번 놓으면 원본이 그대로 돌아옵니다.':
+    'In the stored 0111, the first bit, 0, is the value to repeat. The remaining 111 means 7. We subtracted 1 when storing it, so add 1 to get eight pixels. Repeating 0 eight times restores the original.',
+  '직접 해 보기에서 값 비트와 길이 필드를 바꿔 보세요. 길이 필드 000은 한 칸, 111은 여덟 칸으로 펼쳐집니다.':
+    'In Try it, change the value bit and the length field. The field 000 expands to one pixel, and 111 expands to eight.',
+  '값 비트에서 픽셀의 밝기를, 길이 필드에서 펼칠 칸 수를 정합니다. 기본값은 0111이며 0이 여덟 칸 나옵니다.':
+    'The value bit sets the brightness. The length field sets the number of pixels. The starting word 0111 gives eight zeroes.',
+  '값 1과 길이 3을 나타내는 필드를 골라 111 세 칸을 복원하세요.': 'Set the value to 1 and choose the field for length 3 to restore three ones: 111.',
+  '같은 값으로 길이 1인 묶음을 복원하세요.': 'Restore a run of length 1 with the same value.',
+  '반복할 값 {#0}': 'Repeat value {0}', '복원 {#0}비트': 'Restored {0} {0|bit|bits}',
+  '저장 필드를 바꿨습니다.': 'Changed the stored fields.', '저장': 'Stored',
+  '01010101의 각 칸에서 값이 바뀌어 길이 1의 묶음이 여덟 개 생깁니다. 각 길이 필드가 000이므로 0000과 1000이 교대로 저장됩니다. 원본 8비트 대신 32비트가 필요합니다.':
+    'The value changes at every pixel in 01010101, producing eight runs of length 1. Each length field is 000, so the stored words alternate between 0000 and 1000. They take 32 bits instead of the original 8.',
+  '원래 2×2의 왼쪽 위와 오른쪽 아래는 0, 다른 두 칸은 2입니다. 평균 1을 저장하고 네 칸에 같은 값 1을 펼칩니다. 원래 0과 2가 있던 위치를 되찾을 수 없습니다.':
+    'The original 2×2 block has 0 at the top left and bottom right, and 2 in the other positions. The stored mean 1 expands to 1 in all four positions. The positions of the original 0s and 2s are lost.',
+  '2×2의 밝기 0, 2, 2, 0을 더해 4로 나누면 평균 1입니다. 평균 하나만 2비트로 저장하고 다시 네 칸에 펼치면 모든 칸이 1로 바뀝니다. 처음 0과 2가 어느 칸에 있었는지는 돌아오지 않습니다. 이렇게 일부 정보를 버리는 방법이 손실 압축입니다.':
+    'Add the four brightness values 0, 2, 2 and 0 and divide by 4 to get the mean, 1. Store that mean in two bits and expand it back to four pixels. All four are now 1, so the positions of the original 0s and 2s cannot be recovered. Dropping some information in this way is lossy compression.',
+  '왼쪽 위 2×2': 'Top-left 2×2', '그대로': 'Unchanged', '{#0}×{#0} 평균 {#1}': '{0}×{0} mean {1}',
   "평균 하나로 펼치면 원래 무늬가 사라진다": "Expanding the average loses the original pattern",
   "저장: 평균 1": "Stored: mean 1",
   "원본 · 8비트": "Original · 8 bits",

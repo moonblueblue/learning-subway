@@ -6,16 +6,26 @@ const mapTopics = [
   {id:'architecture', title:'시스템 아키텍처·API 설계', en:'System architecture & API design'},
   {id:'data', title:'데이터 모델링·데이터 엔지니어링', en:'Data modeling & engineering'},
   {id:'infrastructure', title:'운영체제·네트워크·인프라', en:'Operating systems, networking & infrastructure'},
-  {id:'ai', title:'AI·머신러닝', en:'AI & machine learning'},
-  {id:'agent-work', title:'AI 에이전트 작업 설계·위임', en:'AI agent task design & delegation'},
   {id:'quality', title:'테스트 설계·코드 리뷰·인수 검수', en:'Test design, code review & acceptance'},
   {id:'security', title:'보안·권한·개인정보 보호', en:'Security, permissions & privacy'},
-  {id:'operations', title:'배포·서비스 운영·장애 대응', en:'Deployment, operations & incident response'}
+  {id:'operations', title:'배포·서비스 운영·장애 대응', en:'Deployment, operations & incident response'},
+  {id:'ai', line:'1', title:'AI 입문·머신러닝 기초', en:'AI & machine learning foundations'},
+  {id:'ai-search', line:'2', title:'AI 탐색·추론·계획', en:'AI search & planning'},
+  {id:'ai-applied', line:'3', title:'데이터·응용 머신러닝', en:'Applied machine learning'},
+  {id:'ai-vision', line:'4', title:'비전·멀티모달 인식', en:'Vision & multimodal perception'},
+  {id:'ai-robotics', line:'5', title:'강화학습·로봇', en:'Reinforcement learning & robotics'},
+  {id:'ai-generative', line:'6', title:'생성 AI·언어 모델', en:'Generative AI & language models'},
+  {id:'ai-retrieval', line:'7', title:'검색·RAG·AI 응용', en:'Retrieval, RAG & AI applications'},
+  {id:'ai-systems', line:'8', title:'AI 시스템·서빙', en:'AI systems & serving'},
+  {id:'agent-work', title:'AI 에이전트 작업 설계·위임', en:'AI agent task design & delegation'}
 ];
 
 const mapTopicName = topic => courseI18n.lang === 'en' ? topic.en : topic.title;
 function currentMapTopic() {
-  if (document.body.hasAttribute('data-ai-map')) return mapTopics.find(topic => topic.id === 'ai');
+  if (document.body.hasAttribute('data-ai-map')) {
+    const line = new URLSearchParams(location.search).get('line') || '1';
+    return mapTopics.find(topic => topic.line === line) || mapTopics.find(topic => topic.id === 'ai');
+  }
   const id = new URLSearchParams(location.search).get('topic');
   return mapTopics.find(topic => topic.id === id) || mapTopics[0];
 }
@@ -29,12 +39,15 @@ function renderTopicNavigation() {
     if (!link) {
       link = document.createElement('a');
       link.dataset.topic = topic.id;
+      if (topic.line) link.dataset.aiLine = topic.line;
+      if (topic.id === 'ai') nav.append(document.createElement('hr'));
       nav.append(link);
     }
-    const entry = topic.id === 'ai' ? './ai-map.html?v=f151c1fc27eab65c' : './index.html';
+    const entry = topic.line ? './ai-map.html?v=f151c1fc27eab65c' : './index.html';
     const [path, query] = entry.split('?');
     const params = new URLSearchParams(query);
-    if (topic.id !== 'computer-science' && topic.id !== 'ai') params.set('topic', topic.id);
+    if (topic.line) params.set('line', topic.line);
+    else if (topic.id !== 'computer-science') params.set('topic', topic.id);
     if (courseI18n.lang === 'en') params.set('lang', 'en');
     link.setAttribute('href', path + (params.toString() ? '?' + params : ''));
     link.textContent = mapTopicName(topic);

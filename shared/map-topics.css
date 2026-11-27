@@ -15,7 +15,7 @@
 .map-topics a {
   display: block;
   margin-block: 2px;
-  padding: 8px 10px;
+  padding: 6px 10px;
   border-radius: 7px;
   color: #334c42;
   font: 550 14px/1.4 system-ui, sans-serif;
@@ -23,10 +23,18 @@
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
+.map-topics hr {
+  margin: 12px 10px;
+  border: 0;
+  border-block-start: 1px solid #abbfb3;
+}
 .map-topics a:hover { background: #e5f1eb; }
 .map-topics a[aria-current="page"] { background: #d5efeb; color: #124f47; font-weight: 750; }
 .map-topics a:focus-visible { outline: 3px solid #a24c14; outline-offset: -3px; }
 .map-workspace > main, .map-workspace > section { min-width: 0; min-height: 0; }
+@media (max-height: 760px) {
+  .map-topics a { margin-block: 1px; padding-block: 4px; }
+}
 @media (max-width: 740px) {
   .map-workspace { grid-template-columns: clamp(96px, 24vw, 155px) minmax(0, 1fr); gap: 6px; }
   .map-topics { padding-inline-end: 4px; }

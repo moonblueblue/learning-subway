@@ -35,6 +35,7 @@
     url.searchParams.set('line', line.id);
     url.searchParams.set(stop.ref ? 'lesson' : 'stop', value(stop));
     history.replaceState(null, '', url);
+    renderTopicNavigation();
     get('line-name').textContent = t(line, 'title');
     get('destination').textContent = t(line, 'destination');
     select.replaceChildren(...line.stops.map(s => {

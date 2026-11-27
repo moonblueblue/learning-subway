@@ -4,9 +4,28 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="같은 센서 경보가 작업자와 알림 프로그램에 각각 어떤 결정을 맡길까요?">
+<meta name="description" content="어제의 기록이 있을 때 오늘 누가 어느 설비부터 확인하며, 실제 고장은 언제 아는가?">
 <title>누가 어떤 결정을 내리는가 · T01</title>
 <link rel="stylesheet" href="../shared/reading-lesson.css">
+<style>
+.inspection-label,.inspection-column,.inspection-number{fill:#142620;font-size:13px;font-weight:700}
+.inspection-column{font-size:14px}
+.inspection-number{font-variant-numeric:tabular-nums}
+.inspection-note{fill:#43574f;font-size:11px;font-weight:600}
+.inspection-axis,.inspection-flow{fill:none;stroke:#536b61;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.inspection-flow{stroke:#0f766e;stroke-width:2}
+.inspection-card{fill:#fcfdfb;stroke:#9aafa3}
+.inspection-distance,.inspection-reference{fill:none;stroke:#95692c;stroke-width:1.5}
+.inspection-reference{stroke-dasharray:4 4}
+.inspection-current{fill:#0f766e;stroke:#fcfdfb;stroke-width:1.5}
+.inspection-previous{fill:#fcfdfb;stroke:#536b61;stroke-width:1.5}
+.inspection-normal{fill:#d5efeb;stroke:#0f766e}
+.inspection-fault{fill:#fae8df;stroke:#aa4e27}
+.inspection-unknown{fill:#fcfdfb;stroke:#73877c;stroke-dasharray:4 3}
+.inspection-alt,.course-reading .inspection-practice{display:none}
+.workspace:not(.course-reading) .inspection-alt{display:inline}
+.workspace:not(.course-reading) .inspection-base{display:none}
+</style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
 <link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
@@ -18,11 +37,11 @@
 </head>
 <body>
 <main class="shell">
-  <header><p class="eyebrow">AI 공통 본선 · T01</p><h1>누가 어떤 결정을 내리는가</h1><p>같은 센서 경보가 작업자와 알림 프로그램에 각각 어떤 결정을 맡길까요?</p></header>
+  <header><p class="eyebrow">AI 공통 본선 · T01</p><h1>누가 어떤 결정을 내리는가</h1><p>어제의 기록이 있을 때 오늘 누가 어느 설비부터 확인하며, 실제 고장은 언제 아는가?</p></header>
   <div class="workspace">
     <div>
       <section class="panel" aria-labelledby="stage-heading">
-        <div class="stage-top"><h2 id="stage-heading">계산과 판단</h2></div>
+        <div class="stage-top"><h2 id="stage-heading">설비 기록과 점검</h2></div>
         <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">누가 어떤 결정을 내리는가</title><desc id="scene-desc"></desc></svg></div>
         <div class="controls"></div>
         <nav class="timeline" aria-labelledby="timeline-heading">
@@ -49,181 +68,193 @@
 <script>
 const lesson = [
   {
-    "label": "알림 생성",
-    "title": "알림 프로그램이 점검 후보를 올립니다",
-    "body": "펌프 A가 86°C를 기록했습니다. 현재 규칙은 80°C 이상이면 경보를 만들고, 알림 프로그램의 출력은 설비 ID를 담은 후보 A입니다.",
-    "takeaway": "86°C가 80°C 이상을 통과해 펌프 A의 경보가 됩니다.",
-    "example": [
-      "A · 86°C",
-      "86 ≥ 80",
-      "A 경보"
-    ],
-    "readingDiagram": {
-      "nodes": [
-        [
-          "p139_0",
-          118,
-          139,
-          155,
-          59,
-          [
-            "A · 86°C",
-            "센서 입력"
-          ],
-          "plain"
-        ],
-        [
-          "p139_1",
-          310,
-          139,
-          155,
-          59,
-          [
-            "온도 ≥ 80°C",
-            "규칙"
-          ],
-          "plain"
-        ],
-        [
-          "p139_2",
-          502,
-          139,
-          155,
-          59,
-          [
-            "A 경보",
-            "프로그램 출력"
-          ],
-          "active"
-        ]
-      ],
-      "edges": [
-        [
-          "p139_0",
-          "p139_1",
-          "active",
-          ""
-        ],
-        [
-          "p139_1",
-          "p139_2",
-          "active",
-          ""
-        ]
-      ],
-      "labels": [],
-      "bars": [],
-      "staticOnly": true,
-      "title": "알림 생성",
-      "description": "86°C가 80°C 이상을 통과해 펌프 A의 경보가 됩니다."
-    },
-    "quiz": [
-      "기준이 그대로일 때 79°C를 기록하면 어떤 출력이 나올까요?",
-      "경보 없음",
-      "A 경보",
-      "79°C는 기준인 80°C보다 낮습니다."
-    ]
+    label: '어제의 기록',
+    title: '어제의 고장은 현장 점검으로 확인했습니다',
+    body: '어제 08:00에는 두 설비의 온도만 기록했습니다. 오후에 두 설비를 열어 살펴본 뒤, A는 고장이고 B는 정상이라는 결과가 기록에 추가됐습니다.',
+    takeaway: '측정 시간과 실제 상태를 확인한 시간이 다릅니다.',
+    example: ['어제 08:00', '14:20 현장 점검', 'A 고장 · B 정상'],
+    readingDiagram: {figure: 'inspection-history', staticOnly: true, title: '어제의 기록',
+      description: '어제 오전에 A는 86°C, B는 68°C였습니다. 14:20 현장 점검에서 A는 고장, B는 정상으로 확인됐습니다.'},
+    quiz: ['어제 08:00에 이미 알 수 있던 것은 무엇일까요?', '두 설비의 온도', '두 설비의 실제 상태',
+      '고장과 정상은 14:20 현장 점검 뒤에 기록됐습니다.'],
+    practice: ['어제 08:00', '온도만 확인', '14:20 기록 대조'],
   },
   {
-    "label": "작업 허가",
-    "title": "같은 경보라도 작업 허가에 따라 결정이 바뀝니다",
-    "body": "점검 담당자의 입력에는 경보와 작업 허가가 함께 들어옵니다. 현재 계기는 통전 중이라 접근 허가가 보류됐습니다. 담당자는 점검을 연기하고 인계 기록을 남깁니다.",
-    "takeaway": "점검 반장이 같은 A 경보를 보고 허가 여부에 따라 점검을 시작하거나 보류합니다.",
-    "example": [
-      "A 경보",
-      "허가 없음",
-      "작업 보류"
-    ],
-    "readingDiagram": {
-      "nodes": [
-        [
-          "alert",
-          127,
-          151,
-          155,
-          37,
-          [
-            "A 경보"
-          ],
-          "active"
-        ],
-        [
-          "gate",
-          309,
-          151,
-          148,
-          59,
-          [
-            "점검 반장",
-            "작업 허가?"
-          ],
-          "plain"
-        ],
-        [
-          "go",
-          496,
-          95,
-          148,
-          37,
-          [
-            "점검 시작"
-          ],
-          "muted"
-        ],
-        [
-          "stop",
-          496,
-          205,
-          148,
-          37,
-          [
-            "작업 보류"
-          ],
-          "blocked"
-        ]
-      ],
-      "edges": [
-        [
-          "alert",
-          "gate",
-          "active",
-          "",
-          0
-        ],
-        [
-          "gate",
-          "go",
-          "muted",
-          "있음",
-          0
-        ],
-        [
-          "gate",
-          "stop",
-          "blocked",
-          "없음",
-          0
-        ]
-      ],
-      "labels": [],
-      "bars": [],
-      "staticOnly": true,
-      "title": "작업 허가",
-      "description": "점검 반장이 같은 A 경보를 보고 허가 여부에 따라 점검을 시작하거나 보류합니다."
-    },
-    "quiz": [
-      "안전 확인 후 허가가 났다면 누가 점검을 시작할까요?",
-      "점검 담당자",
-      "알림 프로그램",
-      "알림은 후보를 올립니다. 작업 개시는 허가를 확인한 담당자의 결정입니다."
-    ]
-  }
+    label: '오늘의 후보',
+    title: '오늘 어느 설비부터 볼지 고릅니다',
+    body: '오늘 08:00의 A는 83°C, B는 74°C입니다. A의 점이 어제 고장이었던 A의 높은 온도에 더 가깝습니다. 이 예에서는 A를 먼저 확인하기로 합니다.',
+    takeaway: '온도는 점검 순서를 고르는 근거입니다. 오늘 실제 상태는 아직 빈칸입니다.',
+    example: ['오늘 A 83°C · B 74°C', '어제 A 86°C와 비교', 'A 먼저 확인'],
+    readingDiagram: {figure: 'inspection-candidate', staticOnly: true, title: '오늘의 후보',
+      description: '오늘 A의 83°C가 어제 A의 86°C 근처에 있습니다. A가 먼저 확인할 후보가 되고 두 설비의 실제 상태는 모두 미확인입니다.'},
+    quiz: ['다른 날 A가 76°C, B가 85°C라면 같은 비교로 누구를 먼저 볼까요?', 'B 먼저 확인', 'A 먼저 확인',
+      '이번에는 B의 온도 점이 어제 고장이었던 86°C 근처입니다.'],
+    practice: ['A 76°C · B 85°C', 'B 먼저 확인', '86°C에 가까운 점'],
+  },
+  {
+    label: '경보와 배정',
+    title: '프로그램은 경보를 보내고 반장이 점검을 배정합니다',
+    body: '알림 프로그램은 A의 경보를 점검 반장에게 보냅니다. 작업 가능 여부를 확인한 반장이 A를 먼저 살펴보도록 배정합니다. 이때 실제 고장 여부는 두 설비 모두 확인 전입니다.',
+    takeaway: '경보는 할 일을 넘깁니다. 확인 결과는 현장에서 들어옵니다.',
+    example: ['알림 프로그램', 'A 경보 전달', '반장이 A 점검 배정'],
+    readingDiagram: {figure: 'inspection-handoff', staticOnly: true, title: '경보와 배정',
+      description: 'A 경보가 프로그램에서 반장으로 전달되어 A 점검이 배정됩니다. 두 실제 상태 칸은 여전히 비어 있습니다.'},
+    quiz: ['경보를 받고 작업 가능 여부를 확인한 뒤 점검을 배정하는 쪽은 어디일까요?', '점검 반장', '알림 프로그램',
+      '프로그램이 경보를 보내면 반장이 작업 조건을 확인하고 사람에게 점검을 맡깁니다.'],
+    practice: ['A 경보 도착', '반장이 A 점검 배정', '경보와 작업을 구분'],
+  },
+  {
+    label: '점검 뒤 확인',
+    title: '점검이 끝난 뒤에 실제 상태를 채웁니다',
+    body: '오전에는 A 경보와 B 대기를 기록했습니다. 현장에서 A를 먼저 살펴보고 이어 B를 점검합니다. 두 점검이 끝난 14:20에 A의 고장과 B의 정상 상태를 확인합니다.',
+    takeaway: '08:00의 경보와 14:20의 실제 확인은 서로 다른 기록입니다.',
+    example: ['08:00에 A 경보', '14:20 현장 점검', 'A 고장 · B 정상'],
+    readingDiagram: {figure: 'inspection-outcome', staticOnly: true, title: '점검 뒤 확인',
+      description: '08:00 A 경보와 B 대기에서 각각 A와 B의 현장 점검을 거친 뒤, 14:20에 A 고장과 B 정상으로 이어집니다.'},
+    quiz: ['다른 날 A에 경보가 났지만 현장 점검에서 정상이라면 무엇을 기록할까요?', 'A 정상 확인', 'A 고장 확인',
+      '경보 기록을 남기고 실제 상태 칸에는 현장에서 확인한 정상을 적습니다.'],
+    practice: ['A 경보 · 점검 뒤 정상', 'A 정상 확인', '현장 결과를 기록'],
+  },
 ];
-const slug = 'decision-owner';
-const byId = (id) => document.getElementById(id);
-const state = {index: -1, answers: new Map()};
-const feedbackMessages = ["✓ 맞았습니다.", "✗ 다시 생각해 보세요."];
 
+const slug = 'decision-owner';
+const byId = id => document.getElementById(id);
+const state = {index: -1, answers: new Map()};
+const feedbackMessages = ['✓ 맞았습니다.', '✗ 다시 생각해 보세요.'];
+
+function inspectionText(group, x, y, value, className = 'inspection-label', anchor = 'start') {
+  svg('text', {x, y, class: className, 'text-anchor': anchor}, group).textContent = value;
+}
+
+function inspectionCard(group, x, y, width, label, tone = '') {
+  svg('rect', {x, y, width, height: 30, rx: 6, class: 'inspection-card ' + tone}, group);
+  if (label) inspectionText(group, x + width / 2, y + 20, label, 'inspection-label', 'middle');
+}
+
+function buildInspectionFigure(step, index) {
+  const template = document.createElement('template');
+  template.id = step.readingDiagram.figure;
+  const canvas = svg('svg', {viewBox: '0 0 620 280'}, template.content);
+  const group = svg('g', {class: 'inspection-diagram'}, canvas);
+  const old = index === 0;
+  const final = index === 3;
+  const confirmed = old || final;
+  const readings = old ? [86, 68] : [83, 74];
+  const position = value => 86 + (value - 60) * 6.8;
+  const ticks = [60, 70, 80, 90];
+
+  const practiceDate = index === 1 || final;
+  inspectionText(group, 24, 62, old ? '어제 08:00' : '오늘 08:00',
+    practiceDate ? 'inspection-column inspection-base' : 'inspection-column');
+  if (practiceDate) inspectionText(group, 24, 62, '다른 날 08:00', 'inspection-column inspection-alt');
+  if (final) {
+    inspectionText(group, 321, 62, '08:00 기록', 'inspection-column');
+    inspectionText(group, 429, 62, '현장 확인', 'inspection-column');
+    inspectionText(group, 513, 62, '14:20 확인', 'inspection-column');
+  } else {
+    inspectionText(group, 329, 62, old ? '현장 점검' : '08:00 점검 순서', 'inspection-column');
+    inspectionText(group, 462, 62, old ? '14:20 점검 뒤' : '실제 상태 · 확인 전', 'inspection-column');
+  }
+  if (index === 1) svg('path', {d: `M${position(86)} 83V221`, class: 'inspection-reference'}, group);
+
+  function drawReading(parent, value, y) {
+    svg('circle', {cx: position(value), cy: y, r: 6, class: 'inspection-current'}, parent);
+    inspectionText(parent, position(value), y + 19, `${value}°C`, 'inspection-number', 'middle');
+    if (index !== 1) return;
+    const start = position(value), end = position(86), lineY = y + 29;
+    svg('path', {d: `M${start} ${lineY - 3}v6M${start} ${lineY}H${end}m0 -3v6`, class: 'inspection-distance'}, parent);
+    inspectionText(parent, end + 7, lineY + 4, `${86 - value}°C`, 'inspection-note');
+  }
+
+  for (const [row, current] of readings.entries()) {
+    const y = 110 + row * 78;
+    const pump = row ? 'B' : 'A';
+    inspectionText(group, 24, y + 5, '설비 ' + pump, 'inspection-column');
+    svg('path', {d: `M${position(60)} ${y}H${position(90)}`, class: 'inspection-axis'}, group);
+    for (const tick of ticks) svg('path', {d: `M${position(tick)} ${y - 5}v10`, class: 'inspection-axis'}, group);
+    if (!old) {
+      const previous = row ? 68 : 86;
+      svg('circle', {cx: position(previous), cy: y - 17, r: 5, class: 'inspection-previous'}, group);
+      inspectionText(group, position(previous), y - 27, row ? '어제 68°C · 정상' : '어제 86°C · 고장', 'inspection-note', 'middle');
+    }
+    const currentReading = index === 1 ? svg('g', {class: 'inspection-base'}, group) : group;
+    drawReading(currentReading, current, y);
+    if (index === 1) drawReading(svg('g', {class: 'inspection-alt'}, group), row ? 85 : 76, y);
+    const outcome = final && !row ? svg('g', {class: 'inspection-base'}, group) : group;
+    inspectionCard(outcome, final ? 514 : 462, y - 14, final ? 81 : 133,
+      confirmed ? (row ? '✓ 정상' : '! 고장') : '', confirmed ? (row ? 'inspection-normal' : 'inspection-fault') : 'inspection-unknown');
+    if (final && !row) {
+      const alternate = svg('g', {class: 'inspection-alt inspection-practice-outcome'}, group);
+      inspectionCard(alternate, 514, y - 14, 81, '', 'inspection-unknown');
+      inspectionText(alternate, 554.5, y + 6, '', 'inspection-label', 'middle');
+    }
+    if (final) {
+      inspectionCard(group, 320, y - 14, 92, row ? '순서 대기' : 'A 경보');
+      inspectionCard(group, 427, y - 14, 72, row ? 'B 점검' : 'A 점검', 'inspection-normal');
+      for (const [start, end] of [[413, 424], [500, 511]]) {
+        svg('path', {d: `M${start} ${y}H${end}m-4 -4 4 4-4 4`, class: 'inspection-flow'}, group);
+      }
+    } else if (old) {
+      inspectionText(group, 378, y + 5, '직접 확인', 'inspection-note', 'middle');
+      svg('path', {d: `M439 ${y}h16m-5 -4 5 4-5 4`, class: 'inspection-flow'}, group);
+    } else if (row) {
+      inspectionCard(index === 1 ? svg('g', {class: 'inspection-base'}, group) : group, 329, y - 14, 120, '순서 대기');
+      if (index === 1) {
+        const choice = svg('g', {class: 'inspection-alt inspection-choice', visibility: 'hidden'}, group);
+        svg('path', {d: `M${position(85) + 10} ${y}H320m-5 -4 5 4-5 4`, class: 'inspection-flow'}, choice);
+        inspectionCard(choice, 329, y - 14, 120, 'B 먼저 확인', 'inspection-normal');
+      }
+    } else if (index === 1) {
+      const preview = svg('g', {class: 'inspection-base'}, group);
+      svg('path', {d: `M${position(current) + 10} ${y}H320m-5 -4 5 4-5 4`, class: 'inspection-flow'}, preview);
+      inspectionCard(preview, 329, y - 14, 120, 'A 먼저 확인', 'inspection-normal');
+    } else {
+      inspectionCard(group, 329, 78, 120, '프로그램 · A 경보', 'inspection-normal');
+      svg('path', {d: 'M389 108v12m-4 -4 4 4 4-4', class: 'inspection-flow'}, group);
+      inspectionCard(group, 329, 122, 120, '반장 · A 배정', 'inspection-normal');
+    }
+  }
+  for (const tick of ticks) inspectionText(group, position(tick), 235, String(tick), 'inspection-note', 'middle');
+  inspectionText(group, 305, 235, '°C', 'inspection-note');
+
+  const practiceLine = svg('g', {class: 'inspection-practice'}, group);
+  inspectionCard(practiceLine, 24, 240, 190, step.practice[0]);
+  svg('path', {d: 'M219 255h16m-5 -4 5 4-5 4', class: 'inspection-flow'}, practiceLine);
+  inspectionCard(practiceLine, 240, 240, 207, '', 'inspection-result inspection-unknown');
+  inspectionText(practiceLine, 343.5, 260, '선택 대기', 'inspection-label inspection-answer', 'middle');
+  inspectionText(practiceLine, 456, 260, '', 'inspection-note inspection-evidence');
+  document.body.append(template);
+}
+
+lesson.forEach(buildInspectionFigure);
+
+function updateInspectionPractice() {
+  const diagram = byId('scene').querySelector('.inspection-practice');
+  if (!diagram || !lesson[state.index]) return;
+  const step = lesson[state.index];
+  const selected = state.answers.get(state.index);
+  const status = selected === undefined ? 'waiting' : selected === step.quiz[1] ? 'correct' : 'retry';
+  if (diagram.dataset.status === status) return;
+  diagram.dataset.status = status;
+  diagram.querySelector('.inspection-answer').textContent =
+    status === 'correct' ? step.practice[1] : status === 'waiting' ? '선택 대기' : '다시 선택';
+  diagram.querySelector('.inspection-evidence').textContent = status === 'correct' ? step.practice[2] : '';
+  diagram.parentElement.querySelector('.inspection-choice')?.setAttribute('visibility', status === 'correct' ? 'visible' : 'hidden');
+  const outcome = diagram.parentElement.querySelector('.inspection-practice-outcome');
+  if (outcome) {
+    const confirmed = status === 'correct';
+    outcome.querySelector('text').textContent = confirmed ? '✓ 정상' : '';
+    outcome.querySelector('rect').classList.toggle('inspection-normal', confirmed);
+    outcome.querySelector('rect').classList.toggle('inspection-unknown', !confirmed);
+  }
+  const result = diagram.querySelector('.inspection-result');
+  result.classList.toggle('inspection-unknown', status === 'waiting');
+  result.classList.toggle('inspection-normal', status === 'correct');
+  result.classList.toggle('inspection-fault', status === 'retry');
+}
+const inspectionUpdates = new MutationObserver(updateInspectionPractice);
+inspectionUpdates.observe(byId('scene'), {childList: true});
+inspectionUpdates.observe(byId('choices'), {attributes: true, childList: true, subtree: true, attributeFilter: ['aria-pressed']});
 </script>
 <script src="../shared/reading-lesson.js?v=b4d45e8ddc5bfaac"></script>
 </body>

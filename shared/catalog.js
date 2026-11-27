@@ -41,14 +41,18 @@ const courseCatalog = {
             },
             {
               "id": "0.8",
-              "ref": "computing-basics/compress"
+              "ref": "computing-basics/sound"
             },
             {
               "id": "0.9",
-              "ref": "computing-basics/internet"
+              "ref": "computing-basics/compress"
             },
             {
               "id": "0.10",
+              "ref": "computing-basics/internet"
+            },
+            {
+              "id": "0.11",
               "ref": "computing-basics/impact"
             }
           ],
@@ -3265,6 +3269,17 @@ const courseCatalog = {
             "computing-basics/bits"
           ],
           "page": "computing-basics/media.html"
+        },
+        {
+          "id": "sound",
+          "title": "소리를 시간마다 재기",
+          "titleEn": "Measuring sound over time",
+          "question": "손뼉 소리를 기록할 때 언제 무엇을 재야 할까?",
+          "format": "실험",
+          "requires": [
+            "computing-basics/media"
+          ],
+          "page": "computing-basics/sound.html"
         },
         {
           "id": "compress",

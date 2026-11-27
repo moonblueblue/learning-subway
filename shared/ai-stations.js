@@ -619,7 +619,8 @@ const aiStationMap = {
     "stations": [
       {
         "id": "4.6",
-        "ref": "computing-basics/media"
+        "title": "검사 사진의 픽셀과 색",
+        "titleEn": "Pixels and color in inspection photos"
       },
       {
         "id": "4.7",

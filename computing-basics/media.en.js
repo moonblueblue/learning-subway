@@ -1,5 +1,15 @@
 // English for 0.3 Images and sound. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  '그림의 작은 칸': 'The small squares in an image',
+  '0장 컴퓨팅 둘러보기': 'Chapter 0 · A tour of computing',
+  '픽셀 한 칸을 직접 칠하고 값을 바꾸며 그림을 어떻게 기록하는지 살펴보세요.':
+    'Color a pixel and change its value to see how an image is recorded.',
+  '그림 한 장에서 어느 칸의 어떤 값을 바꾸면 밝기와 색이 달라질까요?':
+    'Which values in an image change the brightness and color of a square?',
+  '화면의 그림은 픽셀이라는 아주 작은 칸이 모여 만들어집니다. 칸마다 켜짐과 꺼짐만 정한다면 칸 하나가 비트 하나입니다. 8 × 8 그림은 64비트, 곧 8바이트이고, 한 줄 8칸은 스위치 레슨에서 본 바이트 하나와 같습니다.':
+    'An image on a screen is made of tiny squares called pixels. One bit per pixel can mark it on or off. An 8 by 8 image takes 64 bits, or eight bytes. Each row of eight uses one byte, as in the switch lesson.',
+  '칸 하나에 비트를 2개 쓰면 00, 01, 10, 11 네 단계의 밝기를 나타낼 수 있습니다. 대신 그림 전체는 64칸 × 2비트 = 128비트로 두 배가 됩니다. 예를 들어 8비트 회색조 사진은 칸마다 밝기를 256단계로 기록합니다.':
+    'Two bits in one pixel give four brightness levels: 00, 01, 10, and 11. The image doubles in size to 64 pixels times 2 bits, or 128 bits. For example, an 8-bit grayscale photo records 256 brightness levels per pixel.',
   '한 비트가 같은 열의 픽셀을 정한다': 'Each bit sets the pixel in its column',
   '8×8 하트의 둘째 줄 0110 0110에서 각 비트의 화살표가 같은 열의 픽셀에 닿습니다. 0은 어둡고 1은 밝습니다. 그림 전체는 64비트입니다.':
     'In the second row of the 8×8 heart, each bit in 0110 0110 points to the pixel in its column. A 0 is dark and a 1 is bright. The whole image is 64 bits.',

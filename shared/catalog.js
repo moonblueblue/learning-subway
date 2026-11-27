@@ -1393,180 +1393,174 @@ const courseCatalog = {
           "lessons": [
             {
               "id": "4.1",
-              "stationId": "4.6",
-              "ref": "computing-basics/media",
-              "part": "4.6"
-            },
-            {
-              "id": "4.2",
               "stationId": "4.7",
               "ref": "graphics/transforms",
               "part": "4.6"
             },
             {
-              "id": "4.3",
+              "id": "4.2",
               "stationId": "4.8",
               "ref": "ai/resize-padding-coordinates",
               "part": "4.6"
             },
             {
-              "id": "4.4",
+              "id": "4.3",
               "stationId": "4.9",
               "ref": "ai/box-mask-annotation",
               "part": "4.6"
             },
             {
-              "id": "4.5",
+              "id": "4.4",
               "stationId": "4.10",
               "ref": "ai/camera-time-split",
               "part": "4.6"
             },
             {
-              "id": "4.6",
+              "id": "4.5",
               "stationId": "4.1",
               "ref": "ai/cnn",
               "part": "4.1"
             },
             {
-              "id": "4.7",
+              "id": "4.6",
               "stationId": "4.2",
               "ref": "ai/feature-receptive-field",
               "part": "4.1"
             },
             {
-              "id": "4.8",
+              "id": "4.7",
               "stationId": "4.11",
               "ref": "ai/stride-downsampling",
               "part": "4.1"
             },
             {
-              "id": "4.9",
+              "id": "4.8",
               "stationId": "4.12",
               "ref": "ai/augmentation-labels",
               "part": "4.1"
             },
             {
-              "id": "4.10",
+              "id": "4.9",
               "stationId": "4.13",
               "ref": "ai/pretrained-vision-transfer",
               "part": "4.1"
             },
             {
-              "id": "4.11",
+              "id": "4.10",
               "stationId": "4.3",
               "ref": "ai/detection-box-score",
               "part": "4.3"
             },
             {
-              "id": "4.12",
+              "id": "4.11",
               "stationId": "4.4",
               "ref": "ai/intersection-over-union",
               "part": "4.3"
             },
             {
-              "id": "4.13",
+              "id": "4.12",
               "stationId": "4.14",
               "ref": "ai/nonmaximum-suppression",
               "part": "4.3"
             },
             {
-              "id": "4.14",
+              "id": "4.13",
               "stationId": "4.15",
               "ref": "ai/segmentation-boundary-errors",
               "part": "4.3"
             },
             {
-              "id": "4.15",
+              "id": "4.14",
               "stationId": "4.16",
               "ref": "ai/threshold-defect-misses",
               "part": "4.3"
             },
             {
-              "id": "4.16",
+              "id": "4.15",
               "stationId": "4.5",
               "ref": "ai/image-text-shared-space",
               "part": "4.5"
             },
             {
-              "id": "4.17",
+              "id": "4.16",
               "stationId": "4.17",
               "ref": "ai/contrastive-hard-negatives",
               "part": "4.5"
             },
             {
-              "id": "4.18",
+              "id": "4.17",
               "stationId": "4.18",
               "ref": "ai/image-instruction-ranking",
               "part": "4.5"
             },
             {
-              "id": "4.19",
+              "id": "4.18",
               "stationId": "4.19",
               "ref": "ai/oracle-crop-retrieval",
               "part": "4.5"
             },
             {
-              "id": "4.20",
+              "id": "4.19",
               "stationId": "4.20",
               "ref": "ai/lighting-pair-first-failure",
               "part": "4.5"
             },
             {
-              "id": "4.21",
+              "id": "4.20",
               "stationId": "4.21",
               "ref": "ai/visual-patch-tokens",
               "part": "4.21"
             },
             {
-              "id": "4.22",
+              "id": "4.21",
               "stationId": "4.22",
               "ref": "ai/occlusion-object-tracks",
               "part": "4.21"
             },
             {
-              "id": "4.23",
+              "id": "4.22",
               "stationId": "4.23",
               "ref": "ai/camera-motion-optical-flow",
               "part": "4.21"
             },
             {
-              "id": "4.24",
+              "id": "4.23",
               "stationId": "4.24",
               "ref": "ai/stereo-depth-cues",
               "part": "4.21"
             },
             {
-              "id": "4.25",
+              "id": "4.24",
               "stationId": "4.25",
               "ref": "ai/video-split-track-evaluation",
               "part": "4.21"
             },
             {
-              "id": "4.26",
+              "id": "4.25",
               "stationId": "4.26",
               "ref": "ai/samples-to-spectrogram",
               "part": "4.26"
             },
             {
-              "id": "4.27",
+              "id": "4.26",
               "stationId": "4.27",
               "ref": "ai/speech-segment-alignment",
               "part": "4.26"
             },
             {
-              "id": "4.28",
+              "id": "4.27",
               "stationId": "4.28",
               "ref": "ai/ctc-collapse-alignment",
               "part": "4.26"
             },
             {
-              "id": "4.29",
+              "id": "4.28",
               "stationId": "4.29",
               "ref": "ai/early-late-multimodal-fusion",
               "part": "4.26"
             },
             {
-              "id": "4.30",
+              "id": "4.29",
               "stationId": "4.30",
               "ref": "ai/missing-modality-performance",
               "part": "4.26"
@@ -3247,11 +3241,13 @@ const courseCatalog = {
         },
         {
           "id": "media",
-          "title": "이미지와 소리",
-          "titleEn": "Images and sound",
-          "question": "사진과 소리는 어떻게 숫자가 될까?",
+          "title": "그림의 작은 칸",
+          "titleEn": "The small squares in an image",
+          "question": "그림 한 칸의 밝기와 색은 어느 수로 정할까?",
           "format": "실험",
-          "requires": [],
+          "requires": [
+            "computing-basics/bits"
+          ],
           "page": "computing-basics/media.html"
         },
         {

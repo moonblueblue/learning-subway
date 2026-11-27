@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="픽셀과 색, 소리 샘플이 어떻게 숫자가 되는지 직접 칠하고 바꿔 보며 살펴보세요.">
-<title>이미지와 소리 · 레슨 0.3</title>
+<meta name="description" content="픽셀 한 칸을 직접 칠하고 값을 바꾸며 그림을 어떻게 기록하는지 살펴보세요.">
+<title>그림의 작은 칸</title>
 <style>
 :root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}
@@ -191,9 +191,9 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <body>
 <main class="shell">
   <header>
-    <p class="eyebrow">0장 컴퓨팅 둘러보기 · 레슨 0.3</p>
-    <h1>이미지와 소리</h1>
-    <p class="lead">사진과 소리는 어떻게 숫자가 될까요? 픽셀을 칠하고, 색을 섞고, 소리를 잘게 나눠 보세요.</p>
+    <p class="eyebrow">0장 컴퓨팅 둘러보기</p>
+    <h1>그림의 작은 칸</h1>
+    <p class="lead">그림 한 장에서 어느 칸의 어떤 값을 바꾸면 밝기와 색이 달라질까요?</p>
   </header>
   <div class="workspace">
     <div>
@@ -203,6 +203,9 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
             <title id="scene-title">그림과 소리가 숫자로 바뀌는 장면</title><desc id="scene-desc"></desc>
             <defs>
+              <marker id="media-live-tip" viewBox="0 0 10 10" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" refX="8" refY="5" orient="auto">
+                <path d="M1 1 8 5 1 9Z" fill="#187959"/>
+              </marker>
               <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
               <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
               <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
@@ -266,6 +269,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <script>
 const byId = (id) => document.getElementById(id);
 const viewport = byId('scene');
+const workspace = viewport.closest('.workspace');
 const viewWidth = 620;
 const viewHeight = 280;
 const maxZoom = 3;
@@ -344,7 +348,7 @@ const colors = {
 
 // Each step picks a `mode` (pixels, color or sound) and the demo frames it plays.
 // `tasks` are try-it problems; `check` reads the state and says whether the learner made it.
-const lesson = [
+const mediaSteps = [
   {
     readingDiagram: { figure: 'media-pixel-row', title: '한 비트가 같은 열의 픽셀을 정한다',
       description: '8×8 하트의 둘째 줄 0110 0110에서 각 비트의 화살표가 같은 열의 픽셀에 닿습니다. 0은 어둡고 1은 밝습니다. 그림 전체는 64비트입니다.' },
@@ -353,7 +357,7 @@ const lesson = [
     mode: 'pixels',
     levels: 2,
     title: '그림은 작은 칸으로 나뉜다',
-    body: '화면의 그림은 픽셀이라는 아주 작은 칸이 모여 만들어집니다. 칸마다 켜짐과 꺼짐만 정한다면 칸 하나가 비트 하나입니다. 8 × 8 그림은 64비트, 곧 8바이트이고, 한 줄 8칸은 0.1에서 본 바이트 하나와 같습니다.',
+    body: '화면의 그림은 픽셀이라는 아주 작은 칸이 모여 만들어집니다. 칸마다 켜짐과 꺼짐만 정한다면 칸 하나가 비트 하나입니다. 8 × 8 그림은 64비트, 곧 8바이트이고, 한 줄 8칸은 스위치 레슨에서 본 바이트 하나와 같습니다.',
     takeaway: '화면 둘째 줄을 왼쪽에 펼쳤습니다. 그 줄에서 픽셀을 바꾸면 같은 열의 비트와 밝기가 함께 바뀝니다.',
     description: '8 × 8 픽셀 화면 둘째 줄의 각 비트가 왼쪽에 펼친 행의 같은 열을 가리킵니다. 0은 어둡고 1은 밝습니다.',
     initial: () => ({ image: fromBytes(pictures.heart) }),
@@ -372,7 +376,7 @@ const lesson = [
     mode: 'pixels',
     levels: 4,
     title: '비트를 늘리면 밝기를 나눌 수 있다',
-    body: '칸 하나에 비트를 2개 쓰면 00, 01, 10, 11 네 단계의 밝기를 나타낼 수 있습니다. 대신 그림 전체는 64칸 × 2비트 = 128비트로 두 배가 됩니다. 실제 사진은 보통 칸마다 밝기 256단계(8비트)를 씁니다.',
+    body: '칸 하나에 비트를 2개 쓰면 00, 01, 10, 11 네 단계의 밝기를 나타낼 수 있습니다. 대신 그림 전체는 64칸 × 2비트 = 128비트로 두 배가 됩니다. 예를 들어 8비트 회색조 사진은 칸마다 밝기를 256단계로 기록합니다.',
     takeaway: '칸을 누를 때마다 00 → 01 → 10 → 11로 밝아지고, 장면 왼쪽 숫자도 칸마다 두 자리씩 바뀝니다.',
     description: '8 × 8 픽셀 화면이 있고, 칸마다 네 단계 밝기 중 하나가 칠해져 있습니다. 왼쪽에는 각 줄을 칸마다 두 비트씩 적은 값이 있습니다.',
     initial: () => ({ image: [...gradient] }),
@@ -436,6 +440,10 @@ const lesson = [
     ],
   },
 ];
+
+const legacyAudioBookmark = () => /^#\/media\/[45]$/.test(location.hash);
+const legacyAudio = legacyAudioBookmark();
+const lesson = legacyAudio ? mediaSteps : mediaSteps.slice(0, 3);
 
 const sameColor = (a, b) => a.every((v, i) => v === b[i]);
 const rowValue = (s, r) => s.image.slice(r * size, r * size + size).reduce((value, bit) => value * 2 + (bit ? 1 : 0), 0);
@@ -539,7 +547,7 @@ function buildPixelRowDetail() {
     const x = x0 + pitch * column;
     svg('rect', { x, y: -108, width, height: 28, rx: 4, fill: '#fff', stroke: '#9aac9f' }, group);
     const digit = svg('text', { x: x + 13, y: -89, class: 'expanded-bit' }, group);
-    svg('path', { d: `M${x + 13} -75v28m-4 -4 4 4 4 -4`, class: 'expanded-arrow' }, group);
+    svg('path', { d: `M${x + 13} -75v28`, class: 'expanded-arrow', 'marker-end': 'url(#media-live-tip)' }, group);
     const pixel = svg('rect', { x, y: stripY, width, height: width, stroke: '#6f8a7b' }, group);
     expandedPixels.push({ digit, pixel });
   }
@@ -706,7 +714,7 @@ function createReadingFigure(index) {
   const defs = svg('defs', {}, group);
   const arrow = svg('marker', { id: 'media-figure-tip', viewBox: '0 0 10 10', markerWidth: 8,
     markerHeight: 8, markerUnits: 'userSpaceOnUse', refX: 8, refY: 5, orient: 'auto' }, defs);
-  svg('path', { d: 'M1 1 8 5 1 9', class: 'figure-wire' }, arrow);
+  svg('path', { d: 'M1 1 8 5 1 9Z', fill: '#187959' }, arrow);
   return group;
 }
 
@@ -1162,7 +1170,9 @@ function startStep() {
 // An untouched picture is not carried: the next step's own picture (the 2-bit gradient) shows its point.
 function showStep(index, announce = true) {
   const previous = lesson[state.index];
-  const keep = previous.mode === 'pixels' && lesson[index].mode === 'pixels' && index !== state.index && announce && state.drawn;
+  const practicing = coursePracticeStarted && !workspace.classList.contains('course-reading');
+  const keep = practicing && previous.mode === 'pixels' && lesson[index].mode === 'pixels'
+    && index !== state.index && announce && state.drawn;
   const kept = keep ? state.image.map((v) => (v * (lesson[index].levels - 1) / (previous.levels - 1)) | 0) : null;
   state.index = index;
   state.playing = lessonDemoEnabled();
@@ -1209,8 +1219,12 @@ const stepButtons = lesson.map(({ label }, index) => {
 });
 byId('prev').onclick = () => goToStep(state.index - 1);
 byId('next').onclick = () => goToStep(state.index + 1);
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
+function syncMediaRoute() {
+  if (!legacyAudio && legacyAudioBookmark()) location.reload();
+  else syncRoute();
+}
+window.addEventListener('hashchange', syncMediaRoute);
+window.addEventListener('popstate', syncMediaRoute);
 motion.addEventListener('change', () => {
   if (lessonDemoEnabled()) state.playing = true;
   syncPlayback();
@@ -1227,8 +1241,10 @@ window.addEventListener('keydown', (event) => {
 drawPixelRowFigure();
 drawShadesFigure();
 drawColorFigure();
-drawSoundFigure(3, false);
-drawSoundFigure(4, true);
+if (legacyAudio) {
+  drawSoundFigure(3, false);
+  drawSoundFigure(4, true);
+}
 buildMonitor();
 buildPixelRowDetail();
 buildTowers();

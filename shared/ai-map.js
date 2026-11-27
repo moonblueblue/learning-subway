@@ -20,7 +20,9 @@
   let line = lines.find(item => item.id === (params.get('line') || last.line)) || trunk;
   const initial = params.get('lesson') || params.get('stop') || (last.line === line.id && last.ref);
   const value = stop => stop.ref || stop.id;
-  let stop = line.stops.find(s => value(s) === initial || s.id === initial) || line.stops[0];
+  const findStation = (route, key) => key && route.stops.find(station =>
+    station.ref === key || station.id === key || station.aliases?.includes(key));
+  let stop = findStation(line, initial) || line.stops[0];
   const legend = new Map();
   const lessonURL = (route, station) => './' + station.ref + '.html?' + new URLSearchParams({roadmap:'ai', line:route.id});
 
@@ -106,8 +108,8 @@
     const gap = (h - top - bottom) / 7, mid = top + 4 * gap;
     const left = compact ? Math.min(119, w * .31) : Math.max(44,w*.046);
     const right = w - (compact ? 16 : Math.max(52,w*.05));
-    const currentLine = lines.find(r=>r.id===last.line && r.stops.some(s=>s.ref===last.ref)) || trunk;
-    const currentStop = (last.ref && currentLine.stops.find(s=>s.ref===last.ref)) || currentLine.stops[0];
+    const currentLine = lines.find(r=>r.id===last.line && findStation(r, last.ref)) || trunk;
+    const currentStop = findStation(currentLine, last.ref) || currentLine.stops[0];
     const interchanges = new Set(lines.slice(1).map(r=>r.transfer.ref));
     const capacity = span => Math.max(2, Math.floor(span / (compact ? 18 : 75)) + 1);
     const trunkPoints = stationPoints(trunk,left,right,mid,capacity(right-left),interchanges,currentStop);
@@ -216,7 +218,7 @@
     const button=document.createElement('button');
     button.type='button'; button.className='route'; button.dataset.line=route.id;
     button.style.setProperty('--route',route.color);
-    button.addEventListener('click',()=>selectStation(route,route.stops.find(s=>s.ref===last.ref && route.id===last.line) || route.stops.find(s=>s.ref) || route.stops[0]));
+    button.addEventListener('click',()=>selectStation(route,(route.id === last.line && findStation(route, last.ref)) || route.stops.find(s=>s.ref) || route.stops[0]));
     legend.set(route,button);
     get(route===trunk?'trunk':'branches').append(button);
   }

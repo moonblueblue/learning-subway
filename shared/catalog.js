@@ -2628,9 +2628,9 @@ const courseCatalog = {
         },
         {
           "id": "bits",
-          "title": "비트와 이진수",
-          "titleEn": "Bits and binary",
-          "question": "스위치 8개로 0부터 255까지 어떻게 셀까?",
+          "title": "정보에 표시를 붙이는 약속",
+          "titleEn": "Agreeing on how to represent information",
+          "question": "스위치 하나를 더하면 표시할 수 있는 경우가 얼마나 늘까?",
           "format": "실험",
           "requires": [],
           "page": "computing-basics/bits.html"

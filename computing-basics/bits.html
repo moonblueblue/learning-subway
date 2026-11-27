@@ -5,7 +5,7 @@
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="스위치 8개를 켜고 끄며 비트와 이진수가 숫자를 나타내는 방법을 살펴보세요.">
-<title>비트와 이진수 · 레슨 0.1</title>
+<title>정보에 표시를 붙이는 약속</title>
 <style>
 :root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}
@@ -72,8 +72,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
 .wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
 .wire.signal{stroke:var(--request);stroke-width:2.6}
-.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.chevron.signal{stroke:var(--request)}
+.direction-tip{fill:var(--request)}
 .tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
 .tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
 .tag.place text{font:700 11.5px var(--mono)}
@@ -89,8 +88,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .total.bump{animation:bump .32s ease-out}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
 .note{animation:note 1.6s ease-out forwards}
-.note path{fill:none;stroke:#43574f;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
-.note .arc{stroke-dasharray:3 3.5}
+.note .arc{fill:none;stroke:#43574f;stroke-width:1.4;stroke-linecap:round;stroke-dasharray:3 3.5}
+.note .carry-tip{fill:#43574f}
 .note text{font:700 9.5px system-ui,sans-serif;fill:#43574f;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3.5px;stroke-linejoin:round}
 @keyframes note{0%{opacity:0}10%{opacity:1}72%{opacity:1}100%{opacity:0}}
 .packet{stroke:white;stroke-width:1.6;fill:var(--request)}
@@ -146,8 +145,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <body>
 <main class="shell">
   <header>
-    <p class="eyebrow">0장 컴퓨팅 둘러보기 · 레슨 0.1</p>
-    <h1>비트와 이진수</h1>
+    <p class="eyebrow">0장 컴퓨팅 둘러보기</p>
+    <h1>정보에 표시를 붙이는 약속</h1>
     <p class="lead">스위치 8개로 0부터 255까지 어떻게 셀까요? 스위치를 직접 켜고 끄며 살펴보세요.</p>
   </header>
   <div class="workspace">
@@ -174,7 +173,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
                 <text x="-5" y="6">1</text>
               </g>
               <marker id="bits-tip" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" refX="9" refY="5" orient="auto">
-                <path d="M1 1 9 5 1 9" fill="none" stroke="#187959" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M1 1 9 5 1 9Z" fill="#187959"/>
               </marker>
             </defs>
             <g id="world" aria-hidden="true">
@@ -242,33 +241,53 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <template id="bits-figure-pairs">
   <svg>
     <g class="bits-figure">
-      <text x="275" y="68" class="bits-caption">새 2 자리</text>
-      <text x="391" y="68" class="bits-caption">1 자리</text>
-      <text x="502" y="68" class="bits-caption">합계</text>
-      <path d="M230 80h-10v80h10 M230 164h-10v80h10" class="bits-guide"/>
-      <text x="153" y="125" class="bits-caption">왼쪽 꺼짐</text>
-      <text x="153" y="209" class="bits-caption">왼쪽 켜짐</text>
-      <rect x="239" y="81" width="187" height="38" rx="8" class="bits-pair"/>
-      <use href="#bits-switch-off" x="275" y="100"/>
-      <use href="#bits-switch-off" x="391" y="100"/>
-      <path d="M430 100h45" class="bits-wire" marker-end="url(#bits-tip)"/>
-      <text x="502" y="107" class="bits-total">0</text>
-      <rect x="239" y="123" width="187" height="38" rx="8" class="bits-pair"/>
-      <use href="#bits-switch-off" x="275" y="142"/>
-      <use href="#bits-switch-on" x="391" y="142"/>
-      <path d="M430 142h45" class="bits-wire" marker-end="url(#bits-tip)"/>
-      <text x="502" y="149" class="bits-total">1</text>
-      <rect x="239" y="165" width="187" height="38" rx="8" class="bits-pair"/>
-      <use href="#bits-switch-on" x="275" y="184"/>
-      <use href="#bits-switch-off" x="391" y="184"/>
-      <path d="M430 184h45" class="bits-wire" marker-end="url(#bits-tip)"/>
-      <text x="502" y="191" class="bits-total">2</text>
-      <rect x="239" y="207" width="187" height="38" rx="8" class="bits-pair"/>
-      <use href="#bits-switch-on" x="275" y="226"/>
-      <use href="#bits-switch-on" x="391" y="226"/>
-      <path d="M430 226h45" class="bits-wire" marker-end="url(#bits-tip)"/>
-      <text x="502" y="233" class="bits-total">3</text>
-      <text x="330" y="263" class="bits-caption">2 × 2 = 4가지</text>
+      <text x="111" y="68" class="bits-number">두 스위치</text>
+      <text x="396" y="68" class="bits-number">왼쪽에 세 번째 스위치</text>
+      <text x="302" y="94" class="bits-caption">새 스위치 0</text>
+      <text x="487" y="94" class="bits-caption">새 스위치 1</text>
+      <path d="M184 170h46" class="bits-wire" marker-end="url(#bits-tip)"/>
+      <rect x="56" y="101" width="110" height="30" rx="6" class="bits-pair"/>
+      <text x="111" y="122" class="bits-number">00 = 0</text>
+      <rect x="241" y="101" width="122" height="30" rx="6" class="bits-pair"/>
+      <rect x="257" y="105" width="21" height="22" rx="4" class="diagram-node active"/>
+      <text x="267.5" y="122" class="bits-number">0</text>
+      <text x="314" y="122" class="bits-number">00 = 0</text>
+      <rect x="426" y="101" width="122" height="30" rx="6" class="bits-pair"/>
+      <rect x="442" y="105" width="21" height="22" rx="4" class="diagram-node active"/>
+      <text x="452.5" y="122" class="bits-number">1</text>
+      <text x="499" y="122" class="bits-number">00 = 4</text>
+      <rect x="56" y="138" width="110" height="30" rx="6" class="bits-pair"/>
+      <text x="111" y="159" class="bits-number">01 = 1</text>
+      <rect x="241" y="138" width="122" height="30" rx="6" class="bits-pair"/>
+      <rect x="257" y="142" width="21" height="22" rx="4" class="diagram-node active"/>
+      <text x="267.5" y="159" class="bits-number">0</text>
+      <text x="314" y="159" class="bits-number">01 = 1</text>
+      <rect x="426" y="138" width="122" height="30" rx="6" class="bits-pair"/>
+      <rect x="442" y="142" width="21" height="22" rx="4" class="diagram-node active"/>
+      <text x="452.5" y="159" class="bits-number">1</text>
+      <text x="499" y="159" class="bits-number">01 = 5</text>
+      <rect x="56" y="175" width="110" height="30" rx="6" class="bits-pair"/>
+      <text x="111" y="196" class="bits-number">10 = 2</text>
+      <rect x="241" y="175" width="122" height="30" rx="6" class="bits-pair"/>
+      <rect x="257" y="179" width="21" height="22" rx="4" class="diagram-node active"/>
+      <text x="267.5" y="196" class="bits-number">0</text>
+      <text x="314" y="196" class="bits-number">10 = 2</text>
+      <rect x="426" y="175" width="122" height="30" rx="6" class="bits-pair"/>
+      <rect x="442" y="179" width="21" height="22" rx="4" class="diagram-node active"/>
+      <text x="452.5" y="196" class="bits-number">1</text>
+      <text x="499" y="196" class="bits-number">10 = 6</text>
+      <rect x="56" y="212" width="110" height="30" rx="6" class="bits-pair"/>
+      <text x="111" y="233" class="bits-number">11 = 3</text>
+      <rect x="241" y="212" width="122" height="30" rx="6" class="bits-pair"/>
+      <rect x="257" y="216" width="21" height="22" rx="4" class="diagram-node active"/>
+      <text x="267.5" y="233" class="bits-number">0</text>
+      <text x="314" y="233" class="bits-number">11 = 3</text>
+      <rect x="426" y="212" width="122" height="30" rx="6" class="bits-pair"/>
+      <rect x="442" y="216" width="21" height="22" rx="4" class="diagram-node active"/>
+      <text x="452.5" y="233" class="bits-number">1</text>
+      <text x="499" y="233" class="bits-number">11 = 7</text>
+      <text x="111" y="264" class="bits-caption">4가지 표시</text>
+      <text x="396" y="264" class="bits-caption">4가지 + 4가지 = 8가지</text>
     </g>
   </svg>
 </template>
@@ -363,7 +382,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
       <text x="582" y="73" class="bits-caption">합계</text>
       <text x="582" y="117" class="bits-total">0</text>
       <text x="582" y="180" class="bits-total">255</text>
-      <path d="M577 124v39 M574 128l3 -4 3 4 M574 159l3 4 3 -4" class="bits-guide"/>
+      <path d="M573 124h8 M577 124v39 M573 163h8" class="bits-guide"/>
       <text x="311" y="216" class="bits-number">128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255</text>
       <rect x="48" y="227" width="315" height="39" rx="8" class="diagram-node active"/>
       <text x="206" y="253" class="bits-number">255 − 0 + 1 = 256가지</text>
@@ -406,21 +425,21 @@ const lesson = [
     readingDiagram: {
       figure: 'bits-figure-pairs',
       title: '스위치가 늘면 가짓수는 두 배가 된다',
-      description: '왼쪽에 2 자리를 놓아도 오른쪽 스위치의 자릿값은 1입니다. 스위치 쌍 00, 01, 10, 11의 합계는 차례로 0, 1, 2, 3입니다.',
+      description: '스위치 두 개로 00, 01, 10, 11을 만듭니다. 왼쪽에 하나를 더하면 원래 네 가지 앞에 0을 붙인 000에서 011과, 1을 붙인 100에서 111을 만듭니다. 두 묶음은 각각 4가지입니다.',
     },
-    label: '스위치 둘',
-    example: ["스위치 두 개", "각각 0 또는 1", "조합 2 × 2 = 4개"],
+    label: '스위치 늘리기',
+    example: ['두 스위치로 4가지', '왼쪽 스위치 하나 추가', '4가지씩 두 묶음'],
     title: '스위치가 늘면 가짓수는 두 배가 된다',
-    body: '오른쪽 1 자리는 그대로 두고 그 왼쪽에 값 2인 스위치를 놓습니다. 왼쪽이 꺼져 있을 때도 켜져 있을 때도 오른쪽은 0 또는 1일 수 있습니다. 그래서 두 자리로 0부터 3까지 셉니다.',
-    takeaway: '왼쪽 스위치가 0이면 두 합계는 0과 1입니다. 왼쪽이 1이면 오른쪽 두 상태에 각각 2가 더해져 합계가 2와 3이 됩니다.',
-    description: '스위치 두 개와 합계 화면이 있습니다. 왼쪽 스위치는 값 2, 오른쪽 스위치는 값 1을 맡고, 켜진 스위치의 값이 합계에 더해집니다.',
-    switches: 2,
-    fit: [216, 169, 1.7],
+    body: '처음 두 스위치로 00, 01, 10, 11 네 가지를 표시합니다. 왼쪽에 하나를 더하면 원래 네 가지에 새 표시 0이나 1을 붙일 수 있습니다. 두 묶음을 합하면 여덟 가지입니다.',
+    takeaway: '같은 행의 오른쪽 두 자리는 그대로입니다. 새 스위치가 0인 묶음에 0부터 3까지, 1인 묶음에 4부터 7까지 있습니다.',
+    description: '스위치 세 개가 왼쪽부터 4, 2, 1을 맡습니다. 켜진 스위치의 값이 합계에 더해집니다.',
+    switches: 3,
+    fit: [233, 165, 1.5],
     initial: 1,
-    demo: { values: [3, 0, 1, 2], interval: 1900 },
+    demo: { values: [3, 4, 5, 7], interval: 1900 },
     tasks: [
-      { target: 3, text: '스위치 두 개로 3을 만들어 보세요.' },
-      { target: 1, text: '1을 만들어 보세요. 어느 스위치를 꺼야 할까요?' },
+      { target: 3, text: '오른쪽 두 스위치로 3을 만들어 보세요.' },
+      { target: 5, text: '두 자리로는 0부터 3까지 표시합니다. 새 스위치를 써서 5를 만들어 보세요.' },
     ],
   },
   {
@@ -650,9 +669,9 @@ function createSwitch(bit) {
   const casing = svg('path', { class: 'casing' }, byId('casings'));
   const group = svg('g', { class: 'lane' }, byId('links'));
   const line = svg('path', { class: 'wire signal' }, group);
-  const chevron = svg('path', { class: 'chevron signal', d: 'M-5 -5.5L2.5 0L-5 5.5' }, group);
+  const tip = svg('path', { class: 'direction-tip', d: 'M-5 -5.5L2.5 0L-5 5.5Z' }, group);
   const view = { node, bit, faces, highlight, digit, plate, height: switchLow, heightFrom: switchLow, heightTo: switchLow,
-    lane: { casing, group, line, chevron, opacity: 0, from: 0, to: 0 } };
+    lane: { casing, group, line, tip, opacity: 0, from: 0, to: 0 } };
   shapeSwitch(view, switchLow);
   return view;
 }
@@ -683,7 +702,7 @@ function updateGeometry(view, sumAt) {
   const [p, q] = screen;
   const angle = Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI;
   const transform = `translate(${mix(p[0], q[0], .56)} ${mix(p[1], q[1], .56)}) rotate(${angle})`;
-  view.lane.chevron.setAttribute('transform', transform);
+  view.lane.tip.setAttribute('transform', transform);
 }
 
 // Labels that belong to the whole row rather than one switch (rules in references/visual-language.md, 0장).
@@ -854,7 +873,7 @@ function showCarry(toBit) {
   const note = svg('g', { class: 'note' }, byId('notes'));
   svg('path', { class: 'arc', d: `M${x0} ${y0}Q${cx} ${cy} ${x1} ${y1}` }, note);
   const angle = Math.atan2(y1 - cy, x1 - cx) * 180 / Math.PI;
-  svg('path', { d: 'M-5 -4L0 0L-5 4', transform: `translate(${x1} ${y1}) rotate(${angle})` }, note);
+  svg('path', { class: 'carry-tip', d: 'M-5 -4L0 0L-5 4Z', transform: `translate(${x1} ${y1}) rotate(${angle})` }, note);
   svg('text', { x: cx, y: (y0 + y1) / 4 + cy / 2 - 7 }, note).textContent = '자리올림';
   note.addEventListener('animationend', () => note.remove());
 }

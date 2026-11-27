@@ -1,5 +1,27 @@
 // English for 0.1 Bits and binary. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  '정보에 표시를 붙이는 약속': 'Agreeing on how to represent information',
+  '0장 컴퓨팅 둘러보기': 'Chapter 0 · A tour of computing',
+  '두 스위치': 'Two switches',
+  '왼쪽에 세 번째 스위치': 'Add a third switch on the left',
+  '새 스위치 0': 'New switch 0',
+  '새 스위치 1': 'New switch 1',
+  '4가지 표시': '4 patterns',
+  '4가지 + 4가지 = 8가지': '4 patterns + 4 patterns = 8 patterns',
+  '스위치 늘리기': 'Add a switch',
+  '두 스위치로 4가지': '4 patterns with two switches',
+  '왼쪽 스위치 하나 추가': 'Add a switch on the left',
+  '4가지씩 두 묶음': 'Two groups of 4',
+  '스위치 두 개로 00, 01, 10, 11을 만듭니다. 왼쪽에 하나를 더하면 원래 네 가지 앞에 0을 붙인 000에서 011과, 1을 붙인 100에서 111을 만듭니다. 두 묶음은 각각 4가지입니다.':
+    'Two switches give 00, 01, 10, and 11. With a new switch at the left, the old patterns get a leading 0 in 000 to 011 or a leading 1 in 100 to 111. Each group holds four patterns.',
+  '처음 두 스위치로 00, 01, 10, 11 네 가지를 표시합니다. 왼쪽에 하나를 더하면 원래 네 가지에 새 표시 0이나 1을 붙일 수 있습니다. 두 묶음을 합하면 여덟 가지입니다.':
+    'The first two switches give four patterns: 00, 01, 10, and 11. Add a switch on the left and each old pattern can have a new 0 or 1 in front. The two groups give eight patterns in all.',
+  '같은 행의 오른쪽 두 자리는 그대로입니다. 새 스위치가 0인 묶음에 0부터 3까지, 1인 묶음에 4부터 7까지 있습니다.':
+    'The two right-hand digits stay the same in each row. The group with the new switch at 0 gives values 0 through 3. The group with the new switch at 1 gives 4 through 7.',
+  '스위치 세 개가 왼쪽부터 4, 2, 1을 맡습니다. 켜진 스위치의 값이 합계에 더해집니다.':
+    'The three switches are worth 4, 2, and 1 from left to right. The values of the switches that are on add to the total.',
+  '오른쪽 두 스위치로 3을 만들어 보세요.': 'Use the two right switches to make 3.',
+  '두 자리로는 0부터 3까지 표시합니다. 새 스위치를 써서 5를 만들어 보세요.': 'Two switches show 0 through 3. Use the new switch to make 5.',
   "1 자리에서 2 자리로 올림이 간다": "A carry moves from the ones place to the twos place",
   "5에서 1을 더합니다. 오른쪽 1 자리는 이미 켜져 있으므로 0으로 바꾸고, 바로 왼쪽 2 자리를 켭니다. 켜져 있던 4 자리는 그대로입니다.": "Add 1 to 5. The ones place is already on, so turn it off and turn on the twos place just to its left. The fours place stays on.",
   "결과는 4 + 2 = 6입니다. 4 자리는 그대로이고 오른쪽 두 자리만 바뀌었습니다.": "The result is 4 + 2 = 6. The fours place stays the same and only the two rightmost places change.",

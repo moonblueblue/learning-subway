@@ -16,14 +16,13 @@ body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,
 :focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 a{color:inherit}
 h1,h2{text-wrap:balance}
-.shell{margin:0;padding:10px 20px 16px;min-height:100dvh;display:flex;flex-direction:column}
-.shell>section{flex:1;min-height:0;display:flex;flex-direction:column}
-.masthead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px}
-.masthead .brand{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
-.masthead .tagline{margin:0;color:var(--muted);font-size:.9375rem}
-.masthead h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.9rem);line-height:1.1;letter-spacing:-.045em}
-.masthead .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-inline-start:auto}
-.masthead p{margin:0;color:var(--muted);font-size:.875rem}
+.shell{display:flex;flex-direction:column}
+.map-pane{display:flex;flex-direction:column;min-height:0}
+.map-pane h2{font-size:clamp(1rem,1.6vw,1.35rem);line-height:1.25;margin:0 0 6px}
+.topic-heading small{font:500 .82rem system-ui,sans-serif;color:var(--muted);margin-inline-start:10px}
+.shell:has(.topic-heading:not([hidden])) .line-index{display:none}
+.map.topic-route{padding:0;display:flex}
+.map.topic-route svg{width:100%;height:100%}
 .lang-switch{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--panel)}
 .lang-switch button{border:0;background:none;padding:4px 12px;min-height:36px;font:600 13px system-ui,sans-serif;color:var(--muted);cursor:pointer}
 .lang-switch button+button{border-inline-start:1px solid var(--border)}
@@ -34,13 +33,12 @@ h1,h2{text-wrap:balance}
 .lang-switch button[aria-pressed="true"]{background:var(--active);color:var(--ink)}
 .maps{margin:0;padding:0;list-style:none;flex:1;min-height:0;display:flex}
 .map{flex:1;min-width:0;min-height:0;background:var(--scene);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.line-index{display:flex;flex-wrap:wrap;gap:2px 14px;margin:0;padding:0;list-style:none;font:600 13px/1.6 system-ui,sans-serif;color:var(--ink)}
+ul.line-index{margin:0;padding:0;list-style:none;font:600 13px/1.6 system-ui,sans-serif;color:var(--ink)}
 .line-index li>*{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;padding:2px 6px;border-radius:6px;color:inherit;text-decoration:none}
 .line-index li>span{color:var(--muted)}
 .line-index a:hover,.line-index a:focus-visible{background:var(--hover);text-decoration:underline}
 .line-index a:active{background:var(--active)}
 .map a.here:hover .here-label{text-decoration:underline}
-.index-in-map .masthead .line-index{display:none}
 .map .line-link:hover .hit,.map .line-link:focus-visible .hit{fill:#e4f3f1}
 .map .line-link:hover text,.map .line-link:focus-visible text{text-decoration:underline}
 .map .line-link:active .hit{fill:#d5efeb}
@@ -50,7 +48,7 @@ h1,h2{text-wrap:balance}
 .line-pick:focus-within{outline:3px solid var(--focus);outline-offset:2px}
 .line-pick select:focus-visible{outline:none}
 @media not ((min-width:720px) and (min-height:600px)){.line-index{display:none}}
-@media(max-width:719px){.map{overflow:visible;padding:12px 8px}.masthead{display:grid;grid-template-columns:1fr auto;align-items:center}.masthead .brand{display:contents}.masthead .meta{grid-column:2;grid-row:1;margin:0}.masthead .tagline{grid-column:1/-1;font-size:.875rem}}
+@media(max-width:719px){.map{overflow:visible;padding:12px 8px}}
 .map svg{display:block;width:100%;height:auto;overflow:visible}
 .map svg text{font-family:system-ui,sans-serif}
 .map a{text-decoration:none}
@@ -64,18 +62,25 @@ h1,h2{text-wrap:balance}
   .map svg{flex:1;min-height:0;width:100%;height:0}
 }
 </style>
+<link rel="stylesheet" href="./shared/map-topics.css?v=c313ec6c639ff811">
 <script defer src="./shared/catalog.js"></script>
 <script defer src="./shared/i18n.js"></script>
+<script defer src="./shared/map-topics.js?v=8da91746b40b6eeb"></script>
 </head>
 <body>
-<main class="shell">
-<header class="masthead">
-<div class="brand"><h1>Learning Subway</h1><p class="tagline">컴퓨터가 실제로 어떻게 돌아가는지, 노선을 따라 한 역씩 그림으로 봅니다.</p></div>
-<div class="meta"><div data-lang-switch></div></div>
+<main class="shell map-shell">
+<header class="map-mast">
+<h1>Learning Subway</h1>
+<div class="mast-center"><p class="tagline">컴퓨터가 실제로 어떻게 돌아가는지, 노선을 따라 한 역씩 그림으로 봅니다.</p></div>
+<div data-lang-switch></div>
 </header>
-<section aria-label="노선도">
+<div class="map-workspace">
+<nav class="map-topics" data-no-i18n aria-label="학습 주제"></nav>
+<section class="map-pane" aria-label="노선도">
+<h2 class="topic-heading" data-no-i18n hidden></h2>
 <ul class="maps" id="roadmaps"></ul>
 </section>
+</div>
 </main>
 <script>
 // Rules for this page are in DESIGN.md ("허브 노선도"). Everything is drawn from courseCatalog.
@@ -229,6 +234,36 @@ addEventListener('DOMContentLoaded', () => {
   }
   const strokeOf = (roadmap) => ({ stroke: colorOf(roadmap.id), 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none', ...(built(roadmap) ? {} : { opacity: .45 }) });
 
+  // A sidebar leaves long station names less space. Move a colliding label near its own marker.
+  function separateNames(svg, width, height) {
+    const names = [...svg.querySelectorAll('text.name')];
+    const markers = names.map(name => name.parentNode.firstElementChild.getBBox());
+    const pinParts = [...svg.querySelectorAll('a.here path, .here-label')].map(node => node.getBBox());
+    for (const name of names) {
+      const box = name.getBBox();
+      const others = names.filter(other => other !== name).map(other => other.getBBox()).concat(pinParts);
+      if (!others.some(other => overlaps(box, other, 1))) continue;
+      const near = [...others, ...markers];
+      const x = Number(name.getAttribute('x')), y = Number(name.getAttribute('y'));
+      const marker = name.parentNode.firstElementChild.getBBox();
+      const cx = marker.x + marker.width/2;
+      const beside = [marker.x - 5 - (box.x + box.width), marker.x + marker.width + 5 - box.x];
+      const above = marker.y - 5 - (box.y + box.height), below = marker.y + marker.height + 5 - box.y;
+      const center = cx - (box.x + box.width/2);
+      const positions = [[0,-6],[0,6],[-10,0],[10,0],[0,-13],[0,13],
+        [center,above],[center,below], ...beside.flatMap(dx => [[dx,0],[dx,above],[dx,below]])];
+      for (const [dx,dy] of positions) {
+        const moved = {x:box.x+dx, y:box.y+dy, width:box.width, height:box.height};
+        if (moved.x < 2 || moved.y < 2 || moved.x+box.width > width-2 || moved.y+box.height > height-2) continue;
+        if (near.some(other => overlaps(moved, other, 1))) continue;
+        name.setAttribute('x', x+dx);
+        name.setAttribute('y', y+dy);
+        name.querySelectorAll('tspan').forEach(span => span.setAttribute('x', x+dx));
+        break;
+      }
+    }
+  }
+
   function lineHref(roadmap) {
     if (roadmap.id === 'ai') return './ai-map.html?v=f151c1fc27eab65c';
     const first = roadmap.chapters.flatMap(refsOf)[0];
@@ -249,8 +284,11 @@ addEventListener('DOMContentLoaded', () => {
       item.append(target);
       list.append(item);
     }
-    const old = document.querySelector('.line-index');
-    if (old) old.replaceWith(list); else document.querySelector('.masthead .meta').prepend(list);
+    list.style.setProperty('--line-count', roadmaps.length);
+    list.style.setProperty('--legend-columns', Math.ceil(roadmaps.length / 2));
+    const center = document.querySelector('.mast-center');
+    const old = center.querySelector('.line-index');
+    if (old) old.replaceWith(list); else center.append(list);
   }
 
   // On a wide map the line index sits in the bottom-left corner in two rows, where no line runs. If anything is in
@@ -260,23 +298,23 @@ addEventListener('DOMContentLoaded', () => {
     const items = roadmaps.map((roadmap) => ({ roadmap, name: tr(roadmap.title) }));
     items.forEach((item) => { item.w = 24 + measure.measureText(item.name).width; });
     const per = Math.ceil(items.length / 2), rows = [items.slice(0, per), items.slice(per)];
-    const rowWidth = (row) => row.reduce((sum, item) => sum + item.w, 0) + 18 * (row.length - 1);
-    const w = Math.max(...rows.map(rowWidth)) + 24, h = 2 * 24 + 12, x0 = 12, y0 = H - 12 - h;
+    const columnWidth = Math.ceil(Math.max(...items.map(item => item.w)));
+    const pitch = columnWidth + 12;
+    const w = (per - 1) * pitch + columnWidth + 24, h = 2 * 24 + 12, x0 = 12, y0 = H - 12 - h;
     const group = make('svg:g', { class: 'line-index' });
     group.append(make('svg:rect', { x: x0, y: y0, width: w, height: h, rx: 8, fill: '#fcfdfb', stroke: '#cbd9d0' }));
     rows.forEach((row, r) => {
-      let x = x0 + 12;
       const y = y0 + 6 + 24 * r + 12;
-      for (const { roadmap, name, w: itemWidth } of row) {
+      row.forEach(({ roadmap, name }, column) => {
+        const x = x0 + 12 + column * pitch;
         const href = lineHref(roadmap);
         const target = href ? make('svg:a', { href, class: 'line-link' }) : make('svg:g', { role: 'img', 'aria-label': tr(roadmap.title) + ', ' + tr('준비 중') });
         if (href) target.append(make('svg:title', {}, lineTitle(roadmap)));
-        target.append(make('svg:rect', { x: x - 4, y: y - 11, width: itemWidth + 8, height: 22, rx: 5, class: 'hit', fill: 'transparent' }));
-        target.append(make('svg:rect', { x, y: y - 3, width: 18, height: 6, rx: 3, fill: colorOf(roadmap.id) }));
+        target.append(make('svg:rect', { x: x - 4, y: y - 11, width: columnWidth + 8, height: 22, rx: 5, class: 'hit', fill: 'transparent' }));
+        target.append(make('svg:rect', { class:'line-swatch', x, y: y - 3, width: 18, height: 6, rx: 3, fill: colorOf(roadmap.id) }));
         target.append(make('svg:text', { x: x + 24, y: y + 4.5, 'font-size': 13, 'font-weight': 600, fill: href ? '#142620' : '#43574f' }, name));
         group.append(target);
-        x += itemWidth + 18;
-      }
+      });
     });
     svg.append(group);
     const box = { x: x0 - 4, y: y0 - 4, width: w + 8, height: h + 8 };
@@ -357,6 +395,7 @@ addEventListener('DOMContentLoaded', () => {
     }
     holder.replaceChildren(svg);
     if (here) pin(svg, here[0], here[1], spot.href, here[2], [8, W - 8]);
+    separateNames(svg, W, H);
     mapIndex(svg, W, H);
   }
 
@@ -416,9 +455,77 @@ addEventListener('DOMContentLoaded', () => {
 
   const network = make('li', { class: 'map' });
   document.getElementById('roadmaps').append(network);
+  const topicHeading = document.querySelector('.topic-heading');
+  const catalogLessons = new Map(courseCatalog.topics.flatMap(group =>
+    group.lessons.map(lesson => [group.id + '/' + lesson.id, lesson])));
+
+  // Short topic routes use real station links. Fold the rail across rows to leave room for long lesson names.
+  function drawTopic(topic) {
+    const width = network.clientWidth, height = network.clientHeight;
+    const stops = topic.refs.map(ref => catalogLessons.get(ref));
+    const rows = Math.ceil(stops.length / Math.max(1, Math.floor(width / 225)));
+    const cols = Math.ceil(stops.length / rows);
+    const gap = Math.min(height / rows, 130);
+    const side = cols === 1 ? 23 : Math.min(width * .13, 120);
+    const step = (width - 2 * side) / Math.max(1, cols - 1);
+    const points = stops.map((_, i) => {
+      const row = Math.floor(i / cols), col = i % cols;
+      const x = side + (row % 2 ? cols - 1 - col : col) * step;
+      return [x, (height - (rows - 1) * gap) / 2 + row * gap - (cols === 1 ? 0 : 12)];
+    });
+    const title = mapTopicName(topic), color = colorOf('computer-science');
+    const svg = make('svg:svg', { role:'group', 'aria-label':title, viewBox:`0 0 ${width} ${height}` });
+    let path = 'M' + points[0].join(' ');
+    for (let i = 1; i < points.length; i++) {
+      const [x,y] = points[i], [px,py] = points[i-1];
+      if (cols === 1) path += 'V' + y;
+      else if (y === py) path += 'H' + x;
+      else {
+        const r = Math.min(27, gap/4, side/2), bend = px + (px > width/2 ? r : -r);
+        path += `Q${bend} ${py} ${bend} ${py+r}V${y-r}Q${bend} ${y} ${x} ${y}`;
+      }
+    }
+    svg.append(make('svg:path', { d:path, fill:'none', stroke:color, 'stroke-width':7, 'stroke-linecap':'round' }));
+    stops.forEach((lesson, i) => {
+      const [x,y] = points[i];
+      const s = {label:courseI18n.lang === 'en' ? lesson.titleEn : lesson.title, href:'./' + lesson.page};
+      station(svg, s, x, y, color, i === stops.length-1, cols === 1 ? 'right' : 'down',
+        cols === 1 ? width-60 : Math.min(step-20,side*2-12), [6,width-6]);
+    });
+    network.replaceChildren(svg);
+    for (const link of svg.querySelectorAll('a')) {
+      const b = link.getBBox();
+      link.prepend(make('svg:rect', {x:b.x-3, y:b.y-3, width:b.width+6, height:b.height+6, fill:'transparent'}));
+    }
+  }
+
   // The whole map needs room in both directions; a narrow or short window shows one line at a time.
   const wide = matchMedia('(min-width: 720px) and (min-height: 600px)');
-  const draw = () => (wide.matches ? drawWide(network) : drawNarrow(network));
+  function draw() {
+    const topic = currentMapTopic();
+    network.classList.toggle('topic-route', Boolean(topic.refs));
+    topicHeading.hidden = !topic.refs;
+    if (topic.refs) {
+      const caption = make('small', {}, courseI18n.lang === 'en' ? 'Related lessons' : '관련 레슨');
+      topicHeading.replaceChildren(mapTopicName(topic), caption);
+      drawTopic(topic);
+    } else if (wide.matches) drawWide(network);
+    else drawNarrow(network);
+  }
+  const nav = document.querySelector('.map-topics');
+  if (currentMapTopic().id === 'ai') {
+    location.replace(nav.querySelector('[data-topic="ai"]').href);
+    return;
+  }
+  nav.addEventListener('click', event => {
+    const link = event.target.closest('a[data-topic]');
+    if (!link || link.dataset.topic === 'ai' || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    if (currentMapTopic().id !== link.dataset.topic) history.pushState(null, '', link.href);
+    renderTopicNavigation();
+    draw();
+  });
+  addEventListener('popstate', () => { renderTopicNavigation(); draw(); });
   lineIndex();
   draw();
   let lastSize = '';

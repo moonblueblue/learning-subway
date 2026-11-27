@@ -5,7 +5,7 @@
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="반복을 세어 적는 압축, 압축이 안 되는 경우, 조금 버리는 손실 압축을 픽셀 화면으로 직접 살펴보세요.">
-<title>압축 · 레슨 0.4</title>
+<title>압축 · 레슨 0.9</title>
 <style>
 :root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}
@@ -134,6 +134,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .row-label{font:650 11px var(--mono);fill:#43574f;text-anchor:end;dominant-baseline:central}
 .compression-figure { font: 650 15px system-ui, sans-serif; fill: var(--ink); text-anchor: middle }
 .compression-figure .figure-digit { font: 750 18px var(--mono) }
+.compression-figure .figure-index { font: 650 11px var(--mono) }
 .compression-figure .figure-bit { font: 750 16px var(--mono) }
 .compression-figure .figure-field { fill:#fff; stroke:#6a9481 }
 .compression-figure .figure-length { fill:#e9eeff; stroke:#5362a0 }
@@ -143,6 +144,13 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .compression-figure .figure-bracket { fill:none; stroke:#6b8377; stroke-width:1.5 }
 .compression-figure .figure-expand-guide { fill:none; stroke:#aa5919; stroke-width:1.5; stroke-dasharray:5 3 }
 .compression-figure .figure-light-text { fill:#fff }
+.compression-figure .figure-tip { fill:#187959 }
+.hands-on [hidden] { display:none !important }
+.row-actions { margin-top:12px }
+.row-ends { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 14px }
+.row-ends button { min-width:33px; min-height:44px; padding:4px 8px }
+.row-ends button[aria-pressed=true] { background:#d2ebdc; border-color:#277354 }
+.row-feedback { margin-top:10px; min-height:1.4em }
 .selected-lossy-block { fill:none; stroke:#aa5919; stroke-width:2.3; pointer-events:none }
 .decode-field { display:flex; flex-wrap:wrap; align-items:center; gap:8px }
 .decode-field label { flex:1 1 12em }
@@ -161,9 +169,9 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <body>
 <main class="shell">
   <header>
-    <p class="eyebrow">0장 컴퓨팅 둘러보기 · 레슨 0.4</p>
+    <p class="eyebrow">0장 컴퓨팅 둘러보기 · 레슨 0.9</p>
     <h1>압축</h1>
-    <p class="lead">같은 정보를 더 적은 비트로 담을 수 있을까요? 그림을 바꿔 가며 압축 결과가 어떻게 달라지는지 보세요.</p>
+    <p class="lead">카드의 색을 묶어 적으면 언제 저장 공간이 줄어들까요?</p>
   </header>
   <div class="workspace">
     <div>
@@ -191,6 +199,12 @@ svg{display:block;width:100%;height:auto;max-height:520px}
             <button class="action" id="try-next" type="button" hidden>다음 문제</button>
           </div>
           <p class="readout" id="readout"></p>
+          <div id="row-actions" class="row-actions" hidden>
+            <p>왼쪽부터 같은 색이 끝나는 칸의 번호를 누르세요.</p>
+            <div id="row-ends" class="row-ends" role="group" aria-label="묶음의 마지막 칸"></div>
+            <button class="action" id="row-unfold" type="button">저장한 묶음 펼치기</button>
+            <p id="row-feedback" class="row-feedback" role="status"></p>
+          </div>
           <div id="pixel-controls">
             <div class="pixel-area">
               <div class="pixel-grid" id="pixel-grid" role="group" aria-label="픽셀 칠하기"></div>
@@ -236,6 +250,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <script>
 const byId = (id) => document.getElementById(id);
 const viewport = byId('scene');
+const workspace = viewport.closest('.workspace');
+const inPractice = () => coursePracticeStarted && !workspace.classList.contains('course-reading');
 const viewWidth = 620;
 const viewHeight = 280;
 const maxZoom = 3;
@@ -316,23 +332,19 @@ const lossyExample = [...shadedHeart];
 selectedBlock.forEach((pixel, index) => { lossyExample[pixel] = [0, 2, 2, 0][index]; });
 const lesson = [
   {
-    label: '반복 세기',
+    label: '같은 색 묶기',
     bookmark: 1,
     readingDiagram: { figure: 'compress-encode-row', title: '같은 값 8개를 묶으면 4비트',
-      description: '같은 0이 여덟 개 이어집니다. 값 0을 첫 비트에 두고, 길이 8에서 1을 뺀 7을 3비트 111로 적습니다. 저장하는 네 비트는 0111입니다.' },
+      description: '위의 0 여덟 칸을 한 묶음 0111로 저장합니다. 이를 펼친 아래 줄에도 0이 여덟 칸 있습니다.' },
     example: ["00000000 한 줄", "값 0 · 길이−1은 111", "저장 0111 · 4비트"],
     mode: 'rle',
     levels: 2,
-    title: '같은 값이 이어지면 개수만 적는다',
-    body: '"0 0 0 0 0 1 1 1" 대신 "0이 5개, 1이 3개"라고 적어도 같은 정보입니다. 이렇게 반복을 세어 적는 방법을 런 길이 부호화(RLE)라고 합니다. 여기서는 묶음 하나를 4비트(값 1비트 + 개수 3비트)로 적습니다. 3비트는 0~7까지라서 개수에서 1을 뺀 값을 적고, 1~8개를 나타냅니다. 한 줄이 모두 같으면 8비트가 4비트로 줄어듭니다.',
-    takeaway: '화면 왼쪽에 줄마다 묶음("0×5 1×3")과 그 줄의 압축 크기가 나옵니다. 아래 줄에서 원본 64비트와 압축 결과를 비교해 보세요.',
+    title: '같은 색은 한 묶음으로 적을 수 있습니다',
+    body: '친구에게 보낼 카드에 검은색 칸이 여덟 개 이어집니다. 한 칸씩 적는 대신 색과 이어진 칸 수를 한 묶음으로 적을 수 있습니다. 이 방법을 런 길이 부호화(RLE)라고 합니다. 이 예에서는 색에 1비트, 칸 수에서 1을 뺀 값에 3비트를 써서 한 묶음을 4비트로 저장합니다.',
+    takeaway: '여덟 칸을 한 번에 감싼 괄호를 보세요. 저장한 한 묶음을 펼치면 위와 같은 줄이 돌아옵니다.',
     description: '8 × 8 흑백 화면과, 줄마다 같은 값이 이어지는 묶음을 센 결과가 있습니다. 묶음이 적을수록 압축 결과가 작습니다.',
     initial: () => ({ image: [...horizon] }),
     demo: { frames: [horizon, fromBytes(pictures.heart), fromBytes(pictures.letter)].map((image) => ({ image: [...image] })), interval: 2800 },
-    tasks: [
-      { text: '맨 윗줄을 모두 켜서 한 묶음(1×8)으로 만들어 보세요.', check: (s) => rowValue(s, 0) === 255, result: () => '맨 윗줄 1×8 → 4비트' },
-      { text: '압축 결과가 40비트 이하가 되게 그림을 바꿔 보세요.', check: (s) => rleBits(s.image) <= 40, result: (s) => `압축 ${rleBits(s.image)}비트 ≤ 40비트` },
-    ],
   },
   {
     label: '원래대로 복원',
@@ -356,23 +368,19 @@ const lesson = [
     ],
   },
   {
-    label: '반복이 없으면',
+    label: '번갈아 나오는 줄',
     bookmark: 2,
     readingDiagram: { figure: 'compress-alternating-row', title: '값이 매번 바뀌면 표시를 8번 써야 한다',
-      description: '01010101의 각 칸에서 값이 바뀌어 길이 1의 묶음이 여덟 개 생깁니다. 각 길이 필드가 000이므로 0000과 1000이 교대로 저장됩니다. 원본 8비트 대신 32비트가 필요합니다.' },
+      description: '01010101의 각 칸이 묶음 하나가 됩니다. 저장에는 32비트가 들고, 펼친 아래 줄은 위의 원래 줄과 같습니다.' },
     example: ["01010101 한 줄", "같은 값이 연달아 없음", "8비트 → 8묶음 × 4비트"],
     mode: 'rle',
     levels: 2,
     title: '반복이 없으면 오히려 커진다',
-    body: '체크무늬처럼 값이 매번 바뀌면 묶음이 64개가 되어, 압축 결과(64 × 4 = 256비트)가 원본 64비트보다 커집니다. 모든 그림을 줄이는 압축 방법은 없습니다. 압축은 데이터 안의 규칙(여기서는 반복)을 찾아 쓰는 일이라, 규칙이 없으면 줄일 수 없습니다.',
-    takeaway: '체크무늬에서는 줄마다 묶음이 8개라 압축 결과가 커집니다. 줄무늬처럼 한 줄 안에서 반복되면 다시 작아집니다.',
+    body: '이번 카드도 여덟 칸이지만 색이 칸마다 바뀝니다. 한 칸이 한 묶음이 되어 4비트짜리 묶음이 여덟 개 필요합니다. 원본은 같은 8비트이고, 이 방식으로 적으면 32비트가 됩니다.',
+    takeaway: '위와 아래의 줄은 똑같습니다. 같은 색만 있던 줄의 저장 크기 4비트와 이 줄의 32비트를 비교해 보세요.',
     description: '8 × 8 체크무늬 화면입니다. 칸마다 값이 바뀌어 묶음이 많고, 압축 결과가 원본보다 큽니다.',
     initial: () => ({ image: [...checker] }),
     demo: { frames: [checker, stripes].map((image) => ({ image: [...image] })), interval: 3000 },
-    tasks: [
-      { text: '줄마다 같은 값으로 칠한 가로 줄무늬를 만들어 32비트로 줄여 보세요.', check: (s) => rleBits(s.image) === 32 && new Set(s.image).size === 2, result: () => '줄마다 한 묶음 → 8줄 × 4비트 = 32비트' },
-      { text: '압축 결과가 원본(64비트)보다 커지게 그림을 바꿔 보세요.', check: (s) => rleBits(s.image) > 64, result: (s) => `압축 ${rleBits(s.image)}비트 > 원본 64비트` },
-    ],
   },
   {
     label: '조금 버리기',
@@ -396,7 +404,6 @@ const lesson = [
   },
 ];
 
-const rowValue = (s, r) => s.image.slice(r * size, r * size + size).reduce((value, bit) => value * 2 + (bit ? 1 : 0), 0);
 // Runs of equal values in one row: [[value, count], ...].
 function runs(row) {
   const result = [];
@@ -424,7 +431,7 @@ function blocked(image, block) {
 }
 const step = () => lesson[state.index];
 const state = { index: 0, playing: !motion.matches, wait: 0, demoPosition: 0, solved: '',
-  image: Array(size * size).fill(0), block: 1, word: '0111' };
+  image: Array(size * size).fill(0), block: 1, word: '0111', groupCount: 0, expanded: false };
 const progress = lesson.map(() => 0);
 
 const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
@@ -529,11 +536,13 @@ function figureBox(group, cx, cy, width, height, className) {
 }
 
 function verticalArrow(group, x, from, to) {
-  svg('path', { d: `M${x} ${from}V${to}m-4 -5 4 5 4 -5`, class: 'figure-wire' }, group);
+  svg('path', { d: `M${x} ${from}V${to - 4}`, class: 'figure-wire' }, group);
+  svg('path', { d: `M${x - 4} ${to - 7}h8L${x} ${to}Z`, class: 'figure-tip' }, group);
 }
 
 function horizontalArrow(group, from, to, y) {
-  svg('path', { d: `M${from} ${y}H${to}m-5 -4 5 4 -5 4`, class: 'figure-wire' }, group);
+  svg('path', { d: `M${from} ${y}H${to - 4}`, class: 'figure-wire' }, group);
+  svg('path', { d: `M${to - 7} ${y - 4}v8L${to} ${y}Z`, class: 'figure-tip' }, group);
 }
 
 const rowCenter = (index) => 68 + index * 69;
@@ -546,23 +555,37 @@ function pixelTile(group, cx, cy, length, value, levels) {
   figureText(group, cx, cy + 6, value, `figure-digit${dark ? ' figure-light-text' : ''}`);
 }
 
-function drawEncodedRow() {
-  const group = createReadingFigure(0);
-  const row = rowOf(lesson[0].initial().image, 0);
-  const [run] = runs(row);
-  const [value, count] = run;
-  figureText(group, 310, 63, '원본 8비트');
-  row.forEach((bit, i) => pixelTile(group, rowCenter(i), 93, 39, bit, 2));
-  svg('path', { d: 'M47 119v8H572v-8 M310 127v16 M177 143H441', class: 'figure-bracket' }, group);
-  verticalArrow(group, 177, 143, 153);
-  verticalArrow(group, 441, 143, 153);
-  figureText(group, 177, 168, '값 1비트');
-  figureText(group, 441, 168, '길이−1 (3비트)');
-  figureBox(group, 177, 199, 82, 37, 'figure-field');
-  figureBox(group, 441, 199, 156, 37, 'figure-length');
-  figureText(group, 177, 205, value, 'figure-digit');
-  figureText(group, 441, 205, `${count} − 1 = ${count - 1} → ${lengthBits(count)}`, 'figure-bit');
-  figureText(group, 310, 251, '저장 0111 · 4비트');
+function drawGroupedRow(group, row, accepted, expanded) {
+  const parts = runs(row);
+  const stored = parts.slice(0, accepted).map(encodeRun);
+  figureText(group, 310, 53, '원본 8비트');
+  row.forEach((bit, i) => {
+    pixelTile(group, rowCenter(i), 95, 36, bit, 2);
+    figureText(group, rowCenter(i), 75, i + 1, 'figure-index');
+  });
+  let position = 0;
+  parts.slice(0, accepted).forEach(([value, count], i) => {
+    const left = rowCenter(position) - 17;
+    const right = rowCenter(position + count - 1) + 17;
+    const center = (left + right) / 2;
+    svg('path', { d: `M${left} 116v6H${right}v-6`, class: 'figure-bracket' }, group);
+    verticalArrow(group, center, 122, 140);
+    figureBox(group, center, 158, 62, 32, 'figure-field');
+    figureText(group, center, 164, stored[i], 'figure-bit');
+    figureText(group, center, 191, `${value}×${count}`, 'figure-bit');
+    position += count;
+  });
+  if (accepted === parts.length) {
+    const sizeLabel = parts.length === 1 ? '저장 4비트' : '저장 32비트 · 같은 색 줄은 4비트';
+    figureText(group, 310, 213, sizeLabel);
+  }
+  if (!expanded) return;
+  const restored = stored.flatMap((code) => {
+    const {value, count} = decodeRun(code.replace('|', ''));
+    return Array(count).fill(value);
+  });
+  restored.forEach((bit, i) => pixelTile(group, rowCenter(i), 242, 32, bit, 2));
+  figureText(group, 310, 275, restored.join('') === row.join('') ? '펼친 줄 = 원본 8칸' : '펼친 줄이 원본과 다릅니다');
 }
 
 function drawRestoreRow(group, word) {
@@ -585,22 +608,6 @@ function drawRestoreRow(group, word) {
     else figureBox(group, rowCenter(i), 234, 38, 38, 'figure-empty');
   }
   figureText(group, 310, 276, `복원 ${count}비트`);
-}
-
-function drawAlternatingRow() {
-  const group = createReadingFigure(2);
-  const row = rowOf(lesson[2].initial().image, 0);
-  figureText(group, 310, 60, '원본 8비트');
-  row.forEach((bit, i) => {
-    const x = rowCenter(i);
-    pixelTile(group, x, 87, 39, bit, 2);
-    verticalArrow(group, x, 111, 134);
-    figureBox(group, x, 153, 63, 32, 'figure-field');
-    figureText(group, x, 159, encodeRun([bit, 1]), 'figure-bit');
-  });
-  figureText(group, 310, 197, '길이 1 → 000');
-  figureText(group, 310, 225, '값 1비트 · 길이−1 3비트 · 최대 길이 8');
-  figureText(group, 310, 257, '저장 8 × 4비트 = 32비트');
 }
 
 function drawBlock(group, image, cx, cy, tileSize) {
@@ -649,8 +656,18 @@ function shownImage() {
 }
 function paint() {
   const s = step();
+  const rowPractice = s.mode === 'rle' && inPractice();
   const decoding = s.mode === 'decode';
-  groups.screen.style.display = decoding ? 'none' : '';
+  groups.screen.style.display = decoding || rowPractice ? 'none' : '';
+  liveRow.style.display = rowPractice ? '' : 'none';
+  byId('grid').style.display = rowPractice ? 'none' : '';
+  byId('scene-desc').textContent = rowPractice
+    ? state.expanded ? s.readingDiagram.description : '왼쪽부터 같은 색이 끝나는 칸의 번호를 누르세요.'
+    : s.description;
+  if (rowPractice) {
+    liveRow.replaceChildren();
+    drawGroupedRow(liveRow, rowOf(state.image, 0), state.groupCount, state.expanded);
+  }
   blockOutline.style.display = s.mode === 'lossy' ? '' : 'none';
   liveDecode.style.display = decoding ? '' : 'none';
   liveBlock.style.display = s.mode === 'lossy' ? '' : 'none';
@@ -679,6 +696,31 @@ function paint() {
 // ---------- HTML controls ----------
 const pixelButtons = [];
 function buildControls() {
+  for (let i = 0; i < size; i++) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'action';
+    button.textContent = i + 1;
+    button.onclick = () => {
+      const parts = runs(rowOf(state.image, 0));
+      const end = parts.slice(0, state.groupCount + 1).reduce((total, [, count]) => total + count, 0) - 1;
+      if (i !== end) {
+        byId('row-feedback').textContent = '다음 칸도 같은 색인지 보고, 그 색이 끝나는 칸을 고르세요.';
+        return;
+      }
+      state.groupCount += 1;
+      paint();
+      byId('row-feedback').textContent = state.groupCount === parts.length
+        ? '모든 묶음을 적었습니다. 저장한 묶음을 펼쳐 보세요.' : '다음 색의 마지막 칸을 고르세요.';
+    };
+    byId('row-ends').append(button);
+  }
+  byId('row-unfold').onclick = () => {
+    state.expanded = true;
+    paint();
+    byId('row-feedback').textContent = '펼친 여덟 칸이 원본과 같은 순서입니다.';
+  };
+
   const value = byId('decode-value');
   const length = byId('decode-length');
   for (let count = 1; count <= size; count++) {
@@ -717,10 +759,25 @@ function buildControls() {
 function syncControls() {
   const s = step();
   const decoding = s.mode === 'decode';
-  byId('pixel-controls').hidden = decoding;
+  const rowPractice = s.mode === 'rle' && inPractice();
+  byId('row-actions').hidden = !rowPractice;
+  byId('try').hidden = s.mode === 'rle';
+  byId('pixel-controls').hidden = decoding || s.mode === 'rle';
   byId('decode-controls').hidden = !decoding;
   byId('block-choice').hidden = s.mode !== 'lossy';
   byId('readout').replaceChildren(...readout());
+  if (rowPractice) {
+    const parts = runs(rowOf(state.image, 0));
+    const ends = new Set();
+    let position = 0;
+    parts.slice(0, state.groupCount).forEach(([, count]) => { position += count; ends.add(position); });
+    [...byId('row-ends').children].forEach((button, i) => {
+      button.disabled = i < position;
+      button.setAttribute('aria-pressed', String(ends.has(i + 1)));
+    });
+    byId('row-unfold').disabled = state.groupCount !== parts.length || state.expanded;
+    return;
+  }
   if (decoding) {
     byId('decode-value').value = state.word[0];
     byId('decode-length').value = state.word.slice(1);
@@ -745,6 +802,10 @@ function readout() {
     return element;
   };
   if (s.mode === 'rle') {
+    if (inPractice()) {
+      return state.groupCount === 0 ? ['원본 8비트']
+        : [`원본 8비트 · 저장한 묶음 ${state.groupCount}개 × 4비트 = ${state.groupCount * 4}비트`];
+    }
     const bits = rleBits(state.image);
     const ratio = Math.round(bits / 64 * 100);
     return ['원본 ', strong('64비트'), ' → 압축 ', strong(`${bits}비트`, 'total'), ` (원본의 ${ratio}%${bits > 64 ? ', 더 커짐' : ''})`];
@@ -763,7 +824,7 @@ function cyclePixel(i) {
     `${Math.floor(i / size) + 1}행 ${i % size + 1}열 ${levels === 2 ? (state.image[i] ? '끔' : '켬') : '밝기 바꿈'}.`);
 }
 function sceneTap(hit) {
-  if (hit?.startsWith('p')) cyclePixel(Number(hit.slice(1)));
+  if (step().mode === 'lossy' && hit?.startsWith('p')) cyclePixel(Number(hit.slice(1)));
 }
 
 function userChange(change, message, quiet = false) {
@@ -780,6 +841,7 @@ function userChange(change, message, quiet = false) {
 // ---------- Try-it problems ----------
 function syncTask() {
   const tasks = step().tasks;
+  if (!tasks) return;
   const done = progress[state.index];
   const allDone = done >= tasks.length;
   byId('try').classList.toggle('solved', state.solved !== '');
@@ -791,6 +853,7 @@ function syncTask() {
 }
 function checkTask() {
   const tasks = step().tasks;
+  if (!tasks) return;
   const done = progress[state.index];
   if (state.solved !== '' || done >= tasks.length || !tasks[done].check(state)) return;
   progress[state.index] = done + 1;
@@ -842,13 +905,13 @@ function startStep() {
   state.wait = s.demo.interval;
 }
 function showStep(index, announce = true) {
-  const previous = lesson[state.index];
-  const keep = previous.mode === 'rle' && lesson[index].mode === 'rle' && index !== state.index && announce;
-  const kept = keep ? state.image.map((v) => (v * (lesson[index].levels - 1) / (previous.levels - 1)) | 0) : null;
   state.index = index;
   state.playing = lessonDemoEnabled();
   startStep();
-  if (kept && !state.playing && !document.querySelector('.workspace.course-reading')) state.image = kept;
+  state.groupCount = 0;
+  state.expanded = false;
+  byId('row-feedback').textContent = '';
+  if (coursePracticeStarted && index === 0) progress.fill(0);
   const s = step();
   byId('step-title').textContent = s.title;
   byId('body').textContent = s.body;
@@ -913,14 +976,18 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
-drawEncodedRow();
+for (const index of [0, 2]) {
+  const row = rowOf(lesson[index].initial().image, 0);
+  drawGroupedRow(createReadingFigure(index), row, runs(row).length, true);
+}
 drawRestoreRow(createReadingFigure(1), lesson[1].initial().word);
-drawAlternatingRow();
 drawLossyBlock();
 buildMonitor();
 liveDecode = svg('g', { id: 'decode-figure', class: 'compression-figure' }, byId('world'));
+const liveRow = svg('g', { id: 'grouped-row', class: 'compression-figure' }, viewport);
 liveBlock = svg('g', { id: 'lossy-figure', class: 'compression-figure' }, byId('world'));
 buildControls();
+new MutationObserver(paint).observe(workspace, {attributes: true, attributeFilter: ['class']});
 const initial = routeIndex();
 history.replaceState(null, '', fragmentForStep(initial));
 state.index = initial;

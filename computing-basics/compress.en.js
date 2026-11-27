@@ -7,8 +7,8 @@ window.lessonText = {
   '저장 4비트': 'Stored 4 bits', '저장 0111 · 4비트': 'Stored 0111 · 4 bits',
   '값 0 · 길이−1은 111': 'Value 0 · length − 1 is 111',
   '저장 8 × 4비트 = 32비트': 'Stored 8 × 4 bits = 32 bits',
-  '같은 0이 여덟 개 이어집니다. 값 0을 첫 비트에 두고, 길이 8에서 1을 뺀 7을 3비트 111로 적습니다. 저장하는 네 비트는 0111입니다.':
-    'Eight zeroes form one run. The first bit is the value 0. Subtract 1 from the length 8 and write 7 in three bits as 111. The four stored bits are 0111.',
+  '위의 0 여덟 칸을 한 묶음 0111로 저장합니다. 이를 펼친 아래 줄에도 0이 여덟 칸 있습니다.':
+    'Store the top row of eight zeroes as one group, 0111. Unfold it to get eight zeroes again in the bottom row.',
   '원래대로 복원': 'Restore the row',
   '두 필드로 같은 여덟 칸을 복원한다': 'Two fields restore the same eight pixels',
   '저장한 0111을 값 0과 길이 필드 111로 나눕니다. 111은 7이고 1을 더하면 길이 8입니다. 값 0을 여덟 칸 펼쳐 원래 행을 복원합니다.':
@@ -24,8 +24,8 @@ window.lessonText = {
   '같은 값으로 길이 1인 묶음을 복원하세요.': 'Restore a run of length 1 with the same value.',
   '반복할 값 {#0}': 'Repeat value {0}', '복원 {#0}비트': 'Restored {0} {0|bit|bits}',
   '저장 필드를 바꿨습니다.': 'Changed the stored fields.', '저장': 'Stored',
-  '01010101의 각 칸에서 값이 바뀌어 길이 1의 묶음이 여덟 개 생깁니다. 각 길이 필드가 000이므로 0000과 1000이 교대로 저장됩니다. 원본 8비트 대신 32비트가 필요합니다.':
-    'The value changes at every pixel in 01010101, producing eight runs of length 1. Each length field is 000, so the stored words alternate between 0000 and 1000. They take 32 bits instead of the original 8.',
+  '01010101의 각 칸이 묶음 하나가 됩니다. 저장에는 32비트가 들고, 펼친 아래 줄은 위의 원래 줄과 같습니다.':
+    'Each square of 01010101 makes its own group. The groups take 32 bits, and unfolding them gives the same row shown at the top.',
   '원래 2×2의 왼쪽 위와 오른쪽 아래는 0, 다른 두 칸은 2입니다. 평균 1을 저장하고 네 칸에 같은 값 1을 펼칩니다. 원래 0과 2가 있던 위치를 되찾을 수 없습니다.':
     'The original 2×2 block has 0 at the top left and bottom right, and 2 in the other positions. The stored mean 1 expands to 1 in all four positions. The positions of the original 0s and 2s are lost.',
   '2×2의 밝기 0, 2, 2, 0을 더해 4로 나누면 평균 1입니다. 평균 하나만 2비트로 저장하고 다시 네 칸에 펼치면 모든 칸이 1로 바뀝니다. 처음 0과 2가 어느 칸에 있었는지는 돌아오지 않습니다. 이렇게 일부 정보를 버리는 방법이 손실 압축입니다.':
@@ -38,11 +38,11 @@ window.lessonText = {
   "펼친 뒤": "Expanded",
   "8×8 전체: 16묶음 × 2비트 = 32비트": "Full 8×8: 16 groups × 2 bits = 32 bits",
   // Page
-  '압축 · 레슨 0.4': 'Compression · Lesson 0.4',
+  '압축 · 레슨 0.9': 'Compression · Lesson 0.9',
   '반복을 세어 적는 압축, 압축이 안 되는 경우, 조금 버리는 손실 압축을 픽셀 화면으로 직접 살펴보세요.':
     'Use a pixel screen to see compression that counts repeats, cases that do not compress, and lossy compression that throws a little away.',
-  '같은 정보를 더 적은 비트로 담을 수 있을까요? 그림을 바꿔 가며 압축 결과가 어떻게 달라지는지 보세요.':
-    'Can the same information fit in fewer bits? Change the picture and watch how the compressed result changes.',
+  '카드의 색을 묶어 적으면 언제 저장 공간이 줄어들까요?':
+    'When does grouping a card’s colors save space?',
   '그림과 압축 결과': 'Picture and compressed result', '그림과 줄마다의 압축 결과': 'The picture and each row\'s compressed result',
   '원본': 'Original', '밝은 칸': 'Bright square', '어두운 칸': 'Dark square', '묶는 크기': 'Block size',
   '0 (꺼진 칸)': '0 (square off)', '1 (켜진 칸)': '1 (square on)',
@@ -109,4 +109,22 @@ window.lessonText = {
   '2×2로 묶어 128비트를 32비트로 줄여 보세요.': 'Group into 2×2 blocks to shrink 128 bits to 32 bits.',
   '4×4로 묶어 8비트까지 줄여 보세요. 무엇이 사라지나요?': 'Group into 4×4 blocks to shrink it to 8 bits. What disappears?',
   '다시 1×1로 바꿔 보세요.': 'Change back to 1×1.',
+  "같은 색 묶기": "Group the same color",
+  "번갈아 나오는 줄": "Alternating colors",
+  "같은 색은 한 묶음으로 적을 수 있습니다": "A stretch of the same color fits in one group",
+  "친구에게 보낼 카드에 검은색 칸이 여덟 개 이어집니다. 한 칸씩 적는 대신 색과 이어진 칸 수를 한 묶음으로 적을 수 있습니다. 이 방법을 런 길이 부호화(RLE)라고 합니다. 이 예에서는 색에 1비트, 칸 수에서 1을 뺀 값에 3비트를 써서 한 묶음을 4비트로 저장합니다.": "A card for a friend has eight black squares in a row. You can write the color and how many times it occurs in one group. This is called run-length encoding (RLE). Here a group takes four bits: one for the color and three for the count minus one.",
+  "여덟 칸을 한 번에 감싼 괄호를 보세요. 저장한 한 묶음을 펼치면 위와 같은 줄이 돌아옵니다.": "Find the bracket that spans all eight squares. Unfold the stored group to get the same row back.",
+  "이번 카드도 여덟 칸이지만 색이 칸마다 바뀝니다. 한 칸이 한 묶음이 되어 4비트짜리 묶음이 여덟 개 필요합니다. 원본은 같은 8비트이고, 이 방식으로 적으면 32비트가 됩니다.": "This card still has eight squares, and the color changes at every square. Each square is its own group, so there are eight four-bit groups. The original takes eight bits, and the grouped version takes 32.",
+  "위와 아래의 줄은 똑같습니다. 같은 색만 있던 줄의 저장 크기 4비트와 이 줄의 32비트를 비교해 보세요.": "The top and bottom rows match. Compare the 4 bits stored for the solid row with 32 bits for this row.",
+  "왼쪽부터 같은 색이 끝나는 칸의 번호를 누르세요.": "Start at the left. Select the number of the last square in each stretch of color.",
+  "묶음의 마지막 칸": "Last square in the group",
+  "저장한 묶음 펼치기": "Unfold the stored groups",
+  "다음 칸도 같은 색인지 보고, 그 색이 끝나는 칸을 고르세요.": "Check whether the next square has the same color. Select the square where that color ends.",
+  "모든 묶음을 적었습니다. 저장한 묶음을 펼쳐 보세요.": "All groups are stored. Unfold them to restore the row.",
+  "다음 색의 마지막 칸을 고르세요.": "Select the last square in the next stretch of color.",
+  "펼친 여덟 칸이 원본과 같은 순서입니다.": "The eight restored squares match the original order.",
+  "펼친 줄 = 원본 8칸": "Restored row = original 8 squares",
+  "펼친 줄이 원본과 다릅니다": "The restored row differs from the original",
+  "저장 32비트 · 같은 색 줄은 4비트": "Stored 32 bits · solid row: 4 bits",
+  "원본 8비트 · 저장한 묶음 {#0}개 × 4비트 = {#1}비트": "Original 8 bits · {0} stored {0|group|groups} × 4 bits = {1} bits",
 };

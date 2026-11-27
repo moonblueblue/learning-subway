@@ -1,5 +1,49 @@
 // English for 0.6 What is an algorithm. Korean (the page) → English. Rules: DESIGN.md "두 언어".
 window.lessonText = {
+  '같은 일을 더 적게 하고 끝내기': 'Find the answer with less work',
+  '0장 컴퓨팅 둘러보기': 'Chapter 0 · A tour of computing',
+  '마지막 상자까지 찾기': 'Find the last box',
+  '100만 개에서 마지막 상자를 찾습니다. 반씩 줄이면 남은 수가 100만, 50만, 25만에서 18회 뒤 3개, 19회 뒤 1개가 됩니다. 마지막 한 장을 20번째에 확인합니다. 하나씩 찾으면 100만 개 모두 확인합니다.':
+    'Find the last of one million boxes. Halving gives one million, 500,000, 250,000, then 3 after 18 checks and 1 after 19. The 20th check finds the last card. One-by-one search checks all one million boxes.',
+  '같은 100만 개 · 맨 끝 목표': 'Same million boxes · target at the end',
+  '하나씩 또는 반씩': 'One by one or by halves',
+  '최악에 100만 회와 20회': 'Worst cases: 1 million and 20 checks',
+  '후보를 반씩 줄이면 맨 끝까지 볼 필요가 줄어듭니다': 'Halving the candidates cuts the work to find the last box',
+  '정렬된 상자가 100만 개이고 목표는 맨 끝에 있습니다. 한 장씩 확인하면 100만 번입니다. 반씩 줄이는 방법은 19번 확인했을 때 한 장이 남고, 그 마지막 장을 확인하면 모두 20번입니다.':
+    'There are one million sorted boxes, with the target at the end. Checking individually takes a million checks. Halving leaves one candidate after 19 checks. Checking that last box makes 20 in all.',
+  '위의 줄에서 남은 상자 수와 그 아래에 적힌 확인 횟수를 함께 보세요. 19회는 한 장이 남았을 때이고 20회는 그 장을 확인해 찾았을 때입니다.':
+    'Read each remaining box count and the number of checks below it. At 19 checks one box remains. The 20th check finds the target.',
+  '{#0}회 확인': '{0} {0|check|checks}',
+  '섞인 카드에서': 'Shuffled boxes',
+  '섞여 있으면 가운데 값만으로 왼쪽을 제외할 수 없습니다': 'A middle value can’t rule out the left side when the boxes are shuffled',
+  '두 줄 모두 네 번째 상자의 값은 30이고 찾는 수는 84입니다. 정렬한 윗줄에서는 왼쪽이 모두 30 이하입니다. 아래처럼 카드 순서를 섞으면 30보다 큰 84가 왼쪽에도 올 수 있습니다.':
+    'In both rows, the fourth box holds 30 and the target is 84. In the sorted top row, all values at and to the left of 30 are 30 or less. In the shuffled bottom row, 84 can appear to the left even though it is greater than 30.',
+  '두 줄에서 확인한 위치와 값은 같습니다. 84가 윗줄의 오른쪽에서 아랫줄의 왼쪽으로 옮겨 간 것을 찾아보세요.':
+    'The checked position and its value are the same in both rows. Find 84 on the right in the top row and on the left in the bottom row.',
+  '두 줄 모두 30과 84를 비교': 'Compare 30 with 84 in both rows',
+  '한 줄만 순서를 섞음': 'Shuffle one row',
+  '섞은 줄에서는 왼쪽도 확인': 'Keep checking the left in the shuffled row',
+  '위는 오름차순으로 정렬되어 있습니다. 네 번째 값 30보다 84가 커서 왼쪽 네 장을 제외합니다. 아래는 같은 수를 섞었습니다. 네 번째는 여전히 30이지만 두 번째가 84여서 왼쪽을 제외하면 목표를 놓칩니다.':
+    'The top row is sorted from smallest to largest. The first four boxes can be ruled out since 84 is greater than the fourth value, 30. The bottom row shuffles the same numbers. The fourth box is still 30, but the second is 84. Ruling out the left would miss the target.',
+  '작은 수부터 · 왼쪽 네 장 제외': 'Sorted · rule out the first four',
+  '{#0}번 상자, 미개봉 제외': 'Box {0}, ruled out unopened',
+  '남은 범위를 줄이기': 'Narrow the remaining range',
+  '확인한 순서 8번, 12번, 14번, 15번': 'Checked boxes 8, 12, 14, and 15 in order',
+  '섞은 순서 · 왼쪽에도 84': 'Shuffled · 84 is on the left',
+  '두 줄 모두 목표 84 · 가운데 비교 30 < 84': 'Both rows target 84 · middle comparison 30 < 84',
+  '새로 섞은 카드에서 81을 찾습니다. 30과 한 번 비교해 왼쪽 네 장을 한꺼번에 제외할 수 있나요?':
+    'Look for 81 in a new shuffle. Can a single comparison with 30 rule out the first four boxes?',
+  '왼쪽 네 장 제외': 'Rule out the first four',
+  '왼쪽도 계속 확인': 'Keep checking the left',
+  '섞은 카드 · 목표 81': 'Shuffled boxes · target 81',
+  '가운데 비교 30 < 81': 'Middle comparison 30 < 81',
+  '왼쪽 2번에서 81 발견': '81 is in box 2 on the left',
+  '섞인 카드 여덟 장 중 네 번째의 30만 보입니다. 찾는 수는 81입니다.':
+    'Only the fourth of the eight shuffled boxes is visible. It holds 30. The target is 81.',
+  '섞인 카드의 가운데 30보다 목표 81이 큽니다. 왼쪽 두 번째 카드에 81이 있습니다.':
+    'The target, 81, is greater than the middle value, 30. It is in the second box on the left.',
+  '맞았습니다. 왼쪽의 두 번째 상자에서 81이 나왔습니다.': 'Correct. The second box on the left holds 81.',
+  '이 경우에도 그렇게 할 수 있는지 다시 생각해 보세요.': 'Think again about whether that works here.',
   "정렬되지 않으면 앞에서부터 확인한다": "Without sorting, check from the start",
   "첫 상자": "First box",
   "차례대로 확인": "Check in order",

@@ -5,7 +5,7 @@
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="상자 16개에서 수 하나를 찾으며, 하나씩 찾기와 반씩 줄이기가 일의 양을 얼마나 다르게 만드는지 살펴보세요.">
-<title>알고리즘이란 · 레슨 0.6</title>
+<title>같은 일을 더 적게 하고 끝내기</title>
 <style>
 :root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}
@@ -106,7 +106,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .timeline{padding:15px 18px}
 .timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:0;margin:0;gap:8px}
 .steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
 .steps button:hover{border-color:var(--accent)}
 .steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
@@ -126,7 +126,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .box .face{stroke-width:.8;transition:fill .18s}
 .box.closed .left{fill:#d3dad6}.box.closed .right{fill:#b9c4be}.box.closed .top{fill:#eef1ef}.box.closed .face{stroke:#8c9d96}
 .box.open .left{fill:#e6ebe8}.box.open .right{fill:#cfd8d4}.box.open .top{fill:#ffffff}.box.open .face{stroke:#8c9d96}
-.box.out{opacity:.38}
+.box.out{opacity:.6}
 .box.out .left{fill:#d3dad6}.box.out .right{fill:#b9c4be}.box.out .top{fill:#eef1ef}.box.out .face{stroke:#8c9d96;stroke-dasharray:2 2}
 .box.found .left{fill:#a5d6b6}.box.found .right{fill:#78b592}.box.found .top{fill:#d2f4dd}.box.found .face{stroke:#4f8f6b}
 .box .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
@@ -140,7 +140,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .box-button.out{opacity:.4;background:#fff;color:var(--ink);border-style:dashed}
 .box-button.found{background:#d2f4dd;border-color:var(--accent);color:#0f5a3c}
 .box-button:disabled{cursor:default;opacity:1}
-.box-button.out:disabled{opacity:.4}
+.box-button.out:disabled{opacity:.6}
 .choices{display:flex;gap:12px 28px;flex-wrap:wrap}
 .choice{display:flex;gap:10px;align-items:center}
 .choice > span{font-weight:650;color:var(--muted)}
@@ -150,6 +150,19 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .dot.out{background:#eef1ef;border-style:dashed;opacity:.6}
 .dot.warn{background:#f2c49a;border-color:#a24c14}
 @media(prefers-reduced-motion:reduce){.mode-group,.box .face{transition:none}}
+
+.search-comparison { text-anchor: middle; fill: var(--ink); }
+.search-comparison text { font: 700 15px system-ui, sans-serif; }
+.search-comparison .comparison-caption { font-size: 17px; }
+.search-comparison .comparison-small { font-size: 13px; }
+.search-comparison rect { fill: #f7fcf9; stroke: #7a998a; stroke-width: 1.5; }
+.search-comparison .comparison-focus { fill: #d9eee4; stroke: #176b56; stroke-width: 2; }
+.search-comparison .comparison-excluded { fill: #f0f2ef; stroke-dasharray: 3 3; }
+.search-comparison .comparison-arrow { fill: none; stroke: #176b56; stroke-width: 2.4; marker-end: url(#search-intro-tip); }
+.search-comparison .comparison-rule { stroke: #a1b7ab; }
+#scene .course-diagram .diagram-edge.active { marker-end: url(#search-intro-tip); }
+#scene .course-diagram .diagram-edge.blocked { marker-end: url(#search-intro-blocked-tip); }
+#shuffle-choices .actions { margin-top: 6px; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
@@ -163,8 +176,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 <body>
 <main class="shell">
   <header>
-    <p class="eyebrow">0장 컴퓨팅 둘러보기 · 레슨 0.6</p>
-    <h1>알고리즘이란</h1>
+    <p class="eyebrow">0장 컴퓨팅 둘러보기</p>
+    <h1>같은 일을 더 적게 하고 끝내기</h1>
     <p class="lead">같은 문제를 푸는 방법에 따라 일의 양이 얼마나 달라질까요? 상자를 직접 열어 수를 찾아 보세요.</p>
   </header>
   <div class="workspace">
@@ -175,6 +188,12 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
             <title id="scene-title">상자를 열어 수를 찾는 장면</title><desc id="scene-desc"></desc>
             <defs>
+              <marker id="search-intro-tip" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" refX="9" refY="5" orient="auto">
+                <path d="M 0 0 L 9 5 L 0 10 Z" fill="#176b56"/>
+              </marker>
+              <marker id="search-intro-blocked-tip" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" refX="9" refY="5" orient="auto">
+                <path d="M 0 0 L 9 5 L 0 10 Z" fill="#a14c2d"/>
+              </marker>
               <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
               <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
               <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
@@ -184,6 +203,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
               <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
               <g id="casings"></g><g id="links"></g><g id="nodes"></g>
             </g>
+            <g id="search-transfer" class="search-comparison" aria-hidden="true"></g>
           </svg>
         </div>
         <div class="hands-on">
@@ -193,6 +213,14 @@ svg{display:block;width:100%;height:auto;max-height:520px}
             <button class="action" id="try-next" type="button" hidden>다음 문제</button>
           </div>
           <p class="readout" id="readout"></p>
+          <div id="shuffle-choices" hidden>
+            <p>새로 섞은 카드에서 81을 찾습니다. 30과 한 번 비교해 왼쪽 네 장을 한꺼번에 제외할 수 있나요?</p>
+            <div class="actions">
+              <button class="action" id="shuffle-discard" type="button">왼쪽 네 장 제외</button>
+              <button class="action" id="shuffle-keep" type="button">왼쪽도 계속 확인</button>
+            </div>
+            <p class="readout" id="shuffle-feedback" role="status"></p>
+          </div>
           <div class="box-area" id="box-area">
             <div class="box-row" id="box-buttons" role="group" aria-label="상자 열기"></div>
             <button class="action" id="new-round" type="button">새 문제</button>
@@ -224,8 +252,10 @@ svg{display:block;width:100%;height:auto;max-height:520px}
   </div>
   <div class="sr-only" id="announcement" role="status"></div>
 </main>
+<template id="search-scale-figure"><svg><g class="search-comparison"></g></svg></template>
 <script>
 const byId = (id) => document.getElementById(id);
+const workspace = document.querySelector('.workspace');
 const viewport = byId('scene');
 const viewWidth = 620;
 const viewHeight = 280;
@@ -307,7 +337,7 @@ const lesson = [
       description: "정렬되지 않으면 앞에서부터 확인한다",
       nodes: [
         ["start", 87, 143, 104, 48, ["첫 상자", "61"], "plain"],
-        ["middle", 300, 143, 158, 48, ["4 → 99 → … → 37", "차례대로 확인"], "plain"],
+        ["middle", 300, 143, 158, 48, ["4, 99, …, 37", "차례대로 확인"], "plain"],
         ["end", 526, 143, 116, 48, ["16번째 상자", "84"], "active"],
       ],
       edges: [
@@ -361,8 +391,8 @@ const lesson = [
   },
   {
     readingDiagram: {
-      title: "9–16 → 13–16 → 15–16 → 발견",
-      description: "9–16 → 13–16 → 15–16 → 발견",
+      title: "남은 범위를 줄이기",
+      description: "남은 범위를 줄이기",
       nodes: [
         ["s1", 98, 150, 128, 64, ["9–16", "12번: 43 < 84"], "plain"],
         ["s2", 245, 150, 123, 64, ["13–16", "14번: 81 < 84"], "plain"],
@@ -375,7 +405,7 @@ const lesson = [
         ["s3", "res", "active", ""],
       ],
       labels: [
-        [33, 231, "처음 비교까지: 8번 → 12번 → 14번 → 15번"],
+        [33, 231, "확인한 순서 8번, 12번, 14번, 15번"],
       ],
     },
     label: "판단 반복",
@@ -391,23 +421,38 @@ const lesson = [
     ],
   },
   {
+    readingDiagram: {
+      title: '마지막 상자까지 찾기',
+      description: '100만 개에서 마지막 상자를 찾습니다. 반씩 줄이면 남은 수가 100만, 50만, 25만에서 18회 뒤 3개, 19회 뒤 1개가 됩니다. 마지막 한 장을 20번째에 확인합니다. 하나씩 찾으면 100만 개 모두 확인합니다.',
+      figure: 'search-scale-figure'
+    },
     label: '크기가 커지면',
-    example: ["데이터가 두 배로 증가", "순차 탐색 범위도 두 배", "이진 탐색 깊이는 약 한 단계 증가"],
+    example: ['같은 100만 개 · 맨 끝 목표', '하나씩 또는 반씩', '최악에 100만 회와 20회'],
     mode: 'compare',
-    title: '데이터가 많을수록 차이가 커진다',
-    body: '상자가 16개일 때는 16번과 5번의 차이지만, 100만 개라면 하나씩 찾기는 최악에 100만 번, 반씩 줄이기는 20번이면 됩니다. 같은 문제를 푸는 정확한 절차를 알고리즘이라고 하고, 어떤 알고리즘을 고르느냐에 따라 일의 양이 이렇게 달라집니다. 대신 반씩 줄이려면 먼저 정렬되어 있어야 합니다.',
-    takeaway: '데이터 수를 바꾸면 두 기둥의 높이(최악일 때 여는 횟수)가 바뀝니다. 하나씩 찾기는 데이터 수만큼, 반씩 줄이기는 반으로 나눈 횟수만큼만 늘어납니다.',
+    title: '후보를 반씩 줄이면 맨 끝까지 볼 필요가 줄어듭니다',
+    body: '정렬된 상자가 100만 개이고 목표는 맨 끝에 있습니다. 한 장씩 확인하면 100만 번입니다. 반씩 줄이는 방법은 19번 확인했을 때 한 장이 남고, 그 마지막 장을 확인하면 모두 20번입니다.',
+    takeaway: '위의 줄에서 남은 상자 수와 그 아래에 적힌 확인 횟수를 함께 보세요. 19회는 한 장이 남았을 때이고 20회는 그 장을 확인해 찾았을 때입니다.',
     description: '"하나씩"과 "반씩" 두 기둥이 있습니다. 기둥 높이는 최악의 경우 상자를 여는 횟수이고, 데이터가 많아질수록 "하나씩" 기둥이 훨씬 빨리 높아집니다.',
     tasks: [
       { text: '데이터를 1,000개로 늘려 두 방법의 횟수를 비교해 보세요.', check: (s) => s.size === 1000, result: () => '하나씩 1,000번 · 반씩 10번' },
       { text: '100만 개로 늘려 보세요.', check: (s) => s.size === 1000000, result: () => '하나씩 1,000,000번 · 반씩 20번' },
     ],
   },
+  {
+    mode: 'shuffle',
+    label: '섞인 카드에서',
+    title: '섞여 있으면 가운데 값만으로 왼쪽을 제외할 수 없습니다',
+    body: '두 줄 모두 네 번째 상자의 값은 30이고 찾는 수는 84입니다. 정렬한 윗줄에서는 왼쪽이 모두 30 이하입니다. 아래처럼 카드 순서를 섞으면 30보다 큰 84가 왼쪽에도 올 수 있습니다.',
+    takeaway: '두 줄에서 확인한 위치와 값은 같습니다. 84가 윗줄의 오른쪽에서 아랫줄의 왼쪽으로 옮겨 간 것을 찾아보세요.',
+    example: ['두 줄 모두 30과 84를 비교', '한 줄만 순서를 섞음', '섞은 줄에서는 왼쪽도 확인'],
+    description: '위는 오름차순으로 정렬되어 있습니다. 네 번째 값 30보다 84가 커서 왼쪽 네 장을 제외합니다. 아래는 같은 수를 섞었습니다. 네 번째는 여전히 30이지만 두 번째가 84여서 왼쪽을 제외하면 목표를 놓칩니다.',
+    tasks: []
+  },
 ];
 
 const step = () => lesson[state.index];
 const state = { index: 0, playing: !motion.matches, wait: 0, solved: '',
-  round: 0, numbers: [], target: 0, openedSet: new Set(), opened: 0, lo: 0, hi: count - 1, found: false, size: 16, plan: [] };
+  round: 0, numbers: [], target: 0, openedSet: new Set(), opened: 0, lo: 0, hi: count - 1, found: false, size: 16, plan: [], protectedLeft: null };
 const progress = lesson.map(() => 0);
 
 const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
@@ -524,6 +569,78 @@ const worstBinary = (n) => Math.ceil(Math.log2(n + 1));
 // Heights on a log scale so a million still fits: 1 → 8px, 1,000,000 → 150px.
 const towerHeight = (n) => 8 + 142 * Math.log10(n) / 6;
 
+function comparisonText(parent, x, y, value, className = '') {
+  svg('text', {x, y, class: className}, parent).textContent = value;
+}
+function comparisonBox(parent, x, y, width, height, tone = '') {
+  svg('rect', {x: x - width / 2, y: y - height / 2, width, height, class: tone, rx: 7}, parent);
+}
+function comparisonArrow(parent, start, end, y) {
+  svg('line', {x1: start, x2: end, y1: y, y2: y, class: 'comparison-arrow'}, parent);
+}
+
+function buildScaleFigure() {
+  const drawing = byId('search-scale-figure').content.querySelector('g');
+  comparisonText(drawing, 310, 57, '같은 100만 개 · 맨 끝 목표', 'comparison-caption');
+  comparisonText(drawing, 92, 93, '반씩 줄이기');
+  const counts = [1000000, 500000, 250000, 3, 1, '발견'];
+  const checks = [0, 1, 2, 18, 19, 20];
+  counts.forEach((value, index) => {
+    const x = 62 + 99 * index;
+    comparisonBox(drawing, x, 132, 82, 35, index > 3 ? 'comparison-focus' : '');
+    comparisonText(drawing, x, 137, typeof value === 'number' ? value.toLocaleString('en-US') : value);
+    comparisonText(drawing, x, 165, `${checks[index]}회 확인`, 'comparison-small');
+    if (index < counts.length - 1) comparisonArrow(drawing, x + 43, x + 55, 132);
+    if (index === 2) comparisonText(drawing, x + 49, 116, '…');
+  });
+  svg('line', {x1: 22, x2: 598, y1: 190, y2: 190, class: 'comparison-rule'}, drawing);
+  comparisonText(drawing, 93, 223, '하나씩 찾기');
+  for (const [x, value] of [[182, '1'], [224, '2'], [269, '…'], [354, '1,000,000']]) {
+    comparisonText(drawing, x, 223, value);
+  }
+  for (const [start, end] of [[193, 213], [235, 255], [285, 313]]) {
+    comparisonArrow(drawing, start, end, 218);
+  }
+  comparisonText(drawing, 529, 223, '1,000,000회 확인', 'comparison-caption');
+}
+
+const shuffleNumbers = {
+  sorted: [1, 4, 9, 30, 61, 81, 84, 99],
+  mixed: [1, 84, 9, 30, 61, 81, 4, 99],
+  exercise: [9, 81, 1, 30, 61, 84, 4, 99]
+};
+
+function shuffleRow(drawing, items, y, target, {discard = false, hide = false} = {}) {
+  items.forEach((value, index) => {
+    const x = 61 + 71 * index;
+    const shown = !hide || index === 3;
+    const focus = index === 3 || (shown && value === target);
+    const tone = [focus && 'comparison-focus', discard && index < 4 && 'comparison-excluded'].filter(Boolean).join(' ');
+    comparisonBox(drawing, x, y, 52, 38, tone);
+    comparisonText(drawing, x, y + 6, shown ? value : '?');
+  });
+}
+
+function drawShuffle() {
+  const drawing = byId('search-transfer');
+  drawing.replaceChildren();
+  if (step().mode !== 'shuffle') return;
+  const practicing = coursePracticeStarted && !workspace.classList.contains('course-reading');
+  if (practicing) {
+    comparisonText(drawing, 310, 75, '섞은 카드 · 목표 81', 'comparison-caption');
+    shuffleRow(drawing, shuffleNumbers.exercise, 140, 81, {hide: state.protectedLeft !== true});
+    comparisonText(drawing, 310, 196, '가운데 비교 30 < 81');
+    if (state.protectedLeft === true) comparisonText(drawing, 310, 229, '왼쪽 2번에서 81 발견');
+    return;
+  }
+  comparisonText(drawing, 310, 39, '두 줄 모두 목표 84 · 가운데 비교 30 < 84', 'comparison-caption');
+  comparisonText(drawing, 194, 81, '작은 수부터 · 왼쪽 네 장 제외');
+  shuffleRow(drawing, shuffleNumbers.sorted, 115, 84, {discard: true});
+  svg('line', {x1: 28, x2: 592, y1: 150, y2: 150, class: 'comparison-rule'}, drawing);
+  comparisonText(drawing, 194, 190, '섞은 순서 · 왼쪽에도 84');
+  shuffleRow(drawing, shuffleNumbers.mixed, 224, 84);
+}
+
 // ---------- Drawing ----------
 function boxState(i) {
   if (state.found && state.numbers[i] === state.target) return 'found';
@@ -532,8 +649,20 @@ function boxState(i) {
   if (step().mode === 'binary' && (i < state.lo || i > state.hi)) return 'out';
   return 'closed';
 }
+function shownBoxValue(index, kind) {
+  if (kind === 'out') return '×';
+  if (kind === 'closed') return '?';
+  return String(state.numbers[index]);
+}
+
 function paint() {
   const s = step();
+  byId('world').setAttribute('display', s.mode === 'shuffle' ? 'none' : '');
+  drawShuffle();
+  if (s.mode === 'shuffle') {
+    syncControls();
+    return;
+  }
   for (const group of byId('world').querySelectorAll('.mode-group')) group.classList.toggle('hidden', group.dataset.mode !== (s.mode === 'compare' ? 'compare' : 'boxes'));
   if (s.mode === 'compare') {
     towers[0].target = towerHeight(worstLinear(state.size));
@@ -552,7 +681,7 @@ function paint() {
     boxes.forEach((box, i) => {
       const kind = boxState(i);
       box.node.setAttribute('class', `node box ${kind}`);
-      box.digit.textContent = kind === 'closed' ? '?' : String(state.numbers[i]);
+      box.digit.textContent = shownBoxValue(i, kind);
       box.target = kind === 'found' ? high : kind === 'out' ? sunk : low;
     });
   }
@@ -611,14 +740,19 @@ function buildControls() {
 }
 function syncControls() {
   const s = step();
-  byId('box-area').hidden = s.mode === 'compare';
+  byId('box-area').hidden = !['linear', 'binary'].includes(s.mode);
+  byId('try').hidden = s.mode === 'shuffle';
+  byId('readout').hidden = s.mode === 'shuffle';
+  byId('shuffle-choices').hidden = s.mode !== 'shuffle';
+  if (s.mode === 'shuffle') return;
   byId('size-area').hidden = s.mode !== 'compare';
   boxButtons.forEach((button, i) => {
     const kind = boxState(i);
     button.className = `box-button ${kind}`;
-    button.textContent = kind === 'closed' ? '?' : state.numbers[i];
+    button.textContent = shownBoxValue(i, kind);
     button.disabled = state.found || kind === 'out' || kind === 'open';
-    button.setAttribute('aria-label', `${i + 1}번 상자, ${kind === 'closed' ? '닫힘' : kind === 'out' ? `제외됨, ${state.numbers[i]}` : state.numbers[i]}`);
+    const status = kind === 'closed' ? '닫힘' : kind === 'out' ? '미개봉 제외' : String(state.numbers[i]);
+    button.setAttribute('aria-label', `${i + 1}번 상자, ${status}`);
   });
   for (const button of document.querySelectorAll('#size-choices button')) button.setAttribute('aria-pressed', String(Number(button.dataset.value) === state.size));
   byId('readout').replaceChildren(...readout());
@@ -680,7 +814,7 @@ function revealBox(i) {
   return true;
 }
 function openBox(i) {
-  if (step().mode === 'compare') return;
+  if (!['linear', 'binary'].includes(step().mode)) return;
   userChange(() => { revealBox(i); }, '');
   byId('announcement').textContent = state.hint;
 }
@@ -743,6 +877,7 @@ function demoTick() {
   }
   const next = state.plan.find((i) => !state.openedSet.has(i) && i >= state.lo && i <= state.hi);
   revealBox(next);
+  if (state.index === 1) state.playing = false;
   paint();
   state.wait = state.found ? 2200 : s.mode === 'binary' ? 1300 : 520;
 }
@@ -766,6 +901,7 @@ function syncPlayback() {
 const legends = {
   linear: '<span><i class="dot"></i>닫힌 상자</span><span><i class="dot open"></i>열어 본 상자</span><span><i class="dot on"></i>찾은 상자</span>',
   binary: '<span><i class="dot open"></i>열어 본 상자</span><span><i class="dot out"></i>버린 범위</span><span><i class="dot on"></i>찾은 상자</span>',
+  shuffle: '',
   compare: '<span><i class="dot warn"></i>하나씩 찾기</span><span><i class="dot on"></i>반씩 줄이기</span><span>기둥 높이 = 최악일 때 여는 횟수(로그 눈금)</span>',
 };
 function startStep() {
@@ -773,7 +909,10 @@ function startStep() {
   state.round = 0;
   newRound();
   state.wait = 900;
-  if (motion.matches) showFinished();
+  state.protectedLeft = null;
+  byId('shuffle-feedback').textContent = '';
+  if (motion.matches && !coursePracticeStarted) showFinished();
+  if (coursePracticeStarted && state.index === 2) revealBox(7);
 }
 // Nothing plays with reduced motion, so the still picture shows a finished search instead of sixteen closed boxes:
 // the example's worst case for one at a time (the last box), a target right of the middle for halving, and a million
@@ -781,6 +920,8 @@ function startStep() {
 function showFinished() {
   const s = step();
   if (s.mode === 'compare') { state.size = 1000000; return; }
+  if (s.mode === 'shuffle') return;
+  if (state.index === 1) { revealBox(7); return; }
   const at = s.mode === 'binary' ? 14 : count - 1;
   state.target = state.numbers[at];
   let lo = 0, hi = count - 1;
@@ -797,7 +938,7 @@ function showFinished() {
 }
 function showStep(index, announce = true) {
   state.index = index;
-  state.playing = lessonDemoEnabled();
+  state.playing = lessonDemoEnabled() && step().mode !== 'shuffle';
   startStep();
   const s = step();
   byId('step-title').textContent = s.title;
@@ -816,6 +957,7 @@ function showStep(index, announce = true) {
   state.solved = '';
   syncTask();
   paint();
+  syncShuffleDescription();
   syncPlayback();
   if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
 }
@@ -842,7 +984,7 @@ byId('next').onclick = () => goToStep(state.index + 1);
 window.addEventListener('hashchange', syncRoute);
 window.addEventListener('popstate', syncRoute);
 motion.addEventListener('change', () => {
-  if (lessonDemoEnabled()) state.playing = true;
+  if (lessonDemoEnabled() && step().mode !== 'shuffle') state.playing = true;
   syncPlayback();
 });
 window.addEventListener('keydown', (event) => {
@@ -854,6 +996,26 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
+function syncShuffleDescription() {
+  if (step().mode !== 'shuffle') return;
+  const practicing = coursePracticeStarted && !workspace.classList.contains('course-reading');
+  byId('scene-desc').textContent = !practicing ? step().description
+    : state.protectedLeft === true ? '섞인 카드의 가운데 30보다 목표 81이 큽니다. 왼쪽 두 번째 카드에 81이 있습니다.'
+    : '섞인 카드 여덟 장 중 네 번째의 30만 보입니다. 찾는 수는 81입니다.';
+  drawShuffle();
+}
+function chooseShuffle(keep) {
+  state.protectedLeft = keep;
+  byId('shuffle-feedback').textContent = keep
+    ? '맞았습니다. 왼쪽의 두 번째 상자에서 81이 나왔습니다.'
+    : '이 경우에도 그렇게 할 수 있는지 다시 생각해 보세요.';
+  syncShuffleDescription();
+}
+byId('shuffle-discard').onclick = () => chooseShuffle(false);
+byId('shuffle-keep').onclick = () => chooseShuffle(true);
+new MutationObserver(syncShuffleDescription).observe(workspace, {attributes: true, attributeFilter: ['class']});
+
+buildScaleFigure();
 buildBoxes();
 buildTowers();
 buildControls();

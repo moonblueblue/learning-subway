@@ -25,23 +25,23 @@ const courseCatalog = {
             },
             {
               "id": "0.4",
-              "ref": "computing-basics/bits"
+              "ref": "computing-basics/search"
             },
             {
               "id": "0.5",
-              "ref": "computing-basics/text"
+              "ref": "computing-basics/bits"
             },
             {
               "id": "0.6",
-              "ref": "computing-basics/media"
+              "ref": "computing-basics/text"
             },
             {
               "id": "0.7",
-              "ref": "computing-basics/compress"
+              "ref": "computing-basics/media"
             },
             {
               "id": "0.8",
-              "ref": "computing-basics/search"
+              "ref": "computing-basics/compress"
             },
             {
               "id": "0.9",
@@ -2616,6 +2616,17 @@ const courseCatalog = {
           "page": "computing-basics/computer.html"
         },
         {
+          "id": "search",
+          "title": "같은 일을 더 적게 하고 끝내기",
+          "titleEn": "Find the answer with less work",
+          "question": "같은 수를 찾을 때 정렬하면 몇 장을 보지 않아도 될까?",
+          "format": "실험",
+          "requires": [
+            "computing-basics/repeatable-instructions"
+          ],
+          "page": "computing-basics/search.html"
+        },
+        {
           "id": "bits",
           "title": "비트와 이진수",
           "titleEn": "Bits and binary",
@@ -2650,15 +2661,6 @@ const courseCatalog = {
           "format": "실험",
           "requires": [],
           "page": "computing-basics/compress.html"
-        },
-        {
-          "id": "search",
-          "title": "알고리즘이란",
-          "titleEn": "What is an algorithm",
-          "question": "같은 문제를 푸는 방법에 따라 일의 양이 얼마나 달라질까?",
-          "format": "실험",
-          "requires": [],
-          "page": "computing-basics/search.html"
         },
         {
           "id": "internet",

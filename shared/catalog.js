@@ -17,34 +17,38 @@ const courseCatalog = {
             },
             {
               "id": "0.2",
-              "ref": "computing-basics/bits"
+              "ref": "computing-basics/repeatable-instructions"
             },
             {
               "id": "0.3",
-              "ref": "computing-basics/text"
+              "ref": "computing-basics/bits"
             },
             {
               "id": "0.4",
-              "ref": "computing-basics/media"
+              "ref": "computing-basics/text"
             },
             {
               "id": "0.5",
-              "ref": "computing-basics/compress"
+              "ref": "computing-basics/media"
             },
             {
               "id": "0.6",
-              "ref": "computing-basics/computer"
+              "ref": "computing-basics/compress"
             },
             {
               "id": "0.7",
-              "ref": "computing-basics/search"
+              "ref": "computing-basics/computer"
             },
             {
               "id": "0.8",
-              "ref": "computing-basics/internet"
+              "ref": "computing-basics/search"
             },
             {
               "id": "0.9",
+              "ref": "computing-basics/internet"
+            },
+            {
+              "id": "0.10",
               "ref": "computing-basics/impact"
             }
           ],
@@ -2573,6 +2577,17 @@ const courseCatalog = {
           "format": "실험",
           "requires": [],
           "page": "computing-basics/computer-tasks.html"
+        },
+        {
+          "id": "repeatable-instructions",
+          "title": "따라 할 수 있는 지시",
+          "titleEn": "Instructions someone can follow",
+          "question": "다른 사람도 같은 무늬를 만들도록 무슨 일을 어떤 순서로 전할까?",
+          "format": "실험",
+          "requires": [
+            "computing-basics/computer-tasks"
+          ],
+          "page": "computing-basics/repeatable-instructions.html"
         },
         {
           "id": "bits",

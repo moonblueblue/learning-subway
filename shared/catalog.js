@@ -531,203 +531,253 @@ const courseCatalog = {
           "titleEn": "Common line",
           "lessons": [
             {
-              "id": "1.10",
+              "id": "1.1",
+              "stationId": "1.10",
               "ref": "ai/decision-owner"
             },
             {
-              "id": "1.11",
+              "id": "1.2",
+              "stationId": "1.11",
               "ref": "ai/method-choice"
             },
             {
-              "id": "1.1",
+              "id": "1.3",
+              "stationId": "1.1",
               "ref": "math/logic"
             },
             {
-              "id": "1.12",
+              "id": "1.4",
+              "stationId": "1.12",
               "ref": "ai/rule-inference"
             },
             {
-              "id": "1.13",
+              "id": "1.5",
+              "stationId": "1.13",
               "ref": "ai/observations-features-labels"
             },
             {
-              "id": "1.14",
+              "id": "1.6",
+              "stationId": "1.14",
               "ref": "ai/prediction-row"
             },
             {
-              "id": "1.15",
+              "id": "1.7",
+              "stationId": "1.15",
               "ref": "ai/sampling-bias"
             },
             {
-              "id": "1.16",
+              "id": "1.8",
+              "stationId": "1.16",
               "ref": "ai/delayed-labels"
             },
             {
-              "id": "1.17",
+              "id": "1.9",
+              "stationId": "1.17",
               "ref": "ai/missing-readings"
             },
             {
-              "id": "1.18",
+              "id": "1.10",
+              "stationId": "1.18",
               "ref": "ai/future-leakage"
             },
             {
-              "id": "1.2",
+              "id": "1.11",
+              "stationId": "1.2",
               "ref": "math/vectors"
             },
             {
-              "id": "1.19",
+              "id": "1.12",
+              "stationId": "1.19",
               "ref": "ai/dot-product"
             },
             {
-              "id": "1.3",
+              "id": "1.13",
+              "stationId": "1.3",
               "ref": "math/statistics"
             },
             {
-              "id": "1.20",
+              "id": "1.14",
+              "stationId": "1.20",
               "ref": "ai/base-rate-bayes"
             },
             {
-              "id": "1.21",
+              "id": "1.15",
+              "stationId": "1.21",
               "ref": "ai/resampling"
             },
             {
-              "id": "1.22",
+              "id": "1.16",
+              "stationId": "1.22",
               "ref": "ai/temporal-split"
             },
             {
-              "id": "1.23",
+              "id": "1.17",
+              "stationId": "1.23",
               "ref": "ai/fit-preprocessing"
             },
             {
-              "id": "1.24",
+              "id": "1.18",
+              "stationId": "1.24",
               "ref": "ai/alert-baseline"
             },
             {
-              "id": "1.4",
+              "id": "1.19",
+              "stationId": "1.4",
               "ref": "ai/ml"
             },
             {
-              "id": "1.25",
+              "id": "1.20",
+              "stationId": "1.25",
               "ref": "ai/regression-classification"
             },
             {
-              "id": "1.26",
+              "id": "1.21",
+              "stationId": "1.26",
               "ref": "ai/squared-error"
             },
             {
-              "id": "1.27",
+              "id": "1.22",
+              "stationId": "1.27",
               "ref": "ai/logistic-log-loss"
             },
             {
-              "id": "1.28",
+              "id": "1.23",
+              "stationId": "1.28",
               "ref": "ai/derivatives-sensitivity"
             },
             {
-              "id": "1.5",
+              "id": "1.24",
+              "stationId": "1.5",
               "ref": "ai/gradient"
             },
             {
-              "id": "1.29",
+              "id": "1.25",
+              "stationId": "1.29",
               "ref": "ai/learning-rate"
             },
             {
-              "id": "1.6",
+              "id": "1.26",
+              "stationId": "1.6",
               "ref": "ai/neural"
             },
             {
-              "id": "1.30",
+              "id": "1.27",
+              "stationId": "1.30",
               "ref": "ai/chain-rule-backprop"
             },
             {
-              "id": "1.31",
+              "id": "1.28",
+              "stationId": "1.31",
               "ref": "ai/minibatch-epoch"
             },
             {
-              "id": "1.32",
+              "id": "1.29",
+              "stationId": "1.32",
               "ref": "ai/fit-diagnosis"
             },
             {
-              "id": "1.33",
+              "id": "1.30",
+              "stationId": "1.33",
               "ref": "ai/regularization-early-stop"
             },
             {
-              "id": "1.34",
+              "id": "1.31",
+              "stationId": "1.34",
               "ref": "ai/confusion-matrix"
             },
             {
-              "id": "1.35",
+              "id": "1.32",
+              "stationId": "1.35",
               "ref": "ai/threshold-precision-recall"
             },
             {
-              "id": "1.36",
+              "id": "1.33",
+              "stationId": "1.36",
               "ref": "ai/probability-calibration"
             },
             {
-              "id": "1.9",
+              "id": "1.34",
+              "stationId": "1.9",
               "ref": "ai/error-cost-threshold"
             },
             {
-              "id": "1.37",
+              "id": "1.35",
+              "stationId": "1.37",
               "ref": "ai/group-failures-handoff"
             },
             {
-              "id": "1.7",
+              "id": "1.36",
+              "stationId": "1.7",
               "ref": "math/graph"
             },
             {
-              "id": "1.38",
+              "id": "1.37",
+              "stationId": "1.38",
               "ref": "ai/route-state-cost"
             },
             {
-              "id": "1.39",
+              "id": "1.38",
+              "stationId": "1.39",
               "ref": "algorithms/traversal"
             },
             {
-              "id": "1.8",
+              "id": "1.39",
+              "stationId": "1.8",
               "ref": "algorithms/shortest"
             },
             {
               "id": "1.40",
+              "stationId": "1.40",
               "ref": "ai/closed-unreachable"
             },
             {
               "id": "1.41",
+              "stationId": "1.41",
               "ref": "software-engineering/testing"
             },
             {
               "id": "1.42",
+              "stationId": "1.42",
               "ref": "ai/pinned-versions"
             },
             {
               "id": "1.43",
+              "stationId": "1.43",
               "ref": "ai/seeds-repeated-runs"
             },
             {
               "id": "1.44",
+              "stationId": "1.44",
               "ref": "ai/ablation"
             },
             {
               "id": "1.45",
+              "stationId": "1.45",
               "ref": "ai/recording-nonreproduction"
             },
             {
               "id": "1.46",
+              "stationId": "1.46",
               "ref": "ai/sensor-data-retention"
             },
             {
               "id": "1.47",
+              "stationId": "1.47",
               "ref": "ai/risk-ranking"
             },
             {
               "id": "1.48",
+              "stationId": "1.48",
               "ref": "ai/alert-map-join"
             },
             {
               "id": "1.49",
+              "stationId": "1.49",
               "ref": "ai/prediction-vs-route-errors"
             },
             {
               "id": "1.50",
+              "stationId": "1.50",
               "ref": "ai/inspection-release-report"
             }
           ],
@@ -743,122 +793,152 @@ const courseCatalog = {
           "lessons": [
             {
               "id": "2.1",
+              "stationId": "2.1",
               "ref": "ai/warehouse-state-identity"
             },
             {
-              "id": "2.6",
+              "id": "2.2",
+              "stationId": "2.6",
               "ref": "ai/warehouse-cost-objectives"
             },
             {
-              "id": "2.7",
+              "id": "2.3",
+              "stationId": "2.7",
               "ref": "algorithms/complexity"
             },
             {
-              "id": "2.2",
+              "id": "2.4",
+              "stationId": "2.2",
               "ref": "ai/uniform-cost-expansion"
             },
             {
-              "id": "2.8",
+              "id": "2.5",
+              "stationId": "2.8",
               "ref": "ai/reopen-cheaper-states"
             },
             {
-              "id": "2.3",
+              "id": "2.6",
+              "stationId": "2.3",
               "ref": "ai/warehouse-distance-lower-bound"
             },
             {
-              "id": "2.9",
+              "id": "2.7",
+              "stationId": "2.9",
               "ref": "ai/astar-cumulative-estimated-cost"
             },
             {
-              "id": "2.10",
+              "id": "2.8",
+              "stationId": "2.10",
               "ref": "ai/heuristic-admissible-consistent"
             },
             {
-              "id": "2.11",
+              "id": "2.9",
+              "stationId": "2.11",
               "ref": "ai/obstacle-aware-heuristic"
             },
             {
-              "id": "2.12",
+              "id": "2.10",
+              "stationId": "2.12",
               "ref": "ai/search-budget-vs-unreachable"
             },
             {
-              "id": "2.4",
+              "id": "2.11",
+              "stationId": "2.4",
               "ref": "ai/order-variables-domains-constraints"
             },
             {
-              "id": "2.13",
+              "id": "2.12",
+              "stationId": "2.13",
               "ref": "ai/warehouse-backtracking-order"
             },
             {
-              "id": "2.14",
+              "id": "2.13",
+              "stationId": "2.14",
               "ref": "ai/constraint-propagation-candidates"
             },
             {
-              "id": "2.15",
+              "id": "2.14",
+              "stationId": "2.15",
               "ref": "ai/precedence-predicates"
             },
             {
-              "id": "2.16",
+              "id": "2.15",
+              "stationId": "2.16",
               "ref": "ai/explain-order-conflict"
             },
             {
-              "id": "2.5",
+              "id": "2.16",
+              "stationId": "2.5",
               "ref": "ai/warehouse-action-preconditions"
             },
             {
               "id": "2.17",
+              "stationId": "2.17",
               "ref": "ai/regress-delivery-subgoals"
             },
             {
               "id": "2.18",
+              "stationId": "2.18",
               "ref": "ai/warehouse-resource-conflicts"
             },
             {
               "id": "2.19",
+              "stationId": "2.19",
               "ref": "ai/repair-warehouse-plan"
             },
             {
               "id": "2.20",
+              "stationId": "2.20",
               "ref": "ai/verify-warehouse-plan"
             },
             {
               "id": "2.21",
+              "stationId": "2.21",
               "ref": "ai/bayes-network-conditional-independence"
             },
             {
               "id": "2.22",
+              "stationId": "2.22",
               "ref": "ai/bayes-variable-elimination"
             },
             {
               "id": "2.23",
+              "stationId": "2.23",
               "ref": "ai/rejection-sampling-inference"
             },
             {
               "id": "2.24",
+              "stationId": "2.24",
               "ref": "ai/hidden-markov-warehouse-state"
             },
             {
               "id": "2.25",
+              "stationId": "2.25",
               "ref": "ai/observation-value-utility"
             },
             {
               "id": "2.26",
+              "stationId": "2.26",
               "ref": "ai/game-tree-minimax"
             },
             {
               "id": "2.27",
+              "stationId": "2.27",
               "ref": "ai/alpha-beta-branch-pruning"
             },
             {
               "id": "2.28",
+              "stationId": "2.28",
               "ref": "ai/stochastic-opponent-expectimax"
             },
             {
               "id": "2.29",
+              "stationId": "2.29",
               "ref": "ai/monte-carlo-tree-iteration"
             },
             {
               "id": "2.30",
+              "stationId": "2.30",
               "ref": "ai/local-search-random-restarts"
             }
           ],
@@ -873,131 +953,163 @@ const courseCatalog = {
           "titleEn": "Data and applied ML",
           "lessons": [
             {
-              "id": "3.6",
+              "id": "3.1",
+              "stationId": "3.6",
               "ref": "database/sql"
             },
             {
-              "id": "3.1",
+              "id": "3.2",
+              "stationId": "3.1",
               "ref": "ai/order-inventory-as-of"
             },
             {
-              "id": "3.7",
+              "id": "3.3",
+              "stationId": "3.7",
               "ref": "ai/stockout-censoring"
             },
             {
-              "id": "3.8",
+              "id": "3.4",
+              "stationId": "3.8",
               "ref": "ai/returns-cancellations-labels"
             },
             {
-              "id": "3.9",
+              "id": "3.5",
+              "stationId": "3.9",
               "ref": "ai/item-sample-weights"
             },
             {
-              "id": "3.10",
+              "id": "3.6",
+              "stationId": "3.10",
               "ref": "ai/demand-data-access"
             },
             {
-              "id": "3.2",
+              "id": "3.7",
+              "stationId": "3.2",
               "ref": "ai/seasonal-autocorrelation"
             },
             {
-              "id": "3.11",
+              "id": "3.8",
+              "stationId": "3.11",
               "ref": "ai/seasonal-naive-demand"
             },
             {
-              "id": "3.12",
+              "id": "3.9",
+              "stationId": "3.12",
               "ref": "ai/moving-average-smoothing"
             },
             {
-              "id": "3.3",
+              "id": "3.10",
+              "stationId": "3.3",
               "ref": "ai/lag-rolling-features"
             },
             {
-              "id": "3.13",
+              "id": "3.11",
+              "stationId": "3.13",
               "ref": "ai/forecast-horizon-split"
             },
             {
-              "id": "3.14",
+              "id": "3.12",
+              "stationId": "3.14",
               "ref": "ai/rolling-origin-validation"
             },
             {
-              "id": "3.15",
+              "id": "3.13",
+              "stationId": "3.15",
               "ref": "ai/ridge-demand-regression"
             },
             {
-              "id": "3.4",
+              "id": "3.14",
+              "stationId": "3.4",
               "ref": "ai/demand-tree-split"
             },
             {
-              "id": "3.16",
+              "id": "3.15",
+              "stationId": "3.16",
               "ref": "ai/demand-random-forest"
             },
             {
-              "id": "3.17",
+              "id": "3.16",
+              "stationId": "3.17",
               "ref": "ai/boosting-demand-residuals"
             },
             {
-              "id": "3.18",
+              "id": "3.17",
+              "stationId": "3.18",
               "ref": "ai/rare-item-encoding"
             },
             {
-              "id": "3.19",
+              "id": "3.18",
+              "stationId": "3.19",
               "ref": "ai/temporal-hyperparameters"
             },
             {
-              "id": "3.20",
+              "id": "3.19",
+              "stationId": "3.20",
               "ref": "ai/scaled-demand-mae"
             },
             {
-              "id": "3.21",
+              "id": "3.20",
+              "stationId": "3.21",
               "ref": "ai/forecast-bias-underordering"
             },
             {
-              "id": "3.22",
+              "id": "3.21",
+              "stationId": "3.22",
               "ref": "ai/demand-quantile-cost"
             },
             {
-              "id": "3.23",
+              "id": "3.22",
+              "stationId": "3.23",
               "ref": "ai/forecast-interval-coverage"
             },
             {
-              "id": "3.5",
+              "id": "3.23",
+              "stationId": "3.5",
               "ref": "ai/item-residual-failures"
             },
             {
               "id": "3.24",
+              "stationId": "3.24",
               "ref": "ai/demand-distribution-shift"
             },
             {
               "id": "3.25",
+              "stationId": "3.25",
               "ref": "ai/delayed-forecast-monitoring"
             },
             {
               "id": "3.26",
+              "stationId": "3.26",
               "ref": "ai/shadow-demand-deployment"
             },
             {
               "id": "3.27",
+              "stationId": "3.27",
               "ref": "ai/item-rollout-rollback"
             },
             {
               "id": "3.28",
+              "stationId": "3.28",
               "ref": "ai/demand-experiment-interference"
             },
             {
               "id": "3.29",
+              "stationId": "3.29",
               "ref": "ai/standardized-nearest-items"
             },
             {
               "id": "3.30",
+              "stationId": "3.30",
               "ref": "ai/kmeans-demand-groups"
             },
             {
               "id": "3.31",
+              "stationId": "3.31",
               "ref": "ai/pca-demand-patterns"
             },
             {
               "id": "3.32",
+              "stationId": "3.32",
               "ref": "ai/anomaly-review-budget"
             }
           ],
@@ -1012,123 +1124,153 @@ const courseCatalog = {
           "titleEn": "Vision and multimodal perception",
           "lessons": [
             {
-              "id": "4.6",
+              "id": "4.1",
+              "stationId": "4.6",
               "ref": "computing-basics/media"
             },
             {
-              "id": "4.7",
+              "id": "4.2",
+              "stationId": "4.7",
               "ref": "graphics/transforms"
             },
             {
-              "id": "4.8",
+              "id": "4.3",
+              "stationId": "4.8",
               "ref": "ai/resize-padding-coordinates"
             },
             {
-              "id": "4.9",
+              "id": "4.4",
+              "stationId": "4.9",
               "ref": "ai/box-mask-annotation"
             },
             {
-              "id": "4.10",
+              "id": "4.5",
+              "stationId": "4.10",
               "ref": "ai/camera-time-split"
             },
             {
-              "id": "4.1",
+              "id": "4.6",
+              "stationId": "4.1",
               "ref": "ai/cnn"
             },
             {
-              "id": "4.2",
+              "id": "4.7",
+              "stationId": "4.2",
               "ref": "ai/feature-receptive-field"
             },
             {
-              "id": "4.11",
+              "id": "4.8",
+              "stationId": "4.11",
               "ref": "ai/stride-downsampling"
             },
             {
-              "id": "4.12",
+              "id": "4.9",
+              "stationId": "4.12",
               "ref": "ai/augmentation-labels"
             },
             {
-              "id": "4.13",
+              "id": "4.10",
+              "stationId": "4.13",
               "ref": "ai/pretrained-vision-transfer"
             },
             {
-              "id": "4.3",
+              "id": "4.11",
+              "stationId": "4.3",
               "ref": "ai/detection-box-score"
             },
             {
-              "id": "4.4",
+              "id": "4.12",
+              "stationId": "4.4",
               "ref": "ai/intersection-over-union"
             },
             {
-              "id": "4.14",
+              "id": "4.13",
+              "stationId": "4.14",
               "ref": "ai/nonmaximum-suppression"
             },
             {
-              "id": "4.15",
+              "id": "4.14",
+              "stationId": "4.15",
               "ref": "ai/segmentation-boundary-errors"
             },
             {
-              "id": "4.16",
+              "id": "4.15",
+              "stationId": "4.16",
               "ref": "ai/threshold-defect-misses"
             },
             {
-              "id": "4.5",
+              "id": "4.16",
+              "stationId": "4.5",
               "ref": "ai/image-text-shared-space"
             },
             {
               "id": "4.17",
+              "stationId": "4.17",
               "ref": "ai/contrastive-hard-negatives"
             },
             {
               "id": "4.18",
+              "stationId": "4.18",
               "ref": "ai/image-instruction-ranking"
             },
             {
               "id": "4.19",
+              "stationId": "4.19",
               "ref": "ai/oracle-crop-retrieval"
             },
             {
               "id": "4.20",
+              "stationId": "4.20",
               "ref": "ai/lighting-pair-first-failure"
             },
             {
               "id": "4.21",
+              "stationId": "4.21",
               "ref": "ai/visual-patch-tokens"
             },
             {
               "id": "4.22",
+              "stationId": "4.22",
               "ref": "ai/occlusion-object-tracks"
             },
             {
               "id": "4.23",
+              "stationId": "4.23",
               "ref": "ai/camera-motion-optical-flow"
             },
             {
               "id": "4.24",
+              "stationId": "4.24",
               "ref": "ai/stereo-depth-cues"
             },
             {
               "id": "4.25",
+              "stationId": "4.25",
               "ref": "ai/video-split-track-evaluation"
             },
             {
               "id": "4.26",
+              "stationId": "4.26",
               "ref": "ai/samples-to-spectrogram"
             },
             {
               "id": "4.27",
+              "stationId": "4.27",
               "ref": "ai/speech-segment-alignment"
             },
             {
               "id": "4.28",
+              "stationId": "4.28",
               "ref": "ai/ctc-collapse-alignment"
             },
             {
               "id": "4.29",
+              "stationId": "4.29",
               "ref": "ai/early-late-multimodal-fusion"
             },
             {
               "id": "4.30",
+              "stationId": "4.30",
               "ref": "ai/missing-modality-performance"
             }
           ],
@@ -1144,130 +1286,162 @@ const courseCatalog = {
           "lessons": [
             {
               "id": "5.1",
+              "stationId": "5.1",
               "ref": "ai/hidden-state-observation"
             },
             {
-              "id": "5.6",
+              "id": "5.2",
+              "stationId": "5.6",
               "ref": "ai/action-space-control-period"
             },
             {
-              "id": "5.7",
+              "id": "5.3",
+              "stationId": "5.7",
               "ref": "ai/transition-probability-markov"
             },
             {
-              "id": "5.2",
+              "id": "5.4",
+              "stationId": "5.2",
               "ref": "ai/reward-discount-return"
             },
             {
-              "id": "5.8",
+              "id": "5.5",
+              "stationId": "5.8",
               "ref": "ai/route-following-rule"
             },
             {
-              "id": "5.3",
+              "id": "5.6",
+              "stationId": "5.3",
               "ref": "ai/state-action-value"
             },
             {
-              "id": "5.9",
+              "id": "5.7",
+              "stationId": "5.9",
               "ref": "ai/bellman-expectation"
             },
             {
-              "id": "5.10",
+              "id": "5.8",
+              "stationId": "5.10",
               "ref": "algorithms/dynamic"
             },
             {
-              "id": "5.11",
+              "id": "5.9",
+              "stationId": "5.11",
               "ref": "ai/grid-value-iteration"
             },
             {
-              "id": "5.12",
+              "id": "5.10",
+              "stationId": "5.12",
               "ref": "ai/policy-evaluation-improvement"
             },
             {
-              "id": "5.4",
+              "id": "5.11",
+              "stationId": "5.4",
               "ref": "ai/epsilon-greedy-exploration"
             },
             {
-              "id": "5.13",
+              "id": "5.12",
+              "stationId": "5.13",
               "ref": "ai/monte-carlo-episode-return"
             },
             {
-              "id": "5.14",
+              "id": "5.13",
+              "stationId": "5.14",
               "ref": "ai/temporal-difference-bootstrap"
             },
             {
-              "id": "5.15",
+              "id": "5.14",
+              "stationId": "5.15",
               "ref": "ai/sarsa-q-learning"
             },
             {
-              "id": "5.16",
+              "id": "5.15",
+              "stationId": "5.16",
               "ref": "ai/experience-replay-target-network"
             },
             {
-              "id": "5.17",
+              "id": "5.16",
+              "stationId": "5.17",
               "ref": "ai/policy-gradient-actor-critic"
             },
             {
-              "id": "5.18",
+              "id": "5.17",
+              "stationId": "5.18",
               "ref": "ai/behavior-cloning-demonstrations"
             },
             {
-              "id": "5.19",
+              "id": "5.18",
+              "stationId": "5.19",
               "ref": "ai/navigation-map-splits"
             },
             {
-              "id": "5.20",
+              "id": "5.19",
+              "stationId": "5.20",
               "ref": "ai/paired-navigation-policy-tests"
             },
             {
-              "id": "5.21",
+              "id": "5.20",
+              "stationId": "5.21",
               "ref": "ai/high-reward-failed-trajectory"
             },
             {
-              "id": "5.22",
+              "id": "5.21",
+              "stationId": "5.22",
               "ref": "ai/policy-success-collision-seeds"
             },
             {
-              "id": "5.5",
+              "id": "5.22",
+              "stationId": "5.5",
               "ref": "ai/observation-dropout-safe-stop"
             },
             {
               "id": "5.23",
+              "stationId": "5.23",
               "ref": "ai/camera-body-world-frames"
             },
             {
               "id": "5.24",
+              "stationId": "5.24",
               "ref": "ai/sensor-timestamps-state-estimation"
             },
             {
               "id": "5.25",
+              "stationId": "5.25",
               "ref": "ai/pid-feedback-baseline"
             },
             {
               "id": "5.26",
+              "stationId": "5.26",
               "ref": "ai/actuator-saturation-speed-limits"
             },
             {
               "id": "5.27",
+              "stationId": "5.27",
               "ref": "ai/simulation-to-hardware-error"
             },
             {
               "id": "5.28",
+              "stationId": "5.28",
               "ref": "ai/dynamics-randomization-transfer"
             },
             {
               "id": "5.29",
+              "stationId": "5.29",
               "ref": "ai/hardware-controller-in-loop"
             },
             {
               "id": "5.30",
+              "stationId": "5.30",
               "ref": "ai/sensor-actuator-latency"
             },
             {
               "id": "5.31",
+              "stationId": "5.31",
               "ref": "ai/independent-stop-handover"
             },
             {
               "id": "5.32",
+              "stationId": "5.32",
               "ref": "ai/replay-physical-simulation-gap"
             }
           ],
@@ -1282,155 +1456,193 @@ const courseCatalog = {
           "titleEn": "Generative and language models",
           "lessons": [
             {
-              "id": "6.2",
+              "id": "6.1",
+              "stationId": "6.2",
               "ref": "ai/llm"
             },
             {
-              "id": "6.8",
+              "id": "6.2",
+              "stationId": "6.8",
               "ref": "ai/corpus-provenance-deduplication"
             },
             {
               "id": "6.3",
+              "stationId": "6.3",
               "ref": "ai/utf8-byte-fallback"
             },
             {
-              "id": "6.9",
+              "id": "6.4",
+              "stationId": "6.9",
               "ref": "ai/bpe-train-decode"
             },
             {
-              "id": "6.10",
+              "id": "6.5",
+              "stationId": "6.10",
               "ref": "ai/ngram-add-one-smoothing"
             },
             {
-              "id": "6.11",
+              "id": "6.6",
+              "stationId": "6.11",
               "ref": "ai/shift-next-token-targets"
             },
             {
-              "id": "6.4",
+              "id": "6.7",
+              "stationId": "6.4",
               "ref": "ai/embedding-vocabulary-projection"
             },
             {
-              "id": "6.1",
+              "id": "6.8",
+              "stationId": "6.1",
               "ref": "ai/attention"
             },
             {
-              "id": "6.12",
+              "id": "6.9",
+              "stationId": "6.12",
               "ref": "ai/position-token-order"
             },
             {
-              "id": "6.5",
+              "id": "6.10",
+              "stationId": "6.5",
               "ref": "ai/causal-mask-prefix-invariance"
             },
             {
-              "id": "6.13",
+              "id": "6.11",
+              "stationId": "6.13",
               "ref": "ai/residual-norm-feedforward"
             },
             {
-              "id": "6.14",
+              "id": "6.12",
+              "stationId": "6.14",
               "ref": "ai/stable-softmax-logits"
             },
             {
-              "id": "6.6",
+              "id": "6.13",
+              "stationId": "6.6",
               "ref": "ai/masked-token-cross-entropy"
             },
             {
-              "id": "6.15",
+              "id": "6.14",
+              "stationId": "6.15",
               "ref": "ai/gradient-check-autodiff"
             },
             {
-              "id": "6.16",
+              "id": "6.15",
+              "stationId": "6.16",
               "ref": "ai/adamw-learning-rate-schedule"
             },
             {
-              "id": "6.17",
+              "id": "6.16",
+              "stationId": "6.17",
               "ref": "ai/gradient-norm-clipping"
             },
             {
-              "id": "6.18",
+              "id": "6.17",
+              "stationId": "6.18",
               "ref": "ai/training-checkpoint-rng"
             },
             {
-              "id": "6.19",
+              "id": "6.18",
+              "stationId": "6.19",
               "ref": "ai/shared-tokenizer-held-out-loss"
             },
             {
-              "id": "6.7",
+              "id": "6.19",
+              "stationId": "6.7",
               "ref": "ai/autoregressive-decoding-eos"
             },
             {
               "id": "6.20",
+              "stationId": "6.20",
               "ref": "ai/temperature-distribution"
             },
             {
               "id": "6.21",
+              "stationId": "6.21",
               "ref": "ai/top-k-nucleus-sampling"
             },
             {
               "id": "6.22",
+              "stationId": "6.22",
               "ref": "ai/generation-repetition-memorization"
             },
             {
               "id": "6.23",
+              "stationId": "6.23",
               "ref": "ai/training-token-compute-budget"
             },
             {
               "id": "6.24",
+              "stationId": "6.24",
               "ref": "ai/domain-evaluation-baseline"
             },
             {
               "id": "6.25",
+              "stationId": "6.25",
               "ref": "ai/supervised-chat-target-mask"
             },
             {
               "id": "6.26",
+              "stationId": "6.26",
               "ref": "ai/full-tuning-memory-ledger"
             },
             {
               "id": "6.27",
+              "stationId": "6.27",
               "ref": "ai/lora-low-rank-update"
             },
             {
               "id": "6.28",
+              "stationId": "6.28",
               "ref": "ai/qlora-lora-memory-quality"
             },
             {
               "id": "6.29",
+              "stationId": "6.29",
               "ref": "ai/preference-pair-disagreement"
             },
             {
               "id": "6.30",
+              "stationId": "6.30",
               "ref": "ai/reward-model-score-limits"
             },
             {
               "id": "6.31",
+              "stationId": "6.31",
               "ref": "ai/dpo-preference-log-ratio"
             },
             {
               "id": "6.32",
+              "stationId": "6.32",
               "ref": "ai/domain-adaptation-general-regression"
             },
             {
               "id": "6.33",
+              "stationId": "6.33",
               "ref": "ai/adapter-merge-equivalence"
             },
             {
               "id": "6.34",
+              "stationId": "6.34",
               "ref": "ai/vae-latent-sampling"
             },
             {
               "id": "6.35",
+              "stationId": "6.35",
               "ref": "ai/gan-discriminator-mode-collapse"
             },
             {
               "id": "6.36",
+              "stationId": "6.36",
               "ref": "ai/diffusion-forward-noising"
             },
             {
               "id": "6.37",
+              "stationId": "6.37",
               "ref": "ai/diffusion-noise-prediction-reverse"
             },
             {
               "id": "6.38",
+              "stationId": "6.38",
               "ref": "ai/conditional-generation-quality-diversity"
             }
           ],
@@ -1446,134 +1658,167 @@ const courseCatalog = {
           "lessons": [
             {
               "id": "7.1",
+              "stationId": "7.1",
               "ref": "ai/llm"
             },
             {
-              "id": "7.7",
+              "id": "7.2",
+              "stationId": "7.7",
               "ref": "security/threatmodel"
             },
             {
-              "id": "7.8",
+              "id": "7.3",
+              "stationId": "7.8",
               "ref": "ai/rag-document-registry"
             },
             {
-              "id": "7.2",
+              "id": "7.4",
+              "stationId": "7.2",
               "ref": "ai/rag-structure-preserving-parse"
             },
             {
-              "id": "7.9",
+              "id": "7.5",
+              "stationId": "7.9",
               "ref": "ai/rag-chunk-boundaries"
             },
             {
-              "id": "7.3",
+              "id": "7.6",
+              "stationId": "7.3",
               "ref": "ai/rag-inverted-index-bm25"
             },
             {
-              "id": "7.10",
+              "id": "7.7",
+              "stationId": "7.10",
               "ref": "ai/rag-evidence-test-set"
             },
             {
-              "id": "7.11",
+              "id": "7.8",
+              "stationId": "7.11",
               "ref": "ai/rag-embedding-cosine"
             },
             {
-              "id": "7.12",
+              "id": "7.9",
+              "stationId": "7.12",
               "ref": "ai/rag-exact-approx-neighbors"
             },
             {
-              "id": "7.13",
+              "id": "7.10",
+              "stationId": "7.13",
               "ref": "ai/rag-hybrid-rrf"
             },
             {
-              "id": "7.14",
+              "id": "7.11",
+              "stationId": "7.14",
               "ref": "ai/rag-cross-encoder-reranking"
             },
             {
-              "id": "7.15",
+              "id": "7.12",
+              "stationId": "7.15",
               "ref": "ai/rag-recall-rank-metrics"
             },
             {
-              "id": "7.4",
+              "id": "7.13",
+              "stationId": "7.4",
               "ref": "ai/rag-prompt-data-boundaries"
             },
             {
-              "id": "7.16",
+              "id": "7.14",
+              "stationId": "7.16",
               "ref": "ai/rag-context-passage-budget"
             },
             {
-              "id": "7.17",
+              "id": "7.15",
+              "stationId": "7.17",
               "ref": "ai/rag-citation-source-ids"
             },
             {
-              "id": "7.18",
+              "id": "7.16",
+              "stationId": "7.18",
               "ref": "ai/rag-conflicting-documents-abstention"
             },
             {
-              "id": "7.6",
+              "id": "7.17",
+              "stationId": "7.6",
               "ref": "ai/rag-gold-context-diagnosis"
             },
             {
-              "id": "7.5",
+              "id": "7.18",
+              "stationId": "7.5",
               "ref": "ai/rag-tool-input-schema"
             },
             {
               "id": "7.19",
+              "stationId": "7.19",
               "ref": "ai/rag-document-tool-authorization"
             },
             {
               "id": "7.20",
+              "stationId": "7.20",
               "ref": "ai/rag-tool-state-persistence"
             },
             {
               "id": "7.21",
+              "stationId": "7.21",
               "ref": "ai/rag-retries-idempotency-stop"
             },
             {
               "id": "7.22",
+              "stationId": "7.22",
               "ref": "ai/rag-trace-blocked-tool"
             },
             {
               "id": "7.23",
+              "stationId": "7.23",
               "ref": "ai/rag-local-model-device-budget"
             },
             {
               "id": "7.24",
+              "stationId": "7.24",
               "ref": "ai/rag-offline-artifact-manifest"
             },
             {
               "id": "7.25",
+              "stationId": "7.25",
               "ref": "ai/rag-offline-hash-installation"
             },
             {
               "id": "7.26",
+              "stationId": "7.26",
               "ref": "ai/rag-offline-index-build"
             },
             {
               "id": "7.27",
+              "stationId": "7.27",
               "ref": "ai/rag-offline-restart-access-restore"
             },
             {
               "id": "7.28",
+              "stationId": "7.28",
               "ref": "ai/rag-disconnected-suite-replay"
             },
             {
               "id": "7.29",
+              "stationId": "7.29",
               "ref": "ai/rec-feedback-exposure-bias"
             },
             {
               "id": "7.30",
+              "stationId": "7.30",
               "ref": "ai/rec-collaborative-factorization"
             },
             {
               "id": "7.31",
+              "stationId": "7.31",
               "ref": "ai/rec-cold-start-content"
             },
             {
               "id": "7.32",
+              "stationId": "7.32",
               "ref": "ai/rec-personalization-diversity"
             },
             {
               "id": "7.33",
+              "stationId": "7.33",
               "ref": "ai/rec-exposure-log-offline-evaluation"
             }
           ],
@@ -1588,147 +1833,183 @@ const courseCatalog = {
           "titleEn": "AI systems and serving",
           "lessons": [
             {
-              "id": "8.3",
+              "id": "8.1",
+              "stationId": "8.3",
               "ref": "ai/serving-request-lifecycle"
             },
             {
-              "id": "8.7",
+              "id": "8.2",
+              "stationId": "8.7",
               "ref": "system-design/parallel"
             },
             {
-              "id": "8.8",
+              "id": "8.3",
+              "stationId": "8.8",
               "ref": "ai/serving-gpu-kernel-blocks"
             },
             {
-              "id": "8.9",
+              "id": "8.4",
+              "stationId": "8.9",
               "ref": "ai/serving-device-host-transfer"
             },
             {
-              "id": "8.10",
+              "id": "8.5",
+              "stationId": "8.10",
               "ref": "ai/serving-bandwidth-compute-roofline"
             },
             {
-              "id": "8.11",
+              "id": "8.6",
+              "stationId": "8.11",
               "ref": "ai/serving-inference-memory-budget"
             },
             {
-              "id": "8.1",
+              "id": "8.7",
+              "stationId": "8.1",
               "ref": "system-design/queue"
             },
             {
-              "id": "8.12",
+              "id": "8.8",
+              "stationId": "8.12",
               "ref": "ai/serving-static-batching-delay"
             },
             {
-              "id": "8.13",
+              "id": "8.9",
+              "stationId": "8.13",
               "ref": "ai/serving-prefill-token-decode"
             },
             {
-              "id": "8.2",
+              "id": "8.10",
+              "stationId": "8.2",
               "ref": "system-design/cache"
             },
             {
-              "id": "8.14",
+              "id": "8.11",
+              "stationId": "8.14",
               "ref": "ai/serving-kv-cache-scope"
             },
             {
-              "id": "8.15",
+              "id": "8.12",
+              "stationId": "8.15",
               "ref": "ai/serving-continuous-batching"
             },
             {
-              "id": "8.4",
+              "id": "8.13",
+              "stationId": "8.4",
               "ref": "ai/serving-float-format-ranges"
             },
             {
-              "id": "8.16",
+              "id": "8.14",
+              "stationId": "8.16",
               "ref": "ai/serving-integer-quantization-scale"
             },
             {
-              "id": "8.17",
+              "id": "8.15",
+              "stationId": "8.17",
               "ref": "ai/serving-weight-activation-quantization"
             },
             {
-              "id": "8.18",
+              "id": "8.16",
+              "stationId": "8.18",
               "ref": "ai/serving-quantization-calibration"
             },
             {
-              "id": "8.19",
+              "id": "8.17",
+              "stationId": "8.19",
               "ref": "ai/serving-context-memory-limit"
             },
             {
-              "id": "8.5",
+              "id": "8.18",
+              "stationId": "8.5",
               "ref": "ai/serving-single-optimization-ablation"
             },
             {
-              "id": "8.20",
+              "id": "8.19",
+              "stationId": "8.20",
               "ref": "ai/serving-reproducible-workload-shape"
             },
             {
-              "id": "8.21",
+              "id": "8.20",
+              "stationId": "8.21",
               "ref": "ai/serving-ttft-inter-token-p95"
             },
             {
-              "id": "8.22",
+              "id": "8.21",
+              "stationId": "8.22",
               "ref": "ai/serving-throughput-quality-cost"
             },
             {
-              "id": "8.23",
+              "id": "8.22",
+              "stationId": "8.23",
               "ref": "system-design/loadbalancing"
             },
             {
-              "id": "8.24",
+              "id": "8.23",
+              "stationId": "8.24",
               "ref": "ai/serving-admission-backpressure"
             },
             {
-              "id": "8.25",
+              "id": "8.24",
+              "stationId": "8.25",
               "ref": "ai/serving-cancellation-resource-reclaim"
             },
             {
-              "id": "8.6",
+              "id": "8.25",
+              "stationId": "8.6",
               "ref": "ai/serving-version-bundle"
             },
             {
               "id": "8.26",
+              "stationId": "8.26",
               "ref": "ai/serving-hardware-startup-checks"
             },
             {
               "id": "8.27",
+              "stationId": "8.27",
               "ref": "ai/serving-observability-trace-ids"
             },
             {
               "id": "8.28",
+              "stationId": "8.28",
               "ref": "ai/serving-shadow-canary-rollout"
             },
             {
               "id": "8.29",
+              "stationId": "8.29",
               "ref": "ai/serving-quality-alert-rollback"
             },
             {
               "id": "8.30",
+              "stationId": "8.30",
               "ref": "ai/serving-release-budget-decision"
             },
             {
               "id": "8.31",
+              "stationId": "8.31",
               "ref": "ai/serving-training-memory-ledger"
             },
             {
               "id": "8.32",
+              "stationId": "8.32",
               "ref": "ai/serving-data-parallel-gradients"
             },
             {
               "id": "8.33",
+              "stationId": "8.33",
               "ref": "ai/serving-tensor-parallel-collectives"
             },
             {
               "id": "8.34",
+              "stationId": "8.34",
               "ref": "ai/serving-pipeline-idle-bubbles"
             },
             {
               "id": "8.35",
+              "stationId": "8.35",
               "ref": "ai/serving-optimizer-sharding-recomputation"
             },
             {
               "id": "8.36",
+              "stationId": "8.36",
               "ref": "ai/serving-distributed-checkpoint-resume"
             }
           ],

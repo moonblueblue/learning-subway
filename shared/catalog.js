@@ -3748,7 +3748,7 @@ const courseCatalog = {
           "title": "운영체제는 어떤 일을 할까?",
           "titleEn": "What does an operating system do?",
           "question": "사진을 띄우거나 음악을 틀 때 앱은 누구에게 어떤 일을 부탁할까요?",
-          "format": "실습",
+          "format": "단계 그림",
           "requires": [],
           "page": "os/what-os-does.html"
         },

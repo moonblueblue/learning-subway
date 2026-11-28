@@ -3267,8 +3267,8 @@ const courseCatalog = {
           "id": "media",
           "title": "그림의 작은 칸",
           "titleEn": "The small squares in an image",
-          "question": "그림 한 칸의 밝기와 색은 어느 수로 정할까?",
-          "format": "실험",
+          "question": "그림의 색은 어떤 수로 적을까?",
+          "format": "단계 그림",
           "requires": [
             "computing-basics/bits"
           ],

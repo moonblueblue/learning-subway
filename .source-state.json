@@ -5,7 +5,7 @@
     "computing-basics/bits": "7aa44d952a3e0bc69a68975782797e294a0dcbef",
     "computing-basics/compress": "7aa44d952a3e0bc69a68975782797e294a0dcbef",
     "computing-basics/computer": "a49007902e33ccf7d920bcc67e1640c06b530358",
-    "computing-basics/computer-tasks": "3b5e43d19f6ad2bdfad07ec8300bbc5b17c540e0",
+    "computing-basics/computer-tasks": "6be24451456156e14436a215062272b565791e48",
     "computing-basics/media": "c04886f2e7bf09ed7d6666d6383008f96982e551",
     "computing-basics/repeatable-instructions": "b13bab13041cbe07325b6da411304638fa2578a7",
     "computing-basics/search": "7aa44d952a3e0bc69a68975782797e294a0dcbef",
@@ -25,5 +25,5 @@
     "programming/stack": "6a3a68f632c178a93a4947be5679e79d436cba8c",
     "programming/variables": "8291a9110901af3e6035bf8a33dcff9aa2b0a123"
   },
-  "source_tip": "3b5e43d19f6ad2bdfad07ec8300bbc5b17c540e0"
+  "source_tip": "6be24451456156e14436a215062272b565791e48"
 }

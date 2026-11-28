@@ -177,8 +177,23 @@ const lessonFrame = (() => {
     }));
   }
 
+  // Flow motion (figure guide 3-1): a lesson with `motion: true` plays its figure once each time it is drawn,
+  // and the replay button plays it again. The figure as drawn is the end of the motion.
+  const replay = lesson.motion && document.querySelector('.view-controls')
+    ? Object.assign(create('button', '다시 보기', 'action lesson-replay'), {type: 'button'}) : null;
+  if (replay) {
+    document.querySelector('.view-controls').append(replay);
+    replay.onclick = () => window.IsoScene?.play(figure);
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => { replay.hidden = still.matches; };
+    still.addEventListener('change', sync);
+    sync();
+  }
+
   function renderFigure(step, waiting) {
-    const drawn = draw(waiting ? step.predict.before : step.figure, index);
+    const definition = waiting ? step.predict.before : step.figure;
+    const drawn = draw(definition, index);
+    if (lesson.motion && definition.custom) window.IsoScene?.play(figure);
     const captions = waiting
       ? [step.predict.prompt, ' ', step.predict.before.description]
       : [...drawn, ...(drawn.length && step.description ? ['. '] : []), step.description];

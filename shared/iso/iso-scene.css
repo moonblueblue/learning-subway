@@ -1,0 +1,43 @@
+/* Shared 2.5D scene colours (figure guide 4, visual language). Solid paths come from anatomy's kit:
+   .iso-fill under everything, .iso-shade[data-shade] for side faces (0 darkest), .iso-top, .iso-line edges. */
+#figure .iso-solid { --iso-paper: #eef1ef; --iso-top: #f6f8f6; --iso-s0: #b9c4be; --iso-s1: #c6d0ca; --iso-s2: #d3dad6; --iso-s3: #dfe5e1; --iso-edge: #7f948a; }
+#figure .iso-fill { fill: var(--iso-paper); stroke: none; }
+#figure .iso-shade { stroke: none; }
+#figure .iso-shade[data-shade="0"] { fill: var(--iso-s0); }
+#figure .iso-shade[data-shade="1"] { fill: var(--iso-s1); }
+#figure .iso-shade[data-shade="2"] { fill: var(--iso-s2); }
+#figure .iso-shade[data-shade="3"] { fill: var(--iso-s3); }
+#figure .iso-top { fill: var(--iso-top); stroke: none; }
+#figure .iso-line { fill: none; stroke: var(--iso-edge); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+#figure .iso-crease, #figure .iso-bevel { stroke-opacity: .45; }
+#figure .iso-edge[data-changed] { stroke: #0f766e; stroke-width: 3; }
+
+/* Kinds a lesson can use. A new kind is added here first (figure guide 4). */
+#figure .kind-computer { --iso-paper: #e2f1eb; --iso-top: #eaf6f0; --iso-s0: #8fc3ae; --iso-s1: #a5cdbd; --iso-s2: #b9d9cb; --iso-s3: #cbe4d9; --iso-edge: #417b67; }
+#figure .kind-key { --iso-top: #fbfdfb; --iso-edge: #6f8a7b; }
+#figure .kind-key-on { --iso-paper: #c4e9d8; --iso-top: #c9ecdc; --iso-s0: #6fae8a; --iso-s1: #85bd9d; --iso-s2: #9bccb0; --iso-s3: #b0dac2; --iso-edge: #116a55; }
+#figure .kind-panel { --iso-paper: #fbfdfb; --iso-top: #ffffff; --iso-s0: #c8d4cd; --iso-s1: #d3dcd6; --iso-s2: #dfe6e1; --iso-s3: #f8fbf9; --iso-edge: #6f8a7b; }
+#figure .kind-plate { --iso-paper: #e2f1eb; --iso-top: #eef7f3; --iso-s0: #a5cdbd; --iso-s1: #b9d9cb; --iso-s2: #cbe4d9; --iso-s3: #e2f1eb; --iso-edge: #417b67; }
+#figure .kind-screen { --iso-paper: #163b35; --iso-top: #2c4f48; --iso-s0: #0d2924; --iso-s1: #12322c; --iso-s2: #163b35; --iso-s3: #163b35; --iso-edge: #0d2924; }
+#figure .kind-stand { --iso-paper: #3d5a52; --iso-top: #4c6b62; --iso-s0: #2c443d; --iso-s1: #344f47; --iso-s2: #3d5a52; --iso-s3: #476458; --iso-edge: #2c443d; }
+#figure .kind-frame-empty { --iso-paper: #edf5ee; --iso-s3: #edf5ee; --iso-edge: #889e90; }
+
+/* Floor grid, wires and arrowheads (one filled triangle, figure guide 3). */
+#figure .iso-grid path { fill: none; stroke: #86ad97; stroke-width: .7; opacity: .3; }
+#figure .iso-wire { fill: none; stroke-linecap: butt; }
+#figure .wire-flow { stroke: #0f766e; stroke-width: 3; }
+#figure .wire-idle { stroke: #a9b8b0; stroke-width: 2; stroke-dasharray: 4 4; }
+#figure .wire-unknown { stroke: #a9b8b0; stroke-width: 1.6; }
+#figure .iso-arrow.arrow-flow { fill: #0f766e; }
+#figure .iso-arrow.arrow-idle, #figure .iso-arrow.arrow-unknown { fill: #a9b8b0; }
+
+/* Value dots and moving packets. */
+#figure .iso-dot circle { fill: #fff; stroke: #0f766e; stroke-width: 2; }
+#figure .iso-dot-label, #figure .iso-packet text { font: 800 15px ui-monospace, monospace; fill: #0f5a3c; text-anchor: middle; }
+#figure .iso-packet circle { fill: #0f766e; stroke: #fff; stroke-width: 1.6; }
+#figure .iso-packet text { fill: #fff; }
+
+/* An element waiting for its packet stays hidden until the packet arrives, then fades in. */
+#figure .iso-waiting { opacity: 0; }
+#figure [data-after] { transition: opacity .25s ease-out; }
+@media (prefers-reduced-motion: reduce) { #figure [data-after] { transition: none; } }

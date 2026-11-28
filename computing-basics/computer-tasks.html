@@ -9,49 +9,21 @@
 <meta name="lesson-frame" content="2">
 <style>
 #figure { text-anchor: middle; fill: var(--ink); }
-#figure .heading { font: 750 20px system-ui, sans-serif; }
-#figure .caption { font: 650 16px system-ui, sans-serif; }
-#figure .operation { font: 720 19px system-ui, sans-serif; }
-#figure .detail { font: 700 17px ui-monospace, monospace; fill: #2c5a4b; }
-#figure .value { font: 750 30px system-ui, sans-serif; }
-#figure .key-label { font: 800 19px system-ui, sans-serif; fill: #24443a; }
-#figure .face { stroke-width: .9; stroke-linejoin: round; }
-#figure .base .top { fill: #eef1ef; stroke: #8c9d96; }
-#figure .base .left { fill: #d3dad6; stroke: #8c9d96; }
-#figure .base .right { fill: #b9c4be; stroke: #8c9d96; }
-#figure .key .top { fill: #f8fcf9; stroke: #819b8b; }
-#figure .key .left { fill: #dfe7e2; stroke: #819b8b; }
-#figure .key .right { fill: #c8d4cd; stroke: #819b8b; }
-#figure .key.pressed .top { fill: #c4e9d8; stroke: #116a55; }
-#figure .key.pressed .left { fill: #a5d6b6; stroke: #116a55; }
-#figure .key.pressed .right { fill: #78b592; stroke: #116a55; }
-#figure .computer .top { fill: #e2f1eb; stroke: #417b67; }
-#figure .computer .left { fill: #c4e0d4; stroke: #417b67; }
-#figure .computer .right { fill: #a5cdbd; stroke: #417b67; }
-#figure .panel { fill: #f8fcf9; stroke: #819b8b; stroke-width: 1.5; }
-#figure .panel.instruction { fill: #e2f1eb; stroke: #417b67; }
-#figure .panel.waiting-frame { fill: #edf5ee; stroke: #889e90; stroke-dasharray: 5 4; }
-#figure .screen { fill: #163b35; stroke: #0d2924; stroke-width: 1.5; }
-#figure .neck { fill: #3d5a52; }
+#figure .heading { font: 750 18px system-ui, sans-serif; }
+#figure .caption { font: 650 14px system-ui, sans-serif; }
+#figure .operation { font: 720 15px system-ui, sans-serif; }
+#figure .detail { font: 700 14px ui-monospace, monospace; fill: #2c5a4b; }
+#figure .value { font: 750 24px system-ui, sans-serif; }
+#figure .key-label { font: 800 15px system-ui, sans-serif; fill: #24443a; }
 #figure .screen-text { fill: #fff; }
 #figure .waiting { fill: #596860; }
-#figure .flow { stroke: #0f766e; stroke-width: 3; }
-#figure .flow-arrow { fill: #0f766e; }
-#figure .flow.unknown { stroke: #a9b8b0; stroke-width: 1.6; }
-#figure .flow-arrow.unknown { fill: #a9b8b0; }
-#figure .value-dot circle { fill: #fff; stroke: #0f766e; stroke-width: 2; }
-#figure .dot-label { font: 800 16px ui-monospace, monospace; fill: #0f5a3c; }
-#figure .lane-rule { stroke: #a5b9ad; stroke-width: 1; stroke-dasharray: 6 5; }
-#figure .result-border { fill: none; }
-/* The highlight wins over every block and panel colour above. */
-#figure .face[data-changed], #figure rect[data-changed] { stroke: #0f766e !important; stroke-width: 3 !important; }
 #figure text[data-changed] { fill: #0f766e; }
-#figure .slab-side { fill: #b9c4be; stroke: #8c9d96; stroke-width: .8; }
-#figure .slab-top { fill: #dfe7e2; stroke: #8c9d96; stroke-width: .8; }
-#figure .iso-grid line { stroke: #86ad97; stroke-width: .7; opacity: .35; }
 #scene.is-zoomed { cursor: grab; touch-action: none; }
 #scene.is-dragging { cursor: grabbing; }
 </style>
+<link rel="stylesheet" href="../shared/iso/iso-scene.css?v=5973bf9ef76a7105">
+<script src="../shared/iso/iso-kit.js?v=dd5b559051e01418"></script>
+<script src="../shared/iso/iso-scene.js?v=795931e5c29495c2"></script>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
 <link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
@@ -60,10 +32,10 @@
 <script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
 <script defer blocking="render" src="../shared/figures.js?v=9a32f313b4490f7f"></script>
 <script defer blocking="render" src="./computer-tasks.items.js?v=2f7ceb00b5fdefd8"></script>
-<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=7310b25ba82093c0"></script>
 <script defer blocking="render" src="../shared/catalog.js?v=f7c4de8c7934f922"></script>
 <script defer blocking="render" src="./computer-tasks.en.js?v=92f9bbb9c0a5169b"></script>
-<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=8f1f3b89f1a020f0"></script>
 <script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
@@ -128,6 +100,7 @@ const smallerPhoto = {task: '작게 만들기', result: '작은 사진', width: 
 const grayPhoto = {task: '회색으로 바꾸기', result: '회색 사진', width: 96, height: 56, gray: true};
 
 const lesson = {
+  motion: true,
   question: "같은 것을 주어도 맡긴 일이 달라지면 어떤 결과가 나올까요?",
   terms: [
   {
@@ -302,170 +275,126 @@ const center = {x: viewWidth / 2, y: viewHeight / 2};
 const camera = {x: 0, y: 0, zoom: 1};
 const maxZoom = 2.2;
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-// A 2.5D scene (figure guide 1): each row is a path on the floor. The thing the computer gets stands on a
-// platform on the left, the computer box with its instruction plate in the middle, the screen on the right.
-// A floor wire with filled triangle arrowheads runs left to right, and a value dot on the first wire says
-// what is handed over. Two rows stand one behind the other; one row always takes the back place.
-const columns = [0, 205, 410];           // world x of the three places (left, middle, right)
-const rowFloor = [0, 134];                // world y of the back row and the front row
-const iso = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
+// The figure is a shared 2.5D scene (dist/shared/iso, figure guide 1 and 8). Each row is a lane across the
+// floor: on the left a platform with what the computer gets, in the middle the computer box with the
+// instruction plate standing on it, on the right the screen. Floor wires carry the value left to right, and
+// the flow plays once when the step opens (figure guide 3-1): the value moves into the computer, then the
+// result moves to the screen, which shows it on arrival.
+const lane = {input: 0, computer: 215, output: 430};
+const rowDepth = [0, 230];
+const sceneBounds = [[-70, -45, 0], [500, -45, 0], [-70, 275, 0], [500, 275, 0], [215, -10, 82], [430, 0, 88]];
 
-function text(parent, x, y, value, className) {
-  const label = svg('text', {x, y, class: className}, parent);
-  label.textContent = value;
-  return label;
-}
-function rect(parent, x, y, width, height, className, rx = 8) {
-  return svg('rect', {x, y, width, height, rx, class: className}, parent);
-}
-// A standing panel (card, screen, frame, plate) with its thickness shown along the floor's depth axis.
-function slab(parent, x, y, width, height, className, rx = 6, depth = 7) {
-  const dx = depth, dy = -depth / 2;
-  svg('polygon', {class: 'slab-side', points: `${x + width - 2},${y + 2} ${x + width - 2 + dx},${y + 2 + dy} ${x + width - 2 + dx},${y + height - 2 + dy} ${x + width - 2},${y + height - 2}`}, parent);
-  svg('polygon', {class: 'slab-top', points: `${x + 2},${y + 2} ${x + 2 + dx},${y + 2 + dy} ${x + width - 2 + dx},${y + 2 + dy} ${x + width - 2},${y + 2}`}, parent);
-  return rect(parent, x, y, width, height, className, rx);
-}
-// A faint floor grid along the two floor axes, fading towards the edges.
-function floorGrid(parent) {
-  const g = svg('g', {class: 'iso-grid'}, parent);
-  for (let k = -16; k <= 22; k += 2) {
-    const a = iso(k, -16), b = iso(k, 22), c = iso(-16, k), d = iso(22, k);
-    svg('line', {x1: a[0], y1: a[1], x2: b[0], y2: b[1]}, g);
-    svg('line', {x1: c[0], y1: c[1], x2: d[0], y2: d[1]}, g);
-  }
-}
 function picture(parent, x, y, width, height, gray = false) {
-  svg('use', {href: '#task-photo', x: x - width / 2, y: y - height / 2, width, height,
+  const element = svg('use', {href: '#task-photo', x: x - width / 2, y: y - height / 2, width, height,
     ...(gray ? {style: 'filter: grayscale(1)'} : {})}, parent);
-}
-// A block standing on the floor at (cx, cy): half sizes hx, hy on the floor, height H, lifted by z.
-function block(parent, cx, cy, hx, hy, H, kind, z = 0) {
-  const g = svg('g', {class: 'block ' + kind, transform: `translate(${cx} ${cy})`}, parent);
-  const at = (x, y, h) => iso(x, y, z + h).join(',');
-  const faces = {
-    left: [[-hx, -hy, 0], [hx, -hy, 0], [hx, -hy, H], [-hx, -hy, H]],
-    right: [[hx, -hy, 0], [hx, hy, 0], [hx, hy, H], [hx, -hy, H]],
-    top: [[-hx, -hy, H], [hx, -hy, H], [hx, hy, H], [-hx, hy, H]],
-  };
-  for (const [name, corners] of Object.entries(faces))
-    svg('polygon', {class: 'face ' + name, points: corners.map(c => at(...c)).join(' ')}, g);
-  return g;
-}
-const mark = (g, on) => { if (on) for (const face of g.querySelectorAll('.face, .panel, .screen')) face.setAttribute('data-changed', ''); return g; };
-
-// The floor wire from one place to the next: it runs under both blocks, and the arrowhead sits on the open part.
-function wire(parent, from, to, y, known) {
-  const z = 3;
-  svg('line', {x1: from, y1: y - z, x2: to, y2: y - z, class: known ? 'flow' : 'flow unknown'}, parent);
-  const tip = from + (to - from) * .46;
-  svg('polygon', {class: known ? 'flow-arrow' : 'flow-arrow unknown', points: `${tip + 4},${y - z} ${tip - 5},${y - z - 4.5} ${tip - 5},${y - z + 4.5}`}, parent);
-}
-// The dot is sized to the word it carries in the page's language, so "Photo" fits as well as "사진".
-function valueDot(parent, x, y, value) {
-  const shown = window.courseI18n?.translate(value) ?? value;
-  const width = [...shown].reduce((sum, ch) => sum + (/[가-힣]/.test(ch) ? 16 : 9), 0);
-  const g = svg('g', {class: 'value-dot'}, parent);
-  svg('circle', {cx: x, cy: y - 3, r: Math.max(15, width / 2 + 7)}, g);
-  text(g, x, y + 2, value, 'dot-label');
+  return element;
 }
 
-function drawInput(parent, kind, value, y, changed) {
-  const x = columns[0];
+function drawInput(s, kind, value, v, changed) {
+  const u = lane.input;
   if (kind === 'key') {
-    block(parent, x, y, 2.1, 2.1, 7, 'base');
+    s.block(u, v, {w: 72, d: 72, h: 8, kind: 'base'});
     ['A', 'B'].forEach((key, i) => {
       const pressed = key === value;
-      const offset = i ? .95 : -.95;
-      const [kx, ky] = iso(offset, offset, 0);
-      const cap = mark(block(parent, x + kx, y + ky, .82, .82, pressed ? 4 : 9, pressed ? 'key pressed' : 'key', 7), pressed && changed);
-      const [tx, ty] = iso(0, 0, 7 + (pressed ? 4 : 9));
-      text(cap, tx, ty + 6, key, 'key-label');
+      const ku = u + (i ? 21 : -21);
+      const h = pressed ? 4 : 10;
+      s.block(ku, v, {w: 24, d: 24, h, z: 8, r: 3, kind: pressed ? 'key-on' : 'key', changed: pressed && changed});
+      const [x, y] = s.at(ku, v, 8 + h);
+      const label = svg('text', {x, y: y + 6, class: 'key-label'}, s.layers.labels);
+      label.textContent = key;
     });
     return;
   }
-  block(parent, x, y, 1.45, 1.45, 6, 'base');
+  s.block(u, v, {w: 64, d: 64, h: 8, kind: 'base'});
   if (kind === 'card') {
     twoCards.forEach((number, i) => {
-      const cx = x + (i ? 25 : -25);
-      slab(parent, cx - 20, y - 62, 40, 52, 'panel card', 6, 5);
-      text(parent, cx, y - 25, number, 'value');
+      const cu = u + (i ? 22 : -22);
+      s.block(cu, v, {w: 34, d: 6, h: 46, z: 8, r: 0, kind: 'panel', facing: 'front'});
+      s.faceText(cu, v + 3, 8 + 15, number, 'value');
     });
   } else {
-    slab(parent, x - 56, y - 82, 112, 72, 'panel frame', 6);
-    picture(parent, x, y - 46, 96, 56);
+    s.block(u, v, {w: 104, d: 6, h: 66, z: 8, r: 0, kind: 'panel', facing: 'front'});
+    const [x, y] = s.at(u, v + 3, 8 + 33);
+    const scale = s.at(1, 0)[0] - s.at(0, 0)[0];
+    picture(s.layers.labels, x, y, 96 * scale, 56 * scale);
   }
 }
 
-function drawComputer(parent, instruction, y, changed) {
-  const x = columns[1];
-  const g = mark(block(parent, x, y, 1.6, 1.6, 28, 'computer'), changed);
-  // The instruction plate stands on the computer: the job, and under it what the job works out.
+function drawComputer(s, instruction, v, changed) {
+  const u = lane.computer;
+  s.block(u, v, {w: 58, d: 58, h: 34, kind: 'computer', changed});
+  // The instruction plate stands on the computer's top: the job, and under it what the job works out.
   const detail = instruction.detail;
-  const height = detail ? 50 : 32;
-  const top = y - 28 - 20 - height;
-  const plate = slab(parent, x - 84, top, 168, height, 'panel instruction', 9, 6);
-  if (changed) plate.setAttribute('data-changed', '');
-  text(parent, x, top + 22, instruction.task, 'operation');
-  if (detail) text(parent, x, top + 42, detail, 'detail');
-  return g;
+  const h = detail ? 46 : 30;
+  s.block(u, v - 30, {w: 150, d: 5, h, z: 34, r: 0, kind: 'plate', facing: 'front', changed});
+  s.faceText(u, v - 27.5, 34 + h - 19, instruction.task, 'operation');
+  if (detail) s.faceText(u, v - 27.5, 34 + 7, detail, 'detail');
 }
 
-function drawOutput(parent, kind, outcome, y, changed) {
-  const x = columns[2];
-  block(parent, x, y, 1, 1, 8, 'base');
+function drawOutput(s, kind, outcome, v, changed, seq) {
+  const u = lane.output;
+  s.block(u, v, {w: 26, d: 26, h: 8, kind: 'stand'});
   if (kind === 'photo') {
-    const frame = slab(parent, x - 62, y - 86, 124, 76, 'panel frame' + (outcome ? '' : ' waiting-frame'), 6);
+    s.block(u, v, {w: 124, d: 6, h: 78, z: 8, r: 0, kind: outcome ? 'panel' : 'frame-empty', facing: 'front', changed});
+    const [x, y] = s.at(u, v + 3, 8 + 39);
     if (outcome) {
-      picture(parent, x, y - 48, outcome.width, outcome.height, outcome.gray);
-      if (changed) svg('rect', {x: x - outcome.width / 2, y: y - 48 - outcome.height / 2, width: outcome.width,
-        height: outcome.height, rx: 5, class: 'result-border'}, parent).setAttribute('data-changed', '');
-    } else text(parent, x, y - 43, '대기 중', 'caption waiting');
-    return frame;
+      const scale = s.at(1, 0)[0] - s.at(0, 0)[0];
+      const photo = picture(s.layers.labels, x, y, outcome.width * scale, outcome.height * scale, outcome.gray);
+      photo.dataset.after = seq;
+    } else {
+      const wait = svg('text', {x, y: y + 5, class: 'caption waiting'}, s.layers.labels);
+      wait.textContent = '대기 중';
+    }
+    return;
   }
-  svg('rect', {x: x - 5, y: y - 22, width: 10, height: 14, class: 'neck'}, parent);
-  const screen = slab(parent, x - 61, y - 84, 122, 62, 'screen', 7, 9);
-  if (changed) screen.setAttribute('data-changed', '');
+  // The screen stands behind the middle of its stand, so the stand's front shows under it.
+  s.block(u, v - 8, {w: 8, d: 4, h: 14, z: 8, r: 0, kind: 'stand', facing: 'front'});
+  s.block(u, v - 8, {w: 122, d: 8, h: 64, z: 22, r: 0, kind: 'screen', facing: 'front', changed});
   const result = outcome?.result;
-  text(parent, x, y - 53 + (result == null ? 0 : 5), result ?? '빈 화면', result == null ? 'caption screen-text' : 'value screen-text');
+  const [x, y] = s.at(u, v - 4, 22 + 32);
+  const text = svg('text', {x, y: y + (result == null ? 5 : 11), class: result == null ? 'caption screen-text' : 'value screen-text'}, s.layers.labels);
+  text.textContent = result ?? '빈 화면';
+  if (result != null) text.dataset.after = seq;
 }
 
-function drawRow(parent, kind, instruction, outcome, y, marks) {
-  const row = svg('g', {class: 'row'}, parent);
+function drawRow(s, kind, instruction, outcome, v, marks) {
   const handed = kind === 'key' ? instruction.key : kind === 'card' ? twoCards.join(', ') : '사진';
+  const result = kind === 'photo' ? '사진' : outcome?.result;
   // Wires first, so the blocks cover their ends and only the open stretch between places shows.
-  wire(row, columns[0], columns[1], y, true);
-  wire(row, columns[1], columns[2], y, Boolean(outcome));
-  drawInput(row, kind, instruction.key, y, marks.includes('key'));
-  drawComputer(row, instruction, y, marks.includes('job'));
-  drawOutput(row, kind, outcome, y, marks.includes('output'));
-  valueDot(row, (columns[0] + columns[1]) / 2 + 22, y, handed);
+  // The moving value starts from the value dot and goes into the computer.
+  const dotAt = lane.input + 52 + (lane.computer - 94) * .64;
+  s.wire([[lane.input, v], [lane.computer, v]], {travel: [[52, v], [lane.computer - 42, v]], arrowAt: .3, seq: 1, carry: handed, moveFrom: [dotAt, v]});
+  s.wire([[lane.computer, v], [lane.output, v]], outcome
+    ? {travel: [[lane.computer + 42, v], [lane.output - 20, v]], seq: 2, carry: result}
+    : {state: 'unknown', travel: [[lane.computer + 42, v], [lane.output - 20, v]]});
+  drawInput(s, kind, instruction.key, v, marks.includes('key'));
+  drawComputer(s, instruction, v, marks.includes('job'));
+  drawOutput(s, kind, outcome, v, marks.includes('output'), 2);
+  s.dot(dotAt, v, handed);
 }
 
 function drawFigure(index, {hide, changed}) {
   const step = lesson.steps[index];
   drawing.replaceChildren();
-  // One fixed fit for every step (two rows and the headings' place), so nothing moves between steps.
-  const world = svg('g', {transform: 'translate(152 146) scale(.79)'}, drawing);
-  const fade = svg('radialGradient', {id: 'grid-fade', cx: .5, cy: .5, r: .5}, svg('defs', {}, drawing));
-  svg('stop', {offset: 0, 'stop-color': '#fff'}, fade);
-  svg('stop', {offset: 1, 'stop-color': '#000'}, fade);
-  const mask = svg('mask', {id: 'grid-mask'}, drawing.querySelector('defs'));
-  svg('rect', {x: -260, y: -260, width: 900, height: 560, fill: 'url(#grid-fade)'}, mask);
-  floorGrid(svg('g', {mask: 'url(#grid-mask)', transform: 'translate(0 70)'}, world));
+  // One fit for every step (both rows and the headings' place), so nothing moves between steps.
+  const s = IsoScene.scene(drawing, {bounds: sceneBounds, headroom: 46, pad: 10});
+  s.grid([-90, 520], [-70, 300], 26);
   step.headings?.forEach(([name, meaning], i) => {
-    const title = text(world, columns[i], -158, name, 'heading');
+    const x = s.at([lane.input, lane.computer, lane.output][i], 0)[0];
+    const title = svg('text', {x, y: 20, class: 'heading'}, drawing);
+    title.textContent = name;
     if (changed.includes('headings')) title.setAttribute('data-changed', '');
-    text(world, columns[i], -136, meaning, 'caption');
+    svg('text', {x, y: 40, class: 'caption'}, drawing).textContent = meaning;
   });
-  // Back row first, so the front row stands in front of it.
   step.rows.forEach((option, position) => {
     const n = position + 1;
     const instruction = step.kind === 'key' ? {task: keyboard.task, key: option}
       : hide.includes('detail-' + n) ? {task: option.task} : option;
     const outcome = hide.includes('output-' + n) ? null : step.kind === 'key' ? {result: option} : option;
     const marks = changed.filter(id => id.endsWith('-' + n)).map(id => id.split('-')[0]);
-    drawRow(world, step.kind, instruction, outcome, rowFloor[position], marks);
+    drawRow(s, step.kind, instruction, outcome, rowDepth[position], marks);
   });
+  s.settle();
 }
 
 byId('zoom-in').onclick = () => zoomBy(.3);

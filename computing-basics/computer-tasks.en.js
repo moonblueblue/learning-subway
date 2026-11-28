@@ -106,3 +106,34 @@ window.lessonText = {
   '위의 예시는 A 키를 눌러 화면에 A를 띄웁니다.': 'The example above presses A and shows A on the screen.',
   '위의 예시는 수 카드 2와 3을 더해 5를 얻습니다.': 'The example above adds the 2 and 3 cards to get 5.',
 };
+Object.assign(window.lessonText, {
+  "같은 2와 3을 주고 '큰 수 고르기'를 맡기면 화면에 무엇이 나올까요?": "Give the same 2 and 3 and ask the computer to pick the larger number. What will it show?",
+  "3": "3",
+  "2와 3 중 큰 수는 3이고, 고르는 일은 받은 수 가운데 하나를 그대로 내놓습니다.": "3 is larger than 2. Picking returns one of the numbers it received.",
+  "5": "5",
+  "카드가 같으니 결과도 같다고 본 것인데, 결과는 맡긴 일에 따라 달라집니다.": "The same cards can look like they should give the same result. The result depends on the job.",
+  "2와 3이 함께 나온다": "Both 2 and 3",
+  "두 카드를 받았으니 둘 다 나온다고 본 것인데, 고르기는 둘 중 하나만 내놓습니다.": "The two cards are both inputs. The job returns only one of them.",
+  "같은 컬러 사진을 위 줄은 '작게 만들기', 아래 줄은 '회색으로 바꾸기'에 맡깁니다. 두 결과는 어떻게 될까요?": "Both rows get the same color photo. The top row makes it smaller, and the bottom row makes it grayscale. What will the results look like?",
+  "위는 색이 같은 작은 사진, 아래는 크기가 같은 회색 사진": "A smaller photo with the same colors above, and a grayscale photo of the same size below",
+  "작게 만들기는 크기만, 회색으로 바꾸기는 색만 바꿉니다.": "Making it smaller changes its size. Making it grayscale changes its color.",
+  "두 줄 모두 작은 회색 사진": "Both rows give a small grayscale photo",
+  "맡긴 일이 두 줄에 함께 적용된다고 본 것인데, 줄마다 그 줄의 가운데 일만 합니다.": "This would require both jobs to run on each row. Each row carries out only the job in its middle box.",
+  "두 줄 모두 색이 같은 작은 사진": "Both rows give a smaller photo with the same colors",
+  "같은 사진을 받았으니 결과도 같다고 본 것인데, 4단계처럼 맡긴 일이 다르면 결과가 다릅니다.": "Both rows start with the same photo. As in step 4, different jobs give different results.",
+  "같은 수 카드 2와 3을 두 줄에 놓았습니다. 위에서는 두 수를 더해 5가 나왔고, 아래에서는 큰 수를 고르는 화면이 비어 있습니다.": "Both rows contain number cards 2 and 3. The top row adds them and shows 5. The bottom row is set to pick the larger number, and its screen is blank.",
+  "두 줄에 같은 컬러 사진이 있습니다. 위에는 작게 만들기, 아래에는 회색으로 바꾸기가 적혀 있고 두 결과는 대기 중입니다.": "Both rows contain the same color photo. The top says to make it smaller, the bottom says to make it grayscale, and both results are pending.",
+  "컴퓨터에 맡기는 일을 적은 말. 예: 누른 글자 띄우기, 두 수 더하기": "Words that describe a job for the computer, such as showing the letter or adding the numbers.",
+  "컴퓨터가 받은 것": "What the computer receives.",
+  "받은 것으로 컴퓨터가 하는 일": "What the computer does with what it receives.",
+  "컴퓨터가 내놓은 결과": "The result the computer gives back.",
+  "이번에는 B 키를 누릅니다. 누른 글자를 띄우는 일은 같지만 나오는 글자는 B로 바뀝니다. 위와 아래는 빈 화면에서 따로 시작한 두 번의 실행입니다.": "This time press B. The job of showing the letter stays the same, and the letter on the screen changes to B. The two rows are separate runs that each started with a blank screen.",
+  "같은 2와 3을 주고, 이번에는 두 수 중 큰 수를 고르라고 합니다. 2보다 3이 커서 화면에 3이 나옵니다. 고르기는 새 수를 만들지 않습니다.": "Give the computer the same 2 and 3. This time ask it to pick the larger number. Since 3 is larger than 2, it shows 3. Picking does not make a new number.",
+  "입력은 같은 사진입니다. 위에서는 크기가, 아래에서는 색이 바뀌었습니다.": "Both rows start with the same photo. The top row changes its size, and the bottom row changes its color."
+});
+window.lessonKeep = [/^사과$/, /'사과'/];
+Object.assign(window.lessonText, {
+  "같은 2와 3을 주고 '큰 수 고르기'를 맡기면 화면에 무엇이 나올까요? 같은 수 카드 2와 3을 두 줄에 놓았습니다. 위에서는 두 수를 더해 5가 나왔고, 아래에서는 큰 수를 고르는 화면이 비어 있습니다.": "Give the same 2 and 3 and ask the computer to pick the larger number. What will it show? Both rows show number cards 2 and 3. The top row adds them and gets 5. The bottom row is set to pick the larger number and its screen is blank.",
+  "같은 컬러 사진을 위 줄은 '작게 만들기', 아래 줄은 '회색으로 바꾸기'에 맡깁니다. 두 결과는 어떻게 될까요? 두 줄에 같은 컬러 사진이 있습니다. 위에는 작게 만들기, 아래에는 회색으로 바꾸기가 적혀 있고 두 결과는 대기 중입니다.": "What will the two results look like if the first row makes the photo smaller and the second makes it grayscale? Both rows start with the same color photo. The top row says to make it smaller, the bottom row says to make it grayscale, and both results are pending.",
+  "지시": "Instruction"
+});

@@ -3205,8 +3205,8 @@ const courseCatalog = {
           "id": "computer-tasks",
           "title": "컴퓨터에 어떤 일을 맡길 수 있을까?",
           "titleEn": "What can we ask a computer to do?",
-          "question": "같은 것을 주고 맡긴 일만 바꾸면 결과가 어떻게 달라질까?",
-          "format": "실험",
+          "question": "같은 것을 주어도 맡긴 일이 달라지면 어떤 결과가 나올까요?",
+          "format": "단계 그림",
           "requires": [],
           "page": "computing-basics/computer-tasks.html"
         },
@@ -3236,8 +3236,8 @@ const courseCatalog = {
           "id": "search",
           "title": "같은 일을 더 적게 하고 끝내기",
           "titleEn": "Find the answer with less work",
-          "question": "같은 수를 찾을 때 정렬하면 몇 장을 보지 않아도 될까?",
-          "format": "실험",
+          "question": "찾는 수보다 가운데 값이 작을 때, 언제 왼쪽 상자를 보지 않아도 될까?",
+          "format": "조작 포함",
           "requires": [
             "computing-basics/repeatable-instructions"
           ],
@@ -3247,8 +3247,8 @@ const courseCatalog = {
           "id": "bits",
           "title": "정보에 표시를 붙이는 약속",
           "titleEn": "Agreeing on how to represent information",
-          "question": "스위치 하나를 더하면 표시할 수 있는 경우가 얼마나 늘까?",
-          "format": "실험",
+          "question": "스위치 8개로 나타낼 수 있는 수는 몇 가지이고, 가장 큰 수는 왜 255일까?",
+          "format": "조작 포함",
           "requires": [],
           "page": "computing-basics/bits.html"
         },

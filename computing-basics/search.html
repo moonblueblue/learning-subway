@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="상자 16개에서 수 하나를 찾으며, 하나씩 찾기와 반씩 줄이기가 일의 양을 얼마나 다르게 만드는지 살펴보세요.">
+<meta name="description" content="찾는 수보다 가운데 값이 작을 때, 언제 왼쪽 상자를 보지 않아도 될까?">
+<meta name="lesson-frame" content="2">
 <title>같은 일을 더 적게 하고 끝내기</title>
 <style>
 :root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
@@ -134,8 +135,8 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .box.found .digit{fill:#0f5a3c}
 .box-index{font:600 9px var(--mono);fill:#6b7d76;text-anchor:middle}
 .box-area{display:flex;gap:10px 14px;align-items:flex-start;flex-wrap:wrap}
-.box-row{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:4px;flex:1 1 520px}
-.box-button{min-height:44px;padding:2px 0;border:1px solid #9fb7a9;border-radius:8px;background:#eef1ef;font:700 .95rem var(--mono);color:#7c8c85}
+.box-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(24px,1fr));gap:4px;flex:1 1 520px;max-width:100%}
+.box-button{min-width:24px;min-height:34px;padding:2px 0;border:1px solid #9fb7a9;border-radius:8px;background:#eef1ef;font:700 .95rem var(--mono);color:#7c8c85}
 .box-button.open{background:#fff;color:var(--ink)}
 .box-button.out{opacity:.4;background:#fff;color:var(--ink);border-style:dashed}
 .box-button.found{background:#d2f4dd;border-color:var(--accent);color:#0f5a3c}
@@ -163,22 +164,39 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 #scene .course-diagram .diagram-edge.active { marker-end: url(#search-intro-tip); }
 #scene .course-diagram .diagram-edge.blocked { marker-end: url(#search-intro-blocked-tip); }
 #shuffle-choices .actions { margin-top: 6px; }
+#world[hidden] { display: none; }
+#world .tag text, #world .box .digit, #world .box-index { font-size: 16px; }
+#figure.search-comparison .comparison-excluded { fill: url(#search-excluded); }
+#figure.search-comparison .comparison-excluded + text { fill: #4d6158; }
+#figure.search-comparison .search-small { font-size: 13px; }
+#figure.search-comparison .search-box { fill: #f7fbf8; stroke: #91a99c; }
+#figure.search-comparison .search-box.comparison-excluded { fill: url(#search-excluded); stroke-dasharray: none; }
+#figure.search-comparison .search-box.comparison-focus { stroke: #0f766e; stroke-width: 3; }
+#figure.search-comparison .search-box.comparison-found { fill: #d5efeb; }
+#figure.search-comparison .search-start { text-anchor: start; }
+#figure.search-comparison .search-end { text-anchor: end; }
+#figure.search-comparison .search-bracket { fill: none; stroke: #6d897b; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
 <link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./search.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=42f6f4d09f421784"></script>
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=c0f3c6b6db339d40">
+<link rel="stylesheet" href="../shared/figures.css?v=a40b6840c7b1364a">
+<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
+<script defer blocking="render" src="../shared/figures.js?v=14c528768c1eacea"></script>
+<script defer blocking="render" src="./search.items.js?v=2b29e4593bab933c"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=a668cf178830be0e"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=b9159b197829b257"></script>
+<script defer blocking="render" src="./search.en.js?v=061cdaa79003fc05"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=173806c4ad3440ee"></script>
+<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
 </head>
 <body>
 <main class="shell">
   <header>
     <p class="eyebrow">0장 컴퓨팅 둘러보기</p>
     <h1>같은 일을 더 적게 하고 끝내기</h1>
-    <p class="lead">같은 문제를 푸는 방법에 따라 일의 양이 얼마나 달라질까요? 상자를 직접 열어 수를 찾아 보세요.</p>
+    <p class="lead">찾는 수보다 가운데 값이 작을 때, 언제 왼쪽 상자를 보지 않아도 될까?</p>
   </header>
   <div class="workspace">
     <div>
@@ -198,35 +216,27 @@ svg{display:block;width:100%;height:auto;max-height:520px}
               <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
               <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
               <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
+              <pattern id="search-excluded" width="5" height="5" patternUnits="userSpaceOnUse">
+                <rect width="5" height="5" fill="#eaf0eb"/>
+                <path d="M-2 2L2 -2M0 5L5 0M3 7L7 3" stroke="#b2c2b8"/>
+              </pattern>
             </defs>
-            <g id="world" aria-hidden="true">
+            <g id="world" transform="translate(310 150) scale(1.04)" aria-hidden="true" hidden>
               <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
               <g id="casings"></g><g id="links"></g><g id="nodes"></g>
             </g>
-            <g id="search-transfer" class="search-comparison" aria-hidden="true"></g>
+            <g id="figure" aria-hidden="true"></g>
           </svg>
         </div>
         <div class="hands-on">
           <div class="try" id="try">
-            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p><span id="try-text"></span></p>
             <p class="try-result" id="try-result" role="status"></p>
-            <button class="action" id="try-next" type="button" hidden>다음 문제</button>
           </div>
           <p class="readout" id="readout"></p>
-          <div id="shuffle-choices" hidden>
-            <p>새로 섞은 카드에서 81을 찾습니다. 30과 한 번 비교해 왼쪽 네 장을 한꺼번에 제외할 수 있나요?</p>
-            <div class="actions">
-              <button class="action" id="shuffle-discard" type="button">왼쪽 네 장 제외</button>
-              <button class="action" id="shuffle-keep" type="button">왼쪽도 계속 확인</button>
-            </div>
-            <p class="readout" id="shuffle-feedback" role="status"></p>
-          </div>
           <div class="box-area" id="box-area">
             <div class="box-row" id="box-buttons" role="group" aria-label="상자 열기"></div>
             <button class="action" id="new-round" type="button">새 문제</button>
-          </div>
-          <div class="choices" id="size-area">
-            <div class="choice" role="group" aria-label="데이터 수"><span>데이터 수</span><div id="size-choices"></div></div>
           </div>
         </div>
         <div class="view-controls" role="group" aria-label="장면 보기">
@@ -252,7 +262,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
   </div>
   <div class="sr-only" id="announcement" role="status"></div>
 </main>
-<template id="search-scale-figure"><svg><g class="search-comparison"></g></svg></template>
 <script>
 const byId = (id) => document.getElementById(id);
 const workspace = document.querySelector('.workspace');
@@ -327,133 +336,527 @@ function makeNumbers(seed) {
   return { sorted, shuffled, random };
 }
 
-const sizes = [16, 1000, 1000000];
 const workedSorted = [1, 4, 9, 10, 16, 24, 26, 30, 35, 37, 41, 43, 61, 81, 84, 99];
 const workedShuffled = [61, 4, 99, 35, 26, 81, 16, 43, 9, 1, 30, 10, 41, 24, 37, 84];
-const lesson = [
-  {
-    readingDiagram: {
-      title: "정렬되지 않으면 앞에서부터 확인한다",
-      description: "정렬되지 않으면 앞에서부터 확인한다",
-      nodes: [
-        ["start", 87, 143, 104, 48, ["첫 상자", "61"], "plain"],
-        ["middle", 300, 143, 158, 48, ["4, 99, …, 37", "차례대로 확인"], "plain"],
-        ["end", 526, 143, 116, 48, ["16번째 상자", "84"], "active"],
-      ],
-      edges: [
-        ["start", "middle", "active", ""],
-        ["middle", "end", "active", ""],
-      ],
-      labels: [
-        [30, 226, "찾는 수 84 · 연 상자 16개"],
-      ],
+const lesson = {
+  "question": "찾는 수보다 가운데 값이 작을 때, 언제 왼쪽 상자를 보지 않아도 될까?",
+  "terms": [
+    {
+      "term": "확인",
+      "meaning": "상자 하나를 열어 찾는 수와 비교하는 일. 레슨에서 세는 \"일의 양\"의 단위",
+      "step": 1
     },
-    label: '하나씩 찾기',
-    example: ["목표가 마지막 상자에 있음", "첫 칸부터 하나씩 열기", "16칸이면 최대 16회"],
-    mode: 'linear',
-    title: '순서가 없으면 하나씩 열어 봐야 한다',
-    body: '상자 16개에 수가 하나씩 들어 있고, 순서는 뒤섞여 있습니다. 찾는 수가 어디 있는지 알 수 없으니 하나씩 열어 볼 수밖에 없습니다. 이렇게 처음부터 차례로 확인하는 방법을 순차 탐색이라고 합니다. 운이 좋으면 1번, 나쁘면 16번 열어야 합니다.',
-    takeaway: '연 상자는 숫자가 보이고, 찾으면 초록으로 솟아오릅니다. 아래 줄에 지금까지 연 횟수가 쌓입니다.',
-    description: '닫힌 상자 16개가 한 줄로 놓여 있습니다. 상자를 하나 열 때마다 그 안의 수가 보이고, 찾는 수와 같으면 상자가 초록으로 바뀝니다.',
-    tasks: [
-      { text: '상자를 열어 찾는 수를 찾아 보세요.', check: (s) => s.found },
-      { text: '새 문제로 바꾼 뒤 다시 찾아 보세요. 몇 번 만에 찾았나요?', check: (s) => s.found && s.round > 0 },
-    ],
-  },
-  {
-    readingDiagram: {
-      title: "30보다 큰 84는 오른쪽 절반에 있다",
-      description: "30보다 큰 84는 오른쪽 절반에 있다",
-      nodes: [
-        ["left", 134, 151, 177, 50, ["1–8", "모두 30 이하"], "blocked"],
-        ["mid", 309, 98, 101, 45, ["8번 상자", "30 < 84"], "active"],
-        ["right", 482, 151, 176, 50, ["9–16", "여기서 계속 찾기"], "active"],
-      ],
-      edges: [
-        ["mid", "left", "blocked", "제외"],
-        ["mid", "right", "active", "유지"],
-      ],
-      labels: [
-        [34, 222, "같은 수 16개를 오름차순으로 정렬 · 목표 84"],
-      ],
+    {
+      "term": "순차 탐색",
+      "meaning": "첫 상자부터 차례로 하나씩 열어 보는 방법",
+      "step": 1
     },
-    label: '반씩 줄이기',
-    example: ["정렬된 16칸", "가운데보다 큰 값 찾기", "왼쪽 범위를 한꺼번에 제외"],
-    mode: 'binary',
-    title: '정렬되어 있으면 반씩 버릴 수 있다',
-    body: '이번에는 수가 작은 것부터 차례로 놓여 있습니다. 가운데 상자를 열었는데 찾는 수보다 작으면, 그 왼쪽 상자는 볼 필요도 없이 모두 버릴 수 있습니다. 매번 남은 상자의 가운데를 열면 16개가 8개, 4개, 2개, 1개로 줄어, 많아야 5번이면 찾습니다. 이것을 이진 탐색이라고 합니다.',
-    takeaway: '상자를 열면 찾는 수보다 작은지 큰지 표시되고, 볼 필요 없는 쪽 상자들이 가라앉아 흐려집니다. 남은 상자의 가운데를 열어 보세요.',
-    description: '닫힌 상자 16개가 작은 수부터 차례로 놓여 있습니다. 상자를 열면 찾는 수가 그보다 작은지 큰지 알려 주고, 남은 범위 밖의 상자는 가라앉습니다.',
-    tasks: [
-      { text: '5번 이내로 찾는 수를 찾아 보세요. 남은 상자의 가운데를 여세요.', check: (s) => s.found && s.opened <= 5, result: (s) => `${s.opened}번 만에 찾았습니다` },
-      { text: '새 문제로 바꿔 다시 5번 이내로 찾아 보세요.', check: (s) => s.found && s.opened <= 5 && s.round > 0, result: (s) => `${s.opened}번 만에 찾았습니다` },
-    ],
-  },
-  {
-    readingDiagram: {
-      title: "남은 범위를 줄이기",
-      description: "남은 범위를 줄이기",
-      nodes: [
-        ["s1", 98, 150, 128, 64, ["9–16", "12번: 43 < 84"], "plain"],
-        ["s2", 245, 150, 123, 64, ["13–16", "14번: 81 < 84"], "plain"],
-        ["s3", 393, 150, 121, 64, ["15–16", "15번: 84 = 84"], "active"],
-        ["res", 543, 150, 124, 58, ["발견", "총 4회"], "active"],
-      ],
-      edges: [
-        ["s1", "s2", "active", ""],
-        ["s2", "s3", "active", ""],
-        ["s3", "res", "active", ""],
-      ],
-      labels: [
-        [33, 231, "확인한 순서 8번, 12번, 14번, 15번"],
-      ],
+    {
+      "term": "정렬",
+      "meaning": "수를 작은 것부터 차례로 늘어놓은 상태",
+      "step": 2
     },
-    label: "판단 반복",
-    example: ["남은 상자 9~16번", "남은 범위의 가운데 비교를 반복", "15번의 84를 4번 만에 발견"],
-    mode: 'binary',
-    title: "남은 범위만 다시 반으로 줄인다",
-    body: "남은 9~16번에서 가운데인 12번을 엽니다. 43은 84보다 작으므로 13~16번만 남깁니다. 14번의 81도 작아서 15~16번만 남고, 15번에서 84를 찾습니다.",
-    takeaway: "남은 9~16번에서 가운데인 12번을 엽니다. 43은 84보다 작으므로 13~16번만 남깁니다. 14번의 81도 작아서 15~16번만 남고, 15번에서 84를 찾습니다.",
-    description: '닫힌 상자 16개가 작은 수부터 차례로 놓여 있습니다. 상자를 열면 찾는 수가 그보다 작은지 큰지 알려 주고, 남은 범위 밖의 상자는 가라앉습니다.',
-    tasks: [
-      { text: '5번 이내로 찾는 수를 찾아 보세요. 남은 상자의 가운데를 여세요.', check: (s) => s.found && s.opened <= 5, result: (s) => `${s.opened}번 만에 찾았습니다` },
-      { text: '새 문제로 바꿔 다시 5번 이내로 찾아 보세요.', check: (s) => s.found && s.opened <= 5 && s.round > 0, result: (s) => `${s.opened}번 만에 찾았습니다` },
-    ],
-  },
-  {
-    readingDiagram: {
-      title: '마지막 상자까지 찾기',
-      description: '100만 개에서 마지막 상자를 찾습니다. 반씩 줄이면 남은 수가 100만, 50만, 25만에서 18회 뒤 3개, 19회 뒤 1개가 됩니다. 마지막 한 장을 20번째에 확인합니다. 하나씩 찾으면 100만 개 모두 확인합니다.',
-      figure: 'search-scale-figure'
+    {
+      "term": "후보",
+      "meaning": "아직 찾는 수가 들어 있을 수 있어서 남겨 둔 상자",
+      "step": 2
     },
-    label: '크기가 커지면',
-    example: ['같은 100만 개 · 맨 끝 목표', '하나씩 또는 반씩', '최악에 100만 회와 20회'],
-    mode: 'compare',
-    title: '후보를 반씩 줄이면 맨 끝까지 볼 필요가 줄어듭니다',
-    body: '정렬된 상자가 100만 개이고 목표는 맨 끝에 있습니다. 한 장씩 확인하면 100만 번입니다. 반씩 줄이는 방법은 19번 확인했을 때 한 장이 남고, 그 마지막 장을 확인하면 모두 20번입니다.',
-    takeaway: '위의 줄에서 남은 상자 수와 그 아래에 적힌 확인 횟수를 함께 보세요. 19회는 한 장이 남았을 때이고 20회는 그 장을 확인해 찾았을 때입니다.',
-    description: '"하나씩"과 "반씩" 두 기둥이 있습니다. 기둥 높이는 최악의 경우 상자를 여는 횟수이고, 데이터가 많아질수록 "하나씩" 기둥이 훨씬 빨리 높아집니다.',
-    tasks: [
-      { text: '데이터를 1,000개로 늘려 두 방법의 횟수를 비교해 보세요.', check: (s) => s.size === 1000, result: () => '하나씩 1,000번 · 반씩 10번' },
-      { text: '100만 개로 늘려 보세요.', check: (s) => s.size === 1000000, result: () => '하나씩 1,000,000번 · 반씩 20번' },
+    {
+      "term": "이진 탐색",
+      "meaning": "정렬된 상자에서 남은 후보의 가운데를 열고, 찾는 수가 있을 수 없는 쪽 절반을 한꺼번에 버리는 방법",
+      "step": 2
+    },
+    {
+      "term": "최악의 경우",
+      "meaning": "찾는 수가 가장 늦게 나오는 자리에 있을 때. 확인 횟수가 가장 많아지는 경우",
+      "step": 4
+    }
+  ],
+  "steps": [
+    {
+      "label": "하나씩 찾기",
+      "title": "순서가 없으면 하나씩 열어 봐야 합니다",
+      "body": "상자 16개에 수가 하나씩 들어 있고, 순서는 뒤섞여 있습니다. 찾는 수가 어디 있는지 알 수 없으니 하나씩 열어 볼 수밖에 없습니다. 이렇게 처음부터 차례로 확인하는 방법을 순차 탐색이라고 합니다. 운이 좋으면 1번, 나쁘면 16번 열어야 합니다.",
+      "takeaway": "1번부터 16번까지 차례로 열어 마지막 16번에서 84를 찾았습니다. 확인은 16회입니다.",
+      "description": "1번부터 16번까지 모두 값이 보이고 마지막 16번에서 84가 강조됩니다. 화살표가 1번에서 16번까지 이어지고 끝에 16회가 표시됩니다.",
+      "mode": "binary",
+      "figure": {
+        "custom": true
+      }
+    },
+    {
+      "label": "가운데 열기",
+      "title": "정렬되어 있으면 반을 한꺼번에 버릴 수 있습니다",
+      "body": "이번에는 수가 작은 것부터 차례로 놓여 있습니다. 가운데 상자를 열었는데 찾는 수보다 작으면, 그 왼쪽 상자는 볼 필요도 없이 모두 버릴 수 있습니다. 매번 남은 상자의 가운데를 열면 16개가 8개, 4개, 2개, 1개로 줄어, 많아야 5번이면 찾습니다. 이것을 이진 탐색이라고 합니다. 작은 수부터 놓여 있으니 8번 왼쪽은 모두 30 이하입니다. 84가 그 안에 있을 수 없습니다.",
+      "takeaway": "8번의 30이 84보다 작아 1–8번이 흐리게 제외되고, 9–16번 8개가 남은 후보입니다.",
+      "description": "30 왼쪽 값이 모두 30보다 작다는 것이 흐린 값으로 보이고, 남은 8개는 오른쪽에 붙어 있습니다.",
+      "mode": "binary",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "box-8"
+        ]
+      },
+      "predict": {
+        "prompt": "상자 16개가 작은 수부터 놓여 있고 찾는 수는 84입니다. 8번을 열었더니 30이었습니다. 어느 상자는 더 열어 볼 필요가 없을까요?",
+        "options": [
+          {
+            "text": "1~8번",
+            "why": "작은 수부터 놓였으니 8번까지는 모두 30 이하이고, 84는 그 안에 있을 수 없습니다.",
+            "correct": true
+          },
+          {
+            "text": "9~16번",
+            "why": "큰 값이 버릴 쪽이라고 거꾸로 본 것인데, 84는 30보다 크므로 오른쪽에 있습니다."
+          },
+          {
+            "text": "하나도 뺄 수 없다",
+            "why": "하나씩 찾기에서처럼 모두 열어야 한다고 본 것인데, 정렬되어 있으면 한 번의 비교로 왼쪽 전체를 판단할 수 있습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "excluded",
+            "ranges"
+          ],
+          "description": "정렬한 상자 16개 중 8번만 열려 있고 값은 30입니다. 나머지 15개는 물음표입니다."
+        }
+      }
+    },
+    {
+      "label": "판단 반복",
+      "title": "남은 후보만 다시 반으로 줄입니다",
+      "body": "남은 9~16번에서 가운데인 12번을 엽니다. 43은 84보다 작으므로 13~16번만 남깁니다. 14번의 81도 작아서 15~16번만 남고, 15번에서 84를 찾습니다.",
+      "takeaway": "남은 후보 칸이 8, 4, 2개로 줄어드는 것을 보세요",
+      "description": "남은 후보 칸이 8, 4, 2개로 줄고 4행에서 15번이 발견으로 바뀐다. 연 상자는 8, 12, 14, 15번 네 개뿐",
+      "mode": "binary",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "box-8",
+          "box-12",
+          "box-14",
+          "box-15"
+        ]
+      },
+      "practice": {
+        "goal": "정렬된 상자 16개에서 찾는 수를 5번 이내의 확인으로 찾는다",
+        "predict": {
+          "prompt": "새 문제에서 8번이 찾는 수보다 컸습니다. 다음에는 몇 번 상자를 열까요?",
+          "options": [
+            {
+              "text": "4번",
+              "why": "남은 1~7번의 가운데입니다.",
+              "correct": true
+            },
+            {
+              "text": "12번",
+              "why": "앞 예처럼 늘 오른쪽으로 간다고 본 것인데, 8번이 더 크면 찾는 수는 왼쪽에 있습니다."
+            },
+            {
+              "text": "7번",
+              "why": "방금 연 8번 바로 옆부터 본다고 본 것인데, 7번이 찾는 수보다 크면 7번 하나만 버립니다. 4번을 열면 어느 쪽으로 판단해도 남은 일곱 개 가운데 4번을 포함한 네 개가 한 번에 빠집니다."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "label": "크기가 커지면",
+      "title": "100만 개여도 20번이면 찾습니다",
+      "body": "정렬된 상자가 100만 개이고 목표는 맨 끝에 있습니다. 19번 확인하면 한 개가 남고, 그 상자를 확인하는 20번째에 찾습니다. 같은 20번을 확인했을 때 하나씩 찾기는 아직 999,980개가 남아 있습니다. 끝까지 가면 1,000,000번입니다.",
+      "takeaway": "반씩 막대의 남은 후보가 확인마다 절반이 되어 19회 뒤 1개, 20회에 발견됩니다. 하나씩 막대는 20회 뒤에도 999,980개가 남습니다.",
+      "description": "반씩 막대의 \"남은 후보\" 길이가 매번 절반이 되고, 19회 뒤에 1개가 남아 20회에 발견됩니다. 맨 아래 하나씩 막대는 20회 뒤에도 999,980개가 남아 있습니다.",
+      "mode": "binary",
+      "figure": {
+        "part": "bars",
+        "labelWidth": 175,
+        "unit": "개",
+        "bars": [
+          {
+            "id": "bar-1",
+            "label": "처음 · 찾는 수는 맨 끝",
+            "total": 1000000,
+            "segments": [
+              {
+                "id": "c0",
+                "label": "남은 후보 1,000,000",
+                "value": 1000000,
+                "kind": "a"
+              }
+            ]
+          },
+          {
+            "id": "bar-2",
+            "label": "반씩 · 1회 뒤",
+            "total": 1000000,
+            "segments": [
+              {
+                "id": "x1",
+                "label": "제외 500,000",
+                "value": 500000,
+                "kind": "b"
+              },
+              {
+                "id": "c1",
+                "label": "남은 후보 500,000",
+                "value": 500000,
+                "kind": "a"
+              }
+            ]
+          },
+          {
+            "id": "bar-3",
+            "label": "반씩 · 2회 뒤",
+            "total": 1000000,
+            "segments": [
+              {
+                "id": "x2",
+                "label": "제외 750,000",
+                "value": 750000,
+                "kind": "b"
+              },
+              {
+                "id": "c2",
+                "label": "남은 후보 250,000",
+                "value": 250000,
+                "kind": "a"
+              }
+            ]
+          },
+          {
+            "id": "bar-4",
+            "label": "반씩 · 3회 뒤",
+            "total": 1000000,
+            "segments": [
+              {
+                "id": "x3",
+                "label": "제외 875,000",
+                "value": 875000,
+                "kind": "b"
+              },
+              {
+                "id": "c3",
+                "label": "남은 후보 125,000",
+                "value": 125000,
+                "kind": "a"
+              }
+            ]
+          },
+          {
+            "id": "bar-5",
+            "label": "반씩 · 19회 뒤",
+            "total": 1000000,
+            "segments": [
+              {
+                "id": "x19",
+                "label": "제외 999,999",
+                "value": 999999,
+                "kind": "b"
+              },
+              {
+                "id": "c19",
+                "label": "남은 후보 1",
+                "value": 1,
+                "kind": "a"
+              }
+            ]
+          },
+          {
+            "id": "bar-6",
+            "label": "반씩 · 20회",
+            "total": 1000000,
+            "segments": [
+              {
+                "id": "x20",
+                "label": "제외 999,999",
+                "value": 999999,
+                "kind": "b"
+              },
+              {
+                "id": "f20",
+                "label": "발견",
+                "value": 1,
+                "kind": "c"
+              }
+            ]
+          },
+          {
+            "id": "bar-7",
+            "label": "하나씩 · 20회 뒤",
+            "total": 1000000,
+            "segments": [
+              {
+                "id": "s20",
+                "label": "확인함 20",
+                "value": 20,
+                "kind": "d"
+              },
+              {
+                "id": "r20",
+                "label": "남은 후보 999,980",
+                "value": 999980,
+                "kind": "a"
+              }
+            ]
+          }
+        ],
+        "legend": [
+          {
+            "kind": "a",
+            "label": "남은 후보"
+          },
+          {
+            "kind": "b",
+            "label": "제외"
+          },
+          {
+            "kind": "c",
+            "label": "발견"
+          },
+          {
+            "kind": "d",
+            "label": "확인함"
+          }
+        ],
+        "changed": [
+          "f20",
+          "r20"
+        ]
+      },
+      "predict": {
+        "prompt": "정렬된 상자 100만 개의 맨 끝에 찾는 수가 있습니다. 반씩 줄이며 찾으면 몇 번 확인할까요?",
+        "options": [
+          {
+            "text": "20번",
+            "why": "한 번 확인할 때마다 후보가 절반이 되어 19회 뒤 1개가 남고, 그 1개를 확인하는 20번째에 찾습니다.",
+            "correct": true
+          },
+          {
+            "text": "50만 번",
+            "why": "\"반씩\"을 일의 양이 절반이라는 뜻으로 읽은 것인데, 절반이 되는 것은 남은 후보이고 확인은 한 번씩만 늘어납니다."
+          },
+          {
+            "text": "약 31만 번",
+            "why": "16개에서 5번이었으니 상자 수에 비례해 늘 것이라고 본 것인데, 상자가 두 배가 되어도 확인은 한 번만 늘어납니다."
+          }
+        ],
+        "before": {
+          "part": "bars",
+          "labelWidth": 175,
+          "unit": "개",
+          "bars": [
+            {
+              "id": "bar-1",
+              "label": "처음 · 찾는 수는 맨 끝",
+              "total": 1000000,
+              "segments": [
+                {
+                  "id": "c0",
+                  "label": "남은 후보 1,000,000",
+                  "value": 1000000,
+                  "kind": "a"
+                }
+              ]
+            },
+            {
+              "id": "bar-2",
+              "label": "반씩 · 1회 뒤",
+              "total": 1000000,
+              "segments": [
+                {
+                  "id": "x1",
+                  "label": "제외 500,000",
+                  "value": 500000,
+                  "kind": "b"
+                },
+                {
+                  "id": "c1",
+                  "label": "남은 후보 500,000",
+                  "value": 500000,
+                  "kind": "a"
+                }
+              ]
+            },
+            {
+              "id": "bar-3",
+              "label": "반씩 · 2회 뒤",
+              "total": 1000000,
+              "segments": [
+                {
+                  "id": "x2",
+                  "label": "제외 750,000",
+                  "value": 750000,
+                  "kind": "b"
+                },
+                {
+                  "id": "c2",
+                  "label": "남은 후보 250,000",
+                  "value": 250000,
+                  "kind": "a"
+                }
+              ]
+            },
+            {
+              "id": "bar-4",
+              "label": "반씩 · 3회 뒤",
+              "total": 1000000,
+              "segments": [
+                {
+                  "id": "x3",
+                  "label": "제외 875,000",
+                  "value": 875000,
+                  "kind": "b"
+                },
+                {
+                  "id": "c3",
+                  "label": "남은 후보 125,000",
+                  "value": 125000,
+                  "kind": "a"
+                }
+              ]
+            },
+            {
+              "id": "bar-5",
+              "label": "반씩 · 19회 뒤",
+              "total": 1000000,
+              "segments": [
+                {
+                  "id": "x19",
+                  "label": "제외 999,999",
+                  "value": 999999,
+                  "kind": "b"
+                },
+                {
+                  "id": "c19",
+                  "label": "남은 후보 1",
+                  "value": 1,
+                  "kind": "a"
+                }
+              ]
+            },
+            {
+              "id": "bar-6",
+              "label": "반씩 · 20회",
+              "total": 1000000,
+              "segments": [
+                {
+                  "id": "x20",
+                  "label": "제외 999,999",
+                  "value": 999999,
+                  "kind": "b"
+                },
+                {
+                  "id": "f20",
+                  "label": "발견",
+                  "value": 1,
+                  "kind": "c"
+                }
+              ]
+            },
+            {
+              "id": "bar-7",
+              "label": "하나씩 · 20회 뒤",
+              "total": 1000000,
+              "segments": [
+                {
+                  "id": "s20",
+                  "label": "확인함 20",
+                  "value": 20,
+                  "kind": "d"
+                },
+                {
+                  "id": "r20",
+                  "label": "남은 후보 999,980",
+                  "value": 999980,
+                  "kind": "a"
+                }
+              ]
+            }
+          ],
+          "legend": [
+            {
+              "kind": "a",
+              "label": "남은 후보"
+            },
+            {
+              "kind": "b",
+              "label": "제외"
+            },
+            {
+              "kind": "c",
+              "label": "발견"
+            },
+            {
+              "kind": "d",
+              "label": "확인함"
+            }
+          ],
+          "changed": [],
+          "hide": [
+            "bar-5",
+            "bar-6",
+            "bar-7"
+          ],
+          "description": "100만 개에서 시작해 처음과 1회, 2회, 3회 뒤에 남은 후보를 보여 줍니다."
+        }
+      }
+    },
+    {
+      "label": "섞인 상자에서",
+      "title": "섞여 있으면 가운데 값만으로 왼쪽을 버릴 수 없습니다",
+      "body": "두 줄 모두 네 번째 상자의 값은 30이고 찾는 수는 84입니다. 정렬한 윗줄에서는 왼쪽이 모두 30 이하입니다. 아래처럼 상자 순서를 섞으면 30보다 큰 84가 왼쪽에도 올 수 있습니다.",
+      "takeaway": "두 줄에서 확인한 위치와 값은 같습니다. 84가 윗줄의 오른쪽에서 아랫줄의 왼쪽으로 옮겨 간 것을 찾아보세요.",
+      "description": "위는 오름차순으로 정렬되어 있습니다. 네 번째 값 30보다 84가 커서 왼쪽 네 개를 제외합니다. 아래는 같은 수를 섞었습니다. 네 번째는 여전히 30이지만 두 번째가 84여서 왼쪽을 제외하면 목표를 놓칩니다.",
+      "mode": "binary",
+      "figure": {
+        "custom": true
+      },
+      "predict": {
+        "prompt": "아랫줄은 같은 여덟 개를 섞은 것이고 4번째는 똑같이 30입니다. 찾는 수 84보다 30이 작을 때, 아랫줄에서도 왼쪽 네 개를 빼도 될까요?",
+        "options": [
+          {
+            "text": "된다",
+            "why": "윗줄과 같은 판단을 옮긴 것인데, 섞인 줄에서는 30 왼쪽에 큰 수가 올 수 있습니다."
+          },
+          {
+            "text": "안 된다, 왼쪽에도 84가 있을 수 있다",
+            "why": "왼쪽 값이 모두 작다는 보장은 정렬에서만 나오므로, 섞인 줄은 왼쪽도 확인해야 합니다.",
+            "correct": true
+          },
+          {
+            "text": "오른쪽 네 개를 빼야 한다",
+            "why": "섞이면 방향만 바뀐다고 본 것인데, 섞인 줄은 어느 쪽도 한꺼번에 뺄 근거가 없습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "mixed-values"
+          ],
+          "description": "윗줄은 정렬한 여덟 개를 모두 보여 줍니다. 아랫줄은 섞었으며 네 번째 30만 보입니다."
+        }
+      }
+    }
+  ],
+  "review": {
+    "own": [
+      "search-1",
+      "search-4"
     ],
-  },
-  {
-    mode: 'shuffle',
-    label: '섞인 카드에서',
-    title: '섞여 있으면 가운데 값만으로 왼쪽을 제외할 수 없습니다',
-    body: '두 줄 모두 네 번째 상자의 값은 30이고 찾는 수는 84입니다. 정렬한 윗줄에서는 왼쪽이 모두 30 이하입니다. 아래처럼 카드 순서를 섞으면 30보다 큰 84가 왼쪽에도 올 수 있습니다.',
-    takeaway: '두 줄에서 확인한 위치와 값은 같습니다. 84가 윗줄의 오른쪽에서 아랫줄의 왼쪽으로 옮겨 간 것을 찾아보세요.',
-    example: ['두 줄 모두 30과 84를 비교', '한 줄만 순서를 섞음', '섞은 줄에서는 왼쪽도 확인'],
-    description: '위는 오름차순으로 정렬되어 있습니다. 네 번째 값 30보다 84가 커서 왼쪽 네 장을 제외합니다. 아래는 같은 수를 섞었습니다. 네 번째는 여전히 30이지만 두 번째가 84여서 왼쪽을 제외하면 목표를 놓칩니다.',
-    tasks: []
-  },
-];
+    "prereq": {
+      "ref": "computing-basics/repeatable-instructions",
+      "id": "repeatable-instructions-4"
+    },
+    "fallback": "search-3"
+  }
+};
+const steps = lesson.steps;
 
-const step = () => lesson[state.index];
+const step = () => steps[state.index];
 const state = { index: 0, playing: !motion.matches, wait: 0, solved: '',
   round: 0, numbers: [], target: 0, openedSet: new Set(), opened: 0, lo: 0, hi: count - 1, found: false, size: 16, plan: [], protectedLeft: null };
-const progress = lesson.map(() => 0);
 
 const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
 const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
@@ -496,9 +899,9 @@ const spacing = 1.3;
 const half = .52;
 const low = 11, high = 20, sunk = 3;
 const boxes = [];
-let targetPlate, orderPlate, boxGroup;
+let targetPlate, orderPlate;
 function buildBoxes() {
-  boxGroup = svg('g', { class: 'mode-group', 'data-mode': 'boxes' }, byId('nodes'));
+  const boxGroup = svg('g', { class: 'mode-group', 'data-mode': 'boxes' }, byId('nodes'));
   for (let i = 0; i < count; i++) {
     const c = (i - (count - 1) / 2) * spacing;
     const [bx, by] = project(c, c);
@@ -516,7 +919,6 @@ function buildBoxes() {
   targetPlate = addPlate(boxGroup, 'total', 0, -62, '찾는 수 ?', { pad: 1.1, round: false });
   // Halving: the opened middles in order, under the row, so the still picture shows how the range shrank.
   orderPlate = addPlate(boxGroup, 'tag', 0, 52, '', { pad: 1.6, round: false });
-  groups.boxes = boxGroup;
 }
 function shapeBox(box, H) {
   const h = half;
@@ -530,45 +932,6 @@ function shapeBox(box, H) {
   box.digit.setAttribute('y', -H + .5);
 }
 
-// ---------- Two towers comparing the worst-case number of boxes opened ----------
-const groups = {};
-let towers = [];
-function buildTowers() {
-  const group = svg('g', { class: 'mode-group', 'data-mode': 'compare' }, byId('nodes'));
-  towers = [['하나씩 찾기', -3.2, { top: '#ffe5cc', left: '#f2c49a', right: '#d99a62', stroke: '#a24c14' }],
-            ['반씩 줄이기', 3.2, { top: '#d2f4dd', left: '#a5d6b6', right: '#78b592', stroke: '#4f8f6b' }]].map(([name, c, color]) => {
-    const node = svg('g', { class: 'node', transform: `translate(${28 * c} 0)` }, group);
-    drawShadow(node, 1.3);
-    const faces = {};
-    for (const face of ['left', 'right', 'top']) faces[face] = svg('polygon', { class: 'face', fill: color[face], stroke: color.stroke }, node);
-    const highlight = svg('path', { class: 'highlight' }, node);
-    const plate = addPlate(node, 'total', 0, 0, '0', { pad: 1.1, round: false });
-    const [nx, ny] = project(1.3, -1.3, 0);
-    addPlate(node, 'tag', nx, ny + 16, name);
-    return { node, faces, highlight, plate, height: 6, target: 6 };
-  });
-  // What the towers measure, under them: the data size and that the height is the worst-case count.
-  dataPlate = addPlate(group, 'tag', 0, 66, '', { pad: 1.6, round: false });
-  groups.compare = group;
-}
-let dataPlate;
-function shapeTower(tower, H) {
-  const h = 1.3;
-  const faces = {
-    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
-    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
-    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
-  };
-  for (const [name, corners] of Object.entries(faces)) tower.faces[name].setAttribute('points', corners.map((p) => point(...p)).join(' '));
-  tower.highlight.setAttribute('d', `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}`);
-  tower.plate.y = -H - 14 * h - 20;
-  sizePlate(tower.plate);
-}
-const worstLinear = (n) => n;
-const worstBinary = (n) => Math.ceil(Math.log2(n + 1));
-// Heights on a log scale so a million still fits: 1 → 8px, 1,000,000 → 150px.
-const towerHeight = (n) => 8 + 142 * Math.log10(n) / 6;
-
 function comparisonText(parent, x, y, value, className = '') {
   svg('text', {x, y, class: className}, parent).textContent = value;
 }
@@ -577,31 +940,6 @@ function comparisonBox(parent, x, y, width, height, tone = '') {
 }
 function comparisonArrow(parent, start, end, y) {
   svg('line', {x1: start, x2: end, y1: y, y2: y, class: 'comparison-arrow'}, parent);
-}
-
-function buildScaleFigure() {
-  const drawing = byId('search-scale-figure').content.querySelector('g');
-  comparisonText(drawing, 310, 57, '같은 100만 개 · 맨 끝 목표', 'comparison-caption');
-  comparisonText(drawing, 92, 93, '반씩 줄이기');
-  const counts = [1000000, 500000, 250000, 3, 1, '발견'];
-  const checks = [0, 1, 2, 18, 19, 20];
-  counts.forEach((value, index) => {
-    const x = 62 + 99 * index;
-    comparisonBox(drawing, x, 132, 82, 35, index > 3 ? 'comparison-focus' : '');
-    comparisonText(drawing, x, 137, typeof value === 'number' ? value.toLocaleString('en-US') : value);
-    comparisonText(drawing, x, 165, `${checks[index]}회 확인`, 'comparison-small');
-    if (index < counts.length - 1) comparisonArrow(drawing, x + 43, x + 55, 132);
-    if (index === 2) comparisonText(drawing, x + 49, 116, '…');
-  });
-  svg('line', {x1: 22, x2: 598, y1: 190, y2: 190, class: 'comparison-rule'}, drawing);
-  comparisonText(drawing, 93, 223, '하나씩 찾기');
-  for (const [x, value] of [[182, '1'], [224, '2'], [269, '…'], [354, '1,000,000']]) {
-    comparisonText(drawing, x, 223, value);
-  }
-  for (const [start, end] of [[193, 213], [235, 255], [285, 313]]) {
-    comparisonArrow(drawing, start, end, 218);
-  }
-  comparisonText(drawing, 529, 223, '1,000,000회 확인', 'comparison-caption');
 }
 
 const shuffleNumbers = {
@@ -621,24 +959,69 @@ function shuffleRow(drawing, items, y, target, {discard = false, hide = false} =
   });
 }
 
-function drawShuffle() {
-  const drawing = byId('search-transfer');
-  drawing.replaceChildren();
-  if (step().mode !== 'shuffle') return;
-  const practicing = coursePracticeStarted && !workspace.classList.contains('course-reading');
-  if (practicing) {
-    comparisonText(drawing, 310, 75, '섞은 카드 · 목표 81', 'comparison-caption');
-    shuffleRow(drawing, shuffleNumbers.exercise, 140, 81, {hide: state.protectedLeft !== true});
-    comparisonText(drawing, 310, 196, '가운데 비교 30 < 81');
-    if (state.protectedLeft === true) comparisonText(drawing, 310, 229, '왼쪽 2번에서 81 발견');
-    return;
-  }
+function drawShuffle(drawing, hide) {
   comparisonText(drawing, 310, 39, '두 줄 모두 목표 84 · 가운데 비교 30 < 84', 'comparison-caption');
-  comparisonText(drawing, 194, 81, '작은 수부터 · 왼쪽 네 장 제외');
+  comparisonText(drawing, 194, 81, '작은 수부터 · 왼쪽 네 개 제외');
   shuffleRow(drawing, shuffleNumbers.sorted, 115, 84, {discard: true});
   svg('line', {x1: 28, x2: 592, y1: 150, y2: 150, class: 'comparison-rule'}, drawing);
-  comparisonText(drawing, 194, 190, '섞은 순서 · 왼쪽에도 84');
-  shuffleRow(drawing, shuffleNumbers.mixed, 224, 84);
+  comparisonText(drawing, 194, 190, hide ? '섞은 순서' : '섞은 순서 · 왼쪽에도 84');
+  shuffleRow(drawing, shuffleNumbers.mixed, 224, 84, {hide});
+}
+function searchBox(drawing, x, y, width, height, value, {excluded, open, found} = {}) {
+  const className = ['search-box', excluded && 'comparison-excluded',
+    (open || found) && 'comparison-focus', found && 'comparison-found'].filter(Boolean).join(' ');
+  comparisonBox(drawing, x, y, width, height, className);
+  comparisonText(drawing, x, y + 5, value);
+}
+
+function drawFigure(index, {hide}) {
+  const g = byId('figure');
+  g.setAttribute('class', 'search-comparison');
+  if (index === 4) { drawShuffle(g, hide.includes('mixed-values')); return; }
+  if (index === 2) {
+    comparisonText(g, 24, 24, '정렬한 16개 · 찾는 수 84', 'search-start');
+    const opened = [7, 11, 13, 14];
+    opened.forEach((at, row) => {
+      const y = 64 + row * 56;
+      comparisonText(g, 28, y + 4, (row + 1) + '회', 'search-small');
+      workedSorted.forEach((value, i) => {
+        const x = 66 + i * 34;
+        const earlier = opened.slice(0, row).includes(i);
+        const excluded = i < at;
+        const open = i === at;
+        const found = open && row === opened.length - 1;
+        searchBox(g, x, y, 30, 34, excluded || open ? value : '?', {excluded, open: earlier || open, found});
+        if (open) comparisonText(g, x, y - 22, found ? '= 84 · 발견' : '< 84', 'search-small');
+        if (row === opened.length - 1) comparisonText(g, x, 266, i + 1, 'search-small');
+      });
+    });
+    return;
+  }
+  const boxes = index === 0 ? workedShuffled : workedSorted;
+  const hidden = hide.includes('excluded');
+  comparisonText(g, 24, 24, index === 0 ? '섞인 16개 · 찾는 수 84' : '정렬한 16개 · 찾는 수 84', 'search-start');
+  boxes.forEach((value, i) => {
+    const x = 32 + 37 * i;
+    const excluded = index === 1 && !hidden && i < 7;
+    const open = index === 1 && i === 7;
+    const found = index === 0 && i === 15;
+    comparisonText(g, x, 122, i + 1, 'search-small');
+    searchBox(g, x, 150, 32, 38, index === 0 || open || excluded ? value : '?', {excluded, open, found});
+  });
+  if (index === 0) {
+    comparisonArrow(g, 32, 587, 190);
+    comparisonText(g, 587, 106, '발견', 'search-small');
+    comparisonText(g, 603, 214, '16회 확인', 'search-end');
+    return;
+  }
+  comparisonText(g, 291, 108, '30 < 84', 'search-small');
+  comparisonText(g, 603, 24, '1회 확인', 'search-end');
+  if (!hidden) {
+    [[16, 307, '1–8번 제외 · 모두 30 이하'], [312, 603, '남은 후보 8개']].forEach(([a, b, label]) => {
+      svg('path', {d: `M${a} 187v5h${b - a}v-5`, class: 'search-bracket'}, g);
+      comparisonText(g, (a + b) / 2, 212, label);
+    });
+  }
 }
 
 // ---------- Drawing ----------
@@ -656,35 +1039,18 @@ function shownBoxValue(index, kind) {
 }
 
 function paint() {
-  const s = step();
-  byId('world').setAttribute('display', s.mode === 'shuffle' ? 'none' : '');
-  drawShuffle();
-  if (s.mode === 'shuffle') {
-    syncControls();
-    return;
-  }
-  for (const group of byId('world').querySelectorAll('.mode-group')) group.classList.toggle('hidden', group.dataset.mode !== (s.mode === 'compare' ? 'compare' : 'boxes'));
-  if (s.mode === 'compare') {
-    towers[0].target = towerHeight(worstLinear(state.size));
-    towers[1].target = towerHeight(worstBinary(state.size));
-    towers[0].plate.label.textContent = `${worstLinear(state.size).toLocaleString('ko-KR')}번`;
-    towers[1].plate.label.textContent = `${worstBinary(state.size)}번`;
-    dataPlate.label.textContent = `데이터 ${state.size.toLocaleString('ko-KR')}개 · 최악일 때 여는 횟수 · 높이는 로그 눈금`;
-    sizePlate(dataPlate);
-  } else {
-    targetPlate.label.textContent = state.opened ? `찾는 수 ${state.target} · 연 상자 ${state.opened}개` : `찾는 수 ${state.target}`;
-    sizePlate(targetPlate);
-    const order = [...state.openedSet].map((i) => `${i + 1}번 ${state.numbers[i]}`);
-    orderPlate.group.classList.toggle('hidden', s.mode !== 'binary' || !order.length);
-    orderPlate.label.textContent = order.length ? `정렬됨 · 열어 본 가운데 ${order.join(' → ')}` : '';
-    sizePlate(orderPlate);
-    boxes.forEach((box, i) => {
-      const kind = boxState(i);
-      box.node.setAttribute('class', `node box ${kind}`);
-      box.digit.textContent = shownBoxValue(i, kind);
-      box.target = kind === 'found' ? high : kind === 'out' ? sunk : low;
-    });
-  }
+  targetPlate.label.textContent = state.opened ? `찾는 수 ${state.target} · 연 상자 ${state.opened}개` : `찾는 수 ${state.target}`;
+  sizePlate(targetPlate);
+  const order = [...state.openedSet].map(i => `${i + 1}번 ${state.numbers[i]}`);
+  orderPlate.group.classList.toggle('hidden', !order.length);
+  orderPlate.label.textContent = order.length ? `정렬됨 · 열어 본 가운데 ${order.join(' → ')}` : '';
+  sizePlate(orderPlate);
+  boxes.forEach((box, i) => {
+    const kind = boxState(i);
+    box.node.setAttribute('class', `node box ${kind}`);
+    box.digit.textContent = shownBoxValue(i, kind);
+    box.target = kind === 'found' ? high : kind === 'out' ? sunk : low;
+  });
   animate();
   syncControls();
 }
@@ -695,11 +1061,11 @@ function animate() {
   const frameStep = () => {
     shapeFrame = null;
     let moving = false;
-    for (const item of [...boxes, ...towers]) {
+    for (const item of boxes) {
       const next = motion.matches ? item.target : mix(item.height, item.target, .22);
       item.height = Math.abs(next - item.target) < .3 ? item.target : next;
       if (item.height !== item.target) moving = true;
-      (item.plate ? shapeTower : shapeBox)(item, item.height);
+      shapeBox(item, item.height);
     }
     if (moving) shapeFrame = requestAnimationFrame(frameStep);
   };
@@ -724,57 +1090,30 @@ function buildControls() {
     state.round++;
     newRound();
     paint();
-    syncPlayback();
     syncTask();
     byId('announcement').textContent = `새 문제. 찾는 수 ${state.target}`;
   };
-  for (const n of sizes) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'action choice-button';
-    button.textContent = `${n.toLocaleString('ko-KR')}개`;
-    button.dataset.value = n;
-    button.addEventListener('click', () => userChange(() => { state.size = n; }, `데이터 ${n.toLocaleString('ko-KR')}개.`));
-    byId('size-choices').append(button);
-  }
 }
 function syncControls() {
-  const s = step();
-  byId('box-area').hidden = !['linear', 'binary'].includes(s.mode);
-  byId('try').hidden = s.mode === 'shuffle';
-  byId('readout').hidden = s.mode === 'shuffle';
-  byId('shuffle-choices').hidden = s.mode !== 'shuffle';
-  if (s.mode === 'shuffle') return;
-  byId('size-area').hidden = s.mode !== 'compare';
   boxButtons.forEach((button, i) => {
     const kind = boxState(i);
     button.className = `box-button ${kind}`;
     button.textContent = shownBoxValue(i, kind);
-    button.disabled = state.found || kind === 'out' || kind === 'open';
+    button.disabled = !practiceReady || state.found || kind === 'out' || kind === 'open';
     const status = kind === 'closed' ? '닫힘' : kind === 'out' ? '미개봉 제외' : String(state.numbers[i]);
     button.setAttribute('aria-label', `${i + 1}번 상자, ${status}`);
   });
-  for (const button of document.querySelectorAll('#size-choices button')) button.setAttribute('aria-pressed', String(Number(button.dataset.value) === state.size));
-  byId('readout').replaceChildren(...readout());
+  const i = [...state.openedSet].at(-1);
+  const value = state.numbers[i];
+  const symbol = value === state.target ? '=' : value < state.target ? '<' : '>';
+  const comparison = i === undefined ? '' : ` · ${value} ${symbol} ${state.target}`;
+  const remaining = state.found ? 0 : state.hi - state.lo + 1;
+  byId('readout').replaceChildren(
+    document.createTextNode(`찾는 수 ${state.target}`), ' · ',
+    document.createTextNode(`${state.opened}회 확인`), comparison, ' · ',
+    document.createTextNode(`남은 후보 ${remaining}개`)
+  );
 }
-function readout() {
-  const s = step();
-  const strong = (text, className) => {
-    const element = document.createElement('b');
-    if (className) element.className = className;
-    element.textContent = text;
-    return element;
-  };
-  if (s.mode === 'compare') {
-    return ['데이터 ', strong(`${state.size.toLocaleString('ko-KR')}개`), ' → 하나씩 최대 ', strong(`${worstLinear(state.size).toLocaleString('ko-KR')}번`),
-      ' · 반씩 최대 ', strong(`${worstBinary(state.size)}번`, 'total')];
-  }
-  const parts = ['찾는 수 ', strong(String(state.target)), ' · 연 상자 ', strong(`${state.opened}개`, 'total')];
-  if (s.mode === 'binary' && !state.found) parts.push(` · 남은 범위 ${state.hi - state.lo + 1}개`);
-  if (state.hint) parts.push(` · ${state.hint}`);
-  return parts;
-}
-
 // ---------- Searching ----------
 function newRound() {
   const { sorted, shuffled, random } = makeNumbers(state.round * 7919 + 17);
@@ -814,215 +1153,43 @@ function revealBox(i) {
   return true;
 }
 function openBox(i) {
-  if (!['linear', 'binary'].includes(step().mode)) return;
+  if (!practiceReady) return;
   userChange(() => { revealBox(i); }, '');
-  byId('announcement').textContent = state.hint;
+  byId('announcement').replaceChildren(...[...byId('readout').childNodes].map(node => node.cloneNode(true)));
 }
 function sceneTap(hit) {
   if (hit?.startsWith('b')) openBox(Number(hit.slice(1)));
 }
-function userChange(change, message) {
-  if (state.playing) {
-    // The learner takes over from the demo: start a fresh search.
-    state.playing = false;
-    if (step().mode !== 'compare') newRound();
-  }
-  state.solved = '';
+function userChange(change) {
   change();
   paint();
-  syncPlayback();
-  if (message) byId('announcement').textContent = message;
   syncTask();
-  checkTask();
 }
 
-// ---------- Try-it problems ----------
+let practiceReady = false;
 function syncTask() {
-  const tasks = step().tasks;
-  const done = progress[state.index];
-  const allDone = done >= tasks.length;
-  byId('try').classList.toggle('solved', state.solved !== '');
-  byId('try-text').textContent = state.solved !== '' ? tasks[done - 1].text
-    : allDone ? '이 단계의 문제를 모두 풀었습니다. 자유롭게 해 보세요.' : tasks[done].text;
-  byId('try-result').textContent = state.solved === '' ? ''
-    : `✓ 맞았습니다. ${state.solved}${allDone ? ' · 이 단계의 문제를 모두 풀었습니다.' : ''}`;
-  byId('try-next').hidden = state.solved === '' || allDone;
+  byId('try-result').textContent = !state.found ? ''
+    : state.opened <= 5 ? `${state.opened}번 만에 찾았습니다. 남은 상자의 가운데를 열면 16개는 많아야 5번입니다.`
+      : `${state.opened}번 걸렸습니다. 가운데가 아닌 상자를 열면 한 번에 버리는 상자가 줄어듭니다. 새 문제로 다시 해 보세요.`;
 }
-function checkTask() {
-  const tasks = step().tasks;
-  const done = progress[state.index];
-  if (state.solved !== '' || done >= tasks.length || !tasks[done].check(state)) return;
-  progress[state.index] = done + 1;
-  state.solved = tasks[done].result?.(state) ?? `${state.opened}번 만에 찾았습니다`;
-  syncTask();
-}
-byId('try-next').onclick = () => { state.solved = ''; syncTask(); };
 
-// ---------- Demo playback ----------
-let frame = null, lastFrame = null;
-function demoTick() {
-  const s = step();
-  if (s.mode === 'compare') {
-    state.size = sizes[(sizes.indexOf(state.size) + 1) % sizes.length];
-    paint();
-    state.wait = 2600;
-    return;
-  }
-  if (state.found) {
-    state.round++;
+const lessonHooks = {
+  onStep(index) { state.index = index; },
+  onPractice(open) {
+    practiceReady = open;
+    byId('world').toggleAttribute('hidden', !open);
+    if (open) byId('figure').setAttribute('visibility', 'hidden');
+    else byId('figure').removeAttribute('visibility');
+    if (!open) return;
+    state.round = 0;
     newRound();
+    byId('try-text').textContent = step().practice.goal;
+    byId('try-result').textContent = '';
     paint();
-    state.wait = 900;
-    return;
-  }
-  const next = state.plan.find((i) => !state.openedSet.has(i) && i >= state.lo && i <= state.hi);
-  revealBox(next);
-  if (state.index === 1) state.playing = false;
-  paint();
-  state.wait = state.found ? 2200 : s.mode === 'binary' ? 1300 : 520;
-}
-function tick(now) {
-  frame = null;
-  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
-  lastFrame = now;
-  if (state.playing) {
-    state.wait -= elapsed;
-    if (state.wait <= 0) demoTick();
-    frame = requestAnimationFrame(tick);
-  } else lastFrame = null;
-}
-function syncPlayback() {
-  const reduced = motion.matches;
-  if (reduced) state.playing = false;
-  if (state.playing && frame === null) frame = requestAnimationFrame(tick);
-}
-
-// ---------- Steps and routing ----------
-const legends = {
-  linear: '<span><i class="dot"></i>닫힌 상자</span><span><i class="dot open"></i>열어 본 상자</span><span><i class="dot on"></i>찾은 상자</span>',
-  binary: '<span><i class="dot open"></i>열어 본 상자</span><span><i class="dot out"></i>버린 범위</span><span><i class="dot on"></i>찾은 상자</span>',
-  shuffle: '',
-  compare: '<span><i class="dot warn"></i>하나씩 찾기</span><span><i class="dot on"></i>반씩 줄이기</span><span>기둥 높이 = 최악일 때 여는 횟수(로그 눈금)</span>',
+  },
 };
-function startStep() {
-  state.size = 16;
-  state.round = 0;
-  newRound();
-  state.wait = 900;
-  state.protectedLeft = null;
-  byId('shuffle-feedback').textContent = '';
-  if (motion.matches && !coursePracticeStarted) showFinished();
-  if (coursePracticeStarted && state.index === 2) revealBox(7);
-}
-// Nothing plays with reduced motion, so the still picture shows a finished search instead of sixteen closed boxes:
-// the example's worst case for one at a time (the last box), a target right of the middle for halving, and a million
-// items for the comparison (0.6 review: closed boxes alone said nothing about how the search went).
-function showFinished() {
-  const s = step();
-  if (s.mode === 'compare') { state.size = 1000000; return; }
-  if (s.mode === 'shuffle') return;
-  if (state.index === 1) { revealBox(7); return; }
-  const at = s.mode === 'binary' ? 14 : count - 1;
-  state.target = state.numbers[at];
-  let lo = 0, hi = count - 1;
-  state.plan = [];
-  if (s.mode === 'binary') {
-    while (lo <= hi) {
-      const mid = (lo + hi) >> 1;
-      state.plan.push(mid);
-      if (state.numbers[mid] === state.target) break;
-      if (state.numbers[mid] < state.target) lo = mid + 1; else hi = mid - 1;
-    }
-  } else state.plan = [...Array(count).keys()];
-  for (const i of state.plan) if (!state.found) revealBox(i);
-}
-function showStep(index, announce = true) {
-  state.index = index;
-  state.playing = lessonDemoEnabled() && step().mode !== 'shuffle';
-  startStep();
-  const s = step();
-  byId('step-title').textContent = s.title;
-  byId('body').textContent = s.body;
-  byId('takeaway').textContent = s.takeaway;
-  byId('scene-desc').textContent = s.description;
-  byId('legend').innerHTML = legends[s.mode];
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  stepButtons.forEach((button, i) => {
-    if (i === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  byId('world').setAttribute('transform', s.mode === 'compare' ? 'translate(310 205) scale(.9)' : 'translate(310 150) scale(1.04)');
-  state.solved = '';
-  syncTask();
-  paint();
-  syncShuffleDescription();
-  syncPlayback();
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
-}
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/search/${index + 1}`);
-  showStep(index);
-}
-const stepButtons = lesson.map(({ label }, index) => {
-  const listItem = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  const number = document.createElement('span');
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.addEventListener('click', () => goToStep(index));
-  listItem.append(button);
-  byId('steps').append(listItem);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
-motion.addEventListener('change', () => {
-  if (lessonDemoEnabled() && step().mode !== 'shuffle') state.playing = true;
-  syncPlayback();
-});
-window.addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-    event.preventDefault();
-    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
-  }
-});
-
-function syncShuffleDescription() {
-  if (step().mode !== 'shuffle') return;
-  const practicing = coursePracticeStarted && !workspace.classList.contains('course-reading');
-  byId('scene-desc').textContent = !practicing ? step().description
-    : state.protectedLeft === true ? '섞인 카드의 가운데 30보다 목표 81이 큽니다. 왼쪽 두 번째 카드에 81이 있습니다.'
-    : '섞인 카드 여덟 장 중 네 번째의 30만 보입니다. 찾는 수는 81입니다.';
-  drawShuffle();
-}
-function chooseShuffle(keep) {
-  state.protectedLeft = keep;
-  byId('shuffle-feedback').textContent = keep
-    ? '맞았습니다. 왼쪽의 두 번째 상자에서 81이 나왔습니다.'
-    : '이 경우에도 그렇게 할 수 있는지 다시 생각해 보세요.';
-  syncShuffleDescription();
-}
-byId('shuffle-discard').onclick = () => chooseShuffle(false);
-byId('shuffle-keep').onclick = () => chooseShuffle(true);
-new MutationObserver(syncShuffleDescription).observe(workspace, {attributes: true, attributeFilter: ['class']});
-
-buildScaleFigure();
 buildBoxes();
-buildTowers();
 buildControls();
-const initial = routeIndex();
-history.replaceState(null, '', `#/search/${initial + 1}`);
-state.index = initial;
-showStep(initial, false);
 </script>
 </body>
 </html>

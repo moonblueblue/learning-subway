@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="스위치 8개를 켜고 끄며 비트와 이진수가 숫자를 나타내는 방법을 살펴보세요.">
+<meta name="description" content="스위치 8개로 나타낼 수 있는 수는 몇 가지이고, 가장 큰 수는 왜 255일까?">
+<meta name="lesson-frame" content="2">
 <title>정보에 표시를 붙이는 약속</title>
 <style>
 :root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
@@ -132,22 +133,37 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 .bits-figure .bits-carry { stroke-dasharray: 5 3 }
 .bits-figure .bits-pair { fill: #f6faf7; stroke: #bacbc0 }
 #bits-switch-off, #bits-switch-on { font: 750 17px var(--mono); text-anchor: middle; fill: var(--ink) }
+#bits-switch-off > rect, #bits-switch-on > rect {
+  stroke: var(--switch-outline, var(--switch-color));
+  stroke-width: var(--switch-outline-width, 1);
+}
+#bits-switch-off { --switch-color: #62796b; }
+#bits-switch-on { --switch-color: #277354; }
+.bits-figure .bits-column-heading { text-anchor: start; }
+#world[hidden] { display: none; }
+#world .tag text, #world .switch .digit, #row-labels .caption { font-size: 13px; }
+#figure .bits-hidden-box { fill: none; stroke: #62796b; stroke-dasharray: 4 3; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
 <link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=18f6c6ea5ff4412f"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./bits.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=42f6f4d09f421784"></script>
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=c0f3c6b6db339d40">
+<link rel="stylesheet" href="../shared/figures.css?v=a40b6840c7b1364a">
+<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
+<script defer blocking="render" src="../shared/figures.js?v=14c528768c1eacea"></script>
+<script defer blocking="render" src="./bits.items.js?v=ab6695da50c6e198"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=a668cf178830be0e"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=b9159b197829b257"></script>
+<script defer blocking="render" src="./bits.en.js?v=22630c068742e970"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=173806c4ad3440ee"></script>
+<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
 </head>
 <body>
 <main class="shell">
   <header>
     <p class="eyebrow">0장 컴퓨팅 둘러보기</p>
     <h1>정보에 표시를 붙이는 약속</h1>
-    <p class="lead">스위치 8개로 0부터 255까지 어떻게 셀까요? 스위치를 직접 켜고 끄며 살펴보세요.</p>
+    <p class="lead">스위치 8개로 나타낼 수 있는 수는 몇 가지이고, 가장 큰 수는 왜 255일까?</p>
   </header>
   <div class="workspace">
     <div>
@@ -163,20 +179,22 @@ svg{display:block;width:100%;height:auto;max-height:520px}
               <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
 
               <g id="bits-switch-off">
-                <rect x="-24" y="-16" width="48" height="32" rx="7" fill="#f8faf8" stroke="#62796b"/>
+                <rect x="-24" y="-16" width="48" height="32" rx="7" fill="#f8faf8"/>
                 <circle cx="-13" cy="0" r="6" fill="#fff" stroke="#62796b"/>
                 <text x="5" y="6">0</text>
               </g>
               <g id="bits-switch-on">
-                <rect x="-24" y="-16" width="48" height="32" rx="7" fill="#d2ebdc" stroke="#277354"/>
+                <rect x="-24" y="-16" width="48" height="32" rx="7" fill="#d2ebdc"/>
                 <circle cx="13" cy="0" r="6" fill="#277354"/>
                 <text x="-5" y="6">1</text>
               </g>
+
               <marker id="bits-tip" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" refX="9" refY="5" orient="auto">
                 <path d="M1 1 9 5 1 9Z" fill="#187959"/>
               </marker>
             </defs>
-            <g id="world" aria-hidden="true">
+            <g id="figure"></g>
+            <g id="world" aria-hidden="true" hidden>
               <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
               <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g><g id="notes"></g>
             </g>
@@ -184,15 +202,14 @@ svg{display:block;width:100%;height:auto;max-height:520px}
         </div>
         <div class="hands-on">
           <div class="try" id="try">
-            <p><strong>해 보기</strong><span id="try-text"></span></p>
+            <p><span id="try-text"></span></p>
             <p class="try-result" id="try-result" role="status"></p>
-            <button class="action" id="try-next" type="button" hidden>다음 문제</button>
           </div>
           <p class="readout" id="readout"></p>
           <div class="switch-area">
             <div class="switch-row" id="switch-buttons" role="group" aria-label="스위치 켜고 끄기"></div>
             <div class="switch-actions">
-              <button class="action" id="plus-one" type="button" aria-label="1 더하기">+1</button>
+              <button class="action" id="toggle-demo" type="button">재생</button>
               <button class="action" id="clear" type="button">모두 끄기</button>
             </div>
           </div>
@@ -247,54 +264,72 @@ svg{display:block;width:100%;height:auto;max-height:520px}
       <text x="487" y="94" class="bits-caption">새 스위치 1</text>
       <path d="M184 170h46" class="bits-wire" marker-end="url(#bits-tip)"/>
       <rect x="56" y="101" width="110" height="30" rx="6" class="bits-pair"/>
-      <text x="111" y="122" class="bits-number">00 = 0</text>
+      <text x="111" y="122" class="bits-number">00</text>
       <rect x="241" y="101" width="122" height="30" rx="6" class="bits-pair"/>
       <rect x="257" y="105" width="21" height="22" rx="4" class="diagram-node active"/>
       <text x="267.5" y="122" class="bits-number">0</text>
-      <text x="314" y="122" class="bits-number">00 = 0</text>
+      <text x="314" y="122" class="bits-number">00</text>
       <rect x="426" y="101" width="122" height="30" rx="6" class="bits-pair"/>
       <rect x="442" y="105" width="21" height="22" rx="4" class="diagram-node active"/>
       <text x="452.5" y="122" class="bits-number">1</text>
-      <text x="499" y="122" class="bits-number">00 = 4</text>
+      <text x="499" y="122" class="bits-number">00</text>
       <rect x="56" y="138" width="110" height="30" rx="6" class="bits-pair"/>
-      <text x="111" y="159" class="bits-number">01 = 1</text>
+      <text x="111" y="159" class="bits-number">01</text>
       <rect x="241" y="138" width="122" height="30" rx="6" class="bits-pair"/>
       <rect x="257" y="142" width="21" height="22" rx="4" class="diagram-node active"/>
       <text x="267.5" y="159" class="bits-number">0</text>
-      <text x="314" y="159" class="bits-number">01 = 1</text>
+      <text x="314" y="159" class="bits-number">01</text>
       <rect x="426" y="138" width="122" height="30" rx="6" class="bits-pair"/>
       <rect x="442" y="142" width="21" height="22" rx="4" class="diagram-node active"/>
       <text x="452.5" y="159" class="bits-number">1</text>
-      <text x="499" y="159" class="bits-number">01 = 5</text>
+      <text x="499" y="159" class="bits-number">01</text>
       <rect x="56" y="175" width="110" height="30" rx="6" class="bits-pair"/>
-      <text x="111" y="196" class="bits-number">10 = 2</text>
+      <text x="111" y="196" class="bits-number">10</text>
       <rect x="241" y="175" width="122" height="30" rx="6" class="bits-pair"/>
       <rect x="257" y="179" width="21" height="22" rx="4" class="diagram-node active"/>
       <text x="267.5" y="196" class="bits-number">0</text>
-      <text x="314" y="196" class="bits-number">10 = 2</text>
+      <text x="314" y="196" class="bits-number">10</text>
       <rect x="426" y="175" width="122" height="30" rx="6" class="bits-pair"/>
       <rect x="442" y="179" width="21" height="22" rx="4" class="diagram-node active"/>
       <text x="452.5" y="196" class="bits-number">1</text>
-      <text x="499" y="196" class="bits-number">10 = 6</text>
+      <text x="499" y="196" class="bits-number">10</text>
       <rect x="56" y="212" width="110" height="30" rx="6" class="bits-pair"/>
-      <text x="111" y="233" class="bits-number">11 = 3</text>
+      <text x="111" y="233" class="bits-number">11</text>
       <rect x="241" y="212" width="122" height="30" rx="6" class="bits-pair"/>
       <rect x="257" y="216" width="21" height="22" rx="4" class="diagram-node active"/>
       <text x="267.5" y="233" class="bits-number">0</text>
-      <text x="314" y="233" class="bits-number">11 = 3</text>
+      <text x="314" y="233" class="bits-number">11</text>
       <rect x="426" y="212" width="122" height="30" rx="6" class="bits-pair"/>
       <rect x="442" y="216" width="21" height="22" rx="4" class="diagram-node active"/>
       <text x="452.5" y="233" class="bits-number">1</text>
-      <text x="499" y="233" class="bits-number">11 = 7</text>
+      <text x="499" y="233" class="bits-number">11</text>
       <text x="111" y="264" class="bits-caption">4가지 표시</text>
       <text x="396" y="264" class="bits-caption">4가지 + 4가지 = 8가지</text>
+    </g>
+  </svg>
+</template>
+<template id="bits-figure-pairs-before">
+  <svg>
+    <g class="bits-figure">
+      <text x="111" y="68" class="bits-number">두 스위치</text>
+      <rect x="56" y="101" width="110" height="30" rx="6" class="bits-pair"/>
+      <text x="111" y="122" class="bits-number">00</text>
+      <rect x="56" y="138" width="110" height="30" rx="6" class="bits-pair"/>
+      <text x="111" y="159" class="bits-number">01</text>
+      <rect x="56" y="175" width="110" height="30" rx="6" class="bits-pair"/>
+      <text x="111" y="196" class="bits-number">10</text>
+      <rect x="56" y="212" width="110" height="30" rx="6" class="bits-pair"/>
+      <text x="111" y="233" class="bits-number">11</text>
+      <text x="111" y="264" class="bits-caption">4가지 표시</text>
+      <rect x="185" y="88" width="397" height="154" rx="9" class="bits-hidden-box"/>
+      <text x="384" y="170" class="bits-caption">세 스위치로 몇 가지?</text>
     </g>
   </svg>
 </template>
 <template id="bits-figure-sum">
   <svg>
     <g class="bits-figure">
-      <text x="43" y="78" class="bits-caption">자릿값</text>
+      <text x="18" y="49" class="bits-caption bits-column-heading">자릿값</text>
       <text x="104" y="78" class="bits-number">128</text>
       <text x="165" y="78" class="bits-number">64</text>
       <text x="226" y="78" class="bits-number">32</text>
@@ -308,15 +343,15 @@ svg{display:block;width:100%;height:auto;max-height:520px}
       <use href="#bits-switch-off" x="226" y="114"/>
       <use href="#bits-switch-off" x="287" y="114"/>
       <use href="#bits-switch-off" x="348" y="114"/>
-      <use href="#bits-switch-on" x="409" y="114"/>
+      <use href="#bits-switch-on" x="409" y="114" data-name="active-switch"/>
       <use href="#bits-switch-off" x="470" y="114"/>
-      <use href="#bits-switch-on" x="531" y="114"/>
+      <use href="#bits-switch-on" x="531" y="114" data-name="active-switch"/>
       <path d="M409 133v50h61" class="bits-wire"/>
       <path d="M531 133v50h-61v35" class="bits-wire" marker-end="url(#bits-tip)"/>
       <text x="389" y="164" class="bits-number">+4</text>
       <text x="470" y="159" class="bits-number">+0</text>
       <text x="553" y="164" class="bits-number">+1</text>
-      <rect x="384" y="222" width="172" height="40" rx="8" class="diagram-node active"/>
+      <rect x="384" y="222" width="172" height="40" rx="8" class="diagram-node active" data-name="sum"/>
       <text x="470" y="249" class="bits-total">4 + 1 = 5</text>
     </g>
   </svg>
@@ -340,19 +375,85 @@ svg{display:block;width:100%;height:auto;max-height:520px}
       <text x="580" y="139" class="bits-number">+1</text>
       <path d="M529 170h-54" class="bits-wire bits-carry" marker-end="url(#bits-tip)"/>
       <text x="499" y="157" class="bits-caption">올림</text>
-      <text x="272" y="230" class="bits-total">6</text>
+      <text x="272" y="230" class="bits-total" data-name="sum">6</text>
       <text x="170" y="230" class="bits-caption">더한 뒤</text>
       <use href="#bits-switch-on" x="409" y="223"/>
-      <use href="#bits-switch-on" x="470" y="223"/>
-      <use href="#bits-switch-off" x="531" y="223"/>
+      <use href="#bits-switch-on" x="470" y="223" data-name="changed-switch"/>
+      <use href="#bits-switch-off" x="531" y="223" data-name="changed-switch"/>
       <text x="470" y="263" class="bits-number">4 + 2 = 6</text>
+    </g>
+  </svg>
+</template>
+<template id="bits-figure-carry-before">
+  <svg>
+    <g class="bits-figure">
+      <text x="272" y="78" class="bits-caption">합계</text>
+      <text x="409" y="78" class="bits-caption">4 자리</text>
+      <text x="470" y="78" class="bits-caption">2 자리</text>
+      <text x="531" y="78" class="bits-caption">1 자리</text>
+      <text x="272" y="116" class="bits-total">5</text>
+      <text x="170" y="116" class="bits-caption">더하기 전</text>
+      <use href="#bits-switch-on" x="409" y="109"/>
+      <use href="#bits-switch-off" x="470" y="109"/>
+      <use href="#bits-switch-on" x="531" y="109"/>
+      <path d="M409 130v70" class="bits-guide"/>
+      <path d="M470 130v70" class="bits-guide"/>
+      <path d="M531 130v70" class="bits-guide"/>
+      <path d="M581 147h-47" class="bits-wire" marker-end="url(#bits-tip)"/>
+      <text x="580" y="139" class="bits-number">+1</text>
+      <text x="272" y="230" class="bits-total">?</text>
+      <text x="170" y="230" class="bits-caption">더한 뒤</text>
+      <rect x="385" y="207" width="48" height="32" rx="7" class="bits-hidden-box"/><text x="409" y="229" class="bits-number">?</text>
+      <rect x="446" y="207" width="48" height="32" rx="7" class="bits-hidden-box"/><text x="470" y="229" class="bits-number">?</text>
+      <rect x="507" y="207" width="48" height="32" rx="7" class="bits-hidden-box"/><text x="531" y="229" class="bits-number">?</text>
     </g>
   </svg>
 </template>
 <template id="bits-figure-range">
   <svg>
     <g class="bits-figure">
-      <text x="43" y="73" class="bits-caption">자릿값</text>
+      <text x="18" y="44" class="bits-caption bits-column-heading">자릿값</text>
+      <text x="104" y="73" class="bits-number">128</text>
+      <text x="165" y="73" class="bits-number">64</text>
+      <text x="226" y="73" class="bits-number">32</text>
+      <text x="287" y="73" class="bits-number">16</text>
+      <text x="348" y="73" class="bits-number">8</text>
+      <text x="409" y="73" class="bits-number">4</text>
+      <text x="470" y="73" class="bits-number">2</text>
+      <text x="531" y="73" class="bits-number">1</text>
+      <use href="#bits-switch-off" x="104" y="110"/>
+      <use href="#bits-switch-off" x="165" y="110"/>
+      <use href="#bits-switch-off" x="226" y="110"/>
+      <use href="#bits-switch-off" x="287" y="110"/>
+      <use href="#bits-switch-off" x="348" y="110"/>
+      <use href="#bits-switch-off" x="409" y="110"/>
+      <use href="#bits-switch-off" x="470" y="110"/>
+      <use href="#bits-switch-off" x="531" y="110"/>
+      <use href="#bits-switch-on" x="104" y="173" data-name="all-on"/>
+      <use href="#bits-switch-on" x="165" y="173" data-name="all-on"/>
+      <use href="#bits-switch-on" x="226" y="173" data-name="all-on"/>
+      <use href="#bits-switch-on" x="287" y="173" data-name="all-on"/>
+      <use href="#bits-switch-on" x="348" y="173" data-name="all-on"/>
+      <use href="#bits-switch-on" x="409" y="173" data-name="all-on"/>
+      <use href="#bits-switch-on" x="470" y="173" data-name="all-on"/>
+      <use href="#bits-switch-on" x="531" y="173" data-name="all-on"/>
+      <text x="38" y="116" class="bits-caption">모두 꺼짐</text>
+      <text x="38" y="179" class="bits-caption">모두 켜짐</text>
+      <text x="582" y="73" class="bits-caption">합계</text>
+      <text x="582" y="117" class="bits-total">0</text>
+      <text x="582" y="180" class="bits-total" data-name="sum">255</text>
+      <path d="M573 124h8 M577 124v39 M573 163h8" class="bits-guide"/>
+      <text x="311" y="216" class="bits-number">128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255</text>
+      <rect x="48" y="227" width="315" height="39" rx="8" class="diagram-node active"/>
+      <text x="206" y="253" class="bits-number">255 − 0 + 1 = 256가지</text>
+      <text x="484" y="253" class="bits-caption">8비트 = 1바이트</text>
+    </g>
+  </svg>
+</template>
+<template id="bits-figure-range-before">
+  <svg>
+    <g class="bits-figure">
+      <text x="18" y="44" class="bits-caption bits-column-heading">자릿값</text>
       <text x="104" y="73" class="bits-number">128</text>
       <text x="165" y="73" class="bits-number">64</text>
       <text x="226" y="73" class="bits-number">32</text>
@@ -385,7 +486,7 @@ svg{display:block;width:100%;height:auto;max-height:520px}
       <path d="M573 124h8 M577 124v39 M573 163h8" class="bits-guide"/>
       <text x="311" y="216" class="bits-number">128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255</text>
       <rect x="48" y="227" width="315" height="39" rx="8" class="diagram-node active"/>
-      <text x="206" y="253" class="bits-number">255 − 0 + 1 = 256가지</text>
+      <text x="206" y="253" class="bits-number">? 가지</text>
       <text x="484" y="253" class="bits-caption">8비트 = 1바이트</text>
     </g>
   </svg>
@@ -400,112 +501,269 @@ const places = [1, 2, 4, 8, 16, 32, 64, 128];
 // `fit` is [translateX, translateY, scale] for the scene, so few switches appear large.
 // `tasks` are the try-it problems: the learner has to make `target` with the switches.
 // `byte` adds "비트 8개 = 1바이트" to the count panel under the switches.
-const lesson = [
-  {
-    readingDiagram: {
-      figure: 'bits-figure-switch',
-      title: '스위치 하나는 두 가지를 나타낸다',
-      description: '같은 1 자리에서 스위치를 누르면 꺼진 0이 켜진 1로 바뀌고 합계도 0에서 1이 됩니다.',
+const lesson = {
+  "question": "스위치 8개로 나타낼 수 있는 수는 몇 가지이고, 가장 큰 수는 왜 255일까?",
+  "terms": [
+    {
+      "term": "비트",
+      "meaning": "꺼짐(0)과 켜짐(1) 두 상태 중 하나를 담는 한 칸",
+      "step": 1
     },
-    label: '스위치 하나',
-    example: ["스위치 꺼짐", "하나를 켜면", "합계 0 → 1"],
-    title: '스위치 하나는 두 가지를 나타낸다',
-    body: '컴퓨터는 비트 하나에 두 상태를 기록합니다. 스위치의 꺼짐을 0, 켜짐을 1이라고 부르고, 이 한 칸을 비트(bit)라고 합니다. 비트 하나로는 0과 1, 두 가지만 나타낼 수 있습니다.',
-    takeaway: '스위치가 켜지면 솟아오르며 불이 들어오고, 값 1이 선을 따라 합계로 갑니다. 꺼지면 선이 사라지고 합계는 0이 됩니다.',
-    description: '스위치 하나와 합계 화면이 있습니다. 스위치가 켜지면 값 1이 선을 따라 합계로 전달되고, 꺼지면 합계는 0입니다.',
-    switches: 1,
-    fit: [211, 171, 1.8],
-    initial: 0,
-    tasks: [
-      { target: 1, text: '스위치를 눌러 1을 만들어 보세요.' },
-      { target: 0, text: '이번에는 0으로 되돌려 보세요.' },
-    ],
-  },
-  {
-    readingDiagram: {
-      figure: 'bits-figure-pairs',
-      title: '스위치가 늘면 가짓수는 두 배가 된다',
-      description: '스위치 두 개로 00, 01, 10, 11을 만듭니다. 왼쪽에 하나를 더하면 원래 네 가지 앞에 0을 붙인 000에서 011과, 1을 붙인 100에서 111을 만듭니다. 두 묶음은 각각 4가지입니다.',
+    {
+      "term": "가짓수",
+      "meaning": "스위치들을 켜고 꺼서 만들 수 있는 서로 다른 표시의 수",
+      "step": 2
     },
-    label: '스위치 늘리기',
-    example: ['두 스위치로 4가지', '왼쪽 스위치 하나 추가', '4가지씩 두 묶음'],
-    title: '스위치가 늘면 가짓수는 두 배가 된다',
-    body: '처음 두 스위치로 00, 01, 10, 11 네 가지를 표시합니다. 왼쪽에 하나를 더하면 원래 네 가지에 새 표시 0이나 1을 붙일 수 있습니다. 두 묶음을 합하면 여덟 가지입니다.',
-    takeaway: '같은 행의 오른쪽 두 자리는 그대로입니다. 새 스위치가 0인 묶음에 0부터 3까지, 1인 묶음에 4부터 7까지 있습니다.',
-    description: '스위치 세 개가 왼쪽부터 4, 2, 1을 맡습니다. 켜진 스위치의 값이 합계에 더해집니다.',
-    switches: 3,
-    fit: [233, 165, 1.5],
-    initial: 1,
-    demo: { values: [3, 4, 5, 7], interval: 1900 },
-    tasks: [
-      { target: 3, text: '오른쪽 두 스위치로 3을 만들어 보세요.' },
-      { target: 5, text: '두 자리로는 0부터 3까지 표시합니다. 새 스위치를 써서 5를 만들어 보세요.' },
-    ],
-  },
-  {
-    readingDiagram: {
-      figure: 'bits-figure-sum',
-      title: '각 스위치는 정해진 값을 맡는다',
-      description: '여덟 스위치에서 켜진 4 자리와 1 자리의 선만 합계 5에 닿습니다. 꺼진 2 자리의 기여는 0입니다.',
+    {
+      "term": "자릿값",
+      "meaning": "스위치 자리마다 정해진 값. 오른쪽부터 1, 2, 4, 8, …, 128이고 왼쪽으로 한 칸 갈 때마다 두 배",
+      "step": 3
     },
-    label: '자릿값',
-    example: ["4와 1 자리만 켬", "0000 0101", "합계 5"],
-    title: '각 스위치는 정해진 값을 맡는다',
-    body: '스위치 8개를 나란히 놓으면 오른쪽부터 1, 2, 4, 8, 16, 32, 64, 128을 맡습니다. 왼쪽으로 한 칸 갈 때마다 값이 두 배가 됩니다. 어떤 수든 켜진 스위치의 값을 모두 더한 것입니다. 4와 1을 켜면 5입니다.',
-    takeaway: '켜진 스위치에서만 값이 흘러나와 합계에 모입니다. 꺼진 스위치에는 선이 없습니다. 같은 수를 만드는 방법은 한 가지뿐입니다.',
-    description: '스위치 여덟 개가 한 줄로 놓여 있고 왼쪽부터 128, 64, 32, 16, 8, 4, 2, 1을 맡습니다. 켜진 스위치의 값만 선을 따라 합계 화면으로 모입니다.',
-    switches: 8,
-    fit: [258, 126, 1.04],
-    initial: 5,
-    demo: { values: [19, 100, 200, 5], interval: 3400 },
-    tasks: [
-      { target: 19, text: '19를 만들어 보세요.' },
-      { target: 100, text: '100을 만들어 보세요. 큰 값부터 골라 넣으면 쉽습니다.' },
-      { target: 200, text: '200을 만들어 보세요.' },
-    ],
-  },
-  {
-    readingDiagram: {
-      figure: 'bits-figure-carry',
-      title: '1 자리에서 2 자리로 올림이 간다',
-      description: '1 자리에 1을 더하면 1이 0으로 바뀌고 점선 화살표가 왼쪽 2 자리로 올림을 보냅니다. 2 자리는 0에서 1, 4 자리는 1을 유지하며 합계는 6이 됩니다.',
+    {
+      "term": "이진수",
+      "meaning": "0과 1만으로 쓴 수. 켜진 자리의 자릿값을 모두 더하면 그 수가 된다",
+      "step": 3
     },
-    label: "1 더하기",
-    title: "1 자리에서 2 자리로 올림이 간다",
-    example: ["0000 0101 = 5", "1 자리를 끄고 2 자리를 켬", "0000 0110 = 6"],
-    body: "5에서 1을 더합니다. 오른쪽 1 자리는 이미 켜져 있으므로 0으로 바꾸고, 바로 왼쪽 2 자리를 켭니다. 켜져 있던 4 자리는 그대로입니다.",
-    takeaway: "결과는 4 + 2 = 6입니다. 4 자리는 그대로이고 오른쪽 두 자리만 바뀌었습니다.",
-    description: "결과는 4 + 2 = 6입니다. 4 자리는 그대로이고 오른쪽 두 자리만 바뀌었습니다.",
-    switches: 8,
-    fit: [258, 126, 1.04],
-    initial: 5,
-    demo: {"values": [5, 6], "interval": 2600},
-    tasks: [{ target: 6, text: "5에서 1을 더해 6을 만들어 보세요." }],
-  },
-  {
-    readingDiagram: {
-      figure: 'bits-figure-range',
-      title: '8개를 모두 켜면 255가 된다',
-      description: '같은 여덟 자리의 모두 꺼짐은 0, 모두 켜짐은 255입니다. 두 끝을 포함하면 255 빼기 0 더하기 1로 256가지입니다.',
+    {
+      "term": "올림",
+      "meaning": "이미 1인 자리에 1을 더하면 그 자리는 0이 되고 바로 왼쪽 자리에 1이 넘어가는 것",
+      "step": 4
     },
-    label: '0부터 255까지',
-    example: ["1111 1111", "128 + 64 + … + 1", "최댓값 255"],
-    title: '8개를 모두 켜면 255가 된다',
-    body: '0에서 시작해 1씩 더하면 스위치가 규칙적으로 바뀝니다. 가장 오른쪽 스위치는 매번 바뀌고, 왼쪽으로 갈수록 천천히 바뀝니다. 8개가 모두 켜지면 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255입니다. 0까지 세면 모두 256가지이고, 이 비트 8개 묶음을 바이트(byte)라고 합니다.',
-    takeaway: '255 다음 수는 스위치 8개로 나타낼 수 없습니다. 256을 세려면 아홉 번째 스위치가 필요합니다. +1 버튼으로 한 칸씩 세어 볼 수도 있습니다.',
-    description: '스위치 여덟 개가 0부터 1씩 올라가며 켜지고 꺼집니다. 여덟 개가 모두 켜지면 합계는 가장 큰 수인 255입니다.',
-    switches: 8,
-    fit: [258, 126, 1.04],
-    initial: 0,
-    byte: true,
-    demo: { count: true },
-    tasks: [
-      { target: 128, text: '스위치 하나만 켜서 128을 만들어 보세요.' },
-      { target: 127, text: '128보다 1 작은 127을 만들어 보세요.' },
-      { target: 255, text: '스위치 8개로 만들 수 있는 가장 큰 수를 만들어 보세요.' },
-    ],
-  },
-];
+    {
+      "term": "바이트",
+      "meaning": "비트 8개 묶음",
+      "step": 5
+    }
+  ],
+  "steps": [
+    {
+      "label": "스위치 하나",
+      "title": "스위치 하나는 두 가지를 나타냅니다",
+      "body": "스위치의 꺼짐을 0, 켜짐을 1이라고 부릅니다. 이 한 칸을 비트라고 합니다. 실제 컴퓨터에서는 손으로 누르는 스위치가 아니라 전기가 흐르는지 아닌지로 이 두 상태를 기록합니다.",
+      "takeaway": "같은 1 자리 스위치가 꺼짐(0)에서 켜짐(1)으로 바뀌고 합계도 0에서 1이 됩니다.",
+      "figure": {
+        "template": "bits-figure-switch"
+      },
+      "description": "같은 1 자리에서 스위치를 누르면 꺼진 0이 켜진 1로 바뀌고 합계도 0에서 1이 됩니다.",
+      "switches": 1,
+      "fit": [
+        211,
+        171,
+        1.8
+      ],
+      "initial": 0
+    },
+    {
+      "label": "스위치 늘리기",
+      "title": "스위치가 하나 늘면 가짓수는 두 배가 됩니다",
+      "body": "처음 두 스위치로 00, 01, 10, 11 네 가지를 표시합니다. 왼쪽에 하나를 더하면 원래 네 가지에 새 표시 0이나 1을 붙일 수 있습니다. 원래 네 가지가 새 스위치가 꺼진 쪽과 켜진 쪽에 한 번씩 다시 나옵니다. 두 묶음을 합하면 여덟 가지입니다.",
+      "takeaway": "같은 행의 오른쪽 두 자리는 두 묶음에서 그대로이고, 맨 왼쪽 새 자리만 0과 1로 다릅니다.",
+      "figure": {
+        "template": "bits-figure-pairs"
+      },
+      "description": "왼쪽에 두 스위치의 00, 01, 10, 11이 있습니다. 오른쪽에서 새 스위치가 0인 묶음 000~011과 1인 묶음 100~111이 생겨 4가지 + 4가지 = 8가지입니다.",
+      "switches": 3,
+      "fit": [
+        233,
+        165,
+        1.5
+      ],
+      "initial": 0,
+      "predict": {
+        "prompt": "스위치 두 개로는 00, 01, 10, 11 네 가지를 표시합니다. 왼쪽에 스위치를 하나 더하면 모두 몇 가지가 될까요?",
+        "options": [
+          {
+            "text": "5가지",
+            "why": "스위치가 하나 늘면 표시도 하나 는다고 본 것인데, 새 스위치는 기존 네 가지 각각에 0과 1 두 경우를 붙입니다."
+          },
+          {
+            "text": "6가지",
+            "why": "스위치 하나가 두 가지씩 보탠다고 보고 2 + 2 + 2 = 6으로 더한 것인데, 새 스위치는 기존 네 가지 각각에 0과 1을 붙여 4 + 4 = 8가지가 됩니다."
+          },
+          {
+            "text": "8가지",
+            "why": "기존 네 가지에 새 스위치가 꺼진 묶음과 켜진 묶음이 한 번씩 생겨 4 + 4 = 8가지입니다.",
+            "correct": true
+          }
+        ],
+        "before": {
+          "template": "bits-figure-pairs-before",
+          "description": "왼쪽에 두 스위치의 표시 00, 01, 10, 11이 있습니다. 오른쪽에는 세 스위치로 몇 가지인지 묻는 점선 상자가 있습니다."
+        }
+      }
+    },
+    {
+      "label": "자릿값",
+      "title": "각 스위치는 정해진 값을 맡습니다",
+      "body": "스위치 8개를 나란히 놓으면 오른쪽부터 1, 2, 4, 8, 16, 32, 64, 128을 맡습니다. 왼쪽으로 한 칸 갈 때마다 값이 두 배가 됩니다. 어떤 수든 켜진 스위치의 값을 모두 더한 것입니다. 4와 1을 켜면 5입니다.",
+      "takeaway": "켜진 스위치에서만 값이 흘러나와 합계에 모입니다. 꺼진 스위치에는 선이 없습니다.",
+      "figure": {
+        "template": "bits-figure-sum",
+        "changed": [
+          "active-switch",
+          "sum"
+        ]
+      },
+      "description": "여덟 스위치에서 켜진 4 자리와 1 자리의 선만 합계 5에 닿습니다. 꺼진 2 자리의 기여는 0입니다.",
+      "switches": 8,
+      "fit": [
+        258,
+        126,
+        1.04
+      ],
+      "initial": 0,
+      "practice": {
+        "goal": "스위치 8개로 합계 100을 만든다",
+        "predict": {
+          "prompt": "100을 만들 때 켜야 하는 가장 큰 자리는 어디일까요?",
+          "options": [
+            {
+              "text": "64 자리",
+              "why": "100보다 크지 않은 가장 큰 자릿값이고, 남은 36은 32와 4로 채웁니다.",
+              "correct": true
+            },
+            {
+              "text": "128 자리",
+              "why": "가장 큰 자리부터 켠다고 본 것인데, 128은 그것만으로 100을 넘습니다."
+            },
+            {
+              "text": "100 자리",
+              "why": "십진수처럼 100 자리가 있다고 본 것인데, 자릿값은 1, 2, 4, …, 128뿐입니다."
+            }
+          ]
+        }
+      },
+      "demo": {
+        "values": [
+          19,
+          100,
+          200,
+          5
+        ],
+        "interval": 3400
+      }
+    },
+    {
+      "label": "1 더하기",
+      "title": "1 자리에서 2 자리로 올림이 갑니다",
+      "body": "5에서 1을 더합니다. 오른쪽 1 자리는 이미 켜져 있으므로 0으로 바꾸고, 바로 왼쪽 2 자리를 켭니다. 켜져 있던 4 자리는 그대로입니다.",
+      "takeaway": "결과는 4 + 2 = 6입니다. 4 자리는 그대로이고 오른쪽 두 자리만 바뀌었습니다.",
+      "figure": {
+        "template": "bits-figure-carry",
+        "changed": [
+          "changed-switch",
+          "sum"
+        ]
+      },
+      "description": "1 자리에 1을 더하면 1이 0으로 바뀌고 점선 화살표가 왼쪽 2 자리로 올림을 보냅니다. 2 자리는 0에서 1, 4 자리는 1을 유지하며 합계는 6이 됩니다.",
+      "switches": 8,
+      "fit": [
+        258,
+        126,
+        1.04
+      ],
+      "initial": 0,
+      "predict": {
+        "prompt": "0000 0101(5)에 1을 더합니다. 스위치가 어떻게 바뀔까요?",
+        "options": [
+          {
+            "text": "1 자리가 꺼지고 2 자리가 켜진다",
+            "why": "이미 1인 1 자리에는 더 담을 수 없어 0이 되고 올림이 2 자리로 가서 4 + 2 = 6이 됩니다.",
+            "correct": true
+          },
+          {
+            "text": "꺼져 있던 2 자리만 켜진다",
+            "why": "빈 자리를 하나 켜면 된다고 본 것인데, 그러면 4 + 2 + 1 = 7이 되어 2를 더한 셈입니다."
+          },
+          {
+            "text": "1 자리가 한 번 더 켜져 2가 된다",
+            "why": "한 자리에 수를 쌓을 수 있다고 본 것인데, 스위치 하나는 0과 1 두 상태뿐입니다."
+          }
+        ],
+        "before": {
+          "template": "bits-figure-carry-before",
+          "description": "더하기 전은 101이고 합계는 5입니다. 오른쪽에 +1 화살표가 있고 더한 뒤 세 자리와 합계에는 물음표가 있습니다."
+        }
+      }
+    },
+    {
+      "label": "모두 켜기",
+      "title": "8개를 모두 켜면 255가 됩니다",
+      "body": "같은 여덟 자리에서 모두 꺼짐은 0, 모두 켜짐은 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255입니다. 0부터 세기 때문에 가짓수는 가장 큰 값보다 하나 많은 256가지입니다. 비트 여덟 개를 묶어 1바이트라고 합니다.",
+      "takeaway": "255 다음 수를 표시하려면 아홉 번째 스위치가 필요합니다.",
+      "figure": {
+        "template": "bits-figure-range",
+        "changed": [
+          "all-on",
+          "sum"
+        ]
+      },
+      "description": "같은 여덟 자리에서 모두 꺼짐은 0, 모두 켜짐은 255입니다. 양 끝을 포함해 256가지입니다.",
+      "switches": 8,
+      "fit": [
+        258,
+        126,
+        1.04
+      ],
+      "initial": 0,
+      "predict": {
+        "prompt": "스위치 8개를 모두 켜면 255입니다. 모두 꺼짐 0000 0000부터 모두 켜짐 1111 1111까지, 나타낼 수 있는 값은 모두 몇 가지일까요?",
+        "options": [
+          {
+            "text": "255가지",
+            "why": "가장 큰 값을 가짓수로 본 것인데, 0도 하나의 값이라 가짓수는 하나 많습니다."
+          },
+          {
+            "text": "256가지",
+            "why": "0부터 255까지 세면 0이 하나 더 있어 255 − 0 + 1 = 256가지입니다.",
+            "correct": true
+          },
+          {
+            "text": "16가지",
+            "why": "스위치마다 두 가지씩 8 × 2로 본 것인데, 2단계처럼 스위치가 하나 늘 때마다 가짓수는 두 배가 됩니다(2, 4, 8, …, 256)."
+          }
+        ],
+        "before": {
+          "template": "bits-figure-range-before",
+          "description": "같은 여덟 자리에서 모두 꺼짐은 0, 모두 켜짐은 255입니다. 가짓수가 나올 자리에는 물음표가 있습니다."
+        }
+      },
+      "practice": {
+        "goal": "스위치 8개로 합계 127을 만든다",
+        "predict": {
+          "prompt": "128보다 1 작은 127을 만들려면 스위치를 몇 개 켜야 할까요?",
+          "options": [
+            {
+              "text": "7개",
+              "why": "64 + 32 + 16 + 8 + 4 + 2 + 1 = 127이라 128 자리만 빼고 모두 켭니다.",
+              "correct": true
+            },
+            {
+              "text": "1개",
+              "why": "128 바로 옆 자리 하나면 된다고 본 것인데, 그 자리의 값은 64입니다."
+            },
+            {
+              "text": "8개",
+              "why": "큰 수이니 모두 켠다고 본 것인데, 모두 켜면 255입니다."
+            }
+          ]
+        }
+      },
+      "demo": {
+        "count": true
+      },
+      "byte": true
+    }
+  ],
+  "review": {
+    "own": [
+      "bits-1",
+      "bits-3",
+      "bits-4"
+    ]
+  }
+};
+const steps = lesson.steps;
 
 const byId = (id) => document.getElementById(id);
 const viewport = byId('scene');
@@ -563,8 +821,7 @@ viewport.addEventListener('keydown', (event) => {
 setCamera(0, 0, 1);
 
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const state = { index: 0, value: 0, playing: !motion.matches, demoPosition: 0, wait: 0, solved: '' };
-const progress = lesson.map(() => 0);  // try-it problems solved in each step
+const state = { index: 0, value: 0, playing: false, demoPosition: 0, wait: 0 };
 const transitionMs = 370;
 const nodeViews = new Map();
 let transition = null;
@@ -708,7 +965,6 @@ function updateGeometry(view, sumAt) {
 // Labels that belong to the whole row rather than one switch (rules in references/visual-language.md, 0장).
 // `자릿값` names the plates above the switches; the count panel shows the current pattern and how many exist.
 const labels = {};
-const superscript = (n) => String(n).replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
 function ensureLabels() {
   if (labels.panel) return;
   const group = svg('g', { id: 'row-labels' }, byId('world'));
@@ -718,18 +974,9 @@ function ensureLabels() {
 }
 function showKinds() {
   ensureLabels();
-  const step = lesson[state.index];
-  const count = step.switches;
-  const binary = (value) => value.toString(2).padStart(count, '0').replace(/(\d{4})(?=\d)/g, '$1 ');
-  const parts = [];
-  if (count <= 2) {
-    for (let value = 0; value < 2 ** count; value++) parts.push(...(value ? [[' · ']] : []), [binary(value), value === state.value ? 'bits now' : 'bits']);
-    parts.push([count === 1 ? ' → 2가지' : ' → 2 × 2 = 4가지']);
-  } else {
-    parts.push([binary(state.value), 'bits now'], [` → 2${superscript(count)} = ${2 ** count}가지 (0~${2 ** count - 1})`]);
-  }
-  if (step.byte) parts.push([' · 비트 8개 = 1바이트']);
-  labels.panel.group.classList.toggle('long', count > 2);
+  const binary = state.value.toString(2).padStart(8, '0').replace(/(\d{4})(?=\d)/g, '$1 ');
+  const parts = [[binary, 'bits now']];
+  labels.panel.group.classList.remove('long');
   const label = labels.panel.label;
   label.replaceChildren(...parts.map(([text, now]) => {
     const span = svg('tspan', now ? { class: now } : {}, label);
@@ -759,11 +1006,11 @@ function placeLabels() {
 }
 
 const isOn = (bit) => (state.value >> bit & 1) === 1;
-const maxValue = () => 2 ** lesson[state.index].switches - 1;
+const maxValue = () => 2 ** steps[state.index].switches - 1;
 
 // Point every node and wire at its target for the current step and value, then animate there.
 function retarget(animate, ms = transitionMs) {
-  const targets = layout(lesson[state.index].switches);
+  const targets = layout(steps[state.index].switches);
   for (const view of nodeViews.values()) {
     view.from = [view.c, view.opacity, view.lift];
     view.to = [view.c, 0, rise];
@@ -786,7 +1033,7 @@ function retarget(animate, ms = transitionMs) {
     view.heightFrom = view.height;
     view.heightTo = on ? switchHigh : switchLow;
   }
-  worldView.to = lesson[state.index].fit;
+  worldView.to = steps[state.index].fit;
   worldView.from = worldView.now ?? worldView.to;
   const sum = nodeViews.get('sum');
   sum.total.label.textContent = String(state.value);
@@ -903,7 +1150,7 @@ function setValue(next, { send = 'new', ms = transitionMs, carry = true } = {}) 
   // Adding 1 to a number that ends in 1 carries into the first switch that was off.
   if (carry && next === previous + 1 && previous & 1) showCarry(Math.log2(next & ~previous));
   if (send === 'none') return;
-  for (let bit = lesson[state.index].switches - 1; bit >= 0; bit--) {
+  for (let bit = steps[state.index].switches - 1; bit >= 0; bit--) {
     const on = next >> bit & 1;
     if (on && (send === 'all' || !(previous >> bit & 1))) sendPacket(bit);
   }
@@ -913,7 +1160,7 @@ function setValue(next, { send = 'new', ms = transitionMs, carry = true } = {}) 
 const countInterval = (value) => Math.max(110, 700 * .93 ** value);
 
 function demoTick() {
-  const demo = lesson[state.index].demo;
+  const demo = steps[state.index].demo;
   if (demo.count) {
     if (state.value === 255) {
       setValue(0, { send: 'none' });
@@ -950,7 +1197,7 @@ function tick(now) {
 }
 
 function isSimulationView() {
-  return workspace.classList.contains('course-reading') && !workspace.classList.contains('course-diagram-open');
+  return practiceReady;
 }
 
 function isPlayingDemo() {
@@ -975,7 +1222,7 @@ function syncPlayback() {
 // The HTML switch buttons mirror the scene and are the keyboard and screen reader controls.
 let bitButtons = [];
 function buildButtons() {
-  const count = lesson[state.index].switches;
+  const count = steps[state.index].switches;
   const row = byId('switch-buttons');
   row.style.setProperty('--n', count);
   row.replaceChildren();
@@ -997,14 +1244,13 @@ function buildButtons() {
 }
 
 function syncControls() {
-  const count = lesson[state.index].switches;
+  const count = steps[state.index].switches;
   for (const { bit, button, digit } of bitButtons) {
     const on = isOn(bit);
     button.setAttribute('aria-pressed', String(on));
     button.setAttribute('aria-label', `값 ${places[bit]} 스위치, ${on ? '켜짐' : '꺼짐'}`);
     digit.textContent = on ? '1' : '0';
   }
-  byId('plus-one').disabled = state.value >= maxValue();
   byId('clear').disabled = state.value === 0;
 
   // "이진수 0000 0101 → 4 + 1 = 5"
@@ -1021,145 +1267,65 @@ function syncControls() {
     ...(terms.length > 1 ? [terms.join(' + ') + ' = '] : []), strong(String(state.value), 'total'));
 }
 
-// "16 + 2 + 1 = 19", or just "4" when a single switch is on.
-function sumText() {
-  const terms = places.filter((_, bit) => bit < lesson[state.index].switches && isOn(bit)).reverse();
-  return terms.length > 1 ? `${terms.join(' + ')} = ${state.value}` : String(state.value);
-}
+let practiceReady = false;
 
-// Show the current try-it problem, or the result when the learner has just solved one.
 function syncTask() {
-  const tasks = lesson[state.index].tasks;
-  const done = progress[state.index];
-  const allDone = done >= tasks.length;
-  byId('try').classList.toggle('solved', state.solved !== '');
-  byId('try-text').textContent = state.solved !== '' ? tasks[done - 1].text
-    : allDone ? '이 단계의 문제를 모두 풀었습니다. 스위치를 자유롭게 눌러 보세요.' : tasks[done].text;
-  byId('try-result').textContent = state.solved === '' ? ''
-    : `✓ 맞았습니다. ${state.solved}${allDone ? ' · 이 단계의 문제를 모두 풀었습니다.' : ''}`;
-  byId('try-next').hidden = state.solved === '' || allDone;
+  const value = state.value;
+  const feedback = state.index === 2
+    ? value === 100 ? '64 + 32 + 4 = 100입니다. 0110 0100, 켠 자리는 셋입니다.'
+      : value > 100 ? `지금 합계는 ${value}입니다. 100을 넘었으니 켜진 자리 가운데 하나를 꺼야 합니다.`
+      : `지금 합계는 ${value}입니다. 남은 ${100 - value}을 꺼진 자리로 채워 보세요. 채울 수 없으면 '모두 끄기'를 누르고 64부터 다시 켜 보세요.`
+    : value === 127 ? '0111 1111입니다. 여기에 1을 더하면 일곱 자리가 모두 0이 되고 128 자리가 켜집니다.'
+      : `지금 합계는 ${value}입니다. 128 자리는 끄고 나머지를 켜 보세요.`;
+  byId('try-result').textContent = feedback;
 }
 
-// Only the learner's own changes count, so the demo cannot solve a problem.
-function checkTask() {
-  const tasks = lesson[state.index].tasks;
-  const done = progress[state.index];
-  if (state.solved !== '' || done >= tasks.length || state.value !== tasks[done].target) return;
-  progress[state.index] = done + 1;
-  state.solved = sumText();
-  syncTask();
+function setPlaying(playing) {
+  state.playing = playing;
+  byId('toggle-demo').textContent = playing ? '멈춤' : '재생';
+  syncPlayback();
 }
-
-byId('try-next').onclick = () => {
-  state.solved = '';
-  syncTask();
-  bitButtons[bitButtons.length - 1]?.button.focus();
-};
-
-function userChange(next, message) {
-  state.playing = false;
-  state.solved = '';  // a new move dismisses the last result and brings up the next problem
+function userChange(next) {
+  if (!practiceReady) return;
+  setPlaying(false);
   setValue(next);
-  syncPlayback();
-  byId('announcement').textContent = `${message} 합계 ${state.value}`;
   syncTask();
-  checkTask();
 }
-
 function toggleBit(bit) {
-  if (bit >= lesson[state.index].switches) return;
-  const turningOn = !isOn(bit);
-  userChange(state.value ^ 1 << bit, `값 ${places[bit]} 스위치 ${turningOn ? '켜짐' : '꺼짐'}.`);
+  if (bit < steps[state.index].switches) userChange(state.value ^ 1 << bit);
 }
-
-byId('plus-one').onclick = () => {
-  if (state.value < maxValue()) userChange(state.value + 1, state.value & 1 ? '1을 더했습니다. 자리올림.' : '1을 더했습니다.');
-};
-byId('clear').onclick = () => userChange(0, '모두 껐습니다.');
-
-function startStep() {
-  const step = lesson[state.index];
-  state.value = step.initial;
-  state.demoPosition = 0;
-  state.wait = step.demo?.count ? 1100 : step.demo?.interval ?? 0;
-  clearPackets();
-}
-
-function showStep(index, announce = true) {
-  state.index = index;
-  state.playing = !coursePracticeStarted && Boolean(lesson[index].demo);
-  startStep();
-  const step = lesson[index];
-  byId('step-title').textContent = step.title;
-  byId('body').textContent = step.body;
-  byId('takeaway').textContent = step.takeaway;
-  byId('scene-desc').textContent = step.description;
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  stepButtons.forEach((button, i) => {
-    if (i === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  state.solved = '';
-  syncTask();
-  buildButtons();
-  retarget(announce);
-  syncControls();
-  syncPlayback();
-  for (let bit = step.switches - 1; bit >= 0; bit--) if (isOn(bit)) sendPacket(bit);
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
-}
-
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/bits/${index + 1}`);
-  showStep(index);
-}
-
-const stepButtons = lesson.map(({ label }, index) => {
-  const listItem = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  const number = document.createElement('span');
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.addEventListener('click', () => goToStep(index));
-  listItem.append(button);
-  byId('steps').append(listItem);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
+byId('clear').onclick = () => userChange(0);
+byId('toggle-demo').onclick = () => setPlaying(!state.playing);
 motion.addEventListener('change', syncPlayback);
 
-let wasSimulation = false;
-new MutationObserver(() => {
-  const simulation = isSimulationView();
-  if (wasSimulation && !simulation && state.playing) {
-    // A demo is illustrative. Restore its starting input before the learner acts.
-    startStep();
-    clearNote();
+const lessonHooks = {
+  onStep(index) {
+    state.index = index;
+    setPlaying(false);
+    clearPackets();
+  },
+  onPractice(open) {
+    practiceReady = open;
+    byId('world').toggleAttribute('hidden', !open);
+    byId('figure').toggleAttribute('visibility', open);
+    if (open) byId('figure').setAttribute('visibility', 'hidden');
+    if (!open) {
+      setPlaying(false);
+      clearPackets();
+      return;
+    }
+    const step = steps[state.index];
+    state.value = step.initial;
+    state.demoPosition = 0;
+    state.wait = step.demo?.count ? 1100 : step.demo?.interval ?? 0;
+    clearPackets();
+    byId('try-text').textContent = step.practice.goal;
+    byId('try-result').textContent = '';
+    buildButtons();
     retarget(false);
     syncControls();
-  }
-  wasSimulation = simulation;
-  kick();
-}).observe(workspace, { attributes: true, attributeFilter: ['class'] });
-window.addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-    event.preventDefault();
-    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
-  }
-});
-const initial = routeIndex();
-history.replaceState(null, '', `#/bits/${initial + 1}`);
-showStep(initial, false);
+  },
+};
 </script>
 </body>
 </html>

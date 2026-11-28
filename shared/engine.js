@@ -9,7 +9,8 @@ function routeIndex() {
   const slug = location.pathname.split('/').at(-1).replace(/\.html$/, '');
   const match = /^#\/([\w-]+)\/(\d+)$/.exec(location.hash);
   const index = match?.[1] === slug ? Number(match[2]) - 1 : -1;
-  return index >= 0 && index < lesson.length ? index : 0;
+  const steps = Array.isArray(lesson) ? lesson : lesson.steps;
+  return index >= 0 && index < steps.length ? index : 0;
 }
 
 let coursePracticeStarted = false;

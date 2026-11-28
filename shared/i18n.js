@@ -14,6 +14,10 @@
   const ATTRS = ['aria-label', 'title', 'placeholder', 'alt', 'aria-description', 'aria-roledescription'];
 
   const SHARED = {
+    '먼저 예측해 보세요': 'Predict first', '맞습니다': 'Correct', '예측과 다릅니다': 'Not quite',
+    '내 예측': 'Your prediction', '정답': 'Answer', '고른 답': 'Your pick',
+    '다시 골라 보세요': 'Try again', '다른 선택지 설명': 'Other choices',
+    '재생': 'Play', '멈춤': 'Pause', '되짚기': 'Review', '앞 레슨에서': 'From an earlier lesson',
     'AI 노선도': 'AI map', '전체 노선도': 'All lines', '졸업 과제': 'Capstone', '레슨 선택': 'Choose a lesson',
     '레슨 열기': 'Open lesson', '공개 레슨': 'Available lessons', '공개된 레슨이 아직 없습니다.': 'Lessons are in preparation.',
     '심화 노선': 'Specialist lines', '선택한 노선': 'Selected line',
@@ -153,6 +157,7 @@
   }
 
   register(typeof window.lessonText === 'object' ? window.lessonText : null);
+  for (const dictionary of Object.values(window.lessonItemsText ?? {})) register(dictionary);
   register(SHARED);
   if (typeof courseCatalog === 'object') {
     for (const roadmap of courseCatalog.roadmaps) {
@@ -278,7 +283,7 @@
     }
   }
 
-  window.courseI18n = { get lang() { return lang; }, setLang, translate: (text) => (lang === 'en' ? translate(text) ?? text : text), buildSwitch };
+  window.courseI18n = { get lang() { return lang; }, setLang, translate: (text) => (lang === 'en' ? translate(text) ?? text : text), buildSwitch, register };
   document.querySelectorAll('[data-lang-switch]').forEach(buildSwitch);
   apply();
 })();

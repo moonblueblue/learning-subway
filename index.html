@@ -3,6 +3,16 @@
 <head>
 <meta charset="utf-8">
 <script src="shared/device-access.js?v=1f73c765843f36b1"></script>
+<script>
+// The new subject maps are the home page. The old hub stays at index.html?hub=1 (its checks and topic placeholders).
+(() => {
+  const query = new URLSearchParams(location.search);
+  if (query.has('hub') || query.has('topic')) return;
+  const next = new URLSearchParams({subject: 'computer-science'});
+  if (query.get('lang')) next.set('lang', query.get('lang'));
+  location.replace('./map.html?' + next);
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="컴퓨터와 시스템이 실제로 어떻게 돌아가는지, 개념 하나하나를 단계별 도식과 직접 조작하는 데모로 들여다봅니다.">
 <title>Learning Subway</title>

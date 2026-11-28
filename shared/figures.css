@@ -1,0 +1,25 @@
+#figure .part-label { fill: var(--ink); font: 650 13px system-ui, sans-serif; }
+#figure .part-box { fill: #f9fbf9; stroke: #809b8b; stroke-width: 1.25; }
+#figure .part-line { fill: none; stroke: #466457; stroke-width: 1.5; stroke-linecap: butt; }
+#figure .part-arrow { fill: #466457; }
+#figure .part-guide, #figure .link-broken { stroke-dasharray: 4 3; }
+#figure .link-faded { opacity: .45; stroke-dasharray: 6 2; }
+#figure .link-broken.part-line { stroke: #a24c14; }
+#figure .link-broken.part-arrow { fill: #a24c14; }
+#figure .link-new.part-line, #figure .link-taken.part-line { stroke: #0f766e; stroke-width: 2.5; }
+#figure .link-new.part-arrow, #figure .link-taken.part-arrow, #figure .part-token { fill: #0f766e; }
+#figure .part-segment.kind-a { fill: #d4ede3; }
+#figure .part-segment.kind-b, #figure .cell-excluded { fill: url(#lesson-part-b); }
+#figure .part-segment.kind-c { fill: url(#lesson-part-c); }
+#figure .part-segment.kind-d { fill: url(#lesson-part-d); }
+#figure .part-segment.kind-idle { fill: url(#lesson-part-idle); }
+#figure .part-pattern.part-b { fill: #ecf0ed; }
+#figure .part-pattern.part-c { fill: #d6ece5; }
+#figure .part-pattern.part-d { fill: #e5e8f4; }
+#figure .part-pattern.part-idle { fill: #f4f6f3; }
+#figure .part-pattern-line { fill: none; stroke: #b0c0b7; stroke-width: 1; }
+#figure .part-pattern-dot { fill: #5b9b83; }
+#figure .cell-current, #figure .cell-found, #figure .cell-moved { stroke: #0f766e; stroke-width: 3; }
+#figure .cell-found { fill: #d4ede3; }
+#figure .cell-moved { stroke-dasharray: 4 2; }
+#figure .part-box[data-changed], #figure .part-arrow[data-changed] { stroke: #0f766e; stroke-width: 3; }

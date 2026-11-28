@@ -372,6 +372,8 @@
     document.body.style.setProperty('--course-sidebar-top', bar.offsetHeight + 'px');
   });
   barSize.observe(bar);
+  const frameV2 = document.querySelector('meta[name="lesson-frame"][content="2"]') !== null;
+  const lessonSteps = typeof lesson === 'undefined' ? [] : Array.isArray(lesson) ? lesson : lesson.steps;
   const hasScene = Boolean(canvas.querySelector('#scene'));
   const example = element('figure', 'course-example');
   example.setAttribute('aria-label', '이 단계의 예시');
@@ -388,8 +390,10 @@
     }
     example.append(part);
   }
-  if (hasScene) canvas.querySelector('.course-scene').after(example);
-  else prose.after(example);
+  if (!frameV2) {
+    if (hasScene) canvas.querySelector('.course-scene').after(example);
+    else prose.after(example);
+  }
 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   reducedMotion.addEventListener('change', showExample);
@@ -414,12 +418,12 @@
   drawingButton.setAttribute('aria-controls', 'scene');
   drawingControl.append(drawingButton);
   let worldFrame;
-  if (scene && lesson.some(step => step.readingDiagram)) {
+  if (!frameV2 && scene && lessonSteps.some(step => step.readingDiagram)) {
     const controls = canvas.querySelector('.controls');
     let actions = controls.querySelector(':scope > .actions');
     if (!actions) controls.append(actions = element('div', 'actions'));
     actions.append(drawingControl);
-    if (lesson.some(step => step.readingDiagram?.keepWorld)) {
+    if (lessonSteps.some(step => step.readingDiagram?.keepWorld)) {
       const world = scene.querySelector('#world');
       worldFrame = drawSvg(scene, 'g', {});
       worldFrame.append(world);
@@ -520,9 +524,10 @@
     });
   }
   function showExample() {
+    if (frameV2) { scheduleFit(); return; }
     const current = timeline.querySelector('[aria-current="step"]');
     const index = [...timeline.querySelectorAll('.steps button')].indexOf(current);
-    const step = lesson[index];
+    const step = lessonSteps[index];
     if (!step) return;
     if (step !== previewStep) {
       previewStep = step;
@@ -548,6 +553,9 @@
   });
   let selectedView = hasScene ? 'canvas' : 'guide';
   function placeViews() {
+    const reviewing = frameV2 && workspace.classList.contains('lesson-review-open');
+    const canPractice = practice && (!frameV2 || lessonFrame.canPractice);
+    if (frameV2 && !canPractice && selectedView === 'practice') selectedView = 'guide';
     if (fitted.matches) rail.prepend(views);
     else workspace.before(views);
     if (detail) {
@@ -556,20 +564,20 @@
     }
     const desktop = fitted.matches;
     const reading = hasScene && selectedView !== 'practice';
-    const summary = !desktop && hasScene && selectedView === 'canvas';
+    const summary = !reviewing && !desktop && hasScene && selectedView === 'canvas';
     workspace.classList.toggle('course-reading', reading);
     const hint = canvas.querySelector('.view-hint');
     if (hint) hint.setAttribute('aria-hidden', String(reading));
     workspace.classList.toggle('course-summary-open', summary);
-    views.hidden = desktop && !practice;
-    const selected = desktop && practice && reading ? 'guide' : selectedView;
+    views.hidden = reviewing || desktop && !canPractice;
+    const selected = desktop && canPractice && reading ? 'guide' : selectedView;
     for (const [id, , section] of viewOptions) {
-      const visible = desktop
-        ? id === 'canvas' || (id === 'guide' && (!practice || reading)) || (id === 'practice' && !reading)
+      const visible = reviewing ? id === 'guide' : desktop
+        ? id === 'canvas' || (id === 'guide' && (!canPractice || reading)) || (id === 'practice' && !reading)
         : id === selectedView || (summary && id === 'guide');
       section.hidden = !visible;
       const button = views.querySelector('[data-view="' + id + '"]');
-      button.hidden = desktop && (id === 'canvas' || id === 'detail');
+      button.hidden = desktop && (id === 'canvas' || id === 'detail') || id === 'practice' && !canPractice;
       button.setAttribute('aria-pressed', String(id === selected));
     }
     showExample();
@@ -578,10 +586,15 @@
     const id = event.target.closest('button')?.dataset.view;
     if (!id || id === selectedView) return;
     if (id === 'practice') startCoursePractice();
+    else if (frameV2) lessonFrame.setPractice(false);
     selectedView = id;
     placeViews();
   });
   fitted.addEventListener('change', placeViews);
+  if (frameV2) workspace.addEventListener('lesson-frame-change', () => {
+    if (selectedView === 'practice') selectedView = 'guide';
+    placeViews();
+  });
 
   let fitFrame = null;
   function scheduleFit() {

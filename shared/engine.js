@@ -101,13 +101,6 @@ function zoomBetween(nextZoom, from, to = from) {
             camera.y + from.y / camera.zoom - to.y / zoom, zoom);
 }
 
-// Cached lesson HTML used this global before camera binding moved into the engine.
-function pointerGeometry() {
-  const [a, b] = pointers.values();
-  if (!b) return { point: a, distance: 0 };
-  return { point: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, distance: Math.hypot(a.x - b.x, a.y - b.y) };
-}
-
 let cameraDrag = null;
 
 function enableCameraDrag() {
@@ -133,7 +126,6 @@ function enableCameraDrag() {
 }
 
 function resetView() {
-  if (typeof pointers !== 'undefined') pointers.clear();
   if (cameraDrag && viewport.hasPointerCapture(cameraDrag.id)) viewport.releasePointerCapture(cameraDrag.id);
   cameraDrag = null;
   viewport.classList.remove('is-dragging');

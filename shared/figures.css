@@ -3,6 +3,7 @@
 #figure .part-line { fill: none; stroke: #466457; stroke-width: 1.5; stroke-linecap: butt; }
 #figure .part-arrow { fill: #466457; }
 #figure .part-guide, #figure .link-broken { stroke-dasharray: 4 3; }
+.part-branch-faded { opacity: .60; }
 #figure .link-faded { opacity: .45; stroke-dasharray: 6 2; }
 #figure .link-broken.part-line { stroke: #a24c14; }
 #figure .link-broken.part-arrow { fill: #a24c14; }
@@ -23,3 +24,120 @@
 #figure .cell-found { fill: #d4ede3; }
 #figure .cell-moved { stroke-dasharray: 4 2; }
 #figure .part-box[data-changed], #figure .part-arrow[data-changed] { stroke: #0f766e; stroke-width: 3; }
+#figure .part-line[data-changed] { stroke: #0f766e; stroke-width: 3; }
+#figure .part-arrow[data-changed] { fill: #0f766e; }
+#figure .tree-active { fill: #def1e7; stroke: #729f90; }
+#figure .tree-faded { opacity: .55; }
+#figure .tree-blocked { fill: #f6e7d9; stroke: #a24c14; }
+#figure .part-bar-outline { fill: none; }
+
+#figure .plane-grid {
+  stroke: #c1d2c7;
+  stroke-width: 1px;
+}
+#figure .plane-axis,
+#figure .plane-input {
+  stroke: #274239;
+  stroke-width: 2px;
+}
+#figure .plane-result {
+  stroke: #0f766e;
+  stroke-width: 3px;
+}
+#figure .plane-dash,
+#figure .plane-alternate {
+  stroke-dasharray: 5 4;
+}
+#figure .plane-alternate {
+  stroke: #a44b19;
+}
+#figure .plane-dot,
+#figure .part-arrow:is(.plane-input, .plane-result, .plane-dash, .plane-alternate) {
+  stroke: none;
+}
+#figure .plane-dot.plane-input,
+#figure .part-arrow.plane-input {
+  fill: #274239;
+}
+#figure .plane-dot.plane-result,
+#figure .part-arrow.plane-result {
+  fill: #0f766e;
+}
+#figure .plane-dot.plane-alternate,
+#figure .part-arrow.plane-alternate {
+  fill: #a44b19;
+}
+#figure .plane-outline {
+  fill: none;
+}
+#figure .plane-outline.plane-result {
+  fill: #0f766e20;
+}
+
+#figure .part-line:is(.plane-dash, .plane-alternate)[data-changed] {
+  stroke-width: 3px;
+}
+#figure :is(.plane-dot, .plane-outline)[data-changed] {
+  stroke: #0f766e;
+  stroke-width: 3px;
+}
+
+#figure .part-line.tree-memo-write {
+  stroke-dasharray: 4 3;
+}
+#figure .part-line.tree-memo-read {
+  stroke: #0f766e;
+  stroke-width: 2.25;
+}
+#figure .part-arrow.tree-memo-read {
+  fill: #0f766e;
+}
+#figure .tree-memo-slot {
+  fill: #f6faf7;
+}
+
+#figure .network-road {
+  fill: none;
+  stroke: #69877b;
+  stroke-width: 1.8;
+  stroke-linecap: butt;
+}
+#figure .network-road.network-path { stroke: #b86c16; stroke-width: 4; }
+#figure .network-road.network-depth { stroke: #395587; stroke-width: 3.2; stroke-dasharray: 4 3; }
+#figure .network-road.network-parent { stroke: #3c786a; stroke-width: 2.1; }
+#figure .network-road.network-jam { stroke: #ad4234; stroke-dasharray: 4 3; stroke-width: 3; }
+#figure .network-tip.network-parent { fill: #3c786a; }
+#figure .network-place .left { fill: #c8d9de; }
+#figure .network-place .right { fill: #aec8ce; }
+#figure .network-place .top { fill: #eef7f6; }
+#figure .network-place .face { stroke: #608174; stroke-width: .7; }
+#figure .network-place .highlight { fill: none; stroke: #fff; stroke-opacity: .75; }
+#figure .network-place .shadow { fill: #1f4434; opacity: .16; }
+#figure .network-place.network-visited .top { fill: #b5dcc7; }
+#figure .network-place.network-layer-0 .top { fill: #daede0; }
+#figure .network-place.network-layer-1 .top { fill: #c8e3d2; }
+#figure .network-place.network-layer-2 .top { fill: #abd3bc; }
+#figure .network-place.network-layer-3 .top { fill: #90c3a7; }
+#figure .network-place.network-layer-4 .top { fill: #72ad92; }
+#figure .network-place.network-neighbour .top { stroke: #0f766e; stroke-width: 2.1; }
+#figure .network-label {
+  text-anchor: middle;
+  fill: #18342a;
+  font: 650 12px system-ui, sans-serif;
+}
+#figure .network-place-name, #figure .network-badge text { dominant-baseline: middle; font-size: 9px; font-weight: 800; }
+#figure .network-badge circle { fill: #fff; stroke: #37856a; stroke-width: 1.15; }
+
+#figure .network-changed :is(rect, circle, .top), #figure .network-road.network-changed {
+  stroke-width: 2.7;
+}
+#figure .network-changed.network-place .top {
+  stroke: #0f766e;
+}
+#figure .network-changed > .network-label {
+  fill: #0f766e;
+  font-weight: 800;
+}
+
+#figure .network-road.network-changed.network-path { stroke-width: 4.65; }
+#figure .network-road.network-changed.network-depth { stroke-width: 3.8; }

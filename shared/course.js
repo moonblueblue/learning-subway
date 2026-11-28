@@ -372,7 +372,7 @@
     document.body.style.setProperty('--course-sidebar-top', bar.offsetHeight + 'px');
   });
   barSize.observe(bar);
-  const frameV2 = document.querySelector('meta[name="lesson-frame"][content="2"]') !== null;
+  const framed = document.querySelector('meta[name="lesson-frame"][content="2"]') !== null;
   const lessonSteps = typeof lesson === 'undefined' ? [] : Array.isArray(lesson) ? lesson : lesson.steps;
   const hasScene = Boolean(canvas.querySelector('#scene'));
   const example = element('figure', 'course-example');
@@ -390,7 +390,7 @@
     }
     example.append(part);
   }
-  if (!frameV2) {
+  if (!framed) {
     if (hasScene) canvas.querySelector('.course-scene').after(example);
     else prose.after(example);
   }
@@ -418,7 +418,7 @@
   drawingButton.setAttribute('aria-controls', 'scene');
   drawingControl.append(drawingButton);
   let worldFrame;
-  if (!frameV2 && scene && lessonSteps.some(step => step.readingDiagram)) {
+  if (!framed && scene && lessonSteps.some(step => step.readingDiagram)) {
     const controls = canvas.querySelector('.controls');
     let actions = controls.querySelector(':scope > .actions');
     if (!actions) controls.append(actions = element('div', 'actions'));
@@ -524,7 +524,7 @@
     });
   }
   function showExample() {
-    if (frameV2) { scheduleFit(); return; }
+    if (framed) { scheduleFit(); return; }
     const current = timeline.querySelector('[aria-current="step"]');
     const index = [...timeline.querySelectorAll('.steps button')].indexOf(current);
     const step = lessonSteps[index];
@@ -532,7 +532,7 @@
     if (step !== previewStep) {
       previewStep = step;
       showSimulation = false;
-      workspace.classList.toggle('course-step-preview', Boolean(step.readingRows || step.readingStage || step.readingMemory || step.readingSearch || step.readingRoute || step.readingSchedule));
+      workspace.classList.toggle('course-step-preview', Boolean(step.readingRows || step.readingStage || step.readingMemory || step.readingRoute || step.readingSchedule));
     }
     drawDiagram(step.readingDiagram);
     drawComparison(step.readingDiagram ? {} : step);
@@ -543,7 +543,7 @@
       values = [names.get(event.from) + ' · ' + event.label, event.title, event.text];
     }
     // Refresh the diagram from the preview or the learner’s own simulation state.
-    if (step.readingStage || step.readingMemory || step.readingSearch || step.readingRoute || step.readingSchedule) paint();
+    if (step.readingStage || step.readingMemory || step.readingRoute || step.readingSchedule) paint();
     example.hidden = !values;
     if (values) parts.forEach((part, i) => { part.textContent = values[i]; });
     scheduleFit();
@@ -553,9 +553,9 @@
   });
   let selectedView = hasScene ? 'canvas' : 'guide';
   function placeViews() {
-    const reviewing = frameV2 && workspace.classList.contains('lesson-review-open');
-    const canPractice = practice && (!frameV2 || lessonFrame.canPractice);
-    if (frameV2 && !canPractice && selectedView === 'practice') selectedView = 'guide';
+    const reviewing = framed && workspace.classList.contains('lesson-review-open');
+    const canPractice = practice && (!framed || lessonFrame.canPractice);
+    if (framed && !canPractice && selectedView === 'practice') selectedView = 'guide';
     if (fitted.matches) rail.prepend(views);
     else workspace.before(views);
     if (detail) {
@@ -586,12 +586,12 @@
     const id = event.target.closest('button')?.dataset.view;
     if (!id || id === selectedView) return;
     if (id === 'practice') startCoursePractice();
-    else if (frameV2) lessonFrame.setPractice(false);
+    else if (framed) lessonFrame.setPractice(false);
     selectedView = id;
     placeViews();
   });
   fitted.addEventListener('change', placeViews);
-  if (frameV2) workspace.addEventListener('lesson-frame-change', () => {
+  if (framed) workspace.addEventListener('lesson-frame-change', () => {
     if (selectedView === 'practice') selectedView = 'guide';
     placeViews();
   });
@@ -667,4 +667,135 @@
       if (event.key.startsWith('Arrow')) event.stopPropagation();
     });
   }
+
+  // Keys every lesson shares (frame spec 3.9): ↑/↓ open the previous/next lesson at step one, Esc goes to the
+  // first page, and / opens a lesson finder like GitHub's "Type / to search". ←/→ stay with the steps.
+  const typing = (target) => target instanceof HTMLElement &&
+    (target.isContentEditable || target.closest('input, textarea, select, [contenteditable]'));
+  const scrolls = (target) => {
+    for (let node = target instanceof Element ? target : null; node && node !== document.body; node = node.parentElement) {
+      const {overflowY} = getComputedStyle(node);
+      if ((overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight + 1) return true;
+    }
+    return false;
+  };
+  const modalOpen = () => document.querySelector('dialog[open]') !== null;
+
+  const finder = element('dialog', 'course-finder');
+  finder.setAttribute('aria-label', '레슨 찾기');
+  const search = element('input', 'course-finder-input');
+  search.type = 'text';
+  search.setAttribute('role', 'combobox');
+  search.setAttribute('aria-expanded', 'true');
+  search.setAttribute('aria-controls', 'course-finder-list');
+  search.setAttribute('aria-autocomplete', 'list');
+  search.setAttribute('aria-label', '레슨 찾기');
+  search.placeholder = '레슨 이름이나 번호로 찾기';
+  search.autocomplete = 'off';
+  const results = element('ul', 'course-finder-list');
+  results.id = 'course-finder-list';
+  results.setAttribute('role', 'listbox');
+  results.setAttribute('aria-label', '레슨');
+  const empty = element('p', 'course-finder-empty', '찾는 레슨이 없습니다.');
+  empty.hidden = true;
+  const hints = element('div', 'course-finder-keys');
+  hints.setAttribute('aria-hidden', 'true');
+  for (const [keys, text] of [[['↑', '↓'], '이동'], [['↵'], '열기'], [['esc'], '닫기']]) {
+    const hint = element('span');
+    for (const key of keys) hint.append(element('kbd', '', key));
+    hint.append(element('span', '', text));
+    hints.append(hint);
+  }
+  finder.append(search, results, empty, hints);
+  document.body.append(finder);
+
+  // Hangul initial consonants, so "ㅂㅌ" finds "비트와 자릿값" (the same search the goding admin uses).
+  const INITIALS = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+  const initials = (text) => [...text].map((char) => {
+    const code = char.charCodeAt(0) - 0xac00;
+    return code >= 0 && code < 11172 ? INITIALS[Math.floor(code / 588)] : char;
+  }).join('');
+  const options = ordered.map((lesson, index) => {
+    const option = element('li', 'course-finder-option');
+    option.id = 'course-finder-' + index;
+    option.setAttribute('role', 'option');
+    option.append(element('span', 'course-number', lesson.capstone ? '졸업 과제' : lesson.id),
+      labelInLanguage(element('span', 'course-finder-title'), lesson.title, lesson.titleEn));
+    if (index === at) option.append(element('span', 'course-finder-here', '현재 레슨'));
+    option.addEventListener('mousemove', () => select(index));
+    option.addEventListener('mousedown', (event) => event.preventDefault());
+    option.addEventListener('click', () => open(index));
+    results.append(option);
+    return option;
+  });
+  let active = at;
+  let shown = [];
+  function select(index) {
+    active = index;
+    for (const [position, option] of options.entries()) option.setAttribute('aria-selected', String(position === index));
+    if (index >= 0) {
+      search.setAttribute('aria-activedescendant', options[index].id);
+      options[index].scrollIntoView({block: 'nearest'});
+    } else search.removeAttribute('aria-activedescendant');
+  }
+  function filter() {
+    const query = search.value.trim().toLowerCase();
+    shown = [];
+    for (const [index, lesson] of ordered.entries()) {
+      const words = [lesson.id, lesson.title, initials(lesson.title), options[index].textContent].join(' ').toLowerCase();
+      const match = !query || words.includes(query) || initials(words).includes(query);
+      options[index].hidden = !match;
+      if (match) shown.push(index);
+    }
+    empty.hidden = shown.length > 0;
+    select(shown.includes(at) && !query ? at : shown[0] ?? -1);
+  }
+  function open(index) {
+    const lesson = ordered[index];
+    if (!lesson) return;
+    if (finder.open) finder.close();
+    if (lesson.ref !== pageRef) location.href = lesson.page;
+  }
+  function showFinder() {
+    (document.activeElement instanceof HTMLElement) && document.activeElement.blur();
+    search.value = '';
+    filter();
+    finder.showModal();
+    search.focus();
+    options[at]?.scrollIntoView({block: 'center'});
+  }
+  search.addEventListener('input', filter);
+  search.addEventListener('keydown', (event) => {
+    if (event.isComposing) return;
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      // Wraps at either end, like the goding finder; holding the key keeps going round.
+      event.preventDefault();
+      event.stopPropagation();
+      if (!shown.length) return;
+      const position = shown.indexOf(active);
+      const step = event.key === 'ArrowDown' ? 1 : -1;
+      select(shown[(position + step + shown.length) % shown.length]);
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      open(active);
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') event.stopPropagation();
+  });
+  finder.addEventListener('click', (event) => { if (event.target === finder) finder.close(); });
+
+  addEventListener('keydown', (event) => {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return;
+    if (modalOpen() || typing(event.target)) return;
+    if (event.key === '/') {
+      event.preventDefault();
+      showFinder();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      location.href = brand.href;
+    } else if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !event.shiftKey && !scrolls(event.target)) {
+      const lesson = ordered[at + (event.key === 'ArrowDown' ? 1 : -1)];
+      if (at < 0 || !lesson) return;
+      event.preventDefault();
+      location.href = lesson.page;
+    }
+  });
 })();

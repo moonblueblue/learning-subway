@@ -7,13 +7,16 @@
 .lesson-questions p, .lesson-questions ul, .lesson-questions h3 { margin: 0; }
 .lesson-options { display: flex; flex-wrap: wrap; gap: 8px; }
 .lesson-options .action { text-align: left; white-space: normal; }
+/* A long choice grows the button instead of spilling out of the shared 40px control height. */
+.course-shell main .lesson-options .action.action { height: auto; min-height: var(--course-control-height); padding-block: 8px; }
 .lesson-options .action[aria-pressed=true] { background: var(--active); border-color: var(--accent); }
 .lesson-options .lesson-prediction-answer { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .lesson-options .action:disabled { opacity: 1; }
 .lesson-prediction-label { display: inline-block; margin-inline-start: .55em; color: var(--accent); font-weight: 800; }
 .lesson-feedback { display: grid; gap: 6px; }
 .lesson-terms { margin: 0; padding-left: 1.25em; }
-.lesson-code { margin: 0; font-family: ui-monospace, monospace; white-space: pre; }
+.lesson-code { margin: 0; font-family: ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.lesson-code:empty { display: none; }
 .lesson-code [aria-current] { background: var(--active); }
 .review-step { align-self: center; }
 .review-step[aria-current] { background: var(--active); border-color: var(--accent); }
@@ -40,7 +43,12 @@
 .course-shell .course-practice { overflow-y: auto; }
 .course-practice .course-inputs button { min-inline-size: 24px; min-block-size: 24px; }
 .steps button[aria-current=step] { background: var(--active); border-color: var(--accent); }
-.step-number { color: var(--accent); font-weight: bold; margin-inline-end: .4em; }
+.step-number { color: var(--accent); font-weight: bold; }
+/* Timeline: one number per step in a single row at every width (frame spec 3.8, rule 11). */
+.course-shell .timeline .steps { grid-template-columns: repeat(var(--step-count), minmax(0, 1fr)); }
+.course-shell .timeline .steps button { justify-content: center; padding-inline: 0; white-space: nowrap; }
+.course-shell .timeline #count { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.course-shell .timeline .review-step { white-space: nowrap; }
 .navigation { display: flex; gap: 8px; }
 .timeline:has(.review-step) { grid-template-columns: auto minmax(0,1fr) auto auto; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -86,5 +94,4 @@ body.course-shell > main .workspace.lesson-review-open {
   .course-shell .explanation { display: flex; flex-direction: column; }
   .course-shell .explanation[hidden] { display: none; }
   .course-shell .course-explanation-body { min-height: 0; flex: 1 1 0; overflow-y: auto; }
-  .course-shell .course-explanation-body > .course-fit-content { zoom: 1 !important; }
 }

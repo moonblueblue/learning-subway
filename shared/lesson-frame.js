@@ -1,6 +1,9 @@
 // The lesson owns its drawings and practical controls. This frame owns navigation and questions.
 const lessonFrame = (() => {
   const lessonSteps = lesson.steps;
+  const bookmarks = lessonSteps.map((step, position) => step.bookmark ?? position + 1);
+  bookmarks.push(lessonSteps.length + 1);
+  const fragment = position => '#/' + slug + '/' + bookmarks[position];
   const slug = location.pathname.split('/').at(-1).replace(/\.html$/, '');
   const ref = location.pathname.split('/').slice(-2).join('/').replace(/\.html$/, '');
   const workspace = document.querySelector('.workspace');
@@ -129,7 +132,7 @@ const lessonFrame = (() => {
     } else {
       return window.drawLessonPart(figure, definition);
     }
-    return '';
+    return [];
   }
 
   function reviewItems() {
@@ -174,12 +177,49 @@ const lessonFrame = (() => {
     }));
   }
 
+  function renderFigure(step, waiting) {
+    const drawn = draw(waiting ? step.predict.before : step.figure, index);
+    const captions = waiting
+      ? [step.predict.prompt, ' ', step.predict.before.description]
+      : [...drawn, ...(drawn.length && step.description ? ['. '] : []), step.description];
+    description.replaceChildren(...captions.filter(Boolean).map(text => document.createTextNode(text)));
+  }
+
+  function renderBody(step, waiting) {
+    body.replaceChildren();
+    if (waiting) return;
+    if (!step.links?.length) {
+      body.textContent = step.body;
+      return;
+    }
+    const translate = window.courseI18n?.translate ?? (text => text);
+    let rest = translate(step.body);
+    for (const link of step.links) {
+      const text = translate(link.label);
+      const start = rest.indexOf(text);
+      if (start < 0) continue;
+      const anchor = create('a', text);
+      anchor.href = link.href;
+      body.append(rest.slice(0, start), anchor);
+      rest = rest.slice(start + text.length);
+    }
+    body.append(rest);
+  }
+
+  function refreshPart() {
+    const step = lessonSteps[index];
+    if (!step || practiceOpen) return;
+    const waiting = step.predict && predictions[index]?.answer === undefined;
+    if ((waiting ? step.predict.before : step.figure).part) renderFigure(step, waiting);
+    if (step.links?.length) renderBody(step, waiting);
+  }
+
   function render() {
     const step = lessonSteps[index];
     const record = step?.predict ? predictions[index] ||= {} : null;
     const waiting = record && record.answer === undefined;
     reviewScroll.scrollTop = 0;
-    document.getElementById('count').textContent = (step ? index + 1 : lessonSteps.length) + ' / ' + lessonSteps.length;
+    document.getElementById('count').textContent = step ? (index + 1) + '단계 / ' + lessonSteps.length : '되짚기';
     previous.disabled = index === 0;
     next.disabled = !step;
     workspace.classList.toggle('lesson-review-open', !step);
@@ -196,15 +236,9 @@ const lessonFrame = (() => {
     if (!step) return renderReview();
 
     heading.textContent = waiting ? step.predict.prompt : step.title;
-    body.textContent = waiting ? '' : step.body;
+    renderBody(step, waiting);
     takeaway.textContent = waiting ? '' : step.takeaway;
-    const drawn = draw(waiting ? step.predict.before : step.figure, index);
-    const captions = waiting ? [step.predict.prompt, step.predict.before.description] : [step.description || drawn];
-    description.replaceChildren();
-    for (const caption of captions.filter(Boolean)) {
-      if (description.childNodes.length) description.append(' ');
-      description.append(document.createTextNode(caption));
-    }
+    renderFigure(step, waiting);
 
     if (step.predict) questions.append(questionCard(step.predict, record, predictionKey, true, () => {
       render();
@@ -212,14 +246,15 @@ const lessonFrame = (() => {
       heading.focus();
       workspace.dispatchEvent(new Event('lesson-frame-change'));
     }));
-    if (waiting) return;
-    if (step.code) {
-      code.append(...step.code.lines.map((line, position) => {
+    const example = waiting ? step.predict.before.code : step.code;
+    if (example) {
+      code.append(...example.lines.map((line, position) => {
         const item = create('li', line);
-        if (position + 1 === step.code.current) item.setAttribute('aria-current', 'step');
+        if (position + 1 === example.current) item.setAttribute('aria-current', 'step');
         return item;
       }));
     }
+    if (waiting) return;
     for (const term of lesson.terms.filter(term => term.step === index + 1)) {
       const item = create('li');
       item.append(create('b', term.term), ' — ', create('span', term.meaning));
@@ -248,7 +283,7 @@ const lessonFrame = (() => {
     if (position === index || position < 0 || position > lessonSteps.length) return;
     if (practiceOpen) setPractice(false);
     index = position;
-    if (push) history.pushState(null, '', '#/' + slug + '/' + (index + 1));
+    if (push) history.pushState(null, '', fragment(index));
     hooks.onStep?.(index);
     render();
     announcement.textContent = heading.textContent;
@@ -257,15 +292,19 @@ const lessonFrame = (() => {
 
   function fromLocation() {
     const match = /^#\/([\w-]+)\/(\d+)$/.exec(location.hash);
-    const position = match?.[1] === slug ? Number(match[2]) - 1 : -1;
-    return position >= 0 && position <= lessonSteps.length ? position : 0;
+    const position = match?.[1] === slug ? bookmarks.indexOf(Number(match[2])) : -1;
+    return Math.max(0, position);
   }
 
   const buttons = lessonSteps.map(({label}, position) => {
     const item = create('li');
     const button = create('button');
     button.type = 'button';
-    button.append(create('span', String(position + 1), 'step-number'), create('span', label));
+    // Only the number shows, so a narrow timeline never breaks a title. The title stays in the name and tooltip,
+    // and the count beside the heading says where the learner is.
+    button.append(create('span', String(position + 1), 'step-number'));
+    button.setAttribute('aria-label', (position + 1) + '단계: ' + label);
+    button.title = button.getAttribute('aria-label');
     button.addEventListener('click', () => move(position, true));
     item.append(button);
     timeline.append(item);
@@ -275,19 +314,22 @@ const lessonFrame = (() => {
   addEventListener('DOMContentLoaded', () => {
     reviewScroll = explanation.querySelector('.course-explanation-body');
     heading.after(questions);
+    body.before(code);
     explanation.append(scrollHint);
     reviewScroll.addEventListener('scroll', updateReviewScroll);
     const reviewSize = new ResizeObserver(updateReviewScroll);
     reviewSize.observe(reviewScroll);
     reviewSize.observe(questions);
     if (workspace.classList.contains('lesson-review-open')) reviewScroll.tabIndex = 0;
+    refreshPart();
   });
+  addEventListener('course:lang', refreshPart);
 
   const reviewButton = create('button', '되짚기', 'action review-step');
   reviewButton.type = 'button';
   reviewButton.addEventListener('click', () => move(lessonSteps.length, true));
   timeline.after(reviewButton);
-  body.after(code, terms);
+  body.after(terms);
   practice?.prepend(practiceQuestions);
   previous.addEventListener('click', () => move(index - 1, true));
   next.addEventListener('click', () => move(index + 1, true));
@@ -313,7 +355,7 @@ const lessonFrame = (() => {
   }
 
   const initial = fromLocation();
-  history.replaceState(null, '', '#/' + slug + '/' + (initial + 1));
+  history.replaceState(null, '', fragment(initial));
   move(initial);
   return {
     setPractice,

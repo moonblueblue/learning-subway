@@ -652,9 +652,6 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 .course-shell main .action.choice { min-height: var(--course-control-height); height: auto; box-sizing: border-box; }
 
 
-/* Previously cached course.js also emits a second caption in the same button. */
-.course-step-short { display: none; }
-
 /* Example note on still pictures (engine.js exampleNote): one line at the top centre of the scene. */
 .example-note rect { fill: #f1f7f2; stroke: #7fa891; stroke-width: .8; }
 .example-note text { fill: #2f6b4f; font: 700 12px system-ui, sans-serif; text-anchor: middle; dominant-baseline: central; }
@@ -682,3 +679,43 @@ details[open] > .course-summary::before { transform: rotate(45deg); }
 }
 body:not(.course-shell) > main { visibility: hidden; animation: course-reveal 0s 1.5s forwards; }
 @keyframes course-reveal { to { visibility: visible; } }
+
+/* Lesson finder (/): a centred dialog over the lesson, like the goding admin finder. Keyboard only on desktop. */
+.course-finder {
+  width: min(640px, calc(100vw - 32px));
+  max-height: min(78vh, 720px);
+  margin: 9vh auto auto;
+  padding: 0;
+  border: 1px solid var(--course-border);
+  border-radius: var(--course-panel-radius);
+  background: #fff;
+  color: var(--course-ink);
+  box-shadow: 0 18px 48px rgb(16 31 23 / 22%);
+  overflow: hidden;
+}
+.course-finder[open] { display: flex; flex-direction: column; }
+.course-finder::backdrop { background: rgb(16 31 23 / 45%); }
+.course-finder-input {
+  flex: none;
+  height: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-bottom: 1px solid var(--course-border);
+  font: inherit;
+  font-size: .9375rem;
+  color: inherit;
+  background: transparent;
+  outline: none;
+}
+.course-shell .course-finder-input:focus, .course-shell .course-finder-input:focus-visible { outline: none; box-shadow: none; }
+.course-finder-list { flex: 1 1 auto; min-height: 0; margin: 0; padding: 6px 0; list-style: none; overflow-y: auto; scroll-padding-block: 6px; }
+.course-finder-option { display: flex; align-items: center; gap: 10px; padding: 7px 16px; cursor: pointer; user-select: none; }
+.course-finder-option[hidden] { display: none; }
+.course-finder-option[aria-selected="true"] { background: var(--course-active); }
+.course-finder-option .course-number { min-width: 3.2em; }
+.course-finder-title { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.course-finder-here { flex: none; padding: 1px 6px; border: 1px solid #a5cfb5; border-radius: 4px; color: #0b4e3a; font-size: .75rem; font-weight: 700; }
+.course-finder-empty { margin: 0; padding: 32px 16px; text-align: center; color: var(--course-muted); }
+.course-finder-keys { flex: none; display: flex; gap: 16px; padding: 9px 16px; border-top: 1px solid var(--course-border); background: var(--course-bg); color: var(--course-muted); font-size: .75rem; }
+.course-finder-keys > span { display: flex; align-items: center; gap: 4px; }
+.course-finder-keys kbd { min-width: 20px; padding: 0 4px; border: 1px solid var(--course-border); border-radius: 4px; background: #fff; font: inherit; text-align: center; }

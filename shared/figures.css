@@ -7,6 +7,7 @@
 #figure .link-faded { opacity: .45; stroke-dasharray: 6 2; }
 #figure .link-broken.part-line { stroke: #a24c14; }
 #figure .link-broken.part-arrow { fill: #a24c14; }
+#figure .part-cut { fill: none; stroke: #a24c14; stroke-width: 3; stroke-linecap: round; }
 #figure .link-new.part-line, #figure .link-taken.part-line { stroke: #0f766e; stroke-width: 2.5; }
 #figure .link-new.part-arrow, #figure .link-taken.part-arrow, #figure .part-token { fill: #0f766e; }
 #figure .part-segment.kind-a { fill: #d4ede3; }
@@ -26,6 +27,9 @@
 #figure .part-box[data-changed], #figure .part-arrow[data-changed] { stroke: #0f766e; stroke-width: 3; }
 #figure .part-line[data-changed] { stroke: #0f766e; stroke-width: 3; }
 #figure .part-arrow[data-changed] { fill: #0f766e; }
+/* A broken line keeps its meaning colour when highlighted: only its width grows (frame spec 3.7 rule 2). */
+#figure .link-broken.part-line[data-changed] { stroke: #a24c14; stroke-width: 3; }
+#figure .link-broken.part-arrow[data-changed] { fill: #a24c14; stroke: #a24c14; }
 #figure .tree-active { fill: #def1e7; stroke: #729f90; }
 #figure .tree-faded { opacity: .55; }
 #figure .tree-blocked { fill: #f6e7d9; stroke: #a24c14; }

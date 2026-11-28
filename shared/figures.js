@@ -117,7 +117,12 @@ window.drawLessonPart = function drawLessonPart(target, figure) {
       const g = group(id);
       if (hide.has(from) || hide.has(to)) g.setAttribute('visibility', 'hidden');
       const tone = 'link-' + kind;
-      mark(arrow(g, a.x + width / 2, a.y, b.x - width / 2, b.y, tone), id);
+      if (kind === 'broken') {
+        // A broken link is no longer a path: no head, and a cut mark in the middle (frame spec 3.7 rule 2).
+        const x1 = a.x + width / 2, x2 = b.x - width / 2, mx = (x1 + x2) / 2, my = (a.y + b.y) / 2;
+        mark(line(g, x1, a.y, x2, b.y, tone), id);
+        node('path', {d: `M${mx - 7} ${my - 7}L${mx + 7} ${my + 7}M${mx + 7} ${my - 7}L${mx - 7} ${my + 7}`, class: 'part-cut'}, g);
+      } else mark(arrow(g, a.x + width / 2, a.y, b.x - width / 2, b.y, tone), id);
       if (!hide.has(id) && !hide.has(from) && !hide.has(to)) {
         say(a.cell.label, a.cell.sub, kind === 'broken' ? '⇥' : '→', b.cell.label, b.cell.sub);
       }

@@ -10,6 +10,7 @@
     "computing-basics/sound": "7a3826867cd21d048a4861e4cc98fe1b4db005e5",
     "computing-basics/text": "7aa44d952a3e0bc69a68975782797e294a0dcbef",
     "math/logic": "e3cfb2ae41e1f031787665f4fc718e2295bdc591",
+    "math/sets": "a4ddfd9c60649dab938be8253052b28bc4c410f3",
     "os/file-access": "1071044a6fde161c4180a9a5eac84aa9946f1c68",
     "os/sharing-cpu": "0d56942536a5dd6c018299a357781f0084caf731",
     "os/what-os-does": "31321ad4a532fbfa4f1fc3f21ab12dd2434e2ec1",
@@ -20,5 +21,5 @@
     "programming/stack": "6a3a68f632c178a93a4947be5679e79d436cba8c",
     "programming/variables": "8291a9110901af3e6035bf8a33dcff9aa2b0a123"
   },
-  "source_tip": "1071044a6fde161c4180a9a5eac84aa9946f1c68"
+  "source_tip": "a4ddfd9c60649dab938be8253052b28bc4c410f3"
 }

@@ -4,126 +4,55 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="집합의 원소, 합집합과 교집합, 함수의 뜻을 문제로 확인하고 파이썬의 set과 딕셔너리와 이어 보세요.">
-<title>집합과 함수 · 레슨 2.2</title>
+<meta name="description" content="입력과 출력을 선으로 이을 때, 어떤 모양이어야 함수일까요?">
+<title>집합과 함수</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="logic.items.js?v=2b1f32212b453df5">
 <style>
-:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
-button{font:inherit;color:inherit;cursor:pointer}
-button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
-:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
-.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
-header{margin-bottom:20px}
-h1,h2,p{margin:0}
-.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
-h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
-header p.lead{color:var(--muted);margin-top:10px}
-.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
-.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
-.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
-.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
-.primary{background:var(--accent);color:white;border-color:var(--accent)}
-.primary:hover:not(:disabled){background:#115e59}
-.timeline{padding:15px 18px}
-.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
-.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
-.steps button:hover{border-color:var(--accent)}
-.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
-.step-number{font:700 .875rem var(--mono);color:var(--accent)}
-.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
-.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
-.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
-.takeaway p{font-size:1rem}
-.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
-.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
-.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
-.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
-.stage-top h2{font-size:1rem}
-.score{color:var(--accent);font:700 .875rem var(--mono)}
-.case{margin:18px;padding:16px 18px;border-radius:14px;background:#e9f5f3;border:1px solid var(--border);display:grid;gap:6px}
-.case strong{color:var(--accent);font-size:.875rem}
-.case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
-.items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
-.item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
-.item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
-.choices{display:flex;flex-wrap:wrap;gap:6px}
-.choice{min-width:68px}
-.choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
-.choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
-.feedback{font-size:.9375rem;color:var(--muted);line-height:1.6}
-.feedback:empty{display:none}
-.feedback b{margin-right:4px}
-.item.right{border-color:var(--accent);background:#f6fbf7}
-.item.right .feedback b{color:var(--accent)}
-.item.wrong{border-color:#a24c14;background:#fffaf5}
-.item.wrong .feedback b{color:#a24c14}
-.think{margin:0 18px 18px;padding:14px 16px;border-radius:12px;border:1px dashed #9fb7a9;display:grid;gap:10px}
-.think label{font-weight:700}
-.think textarea{font:inherit;min-height:84px;padding:10px 12px;border:1px solid #9fb7a9;border-radius:10px;resize:vertical}
-.think .sample-answer{color:var(--muted);line-height:1.7}
-.think .sample-answer[hidden]{display:none}
-.done{margin:0 18px 18px;padding:12px 14px;border-radius:10px;background:#d2f4dd;color:#0f5a3c;font-weight:700}
-.done[hidden]{display:none}
-.timeline{border-top:1px solid var(--border)}
-.truth{margin:0 18px 14px}
-.truth[hidden]{display:none}
-.truth table{border-collapse:collapse;font:700 1rem var(--mono);margin:0 auto}
-.truth th,.truth td{border:1px solid var(--border);padding:6px 18px;text-align:center}
-.truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
-.truth td.blank{color:#9aa8a2}
-.truth td.filled{background:#d2f4dd;color:#0f5a3c}
+.venn-set { fill: none; stroke: #557e72; stroke-width: 1.5; }
+.venn-element { fill: white; stroke: #557e72; stroke-width: 1.5; }
+.venn-label { fill: var(--ink); font: 700 15px system-ui, sans-serif; }
 
-.worked-example { min-width: 0; margin: 0; }
-.worked-example table { width: 100%; table-layout: auto; border-collapse: separate; border-spacing: 0;
-  border: 1px solid var(--border); border-radius: 8px; font-size: .85rem; line-height: 1.3; }
-.worked-example caption { padding: 0 0 4px; font-weight: 700; text-align: start; }
-.worked-example :is(th, td) { padding: 3px 6px; border-bottom: 1px solid var(--border);
-  text-align: start; overflow-wrap: anywhere; }
-.worked-example thead { background: #eff6f1; }
-.worked-example tbody tr:last-child :is(th, td) { border-bottom: 0; }
-.worked-example tr.is-key :is(th, td) { background: #e3f1e9; font-weight: 700; }
-.worked-example .worked-note { margin-top: 4px; font-size: .85rem; font-weight: 700; }
-@media (max-height: 720px) and (min-width: 641px) {
-  .explanation:has(.worked-example:not([hidden])) .takeaway { display: none; }
-}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./sets.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=54094544905ce975">
+<link rel="stylesheet" href="../shared/figures.css?v=6299a8916ab8e667">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=bc23e4ccbab765b1"></script>
+<script defer blocking="render" src="./sets.items.js?v=25ca09b45c7234b9"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=7f6891ee1e8cd700"></script>
+<script defer blocking="render" src="./sets.en.js?v=15607594c82ee892"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
   <header>
-    <p class="eyebrow">2장 CS를 위한 수학 · 레슨 2.2 · 실습</p>
+    <p class="eyebrow">2장 CS를 위한 수학</p>
     <h1>집합과 함수</h1>
-    <p class="lead">모음과 대응을 어떻게 정확하게 말할까요? 집합과 함수를 문제로 확인하고 파이썬과 이어 보세요.</p>
+    <p>입력과 출력을 선으로 이을 때, 어떤 모양이어야 함수일까요?</p>
   </header>
   <div class="workspace">
     <div>
-      <section class="panel" aria-labelledby="practice-heading">
-        <div class="stage-top"><h2 id="practice-heading">참일까, 거짓일까</h2><span class="score" id="score" aria-live="polite"></span></div>
-        <div class="case"><strong>문제</strong><p id="case"></p></div>
-        <div class="truth" id="table" hidden></div>
-        <ol class="items" id="items"></ol>
-        <p class="done" id="done" role="status" hidden></p>
-        <div class="think">
-          <label for="answer">생각해 보기 · <span id="question"></span></label>
-          <textarea id="answer" placeholder="자유롭게 적어 보세요. 저장되거나 채점되지 않습니다."></textarea>
-          <div><button class="action" id="reveal" type="button" aria-expanded="false">예시 답 보기</button></div>
-          <p class="sample-answer" id="sample" hidden></p>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">집합의 원소와 입력·출력</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">집합의 원소와 함수의 입출력 대응</title>
+            <desc id="scene-desc"></desc>
+            <g id="figure" aria-hidden="true"></g>
+          </svg>
         </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+        </div>
+        <div class="controls"></div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
           <ol class="steps" id="steps"></ol>
@@ -131,288 +60,668 @@ header p.lead{color:var(--muted);margin-top:10px}
       </section>
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
-      <h2 id="step-title"></h2><p id="body"></p>
-      <figure class="worked-example" id="worked-example" hidden></figure>
-      <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
-      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+      <h2 id="step-title"></h2>
+      <p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
     </section>
   </div>
-  <div class="sr-only" id="announcement" role="status"></div>
+  <div id="announcement" class="sr-only" role="status"></div>
 </main>
 <script>
-const BENEFIT = 'true', RISK = 'false';
-const yes = '참', no = '거짓';
-// Each step is one exercise. `choices` are the two answers; items are statements or truth-table rows.
-// A step with `table` shows its items as a truth table whose last column the learner fills in.
-const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : 'false', why });
-const TF = [['true', '참'], ['false', '거짓']];
-const lesson = [
-  {
-    label: '집합',
-    example: ["1, 2, 2를 집합에 넣음", "중복 2를 한 번만 보관", "원소는 1과 2"],
-    title: '집합은 중복 없이 모은 묶음이다',
-    body: '집합은 서로 다른 것들을 모은 묶음입니다. 순서는 상관없고, 같은 것이 두 번 들어가도 하나로 칩니다. 어떤 것이 집합 안에 있으면 "원소이다"라고 하고 ∈로 씁니다. A = {1, 2, 3}이면 2 ∈ A는 참, 5 ∈ A는 거짓입니다.',
-    link: '1.4의 리스트는 순서가 있고 같은 값이 여러 번 들어갈 수 있었습니다. 집합은 순서도 중복도 없다는 점이 다릅니다.',
-    case: 'A = {1, 2, 3}일 때 다음 문장이 참인지 고르세요.',
-    choices: TF,
-    items: [
-      { text: '2 ∈ A (2는 A의 원소다)', answer: 'true', why: 'A 안에 2가 있습니다.' },
-      { text: '5 ∈ A', answer: 'false', why: 'A에는 1, 2, 3뿐입니다.' },
-      { text: '{3, 1, 2}는 A와 같은 집합이다', answer: 'true', why: '집합은 순서를 따지지 않습니다.' },
-      { text: '{1, 1, 2, 3}의 원소는 네 개다', answer: 'false', why: '같은 1은 하나로 칩니다. 원소는 1, 2, 3 세 개입니다.' },
-    ],
-    question: '반 친구들이 좋아하는 과일을 모을 때 리스트와 집합 중 무엇이 알맞을까요?',
-    sample: '"어떤 과일들이 나왔는지"만 알고 싶으면 중복이 저절로 없어지는 집합이 알맞습니다. "각 과일을 몇 명이 골랐는지"까지 알고 싶으면 리스트나, 과일을 키로 하는 딕셔너리가 필요합니다.',
-  },
-  {
-    worked: {"head": ["연산", "1: A", "2: A·B", "3: B", "결과"], "rows": [["A ∪ B", "✓", "✓", "✓", "{1, 2, 3}"], ["A ∩ B", "—", "✓", "—", "{2}"], ["A − B", "✓", "—", "—", "{1}"]], "mark": [], "note": "A = {1, 2} · B = {2, 3}"},
-    label: '합집합 · 교집합',
-    example: ["A = {1, 2} · B = {2, 3}", "각 원소가 속한 집합을 비교", "∪ = {1, 2, 3} · ∩ = {2} · A − B = {1}"],
-    title: '합집합은 또는, 교집합은 그리고다',
-    body: 'A ∪ B(합집합)는 A나 B 중 한쪽에라도 있는 원소의 모음이고, A ∩ B(교집합)는 양쪽 모두에 있는 원소의 모음입니다. 2.1의 "또는", "그리고"와 똑같은 생각입니다. A − B(차집합)는 A에는 있지만 B에는 없는 원소입니다.',
-    link: '2.1에서 "p 또는 q"는 하나라도 참이면 참이었습니다. "x가 A ∪ B에 있다"는 "x가 A에 있다 또는 x가 B에 있다"와 같습니다.',
-    case: 'A = {1, 2, 3}, B = {2, 3, 4}일 때 다음 문장이 참인지 고르세요.',
-    choices: TF,
-    items: [
-      { text: 'A ∪ B = {1, 2, 3, 4}', answer: 'true', why: '어느 한쪽에라도 있는 원소를 모두 모으면 1, 2, 3, 4입니다.' },
-      { text: 'A ∩ B = {2, 3}', answer: 'true', why: '양쪽 모두에 있는 원소는 2와 3입니다.' },
-      { text: '4 ∈ A ∩ B', answer: 'false', why: '4는 B에만 있고 A에는 없습니다.' },
-      { text: 'A − B = {1}', answer: 'true', why: 'A에 있지만 B에 없는 원소는 1뿐입니다.' },
-    ],
-    question: '두 친구의 팔로우 목록에서 "둘 다 팔로우하는 사람"은 어떤 연산일까요?',
-    sample: '교집합입니다. "한 명이라도 팔로우하는 사람"은 합집합이고, "나만 팔로우하는 사람"은 차집합입니다.',
-  },
-  {
-    worked: {"head": ["상태", "입력 → 출력", "함수인가?"], "rows": [["처음", "A → 1 · B → 1", "예 · 입력당 하나"], ["연결 추가", "A → 1, 2 · B → 1", "아니요 · A에 둘"]], "mark": [1]},
-    label: '함수',
-    example: ["A → 1 · B → 1", "A에서 2로 가는 연결 추가", "A의 출력이 둘이므로 함수 아님"],
-    title: '함수는 입력마다 출력을 딱 하나 정한다',
-    body: '수학에서 함수는 첫 번째 집합의 원소마다 두 번째 집합의 원소를 딱 하나씩 짝지어 주는 규칙입니다. 입력 하나에 출력이 둘이면 함수가 아닙니다. 반대로 서로 다른 입력이 같은 출력을 가져도 괜찮습니다. 학생마다 키가 하나씩 정해져 있으므로 "학생 → 키"는 함수입니다.',
-    link: '1.3의 파이썬 함수도 같은 인자를 주면 같은 값을 돌려주는 경우가 많습니다. 다만 프로그래밍의 함수는 입력이 같아도 바깥 상태에 따라 다른 값을 줄 수 있어서, 수학의 함수보다 넓은 뜻입니다.',
-    case: '다음 대응이 함수(입력마다 출력이 딱 하나)인지 고르세요.',
-    choices: [['true', '함수'], ['false', '함수 아님']],
-    items: [
-      { text: '학생 → 그 학생의 출석 번호', answer: 'true', why: '학생마다 번호가 하나씩 정해져 있습니다.' },
-      { text: '사람 → 그 사람의 휴대폰 번호 (두 대 쓰는 사람도 있음)', answer: 'false', why: '한 사람에게 번호가 둘일 수 있으면 출력이 하나로 정해지지 않습니다.' },
-      { text: 'x → x × x (x는 정수)', answer: 'true', why: '어떤 정수든 제곱은 하나입니다. 2와 −2가 같은 4로 가도 괜찮습니다.' },
-      { text: '도시 → 그 도시의 내일 날씨 예보 하나', answer: 'true', why: '도시마다 예보가 하나씩 정해지면 함수입니다. 여러 도시가 같은 "맑음"이어도 괜찮습니다.' },
-    ],
-    question: '딕셔너리 {"민수": 15, "지아": 14}는 함수라고 할 수 있을까요?',
-    sample: '할 수 있습니다. 딕셔너리는 키마다 값을 딱 하나 짝지으므로, 키 집합에서 값 집합으로 가는 함수입니다. 같은 키에 값을 두 번 넣으면 앞의 값이 지워지는 것도 "출력은 하나"라는 규칙을 지키기 위해서입니다.',
-  },
-  {
-    worked: {"head": ["코드", "실행 결과"], "rows": [["A = set([1, 2, 2])", "{1, 2}"], ["B = {2, 3}", "{2, 3}"], ["A & B", "{2}"], ["2 in A", "True"]], "mark": [2, 3]},
-    label: '파이썬의 집합',
-    example: ["A = set([1, 2, 2]) · B = {2, 3}", "A & B · 2 in A", "{2} · True"],
-    title: '파이썬도 집합과 함수를 그대로 쓴다',
-    body: '파이썬의 set은 수학의 집합처럼 중복을 없애고, | 는 합집합, & 는 교집합, - 는 차집합을 계산합니다. in은 원소인지(∈) 확인합니다. 딕셔너리는 키에서 값으로 가는 함수입니다.',
-    link: '1.4에서 리스트의 index는 칸을 하나씩 훑었습니다. set과 딕셔너리의 in은 해시 테이블(4.5에서 다룹니다) 덕분에 거의 한 번에 답합니다.',
-    case: '다음 파이썬 식의 결과가 참인지 고르세요.',
-    choices: TF,
-    items: [
-      { text: 'len({1, 2, 2, 3}) == 3', answer: 'true', why: 'set은 중복을 없애 {1, 2, 3}이 되므로 길이는 3입니다.' },
-      { text: '{1, 2, 3} & {2, 3, 4} == {2, 3}', answer: 'true', why: '&는 교집합입니다.' },
-      { text: '5 in {1, 2, 3} | {4, 5}', answer: 'true', why: '|로 합치면 {1, 2, 3, 4, 5}이고 5가 있습니다.' },
-      { text: '{"민수": 15, "민수": 16}["민수"] == 15', answer: 'false', why: '같은 키를 두 번 쓰면 나중 값 16만 남습니다.' },
-    ],
-    question: '중복된 이름이 섞인 명단에서 서로 다른 이름이 몇 개인지 세려면 어떻게 할까요?',
-    sample: 'len(set(명단))입니다. 리스트를 set으로 바꾸면 중복이 사라지므로, 길이가 곧 서로 다른 이름의 수입니다.',
-  },
-];
-
-const byId = (id) => document.getElementById(id);
-const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
-
-
-function showWorkedExample(worked) {
-  const figure = byId('worked-example');
-  figure.hidden = !worked;
-  figure.replaceChildren();
-  if (!worked) return;
-  const table = document.createElement('table');
-  table.createCaption().textContent = '계산 예시';
-  const header = table.createTHead().insertRow();
-  for (const name of worked.head) {
-    const cell = document.createElement('th');
-    cell.scope = 'col';
-    cell.textContent = name;
-    header.append(cell);
-  }
-  const body = table.createTBody();
-  worked.rows.forEach((values, index) => {
-    const row = body.insertRow();
-    row.classList.toggle('is-key', worked.mark.includes(index));
-    values.forEach((value, column) => {
-      const cell = document.createElement(column === 0 ? 'th' : 'td');
-      if (column === 0) cell.scope = 'row';
-      cell.textContent = value;
-      row.append(cell);
-    });
-  });
-  figure.append(table);
-  if (worked.note) {
-    const note = document.createElement('p');
-    note.className = 'worked-note';
-    note.textContent = worked.note;
-    figure.append(note);
-  }
-}
-
-function showStep(index, announce = true) {
-  state.index = index;
-  const step = lesson[index];
-  showWorkedExample(step.worked);
-  byId('step-title').textContent = step.title;
-  byId('body').textContent = step.body;
-  byId('takeaway').textContent = step.link;
-  byId('case').textContent = step.case;
-  byId('question').textContent = step.question;
-  byId('sample').textContent = step.sample;
-  byId('sample').hidden = true;
-  byId('reveal').setAttribute('aria-expanded', 'false');
-  byId('reveal').textContent = '예시 답 보기';
-  byId('answer').value = '';
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  stepButtons.forEach((button, i) => {
-    if (i === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  buildItems();
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
-}
-
-function buildItems() {
-  const step = lesson[state.index];
-  const list = byId('items');
-  list.replaceChildren();
-  step.items.forEach((item, i) => {
-    const li = document.createElement('li');
-    li.className = 'item';
-    const top = document.createElement('div');
-    top.className = 'item-top';
-    const text = document.createElement('span');
-    text.className = 'item-text';
-    text.id = `item-${i}`;
-    text.textContent = step.table ? `${step.table[0]} ${item.cells[0]} · ${step.table[1]} ${item.cells[1]}` : item.text;
-    const choices = document.createElement('div');
-    choices.className = 'choices';
-    choices.setAttribute('role', 'group');
-    choices.setAttribute('aria-labelledby', text.id);
-    for (const [value, label] of step.choices) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = `action choice ${value === 'false' ? 'risk' : 'benefit'}`;
-      button.textContent = label;
-      button.dataset.value = value;
-      button.addEventListener('click', () => pick(i, value));
-      choices.append(button);
+const lesson = {
+  "question": "입력과 출력을 선으로 이을 때, 어떤 모양이어야 함수일까요?",
+  "terms": [
+    {
+      "term": "집합",
+      "meaning": "서로 다른 것들을 모은 묶음. 순서가 없고, 같은 것은 하나로 친다",
+      "step": 1
+    },
+    {
+      "term": "원소",
+      "meaning": "집합 안에 든 것 하나. \"2는 A의 원소다\"를 2 ∈ A로 쓴다",
+      "step": 1
+    },
+    {
+      "term": "{ } (집합 표기)",
+      "meaning": "원소를 중괄호 안에 쉼표로 나열해 쓴 집합. 딕셔너리처럼 '키: 값' 쌍이 아니다",
+      "step": 1
+    },
+    {
+      "term": "교집합 A ∩ B",
+      "meaning": "A와 B 둘 다에 있는 원소의 모음",
+      "step": 3
+    },
+    {
+      "term": "합집합 A ∪ B",
+      "meaning": "A나 B 어느 한쪽에라도 있는 원소의 모음",
+      "step": 4
+    },
+    {
+      "term": "차집합 A − B",
+      "meaning": "A에는 있고 B에는 없는 원소의 모음",
+      "step": 5
+    },
+    {
+      "term": "함수",
+      "meaning": "입력 집합의 원소마다 출력 집합의 원소를 정확히 하나씩 짝짓는 규칙",
+      "step": 6
     }
-    const feedback = document.createElement('p');
-    feedback.className = 'feedback';
-    feedback.setAttribute('role', 'status');
-    top.append(text, choices);
-    li.append(top, feedback);
-    list.append(li);
-  });
-  syncItems();
-}
-
-// For table steps, a compact truth table mirrors the answers so far.
-function syncTable() {
-  const step = lesson[state.index];
-  const box = byId('table');
-  box.hidden = !step.table;
-  if (!step.table) return;
-  const picks = state.picks[state.index];
-  const label = (v) => step.choices.find(([value]) => value === v)?.[1] ?? '?';
-  box.innerHTML = '';
-  const table = document.createElement('table');
-  const head = table.createTHead().insertRow();
-  step.table.forEach((h) => { const th = document.createElement('th'); th.textContent = h; head.append(th); });
-  const body = table.createTBody();
-  step.items.forEach((item, i) => {
-    const tr = body.insertRow();
-    item.cells.forEach((c) => { tr.insertCell().textContent = c; });
-    const cell = tr.insertCell();
-    cell.textContent = picks[i] === item.answer ? label(item.answer) : '?';
-    cell.className = picks[i] === item.answer ? 'filled' : 'blank';
-  });
-  box.append(table);
-}
-
-function pick(i, value) {
-  state.picks[state.index][i] = value;
-  syncItems();
-  const item = lesson[state.index].items[i];
-  byId('announcement').textContent = value === item.answer ? '맞았습니다.' : '다시 생각해 보세요.';
-}
-
-function syncItems() {
-  const step = lesson[state.index];
-  const picks = state.picks[state.index];
-  [...byId('items').children].forEach((li, i) => {
-    const item = step.items[i];
-    const picked = picks[i];
-    li.classList.toggle('right', picked === item.answer);
-    li.classList.toggle('wrong', picked !== null && picked !== item.answer);
-    for (const button of li.querySelectorAll('.choice')) button.setAttribute('aria-pressed', String(button.dataset.value === picked));
-    const feedback = li.querySelector('.feedback');
-    feedback.replaceChildren();
-    if (picked !== null) {
-      const mark = document.createElement('b');
-      mark.textContent = picked === item.answer ? '✓ 맞았습니다.' : '✗ 다시 생각해 보세요.';
-      feedback.append(mark, picked === item.answer ? item.why : '');
+  ],
+  "steps": [
+    {
+      "label": "집합",
+      "title": "같은 것은 한 번만 담습니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "넣은 카드",
+            "cells": [
+              {
+                "id": "k1",
+                "label": "1"
+              },
+              {
+                "id": "k2",
+                "label": "2"
+              },
+              {
+                "id": "k3",
+                "label": "2",
+                "sub": "두 번째 2"
+              }
+            ]
+          },
+          {
+            "title": "집합 A",
+            "cells": [
+              {
+                "id": "e1",
+                "label": "1"
+              },
+              {
+                "id": "e2",
+                "label": "2"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "k1",
+            "to": "e1",
+            "kind": "solid"
+          },
+          {
+            "from": "k2",
+            "to": "e2",
+            "kind": "solid"
+          },
+          {
+            "from": "k3",
+            "to": "e2",
+            "kind": "solid"
+          }
+        ],
+        "changed": [
+          "k3→e2"
+        ]
+      },
+      "body": "집합은 원소를 중괄호 { } 안에 쉼표로 나열해 씁니다. 딕셔너리처럼 '키: 값' 쌍이 아닙니다. 집합은 순서를 따지지 않습니다. {3, 1, 2}와 {1, 2, 3}은 같은 집합입니다. 리스트와 딕셔너리에서 본 리스트와 달리, 집합은 순서도 중복도 없습니다. 같은 원소를 두 번 적어도 하나로 셉니다.",
+      "description": "2가 적힌 카드 두 장이 원소 2 한 칸에 모입니다. 집합 A에는 원소가 둘 있습니다.",
+      "takeaway": "2가 적힌 카드 두 장이 원소 2 한 칸에 모입니다. 집합 A에는 원소가 둘 있습니다.",
+      "links": [
+        {
+          "label": "리스트와 딕셔너리",
+          "href": "../programming/collections.html"
+        }
+      ]
+    },
+    {
+      "label": "두 집합",
+      "title": "두 집합이 같은 원소를 함께 가질 수 있습니다",
+      "figure": {
+        "custom": true,
+        "changed": []
+      },
+      "body": "집합 A가 1과 2를 갖고, 집합 B가 2와 3을 갖습니다. 원이 겹치는 곳에는 두 집합이 함께 갖는 원소를 놓습니다.",
+      "description": "2는 겹친 곳에 하나만 놓입니다. 1은 A에만, 3은 B에만 있습니다.",
+      "takeaway": "2는 겹친 곳에 하나만 놓입니다. 1은 A에만, 3은 B에만 있습니다."
+    },
+    {
+      "label": "교집합",
+      "title": "둘 다에 있는 것이 교집합입니다",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "칠",
+          "결과 글"
+        ]
+      },
+      "body": "x가 A ∩ B에 있다는 것은 'x가 A에 있다 그리고 x가 B에 있다'와 같습니다. 명제와 논리에서 두 문장을 그리고로 이었던 방법과 이어집니다.",
+      "description": "칠한 겹친 곳에 원소 2만 있습니다.",
+      "takeaway": "칠한 겹친 곳에 원소 2만 있습니다.",
+      "links": [
+        {
+          "label": "명제와 논리",
+          "href": "./logic.html"
+        }
+      ]
+    },
+    {
+      "label": "합집합",
+      "title": "어느 한쪽에라도 있는 것이 합집합입니다",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "칠",
+          "결과 글"
+        ]
+      },
+      "body": "x가 A ∪ B에 있다는 것은 'x가 A에 있다 또는 x가 B에 있다'와 같습니다. 명제와 논리에서 논리의 또는은 둘 다에 해당해도 참이었습니다. 두 집합에 있는 2도 한 번만 셉니다.",
+      "description": "칠한 영역 안에 1, 2, 3이 있습니다. 2는 한 번만 있습니다.",
+      "takeaway": "칠한 영역 안에 1, 2, 3이 있습니다. 2는 한 번만 있습니다.",
+      "links": [
+        {
+          "label": "명제와 논리",
+          "href": "./logic.html"
+        }
+      ],
+      "predict": {
+        "prompt": "A = {1, 2}, B = {2, 3}에서 어느 한쪽에라도 있는 원소를 모으면(합집합) 원소가 몇 개일까요?",
+        "options": [
+          {
+            "text": "3개",
+            "why": "1, 2, 3이고, 두 집합에 함께 있는 2는 한 번만 셉니다.",
+            "correct": true
+          },
+          {
+            "text": "4개",
+            "why": "A의 2개와 B의 2개를 더한 것인데, 집합은 같은 원소를 두 번 담지 않습니다."
+          },
+          {
+            "text": "1개",
+            "why": "합집합을 겹친 곳으로 본 것인데, 겹친 곳은 3단계의 교집합입니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "칠",
+            "결과 글"
+          ],
+          "description": "두 원에 1, 2, 3이 있습니다. 칠한 부분과 결과 글은 가려져 있습니다."
+        }
+      }
+    },
+    {
+      "label": "차집합",
+      "title": "A에만 있는 것이 차집합입니다",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "칠",
+          "결과 글"
+        ]
+      },
+      "body": "A − B는 A에는 있고 B에는 없는 것만 모읍니다. 빼는 순서가 중요합니다. 이 그림에서는 A만의 영역에 남는 1을 모읍니다.",
+      "description": "칠한 영역에는 1만 있습니다. 2는 겹친 곳이라 빠집니다.",
+      "takeaway": "칠한 영역에는 1만 있습니다. 2는 겹친 곳이라 빠집니다."
+    },
+    {
+      "label": "함수",
+      "title": "학생마다 나이가 하나씩 정해져 있습니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "학생 (입력)",
+            "cells": [
+              {
+                "id": "m",
+                "label": "민수"
+              },
+              {
+                "id": "j",
+                "label": "지아"
+              },
+              {
+                "id": "d",
+                "label": "도윤"
+              }
+            ]
+          },
+          {
+            "title": "나이 (출력)",
+            "cells": [
+              {
+                "id": "a14",
+                "label": "14"
+              },
+              {
+                "id": "a15",
+                "label": "15"
+              },
+              {
+                "id": "a16",
+                "label": "16"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "m",
+            "to": "a15",
+            "kind": "solid"
+          },
+          {
+            "from": "j",
+            "to": "a14",
+            "kind": "solid"
+          },
+          {
+            "from": "d",
+            "to": "a15",
+            "kind": "solid"
+          }
+        ],
+        "changed": []
+      },
+      "body": "함수는 입력 하나마다 출력을 정확히 하나 정합니다. 서로 다른 입력이 같은 출력을 가져도 괜찮습니다(민수와 도윤이 모두 15). 16처럼 선이 오지 않는 출력이 있어도 됩니다. 프로그래밍에서도 '함수'라는 말을 쓰지만, 같은 값을 주어도 바깥 값에 따라 다른 결과를 낼 수 있어 수학의 함수보다 넓습니다. 이 레슨의 '함수'는 수학의 함수입니다.",
+      "description": "학생 칸마다 나가는 선이 하나입니다. 15에는 선 둘이 모이고 16에는 선이 없습니다.",
+      "takeaway": "학생 칸마다 나가는 선이 하나입니다. 15에는 선 둘이 모이고 16에는 선이 없습니다."
+    },
+    {
+      "label": "선 하나 더",
+      "title": "한 입력에 선이 둘이면 함수가 아닙니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "학생 (입력)",
+            "cells": [
+              {
+                "id": "m",
+                "label": "민수",
+                "sub": "나가는 선 2개"
+              },
+              {
+                "id": "j",
+                "label": "지아"
+              },
+              {
+                "id": "d",
+                "label": "도윤"
+              }
+            ]
+          },
+          {
+            "title": "나이 (출력)",
+            "cells": [
+              {
+                "id": "a14",
+                "label": "14"
+              },
+              {
+                "id": "a15",
+                "label": "15"
+              },
+              {
+                "id": "a16",
+                "label": "16"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "m",
+            "to": "a15",
+            "kind": "solid"
+          },
+          {
+            "from": "j",
+            "to": "a14",
+            "kind": "solid"
+          },
+          {
+            "from": "d",
+            "to": "a15",
+            "kind": "solid"
+          },
+          {
+            "from": "m",
+            "to": "a16",
+            "kind": "new"
+          }
+        ],
+        "changed": [
+          "m→a16"
+        ]
+      },
+      "body": "민수에서 16으로 선을 더 그으면 민수의 출력이 15와 16 둘이 됩니다. 입력 하나에서 나가는 결과를 하나로 정할 수 없어서 함수가 아닙니다.",
+      "description": "민수 칸에서만 선이 두 갈래로 나갑니다.",
+      "takeaway": "민수 칸에서만 선이 두 갈래로 나갑니다.",
+      "predict": {
+        "prompt": "민수에서 16으로 가는 선을 하나 더 그으면 이 대응은 함수일까요?",
+        "options": [
+          {
+            "text": "함수가 아니다",
+            "why": "민수라는 입력 하나에 출력이 15와 16 둘이라 하나로 정해지지 않습니다.",
+            "correct": true
+          },
+          {
+            "text": "함수다",
+            "why": "입력마다 출력이 있기만 하면 된다고 본 것인데, 함수는 출력이 정확히 하나여야 합니다."
+          },
+          {
+            "text": "함수다, 이제 16에도 선이 와서 모든 나이가 쓰인다",
+            "why": "출력마다 선이 와야 함수라고 본 것인데, 함수는 입력에서 나가는 선이 하나인지만 봅니다. 6단계에서 16에 선이 없어도 함수였습니다."
+          }
+        ],
+        "before": {
+          "part": "map",
+          "columns": [
+            {
+              "title": "학생 (입력)",
+              "cells": [
+                {
+                  "id": "m",
+                  "label": "민수"
+                },
+                {
+                  "id": "j",
+                  "label": "지아"
+                },
+                {
+                  "id": "d",
+                  "label": "도윤"
+                }
+              ]
+            },
+            {
+              "title": "나이 (출력)",
+              "cells": [
+                {
+                  "id": "a14",
+                  "label": "14"
+                },
+                {
+                  "id": "a15",
+                  "label": "15"
+                },
+                {
+                  "id": "a16",
+                  "label": "16"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "from": "m",
+              "to": "a15",
+              "kind": "solid"
+            },
+            {
+              "from": "j",
+              "to": "a14",
+              "kind": "solid"
+            },
+            {
+              "from": "d",
+              "to": "a15",
+              "kind": "solid"
+            }
+          ],
+          "changed": [],
+          "description": "민수와 도윤은 15에, 지아는 14에 이어집니다. 16에 이은 선은 없습니다."
+        }
+      }
+    },
+    {
+      "label": "딕셔너리",
+      "title": "딕셔너리는 키마다 값을 하나만 둡니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "키 (학생)",
+            "cells": [
+              {
+                "id": "m",
+                "label": "민수",
+                "sub": "나이[\"민수\"] = 16"
+              },
+              {
+                "id": "j",
+                "label": "지아"
+              },
+              {
+                "id": "d",
+                "label": "도윤"
+              }
+            ]
+          },
+          {
+            "title": "값 (나이)",
+            "cells": [
+              {
+                "id": "a14",
+                "label": "14"
+              },
+              {
+                "id": "a15",
+                "label": "15"
+              },
+              {
+                "id": "a16",
+                "label": "16"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "m",
+            "to": "a15",
+            "kind": "broken"
+          },
+          {
+            "from": "j",
+            "to": "a14",
+            "kind": "solid"
+          },
+          {
+            "from": "d",
+            "to": "a15",
+            "kind": "solid"
+          },
+          {
+            "from": "m",
+            "to": "a16",
+            "kind": "new"
+          }
+        ],
+        "changed": [
+          "m→a15"
+        ]
+      },
+      "body": "딕셔너리에서 같은 키에 새 값을 넣으면 옛 값을 지웁니다. 이렇게 하면 키마다 값이 하나라는 함수의 규칙을 지킵니다.",
+      "description": "각 키에서 나가는 진한 선이 하나씩입니다. 민수의 15 선은 끊긴 선으로 남습니다.",
+      "takeaway": "각 키에서 나가는 진한 선이 하나씩입니다. 민수의 15 선은 끊긴 선으로 남습니다.",
+      "code": {
+        "lines": [
+          "나이 = {\"민수\": 15, \"지아\": 14, \"도윤\": 15}",
+          "나이[\"민수\"] = 16"
+        ],
+        "current": 2
+      },
+      "predict": {
+        "prompt": "딕셔너리 나이 에 나이[\"민수\"] = 16 을 실행하면 민수에서 나가는 선은 어떻게 될까요?",
+        "options": [
+          {
+            "text": "16 하나만 남는다",
+            "why": "딕셔너리는 같은 키에 값을 하나만 두므로 새 값이 옛 값을 대신합니다.",
+            "correct": true
+          },
+          {
+            "text": "15와 16 둘이 된다",
+            "why": "리스트에 덧붙이듯 값이 쌓인다고 본 것인데, 그러면 키 하나에 값이 둘이 되어 찾을 수 없습니다."
+          },
+          {
+            "text": "15 하나가 그대로다",
+            "why": "이미 있는 키는 바꿀 수 없다고 본 것인데, 같은 키에 넣으면 값이 바뀝니다."
+          }
+        ],
+        "before": {
+          "part": "map",
+          "columns": [
+            {
+              "title": "키 (학생)",
+              "cells": [
+                {
+                  "id": "m",
+                  "label": "민수",
+                  "sub": "나이[\"민수\"] = 16"
+                },
+                {
+                  "id": "j",
+                  "label": "지아"
+                },
+                {
+                  "id": "d",
+                  "label": "도윤"
+                }
+              ]
+            },
+            {
+              "title": "값 (나이)",
+              "cells": [
+                {
+                  "id": "a14",
+                  "label": "14"
+                },
+                {
+                  "id": "a15",
+                  "label": "15"
+                },
+                {
+                  "id": "a16",
+                  "label": "16"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "from": "m",
+              "to": "a15",
+              "kind": "solid"
+            },
+            {
+              "from": "j",
+              "to": "a14",
+              "kind": "solid"
+            },
+            {
+              "from": "d",
+              "to": "a15",
+              "kind": "solid"
+            }
+          ],
+          "changed": [],
+          "description": "실행하기 전에는 민수 키에서 15로 가는 선이 하나 있습니다."
+        }
+      }
     }
-  });
-  const right = picks.filter((p, i) => p === step.items[i].answer).length;
-  byId('score').textContent = `${right} / ${step.items.length} 맞힘`;
-  byId('done').hidden = right !== step.items.length;
-  byId('done').textContent = step.table ? '✓ 진리표를 모두 채웠습니다. 아래 질문도 생각해 보세요.' : '✓ 모두 맞게 골랐습니다. 아래 질문도 생각해 보세요.';
-  syncTable();
-}
-
-byId('reveal').onclick = () => {
-  const open = byId('sample').hidden;
-  byId('sample').hidden = !open;
-  byId('reveal').setAttribute('aria-expanded', String(open));
-  byId('reveal').textContent = open ? '예시 답 숨기기' : '예시 답 보기';
+  ],
+  "review": {
+    "own": [
+      "sets-1",
+      "sets-2"
+    ],
+    "prereq": {
+      "ref": "math/logic",
+      "id": "logic-3"
+    },
+    "fallback": "sets-3"
+  }
 };
-
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/sets/${index + 1}`);
-  showStep(index);
-}
-const stepButtons = lesson.map(({ label }, index) => {
-  const listItem = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  const number = document.createElement('span');
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.addEventListener('click', () => goToStep(index));
-  listItem.append(button);
-  byId('steps').append(listItem);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
-window.addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+const byId = id => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const center = {x: viewWidth / 2, y: viewHeight / 2};
+const camera = {x: 0, y: 0, zoom: 1};
+const maxZoom = 2.2;
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+document.getElementById('zoom-in').onclick = () => zoomBy(.25);
+document.getElementById('zoom-out').onclick = () => zoomBy(-.25);
+enableCameraDrag();
+viewport.addEventListener('keydown', event => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const pan = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1]}[event.key];
+  if (pan && camera.zoom > 1) {
     event.preventDefault();
-    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+    setCamera(camera.x + pan[0] * 18, camera.y + pan[1] * 18, camera.zoom);
+  } else if (event.key === '+' || event.key === '-' || event.key === '0') {
+    event.preventDefault();
+    if (event.key === '0') resetView();
+    else zoomBy(event.key === '+' ? .25 : -.25);
   }
 });
-const initial = routeIndex();
-history.replaceState(null, '', `#/sets/${initial + 1}`);
-showStep(initial, false);
+setCamera(0, 0, 1);
+
+const setOverlapY = Math.sqrt(110 ** 2 - 60 ** 2);
+const setTop = 150 - setOverlapY;
+const setBottom = 150 + setOverlapY;
+const overlapStart = `M 300 ${setTop}`;
+const vennRegions = [
+  '',
+  `${overlapStart} A 110 110 0 0 1 300 ${setBottom} A 110 110 0 0 1 300 ${setTop} Z`,
+  `${overlapStart} A 110 110 0 1 1 300 ${setBottom} A 110 110 0 1 1 300 ${setTop} Z`,
+  `${overlapStart} A 110 110 0 0 0 300 ${setBottom} A 110 110 0 1 1 300 ${setTop} Z`,
+];
+const vennResults = ['2는 A에도 B에도 있다','A ∩ B = {2} · 둘 다에 있는 것',
+  'A ∪ B = {1, 2, 3} · 어느 한쪽에라도 있는 것','A − B = {1} · A에는 있고 B에는 없는 것'];
+const vennText = value => window.courseI18n?.translate(value) ?? value;
+
+function drawFigure(index, {hide, changed}) {
+  const root = svg('svg', {x:30, y:0, width:560, height:280, viewBox:'0 0 600 300'}, byId('figure'));
+  const step = index - 1;
+  const region = !hide.includes('칠') && vennRegions[step];
+  if (region) {
+    const defs = svg('defs', {}, root);
+    const clip = svg('clipPath', {id:'set-region-clip'}, defs);
+    svg('path', {d:region}, clip);
+    const hatch = svg('pattern', {id:'venn-kind-a', width:6, height:6, patternUnits:'userSpaceOnUse'}, defs);
+    svg('rect', {width:6, height:6, class:'part-segment kind-a'}, hatch);
+    svg('path', {d:'M-2 2L2 -2M0 6L6 0M4 8L8 4', class:'part-pattern-line'}, hatch);
+    svg('rect', {width:600, height:300, fill:'url(#venn-kind-a)','clip-path':'url(#set-region-clip)','data-name':'칠'}, root);
+  }
+  for (const [id,x,anchor,label] of [['A',240,'start','A = {1, 2}'],['B',360,'end','B = {2, 3}']]) {
+    svg('circle', {cx:x,cy:150,r:110,class:'venn-set','data-name':'원 '+id},root);
+    svg('text',{x:id==='A'?180:420,y:28,class:'venn-label','text-anchor':anchor},root).textContent=label;
+  }
+  if (region && changed.includes('칠')) svg('path', {d:region,fill:'none','data-changed':''},root);
+  for (const [i,x] of [175,300,425].entries()) {
+    const g=svg('g',{'data-name':'원소 '+(i+1)},root);
+    svg('circle',{cx:x,cy:150,r:18,class:'venn-element'},g);
+    svg('text',{x,y:155,class:'venn-label','text-anchor':'middle'},g).textContent=i+1;
+  }
+  if (!hide.includes('결과 글')) {
+    const attrs = {x:300,y:286,class:'venn-label','text-anchor':'middle','data-name':'결과 글'};
+    if (changed.includes('결과 글')) attrs['data-changed']='';
+    svg('text',attrs,root).textContent=vennText(vennResults[step]);
+  }
+}
+
 </script>
 </body>
 </html>

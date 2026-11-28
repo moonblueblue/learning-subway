@@ -1,4 +1,5 @@
 window.lessonText = {
+  "사진": "Photo",
   '컴퓨터에 어떤 일을 맡길 수 있을까?': 'What can we ask a computer to do?',
   '0장 컴퓨팅 둘러보기': 'Chapter 0 · A tour of computing',
   '같은 것을 주어도 맡긴 일이 달라지면 어떤 결과가 나올까요?':
@@ -17,7 +18,6 @@ window.lessonText = {
   '화면 5': '5 on the screen',
   '수 카드 2와 3': 'The 2 and 3 cards',
   '컬러 사진': 'Color photo',
-  '할 일 고르기': 'Choose a task',
   '빈 화면': 'Blank screen',
   '대기 중': 'Waiting',
   'A 키': 'A key',

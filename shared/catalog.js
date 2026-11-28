@@ -3569,9 +3569,11 @@ const courseCatalog = {
           "id": "alu",
           "title": "ALU",
           "titleEn": "The ALU",
-          "question": "계산기 회로는 어떻게 여러 연산 중 하나를 고를까?",
-          "format": "실험",
-          "requires": [],
+          "question": "ALU에 3과 4를 넣고 빼기를 고르면, 무엇을 보고 3이 4보다 작다는 것을 알 수 있을까요?",
+          "format": "단계 그림",
+          "requires": [
+            "computer-architecture/adder"
+          ],
           "page": "computer-architecture/alu.html"
         },
         {

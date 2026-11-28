@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="막다른 길에 닿으면 어디까지 되돌아가 다시 고를까요?">
+<title>백트래킹</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="recursion.items.js?v=d4fc784b46771bd5">
+<style>
+#scene.is-zoomed { cursor: grab; touch-action: none; }
+#scene.is-dragging { cursor: grabbing; }
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=54094544905ce975">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=d4e34e1156eba1b0"></script>
+<script defer blocking="render" src="./backtracking.items.js?v=57d734fca9c5e483"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=3acd745d6259e41b"></script>
+<script defer blocking="render" src="./backtracking.en.js?v=63b863b838eda96c"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">1장 프로그래밍 입문</p>
+    <h1>백트래킹</h1>
+    <p>막다른 길에 닿으면 어디까지 되돌아가 다시 고를까요?</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">미로와 되돌아가기</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">갈림길에서 고른 길과 되돌아간 길</title>
+            <desc id="scene-desc"></desc>
+            <g id="figure" aria-hidden="true"></g>
+          </svg>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+        </div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2>
+      <p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
+    </section>
+  </div>
+  <div id="announcement" class="sr-only" role="status"></div>
+</main>
+<script>
+const lesson = {
+  "question": "막다른 길에 닿으면 어디까지 되돌아가 다시 고를까요?",
+  "terms": [
+    {
+      "term": "갈림길",
+      "meaning": "갈 수 있는 길이 둘 이상으로 나뉘는 곳",
+      "step": 1
+    },
+    {
+      "term": "막다른 길",
+      "meaning": "더 나갈 길이 없는 곳",
+      "step": 2
+    },
+    {
+      "term": "백트래킹",
+      "meaning": "막다른 길에 닿으면 왔던 길로 되돌아가, 아직 가 보지 않은 길이 남은 가장 가까운 갈림길에서 다른 길을 고르는 방법",
+      "step": 3
+    }
+  ],
+  "steps": [
+    {
+      "label": "위쪽부터",
+      "title": "갈림길에서는 위쪽 길부터 고릅니다",
+      "body": "미로에는 길이 둘로 나뉘는 갈림길이 있습니다. 어느 길이 출구로 가는지 모르니 차례를 정해 둡니다. 이 레슨에서는 늘 위쪽 길부터 고릅니다.",
+      "takeaway": "입구에서 갈림길 가로 가는 선만 진하고, 갈림길 나로 가는 선은 옅습니다.",
+      "description": "입구에서 갈림길 가로 가는 선만 진하고, 갈림길 나로 가는 선은 옅습니다.",
+      "figure": {
+        "part": "branch",
+        "nodes": [
+          {
+            "id": "in",
+            "label": "입구",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "ga",
+            "label": "갈림길 가",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "na",
+            "label": "갈림길 나",
+            "col": 1,
+            "row": 2
+          },
+          {
+            "id": "d1",
+            "label": "막다른 길 1",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "d2",
+            "label": "막다른 길 2",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "exit",
+            "label": "출구",
+            "col": 2,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "in",
+            "to": "ga",
+            "label": "위쪽",
+            "taken": true
+          },
+          {
+            "from": "in",
+            "to": "na",
+            "label": "아래쪽",
+            "taken": false
+          },
+          {
+            "from": "ga",
+            "to": "d1",
+            "label": "위쪽",
+            "taken": false
+          },
+          {
+            "from": "ga",
+            "to": "d2",
+            "label": "아래쪽",
+            "taken": false
+          },
+          {
+            "from": "na",
+            "to": "exit",
+            "label": "",
+            "taken": false
+          }
+        ],
+        "fadedNodes": [],
+        "token": {
+          "at": "ga",
+          "label": "지금"
+        },
+        "changed": [
+          "in→ga",
+          "ga"
+        ]
+      }
+    },
+    {
+      "label": "막다른 길 1",
+      "title": "막다른 길에서는 더 나갈 곳이 없습니다",
+      "body": "갈림길 가에서도 위쪽 길을 고르자 막다른 길 1에 닿았습니다. 더 나갈 길이 없는 곳을 막다른 길이라고 합니다.",
+      "takeaway": "막다른 길 1에서 나가는 선이 없고, 표시가 막힘입니다.",
+      "description": "막다른 길 1에서 나가는 선이 없고, 표시가 막힘입니다.",
+      "figure": {
+        "part": "branch",
+        "nodes": [
+          {
+            "id": "in",
+            "label": "입구",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "ga",
+            "label": "갈림길 가",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "na",
+            "label": "갈림길 나",
+            "col": 1,
+            "row": 2
+          },
+          {
+            "id": "d1",
+            "label": "막다른 길 1",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "d2",
+            "label": "막다른 길 2",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "exit",
+            "label": "출구",
+            "col": 2,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "in",
+            "to": "ga",
+            "label": "위쪽",
+            "taken": true
+          },
+          {
+            "from": "in",
+            "to": "na",
+            "label": "아래쪽",
+            "taken": false
+          },
+          {
+            "from": "ga",
+            "to": "d1",
+            "label": "위쪽",
+            "taken": true
+          },
+          {
+            "from": "ga",
+            "to": "d2",
+            "label": "아래쪽",
+            "taken": false
+          },
+          {
+            "from": "na",
+            "to": "exit",
+            "label": "",
+            "taken": false
+          }
+        ],
+        "fadedNodes": [],
+        "token": {
+          "at": "d1",
+          "label": "막힘"
+        },
+        "changed": [
+          "ga→d1",
+          "d1"
+        ]
+      }
+    },
+    {
+      "label": "막힌 다음",
+      "title": "바로 앞 갈림길로 돌아가 남은 길을 고릅니다",
+      "body": "막다른 길에 닿으면 왔던 길로 되돌아갑니다. 바로 앞 갈림길 가에는 아직 가 보지 않은 아래쪽 길이 남아 있어 그 길을 고릅니다. 이렇게 막히면 되돌아가 남은 길을 고르는 방법을 백트래킹이라고 합니다.",
+      "takeaway": "막다른 길 1이 옅어졌고, 진한 선이 같은 갈림길 가에서 아래쪽 길로 막다른 길 2에 닿습니다.",
+      "description": "막다른 길 1이 옅어졌고, 진한 선이 같은 갈림길 가에서 아래쪽 길로 막다른 길 2에 닿습니다.",
+      "figure": {
+        "part": "branch",
+        "nodes": [
+          {
+            "id": "in",
+            "label": "입구",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "ga",
+            "label": "갈림길 가",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "na",
+            "label": "갈림길 나",
+            "col": 1,
+            "row": 2
+          },
+          {
+            "id": "d1",
+            "label": "막다른 길 1",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "d2",
+            "label": "막다른 길 2",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "exit",
+            "label": "출구",
+            "col": 2,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "in",
+            "to": "ga",
+            "label": "위쪽",
+            "taken": true
+          },
+          {
+            "from": "in",
+            "to": "na",
+            "label": "아래쪽",
+            "taken": false
+          },
+          {
+            "from": "ga",
+            "to": "d1",
+            "label": "위쪽",
+            "taken": false
+          },
+          {
+            "from": "ga",
+            "to": "d2",
+            "label": "아래쪽",
+            "taken": true
+          },
+          {
+            "from": "na",
+            "to": "exit",
+            "label": "",
+            "taken": false
+          }
+        ],
+        "fadedNodes": [
+          "d1"
+        ],
+        "token": {
+          "at": "d2",
+          "label": "막힘"
+        },
+        "changed": [
+          "ga→d2",
+          "d2"
+        ]
+      },
+      "predict": {
+        "prompt": "막다른 길 1에서 막혔습니다. 다음에는 어디서 다시 고를까요?",
+        "options": [
+          {
+            "text": "갈림길 가에서 아래쪽 길",
+            "why": "바로 앞 갈림길 가에 아직 가 보지 않은 아래쪽 길이 남아 있습니다.",
+            "correct": true
+          },
+          {
+            "text": "입구로 돌아가 아래쪽 길",
+            "why": "맨 처음 갈림길로 돌아간다고 본 것인데, 더 가까운 갈림길 가에 남은 길이 있습니다."
+          },
+          {
+            "text": "막혔으니 찾기를 끝낸다",
+            "why": "막히면 끝이라고 본 것인데, 남은 길이 있으면 되돌아가 다시 고릅니다."
+          }
+        ],
+        "before": {
+          "part": "branch",
+          "nodes": [
+            {
+              "id": "in",
+              "label": "입구",
+              "col": 0,
+              "row": 1
+            },
+            {
+              "id": "ga",
+              "label": "갈림길 가",
+              "col": 1,
+              "row": 0
+            },
+            {
+              "id": "na",
+              "label": "갈림길 나",
+              "col": 1,
+              "row": 2
+            },
+            {
+              "id": "d1",
+              "label": "막다른 길 1",
+              "col": 2,
+              "row": 0
+            },
+            {
+              "id": "d2",
+              "label": "막다른 길 2",
+              "col": 2,
+              "row": 1
+            },
+            {
+              "id": "exit",
+              "label": "출구",
+              "col": 2,
+              "row": 2
+            }
+          ],
+          "edges": [
+            {
+              "from": "in",
+              "to": "ga",
+              "label": "위쪽",
+              "taken": true
+            },
+            {
+              "from": "in",
+              "to": "na",
+              "label": "아래쪽",
+              "taken": false
+            },
+            {
+              "from": "ga",
+              "to": "d1",
+              "label": "위쪽",
+              "taken": true
+            },
+            {
+              "from": "ga",
+              "to": "d2",
+              "label": "아래쪽",
+              "taken": false
+            },
+            {
+              "from": "na",
+              "to": "exit",
+              "label": "",
+              "taken": false
+            }
+          ],
+          "fadedNodes": [],
+          "token": {
+            "at": "d1",
+            "label": "막힘"
+          },
+          "changed": [],
+          "description": "입구에서 갈림길 가를 지나 막다른 길 1까지 진한 선이 있고, 막다른 길 1에 막힘 표시가 있습니다."
+        }
+      }
+    },
+    {
+      "label": "가의 두 길",
+      "title": "남은 길이 없으면 한 갈림길 더 돌아갑니다",
+      "body": "막다른 길 2도 막혔고 갈림길 가에는 남은 길이 없습니다. 그래서 한 갈림길 더 돌아가 입구에서 아직 가 보지 않은 아래쪽 길을 고릅니다. 이미 막힌 길은 다시 고르지 않습니다.",
+      "takeaway": "갈림길 가와 그 뒤 두 곳이 옅어졌고, 진한 선이 입구에서 아래쪽 갈림길 나로 갑니다.",
+      "description": "갈림길 가와 그 뒤 두 곳이 옅어졌고, 진한 선이 입구에서 아래쪽 갈림길 나로 갑니다.",
+      "figure": {
+        "part": "branch",
+        "nodes": [
+          {
+            "id": "in",
+            "label": "입구",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "ga",
+            "label": "갈림길 가",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "na",
+            "label": "갈림길 나",
+            "col": 1,
+            "row": 2
+          },
+          {
+            "id": "d1",
+            "label": "막다른 길 1",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "d2",
+            "label": "막다른 길 2",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "exit",
+            "label": "출구",
+            "col": 2,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "in",
+            "to": "ga",
+            "label": "위쪽",
+            "taken": false
+          },
+          {
+            "from": "in",
+            "to": "na",
+            "label": "아래쪽",
+            "taken": true
+          },
+          {
+            "from": "ga",
+            "to": "d1",
+            "label": "위쪽",
+            "taken": false
+          },
+          {
+            "from": "ga",
+            "to": "d2",
+            "label": "아래쪽",
+            "taken": false
+          },
+          {
+            "from": "na",
+            "to": "exit",
+            "label": "",
+            "taken": false
+          }
+        ],
+        "fadedNodes": [
+          "ga",
+          "d1",
+          "d2"
+        ],
+        "token": {
+          "at": "na",
+          "label": "지금"
+        },
+        "changed": [
+          "in→na",
+          "na"
+        ]
+      },
+      "predict": {
+        "prompt": "갈림길 가의 두 길이 모두 막혔습니다. 이제 어디로 갈까요?",
+        "options": [
+          {
+            "text": "입구로 돌아가 아래쪽 길",
+            "why": "갈림길 가에는 남은 길이 없고, 입구에 아직 가 보지 않은 아래쪽 길이 남아 있습니다.",
+            "correct": true
+          },
+          {
+            "text": "갈림길 가에서 위쪽 길을 다시 가 본다",
+            "why": "가 본 길을 잊는다고 본 것인데, 이미 막힌 길은 다시 고르지 않습니다."
+          },
+          {
+            "text": "입구에서 처음부터 위쪽 길을 다시 간다",
+            "why": "되돌아가면 처음부터 다시 한다고 본 것인데, 입구에서는 남은 아래쪽 길만 고릅니다."
+          }
+        ],
+        "before": {
+          "part": "branch",
+          "nodes": [
+            {
+              "id": "in",
+              "label": "입구",
+              "col": 0,
+              "row": 1
+            },
+            {
+              "id": "ga",
+              "label": "갈림길 가",
+              "col": 1,
+              "row": 0
+            },
+            {
+              "id": "na",
+              "label": "갈림길 나",
+              "col": 1,
+              "row": 2
+            },
+            {
+              "id": "d1",
+              "label": "막다른 길 1",
+              "col": 2,
+              "row": 0
+            },
+            {
+              "id": "d2",
+              "label": "막다른 길 2",
+              "col": 2,
+              "row": 1
+            },
+            {
+              "id": "exit",
+              "label": "출구",
+              "col": 2,
+              "row": 2
+            }
+          ],
+          "edges": [
+            {
+              "from": "in",
+              "to": "ga",
+              "label": "위쪽",
+              "taken": true
+            },
+            {
+              "from": "in",
+              "to": "na",
+              "label": "아래쪽",
+              "taken": false
+            },
+            {
+              "from": "ga",
+              "to": "d1",
+              "label": "위쪽",
+              "taken": false
+            },
+            {
+              "from": "ga",
+              "to": "d2",
+              "label": "아래쪽",
+              "taken": true
+            },
+            {
+              "from": "na",
+              "to": "exit",
+              "label": "",
+              "taken": false
+            }
+          ],
+          "fadedNodes": [
+            "d1"
+          ],
+          "token": {
+            "at": "d2",
+            "label": "막힘"
+          },
+          "changed": [],
+          "description": "입구에서 갈림길 가를 지나 막다른 길 2까지 진한 선이 있고, 막다른 길 1은 옅습니다. 막다른 길 2에 막힘 표시가 있습니다."
+        }
+      }
+    },
+    {
+      "label": "출구",
+      "title": "갈림길 나에서 출구에 닿습니다",
+      "body": "갈림길 나에서 출구에 닿았습니다. 옅은 세 곳은 가 보고 돌아온 곳이라 출구로 가는 길에 들어가지 않습니다.",
+      "takeaway": "진한 선이 입구, 갈림길 나, 출구로 이어지고 옅은 세 곳에는 진한 선이 없습니다.",
+      "description": "진한 선이 입구, 갈림길 나, 출구로 이어지고 옅은 세 곳에는 진한 선이 없습니다.",
+      "figure": {
+        "part": "branch",
+        "nodes": [
+          {
+            "id": "in",
+            "label": "입구",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "ga",
+            "label": "갈림길 가",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "na",
+            "label": "갈림길 나",
+            "col": 1,
+            "row": 2
+          },
+          {
+            "id": "d1",
+            "label": "막다른 길 1",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "d2",
+            "label": "막다른 길 2",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "exit",
+            "label": "출구",
+            "col": 2,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "in",
+            "to": "ga",
+            "label": "위쪽",
+            "taken": false
+          },
+          {
+            "from": "in",
+            "to": "na",
+            "label": "아래쪽",
+            "taken": true
+          },
+          {
+            "from": "ga",
+            "to": "d1",
+            "label": "위쪽",
+            "taken": false
+          },
+          {
+            "from": "ga",
+            "to": "d2",
+            "label": "아래쪽",
+            "taken": false
+          },
+          {
+            "from": "na",
+            "to": "exit",
+            "label": "",
+            "taken": true
+          }
+        ],
+        "fadedNodes": [
+          "ga",
+          "d1",
+          "d2"
+        ],
+        "token": {
+          "at": "exit",
+          "label": "도착"
+        },
+        "changed": [
+          "na→exit",
+          "exit"
+        ]
+      }
+    },
+    {
+      "label": "함수로 보기",
+      "title": "되돌아가기는 함수가 값을 돌려주는 일입니다",
+      "body": "같은 찾기를 함수로 쓰면 한 곳에 갈 때마다 찾기를 부르고 층이 쌓입니다. 막다른 길의 층은 False 를 돌려주고 사라져, 바로 아래층 찾기(갈림길 가)가 다음 길을 고릅니다. 갈림길 가에 남은 길이 없으면 그 층도 사라지고 찾기(입구)가 이어서 고릅니다.",
+      "takeaway": "갈림길 가 구간이 끝난 뒤에야 갈림길 나 구간이 시작합니다.",
+      "description": "셋째 층의 막다른 길 두 구간이 끝날 때마다 둘째 층 갈림길 가 구간이 이어지고, 갈림길 가 구간이 끝난 뒤에야 첫째 층 입구 아래 갈림길 나 구간이 시작합니다.",
+      "code": {
+        "lines": [
+          "def 찾기(곳):",
+          "    if 곳 == 출구:",
+          "        return True",
+          "    for 다음 in 길[곳]:",
+          "        if 찾기(다음):",
+          "            return True",
+          "    return False"
+        ]
+      },
+      "figure": {
+        "part": "timeline",
+        "axis": {
+          "kind": "order",
+          "unit": "실행 차례",
+          "max": 15,
+          "ticks": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        "rows": [
+          {
+            "label": "셋째 층",
+            "spans": [
+              {
+                "id": "c1",
+                "start": 2,
+                "end": 5,
+                "kind": "c",
+                "label": "막다른 길 1 → 막힘"
+              },
+              {
+                "id": "c2",
+                "start": 5,
+                "end": 8,
+                "kind": "c",
+                "label": "막다른 길 2 → 막힘"
+              },
+              {
+                "id": "c3",
+                "start": 11,
+                "end": 13,
+                "kind": "d",
+                "label": "출구 → 찾음"
+              }
+            ]
+          },
+          {
+            "label": "둘째 층",
+            "spans": [
+              {
+                "id": "b1",
+                "start": 1,
+                "end": 9,
+                "kind": "b",
+                "label": "갈림길 가 → 못 찾음"
+              },
+              {
+                "id": "b2",
+                "start": 10,
+                "end": 14,
+                "kind": "a",
+                "label": "갈림길 나 → 찾음"
+              }
+            ]
+          },
+          {
+            "label": "첫째 층",
+            "spans": [
+              {
+                "id": "a1",
+                "start": 0,
+                "end": 15,
+                "kind": "idle",
+                "label": "입구 → 찾음"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "at": 5,
+            "label": "갈림길 가로 돌아감"
+          },
+          {
+            "at": 9,
+            "label": "입구로 돌아감"
+          }
+        ],
+        "changed": [
+          "b1",
+          "b2"
+        ]
+      },
+      "predict": {
+        "prompt": "찾기(막다른 길 2)가 막힘을 돌려준 뒤, 찾기(갈림길 가)는 무엇을 할까요?",
+        "options": [
+          {
+            "text": "남은 길이 없어 끝나고 찾기(입구)로 돌아간다",
+            "why": "갈림길 가의 두 길을 모두 해 봐서 False 를 돌려주고, 그 층이 사라져 아래층 찾기(입구)가 이어서 고릅니다.",
+            "correct": true
+          },
+          {
+            "text": "찾기(막다른 길 1)을 다시 부른다",
+            "why": "가 본 길을 다시 부른다고 본 것인데, for 는 길 목록을 앞에서부터 한 번씩만 지나갑니다."
+          },
+          {
+            "text": "찾기 전체가 끝난다",
+            "why": "한 갈림길에서 못 찾으면 모두 끝난다고 본 것인데, 아래층 찾기(입구)에 아직 아래쪽 길이 남아 있습니다."
+          }
+        ],
+        "before": {
+          "part": "timeline",
+          "axis": {
+            "kind": "order",
+            "unit": "실행 차례",
+            "max": 15,
+            "ticks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
+          },
+          "rows": [
+            {
+              "label": "셋째 층",
+              "spans": [
+                {
+                  "id": "c1",
+                  "start": 2,
+                  "end": 5,
+                  "kind": "c",
+                  "label": "막다른 길 1 → 막힘"
+                },
+                {
+                  "id": "c2",
+                  "start": 5,
+                  "end": 8,
+                  "kind": "c",
+                  "label": "막다른 길 2 → 막힘"
+                }
+              ]
+            },
+            {
+              "label": "둘째 층",
+              "spans": [
+                {
+                  "id": "b1",
+                  "start": 1,
+                  "end": 8,
+                  "kind": "b",
+                  "label": "갈림길 가"
+                }
+              ]
+            },
+            {
+              "label": "첫째 층",
+              "spans": [
+                {
+                  "id": "a1",
+                  "start": 0,
+                  "end": 8,
+                  "kind": "idle",
+                  "label": "입구"
+                }
+              ]
+            }
+          ],
+          "marks": [
+            {
+              "at": 5,
+              "label": "갈림길 가로 돌아감"
+            }
+          ],
+          "description": "막다른 길 1과 막다른 길 2의 구간이 막힘으로 끝나 있고, 갈림길 가와 입구 구간은 눈금 8까지만 그려져 있습니다."
+        }
+      }
+    }
+  ],
+  "review": {
+    "own": [
+      "backtracking-3",
+      "backtracking-2"
+    ],
+    "prereq": {
+      "ref": "programming/recursion",
+      "id": "recursion-4"
+    },
+    "fallback": "backtracking-4"
+  }
+};
+
+const byId = id => document.getElementById(id);
+const viewport = byId('scene');
+const drawing = byId('figure');
+const viewWidth = 620;
+const viewHeight = 280;
+const center = {x: viewWidth / 2, y: viewHeight / 2};
+const camera = {x: 0, y: 0, zoom: 1};
+const maxZoom = 2.2;
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+// Every step draws a shared figure part; the lesson has no drawing code of its own.
+function drawFigure() {}
+
+byId('zoom-in').onclick = () => zoomBy(.3);
+byId('zoom-out').onclick = () => zoomBy(-.3);
+enableCameraDrag();
+
+viewport.addEventListener('keydown', event => {
+  if (camera.zoom === 1) return;
+  const direction = {ArrowLeft: [-1, 0], ArrowUp: [0, -1], ArrowRight: [1, 0], ArrowDown: [0, 1]}[event.key];
+  if (!direction) return;
+  event.preventDefault();
+  setCamera(camera.x + direction[0] * 18, camera.y + direction[1] * 18, camera.zoom);
+});
+
+window.addEventListener('keydown', event => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  const zoom = {'+': () => zoomBy(.3), '-': () => zoomBy(-.3), '0': resetView}[event.key];
+  if (zoom) {
+    event.preventDefault();
+    zoom();
+  }
+});
+setCamera(0, 0, 1);
+</script>
+</body>
+</html>

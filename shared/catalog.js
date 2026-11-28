@@ -85,10 +85,14 @@ const courseCatalog = {
             },
             {
               "id": "1.6",
-              "ref": "software-engineering/debugging"
+              "ref": "programming/backtracking"
             },
             {
               "id": "1.7",
+              "ref": "software-engineering/debugging"
+            },
+            {
+              "id": "1.8",
               "ref": "software-engineering/devtools"
             }
           ],
@@ -3376,6 +3380,17 @@ const courseCatalog = {
             "programming/control"
           ],
           "page": "programming/recursion.html"
+        },
+        {
+          "id": "backtracking",
+          "title": "백트래킹",
+          "titleEn": "Backtracking",
+          "question": "막다른 길에 닿으면 어디까지 되돌아가 다시 고를까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming/recursion"
+          ],
+          "page": "programming/backtracking.html"
         }
       ]
     },

@@ -4,122 +4,163 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="사진 앱과 음악 앱은 CPU 코어 하나를 어떻게 번갈아 쓸까요?">
-<title>여러 앱은 CPU를 어떻게 나눠 쓸까? · 0.2</title>
-<link rel="stylesheet" href="../shared/reading-lesson.css">
+<meta name="description" content="사진 앱과 음악 앱이 CPU 코어 하나를 함께 쓰면, 차례는 어떻게 정해질까요?">
+<title>여러 앱은 CPU를 어떻게 나눠 쓸까?</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="what-os-does.items.js?v=3f939d590dd040a1">
 <style>
-.cpu-label{fill:#182f28;font:700 16px system-ui,sans-serif}
-.cpu-small{font-size:13px}
-.cpu-card{fill:#f8fbf7;stroke:#758a7e;stroke-width:1.2}
-.cpu-photo{fill:#e5eafd;stroke:#677cad}
-.cpu-music{fill:#f8ead7;stroke:#956c3d}
-.cpu-os{fill:#e1f2e7;stroke:#54836e}
-.cpu-empty{fill:#fbfdfb;stroke:#83978e;stroke-dasharray:4 3}
-.cpu-paused{stroke:#a05c31;stroke-dasharray:4 3}
-.cpu-shaft{fill:none;stroke:#327263;stroke-width:2;stroke-linecap:round}
-.cpu-tip{fill:#327263}
-#choices[hidden]{display:none}
-.cpu-controls .action[aria-disabled="true"]{color:#596d63;background:#f0f4ef;cursor:default}
-.cpu-controls{display:flex;flex-wrap:wrap;gap:8px}
-body.course-shell .hands-on .action{min-height:44px}
-.cpu-trial,body.course-shell .workspace:not(.course-reading) .cpu-reading{display:none}
-body.course-shell .workspace:not(.course-reading) .cpu-trial{display:inline}
+#figure .cpu-label{fill:#182f28;font:700 16px system-ui,sans-serif}
+#figure .cpu-small{font-size:13px}
+#figure .cpu-card{fill:#f8fbf7;stroke:#758a7e;stroke-width:1.2}
+#figure .cpu-photo{fill:#e5eafd;stroke:#677cad}
+#figure .cpu-music{fill:#f8ead7;stroke:#956c3d}
+#figure .cpu-os{fill:#e1f2e7;stroke:#54836e}
+#figure .cpu-empty{fill:#fbfdfb;stroke:#83978e;stroke-dasharray:4 3}
+#figure .cpu-paused{stroke:#a05c31;stroke-dasharray:4 3}
+#figure .cpu-shaft{fill:none;stroke:#327263;stroke-width:2;stroke-linecap:round}
+#figure .cpu-tip{fill:#327263}
+#scene.is-zoomed { cursor: grab; touch-action: none; }
+#scene.is-dragging { cursor: grabbing; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./sharing-cpu.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=54094544905ce975">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=d4e34e1156eba1b0"></script>
+<script defer blocking="render" src="./sharing-cpu.items.js?v=54f88be120037ba8"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=5e422294bd8f3355"></script>
+<script defer blocking="render" src="./sharing-cpu.en.js?v=820f73c355b8825f"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
-  <header><p class="eyebrow">운영체제 입문 · 0.2</p><h1>여러 앱은 CPU를 어떻게 나눠 쓸까?</h1><p>사진 앱과 음악 앱은 CPU 코어 하나를 어떻게 번갈아 쓸까요?</p></header>
+  <header>
+    <p class="eyebrow">운영체제 입문</p>
+    <h1>여러 앱은 CPU를 어떻게 나눠 쓸까?</h1>
+    <p>사진 앱과 음악 앱이 CPU 코어 하나를 함께 쓰면, 차례는 어떻게 정해질까요?</p>
+  </header>
   <div class="workspace">
     <div>
       <section class="panel" aria-labelledby="stage-heading">
         <div class="stage-top"><h2 id="stage-heading">CPU 한 차례</h2></div>
-        <div class="stage"><svg id="scene" viewBox="0 0 620 280" role="img" aria-labelledby="scene-title scene-desc"><title id="scene-title">여러 앱은 CPU를 어떻게 나눠 쓸까?</title><desc id="scene-desc"></desc></svg></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">여러 앱은 CPU를 어떻게 나눠 쓸까?</title>
+            <desc id="scene-desc"></desc>
+            <g id="figure" aria-hidden="true"></g>
+          </svg>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+        </div>
         <div class="controls"></div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
           <ol class="steps" id="steps"></ol>
         </nav>
       </section>
-      <div class="hands-on">
-        <p class="try"><strong>차례별로 실행</strong></p>
-        <p id="prompt" class="try"></p>
-        <p id="feedback" class="readout" role="status"></p>
-        <div id="choices" hidden></div>
-        <div class="cpu-controls">
-          <button class="action" id="run-turn" type="button">한 차례 실행</button>
-          <button class="action" id="pause-app" type="button" hidden>사진 앱 잠시 멈춤</button>
-          <button class="action" id="resume-app" type="button" hidden>사진 앱 다시 준비</button>
-        </div>
-      </div>
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
-      <h2 id="step-title"></h2><p id="body"></p>
+      <h2 id="step-title"></h2>
+      <p id="body"></p>
       <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
-      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
     </section>
   </div>
-  <div class="sr-only" id="announcement" role="status"></div>
+  <div id="announcement" class="sr-only" role="status"></div>
 </main>
 <script>
-const lesson = [
-  {
-    label: '코어에 들어가는 일',
-    title: '코어 하나는 한 번에 한 앱의 일을 합니다',
-    body: '사진 앱에 정리할 사진이 있습니다. CPU는 앱이 맡은 계산을 하는 부품입니다. 여기서 살펴보는 CPU 코어 하나에 운영체제가 사진 앱의 일 하나를 올립니다.',
-    takeaway: '코어의 사진 표식과 1번 칸의 표식이 같습니다. 사진 앱 옆에 끝낸 일이 한 칸 쌓입니다.',
-    description: '사진 앱에서 운영체제를 거쳐 CPU 코어 하나로 화살표가 이어집니다. 최근 실행과 1번 차례에 모두 사진 표식이 있고, 사진 앱은 일 하나를 마쳤습니다.',
-    example: ['사진 앱에 할 일이 있음', '코어에서 한 차례 실행', '사진 앱 완료 1'],
-    prompt: '코어에서 사진 앱의 첫 차례를 실행해 보세요.',
-  },
-  {
-    label: '두 앱이 번갈아 실행',
-    title: '두 앱에 할 일이 있으면 차례를 나눕니다',
-    body: '음악 앱에도 할 일이 생겼습니다. 이 예에서 운영체제는 준비된 두 앱에 한 차례씩 번갈아 줍니다. 두 앱이 짧게 번갈아 계산하므로 사진을 정리하는 동안 음악도 들을 수 있습니다.',
-    takeaway: '같은 코어에서 사진, 음악, 사진, 음악 순으로 네 차례를 썼습니다. 두 앱은 각각 두 차례를 얻었습니다.',
-    description: '사진 앱과 음악 앱이 준비되어 있고 CPU 코어는 하나입니다. 차례 1에서 4까지 사진, 음악, 사진, 음악 순서로 기록됩니다. 각 앱이 두 차례씩 마쳤습니다.',
-    example: ['두 앱 모두 준비', '사진 · 음악 · 사진 · 음악', '앱마다 두 차례'],
-    prompt: '한 차례씩 네 번 실행하고 어느 앱이 각 칸을 채우는지 보세요.',
-  },
-  {
-    label: '사진 앱이 잠시 쉼',
-    title: '준비된 앱이 빈 차례를 이어서 얻습니다',
-    body: '두 번째 차례가 끝난 뒤 사진 앱을 잠시 멈춥니다. 음악 앱에 할 일이 남아 있어 운영체제가 세 번째와 네 번째 차례를 음악 앱에 줍니다.',
-    takeaway: '두 줄 모두 네 차례입니다. 사진 앱이 쉴 때 음악 앱의 두 차례가 세 차례로 늘어납니다.',
-    description: '위의 네 차례는 사진, 음악, 사진, 음악입니다. 아래에서는 두 번째 차례 뒤 사진 앱이 쉬어 사진, 음악, 음악, 음악이 됩니다. 사진 앱이 한 차례, 음악 앱이 세 차례를 마칩니다.',
-    example: ['두 번째 차례 뒤 사진 앱 멈춤', '사진 · 음악 · 음악 · 음악', '음악 앱이 한 차례 더 실행'],
-    prompt: '사진 앱을 잠시 멈춘 뒤 3번과 4번을 실행하세요. 위아래에서 음악 앱의 차례를 세어 보세요.',
-  },
-  {
-    label: '같은 일 이어서 하기',
-    title: '다시 준비된 앱은 하던 일을 이어갑니다',
-    body: '사진 앱을 다시 준비시켜도 완료한 일은 그대로입니다. 이 예의 다음 차례를 실행하면 사진 앱이 이어서 계산합니다.',
-    takeaway: '앞의 네 칸은 그대로입니다. 5번에 사진 앱이 들어오고 사진 앱이 끝낸 일은 하나에서 둘로 늘어납니다.',
-    description: '앞의 사진, 음악, 음악, 음악 순서 뒤에 사진 앱이 다섯 번째로 기록됩니다. 사진 앱은 두 차례를, 음악 앱은 세 차례를 마쳤습니다.',
-    example: ['사진 앱 완료 1에서 다시 준비', '5번 차례에 사진 앱 실행', '사진 앱 완료 2'],
-    prompt: '사진 앱을 다시 준비시키고 5번 차례를 실행하세요. 사진 앱이 끝낸 일이 어떻게 달라질까요?',
-  },
-].map((step, index) => ({...step,
-  quiz: [step.prompt, '한 차례 실행', '기다리기', ''],
-  readingDiagram: {figure: `cpu-intro-${index}`, staticOnly: true, title: step.label, description: step.description},
-}));
+const lesson = {
+  question: '사진 앱과 음악 앱이 CPU 코어 하나를 함께 쓰면, 차례는 어떻게 정해질까요?',
+  terms: [
+    {term: 'CPU', meaning: '앱이 맡은 계산을 하는 부품', step: 1},
+    {term: 'CPU 코어', meaning: 'CPU 안에서 한 번에 한 앱의 일을 하는 곳. 이 레슨의 컴퓨터에는 하나', step: 1},
+    {term: '차례', meaning: '코어를 한 앱이 한 번 쓰는 칸. 아래 줄의 번호 칸', step: 1},
+    {term: '완료', meaning: '앱이 차례마다 마친 일의 수. 앱 카드 옆 작은 칸의 개수', step: 1},
+    {term: '준비됨', meaning: '할 일이 있어 차례를 받을 수 있는 상태', step: 1},
+    {term: '쉬는 중', meaning: '앱이 잠시 멈춰 차례를 받지 않는 상태', step: 3}
+  ],
+  steps: [
+    {
+      label: '코어에 들어가는 일',
+      title: '코어 하나는 한 번에 한 앱의 일을 합니다',
+      body: '사진 앱에 정리할 사진이 있습니다. CPU는 앱이 맡은 계산을 하는 부품입니다. 여기서 살펴보는 CPU 코어 하나에 운영체제가 사진 앱의 일 하나를 올립니다. 이 레슨에서 코어는 운영체제가 차례를 주는 자리 하나를 뜻합니다.',
+      takeaway: '코어의 사진 표식과 1번 칸의 표식이 같습니다. 사진 앱 옆에 끝낸 일이 한 칸 쌓입니다.',
+      description: '사진 앱에서 운영체제를 거쳐 CPU 코어 하나로 화살표가 이어집니다. 최근 실행과 1번 차례에 모두 사진 표식이 있고, 사진 앱은 일 하나를 마쳤습니다.',
+      figure: {custom: true, changed: ['코어 칸', '차례 1', '사진 완료']}
+    },
+    {
+      label: '두 앱이 번갈아 실행',
+      title: '두 앱에 할 일이 있으면 차례를 나눕니다',
+      body: '음악 앱에도 할 일이 생겼습니다. 이 예에서 운영체제는 준비된 두 앱에 한 차례씩 번갈아 줍니다. 두 앱이 짧게 번갈아 계산하므로 사진을 정리하는 동안 음악도 들을 수 있습니다.',
+      takeaway: '같은 코어에서 사진, 음악, 사진, 음악 순으로 네 차례를 썼습니다. 두 앱은 각각 두 차례를 얻었습니다.',
+      description: '사진 앱과 음악 앱이 준비되어 있고 CPU 코어는 하나입니다. 차례 1에서 4까지 사진, 음악, 사진, 음악 순서로 기록됩니다. 각 앱이 두 차례씩 마쳤습니다.',
+      figure: {custom: true, changed: ['음악 앱 카드', '음악 상태', '음악 완료', '사진 완료', '차례 2', '차례 3', '차례 4', '코어 칸']}
+    },
+    {
+      label: '사진 앱이 잠시 쉼',
+      title: '준비된 앱이 빈 차례를 이어서 얻습니다',
+      body: '2단계의 두 번째 차례 직후로 돌아가, 그때 사진 앱이 쉬었다면 어떻게 되는지 아래 줄에 그립니다. 그래서 사진 앱의 완료는 1부터 봅니다. 두 번째 차례가 끝난 뒤 사진 앱을 잠시 멈춥니다. 음악 앱에 할 일이 남아 있어 운영체제가 세 번째와 네 번째 차례를 음악 앱에 줍니다. 코어는 쉬는 앱의 차례를 비워 두지 않고, 준비된 다른 앱에게 줍니다.',
+      takeaway: '두 줄 모두 네 차례입니다. 사진 앱이 쉴 때 음악 앱의 두 차례가 세 차례로 늘어납니다.',
+      description: '위의 네 차례는 사진, 음악, 사진, 음악입니다. 아래에서는 두 번째 차례 뒤 사진 앱이 쉬어 사진, 음악, 음악, 음악이 됩니다. 사진 앱이 한 차례, 음악 앱이 세 차례를 마칩니다.',
+      figure: {custom: true, changed: ['아래 차례 3', '아래 차례 4', '음악 완료', '사진 완료', '사진 상태']},
+      predict: {
+        prompt: '두 번째 차례가 끝난 뒤 사진 앱이 쉽니다. 음악 앱에는 할 일이 남아 있습니다. 3번과 4번 차례는 어떻게 채워질까요?',
+        options: [
+          {text: '음악, 음악', correct: true, why: '차례는 준비된 앱이 받고, 사진 앱이 쉬는 동안 준비된 앱은 음악 앱뿐입니다.'},
+          {text: '비어 있음, 음악', why: '사진 앱의 차례를 비워 두고 기다린다고 본 것인데, 코어는 비워 두지 않고 준비된 다른 앱에게 줍니다.'},
+          {text: '사진, 음악', why: '2단계의 순서가 그대로 이어진다고 본 것인데, 쉬는 앱은 차례를 받지 않습니다.'}
+        ],
+        before: {custom: true, hide: ['아래 차례 3', '아래 차례 4', '음악 완료', '코어 칸', '흐름 화살표'],
+          description: '사진 앱은 쉬는 중이고 완료 1입니다. 음악 앱은 준비됨이고 완료 수는 물음표입니다. 위 줄 둘 다 준비는 사진, 음악, 사진, 음악입니다. 아래 줄 사진 앱이 쉼은 1번 사진, 2번 음악이고 3번과 4번은 물음표입니다. CPU 코어 하나의 칸도 물음표입니다.'}
+      }
+    },
+    {
+      label: '다시 준비',
+      title: '다시 준비된 앱은 하던 일을 이어갑니다',
+      body: '사진 앱을 다시 준비시켜도 완료한 일은 그대로입니다. 이 예의 다음 차례를 실행하면 사진 앱이 이어서 계산합니다.',
+      takeaway: '앞의 네 칸은 그대로입니다. 5번에 사진 앱이 들어오고 사진 앱이 끝낸 일은 하나에서 둘로 늘어납니다.',
+      description: '앞의 사진, 음악, 음악, 음악 순서 뒤에 사진 앱이 다섯 번째로 기록됩니다. 사진 앱은 두 차례를, 음악 앱은 세 차례를 마쳤습니다.',
+      figure: {custom: true, changed: ['차례 5', '사진 완료', '사진 상태', '코어 칸']},
+      predict: {
+        prompt: '쉬던 사진 앱이 다시 준비되었고, 5번 차례에 사진 앱이 실행됩니다. 5번 차례가 끝나면 사진 앱의 완료는 몇일까요?',
+        options: [
+          {text: '완료 2', correct: true, why: '쉬는 동안에도 마친 일 1은 그대로였으므로, 그 위에 한 차례가 더해집니다.'},
+          {text: '완료 1', why: '쉬었다 돌아오면 처음부터 다시 한다고 본 것인데, 3단계에서 쉬는 동안 완료 1이 지워지지 않고 남아 있었습니다.'},
+          {text: '완료 3', why: '쉬는 동안 놓친 차례까지 한꺼번에 받는다고 본 것인데, 한 차례에는 일 하나만 하고 놓친 차례를 돌려받지 않습니다.'}
+        ],
+        before: {custom: true, hide: ['차례 5', '사진 완료', '코어 칸', '흐름 화살표'],
+          description: '사진 앱은 준비됨이고 완료 수는 물음표입니다. 음악 앱은 준비됨이고 완료 3입니다. 마친 차례는 사진, 음악, 음악, 음악이고 5번은 물음표입니다. CPU 코어 하나의 칸도 물음표입니다.'}
+      }
+    }
+  ],
+  review: {
+    own: ['sharing-cpu-1', 'sharing-cpu-2'],
+    prereq: {ref: 'os/what-os-does', id: 'what-os-does-4'},
+    fallback: 'sharing-cpu-3'
+  }
+};
 
 const slug = 'sharing-cpu';
 const byId = id => document.getElementById(id);
-const scene = byId('scene');
-const workspace = scene.closest('.workspace');
-const advance = byId('run-turn');
-const pause = byId('pause-app');
-const resume = byId('resume-app');
-const state = {index: -1, answers: new Map()};
-const feedbackMessages = ['✓ 맞았습니다.', '✗ 다시 생각해 보세요.'];
+const viewport = byId('scene');
+const drawing = byId('figure');
+const viewWidth = 620;
+const viewHeight = 280;
+const center = {x: viewWidth / 2, y: viewHeight / 2};
+const camera = {x: 0, y: 0, zoom: 1};
+const maxZoom = 2.2;
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
 const normalTurns = ['photo', 'music', 'photo', 'music'];
 const pausedTurns = ['photo', 'music', 'music', 'music'];
 const demos = [
@@ -131,12 +172,15 @@ const demos = [
 const limits = [1, 4, 4, 5];
 const names = {photo: '사진 앱', music: '음악 앱'};
 const marks = {photo: '사진', music: '음악'};
-let practiceIndex = -1;
-let practiceTurn = null;
-let readingMode = true;
+
+// Every drawn element joins a group named as in the card, so the frame can highlight or hide it.
+// Shapes marked data-edge are the ones whose outline turns teal when their group is highlighted.
+function named(parent, name) {
+  return svg('g', {'data-name': name}, parent);
+}
 
 function card(group, x, y, width, height, tone = '') {
-  return svg('rect', {x, y, width, height, rx: 7, class: 'cpu-card ' + tone}, group);
+  return svg('rect', {x, y, width, height, rx: 7, class: 'cpu-card ' + tone, 'data-edge': ''}, group);
 }
 
 function label(group, x, y, text, small = false, anchor = 'middle') {
@@ -153,146 +197,102 @@ function count(turns, app) {
   return turns.filter(turn => turn === app).length;
 }
 
-function appCard(group, app, y, completed, paused) {
-  card(group, 28, y, 166, 46, 'cpu-' + app + (paused ? ' cpu-paused' : ''));
-  label(group, 40, y + 19, names[app], true, 'start');
-  label(group, 181, y + 19, paused ? '쉬는 중' : '준비됨', true, 'end');
-  label(group, 40, y + 37, '완료 {#0}'.replace('{#0}', completed), true, 'start');
+// A hidden element is replaced by a placeholder of the same size in the same place (card "더할 것").
+function appCard(group, app, y, completed, paused, hide) {
+  const mark = marks[app];
+  const body = named(group, mark + ' 앱 카드');
+  card(body, 28, y, 166, 46, 'cpu-' + app + (paused ? ' cpu-paused' : ''));
+  label(body, 40, y + 19, names[app], true, 'start');
+  label(named(group, mark + ' 상태'), 181, y + 19, paused ? '쉬는 중' : '준비됨', true, 'end');
+  const done = named(group, mark + ' 완료');
+  if (hide.includes(mark + ' 완료')) {
+    label(done, 40, y + 37, '완료 ?', true, 'start');
+    return;
+  }
+  label(done, 40, y + 37, '완료 {#0}'.replace('{#0}', completed), true, 'start');
   for (let slot = 0; slot < completed; slot++) {
-    card(group, 136 + slot * 13, y + 27, 10, 10, 'cpu-' + app);
+    card(done, 136 + slot * 13, y + 27, 10, 10, 'cpu-' + app);
   }
 }
 
-function timelineRow(group, y, name, numbers, turns) {
-  label(group, 28, y + 26, name, true, 'start');
+function timelineRow(group, y, prefix, name, numbers, turns, hide) {
+  label(named(group, prefix + '줄 이름'), 28, y + 26, name, true, 'start');
   for (let slot = 0; slot < numbers; slot++) {
+    const cell = named(group, prefix + '차례 ' + (slot + 1));
     const x = 176 + slot * 82;
-    const app = turns[slot];
-    card(group, x, y, 74, 35, app ? 'cpu-' + app : 'cpu-empty');
-    label(group, x + 12, y + 22, slot + 1, true);
-    if (app) label(group, x + 47, y + 22, marks[app], true);
+    const app = hide.includes(prefix + '차례 ' + (slot + 1)) ? null : turns[slot];
+    card(cell, x, y, 74, 35, app ? 'cpu-' + app : 'cpu-empty');
+    label(cell, x + 12, y + 22, slot + 1, true);
+    label(cell, x + 47, y + 22, app ? marks[app] : '?', true);
   }
 }
 
-function drawRun(group, index, run) {
+function drawRun(group, index, run, hide = []) {
   const {turns, paused} = run;
   const latest = turns.at(-1);
-  group.dataset.turns = turns.join(',');
-  group.dataset.paused = String(paused);
-  appCard(group, 'photo', 51, count(turns, 'photo'), paused);
-  if (index) appCard(group, 'music', 111, count(turns, 'music'), false);
-  card(group, 242, 67, 148, 77, 'cpu-os');
-  label(group, 316, 96, '운영체제');
-  label(group, 316, 120, '차례 고르기', true);
-  card(group, 443, 67, 151, 77);
-  label(group, 518.5, 89, 'CPU 코어 하나');
-  card(group, 457, 99, 123, 32, latest ? 'cpu-' + latest : 'cpu-empty');
-  label(group, 518.5, 119, latest ? '최근 실행 · {0}'.replace('{0}', marks[latest]) : '실행 대기', true);
-  if (latest) {
-    const y = latest === 'photo' ? 81 : 129;
-    flowArrow(group, 199, 235, y);
-    flowArrow(group, 397, 437, 105);
+  appCard(group, 'photo', 51, count(turns, 'photo'), paused, hide);
+  if (index) appCard(group, 'music', 111, count(turns, 'music'), false, hide);
+  const system = named(group, '운영체제 판');
+  card(system, 242, 67, 148, 77, 'cpu-os');
+  label(system, 316, 96, '운영체제');
+  label(system, 316, 120, '차례 고르기', true);
+  const core = named(group, '코어 판');
+  card(core, 443, 67, 151, 77);
+  label(core, 518.5, 89, 'CPU 코어 하나');
+  const slot = named(group, '코어 칸');
+  if (hide.includes('코어 칸')) {
+    card(slot, 457, 99, 123, 32, 'cpu-empty');
+    label(slot, 518.5, 119, '?', true);
+  } else {
+    card(slot, 457, 99, 123, 32, 'cpu-' + latest);
+    label(slot, 518.5, 119, '최근 실행 · {0}'.replace('{0}', marks[latest]), true);
+  }
+  if (!hide.includes('흐름 화살표')) {
+    const arrows = named(group, '흐름 화살표');
+    flowArrow(arrows, 199, 235, latest === 'photo' ? 81 : 129);
+    flowArrow(arrows, 397, 437, 105);
   }
   if (index === 2) {
-    timelineRow(group, 174, '둘 다 준비', 4, normalTurns);
-    timelineRow(group, 220, paused ? '사진 앱이 쉼' : '잠시 멈추기 전', 4, turns);
+    timelineRow(group, 174, '위 ', '둘 다 준비', 4, normalTurns, hide);
+    timelineRow(group, 220, '아래 ', '사진 앱이 쉼', 4, turns, hide);
   } else {
-    timelineRow(group, 199, '마친 차례', limits[index], turns);
+    timelineRow(group, 199, '', '마친 차례', limits[index], turns, hide);
   }
 }
 
-function runGroup(index, run, className) {
-  const group = svg('g', {class: className});
-  drawRun(group, index, run);
-  return group;
-}
-
-function initialTurn(index) {
-  return {turns: index === 2 ? normalTurns.slice(0, 2) : index === 3 ? [...pausedTurns] : [], paused: index === 3};
-}
-
-for (const [index, step] of lesson.entries()) {
-  const template = document.createElement('template');
-  template.id = step.readingDiagram.figure;
-  const canvas = svg('svg', {viewBox: '0 0 620 280'}, template.content);
-  const group = svg('g', {}, canvas);
-  group.append(runGroup(index, demos[index], 'cpu-reading'), runGroup(index, initialTurn(index), 'cpu-trial'));
-  document.body.append(template);
-}
-
-function localize(text) {
-  return window.courseI18n?.translate(text) ?? text;
-}
-
-function syncPractice() {
-  const index = state.index;
-  if (index < 0) return;
-  const reading = workspace.classList.contains('course-reading');
-  if (index !== practiceIndex || (readingMode && !reading)) {
-    practiceIndex = index;
-    practiceTurn = initialTurn(index);
-    byId('feedback').textContent = '';
-  }
-  readingMode = reading;
-  const {turns, paused} = practiceTurn;
-  const full = turns.length >= limits[index];
-  pause.hidden = index !== 2;
-  resume.hidden = index !== 3;
-  pause.setAttribute('aria-disabled', String(paused));
-  resume.setAttribute('aria-disabled', String(!paused));
-  advance.setAttribute('aria-disabled', String(full || (index === 2 && !paused) || (index === 3 && paused)));
-
-  const figure = scene.querySelector('.cpu-trial');
-  if (figure && (figure.dataset.turns !== turns.join(',') || figure.dataset.paused !== String(paused))) {
-    figure.replaceWith(runGroup(index, practiceTurn, 'cpu-trial'));
-  }
-  const runText = turns.length ? turns.map(app => localize(marks[app])).join(' · ') : localize('아직 실행한 차례가 없습니다.');
-  const description = reading ? localize(lesson[index].description) : [
-    localize(lesson[index].prompt),
-    localize(paused ? '사진 앱이 쉬고 있습니다.' : '사진 앱이 준비되어 있습니다.'),
-    localize('마친 차례') + ' · ' + runText,
-  ].join(' ');
-  for (const id of ['scene-desc', 'course-diagram-desc']) {
-    const node = byId(id);
-    if (node && node.textContent !== description) node.textContent = description;
+// A highlighted group colours the outline of its edge shapes and its words (frame spec 3.7 rule 2).
+function drawFigure(index, {hide = [], changed = []}) {
+  drawing.replaceChildren();
+  drawRun(drawing, index, demos[index], hide);
+  for (const name of changed) {
+    for (const element of drawing.querySelector(`[data-name="${name}"]`)?.querySelectorAll('[data-edge], text') ?? []) {
+      element.setAttribute('data-changed', '');
+    }
   }
 }
 
-advance.onclick = () => {
-  if (advance.getAttribute('aria-disabled') === 'true') return;
-  const {index} = state;
-  const {turns} = practiceTurn;
-  const app = index === 2 ? 'music' : index === 3 ? 'photo' : normalTurns[turns.length];
-  turns.push(app);
-  const feedback = index === 2 && turns.length === limits[index]
-    ? '같은 네 차례에서 음악 앱이 한 차례 더 실행됐습니다.'
-    : '{#0}번 · {1} 실행'.replace('{#0}', turns.length).replace('{1}', names[app]);
-  byId('feedback').textContent = feedback;
-  syncPractice();
-};
+byId('zoom-in').onclick = () => zoomBy(.3);
+byId('zoom-out').onclick = () => zoomBy(-.3);
+enableCameraDrag();
 
-pause.onclick = () => {
-  if (pause.getAttribute('aria-disabled') === 'true') return;
-  practiceTurn.paused = true;
-  byId('feedback').textContent = '사진 앱이 쉬고 있습니다.';
-  syncPractice();
-  advance.focus();
-};
+viewport.addEventListener('keydown', event => {
+  if (camera.zoom === 1) return;
+  const direction = {ArrowLeft: [-1, 0], ArrowUp: [0, -1], ArrowRight: [1, 0], ArrowDown: [0, 1]}[event.key];
+  if (!direction) return;
+  event.preventDefault();
+  setCamera(camera.x + direction[0] * 18, camera.y + direction[1] * 18, camera.zoom);
+});
 
-resume.onclick = () => {
-  if (resume.getAttribute('aria-disabled') === 'true') return;
-  practiceTurn.paused = false;
-  byId('feedback').textContent = '사진 앱이 준비되어 있습니다.';
-  syncPractice();
-  advance.focus();
-};
-
-const changes = new MutationObserver(syncPractice);
-changes.observe(scene, {childList: true});
-changes.observe(workspace, {attributes: true, attributeFilter: ['class']});
-changes.observe(byId('steps'), {subtree: true, attributes: true, attributeFilter: ['aria-current']});
-window.addEventListener('course:lang', syncPractice);
+window.addEventListener('keydown', event => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === '+') zoomBy(.3);
+  else if (event.key === '-') zoomBy(-.3);
+  else if (event.key === '0') resetView();
+  else return;
+  event.preventDefault();
+});
+setCamera(0, 0, 1);
 </script>
-<script src="../shared/reading-lesson.js?v=b4d45e8ddc5bfaac"></script>
 </body>
 </html>

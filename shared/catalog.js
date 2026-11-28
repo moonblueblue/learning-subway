@@ -3759,8 +3759,8 @@ const courseCatalog = {
           "id": "sharing-cpu",
           "title": "여러 앱은 CPU를 어떻게 나눠 쓸까?",
           "titleEn": "How do apps share the CPU?",
-          "question": "사진 앱과 음악 앱은 CPU 코어 하나를 어떻게 번갈아 쓸까요?",
-          "format": "실습",
+          "question": "사진 앱과 음악 앱이 CPU 코어 하나를 함께 쓰면, 차례는 어떻게 정해질까요?",
+          "format": "단계 그림",
           "requires": [
             "os/what-os-does"
           ],

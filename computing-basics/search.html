@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="찾는 수보다 가운데 값이 작을 때, 언제 왼쪽 상자를 보지 않아도 될까?">
 <meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="repeatable-instructions.items.js?v=d4fedf064848f268">
 <title>같은 일을 더 적게 하고 끝내기</title>
 <style>
 :root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
@@ -179,17 +180,17 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<link rel="stylesheet" href="../shared/lesson-frame.css?v=c0f3c6b6db339d40">
-<link rel="stylesheet" href="../shared/figures.css?v=a40b6840c7b1364a">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/figures.js?v=14c528768c1eacea"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=43626da713e5fe4e">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=664b1e5738d1a909"></script>
 <script defer blocking="render" src="./search.items.js?v=2b29e4593bab933c"></script>
-<script defer blocking="render" src="../shared/lesson-frame.js?v=a668cf178830be0e"></script>
-<script defer blocking="render" src="../shared/catalog.js?v=b9159b197829b257"></script>
-<script defer blocking="render" src="./search.en.js?v=061cdaa79003fc05"></script>
-<script defer blocking="render" src="../shared/i18n.js?v=173806c4ad3440ee"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=786b62ca9e83ae58"></script>
+<script defer blocking="render" src="./search.en.js?v=49ba3b427fdd841e"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
@@ -429,7 +430,7 @@ const lesson = {
       "title": "남은 후보만 다시 반으로 줄입니다",
       "body": "남은 9~16번에서 가운데인 12번을 엽니다. 43은 84보다 작으므로 13~16번만 남깁니다. 14번의 81도 작아서 15~16번만 남고, 15번에서 84를 찾습니다.",
       "takeaway": "남은 후보 칸이 8, 4, 2개로 줄어드는 것을 보세요",
-      "description": "남은 후보 칸이 8, 4, 2개로 줄고 4행에서 15번이 발견으로 바뀐다. 연 상자는 8, 12, 14, 15번 네 개뿐",
+      "description": "남은 후보 칸이 8개, 4개, 2개로 줄고, 4행에서 15번 상자에 발견 표시가 나타납니다. 연 상자는 8번, 12번, 14번, 15번 네 개뿐입니다.",
       "mode": "binary",
       "figure": {
         "custom": true,

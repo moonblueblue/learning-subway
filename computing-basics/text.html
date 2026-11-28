@@ -4,8 +4,10 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="글자에 번호를 붙이고, 그 번호를 비트로 바꾸는 방법(ASCII, 유니코드, UTF-8)을 스위치로 살펴보세요.">
+<meta name="description" content="받은 바이트를 어떤 글자로 읽을지는 무엇이 정할까?">
 <title>글자의 번호표</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="bits.items.js?v=ab6695da50c6e198">
 <style>
 :root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}
@@ -155,22 +157,29 @@ svg{display:block;width:100%;height:auto;max-height:520px}
 #try[hidden], #readout[hidden], .switch-area[hidden], #letter-actions[hidden] { display: none; }
 #letter-actions .actions { margin-block: 8px; }
 #letter-actions button[aria-pressed=true] { border: 2px solid var(--accent); }
+#figure .utf8-head { fill: url(#utf8-fixed-prefix); }
+#world[hidden], #figure[hidden] { display: none; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./text.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=43626da713e5fe4e">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=664b1e5738d1a909"></script>
+<script defer blocking="render" src="./text.items.js?v=cd6991e63c6dd05c"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=786b62ca9e83ae58"></script>
+<script defer blocking="render" src="./text.en.js?v=31c5d771ebe2ff1a"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
   <header>
     <p class="eyebrow">0장 컴퓨팅 둘러보기</p>
     <h1>글자의 번호표</h1>
-    <p class="lead">"A"와 "가"는 어떤 비트가 될까요? 스위치로 번호를 만들고, 그 번호가 어떤 글자인지 확인해 보세요.</p>
+    <p>받은 바이트를 어떤 글자로 읽을지는 무엇이 정할까?</p>
   </header>
   <div class="workspace">
     <div>
@@ -178,8 +187,12 @@ svg{display:block;width:100%;height:auto;max-height:520px}
         <div class="stage-top"><h2 id="stage-heading">번호와 글자</h2></div>
         <div class="stage">
           <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
-            <title id="scene-title">스위치로 만든 번호가 글자표에서 글자가 되는 장면</title><desc id="scene-desc"></desc>
+            <title id="scene-title">스위치로 만든 번호가 번호표에서 글자가 되는 장면</title><desc id="scene-desc"></desc>
             <defs>
+              <pattern id="utf8-fixed-prefix" width="5" height="5" patternUnits="userSpaceOnUse">
+                <rect width="5" height="5" fill="#f5e7c3"/>
+                <path d="M-1 1L1-1M0 5L5 0M4 6L6 4" stroke="#bb9450" stroke-width="1"/>
+              </pattern>
               <marker id="text-intro-tip" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" refX="9" refY="5" orient="auto">
                 <path d="M 0 0 L 9 5 L 0 10 Z" fill="#187959"/>
               </marker>
@@ -191,32 +204,22 @@ svg{display:block;width:100%;height:auto;max-height:520px}
               <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
               <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
             </defs>
-            <g id="world" aria-hidden="true">
+            <g id="figure"></g>
+            <g id="world" aria-hidden="true" hidden>
               <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
               <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g><g id="notes"></g>
             </g>
-            <g id="letter-practice-drawing" class="codebook-figure" aria-hidden="true"></g>
           </svg>
         </div>
         <div class="hands-on">
           <div class="try" id="try">
             <p><strong>해 보기</strong><span id="try-text"></span></p>
             <p class="try-result" id="try-result" role="status"></p>
-            <button class="action" id="try-next" type="button" hidden>다음 문제</button>
-          </div>
-          <div id="letter-actions" hidden>
-            <p>보낸 번호 65를 어느 표로 읽을지 선택해 보세요.</p>
-            <div class="actions">
-              <button class="action" id="same-codebook" type="button" aria-pressed="false">같은 번호표</button>
-              <button class="action" id="other-codebook" type="button" aria-pressed="false">다른 예시 번호표</button>
-            </div>
-            <p class="readout" id="letter-feedback" role="status"></p>
           </div>
           <p class="readout" id="readout"></p>
           <div class="switch-area">
             <div class="switch-row" id="switch-buttons" role="group" aria-label="스위치 켜고 끄기"></div>
             <div class="switch-actions">
-              <button class="action" id="plus-one" type="button" aria-label="1 더하기">+1</button>
               <button class="action" id="clear" type="button">모두 끄기</button>
             </div>
           </div>
@@ -226,9 +229,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
           <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
           <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
           <span class="view-hint">장면의 스위치를 눌러도 됩니다 · 확대 후 드래그로 이동</span>
-        </div>
-        <div class="controls">
-          <div class="legend" aria-label="범례"><span><i class="sample"></i>값이 흐르는 선</span><span><i class="dot on"></i>켜짐 = 1</span><span><i class="dot"></i>꺼짐 = 0</span></div>
         </div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
@@ -244,7 +244,6 @@ svg{display:block;width:100%;height:auto;max-height:520px}
   </div>
   <div class="sr-only" id="announcement" role="status"></div>
 </main>
-<template id="same-number-codebooks"><svg><g class="codebook-figure"></g></svg></template>
 <template id="utf8-one-byte">
   <svg>
     <g class="utf8-figure">
@@ -304,131 +303,531 @@ svg{display:block;width:100%;height:auto;max-height:520px}
     </g>
   </svg>
 </template>
+<template id="utf8-three-bytes-before">
+  <svg>
+    <g class="utf8-figure">
+      <text x="28" y="86" class="utf8-label">문자 번호</text>
+      <text x="28" y="113" class="utf8-label">가 · 44032</text>
+      <text x="28" y="139" class="utf8-label">16비트</text>
+      <rect x="225" y="94" width="383" height="38" rx="4" class="utf8-value"/>
+      <text x="416" y="119" class="utf8-bits">1010 1100 0000 0000</text>
+    </g>
+  </svg>
+</template>
 <script>
 // Place value of each switch. Index = bit number, so places[0] is the rightmost switch.
-const places = Array.from({ length: 16 }, (_, bit) => 2 ** bit);
+const places = Array.from({ length: 7 }, (_, bit) => 2 ** bit);
 
-// Each step shows `switches` switches. While playing, the demo walks through `values`.
-// `initial` is the value shown first. `fit` is [translateX, translateY, scale] for the scene,
-// `spacing` the gap between switches on the floor, and `utf8` adds the UTF-8 bytes to the readout.
-// `tasks` are the try-it problems: the learner has to make `target` with the switches.
-const lesson = [
-  {
-    readingDiagram: {
-      title: '같은 번호표를 쓰면 같은 글자를 읽습니다',
-      description: '두 줄 모두 보내는 사람이 A에 해당하는 번호 65를 보냅니다. 같은 번호표는 65를 A로 읽습니다. 다른 예시 번호표는 65를 B로 읽어서 보내려던 글자와 달라집니다.',
-      figure: 'same-number-codebooks'
+const lesson = {
+  "question": "받은 바이트를 어떤 글자로 읽을지는 무엇이 정할까?",
+  "terms": [
+    {
+      "term": "번호표",
+      "meaning": "글자마다 번호를 하나씩 짝지은 표. 보내는 쪽은 글자를 번호로, 받는 쪽은 번호를 글자로 바꿀 때 쓴다",
+      "step": 1
     },
-    label: '같은 번호표',
-    example: ['보낸 글자 A', '같은 번호 65를 두 표로 읽기', '같은 표의 A · 다른 표의 B'],
-    title: '보내는 쪽과 받는 쪽은 같은 번호표를 써야 합니다',
-    body: '글자 A를 보낼 때 표에서 번호 65를 찾습니다. 받는 사람이 같은 표를 보면 65에서 A를 찾습니다. 번호표를 바꾸면 같은 65도 다른 글자가 됩니다. 실제 ASCII 표에서 A는 65번, a는 97번입니다.',
-    takeaway: '두 줄에서 받은 번호는 65로 같습니다. 달라진 받는 번호표를 지나 오른쪽에 나온 A와 B를 확인하세요.',
-    description: '실행 장면에서도 같은 65를 두 번호표로 읽습니다. 같은 표는 A, 바꾼 예시 표는 B를 냅니다.',
-    switches: 8,
-    spacing: 1.8,
-    fit: [248, 126, 1.13],
-    initial: 65,
-    board: 'case',
-    demo: { values: [97, 65, 66, 98], interval: 2400 },
-    tasks: [
-      { target: 66, text: 'B를 만들어 보세요. A는 65번이고, B는 그다음 번호입니다.' },
-      { target: 72, text: 'H를 만들어 보세요. H는 72번입니다.' },
-      { target: 98, text: '소문자 b를 만들어 보세요. 대문자 B(66)보다 32 큽니다.' },
-      { target: 48, text: '숫자 글자 "0"을 만들어 보세요. 48번입니다.' },
-    ],
-  },
-  {
-    readingDiagram: {
-      title: "‘가’의 문자 번호는 8비트에 들어가지 않는다",
-      description: "유니코드에서 가의 번호는 44032입니다. 8비트의 최댓값 255보다 크며 번호 비트는 1010 1100 0000 0000입니다.",
-      nodes: [
-        ["letter", 100, 132, 105, 56, ["가", "유니코드"], "plain"],
-        ["num", 300, 132, 139, 56, ["44032", "문자 번호"], "active"],
-        ["byte", 507, 132, 150, 56, ["255", "8비트 최댓값"], "blocked"],
-        ["bits", 300, 225, 256, 57, ["1010 1100 0000 0000", "44032를 쓴 16비트"], "active"],
-      ],
-      edges: [
-        ["letter", "num", "active", ""],
-        ["num", "bits", "active", ""],
-      ],
-      labels: [
-        [398, 127, ">"],
-      ],
+    {
+      "term": "ASCII",
+      "meaning": "영어 알파벳, 숫자, 기호 128개에 0~127번을 붙인 번호표. A는 65, a는 97",
+      "step": 1
     },
-    label: '한글은 큰 번호',
-    example: ["한글 ‘가’", "글자 번호 44032", "8비트 범위를 초과"],
-    title: '한글은 8비트로는 모자란다',
-    body: 'ASCII는 128개 글자만 담아서 한글이 없습니다. 그래서 세계의 모든 글자에 번호를 붙인 유니코드가 만들어졌습니다. 유니코드에서 "가"는 44032번이고, 이만큼 큰 수를 나타내려면 스위치가 16개 필요합니다. 한글 음절은 가, 각, 갂… 순서로 번호가 이어집니다.',
-    takeaway: '스위치가 16개로 늘어납니다. "가"는 32768, 8192, 2048, 1024 네 스위치를 켠 44032번이고, 1을 더하면 "각"이 됩니다.',
-    description: '스위치 열여섯 개와 글자표가 있습니다. 32768, 8192, 2048, 1024를 맡은 스위치가 켜져 44032가 되고, 글자표는 한글 "가"를 보여 줍니다.',
-    switches: 16,
-    spacing: 1.8,
-    rowGap: 10.6,
-    rowShift: 7.2,
-    sumGap: 5.2,
-    fit: [199, 207, .82],
-    initial: 44032,
-    board: 'range',
-    demo: { values: [44032, 44033, 45208, 54620], interval: 3200 },
-    tasks: [
-      { target: 44033, text: '"가" 다음 글자인 "각"을 만들어 보세요. +1을 써도 됩니다.' },
-      { target: 45208, text: '"나"를 만들어 보세요. 45208번입니다.' },
-    ],
-  },
-  {
-    readingDiagram: {
-      figure: 'utf8-one-byte',
-      title: 'A의 UTF-8은 한 바이트',
-      description: 'A의 번호 65를 나타내는 일곱 비트 1000001 앞에 고정 머리 0을 붙입니다. 저장하는 한 바이트는 01000001이고 16진수로 41입니다.',
+    {
+      "term": "유니코드",
+      "meaning": "세계의 글자에 번호를 붙인 번호표. 한글 \"가\"는 44032",
+      "step": 2
     },
-    label: '심화 · A의 UTF-8',
-    example: ['A = 65', '0 뒤에 1000001을 넣음', '한 바이트 41'],
-    title: 'A의 UTF-8은 한 바이트',
-    body: 'UTF-8은 문자 번호를 저장 바이트로 바꾸는 규칙입니다. 0부터 127까지의 번호는 일곱 비트에 들어가므로, 앞에 고정 비트 0을 붙여 한 바이트로 저장합니다. A의 번호 65는 1000001이고 저장하는 바이트는 01000001입니다.',
-    takeaway: '41은 저장 바이트 01000001을 16진수 두 자리로 쓴 것입니다. 문자 번호는 그대로 65입니다.',
-    description: 'A의 문자 번호 65가 들어 있고, UTF-8 저장 바이트에는 고정 머리 0과 번호 비트 1000001이 표시됩니다.',
-    switches: 8,
-    spacing: 1.8,
-    fit: [248, 126, 1.13],
-    utf8: true,
-    board: 'utf8',
-    initial: 65,
-    demo: { values: [66, 127, 128, 65], interval: 3400 },
-    tasks: [
-      { target: 66, text: 'A 다음 문자 번호를 만들고 한 바이트가 어떻게 바뀌는지 보세요.' },
-      { target: 127, text: '1바이트에 들어가는 가장 큰 번호(127)를 만들어 보세요.' },
-      { target: 128, text: '2바이트가 필요한 첫 번호를 만들어 보세요.' },
-    ],
-  },
-  {
-    readingDiagram: {
-      figure: 'utf8-three-bytes',
-      title: '가의 UTF-8은 세 바이트',
-      description: '가의 44032를 쓴 16비트를 1010, 110000, 000000으로 나눕니다. 각각 머리 1110, 10, 10 뒤로 옮기면 11101010, 10110000, 10000000이 됩니다. 이 24비트는 세 바이트 EA B0 80으로 저장합니다.',
+    {
+      "term": "문자 번호",
+      "meaning": "번호표에서 글자 하나가 받은 번호",
+      "step": 2
     },
-    label: '심화 · 가의 UTF-8',
-    example: ['가 = 44032', '1010 · 110000 · 000000', '세 바이트 EA B0 80'],
-    title: '가의 UTF-8은 세 바이트',
-    body: '가의 문자 번호 44032를 나타내는 16비트를 왼쪽부터 4·6·6비트로 나눕니다. 첫 바이트는 머리 1110으로 시작하고, 뒤의 두 바이트는 머리 10으로 시작합니다. 각 머리 뒤에 번호 비트 한 묶음씩 채우면 저장 바이트 EA B0 80이 됩니다.',
-    takeaway: '문자 번호의 비트는 16자리입니다. UTF-8에서는 머리 비트 8개를 더해 24비트, 즉 세 바이트를 저장합니다.',
-    description: '가의 문자 번호 44032가 16개 스위치에 들어 있습니다. UTF-8 저장 바이트에는 고정 머리 1110, 10, 10과 번호 비트 세 묶음이 표시됩니다.',
-    switches: 16,
-    spacing: 1.8,
-    rowGap: 10.6,
-    rowShift: 7.2,
-    sumGap: 5.2,
-    fit: [199, 184, .82],
-    utf8: true,
-    board: 'utf8',
-    initial: 44032,
-    demo: { values: [44033, 45208, 2048, 44032], interval: 3400 },
-    tasks: [
-      { target: 44033, text: '1을 더해 각을 만들고 세 바이트 중 어느 비트가 바뀌는지 보세요.' },
-      { target: 2048, text: '3바이트가 필요한 첫 번호를 만들어 보세요.' },
+    {
+      "term": "UTF-8",
+      "meaning": "문자 번호를 저장할 바이트로 바꾸는 규칙. 번호가 작으면 1바이트, 크면 여러 바이트를 쓴다",
+      "step": 3
+    },
+    {
+      "term": "고정 머리",
+      "meaning": "UTF-8 바이트 앞쪽에 규칙으로 정해져 늘 같은 비트(0, 1110, 10). 번호의 일부가 아니다",
+      "step": 3
+    },
+    {
+      "term": "16진수",
+      "meaning": "비트 4개를 0~9, A~F 한 자리로 줄여 쓰는 표기. 0100 0001 은 41, 1110 1010 은 EA",
+      "step": 3
+    },
+    {
+      "term": "Windows-1252",
+      "meaning": "바이트 하나에 글자 하나를 짝지은 옛 서양 번호표. 한글이 없다",
+      "step": 5
+    }
+  ],
+  "steps": [
+    {
+      "label": "같은 번호표",
+      "title": "보내는 쪽과 받는 쪽은 같은 번호표를 써야 합니다",
+      "body": "실제 ASCII 표에서 A는 65번, a는 97번입니다. 글자 A를 보낼 때 표에서 번호 65를 찾습니다. 받는 사람이 같은 표를 보면 65에서 A를 찾습니다. 번호표를 바꾸면 같은 65도 다른 글자가 됩니다. 다른 예시 번호표는 설명을 위해 만든 표입니다. 실제로는 5단계처럼 서로 다른 실제 규칙이 부딪칠 때 이런 일이 생깁니다.",
+      "takeaway": "받은 번호 칸은 65 하나입니다. 두 선을 따라가면 같은 표에서는 A, 다른 예시 표에서는 B에 닿습니다.",
+      "description": "받은 번호 65에서 선이 두 개로 갈라집니다. 같은 표로 읽은 A와 다른 예시 표로 읽은 B가 각각 보입니다.",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "보낸 글자",
+            "cells": [
+              {
+                "id": "sent",
+                "label": "A",
+                "sub": "ASCII 표에서 65번"
+              }
+            ]
+          },
+          {
+            "title": "받은 번호",
+            "cells": [
+              {
+                "id": "num",
+                "label": "65",
+                "sub": "0100 0001"
+              }
+            ]
+          },
+          {
+            "title": "받는 쪽이 읽은 글자",
+            "cells": [
+              {
+                "id": "same",
+                "label": "A",
+                "sub": "같은 표(ASCII) · 65 = A"
+              },
+              {
+                "id": "other",
+                "label": "B",
+                "sub": "다른 예시 표 · 65 = B, 66 = A"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "to": "num",
+            "kind": "solid",
+            "from": "sent"
+          },
+          {
+            "to": "same",
+            "kind": "solid",
+            "from": "num"
+          },
+          {
+            "to": "other",
+            "kind": "broken",
+            "from": "num"
+          }
+        ],
+        "changed": [
+          "other"
+        ]
+      }
+    },
+    {
+      "label": "한글은 큰 번호",
+      "title": "한글은 8비트로 모자랍니다",
+      "body": "ASCII는 128개 글자만 담아서 한글이 없습니다. 그래서 세계의 모든 글자에 번호를 붙인 유니코드가 만들어졌습니다. 유니코드에서 \"가\"는 44032번이고, 이만큼 큰 수를 나타내려면 스위치가 16개 필요합니다. 한글 음절은 가, 각, 갂… 순서로 번호가 이어집니다. 여기서 보는 16비트는 번호를 쓴 비트입니다. UTF-8이 파일에 저장하는 바이트는 다음 단계에서 봅니다.",
+      "takeaway": "“가”의 문자 번호 44032는 8비트 막대의 끝을 넘지만 16비트 막대 범위 안에 들어갑니다.",
+      "description": "8비트로 쓸 수 있는 번호는 256가지입니다. 가의 번호 44032는 이보다 크고, 16비트로 쓸 수 있는 65536가지 안에 들어갑니다.",
+      "figure": {
+        "part": "bars",
+        "unit": "번호",
+        "bars": [
+          {
+            "label": "8비트로 쓸 수 있는 번호",
+            "total": 256,
+            "segments": [
+              {
+                "id": "r8",
+                "label": "0~255 · 256가지",
+                "value": 256,
+                "kind": "a"
+              }
+            ]
+          },
+          {
+            "id": "ga-bar",
+            "label": "“가”의 문자 번호",
+            "total": 44032,
+            "segments": [
+              {
+                "id": "ga",
+                "label": "44032",
+                "value": 44032,
+                "kind": "b"
+              }
+            ]
+          },
+          {
+            "label": "16비트로 쓸 수 있는 번호",
+            "total": 65536,
+            "segments": [
+              {
+                "id": "r16",
+                "label": "0~65535 · 65536가지",
+                "value": 65536,
+                "kind": "a"
+              }
+            ]
+          }
+        ],
+        "labelWidth": 180,
+        "exactLabels": true,
+        "legend": [
+          {
+            "kind": "a",
+            "label": "쓸 수 있는 번호 범위"
+          },
+          {
+            "kind": "b",
+            "label": "글자의 번호"
+          }
+        ],
+        "changed": [
+          "ga"
+        ]
+      },
+      "predict": {
+        "prompt": "한글 \"가\"의 문자 번호는 44032입니다. 이 번호를 8비트 한 칸에 담을 수 있을까요?",
+        "options": [
+          {
+            "text": "담을 수 있다, 글자 하나는 한 칸이다",
+            "why": "A가 8비트 한 칸이었으니 모든 글자가 그렇다고 본 것인데, 8비트로 쓸 수 있는 가장 큰 번호는 255입니다."
+          },
+          {
+            "text": "담을 수 없다, 255보다 크다",
+            "why": "44032는 255를 훨씬 넘어서 비트가 16개 필요합니다.",
+            "correct": true
+          },
+          {
+            "text": "앞의 8자리만 담으면 된다",
+            "why": "일부만 담아도 된다고 본 것인데, 자리를 잘라 내면 다른 번호가 되어 다른 글자가 됩니다."
+          }
+        ],
+        "before": {
+          "part": "bars",
+          "unit": "번호",
+          "bars": [
+            {
+              "label": "8비트로 쓸 수 있는 번호",
+              "total": 256,
+              "segments": [
+                {
+                  "id": "r8",
+                  "label": "0~255 · 256가지",
+                  "value": 256,
+                  "kind": "a"
+                }
+              ]
+            },
+            {
+              "id": "ga-bar",
+              "label": "“가”의 문자 번호 44032",
+              "total": 44032,
+              "segments": []
+            },
+            {
+              "label": "16비트로 쓸 수 있는 번호",
+              "total": 65536,
+              "segments": [
+                {
+                  "id": "r16",
+                  "label": "0~65535 · 65536가지",
+                  "value": 65536,
+                  "kind": "a"
+                }
+              ]
+            }
+          ],
+          "labelWidth": 180,
+          "exactLabels": true,
+          "legend": [
+            {
+              "kind": "a",
+              "label": "쓸 수 있는 번호 범위"
+            },
+            {
+              "kind": "b",
+              "label": "글자의 번호"
+            }
+          ],
+          "changed": [],
+          "description": "8비트와 16비트로 쓸 수 있는 번호의 범위가 막대로 보입니다. 가의 문자 번호는 이름표 44032로 표시합니다."
+        }
+      }
+    },
+    {
+      "label": "심화 · A의 UTF-8",
+      "title": "A의 UTF-8은 한 바이트입니다",
+      "body": "UTF-8은 문자 번호를 저장 바이트로 바꾸는 규칙입니다. 0부터 127까지의 번호는 일곱 비트에 들어가므로, 앞에 고정 머리 0을 붙여 한 바이트로 저장합니다. A의 번호 65는 1000001이고 저장하는 바이트는 01000001입니다. 41은 저장한 바이트를 16진수로 쓴 것입니다. 문자 번호는 그대로 65입니다.",
+      "takeaway": "41은 저장 바이트 01000001을 16진수 두 자리로 쓴 것입니다. 문자 번호는 그대로 65입니다.",
+      "description": "A의 번호 65를 나타내는 일곱 비트 1000001 앞에 고정 머리 0을 붙입니다. 저장하는 한 바이트는 01000001이고 16진수로 41입니다.",
+      "figure": {
+        "template": "utf8-one-byte"
+      },
+      "practice": {
+        "predict": {
+          "prompt": "127은 UTF-8로 몇 바이트가 될까요?",
+          "options": [
+            {
+              "text": "1바이트",
+              "why": "127 = 111 1111 일곱 자리라 고정 머리 0 뒤에 다 들어갑니다.",
+              "correct": true
+            },
+            {
+              "text": "2바이트",
+              "why": "큰 번호라서 두 바이트가 필요하다고 본 것인데, 일곱 자리 안에 들어가는 번호는 한 바이트입니다."
+            },
+            {
+              "text": "1바이트이고 고정 머리 0은 빠진다",
+              "why": "일곱 자리가 다 차면 머리가 필요 없다고 본 것인데, 맨 앞 0은 늘 붙어 0111 1111 이 됩니다."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "label": "심화 · 가의 UTF-8",
+      "title": "가의 UTF-8은 세 바이트입니다",
+      "body": "가의 문자 번호 44032를 나타내는 16비트를 왼쪽부터 4·6·6비트로 나눕니다. 첫 바이트는 머리 1110으로 시작하고, 뒤의 두 바이트는 머리 10으로 시작합니다. 각 머리 뒤에 번호 비트 한 묶음씩 채우면 저장 바이트 EA B0 80이 됩니다. 첫 바이트의 고정 머리 1110에는 1이 셋 있습니다. 이 글자가 세 바이트로 되어 있다는 표시입니다.",
+      "takeaway": "문자 번호의 비트는 16자리입니다. UTF-8에서는 머리 비트 8개를 더해 24비트, 즉 세 바이트를 저장합니다.",
+      "description": "가의 44032를 쓴 16비트를 1010, 110000, 000000으로 나눕니다. 각각 머리 1110, 10, 10 뒤로 옮기면 11101010, 10110000, 10000000이 됩니다. 이 24비트는 세 바이트 EA B0 80으로 저장합니다.",
+      "figure": {
+        "template": "utf8-three-bytes"
+      },
+      "predict": {
+        "prompt": "A(65)는 UTF-8로 1바이트였습니다. 번호가 44032인 \"가\"는 몇 바이트가 될까요?",
+        "options": [
+          {
+            "text": "2바이트",
+            "why": "번호가 16비트이니 8비트 둘이면 된다고 본 것인데, 바이트마다 고정 머리가 자리를 차지해 16비트가 두 바이트에 다 들어가지 않습니다."
+          },
+          {
+            "text": "3바이트",
+            "why": "16비트를 4·6·6비트로 나눠 머리 1110, 10, 10 뒤에 채우므로 24비트, 세 바이트가 됩니다.",
+            "correct": true
+          },
+          {
+            "text": "1바이트",
+            "why": "글자 하나는 늘 한 바이트라고 본 것인데, 2단계에서 본 것처럼 44032는 한 바이트에 들어가지 않습니다."
+          }
+        ],
+        "before": {
+          "template": "utf8-three-bytes-before",
+          "description": "“가”의 문자 번호 44032를 쓴 16비트 1010 1100 0000 0000이 한 줄에 보입니다."
+        }
+      }
+    },
+    {
+      "label": "다른 규칙으로 읽기",
+      "title": "같은 바이트도 다른 규칙으로 읽으면 다른 글자가 됩니다",
+      "body": "글자가 엉뚱한 글자들로 보이는 것을 깨진 글자라고 합니다. UTF-8로 저장한 “가”의 EA, B0, 80을 Windows-1252로 읽으면 ê, °, €가 보입니다. 바이트는 번호일 뿐이고, 어떤 글자로 보일지는 받는 쪽이 고른 규칙이 정합니다. 깨진 글자는 대부분 바이트가 망가진 것이 아니라 읽는 규칙이 다른 것입니다.",
+      "takeaway": "EA, B0, 80에서 나가는 선이 각각 ê, °, €에 닿습니다. 같은 바이트가 다른 규칙으로 읽혀 글자 셋이 됩니다.",
+      "description": "한글 가는 UTF-8에서 EA, B0, 80 바이트가 됩니다. Windows-1252는 바이트별로 ê, °, €를 읽습니다.",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "보낸 글자",
+            "cells": [
+              {
+                "id": "ga",
+                "label": "가",
+                "sub": "유니코드 44032"
+              }
+            ]
+          },
+          {
+            "title": "저장된 바이트(UTF-8)",
+            "cells": [
+              {
+                "id": "b1",
+                "label": "EA",
+                "sub": "1110 1010"
+              },
+              {
+                "id": "b2",
+                "label": "B0",
+                "sub": "1011 0000"
+              },
+              {
+                "id": "b3",
+                "label": "80",
+                "sub": "1000 0000"
+              }
+            ]
+          },
+          {
+            "title": "받는 쪽이 읽은 글자(Windows-1252)",
+            "cells": [
+              {
+                "id": "r1",
+                "label": "ê",
+                "sub": "EA = 234번"
+              },
+              {
+                "id": "r2",
+                "label": "°",
+                "sub": "B0 = 176번"
+              },
+              {
+                "id": "r3",
+                "label": "€",
+                "sub": "80 = 128번"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "to": "b1",
+            "kind": "solid",
+            "from": "ga"
+          },
+          {
+            "to": "b2",
+            "kind": "solid",
+            "from": "ga"
+          },
+          {
+            "to": "b3",
+            "kind": "solid",
+            "from": "ga"
+          },
+          {
+            "to": "r1",
+            "kind": "broken",
+            "from": "b1"
+          },
+          {
+            "to": "r2",
+            "kind": "broken",
+            "from": "b2"
+          },
+          {
+            "to": "r3",
+            "kind": "broken",
+            "from": "b3"
+          }
+        ],
+        "changed": [
+          "r1",
+          "r2",
+          "r3"
+        ]
+      },
+      "predict": {
+        "prompt": "받는 쪽이 EA B0 80 을, 바이트 하나에 글자 하나를 짝지은 Windows-1252 표로 읽습니다. 무엇이 보일까요?",
+        "options": [
+          {
+            "text": "\"가\"",
+            "why": "바이트 안에 글자가 들어 있다고 본 것인데, 바이트는 번호일 뿐이고 어떤 글자로 보일지는 읽는 표가 정합니다."
+          },
+          {
+            "text": "글자 세 개",
+            "why": "이 표는 바이트 하나를 글자 하나로 읽으므로 EA, B0, 80이 각각 ê, °, €가 됩니다.",
+            "correct": true
+          },
+          {
+            "text": "한글이 아닌 글자 하나",
+            "why": "세 바이트가 여전히 한 글자로 묶인다고 본 것인데, 세 바이트를 한 글자로 묶는 것은 UTF-8 규칙이고 이 표는 그 규칙을 모릅니다."
+          }
+        ],
+        "before": {
+          "part": "map",
+          "columns": [
+            {
+              "title": "보낸 글자",
+              "cells": [
+                {
+                  "id": "ga",
+                  "label": "가",
+                  "sub": "유니코드 44032"
+                }
+              ]
+            },
+            {
+              "title": "저장된 바이트(UTF-8)",
+              "cells": [
+                {
+                  "id": "b1",
+                  "label": "EA",
+                  "sub": "1110 1010"
+                },
+                {
+                  "id": "b2",
+                  "label": "B0",
+                  "sub": "1011 0000"
+                },
+                {
+                  "id": "b3",
+                  "label": "80",
+                  "sub": "1000 0000"
+                }
+              ]
+            },
+            {
+              "title": "받는 쪽이 읽은 글자(Windows-1252)",
+              "cells": [
+                {
+                  "id": "unknown",
+                  "label": "?"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "to": "b1",
+              "kind": "solid",
+              "from": "ga"
+            },
+            {
+              "to": "b2",
+              "kind": "solid",
+              "from": "ga"
+            },
+            {
+              "to": "b3",
+              "kind": "solid",
+              "from": "ga"
+            }
+          ],
+          "description": "보낸 글자 가와 저장 바이트 EA, B0, 80이 보입니다. 받는 쪽 칸에는 물음표가 있습니다."
+        }
+      }
+    }
+  ],
+  "review": {
+    "own": [
+      "text-1",
+      "text-2"
     ],
-  },
-];
+    "prereq": {
+      "ref": "computing-basics/bits",
+      "id": "bits-2"
+    },
+    "fallback": "text-3"
+  }
+};
+const exercise = {
+  "spacing": 1.8,
+  "fit": [
+    248,
+    126,
+    1.13
+  ],
+  "utf8": true,
+  "initial": 65,
+  "switches": 7
+};
 
 // The glyph for a code number, or a short name for characters that have no visible shape.
 function glyph(code) {
@@ -506,14 +905,12 @@ viewport.addEventListener('keydown', (event) => {
 setCamera(0, 0, 1);
 
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const state = { index: 0, value: 0, playing: !motion.matches, demoPosition: 0, wait: 0, solved: '' };
-const progress = lesson.map(() => 0);  // try-it problems solved in each step
+const state = { value: exercise.initial };
 const transitionMs = 370;
 const nodeViews = new Map();
 let transition = null;
 let packets = [];
 let frame = null;
-let lastFrame = null;
 
 
 // The same world-to-screen projection as the other labs.
@@ -546,7 +943,7 @@ const rowCenter = 1.7;
 // display's column before the front row: they stop behind it and come down the column into the display
 // from the upper right, past the end of the front row and clear of its plates (visual-language.md 0장).
 function layout(count) {
-  const { spacing, rowGap = 4.6, rowShift = 0, sumGap: gap = sumGap } = lesson[state.index];
+  const { spacing, rowGap = 4.6, rowShift = 0, sumGap: gap = sumGap } = exercise;
   const columns = Math.min(count, 8);
   const span = spacing * (columns - 1) + gap;
   const start = rowCenter - span / 2;
@@ -639,7 +1036,7 @@ function createSum() {
   const glare = [screen[2], screen[3], [-h + .35, -h, H - 10], [h - .35, -h, H - 10]];
   svg('polygon', { points: glare.map((p) => point(...p)).join(' '), fill: '#fff', opacity: .12 }, node);
   const [cx, cy] = project(h, -h, 0);
-  addPlate(node, 'tag', cx, cy + 16, '글자표');
+  addPlate(node, 'tag', cx, cy + 16, '번호표');
   const outputLink = svg('path', { class: 'stored-link' }, node);
   const output = svg('g', {}, node);
   const total = addPlate(output, 'total', 0, -H - 14 * h - 20, '0', { pad: 1.1, round: false });
@@ -681,7 +1078,7 @@ function drawStoredOutput(view, bytes) {
 }
 
 function placeStoredOutput(view) {
-  if (!lesson[state.index].utf8 || !worldView.now) {
+  if (!exercise.utf8 || !worldView.now) {
     view.output.removeAttribute('transform');
     view.outputLink.removeAttribute('d');
     return;
@@ -713,10 +1110,7 @@ function updateGeometry(view, sum) {
   view.lane.tip.setAttribute('transform', transform);
 }
 
-// Panels above the switch rows (rules in references/visual-language.md, 0장 "판").
-// A step's `board` picks what they show, so the still picture carries the step's point:
-// 'case' = the capital and small letter side by side with the one bit that differs,
-// 'range' = how many numbers the switches can make, 'utf8' = the stored bytes and the UTF-8 length table.
+// The panel above the switch rows stays empty: the card's practice section gives it no text.
 const boards = {};
 const spaced = (value, count) => value.toString(2).padStart(count, '0').replace(/(\d{4})(?=\d)/g, '$1 ');
 function fillPlate(plate, parts) {
@@ -735,31 +1129,8 @@ function showBoards() {
     // The page translation swaps the text (and resizes the plates) after this runs, so place them again then.
     new MutationObserver(() => requestAnimationFrame(placeBoards)).observe(group, { subtree: true, characterData: true, childList: true });
   }
-  const step = lesson[state.index];
-  const value = state.value;
+  const step = exercise;
   const main = [];
-  if (step.board === 'case') {
-    // Capital letters are 65–90 and small letters 97–122: they differ only in the 32 switch.
-    const upper = value >= 97 && value <= 122 ? value - 32 : value;
-    if (upper >= 65 && upper <= 90) {
-      for (const code of [upper, upper + 32]) {
-        const bits = spaced(code, 8);
-        if (code !== upper) main.push([' · ']);
-        main.push([String.fromCharCode(code) + ' ', code === value ? 'now' : ''],
-          [bits.slice(0, 2), 'bits'], [bits[2], 'bits now'], [bits.slice(3), 'bits']);
-      }
-      main.push([' → 32 자리 하나만 다름']);
-    } else {
-      main.push([spaced(value, 8), 'bits now']);
-    }
-  } else if (step.board === 'range') {
-    const count = step.switches;
-    main.push(['번호를 쓴 16비트 '], [spaced(value, count), 'bits now']);
-    main.push([' · 8비트로는 0~255뿐']);
-  } else if (step.board === 'utf8') {
-    main.push(['UTF-8 예 · '], ['A 65는 1바이트', value === 65 ? 'now' : ''],
-      [' · '], ['가 44032는 3바이트', value === 44032 ? 'now' : '']);
-  }
   boards.main.group.classList.toggle('long', step.switches > 2);
   fillPlate(boards.main, main);
 }
@@ -781,11 +1152,10 @@ function placeBoards() {
 }
 
 const isOn = (bit) => (state.value >> bit & 1) === 1;
-const maxValue = () => 2 ** lesson[state.index].switches - 1;
 
 // Point every node and wire at its target for the current step and value, then animate there.
 function retarget(animate, ms = transitionMs) {
-  const targets = layout(lesson[state.index].switches);
+  const targets = layout(exercise.switches);
   for (const view of nodeViews.values()) {
     view.from = [view.c, view.r, view.opacity, view.lift];
     view.to = [view.c, view.r, 0, rise];
@@ -808,10 +1178,10 @@ function retarget(animate, ms = transitionMs) {
     view.heightFrom = view.height;
     view.heightTo = on ? switchHigh : switchLow;
   }
-  worldView.to = lesson[state.index].fit;
+  worldView.to = exercise.fit;
   worldView.from = worldView.now ?? worldView.to;
   const sum = nodeViews.get('sum');
-  const {switches, utf8} = lesson[state.index];
+  const {switches, utf8} = exercise;
   const bytes = utf8 ? utf8Bytes(state.value) : [];
   sum.total.label.textContent = `${state.value} → ${glyph(state.value)}${bytes.length ? ` · ${bytes.length}바이트` : ''}`;
   sum.total.group.classList.toggle('max', !hasGlyph(state.value));
@@ -935,50 +1305,25 @@ function setValue(next, { send = 'new', ms = transitionMs, carry = true } = {}) 
   // Adding 1 to a number that ends in 1 carries into the first switch that was off.
   if (carry && next === previous + 1 && previous & 1) showCarry(Math.log2(next & ~previous));
   if (send === 'none') return;
-  for (let bit = lesson[state.index].switches - 1; bit >= 0; bit--) {
+  for (let bit = exercise.switches - 1; bit >= 0; bit--) {
     const on = next >> bit & 1;
     if (on && (send === 'all' || !(previous >> bit & 1))) sendPacket(bit);
   }
 }
 
-function demoTick() {
-  const demo = lesson[state.index].demo;
-  setValue(demo.values[state.demoPosition], { send: 'all' });
-  state.demoPosition = (state.demoPosition + 1) % demo.values.length;
-  state.wait = demo.interval;
-}
-
 function tick(now) {
   frame = null;
-  const elapsed = lastFrame === null ? 0 : Math.min(now - lastFrame, 80);
-  lastFrame = now;
   if (transition) {
     const progress = clamp((now - transition.start) / transition.ms, 0, 1);
     updateScene(progress);
     if (progress === 1) transition = null;
   }
-  if (isPlayingDemo()) {
-    state.wait -= elapsed;
-    if (state.wait <= 0) demoTick();
-  }
   movePackets(now);
-  // A demo tick above may already have scheduled the next frame through kick().
-  if (!(isPlayingDemo() || transition || packets.length)) lastFrame = null;
-  else if (frame === null) frame = requestAnimationFrame(tick);
-}
-
-function isSimulationView() {
-  return workspace.classList.contains('course-reading') && !workspace.classList.contains('course-diagram-open');
-}
-
-function isPlayingDemo() {
-  return state.playing && !motion.matches && isSimulationView();
+  kick();
 }
 
 function kick() {
-  if (frame === null && !motion.matches && (isPlayingDemo() || transition || packets.length)) {
-    frame = requestAnimationFrame(tick);
-  }
+  if (frame === null && !motion.matches && (transition || packets.length)) frame = requestAnimationFrame(tick);
 }
 
 function syncPlayback() {
@@ -993,7 +1338,7 @@ function syncPlayback() {
 // The HTML switch buttons mirror the scene and are the keyboard and screen reader controls.
 let bitButtons = [];
 function buildButtons() {
-  const count = lesson[state.index].switches;
+  const count = exercise.switches;
   const row = byId('switch-buttons');
   row.style.setProperty('--cols', Math.min(count, 8));
   row.classList.toggle('wide', count > 8);
@@ -1016,14 +1361,13 @@ function buildButtons() {
 }
 
 function syncControls() {
-  const {switches: count, utf8} = lesson[state.index];
+  const {switches: count, utf8} = exercise;
   for (const { bit, button, digit } of bitButtons) {
     const on = isOn(bit);
     button.setAttribute('aria-pressed', String(on));
     button.setAttribute('aria-label', `값 ${places[bit]} 스위치, ${on ? '켜짐' : '꺼짐'}`);
     digit.textContent = on ? '1' : '0';
   }
-  byId('plus-one').disabled = state.value >= maxValue();
   byId('clear').disabled = state.value === 0;
 
   const bytes = utf8 ? utf8Bytes(state.value) : [];
@@ -1080,232 +1424,46 @@ function syncControls() {
   readout.replaceChildren(...lines);
 }
 
-// "16 + 2 + 1 = 19", or just "4" when a single switch is on.
-function sumText() {
-  const terms = places.filter((_, bit) => bit < lesson[state.index].switches && isOn(bit)).reverse();
-  const number = terms.length > 1 ? `${terms.join(' + ')} = ${state.value}` : String(state.value);
-  return `${number} → ${glyph(state.value)}`;
-}
-
-// Show the current try-it problem, or the result when the learner has just solved one.
 function syncTask() {
-  const tasks = lesson[state.index].tasks;
-  const done = progress[state.index];
-  const allDone = done >= tasks.length;
-  byId('try').classList.toggle('solved', state.solved !== '');
-  byId('try-text').textContent = state.solved !== '' ? tasks[done - 1].text
-    : allDone ? '이 단계의 문제를 모두 풀었습니다. 스위치를 자유롭게 눌러 보세요.' : tasks[done].text;
-  byId('try-result').textContent = state.solved === '' ? ''
-    : `✓ 맞았습니다. ${state.solved}${allDone ? ' · 이 단계의 문제를 모두 풀었습니다.' : ''}`;
-  byId('try-next').hidden = state.solved === '' || allDone;
+  const complete = state.value === 127;
+  byId('try').classList.toggle('solved', complete);
+  byId('try-result').textContent = complete
+    ? '111 1111 에 고정 머리 0을 붙여 0111 1111, 16진수 7F 한 바이트입니다. 128부터는 일곱 자리로 모자라 한 바이트에 들어가지 않습니다.'
+    : `지금 번호는 ${state.value}입니다. 일곱 자리를 모두 켜 보세요.`;
 }
 
-// Only the learner's own changes count, so the demo cannot solve a problem.
-function checkTask() {
-  const tasks = lesson[state.index].tasks;
-  const done = progress[state.index];
-  if (state.solved !== '' || done >= tasks.length || state.value !== tasks[done].target) return;
-  progress[state.index] = done + 1;
-  state.solved = sumText();
-  syncTask();
-}
-
-byId('try-next').onclick = () => {
-  state.solved = '';
-  syncTask();
-  bitButtons[bitButtons.length - 1]?.button.focus();
-};
-
-function userChange(next, message) {
-  state.playing = false;
-  state.solved = '';  // a new move dismisses the last result and brings up the next problem
+function userChange(next) {
   setValue(next);
   syncPlayback();
-  byId('announcement').textContent = `${message} 번호 ${state.value}, 글자 ${glyph(state.value)}`;
   syncTask();
-  checkTask();
 }
 
 function toggleBit(bit) {
-  if (bit >= lesson[state.index].switches) return;
-  const turningOn = !isOn(bit);
-  userChange(state.value ^ 1 << bit, `값 ${places[bit]} 스위치 ${turningOn ? '켜짐' : '꺼짐'}.`);
+  if (!byId('world').hasAttribute('hidden') && bit < exercise.switches) userChange(state.value ^ 1 << bit);
 }
 
-byId('plus-one').onclick = () => {
-  if (state.value < maxValue()) userChange(state.value + 1, state.value & 1 ? '1을 더했습니다. 자리올림.' : '1을 더했습니다.');
-};
-byId('clear').onclick = () => userChange(0, '모두 껐습니다.');
+byId('try-text').textContent = '번호 스위치 7개로 1바이트에 들어가는 가장 큰 번호 127을 만듭니다.';
+byId('clear').onclick = () => userChange(0);
 
-function startStep() {
-  const step = lesson[state.index];
-  state.value = step.initial;
-  state.demoPosition = 0;
-  state.wait = step.demo.interval;
-  clearPackets();
-}
-
-let selectedCodebook = null;
-
-function codebookText(parent, x, y, value, style = '') {
-  svg('text', {x, y, class: style}, parent).textContent = value;
-}
-
-function codebookBox(parent, x, y, width, height, style = 'codebook-card') {
-  svg('rect', {x: x - width / 2, y: y - height / 2, width, height, rx: 7, class: style}, parent);
-}
-
-function codebookArrow(parent, start, end, y) {
-  svg('line', {x1: start, x2: end, y1: y, y2: y, class: 'codebook-arrow'}, parent);
-}
-
-function codebookRow(drawing, y, chosen) {
-  for (const [x, width, value] of [[89, 76, 'A'], [232, 78, '65'], [548, 76, chosen === 'same' ? 'A' : chosen === 'other' ? 'B' : '—']]) {
-    codebookBox(drawing, x, y, width, 48);
-    codebookText(drawing, x, y + 9, value, 'codebook-value');
-  }
-  codebookArrow(drawing, 132, 186, y);
-  codebookArrow(drawing, 278, 317, y);
-  codebookBox(drawing, 410, y, 156, 65, 'codebook-table');
-  codebookText(drawing, 410, y - 6, chosen === 'same' ? '같은 번호표' : chosen === 'other' ? '다른 예시 번호표' : '번호표 선택 전');
-  if (chosen) {
-    codebookText(drawing, 410, y + 15, chosen === 'same' ? '65 = A · 66 = B' : '65 = B · 66 = A');
-    codebookArrow(drawing, 493, 505, y);
-  }
-}
-
-function renderCodebook(drawing, books) {
-  drawing.replaceChildren();
-  for (const [x, label] of [[89, '보낸 글자'], [232, '받은 번호'], [410, '받는 번호표'], [548, '나온 글자']]) {
-    codebookText(drawing, x, 62, label);
-  }
-  if (books.length === 1) {
-    codebookRow(drawing, 153, books[0]);
-    return;
-  }
-  codebookRow(drawing, 112, books[0]);
-  svg('line', {x1: 30, y1: 161, x2: 595, y2: 161, class: 'codebook-separator'}, drawing);
-  codebookRow(drawing, 210, books[1]);
-}
-
-function codebookDescription() {
-  if (selectedCodebook === 'same') return '보낸 65를 같은 번호표에서 찾았습니다. 화면에 A가 나옵니다.';
-  if (selectedCodebook === 'other') return '보낸 65를 다른 예시 번호표에서 찾았습니다. 화면에 B가 나옵니다.';
-  return '보내는 쪽은 A의 번호 65를 보냈습니다. 받는 번호표를 고르기 전이라 화면 글자가 없습니다.';
-}
-
-function syncCodebookPractice() {
-  const reading = workspace.classList.contains('course-reading');
-  const active = state.index === 0 && coursePracticeStarted && !reading;
-  const live = state.index === 0 && reading && !workspace.classList.contains('course-diagram-open');
-  const drawing = byId('letter-practice-drawing');
-  byId('letter-actions').hidden = !active;
-  byId('try').hidden = active;
-  byId('readout').hidden = active;
-  document.querySelector('.switch-area').hidden = active;
-  byId('world').setAttribute('display', active || live ? 'none' : '');
-  if (active) {
-    renderCodebook(drawing, [selectedCodebook]);
-    byId('scene-desc').textContent = codebookDescription();
-  } else if (live) {
-    renderCodebook(drawing, ['same', 'other']);
-    byId('scene-desc').textContent = lesson[0].description;
-  } else drawing.replaceChildren();
-}
-
-for (const [id, choice] of [['same-codebook', 'same'], ['other-codebook', 'other']]) {
-  byId(id).onclick = () => {
-    selectedCodebook = choice;
-    byId('same-codebook').setAttribute('aria-pressed', String(choice === 'same'));
-    byId('other-codebook').setAttribute('aria-pressed', String(choice === 'other'));
-    byId('letter-feedback').textContent = codebookDescription();
-    syncCodebookPractice();
-  };
-}
-const codebookGuide = byId('same-number-codebooks').content.querySelector('g');
-renderCodebook(codebookGuide, ['same', 'other']);
-new MutationObserver(syncCodebookPractice).observe(workspace, {attributes: true, attributeFilter: ['class']});
-
-function showStep(index, announce = true) {
-  state.index = index;
-  selectedCodebook = null;
-  byId('same-codebook').setAttribute('aria-pressed', 'false');
-  byId('other-codebook').setAttribute('aria-pressed', 'false');
-  byId('letter-feedback').textContent = '';
-  state.playing = !coursePracticeStarted && index > 0;
-  startStep();
-  const step = lesson[index];
-  byId('step-title').textContent = step.title;
-  byId('body').textContent = step.body;
-  byId('takeaway').textContent = step.takeaway;
-  byId('scene-desc').textContent = step.description;
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  stepButtons.forEach((button, i) => {
-    if (i === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  state.solved = '';
-  syncTask();
-  buildButtons();
-  retarget(announce);
-  syncControls();
-  syncPlayback();
-  for (let bit = step.switches - 1; bit >= 0; bit--) if (isOn(bit)) sendPacket(bit);
-  syncCodebookPractice();
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
-}
-
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/text/${index + 1}`);
-  showStep(index);
-}
-
-const stepButtons = lesson.map(({ label }, index) => {
-  const listItem = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  const number = document.createElement('span');
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.addEventListener('click', () => goToStep(index));
-  listItem.append(button);
-  byId('steps').append(listItem);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
-motion.addEventListener('change', syncPlayback);
-
-let wasSimulation = false;
-new MutationObserver(() => {
-  const simulation = isSimulationView();
-  if (wasSimulation && !simulation && state.playing) {
-    // The illustration must not change the practice's representative input.
-    startStep();
-    clearNote();
+const lessonHooks = {
+  onStep() {
+    state.value = exercise.initial;
+  },
+  onPractice(ready) {
+    byId('figure').toggleAttribute('hidden', ready);
+    byId('world').toggleAttribute('hidden', !ready);
+    if (!ready) {
+      clearPackets();
+      return;
+    }
+    buildButtons();
     retarget(false);
     syncControls();
+    syncTask();
   }
-  wasSimulation = simulation;
-  kick();
-}).observe(workspace, { attributes: true, attributeFilter: ['class'] });
-window.addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-    event.preventDefault();
-    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
-  }
-});
-const initial = routeIndex();
-history.replaceState(null, '', `#/text/${initial + 1}`);
-showStep(initial, false);
+};
+
+motion.addEventListener('change', syncPlayback);
 </script>
 </body>
 </html>

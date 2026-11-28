@@ -275,8 +275,10 @@ window.drawLessonPart = function drawLessonPart(target, figure) {
       if (text) {
         const dx = b.x - a.x, dy = b.y - a.y;
         const length = Math.hypot(dx, dy);
-        const centerX = (a.x + b.x) / 2 + 16 * dy / length;
-        const centerY = (a.y + b.y) / 2 - 16 * dx / length;
+        // A little nearer the start than the middle: lines that meet at one box crowd near its arrowheads.
+        const along = .4;
+        const centerX = a.x + dx * along + 16 * dy / length;
+        const centerY = a.y + dy * along - 16 * dx / length;
         const anchor = dy < 0 ? 'end' : dy > 0 ? 'start' : 'middle';
         const words = label(g, centerX, centerY + 4, text, {anchor, width: pitch});
         if (dy === 0) {

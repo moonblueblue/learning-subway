@@ -4,126 +4,48 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="명제를 가려내고, 그리고·또는·이면의 진리표를 채우고, 파이썬 조건식을 계산해 보세요.">
-<title>명제와 논리 · 레슨 2.1</title>
-<style>
-:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
-button{font:inherit;color:inherit;cursor:pointer}
-button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
-:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
-.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
-header{margin-bottom:20px}
-h1,h2,p{margin:0}
-.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
-h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
-header p.lead{color:var(--muted);margin-top:10px}
-.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
-.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
-.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
-.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
-.primary{background:var(--accent);color:white;border-color:var(--accent)}
-.primary:hover:not(:disabled){background:#115e59}
-.timeline{padding:15px 18px}
-.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
-.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
-.steps button:hover{border-color:var(--accent)}
-.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
-.step-number{font:700 .875rem var(--mono);color:var(--accent)}
-.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
-.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
-.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
-.takeaway p{font-size:1rem}
-.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
-.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
-.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-
-.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
-.stage-top h2{font-size:1rem}
-.score{color:var(--accent);font:700 .875rem var(--mono)}
-.case{margin:18px;padding:16px 18px;border-radius:14px;background:#e9f5f3;border:1px solid var(--border);display:grid;gap:6px}
-.case strong{color:var(--accent);font-size:.875rem}
-.case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
-.items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
-.item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
-.item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
-.choices{display:flex;flex-wrap:wrap;gap:6px}
-.choice{min-width:68px}
-.choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
-.choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
-.feedback{font-size:.9375rem;color:var(--muted);line-height:1.6}
-.feedback:empty{display:none}
-.feedback b{margin-right:4px}
-.item.right{border-color:var(--accent);background:#f6fbf7}
-.item.right .feedback b{color:var(--accent)}
-.item.wrong{border-color:#a24c14;background:#fffaf5}
-.item.wrong .feedback b{color:#a24c14}
-.think{margin:0 18px 18px;padding:14px 16px;border-radius:12px;border:1px dashed #9fb7a9;display:grid;gap:10px}
-.think label{font-weight:700}
-.think textarea{font:inherit;min-height:84px;padding:10px 12px;border:1px solid #9fb7a9;border-radius:10px;resize:vertical}
-.think .sample-answer{color:var(--muted);line-height:1.7}
-.think .sample-answer[hidden]{display:none}
-.done{margin:0 18px 18px;padding:12px 14px;border-radius:10px;background:#d2f4dd;color:#0f5a3c;font-weight:700}
-.done[hidden]{display:none}
-.timeline{border-top:1px solid var(--border)}
-.truth{margin:0 18px 14px}
-.truth[hidden]{display:none}
-.truth table{border-collapse:collapse;font:700 1rem var(--mono);margin:0 auto}
-.truth th,.truth td{border:1px solid var(--border);padding:6px 18px;text-align:center}
-.truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
-.truth td.blank{color:#9aa8a2}
-.truth td.filled{background:#d2f4dd;color:#0f5a3c}
-
-.worked-example { min-width: 0; margin: 0; }
-.worked-example table { width: 100%; table-layout: auto; border-collapse: separate; border-spacing: 0;
-  border: 1px solid var(--border); border-radius: 8px; font-size: .85rem; line-height: 1.3; }
-.worked-example caption { padding: 0 0 4px; font-weight: 700; text-align: start; }
-.worked-example :is(th, td) { padding: 3px 6px; border-bottom: 1px solid var(--border);
-  text-align: start; overflow-wrap: anywhere; }
-.worked-example thead { background: #eff6f1; }
-.worked-example tbody tr:last-child :is(th, td) { border-bottom: 0; }
-.worked-example tr.is-key :is(th, td) { background: #e3f1e9; font-weight: 700; }
-.worked-example .worked-note { margin-top: 4px; font-size: .85rem; font-weight: 700; }
-@media (max-height: 720px) and (min-width: 641px) {
-  .explanation:has(.worked-example:not([hidden])) .takeaway { display: none; }
-}
-</style>
+<meta name="description" content="두 문장을 '그리고', '또는', '이면'으로 이은 문장이 참인지 거짓인지는 무엇으로 정해질까요?">
+<title>명제와 논리</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="../programming/control.items.js?v=d7a77bf47397736e">
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./logic.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=54094544905ce975">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=68a3f9d324de033f"></script>
+<script defer blocking="render" src="./logic.items.js?v=2b1f32212b453df5"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=3acd745d6259e41b"></script>
+<script defer blocking="render" src="./logic.en.js?v=fd63ab7d49d33f51"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
   <header>
-    <p class="eyebrow">2장 CS를 위한 수학 · 레슨 2.1 · 실습</p>
+    <p class="eyebrow">2장 CS를 위한 수학</p>
     <h1>명제와 논리</h1>
-    <p class="lead">참과 거짓을 어떻게 조합하고 따질까요? 명제를 가려내고 진리표를 직접 채워 보세요.</p>
+    <p>두 문장을 '그리고', '또는', '이면'으로 이은 문장이 참인지 거짓인지는 무엇으로 정해질까요?</p>
   </header>
   <div class="workspace">
     <div>
-      <section class="panel" aria-labelledby="practice-heading">
-        <div class="stage-top"><h2 id="practice-heading">참일까, 거짓일까</h2><span class="score" id="score" aria-live="polite"></span></div>
-        <div class="case"><strong>문제</strong><p id="case"></p></div>
-        <div class="truth" id="table" hidden></div>
-        <ol class="items" id="items"></ol>
-        <p class="done" id="done" role="status" hidden></p>
-        <div class="think">
-          <label for="answer">생각해 보기 · <span id="question"></span></label>
-          <textarea id="answer" placeholder="자유롭게 적어 보세요. 저장되거나 채점되지 않습니다."></textarea>
-          <div><button class="action" id="reveal" type="button" aria-expanded="false">예시 답 보기</button></div>
-          <p class="sample-answer" id="sample" hidden></p>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">문장의 참과 거짓</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">문장과 조건을 참 또는 거짓으로 판정한 그림</title>
+            <desc id="scene-desc"></desc>
+            <g id="figure" aria-hidden="true"></g>
+          </svg>
         </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+        </div>
+        <div class="controls"></div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
           <ol class="steps" id="steps"></ol>
@@ -131,290 +53,834 @@ header p.lead{color:var(--muted);margin-top:10px}
       </section>
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
-      <h2 id="step-title"></h2><p id="body"></p>
-      <figure class="worked-example" id="worked-example" hidden></figure>
-      <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
-      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+      <h2 id="step-title"></h2>
+      <p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
     </section>
   </div>
-  <div class="sr-only" id="announcement" role="status"></div>
+  <div id="announcement" class="sr-only" role="status"></div>
 </main>
 <script>
-const BENEFIT = 'true', RISK = 'false';
-const yes = '참', no = '거짓';
-// Each step is one exercise. `choices` are the two answers; items are statements or truth-table rows.
-// A step with `table` shows its items as a truth table whose last column the learner fills in.
-const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : 'false', why });
-const lesson = [
-  {
-    worked: {"head": ["문장", "판정할 값", "분류"], "rows": [["2는 짝수다", "참", "명제"], ["3은 짝수다", "거짓", "명제"], ["몇 시지?", "—", "명제 아님"]], "mark": [1]},
-    label: '명제란',
-    example: ["2는 짝수다 · 3은 짝수다 · 몇 시지?", "참·거짓을 정할 수 있는지 판정", "참인 명제 · 거짓인 명제 · 명제 아님"],
-    title: '참인지 거짓인지 정할 수 있는 문장이 명제다',
-    body: '논리는 문장이 참인지 거짓인지를 따지는 방법입니다. 그중 참이나 거짓 둘 중 하나로 딱 정해지는 문장을 명제라고 합니다. 질문이나 명령, "x > 3"처럼 x 값을 모르면 정할 수 없는 문장은 명제가 아닙니다. 컴퓨터의 조건문도 결국 명제를 계산합니다.',
-    link: '1.2에서 if 뒤의 조건은 참이나 거짓 둘 중 하나였습니다. 그 조건 하나하나가 명제입니다.',
-    case: '다음 문장이 명제인지 고르세요. 명제라면 참이든 거짓이든 상관없습니다.',
-    choices: [['true', '명제'], ['false', '명제 아님']],
-    items: [
-      { text: '2 + 3 = 5', answer: 'true', why: '참으로 정해지는 명제입니다.' },
-      { text: '7은 짝수다.', answer: 'true', why: '거짓이지만, 참·거짓이 정해지므로 명제입니다.' },
-      { text: '오늘 점심 뭐 먹을까?', answer: 'false', why: '질문은 참이나 거짓을 따질 수 없습니다.' },
-      { text: 'x > 3', answer: 'false', why: 'x가 무엇인지에 따라 달라지므로 그 자체로는 명제가 아닙니다. x에 값을 넣으면 명제가 됩니다.' },
-    ],
-    question: '"이 문장은 거짓이다"는 명제일까요?',
-    sample: '참이라고 하면 문장 내용대로 거짓이 되고, 거짓이라고 하면 내용이 틀렸으니 참이 됩니다. 어느 쪽으로도 정할 수 없어 명제가 아닙니다. 이런 문장을 역설이라고 합니다.',
-  },
-  {
-    worked: {"head": ["비 p", "바람 q", "p AND q", "p OR q"], "rows": [["참", "참", "참", "참"], ["참", "거짓", "거짓", "참"], ["거짓", "참", "거짓", "참"], ["거짓", "거짓", "거짓", "거짓"]], "mark": [1]},
-    label: '그리고 · 또는',
-    example: ["비는 오고 바람은 없음", "같은 값에 AND와 OR 적용", "AND는 거짓 · OR는 참"],
-    title: '그리고는 둘 다, 또는은 하나라도 참이면 참이다',
-    body: '명제 두 개를 이어 새 명제를 만들 수 있습니다. "p 그리고 q"(AND)는 둘 다 참일 때만 참이고, "p 또는 q"(OR)는 하나라도 참이면 참입니다. 가능한 경우를 모두 적은 표를 진리표라고 합니다. p와 q가 각각 참·거짓이므로 경우는 2 × 2 = 4가지입니다.',
-    link: '0.1의 스위치 두 개가 00, 01, 10, 11 네 가지였던 것과 같습니다. 3장에서 이 표를 그대로 전기 회로(논리 게이트)로 만듭니다.',
-    case: 'p = "비가 온다", q = "바람이 분다"일 때, 표의 마지막 칸 "p 그리고 q"를 채우세요.',
-    choices: [['true', yes], ['false', no]],
-    table: ['p', 'q', 'p 그리고 q'],
-    items: [
-      row(yes, yes, true, '비도 오고 바람도 불면 "비가 오고 바람이 분다"는 참입니다.'),
-      row(yes, no, false, '바람이 불지 않으니 "둘 다"는 거짓입니다.'),
-      row(no, yes, false, '비가 오지 않으니 거짓입니다.'),
-      row(no, no, false, '둘 다 아니니 거짓입니다.'),
-    ],
-    question: '같은 표에서 "p 또는 q"가 거짓인 경우는 몇 가지일까요?',
-    sample: '한 가지뿐입니다. p와 q가 모두 거짓일 때만 "또는"이 거짓이고, 나머지 세 경우는 참입니다.',
-  },
-  {
-    worked: {"head": ["합격 p", "선물 q", "p → q"], "rows": [["참", "참", "참"], ["참", "거짓", "거짓 · 약속 위반"], ["거짓", "참", "참"], ["거짓", "거짓", "참"]], "mark": [1]},
-    label: '만약 ~이면',
-    example: ["합격하면 선물을 주기로 함", "합격과 선물의 네 경우를 확인", "합격했는데 선물이 없을 때만 거짓"],
-    title: '"p이면 q"는 약속을 어겼을 때만 거짓이다',
-    body: '"p이면 q"(p → q)는 약속처럼 읽으면 쉽습니다. "시험에 합격하면(p) 선물을 준다(q)"는 약속은 합격했는데 선물을 안 줄 때만 깨집니다. 합격하지 못했다면 선물을 주든 안 주든 약속을 어긴 것은 아니므로 참으로 봅니다. 처음엔 어색한 부분이라 진리표로 확인해 보세요.',
-    link: '1.2의 if는 조건이 참일 때만 아래 줄을 실행했습니다. 조건이 거짓이면 아무 약속도 하지 않은 것과 같습니다.',
-    case: 'p = "합격한다", q = "선물을 준다"일 때 "p이면 q"가 참인지 채우세요.',
-    choices: [['true', yes], ['false', no]],
-    table: ['p', 'q', 'p이면 q'],
-    items: [
-      row(yes, yes, true, '합격했고 선물도 줬으니 약속을 지켰습니다.'),
-      row(yes, no, false, '합격했는데 선물을 안 줬으니 약속을 어겼습니다. 유일하게 거짓인 경우입니다.'),
-      row(no, yes, true, '합격하지 않았으니 약속이 적용되지 않습니다. 선물을 줘도 어긴 것이 아닙니다.'),
-      row(no, no, true, '합격하지 않았으니 약속이 적용되지 않습니다.'),
-    ],
-    question: '"p이면 q"가 참일 때 "q이면 p"도 꼭 참일까요?',
-    sample: '아닙니다. "비가 오면 땅이 젖는다"가 참이어도, 땅이 젖었다고 비가 온 것은 아닙니다(누가 물을 뿌렸을 수도 있습니다). 방향을 바꾼 문장을 역이라고 하며, 원래 문장과 참·거짓이 다를 수 있습니다.',
-  },
-  {
-    worked: {"head": ["순서", "계산"], "rows": [[1, "125 ≥ 120 → 참"], [2, "8 ≥ 10 → 거짓"], [3, "(거짓 OR 보호자 있음) → 참"], [4, "키 조건 AND 괄호 → 참"]], "mark": [3]},
-    label: '코드 속 논리',
-    example: ["키 125 · 나이 8 · 보호자 동행", "괄호 안 거짓 OR 참 → 참", "키 조건 참 AND 괄호 참 → 참"],
-    title: '프로그램의 조건은 명제를 계산한다',
-    body: '파이썬에서는 그리고를 and, 또는을 or, 아니다를 not으로 씁니다. 놀이기구 탑승 규칙 "키 >= 120 and (나이 >= 10 or 보호자)"는 키가 120 이상이면서, 10살 이상이거나 보호자가 있어야 참입니다. 괄호 안을 먼저 계산합니다.',
-    link: '1.6의 하나 차이 버그처럼, 조건을 잘못 쓰면 프로그램이 엉뚱한 길로 갑니다. 진리표로 경우를 모두 따져 보면 이런 버그를 미리 막을 수 있습니다.',
-    case: '조건 키 >= 120 and (나이 >= 10 or 보호자)가 True인지 False인지 고르세요.',
-    choices: [['true', 'True'], ['false', 'False']],
-    items: [
-      { text: '키 130, 나이 12, 보호자 없음', answer: 'true', why: '키 조건이 참이고, 나이 >= 10이 참이라 괄호 안도 참입니다.' },
-      { text: '키 130, 나이 8, 보호자 없음', answer: 'false', why: '괄호 안의 나이 >= 10도, 보호자도 거짓이라 괄호 안이 거짓입니다.' },
-      { text: '키 130, 나이 8, 보호자 있음', answer: 'true', why: '보호자가 있어 괄호 안이 참이 됩니다.' },
-      { text: '키 110, 나이 15, 보호자 있음', answer: 'false', why: '키 >= 120이 거짓이면 and 전체가 거짓입니다. 괄호 안은 볼 필요도 없습니다.' },
-    ],
-    question: '괄호를 빼고 키 >= 120 and 나이 >= 10 or 보호자라고 쓰면 무엇이 달라질까요?',
-    sample: '파이썬은 and를 먼저 계산하므로 (키 >= 120 and 나이 >= 10) or 보호자가 됩니다. 그러면 키가 110이어도 보호자만 있으면 True가 되어 규칙과 달라집니다. 헷갈릴 때는 괄호로 순서를 분명히 적습니다.',
-  },
-];
-
-const byId = (id) => document.getElementById(id);
-const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
-
-
-function showWorkedExample(worked) {
-  const figure = byId('worked-example');
-  figure.hidden = !worked;
-  figure.replaceChildren();
-  if (!worked) return;
-  const table = document.createElement('table');
-  table.createCaption().textContent = '계산 예시';
-  const header = table.createTHead().insertRow();
-  for (const name of worked.head) {
-    const cell = document.createElement('th');
-    cell.scope = 'col';
-    cell.textContent = name;
-    header.append(cell);
-  }
-  const body = table.createTBody();
-  worked.rows.forEach((values, index) => {
-    const row = body.insertRow();
-    row.classList.toggle('is-key', worked.mark.includes(index));
-    values.forEach((value, column) => {
-      const cell = document.createElement(column === 0 ? 'th' : 'td');
-      if (column === 0) cell.scope = 'row';
-      cell.textContent = value;
-      row.append(cell);
-    });
-  });
-  figure.append(table);
-  if (worked.note) {
-    const note = document.createElement('p');
-    note.className = 'worked-note';
-    note.textContent = worked.note;
-    figure.append(note);
-  }
-}
-
-function showStep(index, announce = true) {
-  state.index = index;
-  const step = lesson[index];
-  showWorkedExample(step.worked);
-  byId('step-title').textContent = step.title;
-  byId('body').textContent = step.body;
-  byId('takeaway').textContent = step.link;
-  byId('case').textContent = step.case;
-  byId('question').textContent = step.question;
-  byId('sample').textContent = step.sample;
-  byId('sample').hidden = true;
-  byId('reveal').setAttribute('aria-expanded', 'false');
-  byId('reveal').textContent = '예시 답 보기';
-  byId('answer').value = '';
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  stepButtons.forEach((button, i) => {
-    if (i === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  buildItems();
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
-}
-
-function buildItems() {
-  const step = lesson[state.index];
-  const list = byId('items');
-  list.replaceChildren();
-  step.items.forEach((item, i) => {
-    const li = document.createElement('li');
-    li.className = 'item';
-    const top = document.createElement('div');
-    top.className = 'item-top';
-    const text = document.createElement('span');
-    text.className = 'item-text';
-    text.id = `item-${i}`;
-    text.textContent = step.table ? `${step.table[0]} ${item.cells[0]} · ${step.table[1]} ${item.cells[1]}` : item.text;
-    const choices = document.createElement('div');
-    choices.className = 'choices';
-    choices.setAttribute('role', 'group');
-    choices.setAttribute('aria-labelledby', text.id);
-    for (const [value, label] of step.choices) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = `action choice ${value === 'false' ? 'risk' : 'benefit'}`;
-      button.textContent = label;
-      button.dataset.value = value;
-      button.addEventListener('click', () => pick(i, value));
-      choices.append(button);
+const lesson = {
+  "question": "두 문장을 '그리고', '또는', '이면'으로 이은 문장이 참인지 거짓인지는 무엇으로 정해질까요?",
+  "terms": [
+    {
+      "term": "명제",
+      "meaning": "참인지 거짓인지 하나로 정해지는 문장. 거짓인 문장도 명제다",
+      "step": 1
+    },
+    {
+      "term": "그리고 (AND)",
+      "meaning": "두 문장이 둘 다 참일 때만 참이 되게 잇는 말",
+      "step": 2
+    },
+    {
+      "term": "경우",
+      "meaning": "두 문장의 참·거짓 조합 하나. 두 문장이면 2 × 2 = 4가지",
+      "step": 2
+    },
+    {
+      "term": "또는 (OR)",
+      "meaning": "두 문장 중 하나라도 참이면 참이 되게 잇는 말. 둘 다 참이어도 참이다",
+      "step": 3
+    },
+    {
+      "term": "진리표",
+      "meaning": "경우를 모두 적고 경우마다 결과를 하나씩 짝지은 표. 이 레슨의 왼쪽 네 칸과 오른쪽 결과를 잇는 그림이 진리표다",
+      "step": 3
+    },
+    {
+      "term": "and, or",
+      "meaning": "파이썬에서 '그리고', '또는'을 쓰는 글자",
+      "step": 4
+    },
+    {
+      "term": "이면 (p → q)",
+      "meaning": "\"p이면 q\". p가 참인데 q가 거짓일 때만 거짓인 약속",
+      "step": 5
     }
-    const feedback = document.createElement('p');
-    feedback.className = 'feedback';
-    feedback.setAttribute('role', 'status');
-    top.append(text, choices);
-    li.append(top, feedback);
-    list.append(li);
-  });
-  syncItems();
-}
-
-// For table steps, a compact truth table mirrors the answers so far.
-function syncTable() {
-  const step = lesson[state.index];
-  const box = byId('table');
-  box.hidden = !step.table;
-  if (!step.table) return;
-  const picks = state.picks[state.index];
-  const label = (v) => step.choices.find(([value]) => value === v)?.[1] ?? '?';
-  box.innerHTML = '';
-  const table = document.createElement('table');
-  const head = table.createTHead().insertRow();
-  step.table.forEach((h) => { const th = document.createElement('th'); th.textContent = h; head.append(th); });
-  const body = table.createTBody();
-  step.items.forEach((item, i) => {
-    const tr = body.insertRow();
-    item.cells.forEach((c) => { tr.insertCell().textContent = c; });
-    const cell = tr.insertCell();
-    cell.textContent = picks[i] === item.answer ? label(item.answer) : '?';
-    cell.className = picks[i] === item.answer ? 'filled' : 'blank';
-  });
-  box.append(table);
-}
-
-function pick(i, value) {
-  state.picks[state.index][i] = value;
-  syncItems();
-  const item = lesson[state.index].items[i];
-  byId('announcement').textContent = value === item.answer ? '맞았습니다.' : '다시 생각해 보세요.';
-}
-
-function syncItems() {
-  const step = lesson[state.index];
-  const picks = state.picks[state.index];
-  [...byId('items').children].forEach((li, i) => {
-    const item = step.items[i];
-    const picked = picks[i];
-    li.classList.toggle('right', picked === item.answer);
-    li.classList.toggle('wrong', picked !== null && picked !== item.answer);
-    for (const button of li.querySelectorAll('.choice')) button.setAttribute('aria-pressed', String(button.dataset.value === picked));
-    const feedback = li.querySelector('.feedback');
-    feedback.replaceChildren();
-    if (picked !== null) {
-      const mark = document.createElement('b');
-      mark.textContent = picked === item.answer ? '✓ 맞았습니다.' : '✗ 다시 생각해 보세요.';
-      feedback.append(mark, picked === item.answer ? item.why : '');
+  ],
+  "steps": [
+    {
+      "label": "명제란",
+      "title": "참이나 거짓으로 정해지는 문장이 명제입니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "문장",
+            "cells": [
+              {
+                "id": "s1",
+                "label": "2는 짝수다"
+              },
+              {
+                "id": "s2",
+                "label": "3은 짝수다"
+              },
+              {
+                "id": "s3",
+                "label": "몇 시지?"
+              },
+              {
+                "id": "s4",
+                "label": "x > 3",
+                "sub": "x가 무엇인지 모름"
+              }
+            ]
+          },
+          {
+            "title": "판정",
+            "cells": [
+              {
+                "id": "t",
+                "label": "참"
+              },
+              {
+                "id": "f",
+                "label": "거짓"
+              },
+              {
+                "id": "u",
+                "label": "정할 수 없음"
+              }
+            ]
+          },
+          {
+            "title": "분류",
+            "cells": [
+              {
+                "id": "yes",
+                "label": "명제"
+              },
+              {
+                "id": "no",
+                "label": "명제 아님"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "s1",
+            "to": "t",
+            "kind": "solid"
+          },
+          {
+            "from": "s2",
+            "to": "f",
+            "kind": "solid"
+          },
+          {
+            "from": "s3",
+            "to": "u",
+            "kind": "solid"
+          },
+          {
+            "from": "s4",
+            "to": "u",
+            "kind": "solid"
+          },
+          {
+            "from": "t",
+            "to": "yes",
+            "kind": "solid"
+          },
+          {
+            "from": "f",
+            "to": "yes",
+            "kind": "solid"
+          },
+          {
+            "from": "u",
+            "to": "no",
+            "kind": "solid"
+          }
+        ],
+        "changed": []
+      },
+      "body": "조건과 반복에서 조건의 결과가 참이나 거짓으로 정해지는 것을 봤습니다. 거짓인 문장도 명제입니다. 명제인지는 참인지가 아니라, 참인지 거짓인지 정해지는지로 가립니다. x에 값을 넣으면 명제가 됩니다.",
+      "description": "참과 거짓 두 칸 모두 명제로 이어집니다. 정할 수 없음만 명제 아님으로 이어집니다.",
+      "takeaway": "참과 거짓 두 칸 모두 명제로 이어집니다. 정할 수 없음만 명제 아님으로 이어집니다.",
+      "links": [
+        {
+          "label": "조건과 반복",
+          "href": "../programming/control.html"
+        }
+      ]
+    },
+    {
+      "label": "그리고",
+      "title": "'그리고'는 둘 다 참일 때만 참입니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "경우 (p 비가 온다 · q 바람이 분다)",
+            "cells": [
+              {
+                "id": "c1",
+                "label": "p 참 · q 참"
+              },
+              {
+                "id": "c2",
+                "label": "p 참 · q 거짓",
+                "sub": "오늘"
+              },
+              {
+                "id": "c3",
+                "label": "p 거짓 · q 참"
+              },
+              {
+                "id": "c4",
+                "label": "p 거짓 · q 거짓"
+              }
+            ]
+          },
+          {
+            "title": "p 그리고 q",
+            "cells": [
+              {
+                "id": "T",
+                "label": "참"
+              },
+              {
+                "id": "F",
+                "label": "거짓"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "c1",
+            "to": "T",
+            "kind": "solid"
+          },
+          {
+            "from": "c2",
+            "to": "F",
+            "kind": "solid"
+          },
+          {
+            "from": "c3",
+            "to": "F",
+            "kind": "solid"
+          },
+          {
+            "from": "c4",
+            "to": "F",
+            "kind": "solid"
+          }
+        ],
+        "changed": [
+          "c2→F"
+        ]
+      },
+      "body": "p는 비가 온다, q는 바람이 분다입니다. 두 문장을 그리고로 이으면 비가 오고 바람이 불 때만 참입니다. 두 문장이 각각 참·거짓 둘 중 하나라서 경우는 2 × 2 = 4가지입니다. 정보에 표시를 붙이는 약속의 스위치 두 개가 00, 01, 10, 11 네 가지였던 것과 같습니다.",
+      "description": "참으로 가는 선은 하나입니다. 나머지 셋은 거짓으로 모이고 오늘도 거짓입니다.",
+      "takeaway": "참으로 가는 선은 하나입니다. 나머지 셋은 거짓으로 모이고 오늘도 거짓입니다.",
+      "links": [
+        {
+          "label": "정보에 표시를 붙이는 약속",
+          "href": "../computing-basics/bits.html"
+        }
+      ]
+    },
+    {
+      "label": "또는",
+      "title": "같은 네 경우를 '또는'으로 이으면 결과가 바뀝니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "경우 (p 비가 온다 · q 바람이 분다)",
+            "cells": [
+              {
+                "id": "c1",
+                "label": "p 참 · q 참"
+              },
+              {
+                "id": "c2",
+                "label": "p 참 · q 거짓",
+                "sub": "오늘"
+              },
+              {
+                "id": "c3",
+                "label": "p 거짓 · q 참"
+              },
+              {
+                "id": "c4",
+                "label": "p 거짓 · q 거짓"
+              }
+            ]
+          },
+          {
+            "title": "p 또는 q",
+            "cells": [
+              {
+                "id": "T",
+                "label": "참"
+              },
+              {
+                "id": "F",
+                "label": "거짓"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "c1",
+            "to": "T",
+            "kind": "solid"
+          },
+          {
+            "from": "c2",
+            "to": "T",
+            "kind": "solid"
+          },
+          {
+            "from": "c3",
+            "to": "T",
+            "kind": "solid"
+          },
+          {
+            "from": "c4",
+            "to": "F",
+            "kind": "solid"
+          }
+        ],
+        "changed": [
+          "c2→T",
+          "c3→T"
+        ]
+      },
+      "body": "일상말의 '또는'은 둘 중 하나만이라는 뜻일 때가 있지만, 논리의 '또는'은 둘 다 참인 경우도 참입니다. 경우를 모두 적고 각 경우에 결과를 짝지은 표를 진리표라고 합니다.",
+      "description": "거짓으로 가는 선은 하나입니다. 오늘은 참입니다.",
+      "takeaway": "거짓으로 가는 선은 하나입니다. 오늘은 참입니다.",
+      "predict": {
+        "prompt": "'또는'은 둘 중 하나라도 참이면 참입니다. 같은 네 경우를 '또는'으로 이으면 '거짓'이 되는 경우는 몇 가지일까요?",
+        "options": [
+          {
+            "text": "1가지",
+            "why": "'또는'은 하나라도 참이면 참이라서, 둘 다 거짓인 c4만 거짓이 됩니다.",
+            "correct": true
+          },
+          {
+            "text": "2가지",
+            "why": "둘 다 참인 경우도 거짓으로 본 것인데, '하나라도'에는 둘 다 참인 경우도 들어갑니다."
+          },
+          {
+            "text": "3가지",
+            "why": "2단계의 '그리고'와 같은 결과를 떠올린 것인데, 잇는 말이 바뀌면 결과도 바뀝니다."
+          }
+        ],
+        "before": {
+          "part": "map",
+          "columns": [
+            {
+              "title": "경우 (p 비가 온다 · q 바람이 분다)",
+              "cells": [
+                {
+                  "id": "c1",
+                  "label": "p 참 · q 참"
+                },
+                {
+                  "id": "c2",
+                  "label": "p 참 · q 거짓",
+                  "sub": "오늘"
+                },
+                {
+                  "id": "c3",
+                  "label": "p 거짓 · q 참"
+                },
+                {
+                  "id": "c4",
+                  "label": "p 거짓 · q 거짓"
+                }
+              ]
+            },
+            {
+              "title": "p 또는 q",
+              "cells": [
+                {
+                  "id": "T",
+                  "label": "참"
+                },
+                {
+                  "id": "F",
+                  "label": "거짓"
+                }
+              ]
+            }
+          ],
+          "links": [],
+          "changed": [],
+          "description": "두 문장의 참과 거짓을 조합한 네 경우와 결과 칸 두 개만 보입니다."
+        }
+      }
+    },
+    {
+      "label": "괄호 있는 조건",
+      "title": "놀이기구 조건은 괄호 안부터 따집니다",
+      "figure": {
+        "part": "branch",
+        "nodes": [
+          {
+            "id": "h",
+            "label": "키 125 >= 120 · 참",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "a",
+            "label": "나이 8 >= 10 · 거짓",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "g",
+            "label": "보호자 있음 · 참",
+            "col": 0,
+            "row": 2
+          },
+          {
+            "id": "or",
+            "label": "(나이 or 보호자) · 참",
+            "col": 1,
+            "row": 1
+          },
+          {
+            "id": "and",
+            "label": "키 and (괄호) · 참",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "yes",
+            "label": "탈 수 있음",
+            "col": 3,
+            "row": 0
+          },
+          {
+            "id": "no",
+            "label": "탈 수 없음",
+            "col": 3,
+            "row": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "h",
+            "to": "and",
+            "label": "참",
+            "taken": true
+          },
+          {
+            "from": "a",
+            "to": "or",
+            "label": "거짓",
+            "taken": true
+          },
+          {
+            "from": "g",
+            "to": "or",
+            "label": "참",
+            "taken": true
+          },
+          {
+            "from": "or",
+            "to": "and",
+            "label": "참",
+            "taken": true
+          },
+          {
+            "from": "and",
+            "to": "yes",
+            "label": "참",
+            "taken": true
+          },
+          {
+            "from": "and",
+            "to": "no",
+            "label": "거짓",
+            "taken": false
+          }
+        ],
+        "token": {
+          "at": "yes",
+          "label": "키 125 · 나이 8 · 보호자 있음"
+        }
+      },
+      "body": "파이썬은 '그리고'를 and, '또는'을 or 로 씁니다. 괄호 안의 or 결과와 키 조건을 and로 잇습니다. 괄호를 빼고 키 >= 120 and 나이 >= 10 or 보호자 로 쓰면 and를 먼저 계산해 키 110이어도 보호자만 있으면 참이 됩니다. 논리 게이트에서도 참과 거짓을 조합합니다.",
+      "description": "나이 선은 거짓이어도 보호자 선이 참이라 괄호 안은 참입니다. 진한 길은 탈 수 있음에 닿습니다.",
+      "takeaway": "나이 선은 거짓이어도 보호자 선이 참이라 괄호 안은 참입니다. 진한 길은 탈 수 있음에 닿습니다.",
+      "predict": {
+        "prompt": "파이썬은 '그리고'를 and, '또는'을 or 로 씁니다. 키 125, 나이 8, 보호자와 함께 온 아이는 어느 길로 가고, 그 까닭은 무엇일까요?",
+        "options": [
+          {
+            "text": "탈 수 있음, 괄호 안이 보호자 덕분에 참이고 키도 참이라서",
+            "why": "'or'는 하나만 참이어도 참이고, 'and'의 양쪽이 모두 참입니다.",
+            "correct": true
+          },
+          {
+            "text": "탈 수 없음, 나이 조건이 거짓이라서",
+            "why": "거짓이 하나라도 있으면 전체가 거짓이라고 본 것인데, 나이는 괄호 안 'or'에 있어 보호자가 대신합니다."
+          },
+          {
+            "text": "탈 수 있음, 키가 참이면 뒤는 보지 않아서",
+            "why": "'and'는 앞이 참이면 뒤도 따져야 하고, 뒤를 보지 않는 것은 앞이 거짓일 때입니다."
+          }
+        ],
+        "before": {
+          "part": "branch",
+          "nodes": [
+            {
+              "id": "h",
+              "label": "키 125 >= 120 · 참",
+              "col": 0,
+              "row": 0
+            },
+            {
+              "id": "a",
+              "label": "나이 8 >= 10 · 거짓",
+              "col": 0,
+              "row": 1
+            },
+            {
+              "id": "g",
+              "label": "보호자 있음 · 참",
+              "col": 0,
+              "row": 2
+            },
+            {
+              "id": "or",
+              "label": "(나이 or 보호자) · ?",
+              "col": 1,
+              "row": 1
+            },
+            {
+              "id": "and",
+              "label": "키 and (괄호) · ?",
+              "col": 2,
+              "row": 0
+            },
+            {
+              "id": "yes",
+              "label": "탈 수 있음",
+              "col": 3,
+              "row": 0
+            },
+            {
+              "id": "no",
+              "label": "탈 수 없음",
+              "col": 3,
+              "row": 1
+            }
+          ],
+          "edges": [
+            {
+              "from": "h",
+              "to": "and",
+              "label": "",
+              "taken": true
+            },
+            {
+              "from": "a",
+              "to": "or",
+              "label": "거짓",
+              "taken": true
+            },
+            {
+              "from": "g",
+              "to": "or",
+              "label": "참",
+              "taken": true
+            },
+            {
+              "from": "or",
+              "to": "and",
+              "label": "",
+              "taken": true
+            },
+            {
+              "from": "and",
+              "to": "yes",
+              "label": "참",
+              "taken": false
+            },
+            {
+              "from": "and",
+              "to": "no",
+              "label": "거짓",
+              "taken": false
+            }
+          ],
+          "description": "키는 조건을 만족하고, 나이는 조건을 만족하지 않으며, 보호자는 있습니다. 괄호와 전체 판정의 참 또는 거짓은 가려져 있습니다."
+        }
+      },
+      "code": {
+        "lines": [
+          "키 >= 120 and (나이 >= 10 or 보호자)"
+        ]
+      },
+      "links": [
+        {
+          "label": "논리 게이트",
+          "href": "../computer-architecture/gates.html"
+        }
+      ]
+    },
+    {
+      "label": "이면: 합격",
+      "title": "\"합격하면 선물을 준다\"는 합격했을 때 지켰는지로 따집니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "경우 (p 합격한다 · q 선물을 준다)",
+            "cells": [
+              {
+                "id": "k1",
+                "label": "합격 · 선물 줌"
+              },
+              {
+                "id": "k2",
+                "label": "합격 · 선물 안 줌"
+              },
+              {
+                "id": "k3",
+                "label": "불합격 · 선물 줌"
+              },
+              {
+                "id": "k4",
+                "label": "불합격 · 선물 안 줌"
+              }
+            ]
+          },
+          {
+            "title": "p이면 q",
+            "cells": [
+              {
+                "id": "T",
+                "label": "참 (지킴)"
+              },
+              {
+                "id": "F",
+                "label": "거짓 (어김)"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "k1",
+            "to": "T",
+            "kind": "solid"
+          },
+          {
+            "from": "k2",
+            "to": "F",
+            "kind": "solid"
+          }
+        ],
+        "changed": []
+      },
+      "body": "\"합격하면 선물을 준다\"는 약속에서 p는 합격하는 조건이고, q는 선물을 주는 일입니다. 합격했는데 선물을 주지 않은 경우만 약속을 어겼으므로 거짓입니다.",
+      "description": "선물을 주면 지킴, 주지 않으면 어김으로 갑니다. 합격하지 못한 두 경우에는 아직 선이 없습니다.",
+      "takeaway": "선물을 주면 지킴, 주지 않으면 어김으로 갑니다. 합격하지 못한 두 경우에는 아직 선이 없습니다."
+    },
+    {
+      "label": "이면: 불합격",
+      "title": "합격하지 못했으면 약속을 어긴 것이 아닙니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "경우 (p 합격한다 · q 선물을 준다)",
+            "cells": [
+              {
+                "id": "k1",
+                "label": "합격 · 선물 줌"
+              },
+              {
+                "id": "k2",
+                "label": "합격 · 선물 안 줌"
+              },
+              {
+                "id": "k3",
+                "label": "불합격 · 선물 줌"
+              },
+              {
+                "id": "k4",
+                "label": "불합격 · 선물 안 줌"
+              }
+            ]
+          },
+          {
+            "title": "p이면 q",
+            "cells": [
+              {
+                "id": "T",
+                "label": "참 (지킴)"
+              },
+              {
+                "id": "F",
+                "label": "거짓 (어김)"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "k1",
+            "to": "T",
+            "kind": "solid"
+          },
+          {
+            "from": "k2",
+            "to": "F",
+            "kind": "solid"
+          },
+          {
+            "from": "k3",
+            "to": "T",
+            "kind": "new"
+          },
+          {
+            "from": "k4",
+            "to": "T",
+            "kind": "new"
+          }
+        ],
+        "changed": [
+          "k3→T",
+          "k4→T"
+        ]
+      },
+      "body": "합격하지 못한 두 경우는 모두 약속을 어긴 경우가 아니라서 참입니다. 일상에서는 \"합격하지 못하면 선물이 없다\"는 뜻도 함께 듣는 일이 있지만, 논리의 '이면'은 그 뜻을 담지 않습니다. 조건과 반복의 if는 조건이 참일 때만 아래 줄을 실행했습니다. 조건이 거짓이면 아무 약속도 하지 않은 것과 같습니다.",
+      "description": "네 경우 중 합격했지만 선물을 안 준 하나만 거짓으로 갑니다.",
+      "takeaway": "네 경우 중 합격했지만 선물을 안 준 하나만 거짓으로 갑니다.",
+      "predict": {
+        "prompt": "합격하지 못한 두 경우, \"합격하면 선물을 준다\"는 약속은 어떻게 판정할까요?",
+        "options": [
+          {
+            "text": "두 경우 모두 참",
+            "why": "약속은 합격했을 때 할 일만 정했으므로, 합격하지 못했으면 무엇을 해도 어긴 것이 아닙니다.",
+            "correct": true
+          },
+          {
+            "text": "두 경우 모두 거짓",
+            "why": "앞부분 p가 거짓이면 전체가 거짓이라고 '그리고'처럼 계산한 것인데, '이면'은 p가 참일 때만 q를 따집니다."
+          },
+          {
+            "text": "선물을 주면 거짓, 안 주면 참",
+            "why": "\"합격하지 못하면 선물을 주지 않는다\"까지 약속했다고 본 것인데, 그런 약속은 하지 않았습니다."
+          }
+        ],
+        "before": {
+          "part": "map",
+          "columns": [
+            {
+              "title": "경우 (p 합격한다 · q 선물을 준다)",
+              "cells": [
+                {
+                  "id": "k1",
+                  "label": "합격 · 선물 줌"
+                },
+                {
+                  "id": "k2",
+                  "label": "합격 · 선물 안 줌"
+                },
+                {
+                  "id": "k3",
+                  "label": "불합격 · 선물 줌"
+                },
+                {
+                  "id": "k4",
+                  "label": "불합격 · 선물 안 줌"
+                }
+              ]
+            },
+            {
+              "title": "p이면 q",
+              "cells": [
+                {
+                  "id": "T",
+                  "label": "참 (지킴)"
+                },
+                {
+                  "id": "F",
+                  "label": "거짓 (어김)"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "from": "k1",
+              "to": "T",
+              "kind": "solid"
+            },
+            {
+              "from": "k2",
+              "to": "F",
+              "kind": "solid"
+            }
+          ],
+          "changed": [],
+          "description": "합격한 경우만 참과 거짓에 이어집니다. 불합격한 두 경우에는 선이 없습니다."
+        }
+      },
+      "links": [
+        {
+          "label": "조건과 반복",
+          "href": "../programming/control.html"
+        }
+      ]
     }
-  });
-  const right = picks.filter((p, i) => p === step.items[i].answer).length;
-  byId('score').textContent = `${right} / ${step.items.length} 맞힘`;
-  byId('done').hidden = right !== step.items.length;
-  byId('done').textContent = step.table ? '✓ 진리표를 모두 채웠습니다. 아래 질문도 생각해 보세요.' : '✓ 모두 맞게 골랐습니다. 아래 질문도 생각해 보세요.';
-  syncTable();
-}
-
-byId('reveal').onclick = () => {
-  const open = byId('sample').hidden;
-  byId('sample').hidden = !open;
-  byId('reveal').setAttribute('aria-expanded', String(open));
-  byId('reveal').textContent = open ? '예시 답 숨기기' : '예시 답 보기';
+  ],
+  "review": {
+    "own": [
+      "logic-1",
+      "logic-2"
+    ],
+    "prereq": {
+      "ref": "programming/control",
+      "id": "control-3"
+    },
+    "fallback": "logic-3"
+  }
 };
-
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/logic/${index + 1}`);
-  showStep(index);
-}
-const stepButtons = lesson.map(({ label }, index) => {
-  const listItem = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  const number = document.createElement('span');
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.addEventListener('click', () => goToStep(index));
-  listItem.append(button);
-  byId('steps').append(listItem);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
-window.addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+const byId = id => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const center = {x: viewWidth / 2, y: viewHeight / 2};
+const camera = {x: 0, y: 0, zoom: 1};
+const maxZoom = 2.2;
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+document.getElementById('zoom-in').onclick = () => zoomBy(.25);
+document.getElementById('zoom-out').onclick = () => zoomBy(-.25);
+enableCameraDrag();
+viewport.addEventListener('keydown', event => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const pan = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1]}[event.key];
+  if (pan && camera.zoom > 1) {
     event.preventDefault();
-    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+    setCamera(camera.x + pan[0] * 18, camera.y + pan[1] * 18, camera.zoom);
+  } else if (event.key === '+' || event.key === '-' || event.key === '0') {
+    event.preventDefault();
+    if (event.key === '0') resetView();
+    else zoomBy(event.key === '+' ? .25 : -.25);
   }
 });
-const initial = routeIndex();
-history.replaceState(null, '', `#/logic/${initial + 1}`);
-showStep(initial, false);
+setCamera(0, 0, 1);
 </script>
 </body>
 </html>

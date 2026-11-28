@@ -2959,6 +2959,10 @@ const courseCatalog = {
             {
               "id": "0.2",
               "ref": "os/sharing-cpu"
+            },
+            {
+              "id": "0.3",
+              "ref": "os/file-access"
             }
           ],
           "tracks": []
@@ -3780,6 +3784,17 @@ const courseCatalog = {
             "os/what-os-does"
           ],
           "page": "os/sharing-cpu.html"
+        },
+        {
+          "id": "file-access",
+          "title": "앱은 어느 파일까지 열 수 있을까?",
+          "titleEn": "Which files can an app open?",
+          "question": "사진 앱이 파일을 열어 달라고 할 때, 열릴지 말지는 무엇이 정할까요?",
+          "format": "단계 그림",
+          "requires": [
+            "os/what-os-does"
+          ],
+          "page": "os/file-access.html"
         },
         {
           "id": "process",

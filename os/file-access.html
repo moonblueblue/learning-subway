@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="사진 앱이 파일을 열어 달라고 할 때, 열릴지 말지는 무엇이 정할까요?">
+<title>앱은 어느 파일까지 열 수 있을까?</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="what-os-does.items.js?v=3f939d590dd040a1">
+<style>
+#figure .fa-name{fill:#182f28;font-size:13px;font-weight:700}
+#figure .fa-text{fill:#182f28;font-size:12px}
+#figure .fa-text.fa-mark{font-weight:700}
+#figure .fa-row{fill:#43574f;font-size:12px}
+#figure .fa-deny{fill:#53649a;font-size:12px;font-weight:700}
+#figure .fa-box{stroke-width:1.2}
+#figure .fa-app{fill:#edf0fc;stroke:#6d82ab}
+#figure .fa-system{fill:#e3f2e9;stroke:#47826b}
+#figure .fa-storage{fill:#f6f3e5;stroke:#7e7753}
+#figure .fa-window{fill:#fdfdfb;stroke:#75897d;stroke-width:1;stroke-dasharray:4 3}
+#figure .fa-doc{fill:#fff;stroke:#8c9d96;stroke-width:1}
+#figure .fa-doc-line{stroke:#8c9d96;stroke-width:1}
+#figure .fa-line{fill:none;stroke:#327263;stroke-width:2;stroke-linecap:round}
+#figure .fa-tip{fill:#327263}
+#figure .fa-line.fa-reply{stroke:#53649a;stroke-dasharray:5 4}
+#figure .fa-tip.fa-reply{fill:#53649a}
+/* A highlighted dashed line keeps its dash and width and only changes colour (frame spec 3.7 rule 2). */
+#figure .fa-window[data-changed]{stroke-width:1}
+#figure .fa-line.fa-reply[data-changed]{stroke:#0f766e;stroke-width:2}
+#figure .fa-tip[data-changed]{fill:#0f766e;stroke:none}
+/* The sea picture is drawn scaled down; its highlight outline stays 3px on screen. */
+#figure g[transform] rect[data-changed]{vector-effect:non-scaling-stroke}
+#scene.is-zoomed { cursor: grab; touch-action: none; }
+#scene.is-dragging { cursor: grabbing; }
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=54094544905ce975">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=68a3f9d324de033f"></script>
+<script defer blocking="render" src="./file-access.items.js?v=347de1c4a6379f29"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=7f6891ee1e8cd700"></script>
+<script defer blocking="render" src="./file-access.en.js?v=8fa1883cb46b5d46"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">운영체제 입문</p>
+    <h1>앱은 어느 파일까지 열 수 있을까?</h1>
+    <p>사진 앱이 파일을 열어 달라고 할 때, 열릴지 말지는 무엇이 정할까요?</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">운영체제의 권한 확인</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">사진 앱의 열기 요청을 운영체제가 권한으로 확인하는 장면</title>
+            <desc id="scene-desc"></desc>
+            <g id="figure" aria-hidden="true"></g>
+          </svg>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+        </div>
+        <div class="controls"></div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2>
+      <p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
+    </section>
+  </div>
+  <div id="announcement" class="sr-only" role="status"></div>
+</main>
+<script>
+const lesson = {
+  question: '사진 앱이 파일을 열어 달라고 할 때, 열릴지 말지는 무엇이 정할까요?',
+  terms: [
+    {term: '권한 확인', meaning: '운영체제가 요청을 받으면, 저장 장치에 넘기기 전에 그 요청이 허락되어 있는지 보는 일', step: 1},
+    {term: '권한', meaning: '운영체제가 적어 두고 지키는 허락. 누가 어느 파일에 무엇을 해도 되는지. 설정에서 바꿀 수 있다. 이 레슨의 \'누가\'는 앱이고 \'무엇\'은 읽기다', step: 2},
+    {term: '허용', meaning: '권한에 그 일이 허락되어 있음. 그림의 \'사진 폴더 읽기 · 허용\'', step: 2},
+    {term: '거절', meaning: '허용이 없어 운영체제가 요청을 저장 장치에 넘기지 않고 앱에 돌려보내는 것', step: 3}
+  ],
+  steps: [
+    {
+      label: '열기 요청',
+      title: '열기 요청은 먼저 운영체제에 닿습니다',
+      body: '사진 앱에서 사진 폴더의 바다.jpg 를 엽니다. 사진 앱은 운영체제에 바다.jpg 를 열어 달라고 요청합니다. 운영체제는 요청을 저장 장치에 넘기기 전에, 이 앱이 이 파일을 읽어도 되는지 먼저 확인합니다. 운영체제는 어떤 일을 할까? 레슨에서는 이 확인이 허락으로 끝나서 보이지 않았습니다.',
+      links: [{label: '운영체제는 어떤 일을 할까?', href: 'what-os-does.html'}],
+      takeaway: '실선이 앱에서 운영체제까지만 와 있고, 운영체제에서 저장 장치로 가는 선은 아직 없습니다. 앱 창은 비어 있습니다.',
+      description: '사진 앱에서 운영체제까지 실선 화살표가 와 있고, 운영체제 칸에는 권한 확인 중이라고 적혀 있습니다. 운영체제에서 저장 장치로 가는 선은 아직 없습니다. 사진 앱의 창은 빈 창입니다.',
+      figure: {custom: true, changed: ['줄1 요청1']}
+    },
+    {
+      label: '권한 확인',
+      title: '허용되어 있으면 사진이 뜹니다',
+      body: '운영체제가 확인하는 허락을 권한이라고 합니다. 권한은 운영체제가 적어 두고 지키며, 사람이 설정에서 바꿀 수 있습니다. 사진 앱에는 사진 폴더를 읽을 권한이 허용되어 있습니다. 그래서 운영체제가 저장 장치에서 바다.jpg 를 읽어 와 사진 앱에 돌려주고, 앱 창에 바다 사진이 뜹니다.',
+      takeaway: '운영체제 칸의 \'허용\' 글자 오른쪽으로 실선이 저장 장치까지 이어지고, 점선이 저장 장치에서 운영체제를 지나 앱까지 돌아와 앱 창에 바다 그림이 있습니다.',
+      description: '운영체제 칸에 사진 폴더 읽기 · 허용이 적혀 있고, 그 오른쪽으로 실선이 저장 장치까지 이어집니다. 점선이 저장 장치에서 운영체제를 지나 사진 앱까지 돌아오고, 사진 앱의 창에 바다 그림이 있습니다.',
+      figure: {custom: true, changed: ['줄1 권한', '줄1 요청2', '줄1 반환1', '줄1 반환2', '줄1 창']}
+    },
+    {
+      label: '다른 파일',
+      title: '허용이 없으면 운영체제에서 돌아갑니다',
+      body: '같은 사진 앱이 이번에는 문서 폴더의 일기.txt 를 열어 달라고 요청합니다. 사진 앱에는 문서 폴더를 읽을 권한이 없습니다. 허용이 없으면 운영체제는 요청을 저장 장치에 넘기지 않고, 앱에 거절을 돌려줍니다. 같은 사진 앱이라도 폴더마다 권한이 다릅니다.',
+      takeaway: '둘째 줄은 실선이 운영체제까지만 가고, 운영체제에서 앱 쪽으로 점선과 \'거절\'이 돌아옵니다. 운영체제와 저장 장치 사이에는 선이 없습니다. 첫째 줄은 그대로입니다.',
+      description: '둘째 줄은 사진 앱에서 운영체제까지만 실선이 가고, 운영체제에서 사진 앱 쪽으로 점선과 거절이 돌아옵니다. 둘째 줄의 운영체제와 저장 장치 사이에는 선이 없습니다. 첫째 줄은 2단계 그대로입니다.',
+      figure: {custom: true, changed: ['줄2 이름', '줄2 앱', '줄2 창', '줄2 요청1', '줄2 운영체제', '줄2 권한', '줄2 반환2', '줄2 거절', '줄2 저장 장치', '줄2 파일']},
+      predict: {
+        prompt: '같은 사진 앱이 이번에는 문서 폴더의 일기.txt 를 열어 달라고 합니다. 운영체제가 확인한 권한에는 \'문서 폴더 읽기 · 허용 없음\'이라고 되어 있습니다. 요청은 어떻게 될까요?',
+        options: [
+          {text: '운영체제에서 멈추고 사진 앱에 거절이 돌아간다', correct: true, why: '운영체제는 저장 장치에 넘기기 전에 권한을 확인하므로, 허용이 없으면 그 자리에서 앱으로 돌려보냅니다.'},
+          {text: '저장 장치까지 갔다가 빈 내용이 돌아온다', why: '허락을 확인하는 것이 저장 장치라고 본 것인데, 2단계에서 권한 글자는 운영체제 칸에 있었고 저장 장치로 가는 선은 그다음에 생겼습니다.'},
+          {text: '사진 앱이 저장 장치에서 직접 읽어 온다', why: '운영체제가 막으면 앱이 직접 가면 된다고 본 것인데, 앱은 저장 장치에 직접 닿지 않고 운영체제를 거칩니다.'}
+        ],
+        before: {custom: true, hide: ['줄2 반환2', '줄2 거절', '줄2 창'],
+          description: '첫째 줄은 2단계 그대로입니다. 둘째 줄은 둘째 · 문서 폴더의 일기.txt 열기입니다. 사진 앱에서 운영체제까지 실선이 와 있고, 운영체제 칸에는 문서 폴더 읽기 · 허용 없음이 적혀 있습니다. 저장 장치에는 문서 그림과 일기.txt 가 있습니다. 사진 앱의 창 자리에는 물음표가 있습니다.'}
+      }
+    },
+    {
+      label: '허용 끈 뒤',
+      title: '같은 파일도 권한이 바뀌면 거절됩니다',
+      body: '설정에서 사진 앱의 사진 폴더 읽기 허용을 끈 뒤, 첫째 줄과 똑같이 바다.jpg 를 열어 달라고 요청합니다. 운영체제는 열어 달라고 할 때마다 그때의 권한을 확인하므로 이번에는 거절합니다. 권한을 꺼도 저장 장치의 바다.jpg 는 그대로 있습니다. 열릴지 말지를 정한 것은 앱도 파일도 아니고, 운영체제가 확인한 권한입니다. 운영체제는 앱마다의 허용과 함께, 앱을 실행한 사용자의 권한도 확인합니다. 사용자 쪽은 사용자와 권한 레슨에서 봅니다.',
+      takeaway: '첫째 줄과 셋째 줄은 앱 이름과 파일이 같은데 운영체제 칸의 권한 글자만 다르고, 첫째 줄만 저장 장치까지 선이 갑니다. 셋째 줄 저장 장치에도 바다.jpg 가 같은 그림으로 있습니다.',
+      description: '첫째 줄과 셋째 줄은 사진 앱과 바다.jpg 가 같고, 운영체제 칸의 권한 글자만 사진 폴더 읽기 · 허용과 사진 폴더 읽기 · 허용 없음으로 다릅니다. 첫째 줄만 저장 장치까지 선이 가고, 셋째 줄은 운영체제에서 거절이 돌아옵니다. 셋째 줄 저장 장치에도 바다.jpg 가 같은 그림으로 있습니다.',
+      figure: {custom: true, changed: ['줄3 이름', '줄3 앱', '줄3 창', '줄3 요청1', '줄3 운영체제', '줄3 권한', '줄3 반환2', '줄3 거절', '줄3 저장 장치', '줄3 파일']},
+      predict: {
+        prompt: '셋째 줄은 첫째 줄과 같은 사진 앱이 같은 바다.jpg 를 여는 요청입니다. 그 사이 설정에서 사진 앱의 사진 폴더 읽기 허용을 껐습니다. 셋째 줄은 어떻게 될까요?',
+        options: [
+          {text: '거절되고 셋째 창은 열지 못한다', correct: true, why: '운영체제는 열어 달라고 할 때마다 그때의 권한을 보고, 지금은 사진 폴더 읽기 허용이 없습니다.'},
+          {text: '첫째 줄에서 열었던 파일이라 다시 열린다', why: '한 번 열린 파일은 계속 열린다고 본 것인데, 운영체제는 지난 결과가 아니라 지금의 권한을 확인합니다.'},
+          {text: '저장 장치의 바다.jpg 가 지워진다', why: '권한을 끄면 파일도 없어진다고 본 것인데, 권한은 허락만 바꾸고 바다.jpg 는 저장 장치에 그대로 있습니다.'}
+        ],
+        before: {custom: true, hide: ['줄3 반환2', '줄3 거절', '줄3 창'],
+          description: '첫째 줄과 둘째 줄은 3단계 그대로입니다. 셋째 줄은 셋째 · 사진 폴더의 바다.jpg 열기 · 허용 끈 뒤입니다. 사진 앱에서 운영체제까지 실선이 와 있고, 운영체제 칸에는 사진 폴더 읽기 · 허용 없음이 적혀 있습니다. 저장 장치에는 바다 그림과 바다.jpg 가 있습니다. 사진 앱의 창 자리에는 물음표가 있습니다.'}
+      }
+    }
+  ],
+  review: {
+    own: ['file-access-1', 'file-access-2'],
+    prereq: {ref: 'os/what-os-does', id: 'what-os-does-5'},
+    fallback: 'file-access-3'
+  }
+};
+
+const slug = 'file-access';
+const byId = id => document.getElementById(id);
+const viewport = byId('scene');
+const drawing = byId('figure');
+const viewWidth = 620;
+const viewHeight = 280;
+const center = {x: viewWidth / 2, y: viewHeight / 2};
+const camera = {x: 0, y: 0, zoom: 1};
+const maxZoom = 2.2;
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+// Each row of the figure, as the card's step table gives it. A row's window is 'empty', 'sea' or 'denied',
+// and an open request that was allowed has the second request and both replies; a denied one has only reply 2.
+const rows = [
+  {name: '첫째 · 사진 폴더의 바다.jpg 열기', file: 'sea'},
+  {name: '둘째 · 문서 폴더의 일기.txt 열기', file: 'diary', permission: '문서 폴더 읽기 · 허용 없음', result: 'denied'},
+  {name: '셋째 · 사진 폴더의 바다.jpg 열기 · 허용 끈 뒤', file: 'sea', permission: '사진 폴더 읽기 · 허용 없음', result: 'denied'}
+];
+// Step by step: how many rows are drawn, and the first row's state (checking in step 1, allowed afterwards).
+const stepRows = [1, 1, 2, 3];
+const centres = [70, 150, 230];
+
+// Every drawn element joins a group named as on the card, so the frame can highlight or hide it by that name.
+// Shapes marked data-edge are the ones whose outline turns teal when their group is highlighted.
+function named(parent, name) {
+  return svg('g', {'data-name': name}, parent);
+}
+
+function words(group, x, y, value, tone, anchor = 'middle') {
+  svg('text', {x, y, class: tone, 'text-anchor': anchor}, group).textContent = value;
+}
+
+function box(group, x1, y1, x2, y2, tone) {
+  svg('rect', {x: x1, y: y1, width: x2 - x1, height: y2 - y1, rx: 8, class: 'fa-box ' + tone, 'data-edge': ''}, group);
+}
+
+// Same arrow as in 운영체제는 어떤 일을 할까?: an 8px head, 10px wide.
+function arrow(group, x1, y1, x2, y2, reply = false) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const tipLength = 8;
+  const inset = (tipLength - 1) / Math.hypot(dx, dy);
+  const tone = reply ? 'fa-reply' : '';
+  svg('line', {x1, y1, x2: x2 - dx * inset, y2: y2 - dy * inset, class: 'fa-line ' + tone, 'data-edge': ''}, group);
+  svg('polygon', {'data-arrowhead': '', 'data-edge': '', points: `${-tipLength},-5 0,0 ${-tipLength},5`, class: 'fa-tip ' + tone,
+    transform: `translate(${x2} ${y2}) rotate(${Math.atan2(dy, dx) * 180 / Math.PI})`}, group);
+}
+
+// Same sea photo as in 운영체제는 어떤 일을 할까?: a 66×46 picture drawn at the given size.
+function picture(group, x, y, size = 1) {
+  const image = svg('g', {transform: `translate(${x} ${y}) scale(${size})`}, group);
+  svg('rect', {x: -33, y: -23, width: 66, height: 46, rx: 4, fill: '#d9ecfa', stroke: '#638178', 'data-edge': ''}, image);
+  svg('circle', {cx: 15, cy: -12, r: 5, fill: '#f4bd67'}, image);
+  svg('path', {d: 'M-31 5Q-17 -1 -2 5Q14 1 31 6V18Q31 21 28 21H-28Q-31 21-31 18Z', fill: '#458abe'}, image);
+  svg('path', {d: 'M-23 12q8 -4 16 0m11 2q8 -4 16 0', fill: 'none', stroke: '#fff', 'stroke-width': 1.5}, image);
+}
+
+function diary(group, y) {
+  svg('rect', {x: 491, y: y + 1, width: 18, height: 22, class: 'fa-doc', 'data-edge': ''}, group);
+  for (const offset of [7, 12, 17]) {
+    svg('line', {x1: 494, y1: y + offset, x2: 506, y2: y + offset, class: 'fa-doc-line'}, group);
+  }
+}
+
+// The window inside the app: a sea picture, or a dashed slot holding '빈 창', '열지 못함' or the '?' placeholder.
+function appWindow(group, y, content) {
+  if (content === 'sea') {
+    picture(group, 130, y + 12, .42);
+    return;
+  }
+  svg('rect', {x: 98, y: y + 2, width: 64, height: 20, class: 'fa-window', 'data-edge': ''}, group);
+  const label = {empty: '빈 창', denied: '열지 못함', unknown: '?'}[content];
+  words(group, 130, y + 16, label, content === 'unknown' ? 'fa-text fa-mark' : 'fa-text');
+}
+
+function drawRow(index, row, hide) {
+  const y = centres[index];
+  const part = name => `줄${index + 1} ${name}`;
+  const shown = name => !hide.includes(part(name));
+  const add = (name, draw) => {
+    if (shown(name)) draw(named(drawing, part(name)));
+  };
+  add('이름', group => words(group, 80, y - 34, row.name, 'fa-row', 'start'));
+  add('앱', group => {
+    box(group, 80, y - 26, 180, y + 26, 'fa-app');
+    words(group, 130, y - 6, '사진 앱', 'fa-name');
+  });
+  // A hidden window keeps its place as a dashed slot with '?', so the answer does not move it.
+  appWindow(named(drawing, part('창')), y, shown('창') ? row.window : 'unknown');
+  add('요청1', group => arrow(group, 184, y - 8, 236, y - 8));
+  add('운영체제', group => {
+    box(group, 240, y - 26, 420, y + 26, 'fa-system');
+    words(group, 330, y - 6, '운영체제', 'fa-name');
+  });
+  add('권한', group => words(group, 330, y + 16, row.permission, 'fa-text'));
+  add('저장 장치', group => {
+    box(group, 466, y - 26, 606, y + 26, 'fa-storage');
+    words(group, 536, y - 6, '저장 장치', 'fa-name');
+  });
+  add('파일', group => {
+    if (row.file === 'sea') picture(group, 500, y + 12, .42);
+    else diary(group, y);
+    words(group, 520, y + 16, row.file === 'sea' ? '바다.jpg' : '일기.txt', 'fa-text', 'start');
+  });
+  if (row.result === 'allowed') {
+    add('요청2', group => arrow(group, 424, y - 8, 462, y - 8));
+    add('반환1', group => arrow(group, 462, y + 10, 424, y + 10, true));
+  }
+  if (row.result !== 'checking') add('반환2', group => arrow(group, 236, y + 10, 184, y + 10, true));
+  if (row.result === 'denied') add('거절', group => words(group, 210, y + 26, '거절', 'fa-deny'));
+}
+
+function rowState(index, step) {
+  if (index > 0) return {...rows[index], window: 'denied'};
+  return step === 0
+    ? {...rows[0], permission: '권한 확인 중', result: 'checking', window: 'empty'}
+    : {...rows[0], permission: '사진 폴더 읽기 · 허용', result: 'allowed', window: 'sea'};
+}
+
+// A highlighted group colours the outline of its edge shapes and its words (frame spec 3.7 rule 2).
+// A hidden element is not drawn and leaves its place empty; a hidden window becomes the '?' slot.
+function drawFigure(index, {hide = [], changed = []}) {
+  drawing.replaceChildren();
+  for (let row = 0; row < stepRows[index]; row += 1) drawRow(row, rowState(row, index), hide);
+  for (const name of changed) {
+    for (const element of drawing.querySelector(`[data-name="${name}"]`)?.querySelectorAll('[data-edge], text') ?? []) {
+      element.setAttribute('data-changed', '');
+    }
+  }
+}
+
+byId('zoom-in').onclick = () => zoomBy(.3);
+byId('zoom-out').onclick = () => zoomBy(-.3);
+enableCameraDrag();
+
+viewport.addEventListener('keydown', event => {
+  if (camera.zoom === 1) return;
+  const direction = {ArrowLeft: [-1, 0], ArrowUp: [0, -1], ArrowRight: [1, 0], ArrowDown: [0, 1]}[event.key];
+  if (!direction) return;
+  event.preventDefault();
+  setCamera(camera.x + direction[0] * 18, camera.y + direction[1] * 18, camera.zoom);
+});
+
+window.addEventListener('keydown', event => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === '+') zoomBy(.3);
+  else if (event.key === '-') zoomBy(-.3);
+  else if (event.key === '0') resetView();
+  else return;
+  event.preventDefault();
+});
+setCamera(0, 0, 1);
+</script>
+</body>
+</html>

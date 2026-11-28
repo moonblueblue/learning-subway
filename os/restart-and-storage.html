@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="전원을 껐다 켜면, 메모리의 운영체제와 사진 앱, 편집 중인 사진은 어떻게 될까요?">
+<title>다시 켜면 무엇이 남을까?</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="what-os-does.items.js?v=3f939d590dd040a1">
+<style>
+#scene.is-zoomed { cursor: grab; touch-action: none; }
+#scene.is-dragging { cursor: grabbing; }
+</style>
+<link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=54094544905ce975">
+<link rel="stylesheet" href="../shared/figures.css?v=6299a8916ab8e667">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=bc23e4ccbab765b1"></script>
+<script defer blocking="render" src="./restart-and-storage.items.js?v=6848a94059d9b4ad"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=1983a13d45e873cc"></script>
+<script defer blocking="render" src="./restart-and-storage.en.js?v=a1321a0d4b0041fe"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <p class="eyebrow">운영체제 입문</p>
+    <h1>다시 켜면 무엇이 남을까?</h1>
+    <p>전원을 껐다 켜면, 메모리의 운영체제와 사진 앱, 편집 중인 사진은 어떻게 될까요?</p>
+  </header>
+  <div class="workspace">
+    <div>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">저장 장치와 메모리</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">저장 장치의 파일과 메모리에 올린 사본을 잇는 대응표</title>
+            <desc id="scene-desc"></desc>
+            <g id="figure" aria-hidden="true"></g>
+          </svg>
+        </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+        </div>
+        <nav class="timeline" aria-labelledby="timeline-heading">
+          <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
+          <ol class="steps" id="steps"></ol>
+        </nav>
+      </section>
+    </div>
+    <section class="panel explanation" aria-labelledby="step-title">
+      <h2 id="step-title"></h2>
+      <p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
+    </section>
+  </div>
+  <div id="announcement" class="sr-only" role="status"></div>
+</main>
+<script>
+// Every figure is the same two-column table (card "단계"): storage files on the left, the copies loaded into memory
+// on the right. The three rows keep their places in every step; a line is loading a file into memory.
+const EMPTY = {label: '비어 있음'};
+function storageAndMemory({file, memory, cells, kinds, changed = [], hide}) {
+  const figure = {
+    part: 'map',
+    columns: [
+      {title: '저장 장치 · 파일', cells: [
+        {id: 'f-os', label: '운영체제 파일'},
+        {id: 'f-app', label: '사진 앱 파일'},
+        {id: 'f-sea', label: '바다.jpg', sub: file}
+      ]},
+      {title: memory, cells: ['m-os', 'm-app', 'm-sea'].map((id, row) => ({id, ...cells[row]}))}
+    ],
+    links: [['f-os', 'm-os'], ['f-app', 'm-app'], ['f-sea', 'm-sea']].map(([from, to], row) => ({from, to, kind: kinds[row]})),
+    changed
+  };
+  if (hide) figure.hide = hide;
+  return figure;
+}
+const OS = {label: '운영체제'};
+const APP = {label: '사진 앱'};
+const sea = sub => ({label: '바다 사진', sub});
+const running = (file, photo, changed) => storageAndMemory({file, memory: '메모리 · 실행 중', cells: [OS, APP, sea(photo)],
+  kinds: ['solid', 'solid', 'solid'], changed});
+const off = hide => storageAndMemory({file: '바다 · 별', memory: '메모리 · 꺼짐', cells: [EMPTY, EMPTY, EMPTY],
+  kinds: ['faded', 'faded', 'faded'], changed: hide ? [] : ['m-os', 'm-app', 'm-sea', 'f-os→m-os', 'f-app→m-app', 'f-sea→m-sea'], hide});
+const backOn = (cells, kinds, changed, hide) => storageAndMemory({file: '바다 · 별', memory: '메모리 · 다시 켬', cells, kinds,
+  changed: hide ? [] : changed, hide});
+
+const lesson = {
+  question: '전원을 껐다 켜면, 메모리의 운영체제와 사진 앱, 편집 중인 사진은 어떻게 될까요?',
+  terms: [
+    {term: '메모리', meaning: '지금 실행 중인 운영체제와 앱, 열어 둔 파일 내용을 두는 곳. 그림의 오른쪽 열', step: 1},
+    {term: '올리기', meaning: '저장 장치의 파일 내용을 메모리에 복사해 두는 일. 그림에서 저장 장치 칸에서 메모리 칸으로 가는 선', step: 1},
+    {term: '저장', meaning: '메모리에서 고친 내용을 저장 장치의 파일에 써 두는 일. 앱이 운영체제에 요청한다', step: 3},
+    {term: '전원 끄기', meaning: '시스템 종료로 컴퓨터의 전원을 끄는 일', step: 5}
+  ],
+  steps: [
+    {
+      label: '켜 둔 컴퓨터',
+      title: '실행 중인 것은 저장 장치의 파일을 올린 사본입니다',
+      body: '사진 앱으로 바다.jpg 를 열어 둔 컴퓨터입니다. 이 레슨의 사진 앱은 자동 저장을 꺼 두었고, 컴퓨터를 다시 켤 때 앱을 저절로 되살리는 기능도 꺼 두었습니다. 운영체제는 어떤 일을 할까? 레슨에서 앱에 돌아온 바다.jpg 의 내용은 메모리에 있습니다. 지금 실행 중인 운영체제와 사진 앱도 메모리에 있습니다. 셋 다 저장 장치의 파일을 메모리에 올린 사본입니다.',
+      links: [{label: '운영체제는 어떤 일을 할까?', href: 'what-os-does.html'}],
+      takeaway: '오른쪽 메모리의 세 칸마다 왼쪽 저장 장치의 같은 이름 파일에서 선이 하나씩 들어옵니다. 바다 사진과 바다.jpg 의 아래 글자가 같은 \'바다\'입니다.',
+      description: '저장 장치 · 파일 열의 운영체제 파일, 사진 앱 파일, 바다.jpg 에서 메모리 · 실행 중 열의 운영체제, 사진 앱, 바다 사진으로 실선이 하나씩 들어갑니다. 바다 사진과 바다.jpg 아래에는 둘 다 바다라고 적혀 있습니다.',
+      figure: running('바다', '바다', [])
+    },
+    {
+      label: '별 붙이기',
+      title: '편집은 메모리의 사진에만 생깁니다',
+      body: '사진에 별을 붙입니다. 별은 메모리에 있는 바다 사진에만 생기고, 저장 장치의 바다.jpg 는 그대로입니다.',
+      takeaway: '오른쪽 바다 사진은 \'바다 · 별\'인데 왼쪽 바다.jpg 는 \'바다\' 그대로입니다.',
+      description: '메모리의 바다 사진 아래 글자가 바다 · 별로 바뀌었고, 저장 장치의 바다.jpg 아래 글자는 바다 그대로입니다.',
+      figure: running('바다', '바다 · 별', ['m-sea'])
+    },
+    {
+      label: '저장',
+      title: '저장하면 별이 파일에도 들어갑니다',
+      body: '저장을 누르면 사진 앱이 운영체제에 요청하고, 운영체제가 메모리의 내용을 저장 장치의 바다.jpg 에 씁니다. 이제 바다.jpg 에도 별이 있습니다.',
+      takeaway: '왼쪽 바다.jpg 의 아래 글자가 오른쪽 바다 사진과 같은 \'바다 · 별\'이 됩니다.',
+      description: '저장 장치의 바다.jpg 아래 글자가 바다 · 별로 바뀌어, 메모리의 바다 사진과 같습니다.',
+      figure: running('바다 · 별', '바다 · 별', ['f-sea'])
+    },
+    {
+      label: '하트 붙이기',
+      title: '저장 뒤에 고친 것은 다시 메모리에만 있습니다',
+      body: '이번에는 하트를 붙이고 저장하지 않습니다. 하트는 메모리의 바다 사진에만 있습니다.',
+      takeaway: '오른쪽은 \'바다 · 별 · 하트\', 왼쪽은 \'바다 · 별\'로 하트만 오른쪽에 있습니다.',
+      description: '메모리의 바다 사진은 바다 · 별 · 하트이고, 저장 장치의 바다.jpg 는 바다 · 별입니다. 하트는 메모리 쪽에만 있습니다.',
+      figure: running('바다 · 별', '바다 · 별 · 하트', ['m-sea'])
+    },
+    {
+      label: '전원 끄기',
+      title: '전원을 끄면 메모리는 운영체제까지 모두 비워집니다',
+      body: '시스템 종료로 전원을 끕니다. 사진 앱이 저장할지 물으면 \'저장 안 함\'을 고릅니다. 메모리는 전원이 있어야 내용을 지닙니다. 전원을 끄면 바다 사진만이 아니라 운영체제와 사진 앱도 메모리에서 사라집니다. 저장 장치의 파일은 전원 없이도 남습니다.',
+      takeaway: '오른쪽 세 칸이 모두 \'비어 있음\'이고 선은 셋 다 옅습니다. 왼쪽 세 칸은 그대로이고 바다.jpg 는 \'바다 · 별\'입니다.',
+      description: '메모리 · 꺼짐 열의 세 칸이 모두 비어 있음이고, 저장 장치에서 오는 선 셋이 모두 옅게 그려져 있습니다. 저장 장치 열의 운영체제 파일, 사진 앱 파일, 바다.jpg 는 그대로이고 바다.jpg 아래 글자는 바다 · 별입니다.',
+      figure: off(),
+      predict: {
+        prompt: '이제 컴퓨터를 끕니다. 사진 앱이 저장할지 물으면 \'저장 안 함\'을 고릅니다. 꺼져 있는 동안 메모리와 저장 장치에는 무엇이 있을까요?',
+        options: [
+          {text: '메모리는 비고, 바다.jpg 에는 별까지만 남는다', correct: true, why: '메모리는 전원이 있어야 내용을 지니고, 저장 장치의 파일은 전원 없이도 남습니다. 바다.jpg 에는 3단계에서 저장한 별까지만 들어 있습니다.'},
+          {text: '메모리에 운영체제와 사진 앱은 남고 바다 사진만 사라진다', why: '운영체제와 앱은 늘 있어야 하니 메모리에 남는다고 본 것인데, 메모리는 전원이 있어야 내용을 지니므로 운영체제와 사진 앱도 함께 사라집니다.'},
+          {text: '메모리는 비고, 바다.jpg 에 하트까지 남는다', why: '끌 때 알아서 저장된다고 본 것인데, 하트는 저장하지 않아 메모리에만 있다가 메모리와 함께 사라졌습니다.'}
+        ],
+        before: {...off(['m-os', 'm-app', 'm-sea', 'f-sea', 'f-os→m-os', 'f-app→m-app', 'f-sea→m-sea']),
+          description: '왼쪽 저장 장치 · 파일 열에는 운영체제 파일과 사진 앱 파일이 있습니다. 오른쪽 열의 제목은 메모리 · 꺼짐입니다.'}
+      }
+    },
+    {
+      label: '다시 켜기',
+      title: '다시 켜면 운영체제가 먼저 올라옵니다',
+      body: '전원을 다시 켭니다. 앱은 파일을 열거나 화면을 쓸 때 운영체제에 요청합니다. 그래서 켜지면 운영체제가 먼저 저장 장치에서 메모리로 올라와야 합니다. 올리기는 복사라서 저장 장치의 운영체제 파일은 그대로 남습니다. 운영체제를 처음 메모리에 올리는 일은 누가 할까요? 운영체제 커널 레슨에서 이어서 봅니다.',
+      links: [{label: '운영체제 커널', href: 'kernel.html'}],
+      takeaway: '오른쪽에서 운영체제 칸만 차 있고 그 칸에만 왼쪽 운영체제 파일에서 새 선이 들어옵니다. 앱과 사진 칸은 비어 있습니다. 왼쪽 저장 장치의 세 칸은 그대로입니다.',
+      description: '메모리 · 다시 켬 열에서 운영체제 칸만 차 있고, 저장 장치의 운영체제 파일에서 그 칸으로 새 선이 들어옵니다. 사진 앱 칸과 사진 칸은 비어 있음이고 그리로 가는 선은 옅습니다. 저장 장치 열의 세 칸은 그대로입니다.',
+      figure: backOn([OS, EMPTY, EMPTY], ['new', 'faded', 'faded'], ['m-os', 'f-os→m-os']),
+      predict: {
+        prompt: '전원을 다시 켰습니다. 아직 아무 앱도 열지 않았습니다. 지금 메모리와 저장 장치에는 무엇이 있을까요?',
+        options: [
+          {text: '메모리에는 운영체제만 있고, 저장 장치의 세 파일은 그대로다', correct: true, why: '앱이 파일과 장치를 쓰려면 운영체제에 요청해야 하므로 켜지면 운영체제가 먼저 올라오고, 올리기는 복사라 저장 장치의 파일은 그대로입니다.'},
+          {text: '메모리에 운영체제가 있고, 저장 장치의 운영체제 파일은 옮겨 가 비었다', why: '올리기를 파일을 옮기는 일로 본 것인데, 올리기는 복사라서 저장 장치의 운영체제 파일은 그대로 남습니다.'},
+          {text: '메모리에는 아무것도 없고, 저장 장치의 세 파일은 그대로다', why: '앱을 열기 전까지 메모리가 비어 있다고 본 것인데, 앱의 요청을 받을 운영체제가 먼저 메모리에 있어야 합니다.'}
+        ],
+        before: {...backOn([OS, EMPTY, EMPTY], ['new', 'faded', 'faded'], [],
+          ['f-os', 'f-app', 'f-sea', 'm-os', 'm-app', 'm-sea', 'f-os→m-os', 'f-app→m-app', 'f-sea→m-sea']),
+          description: '두 열의 제목 저장 장치 · 파일과 메모리 · 다시 켬만 보입니다.'}
+      }
+    },
+    {
+      label: '앱 열기',
+      title: '앱은 열 때 올라옵니다',
+      body: '사진 앱을 열면 운영체제가 저장 장치의 사진 앱 파일을 메모리에 올립니다. 다시 켰다고 앱이 저절로 올라오지는 않습니다. 열 때 올라옵니다.',
+      takeaway: '사진 앱 칸에 왼쪽 사진 앱 파일에서 새 선이 들어옵니다. 사진 칸은 아직 비어 있습니다.',
+      description: '메모리의 사진 앱 칸이 차고, 저장 장치의 사진 앱 파일에서 그 칸으로 새 선이 들어옵니다. 운영체제로 가는 선은 보통 실선이 되었고, 사진 칸은 아직 비어 있음입니다.',
+      figure: backOn([OS, APP, EMPTY], ['solid', 'new', 'faded'], ['m-app', 'f-app→m-app', 'f-os→m-os'])
+    },
+    {
+      label: '사진 열기',
+      title: '사진은 저장한 데까지만 돌아옵니다',
+      body: '사진 앱으로 바다.jpg 를 엽니다. 사진 앱의 요청을 받은 운영체제가 저장 장치의 바다.jpg 를 메모리에 올립니다. 다시 연 사진은 저장 장치의 바다.jpg 를 올린 것이라, 저장한 별까지만 있습니다. 하트는 저장하지 않아 전원과 함께 사라졌습니다.',
+      takeaway: '오른쪽 세 칸이 모두 다시 찼고 칸마다 왼쪽 파일에서 선이 들어옵니다. 바다 사진은 왼쪽 바다.jpg 와 같은 \'바다 · 별\'이고 하트는 어느 칸에도 없습니다.',
+      description: '메모리 · 다시 켬 열의 운영체제, 사진 앱, 바다 사진 세 칸이 모두 차 있고, 칸마다 저장 장치의 파일에서 선이 들어옵니다. 바다 사진 아래 글자는 바다.jpg 와 같은 바다 · 별이고, 하트는 어느 칸에도 없습니다.',
+      figure: backOn([OS, APP, sea('바다 · 별')], ['solid', 'solid', 'new'], ['m-sea', 'f-sea→m-sea', 'f-app→m-app']),
+      predict: {
+        prompt: '사진 앱으로 바다.jpg 를 다시 엽니다. 메모리의 바다 사진에는 무엇이 있을까요?',
+        options: [
+          {text: '바다와 별', correct: true, why: '사진을 열면 저장 장치의 바다.jpg 를 올리는데, 그 파일에는 저장한 별까지만 있습니다.'},
+          {text: '바다, 별, 하트', why: '끄기 전의 편집이 돌아온다고 본 것인데, 하트는 메모리에만 있다가 전원과 함께 사라졌습니다.'},
+          {text: '바다만', why: '다시 켜면 처음 열었던 사진으로 돌아간다고 본 것인데, 3단계에서 저장할 때 바다.jpg 가 \'바다 · 별\'로 바뀌었습니다.'}
+        ],
+        before: {...backOn([OS, APP, sea('바다 · 별')], ['solid', 'solid', 'new'], [], ['m-sea', 'f-sea→m-sea']),
+          description: '왼쪽 저장 장치 · 파일 열에는 운영체제 파일, 사진 앱 파일, 바다 · 별인 바다.jpg 가 있습니다. 오른쪽 메모리 · 다시 켬 열에는 운영체제와 사진 앱이 있고, 두 칸에는 왼쪽 파일에서 실선이 들어옵니다.'}
+      }
+    }
+  ],
+  review: {
+    own: ['restart-and-storage-1', 'restart-and-storage-2'],
+    prereq: {ref: 'os/what-os-does', id: 'what-os-does-4'},
+    fallback: 'restart-and-storage-3'
+  }
+};
+
+const byId = id => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const center = {x: viewWidth / 2, y: viewHeight / 2};
+const camera = {x: 0, y: 0, zoom: 1};
+const maxZoom = 2.2;
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+byId('zoom-in').onclick = () => zoomBy(.3);
+byId('zoom-out').onclick = () => zoomBy(-.3);
+enableCameraDrag();
+
+viewport.addEventListener('keydown', event => {
+  if (camera.zoom === 1) return;
+  const direction = {ArrowLeft: [-1, 0], ArrowUp: [0, -1], ArrowRight: [1, 0], ArrowDown: [0, 1]}[event.key];
+  if (!direction) return;
+  event.preventDefault();
+  setCamera(camera.x + direction[0] * 18, camera.y + direction[1] * 18, camera.zoom);
+});
+
+window.addEventListener('keydown', event => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
+  if (event.key === '+') zoomBy(.3);
+  else if (event.key === '-') zoomBy(-.3);
+  else if (event.key === '0') resetView();
+  else return;
+  event.preventDefault();
+});
+setCamera(0, 0, 1);
+</script>
+</body>
+</html>

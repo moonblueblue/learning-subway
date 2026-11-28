@@ -4,126 +4,55 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="예시와 증명의 차이, 도미노로 보는 귀납법, 합 공식의 증명, 반복문과 재귀가 맞다는 것을 보이는 방법을 문제로 익혀 보세요.">
-<title>증명과 귀납법 · 레슨 2.3</title>
+<meta name="description" content="모든 n에서 참이라는 것은 어떻게 보일 수 있을까요?">
+<title>증명과 귀납법</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="logic.items.js?v=2b1f32212b453df5">
 <style>
-:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
-button{font:inherit;color:inherit;cursor:pointer}
-button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
-:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
-.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
-header{margin-bottom:20px}
-h1,h2,p{margin:0}
-.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
-h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
-header p.lead{color:var(--muted);margin-top:10px}
-.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
-.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
-.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
-.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
-.primary{background:var(--accent);color:white;border-color:var(--accent)}
-.primary:hover:not(:disabled){background:#115e59}
-.timeline{padding:15px 18px}
-.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
-.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
-.steps button:hover{border-color:var(--accent)}
-.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
-.step-number{font:700 .875rem var(--mono);color:var(--accent)}
-.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
-.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
-.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
-.takeaway p{font-size:1rem}
-.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
-.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
-.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
-.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
-.stage-top h2{font-size:1rem}
-.score{color:var(--accent);font:700 .875rem var(--mono)}
-.case{margin:18px;padding:16px 18px;border-radius:14px;background:#e9f5f3;border:1px solid var(--border);display:grid;gap:6px}
-.case strong{color:var(--accent);font-size:.875rem}
-.case p{font-size:1.125rem;line-height:1.6;color:var(--ink)}
-.items{list-style:none;margin:0;padding:0 18px 18px;display:grid;gap:10px}
-.item{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:grid;gap:8px;background:#fff}
-.item-top{display:flex;gap:10px 14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.item-text{font-size:1rem;font-weight:600;flex:1 1 280px}
-.choices{display:flex;flex-wrap:wrap;gap:6px}
-.choice{min-width:68px}
-.choice[aria-pressed=true]{border-color:var(--accent);background:#d2f4dd;color:#0f5a3c}
-.choice.risk[aria-pressed=true]{border-color:#a24c14;background:#fff1e4;color:#8a3d0f}
-.feedback{font-size:.9375rem;color:var(--muted);line-height:1.6}
-.feedback:empty{display:none}
-.feedback b{margin-right:4px}
-.item.right{border-color:var(--accent);background:#f6fbf7}
-.item.right .feedback b{color:var(--accent)}
-.item.wrong{border-color:#a24c14;background:#fffaf5}
-.item.wrong .feedback b{color:#a24c14}
-.think{margin:0 18px 18px;padding:14px 16px;border-radius:12px;border:1px dashed #9fb7a9;display:grid;gap:10px}
-.think label{font-weight:700}
-.think textarea{font:inherit;min-height:84px;padding:10px 12px;border:1px solid #9fb7a9;border-radius:10px;resize:vertical}
-.think .sample-answer{color:var(--muted);line-height:1.7}
-.think .sample-answer[hidden]{display:none}
-.done{margin:0 18px 18px;padding:12px 14px;border-radius:10px;background:#d2f4dd;color:#0f5a3c;font-weight:700}
-.done[hidden]{display:none}
-.timeline{border-top:1px solid var(--border)}
-.truth{margin:0 18px 14px}
-.truth[hidden]{display:none}
-.truth table{border-collapse:collapse;font:700 1rem var(--mono);margin:0 auto}
-.truth th,.truth td{border:1px solid var(--border);padding:6px 18px;text-align:center}
-.truth th{background:#e9f5f3;color:var(--accent);font-family:system-ui,sans-serif}
-.truth td.blank{color:#9aa8a2}
-.truth td.filled{background:#d2f4dd;color:#0f5a3c}
+.domino { fill: #f9fbf9; stroke: #557e72; stroke-width: 1.5; }
+.domino.fallen { fill: url(#domino-down); }
+.domino-text { font: 650 13px system-ui, sans-serif; fill: var(--ink); }
 
-.worked-example { min-width: 0; margin: 0; }
-.worked-example table { width: 100%; table-layout: auto; border-collapse: separate; border-spacing: 0;
-  border: 1px solid var(--border); border-radius: 8px; font-size: .85rem; line-height: 1.3; }
-.worked-example caption { padding: 0 0 4px; font-weight: 700; text-align: start; }
-.worked-example :is(th, td) { padding: 3px 6px; border-bottom: 1px solid var(--border);
-  text-align: start; overflow-wrap: anywhere; }
-.worked-example thead { background: #eff6f1; }
-.worked-example tbody tr:last-child :is(th, td) { border-bottom: 0; }
-.worked-example tr.is-key :is(th, td) { background: #e3f1e9; font-weight: 700; }
-.worked-example .worked-note { margin-top: 4px; font-size: .85rem; font-weight: 700; }
-@media (max-height: 720px) and (min-width: 641px) {
-  .explanation:has(.worked-example:not([hidden])) .takeaway { display: none; }
-}
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./proof.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=54094544905ce975">
+<link rel="stylesheet" href="../shared/figures.css?v=6299a8916ab8e667">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=bc23e4ccbab765b1"></script>
+<script defer blocking="render" src="./proof.items.js?v=dd45d9542297e493"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=1983a13d45e873cc"></script>
+<script defer blocking="render" src="./proof.en.js?v=cb23b10bfdee06d7"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
   <header>
-    <p class="eyebrow">2장 CS를 위한 수학 · 레슨 2.3 · 실습</p>
+    <p class="eyebrow">2장 CS를 위한 수학</p>
     <h1>증명과 귀납법</h1>
-    <p class="lead">무한히 많은 경우가 모두 맞다고 어떻게 확신할까요? 반례와 도미노, 귀납법 증명을 차례로 따라가 보세요.</p>
+    <p>모든 n에서 참이라는 것은 어떻게 보일 수 있을까요?</p>
   </header>
   <div class="workspace">
     <div>
-      <section class="panel" aria-labelledby="practice-heading">
-        <div class="stage-top"><h2 id="practice-heading">참일까, 거짓일까</h2><span class="score" id="score" aria-live="polite"></span></div>
-        <div class="case"><strong>문제</strong><p id="case"></p></div>
-        <div class="truth" id="table" hidden></div>
-        <ol class="items" id="items"></ol>
-        <p class="done" id="done" role="status" hidden></p>
-        <div class="think">
-          <label for="answer">생각해 보기 · <span id="question"></span></label>
-          <textarea id="answer" placeholder="자유롭게 적어 보세요. 저장되거나 채점되지 않습니다."></textarea>
-          <div><button class="action" id="reveal" type="button" aria-expanded="false">예시 답 보기</button></div>
-          <p class="sample-answer" id="sample" hidden></p>
+      <section class="panel" aria-labelledby="stage-heading">
+        <div class="stage-top"><h2 id="stage-heading">반례, 도미노, 합</h2></div>
+        <div class="stage">
+          <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">반례와 시작 및 이어 감의 그림</title>
+            <desc id="scene-desc"></desc>
+            <g id="figure" aria-hidden="true"></g>
+          </svg>
         </div>
+        <div class="view-controls" role="group" aria-label="장면 보기">
+          <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
+          <output id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
+        </div>
+        <div class="controls"></div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
           <ol class="steps" id="steps"></ol>
@@ -131,288 +60,952 @@ header p.lead{color:var(--muted);margin-top:10px}
       </section>
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
-      <h2 id="step-title"></h2><p id="body"></p>
-      <figure class="worked-example" id="worked-example" hidden></figure>
-      <div class="takeaway"><strong>앞 레슨과 이어 보기</strong><p id="takeaway"></p></div>
-      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+      <h2 id="step-title"></h2>
+      <p id="body"></p>
+      <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
     </section>
   </div>
-  <div class="sr-only" id="announcement" role="status"></div>
+  <div id="announcement" class="sr-only" role="status"></div>
 </main>
 <script>
-const BENEFIT = 'true', RISK = 'false';
-const yes = '참', no = '거짓';
-// Each step is one exercise. `choices` are the two answers; items are statements or truth-table rows.
-// A step with `table` shows its items as a truth table whose last column the learner fills in.
-const row = (p, q, answer, why) => ({ cells: [p, q], answer: answer ? 'true' : 'false', why });
-const TF = [['true', '참'], ['false', '거짓']];
-const lesson = [
-  {
-    worked: {"head": ["입력 n", "n² + n + 41", "판정"], "rows": [[0, "41", "소수"], [1, "43", "소수"], [2, "47", "소수"], [40, "1681 = 41 × 41", "합성수 · 반례"]], "mark": [3]},
-    label: '예와 증명',
-    example: ["n² + n + 41", "n = 40에서 41 × 41", "항상 소수라는 주장 기각"],
-    title: '예를 아무리 많이 확인해도 증명은 아니다',
-    body: "여러 값에서 맞아도 모든 값에서 맞는다는 뜻은 아닙니다. n² + n + 41은 0, 1, 2에서 소수를 만들지만 n = 40에서는 1681 = 41 × 41입니다. 이 한 반례로 항상 소수라는 주장은 거짓입니다.",
-    link: '1.6에서 몇 번 실행해 맞게 나와도 경계(i가 3일 때)에서 틀리는 버그가 있었습니다. 테스트는 버그를 찾을 수 있지만, 버그가 없다는 것을 보여 주지는 못합니다.',
-    case: '다음 문장이 참인지 고르세요.',
-    choices: TF,
-    items: [
-      { text: '예를 100개 확인해 모두 맞으면, 모든 경우에 참이라고 확신할 수 있다.', answer: 'false', why: 'n² + n + 41처럼 40번째에서 처음 틀리는 경우도 있습니다.' },
-      { text: '반례 하나만 찾으면 "모든 경우에 참"이 거짓임을 보일 수 있다.', answer: 'true', why: 'n = 40 하나로 "항상 소수"가 거짓임이 드러납니다.' },
-      { text: '증명은 경우가 무한히 많아도 모두 참임을 보일 수 있다.', answer: 'true', why: '논리로 모든 경우를 한꺼번에 다루기 때문입니다.' },
-      { text: '프로그램을 몇 번 실행해 보고 맞으면 버그가 없다는 것이 증명된다.', answer: 'false', why: '실행해 본 입력에서만 맞는다는 것을 알 수 있을 뿐입니다.' },
-    ],
-    question: '"모든 홀수는 소수다"가 거짓임을 보이려면 무엇이 필요할까요?',
-    sample: '반례 하나면 됩니다. 9는 홀수지만 3 × 3이라 소수가 아닙니다.',
-  },
-  {
-    label: '도미노',
-    example: ["첫 도미노가 넘어짐", "각 도미노가 다음 칸을 넘어뜨림", "모든 칸이 차례로 넘어짐"],
-    title: '첫 칸과 다음 칸이면 모든 칸이 넘어간다',
-    body: '도미노를 끝없이 세워 두었다고 해 봅시다. 첫 번째가 넘어지고, "어떤 도미노가 넘어지면 바로 다음 것도 넘어진다"가 참이면, 모든 도미노가 넘어집니다. 이것이 수학적 귀납법입니다. ① n = 1일 때 참임을 보이고(시작), ② n = k일 때 참이면 n = k + 1일 때도 참임을 보이면(이어 감), 모든 자연수 n에서 참입니다.',
-    link: '0.1에서 1씩 더하면 다음 수가 되었습니다. 귀납법은 이 "1씩 늘려 가기"를 무한히 이어 가는 논리입니다.',
-    case: '도미노 이야기로 다음 문장이 참인지 고르세요.',
-    choices: TF,
-    items: [
-      { text: '첫 도미노가 넘어지고, k번째가 넘어지면 k + 1번째도 넘어진다. 그러면 모두 넘어진다.', answer: 'true', why: '시작과 이어 감이 모두 있으므로 귀납법이 성립합니다.' },
-      { text: 'k번째가 넘어지면 k + 1번째도 넘어진다. 이것만으로 모두 넘어진다.', answer: 'false', why: '첫 도미노를 넘어뜨리지 않으면 아무것도 시작되지 않습니다.' },
-      { text: '첫 도미노만 넘어지면 나머지도 저절로 넘어진다.', answer: 'false', why: '도미노 사이가 멀면 다음 것이 넘어지지 않습니다. 이어 감도 보여야 합니다.' },
-      { text: '귀납법은 1, 2, 3 …처럼 차례로 셀 수 있는 대상에 쓴다.', answer: 'true', why: '다음 칸이 무엇인지 정해져 있어야 "k에서 k + 1로"를 말할 수 있습니다.' },
-    ],
-    question: '재귀 함수(1.5)의 "기저 조건"은 귀납법의 어느 부분과 닮았을까요?',
-    sample: '시작 단계(n = 1일 때)와 닮았습니다. 재귀의 나머지 부분인 "n − 1의 답으로 n의 답을 만든다"는 이어 감 단계와 닮았습니다.',
-  },
-  {
-    worked: {"head": ["단계", "합 S"], "rows": [["n = 1", "1 = 1 × 2 / 2"], ["n = k", "S = k(k + 1) / 2"], ["n = k + 1", "S + (k + 1) = k(k + 1) / 2 + (k + 1)"], ["정리", "S + (k + 1) = (k + 1)(k + 2) / 2"]], "mark": [3]},
-    label: '증명 따라가기',
-    example: ["S = k(k + 1) / 2", "양쪽에 k + 1을 더함", "(k + 1)(k + 2) / 2"],
-    title: '1부터 n까지의 합은 n(n + 1)/2다',
-    body: '1 + 2 + … + n = n(n + 1)/2를 귀납법으로 증명해 봅시다. ① n = 1이면 왼쪽은 1, 오른쪽은 1 × 2 / 2 = 1로 같습니다. ② n = k일 때 1 + … + k = k(k + 1)/2라고 가정합니다. 양쪽에 k + 1을 더하면 오른쪽은 k(k + 1)/2 + (k + 1) = (k + 1)(k + 2)/2가 되어, n = k + 1일 때의 식과 같아집니다. 따라서 모든 n에서 참입니다.',
-    link: '1.2의 while 반복은 합계에 1, 2, 3을 차례로 더했습니다. 이 공식이 있으면 반복 없이 3 × 4 / 2 = 6을 바로 구할 수 있습니다.',
-    case: '증명의 각 문장이 맞는지 고르세요.',
-    choices: [['true', '맞다'], ['false', '틀리다']],
-    items: [
-      { text: 'n = 1일 때: 1 = 1 × 2 / 2', answer: 'true', why: '시작 단계입니다. 양쪽 모두 1입니다.' },
-      { text: 'n = k일 때 식이 성립한다고 가정해도 된다.', answer: 'true', why: '이어 감 단계에서는 k일 때를 가정하고 k + 1일 때를 보입니다. 시작 단계가 이 가정의 출발점이 됩니다.' },
-      { text: 'k(k + 1)/2 + (k + 1)은 (k + 1)(k + 2)/2와 같다.', answer: 'true', why: '(k + 1)로 묶으면 (k + 1)(k/2 + 1) = (k + 1)(k + 2)/2입니다.' },
-      { text: 'n = 1, 2, 3에서 맞으니 증명이 끝났다.', answer: 'false', why: '그것은 예시입니다. 이어 감 단계가 있어야 모든 n이 됩니다.' },
-    ],
-    question: '1부터 100까지의 합은 얼마일까요?',
-    sample: '100 × 101 / 2 = 5050입니다. 반복으로 100번 더하지 않아도 공식 한 번이면 됩니다.',
-  },
-  {
-    worked: {"head": ["상태", "i", "합계 = 1 + … + (i − 1)"], "rows": [["반복 전", 3, "3 = 1 + 2"], ["3을 더하고 i를 1 증가", 4, "6 = 1 + 2 + 3"], ["종료 · i > n = 3", 4, 6]], "mark": [1]},
-    label: '코드의 정확성',
-    example: ["i = 3 · 3 = 1 + 2", "3을 더하고 i를 4로", "i = 4 · 6 = 1 + 2 + 3"],
-    title: '귀납법으로 프로그램이 맞다는 것을 보인다',
-    body: '반복문이 맞다는 것은 "반복 불변식"으로 보입니다. 1.2의 합계 반복에서 "매 바퀴를 시작할 때 합계 = 1 + … + (i − 1)"이 처음에도 참이고, 한 바퀴가 지나도 계속 참이면, 반복이 끝났을 때 합계는 1 + … + n입니다. 재귀 함수도 같은 방식으로 보입니다.',
-    link: '1.5의 팩(n)은 팩(1)이 맞고, 팩(n − 1)이 맞으면 n × 팩(n − 1)도 맞습니다. 바로 귀납법의 두 단계입니다.',
-    case: '다음 문장이 참인지 고르세요.',
-    choices: TF,
-    items: [
-      { text: '반복 전에 합계 = 0, i = 1이면 "합계 = 1 + … + (i − 1)"은 참이다.', answer: 'true', why: 'i − 1 = 0이므로 더할 것이 없는 합 0과 같습니다.' },
-      { text: '한 바퀴에서 합계에 i를 더하고 i를 1 늘리면 불변식은 계속 참이다.', answer: 'true', why: '합계가 1 + … + i가 되고, 새 i로 보면 1 + … + (새 i − 1)입니다.' },
-      { text: '팩(1)이 맞고 팩(n − 1)이 맞으면 팩(n)도 맞으므로, 모든 n에서 팩이 맞다.', answer: 'true', why: '시작과 이어 감, 귀납법 그대로입니다.' },
-      { text: '불변식이 있으면 반복이 반드시 끝난다.', answer: 'false', why: '끝나는지는 따로 보여야 합니다. 1.2의 무한 반복처럼 i가 늘지 않으면 끝나지 않습니다.' },
-    ],
-    question: '1.6의 하나 차이 버그(while i < 3)를 불변식으로 보면 어디서 어긋날까요?',
-    sample: '반복이 끝났을 때 i = 3이라 불변식은 합계 = 1 + 2만 말해 줍니다. 원하는 결과(1 + 2 + 3)가 되려면 끝날 때 i가 4여야 하므로, 끝나는 조건이 잘못되었다는 것을 알 수 있습니다.',
-  },
-];
-
-const byId = (id) => document.getElementById(id);
-const state = { index: 0, picks: lesson.map((step) => step.items.map(() => null)) };
-
-
-function showWorkedExample(worked) {
-  const figure = byId('worked-example');
-  figure.hidden = !worked;
-  figure.replaceChildren();
-  if (!worked) return;
-  const table = document.createElement('table');
-  table.createCaption().textContent = '계산 예시';
-  const header = table.createTHead().insertRow();
-  for (const name of worked.head) {
-    const cell = document.createElement('th');
-    cell.scope = 'col';
-    cell.textContent = name;
-    header.append(cell);
-  }
-  const body = table.createTBody();
-  worked.rows.forEach((values, index) => {
-    const row = body.insertRow();
-    row.classList.toggle('is-key', worked.mark.includes(index));
-    values.forEach((value, column) => {
-      const cell = document.createElement(column === 0 ? 'th' : 'td');
-      if (column === 0) cell.scope = 'row';
-      cell.textContent = value;
-      row.append(cell);
-    });
-  });
-  figure.append(table);
-  if (worked.note) {
-    const note = document.createElement('p');
-    note.className = 'worked-note';
-    note.textContent = worked.note;
-    figure.append(note);
-  }
-}
-
-function showStep(index, announce = true) {
-  state.index = index;
-  const step = lesson[index];
-  showWorkedExample(step.worked);
-  byId('step-title').textContent = step.title;
-  byId('body').textContent = step.body;
-  byId('takeaway').textContent = step.link;
-  byId('case').textContent = step.case;
-  byId('question').textContent = step.question;
-  byId('sample').textContent = step.sample;
-  byId('sample').hidden = true;
-  byId('reveal').setAttribute('aria-expanded', 'false');
-  byId('reveal').textContent = '예시 답 보기';
-  byId('answer').value = '';
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  stepButtons.forEach((button, i) => {
-    if (i === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  buildItems();
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
-}
-
-function buildItems() {
-  const step = lesson[state.index];
-  const list = byId('items');
-  list.replaceChildren();
-  step.items.forEach((item, i) => {
-    const li = document.createElement('li');
-    li.className = 'item';
-    const top = document.createElement('div');
-    top.className = 'item-top';
-    const text = document.createElement('span');
-    text.className = 'item-text';
-    text.id = `item-${i}`;
-    text.textContent = step.table ? `${step.table[0]} ${item.cells[0]} · ${step.table[1]} ${item.cells[1]}` : item.text;
-    const choices = document.createElement('div');
-    choices.className = 'choices';
-    choices.setAttribute('role', 'group');
-    choices.setAttribute('aria-labelledby', text.id);
-    for (const [value, label] of step.choices) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = `action choice ${value === 'false' ? 'risk' : 'benefit'}`;
-      button.textContent = label;
-      button.dataset.value = value;
-      button.addEventListener('click', () => pick(i, value));
-      choices.append(button);
+const lesson = {
+  "question": "모든 n에서 참이라는 것은 어떻게 보일 수 있을까요?",
+  "terms": [
+    {
+      "term": "소수",
+      "meaning": "1과 자기 자신으로만 나누어떨어지는 2 이상의 수. 예: 41, 43, 47",
+      "step": 1
+    },
+    {
+      "term": "반례",
+      "meaning": "\"모든 경우에 참\"이라는 말을 거짓으로 만드는 경우 하나",
+      "step": 2
+    },
+    {
+      "term": "증명",
+      "meaning": "확인하지 않은 경우까지 포함해 모든 경우에 참임을 논리로 보이는 것",
+      "step": 2
+    },
+    {
+      "term": "시작",
+      "meaning": "첫 번째 경우(n = 1 등)에서 참임을 보이는 부분",
+      "step": 4
+    },
+    {
+      "term": "이어 감",
+      "meaning": "어떤 k에서 참이면 바로 다음 k + 1에서도 참임을 보이는 부분",
+      "step": 4
+    },
+    {
+      "term": "귀납법",
+      "meaning": "시작과 이어 감을 둘 다 보여 모든 자연수 n에서 참임을 보이는 방법",
+      "step": 4
+    },
+    {
+      "term": "반복 불변식",
+      "meaning": "반복의 조건을 확인할 때마다 늘 참인 문장. 예: 합계 = 1 + … + (i − 1)",
+      "step": 8
     }
-    const feedback = document.createElement('p');
-    feedback.className = 'feedback';
-    feedback.setAttribute('role', 'status');
-    top.append(text, choices);
-    li.append(top, feedback);
-    list.append(li);
-  });
-  syncItems();
-}
-
-// For table steps, a compact truth table mirrors the answers so far.
-function syncTable() {
-  const step = lesson[state.index];
-  const box = byId('table');
-  box.hidden = !step.table;
-  if (!step.table) return;
-  const picks = state.picks[state.index];
-  const label = (v) => step.choices.find(([value]) => value === v)?.[1] ?? '?';
-  box.innerHTML = '';
-  const table = document.createElement('table');
-  const head = table.createTHead().insertRow();
-  step.table.forEach((h) => { const th = document.createElement('th'); th.textContent = h; head.append(th); });
-  const body = table.createTBody();
-  step.items.forEach((item, i) => {
-    const tr = body.insertRow();
-    item.cells.forEach((c) => { tr.insertCell().textContent = c; });
-    const cell = tr.insertCell();
-    cell.textContent = picks[i] === item.answer ? label(item.answer) : '?';
-    cell.className = picks[i] === item.answer ? 'filled' : 'blank';
-  });
-  box.append(table);
-}
-
-function pick(i, value) {
-  state.picks[state.index][i] = value;
-  syncItems();
-  const item = lesson[state.index].items[i];
-  byId('announcement').textContent = value === item.answer ? '맞았습니다.' : '다시 생각해 보세요.';
-}
-
-function syncItems() {
-  const step = lesson[state.index];
-  const picks = state.picks[state.index];
-  [...byId('items').children].forEach((li, i) => {
-    const item = step.items[i];
-    const picked = picks[i];
-    li.classList.toggle('right', picked === item.answer);
-    li.classList.toggle('wrong', picked !== null && picked !== item.answer);
-    for (const button of li.querySelectorAll('.choice')) button.setAttribute('aria-pressed', String(button.dataset.value === picked));
-    const feedback = li.querySelector('.feedback');
-    feedback.replaceChildren();
-    if (picked !== null) {
-      const mark = document.createElement('b');
-      mark.textContent = picked === item.answer ? '✓ 맞았습니다.' : '✗ 다시 생각해 보세요.';
-      feedback.append(mark, picked === item.answer ? item.why : '');
+  ],
+  "steps": [
+    {
+      "label": "예를 확인",
+      "title": "40개를 넣어 봐도 모두 소수였습니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "n",
+            "cells": [
+              {
+                "id": "n0",
+                "label": "n = 0",
+                "sub": "41"
+              },
+              {
+                "id": "n1",
+                "label": "n = 1",
+                "sub": "43"
+              },
+              {
+                "id": "n2",
+                "label": "n = 2",
+                "sub": "47"
+              },
+              {
+                "id": "n3",
+                "label": "n = 3 ~ 39",
+                "sub": "37개"
+              },
+              {
+                "id": "n40",
+                "label": "n = 40",
+                "sub": "1681 = 41 × 41"
+              }
+            ]
+          },
+          {
+            "title": "n² + n + 41",
+            "cells": [
+              {
+                "id": "p",
+                "label": "소수"
+              },
+              {
+                "id": "q",
+                "label": "소수 아님"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "n0",
+            "to": "p",
+            "kind": "solid"
+          },
+          {
+            "from": "n1",
+            "to": "p",
+            "kind": "solid"
+          },
+          {
+            "from": "n2",
+            "to": "p",
+            "kind": "solid"
+          },
+          {
+            "from": "n3",
+            "to": "p",
+            "kind": "solid"
+          },
+          {
+            "from": "n40",
+            "to": "q",
+            "kind": "new"
+          }
+        ],
+        "changed": [],
+        "hide": [
+          "n40",
+          "n40→q"
+        ]
+      },
+      "body": "n² 은 n × n 입니다. 소수는 1과 자기 자신으로만 나누어떨어지는 2 이상의 수입니다. n = 0부터 2까지 식에 넣으면 41, 43, 47이 나옵니다. n = 3부터 39까지 하나씩 넣어 보면 37개 모두 소수입니다.",
+      "description": "네 칸의 선이 모두 소수로 모입니다. 소수 아님에는 선이 없습니다.",
+      "takeaway": "네 칸의 선이 모두 소수로 모입니다. 소수 아님에는 선이 없습니다."
+    },
+    {
+      "label": "예로 결론 내기",
+      "title": "41번째에서 처음 틀립니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "n",
+            "cells": [
+              {
+                "id": "n0",
+                "label": "n = 0",
+                "sub": "41"
+              },
+              {
+                "id": "n1",
+                "label": "n = 1",
+                "sub": "43"
+              },
+              {
+                "id": "n2",
+                "label": "n = 2",
+                "sub": "47"
+              },
+              {
+                "id": "n3",
+                "label": "n = 3 ~ 39",
+                "sub": "37개"
+              },
+              {
+                "id": "n40",
+                "label": "n = 40",
+                "sub": "1681 = 41 × 41"
+              }
+            ]
+          },
+          {
+            "title": "n² + n + 41",
+            "cells": [
+              {
+                "id": "p",
+                "label": "소수"
+              },
+              {
+                "id": "q",
+                "label": "소수 아님"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "n0",
+            "to": "p",
+            "kind": "solid"
+          },
+          {
+            "from": "n1",
+            "to": "p",
+            "kind": "solid"
+          },
+          {
+            "from": "n2",
+            "to": "p",
+            "kind": "solid"
+          },
+          {
+            "from": "n3",
+            "to": "p",
+            "kind": "solid"
+          },
+          {
+            "from": "n40",
+            "to": "q",
+            "kind": "new"
+          }
+        ],
+        "changed": [
+          "n40",
+          "n40→q"
+        ]
+      },
+      "body": "n = 40에서 1681 = 41 × 41이므로 소수가 아닙니다. '모든 n에서 소수다'도 참 아니면 거짓인 명제입니다. '모든'이 붙은 명제는 어긋나는 경우가 하나만 있어도 거짓입니다. 이런 경우를 반례라고 합니다. 테스트를 아무리 많이 통과해도 버그가 없다는 증명은 되지 않습니다.",
+      "description": "n = 40만 소수 아님으로 갑니다. 이 한 경우로 모든 n에서 소수라는 명제가 거짓이 됩니다.",
+      "takeaway": "n = 40만 소수 아님으로 갑니다. 이 한 경우로 모든 n에서 소수라는 명제가 거짓이 됩니다.",
+      "predict": {
+        "prompt": "n = 0부터 39까지 40개가 모두 소수였습니다. 이것으로 \"n² + n + 41은 모든 n에서 소수다\"라고 말할 수 있을까요?",
+        "options": [
+          {
+            "text": "말할 수 없다",
+            "why": "확인하지 않은 n이 끝없이 남아 있고, 실제로 n = 40에서 1681 = 41 × 41이 됩니다.",
+            "correct": true
+          },
+          {
+            "text": "말할 수 있다",
+            "why": "40개나 맞았으니 충분하다고 본 것인데, '모든'은 하나만 어겨도 거짓입니다."
+          },
+          {
+            "text": "말할 수 있다, 39까지 맞았으니 40도 맞는다",
+            "why": "앞이 맞으면 다음도 맞는다는 근거를 보이지 않았습니다. 그 근거를 보이는 것이 4단계의 이어 감입니다."
+          }
+        ],
+        "before": {
+          "part": "map",
+          "columns": [
+            {
+              "title": "n",
+              "cells": [
+                {
+                  "id": "n0",
+                  "label": "n = 0",
+                  "sub": "41"
+                },
+                {
+                  "id": "n1",
+                  "label": "n = 1",
+                  "sub": "43"
+                },
+                {
+                  "id": "n2",
+                  "label": "n = 2",
+                  "sub": "47"
+                },
+                {
+                  "id": "n3",
+                  "label": "n = 3 ~ 39",
+                  "sub": "37개"
+                },
+                {
+                  "id": "n40",
+                  "label": "n = 40",
+                  "sub": "1681 = 41 × 41"
+                }
+              ]
+            },
+            {
+              "title": "n² + n + 41",
+              "cells": [
+                {
+                  "id": "p",
+                  "label": "소수"
+                },
+                {
+                  "id": "q",
+                  "label": "소수 아님"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "from": "n0",
+              "to": "p",
+              "kind": "solid"
+            },
+            {
+              "from": "n1",
+              "to": "p",
+              "kind": "solid"
+            },
+            {
+              "from": "n2",
+              "to": "p",
+              "kind": "solid"
+            },
+            {
+              "from": "n3",
+              "to": "p",
+              "kind": "solid"
+            },
+            {
+              "from": "n40",
+              "to": "q",
+              "kind": "new"
+            }
+          ],
+          "changed": [],
+          "description": "n = 0부터 39까지의 선이 모두 소수에 닿습니다. 그 뒤의 값은 보이지 않습니다.",
+          "hide": [
+            "n40",
+            "n40→q"
+          ]
+        }
+      }
+    },
+    {
+      "label": "도미노 세우기",
+      "title": "다음 도미노에 닿게 세워 둡니다",
+      "figure": {
+        "custom": true,
+        "changed": [],
+        "hide": []
+      },
+      "body": "도미노 k가 넘어지는 것은 n = k에서 참인 경우에 해당합니다. 첫 도미노를 미는 일이 시작이고, 앞 도미노가 다음 도미노에 닿는 간격이 이어 감입니다. 실제 도미노는 끝이 있지만, 이 그림의 …는 자연수가 끝없이 이어진다는 뜻입니다.",
+      "description": "일곱 간격이 실선이고 첫 도미노 앞에 미는 화살표가 있습니다.",
+      "takeaway": "일곱 간격이 실선이고 첫 도미노 앞에 미는 화살표가 있습니다."
+    },
+    {
+      "label": "첫 도미노 밀기",
+      "title": "시작과 이어 감이 있으면 모두 넘어집니다",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "도미노1",
+          "도미노2",
+          "도미노3",
+          "도미노4",
+          "도미노5",
+          "도미노6",
+          "도미노7",
+          "도미노8"
+        ],
+        "hide": []
+      },
+      "body": "첫 도미노를 밀었고 앞의 도미노가 넘어질 때마다 다음 도미노도 넘어집니다. 시작과 이어 감, 둘 중 하나만 있으면 안 됩니다. 두 가지를 보여 모든 자연수에서 참이라고 증명하는 방법을 귀납법이라고 합니다.",
+      "description": "여덟 도미노가 모두 오른쪽으로 기울어 있습니다. 실선 간격을 차례로 지나 8번까지 넘어졌습니다.",
+      "takeaway": "여덟 도미노가 모두 오른쪽으로 기울어 있습니다. 실선 간격을 차례로 지나 8번까지 넘어졌습니다.",
+      "predict": {
+        "prompt": "모든 간격이 \"앞이 넘어지면 다음에 닿는\" 거리이고, 첫 도미노를 밉니다. 8번 도미노는 어떻게 될까요?",
+        "options": [
+          {
+            "text": "넘어진다",
+            "why": "1이 2를, 2가 3을 넘어뜨리는 식으로 일곱 간격을 차례로 지나 8번에 닿습니다.",
+            "correct": true
+          },
+          {
+            "text": "서 있다",
+            "why": "민 것은 첫 도미노뿐이라고 본 것인데, 실선 간격마다 앞이 다음을 넘어뜨립니다."
+          },
+          {
+            "text": "알 수 없다",
+            "why": "8번을 직접 밀어 보지 않아서 모른다고 본 것인데, 시작과 모든 간격의 이어 감이 8번까지 이어집니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "changed": [],
+          "hide": [
+            "도미노 기울기",
+            "위 글"
+          ],
+          "description": "여덟 도미노가 서 있고 일곱 간격은 모두 실선입니다. 첫째 앞에는 시작 화살표가 있습니다."
+        }
+      }
+    },
+    {
+      "label": "넓힌 간격",
+      "title": "간격 하나가 끊기면 거기서 멈춥니다",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "간격4-5",
+          "도미노5",
+          "도미노6",
+          "도미노7",
+          "도미노8"
+        ],
+        "hide": []
+      },
+      "body": "4번과 5번 사이를 넓혔습니다. 앞쪽에서 네 번째까지는 이어지지만, 4번이 5번에 닿지 않으면 5번부터는 움직이지 않습니다.",
+      "description": "1번부터 4번은 기울어 있고 5번부터 8번은 서 있습니다. 그 경계가 점선 간격입니다.",
+      "takeaway": "1번부터 4번은 기울어 있고 5번부터 8번은 서 있습니다. 그 경계가 점선 간격입니다.",
+      "predict": {
+        "prompt": "4번과 5번 사이만 넓혔습니다. 첫 도미노를 밀면 몇 번까지 넘어질까요?",
+        "options": [
+          {
+            "text": "4번까지",
+            "why": "1~4번 사이 간격은 그대로 닿지만, 4번은 5번에 닿지 않아 이어 감이 거기서 끊깁니다.",
+            "correct": true
+          },
+          {
+            "text": "8번까지 모두",
+            "why": "첫 도미노만 밀면 된다고 본 것인데, 이어 감이 하나라도 빠지면 그 뒤로는 전해지지 않습니다."
+          },
+          {
+            "text": "1번만",
+            "why": "끊긴 곳이 하나라도 있으면 아무것도 이어지지 않는다고 본 것인데, 끊긴 곳 앞의 간격들은 그대로 닿습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "changed": [
+            "간격4-5"
+          ],
+          "hide": [
+            "도미노 기울기"
+          ],
+          "description": "여덟 도미노가 서 있습니다. 4번과 5번 사이만 점선이고 닿지 않음이라고 적혀 있습니다."
+        }
+      }
+    },
+    {
+      "label": "합 확인",
+      "title": "1부터 n까지의 합을 몇 개 확인합니다",
+      "figure": {
+        "part": "bars",
+        "bars": [
+          {
+            "label": "n = 1, 합 1 = 1 × 2 ÷ 2",
+            "total": 1,
+            "segments": [
+              {
+                "id": "a1",
+                "value": 1,
+                "kind": "a",
+                "label": "1"
+              }
+            ]
+          },
+          {
+            "label": "n = 2, 합 3 = 2 × 3 ÷ 2",
+            "total": 3,
+            "segments": [
+              {
+                "id": "b1",
+                "value": 1,
+                "kind": "a",
+                "label": "1"
+              },
+              {
+                "id": "b2",
+                "value": 2,
+                "kind": "a",
+                "label": "2"
+              }
+            ]
+          },
+          {
+            "label": "n = 3, 합 6 = 3 × 4 ÷ 2",
+            "total": 6,
+            "segments": [
+              {
+                "id": "c1",
+                "value": 1,
+                "kind": "a",
+                "label": "1"
+              },
+              {
+                "id": "c2",
+                "value": 2,
+                "kind": "a",
+                "label": "2"
+              },
+              {
+                "id": "c3",
+                "value": 3,
+                "kind": "a",
+                "label": "3"
+              }
+            ]
+          }
+        ],
+        "max": 10,
+        "labelWidth": 232,
+        "unit": "합",
+        "exactLabels": true,
+        "changed": []
+      },
+      "body": "1부터 n까지의 합은 n(n + 1) ÷ 2라는 식으로 나타낼 수 있습니다. n = 1, 2, 3에서 합과 공식의 값은 각각 1, 3, 6입니다. 세 경우를 확인한 것은 예를 본 것일 뿐 증명은 아닙니다. n = 1에서 맞는 것은 시작에 해당합니다.",
+      "description": "막대가 1, 3, 6으로 길어집니다. 막대 길이와 이름표 공식의 값이 같습니다.",
+      "takeaway": "막대가 1, 3, 6으로 길어집니다. 막대 길이와 이름표 공식의 값이 같습니다."
+    },
+    {
+      "label": "합의 이어 감",
+      "title": "앞의 합에 다음 수를 더하면 다음 공식이 됩니다",
+      "figure": {
+        "part": "bars",
+        "bars": [
+          {
+            "label": "n = 1, 합 1 = 1 × 2 ÷ 2",
+            "total": 1,
+            "segments": [
+              {
+                "id": "a1",
+                "value": 1,
+                "kind": "a",
+                "label": "1"
+              }
+            ]
+          },
+          {
+            "label": "n = 2, 합 3 = 2 × 3 ÷ 2",
+            "total": 3,
+            "segments": [
+              {
+                "id": "b1",
+                "value": 1,
+                "kind": "a",
+                "label": "1"
+              },
+              {
+                "id": "b2",
+                "value": 2,
+                "kind": "a",
+                "label": "2"
+              }
+            ]
+          },
+          {
+            "label": "n = 3, 합 6 = 3 × 4 ÷ 2",
+            "total": 6,
+            "segments": [
+              {
+                "id": "c1",
+                "value": 1,
+                "kind": "a",
+                "label": "1"
+              },
+              {
+                "id": "c2",
+                "value": 2,
+                "kind": "a",
+                "label": "2"
+              },
+              {
+                "id": "c3",
+                "value": 3,
+                "kind": "a",
+                "label": "3"
+              }
+            ]
+          },
+          {
+            "label": "n = 4 · 6 + 4 = 10 = 4 × 5 ÷ 2",
+            "total": 10,
+            "segments": [
+              {
+                "id": "d123",
+                "value": 6,
+                "kind": "a",
+                "label": "앞의 합 6"
+              },
+              {
+                "id": "d4",
+                "value": 4,
+                "kind": "b",
+                "label": "더한 4"
+              }
+            ]
+          }
+        ],
+        "max": 10,
+        "labelWidth": 232,
+        "unit": "합",
+        "exactLabels": true,
+        "changed": [
+          "d4"
+        ]
+      },
+      "body": "n = k까지의 합이 k(k + 1) ÷ 2라면 k + 1을 더한 합은 k(k + 1) ÷ 2 + (k + 1) = (k + 1)(k + 2) ÷ 2입니다. 어떤 k에서도 같은 계산이 되므로 이어 감이 보였고, 6단계의 n = 1이 시작입니다.",
+      "description": "넷째 막대 앞부분의 길이는 셋째 막대와 같은 6입니다. 4를 붙이면 길이 10이 됩니다.",
+      "takeaway": "넷째 막대 앞부분의 길이는 셋째 막대와 같은 6입니다. 4를 붙이면 길이 10이 됩니다.",
+      "predict": {
+        "prompt": "1 + 2 + 3 = 6은 공식 3 × 4 ÷ 2와 같았습니다. 여기에 4를 더한 합은 공식 4 × 5 ÷ 2와 같을까요?",
+        "options": [
+          {
+            "text": "같다, 둘 다 10",
+            "why": "6 + 4 = 10이고 4 × 5 ÷ 2 = 10입니다. 앞의 합이 맞으면 다음 합도 맞습니다.",
+            "correct": true
+          },
+          {
+            "text": "다르다",
+            "why": "공식이 n = 3에 맞춘 값이라 n = 4에서는 어긋난다고 본 것인데, 계산하면 둘 다 10입니다."
+          },
+          {
+            "text": "1 + 2 + 3 + 4를 처음부터 다시 더해 봐야 안다",
+            "why": "앞의 합 6을 그대로 쓰고 4만 더하면 됩니다. 이것이 이어 감입니다."
+          }
+        ],
+        "before": {
+          "part": "bars",
+          "bars": [
+            {
+              "label": "n = 1, 합 1 = 1 × 2 ÷ 2",
+              "total": 1,
+              "segments": [
+                {
+                  "id": "a1",
+                  "value": 1,
+                  "kind": "a",
+                  "label": "1"
+                }
+              ]
+            },
+            {
+              "label": "n = 2, 합 3 = 2 × 3 ÷ 2",
+              "total": 3,
+              "segments": [
+                {
+                  "id": "b1",
+                  "value": 1,
+                  "kind": "a",
+                  "label": "1"
+                },
+                {
+                  "id": "b2",
+                  "value": 2,
+                  "kind": "a",
+                  "label": "2"
+                }
+              ]
+            },
+            {
+              "label": "n = 3, 합 6 = 3 × 4 ÷ 2",
+              "total": 6,
+              "segments": [
+                {
+                  "id": "c1",
+                  "value": 1,
+                  "kind": "a",
+                  "label": "1"
+                },
+                {
+                  "id": "c2",
+                  "value": 2,
+                  "kind": "a",
+                  "label": "2"
+                },
+                {
+                  "id": "c3",
+                  "value": 3,
+                  "kind": "a",
+                  "label": "3"
+                }
+              ]
+            },
+            {
+              "label": "n = 4 · ?",
+              "total": 6,
+              "segments": [
+                {
+                  "id": "d123",
+                  "value": 6,
+                  "kind": "a",
+                  "label": "앞의 합 6"
+                }
+              ]
+            }
+          ],
+          "max": 10,
+          "labelWidth": 232,
+          "unit": "합",
+          "exactLabels": true,
+          "changed": [],
+          "description": "n = 1부터 3까지의 세 막대와 n = 4 막대의 앞의 합 6만 보입니다."
+        }
+      }
+    },
+    {
+      "label": "반복이 맞는 이유",
+      "title": "반복도 시작과 이어 감으로 맞음을 보입니다",
+      "figure": {
+        "part": "timeline",
+        "axis": {
+          "kind": "order",
+          "unit": "조건 확인 차례",
+          "max": 4,
+          "ticks": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "rows": [
+          {
+            "label": "확인할 때 i",
+            "spans": [
+              {
+                "id": "i1",
+                "start": 0,
+                "end": 1,
+                "kind": "a",
+                "label": "1"
+              },
+              {
+                "id": "i2",
+                "start": 1,
+                "end": 2,
+                "kind": "a",
+                "label": "2"
+              },
+              {
+                "id": "i3",
+                "start": 2,
+                "end": 3,
+                "kind": "a",
+                "label": "3"
+              },
+              {
+                "id": "i4",
+                "start": 3,
+                "end": 4,
+                "kind": "a",
+                "label": "4"
+              }
+            ]
+          },
+          {
+            "label": "확인할 때 합계",
+            "spans": [
+              {
+                "id": "s0",
+                "start": 0,
+                "end": 1,
+                "kind": "b",
+                "label": "0"
+              },
+              {
+                "id": "s1",
+                "start": 1,
+                "end": 2,
+                "kind": "b",
+                "label": "1"
+              },
+              {
+                "id": "s3",
+                "start": 2,
+                "end": 3,
+                "kind": "b",
+                "label": "3"
+              },
+              {
+                "id": "s6",
+                "start": 3,
+                "end": 4,
+                "kind": "b",
+                "label": "6"
+              }
+            ]
+          },
+          {
+            "label": "1 + … + (i − 1)",
+            "spans": [
+              {
+                "id": "v0",
+                "start": 0,
+                "end": 1,
+                "kind": "c",
+                "label": "0 (더할 것 없음)"
+              },
+              {
+                "id": "v1",
+                "start": 1,
+                "end": 2,
+                "kind": "c",
+                "label": "1"
+              },
+              {
+                "id": "v3",
+                "start": 2,
+                "end": 3,
+                "kind": "c",
+                "label": "1 + 2 = 3"
+              },
+              {
+                "id": "v6",
+                "start": 3,
+                "end": 4,
+                "kind": "c",
+                "label": "1 + 2 + 3 = 6"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "at": 0,
+            "label": "시작: 0 = 0"
+          },
+          {
+            "at": 1,
+            "label": "아래 두 행 + 1"
+          },
+          {
+            "at": 2,
+            "label": "아래 두 행 + 2"
+          },
+          {
+            "at": 3,
+            "label": "아래 두 행 + 3"
+          },
+          {
+            "at": 4,
+            "label": "끝: 합계 6"
+          }
+        ],
+        "changed": [
+          "v0",
+          "v1",
+          "v3",
+          "v6"
+        ]
+      },
+      "body": "조건과 반복에서 보았듯, 확인할 때 i가 1, 2, 3, 4로 바뀔 때 합계는 0, 1, 3, 6입니다. 그때마다 합계 = 1 + … + (i − 1)이므로 이를 반복 불변식이라고 합니다. 재귀의 기저 조건은 시작, n − 1의 답으로 n의 답을 만드는 것은 이어 감과 닮았습니다. 불변식은 반복이 끝난다는 것까지 보여 주지는 않습니다. 끝나는지는 i가 매 바퀴 1씩 커진다는 것으로 따로 봅니다.",
+      "description": "셋째 행은 매 칸에서 그 위의 합계와 같습니다. 마지막 칸에서는 합계 6 = 1 + 2 + 3입니다.",
+      "takeaway": "셋째 행은 매 칸에서 그 위의 합계와 같습니다. 마지막 칸에서는 합계 6 = 1 + 2 + 3입니다.",
+      "code": {
+        "lines": [
+          "합계 = 0",
+          "i = 1",
+          "while i <= 3:",
+          "    합계 = 합계 + i",
+          "    i = i + 1"
+        ]
+      },
+      "links": [
+        {
+          "label": "조건과 반복",
+          "href": "../programming/control.html"
+        },
+        {
+          "label": "재귀",
+          "href": "../programming/recursion.html"
+        }
+      ]
     }
-  });
-  const right = picks.filter((p, i) => p === step.items[i].answer).length;
-  byId('score').textContent = `${right} / ${step.items.length} 맞힘`;
-  byId('done').hidden = right !== step.items.length;
-  byId('done').textContent = step.table ? '✓ 진리표를 모두 채웠습니다. 아래 질문도 생각해 보세요.' : '✓ 모두 맞게 골랐습니다. 아래 질문도 생각해 보세요.';
-  syncTable();
-}
-
-byId('reveal').onclick = () => {
-  const open = byId('sample').hidden;
-  byId('sample').hidden = !open;
-  byId('reveal').setAttribute('aria-expanded', String(open));
-  byId('reveal').textContent = open ? '예시 답 숨기기' : '예시 답 보기';
+  ],
+  "review": {
+    "own": [
+      "proof-1",
+      "proof-2"
+    ],
+    "prereq": {
+      "ref": "math/logic",
+      "id": "logic-3"
+    },
+    "fallback": "proof-3"
+  }
 };
-
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/proof/${index + 1}`);
-  showStep(index);
-}
-const stepButtons = lesson.map(({ label }, index) => {
-  const listItem = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  const number = document.createElement('span');
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.addEventListener('click', () => goToStep(index));
-  listItem.append(button);
-  byId('steps').append(listItem);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
-window.addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+const byId = id => document.getElementById(id);
+const viewport = byId('scene');
+const viewWidth = 620;
+const viewHeight = 280;
+const center = {x: viewWidth / 2, y: viewHeight / 2};
+const camera = {x: 0, y: 0, zoom: 1};
+const maxZoom = 2.2;
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+document.getElementById('zoom-in').onclick = () => zoomBy(.25);
+document.getElementById('zoom-out').onclick = () => zoomBy(-.25);
+enableCameraDrag();
+viewport.addEventListener('keydown', event => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const pan = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1]}[event.key];
+  if (pan && camera.zoom > 1) {
     event.preventDefault();
-    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
+    setCamera(camera.x + pan[0] * 18, camera.y + pan[1] * 18, camera.zoom);
+  } else if (event.key === '+' || event.key === '-' || event.key === '0') {
+    event.preventDefault();
+    if (event.key === '0') resetView();
+    else zoomBy(event.key === '+' ? .25 : -.25);
   }
 });
-const initial = routeIndex();
-history.replaceState(null, '', `#/proof/${initial + 1}`);
-showStep(initial, false);
+setCamera(0, 0, 1);
+
+const domWords = [
+  '모든 간격: 앞이 넘어지면 다음에 닿는다',
+  '이어 감: 앞이 넘어지면 다음도 넘어진다',
+  '4번과 5번 사이만 넓다',
+];
+const dominoText = value => window.courseI18n?.translate(String(value)) ?? String(value);
+
+function drawFigure(index, {hide, changed}) {
+  const svgRoot = svg('svg',{x:0,y:25,width:620,height:230,viewBox:'0 0 640 230'},byId('figure'));
+  const step = index - 2;
+  const widened = step === 2;
+  const positions = Array.from({length:8},(_,i)=>40 + 72*i + (widened && i >= 4 ? 40 : 0));
+  const defs = svg('defs',{},svgRoot);
+  const pattern = svg('pattern',{id:'domino-down',patternUnits:'userSpaceOnUse',width:6,height:6},defs);
+  svg('rect',{width:6,height:6,class:'part-segment kind-a'},pattern);
+  svg('path',{d:'M-2 2L2 -2M0 6L6 0M4 8L8 4',class:'part-pattern-line'},pattern);
+
+  function text(g,x,y,words,anchor='middle') {
+    svg('text',{x,y,'text-anchor':anchor,class:'domino-text'},g).textContent=dominoText(words);
+  }
+  function arrow(g,x1,x2,y,dashed=false,highlight=false) {
+    const color = highlight ? '#0f766e' : '#466457';
+    const line = {x1,x2:x2-8,y1:y,y2:y,stroke:color,'stroke-width':highlight ? 3 : 1.5};
+    if (dashed) line['stroke-dasharray']='5 3';
+    svg('line',line,g);
+    svg('path',{d:`M ${x2-8} ${y-4} L ${x2} ${y} L ${x2-8} ${y+4} Z`,fill:color},g);
+  }
+
+  for (const [i,x] of positions.entries()) {
+    const id = '도미노'+(i+1);
+    const fallen = !hide.includes('도미노 기울기') && (step === 1 || (widened && i < 4));
+    const attrs = {x:x-7,y:100,width:14,height:80,rx:1,class:fallen?'domino fallen':'domino','data-name':id};
+    if (fallen) attrs.transform=`rotate(65 ${x+7} 180)`;
+    if (changed.includes(id)) attrs['data-changed']='';
+    svg('rect',attrs,svgRoot);
+    text(svgRoot,x,202,i+1);
+  }
+  text(svgRoot,622,202,'…');
+  for (let i=0; i<positions.length-1; i++) {
+    const id = `간격${i+1}-${i+2}`;
+    const disconnected = widened && i === 3;
+    const g = svg('g',{'data-name':id},svgRoot);
+    arrow(g,positions[i]+12,positions[i+1]-12,92,disconnected,changed.includes(id));
+    if (disconnected) text(g,(positions[i]+positions[i+1])/2,112,'닿지 않음');
+  }
+  const start=svg('g',{'data-name':'시작 화살표'},svgRoot);
+  arrow(start,6,26,120,false,true);
+  text(start,6,76,step === 0 ? '첫 도미노를 민다' : '시작: 첫 도미노를 민다','start');
+  if (!hide.includes('위 글')) text(svgRoot,320,30,domWords[step]);
+}
+
 </script>
 </body>
 </html>

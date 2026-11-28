@@ -2963,6 +2963,10 @@ const courseCatalog = {
             {
               "id": "0.3",
               "ref": "os/file-access"
+            },
+            {
+              "id": "0.4",
+              "ref": "os/restart-and-storage"
             }
           ],
           "tracks": []
@@ -3464,7 +3468,8 @@ const courseCatalog = {
           "question": "입력과 출력을 선으로 이을 때, 어떤 모양이어야 함수일까요?",
           "format": "단계 그림",
           "requires": [
-            "math/logic"
+            "math/logic",
+            "programming/collections"
           ],
           "page": "math/sets.html"
         },
@@ -3475,7 +3480,8 @@ const courseCatalog = {
           "question": "모든 n에서 참이라는 것은 어떻게 보일 수 있을까요?",
           "format": "단계 그림",
           "requires": [
-            "math/logic"
+            "math/logic",
+            "programming/recursion"
           ],
           "page": "math/proof.html"
         },
@@ -3795,6 +3801,18 @@ const courseCatalog = {
             "os/what-os-does"
           ],
           "page": "os/file-access.html"
+        },
+        {
+          "id": "restart-and-storage",
+          "title": "다시 켜면 무엇이 남을까?",
+          "titleEn": "What stays after a restart?",
+          "question": "전원을 껐다 켜면, 메모리의 운영체제와 사진 앱, 편집 중인 사진은 어떻게 될까요?",
+          "format": "단계 그림",
+          "requires": [
+            "os/what-os-does",
+            "computing-basics/computer"
+          ],
+          "page": "os/restart-and-storage.html"
         },
         {
           "id": "process",

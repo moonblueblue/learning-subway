@@ -4,45 +4,47 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="손뼉의 신호를 같은 시간 간격마다 재고, 높이를 순서대로 기록해 보세요.">
+<meta name="description" content="컴퓨터는 손뼉 소리를 어느 시각마다 어떤 수로 적어 둘까?">
 <title>소리를 시간마다 재기</title>
-<link rel="stylesheet" href="../shared/reading-lesson.css">
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="media.items.js?v=bc0583dd2ad757c7">
 <style>
-#sound-drawing { text-anchor: middle; fill: var(--ink); }
-#sound-drawing text { font: 675 15px system-ui, sans-serif; }
-#sound-drawing .heading { font-size: 18px; font-weight: 750; }
-#sound-drawing .number { font: 750 13px ui-monospace, monospace; }
-#sound-drawing .dense { font-size: 10px; }
-#sound-drawing .row-label { font-size: 12px; }
-#sound-drawing .clap-ready { --left-hand: translate(-9px, 4px); --right-hand: translate(9px, -4px); --clap-rays: 0; }
-#sound-clap .left-hand { transform: var(--left-hand, none); }
-#sound-clap .right-hand { transform: var(--right-hand, none); }
-#sound-clap .rays { opacity: var(--clap-rays, 1); }
-#sound-drawing .guide { stroke: #a6b9ae; stroke-width: 1; stroke-dasharray: 4 4; }
-#sound-drawing .axis { fill: none; stroke: #587267; stroke-width: 1.2; }
-#sound-drawing .signal { fill: none; stroke: #176e58; stroke-width: 2.6; stroke-linejoin: round; }
-#sound-drawing .dot { fill: #176e58; stroke: #fff; stroke-width: 1.2; }
-#sound-drawing .flow { fill: none; stroke: #176e58; stroke-width: 2.2; marker-end: url(#sound-tip); }
-#sound-drawing .code { fill: #daeee4; stroke: #3e8067; stroke-width: 1; }
+#figure { text-anchor: middle; fill: var(--ink); }
+#figure text { font: 675 15px system-ui, sans-serif; }
+#figure .heading { font-size: 18px; font-weight: 750; }
+#figure .number { font: 750 13px ui-monospace, monospace; }
+#figure .dense { font: 750 11px Arial, sans-serif; font-variant-numeric: tabular-nums; }
+#figure .row-label { font-size: 12px; }
+#figure .guide { stroke: #a6b9ae; stroke-width: 1; stroke-dasharray: 4 4; }
+#figure .axis { fill: none; stroke: #587267; stroke-width: 1.2; }
+#figure .signal { fill: none; stroke: #176e58; stroke-width: 2.6; stroke-linejoin: round; }
+#figure .dot { fill: #176e58; stroke: #fff; stroke-width: 1.2; }
+#figure .dot[data-changed] { fill: #eaf3eb; }
+#figure .flow { fill: none; stroke: #176e58; stroke-width: 2.2; marker-end: url(#sound-tip); }
+#figure .code { fill: #daeee4; stroke: #3e8067; stroke-width: 1; }
 #scene.is-zoomed { cursor: grab; touch-action: none; }
 #scene.is-dragging { cursor: grabbing; }
-.sound-actions .action { min-height: 44px; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./sound.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=43626da713e5fe4e">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=664b1e5738d1a909"></script>
+<script defer blocking="render" src="./sound.items.js?v=b5329b95f6b9d737"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=5955c1a45768b2a4"></script>
+<script defer blocking="render" src="./sound.en.js?v=8fefa80fdad1b5fc"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
   <header>
     <p class="eyebrow">0장 컴퓨팅 둘러보기</p>
     <h1>소리를 시간마다 재기</h1>
-    <p>손뼉 소리를 기록할 때 언제 무엇을 재야 할까요?</p>
+    <p>컴퓨터는 손뼉 소리를 어느 시각마다 어떤 수로 적어 둘까?</p>
   </header>
   <div class="workspace">
     <div>
@@ -67,7 +69,7 @@
                 <path class="rays" d="m45 11-3-7m10 7 2-7m5 9 6-6" fill="none" stroke="#a46527" stroke-width="2.5" stroke-linecap="round"/>
               </symbol>
             </defs>
-            <g id="sound-drawing" aria-hidden="true"></g>
+            <g id="figure" aria-hidden="true"></g>
           </svg>
         </div>
         <div class="view-controls" role="group" aria-label="장면 보기">
@@ -81,11 +83,6 @@
           <ol class="steps" id="steps"></ol>
         </nav>
       </section>
-      <div class="hands-on">
-        <p id="sound-prompt" class="try"></p>
-        <p id="sound-status" class="readout" role="status"></p>
-        <div id="choices" class="sound-actions"></div>
-      </div>
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2>
@@ -100,48 +97,195 @@
   <div id="announcement" class="sr-only" role="status"></div>
 </main>
 <script>
-const lesson = [
-  {
-    label: '손뼉과 마이크',
-    title: '마이크는 손뼉 소리를 변하는 신호로 받습니다',
-    body: '손뼉을 치면 공기가 흔들립니다. 그 흔들림이 마이크에 닿으면 마이크의 신호가 오르내립니다. 오른쪽 선은 시간마다 달라지는 신호를 그린 파형입니다.',
-    takeaway: '손뼉에서 마이크로 화살표를 따라가 보세요. 마이크의 오른쪽에는 시간이 지나며 오르내리는 선이 있습니다.',
-    example: ['손뼉', '마이크로 받기', '시간에 따라 변하는 신호'],
-    prompt: '모형 속에서 손뼉을 쳐 보세요. 오른쪽 마이크 신호를 확인합니다.',
-    description: '왼쪽에서 손뼉을 치면 가운데 마이크가 소리를 받습니다. 오른쪽 시간축 위의 신호는 평평한 선에서 오르내리는 파형으로 바뀝니다.'
-  },
-  {
-    label: '같은 시간 간격',
-    title: '정해진 시각에 신호의 높이를 하나씩 잽니다',
-    body: '같은 간격으로 놓인 시간 눈금마다 그때의 높이를 잽니다. 이렇게 일정한 시간마다 값을 재는 일을 샘플링이라고 합니다. 같은 시간에 두 배 자주 재면 점이 두 배 촘촘해집니다.',
-    takeaway: '시간축 눈금 바로 위의 점이 그 시각의 측정입니다. 재는 간격을 바꿔도 파형은 같습니다.',
-    example: ['같은 손뼉의 파형', '일정한 간격으로 측정', '시간 순서대로 8점'],
-    prompt: '같은 손뼉을 더 자주 재려면 측정 횟수를 얼마로 바꿀까요?',
-    description: '같은 손뼉의 파형 위에 시간 눈금과 같은 열의 점이 있습니다. 16밀리초 동안 두 밀리초 간격으로 재면 모두 여덟 점입니다.'
-  },
-  {
-    label: '가까운 높이 기록',
-    title: '잰 높이와 가장 가까운 값을 기록합니다',
-    body: '일정한 시각마다 잰 수를 아래에 놓습니다. 이 예의 4비트 방식은 0부터 15까지 중 가장 가까운 높이를 골라 이진수 네 자리로 기록합니다. 2비트 방식은 높이 네 가지 중 하나를 이진수 두 자리로 기록합니다.',
-    takeaway: '같은 열 위아래의 잰 수와 기록값을 대조해 보세요. 한 번에 쓰는 비트를 줄여도 언제 재는지는 달라지지 않습니다.',
-    example: ['같은 8개의 측정점', '가장 가까운 기록 단계', '4비트씩 32비트 기록'],
-    prompt: '측정점을 그대로 두고 2비트를 골라 보세요. 어느 칸의 기록값이 바뀌나요?',
-    description: '시간마다 잰 여덟 높이가 위에 있고, 각 화살표 아래 칸에 가장 가까운 높이와 그 높이의 이진수가 있습니다. 4비트씩 여덟 값이라 모두 32비트입니다.'
+const lesson = {
+  "question": "컴퓨터는 손뼉 소리를 어느 시각마다 어떤 수로 적어 둘까?",
+  "terms": [
+    {
+      "term": "신호",
+      "meaning": "마이크가 소리를 받아 내보내는, 시간에 따라 오르내리는 값",
+      "step": 1
+    },
+    {
+      "term": "파형",
+      "meaning": "시간에 따른 신호의 높이를 그린 선",
+      "step": 1
+    },
+    {
+      "term": "ms(밀리초)",
+      "meaning": "1초의 1000분의 1",
+      "step": 2
+    },
+    {
+      "term": "샘플링",
+      "meaning": "일정한 시간 간격마다 신호의 높이를 한 번씩 재는 일",
+      "step": 2
+    },
+    {
+      "term": "측정점",
+      "meaning": "한 번 잰 시각과 그때의 높이. 그림의 점 하나",
+      "step": 2
+    },
+    {
+      "term": "기록 비트 수",
+      "meaning": "잰 높이 하나를 적는 데 쓰는 비트 수. 적을 수 있는 높이의 가짓수를 정한다",
+      "step": 3
+    }
+  ],
+  "steps": [
+    {
+      "label": "손뼉과 마이크",
+      "title": "마이크는 손뼉 소리를 변하는 신호로 받습니다",
+      "body": "손뼉을 치면 공기가 흔들립니다. 그 흔들림이 마이크에 닿으면 마이크의 신호가 오르내립니다. 오른쪽 선은 시간마다 달라지는 신호를 그린 파형입니다.",
+      "takeaway": "손뼉에서 마이크로 화살표를 따라가 보세요. 마이크의 오른쪽에는 시간이 지나며 오르내리는 선이 있습니다.",
+      "description": "왼쪽에서 손뼉을 치면 가운데 마이크가 소리를 받습니다. 오른쪽 시간축 위에 시간에 따라 오르내리는 파형이 있습니다.",
+      "figure": {
+        "custom": true
+      }
+    },
+    {
+      "label": "같은 시간 간격",
+      "title": "정해진 시각에 신호의 높이를 하나씩 잽니다",
+      "body": "같은 간격으로 놓인 시간 눈금마다 그때의 높이를 잽니다. 이렇게 일정한 시간마다 값을 재는 일을 샘플링이라고 합니다.",
+      "takeaway": "시간축 눈금 바로 위의 점이 그 시각의 측정입니다. 2 ms 간격으로 모두 여덟 번을 잽니다.",
+      "description": "같은 손뼉의 파형 위에 시간 눈금과 같은 열의 점이 있습니다. 16밀리초 동안 두 밀리초 간격으로 재면 모두 여덟 점입니다.",
+      "figure": {
+        "custom": true
+      }
+    },
+    {
+      "label": "높이 기록",
+      "title": "잰 높이와 가장 가까운 정수를 기록합니다",
+      "body": "일정한 시각마다 잰 수를 아래에 놓습니다. 4비트로는 0부터 15까지 16가지 정수만 적을 수 있습니다. 그래서 잰 높이와 가장 가까운 정수를 골라 이진수 네 자리로 적습니다. 기록값은 처음 잰 높이와 다를 수 있습니다.",
+      "takeaway": "같은 열 위아래의 잰 높이와 기록값을 대조해 보세요. 2 ms에 잰 3.73은 가장 가까운 4로 기록합니다.",
+      "description": "시간마다 잰 여덟 높이가 위에 있고, 각 화살표 아래 칸에 가장 가까운 높이와 그 높이의 이진수가 있습니다. 4비트씩 여덟 값이라 모두 32비트입니다.",
+      "figure": {
+        "custom": true
+      },
+      "predict": {
+        "prompt": "0~15 정수 가운데 하나로 적을 때, 2 ms에 잰 3.73은 무엇으로 기록될까요?",
+        "options": [
+          {
+            "text": "4",
+            "why": "3.73에서 가장 가까운 정수는 4입니다(3까지 0.73, 4까지 0.27).",
+            "correct": true
+          },
+          {
+            "text": "3",
+            "why": "소수점 아래를 버린 것입니다. 이 기록은 버리지 않고 가장 가까운 정수를 고릅니다."
+          },
+          {
+            "text": "3.73 그대로",
+            "why": "잰 값을 그대로 적는다고 본 것입니다. 4비트에는 0부터 15까지 정수 16개만 들어갑니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "answer"
+          ],
+          "description": "8개의 측정점마다 높이 숫자와 아래로 향한 화살표가 보입니다. 기록 칸은 비어 있습니다."
+        }
+      }
+    },
+    {
+      "label": "더 자주 재기",
+      "title": "두 배 자주 재면 놓쳤던 높이가 잡힙니다",
+      "body": "같은 16 ms 동안 1 ms마다 높이를 잽니다. 8번 잴 때는 2 ms와 4 ms 사이에서 신호가 11.39까지 올라간 것을 몰랐습니다. 재지 않은 시각의 높이는 기록에 없습니다. 더 자주 재면 더 많이 담지만 기록도 두 배가 됩니다.",
+      "takeaway": "홀수 ms에 점 여덟 개가 추가되었습니다. 3 ms의 높이 11.39를 양옆의 점과 비교해 보세요.",
+      "description": "같은 파형을 1 ms마다 재어 16점과 16개 기록을 얻습니다. 새 점 가운데 3 ms의 높이는 11.39입니다. 기록은 64비트입니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "odd-samples"
+        ]
+      },
+      "predict": {
+        "prompt": "같은 16 ms를 2 ms가 아니라 1 ms마다 재면 무엇이 달라질까요?",
+        "options": [
+          {
+            "text": "점이 16개가 되고, 8번 잴 때 없던 3 ms의 높은 점이 잡힌다",
+            "why": "2 ms와 4 ms 사이에서 파형이 11.39까지 올라갔는데 8번 잴 때는 그 시각을 재지 않았습니다.",
+            "correct": true
+          },
+          {
+            "text": "파형 모양이 더 촘촘하게 바뀐다",
+            "why": "재는 횟수가 소리를 바꾼다고 본 것입니다. 파형은 그대로이고 점만 늘어납니다."
+          },
+          {
+            "text": "점은 16개가 되지만 새로 알게 되는 것은 없다",
+            "why": "점 사이 높이를 이미 안다고 본 것입니다. 재지 않은 시각의 높이는 기록에 없습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "answer"
+          ],
+          "description": "2 ms마다 잰 점 8개와 4비트 기록이 보입니다. 홀수 ms에도 축에 짧은 눈금이 있습니다."
+        }
+      }
+    },
+    {
+      "label": "기록 비트 줄이기",
+      "title": "2비트로 적으면 높이가 네 가지뿐입니다",
+      "body": "같은 시각에 잰 높이를 0, 5, 10, 15 중 가장 가까운 값으로 기록합니다. 2비트로 적는 수는 높이 자체가 아니라 네 높이에 차례로 붙인 번호입니다. 높이 5의 번호는 1이라 01이고, 높이 10의 번호는 2라 10입니다. 8번 × 4비트와 16번 × 2비트는 둘 다 32비트입니다. 같은 크기를 시각에 쓸지 높이에 쓸지가 다릅니다.",
+      "takeaway": "0, 5, 10, 15의 가로선과 점을 비교해 보세요. 2 ms에 잰 3.73은 이제 5로 기록합니다.",
+      "description": "16개의 측정점은 그대로입니다. 각 점에 가장 가까운 0, 5, 10, 15 중 하나를 고르고, 높이의 번호를 두 비트로 기록합니다. 기록은 32비트입니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "record-levels"
+        ]
+      },
+      "predict": {
+        "prompt": "2비트로 적으면 높이는 0·5·10·15 넷뿐입니다. 2 ms의 3.73은 무엇으로 기록될까요?",
+        "options": [
+          {
+            "text": "5",
+            "why": "넷 가운데 3.73에 가장 가까운 것은 5입니다(5까지 1.27, 0까지 3.73).",
+            "correct": true
+          },
+          {
+            "text": "0",
+            "why": "늘 아래 값으로 내린다고 본 것입니다. 가장 가까운 값을 고릅니다."
+          },
+          {
+            "text": "4",
+            "why": "4비트 때 기록을 그대로 쓴다고 본 것입니다. 2비트로는 4를 적을 수 없습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "answer"
+          ],
+          "description": "16개의 측정점과 높이 0, 5, 10, 15 가로선이 보입니다. 기록 칸은 비어 있습니다."
+        }
+      }
+    }
+  ],
+  "review": {
+    "own": [
+      "sound-1",
+      "sound-3"
+    ],
+    "prereq": {
+      "ref": "computing-basics/media",
+      "id": "media-3"
+    },
+    "fallback": "sound-4"
   }
-];
+};
 
-const slug = 'sound';
 const byId = id => document.getElementById(id);
-const workspace = document.querySelector('.workspace');
 const viewport = byId('scene');
-const drawing = byId('sound-drawing');
+const drawing = byId('figure');
 const viewWidth = 620;
 const viewHeight = 280;
 const center = {x: viewWidth / 2, y: viewHeight / 2};
 const camera = {x: 0, y: 0, zoom: 1};
 const maxZoom = 2.2;
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-const state = {index: -1, clapped: false, count: 8, depth: 4};
 
 function text(parent, x, y, value, className = '') {
   svg('text', {x, y, class: className}, parent).textContent = value;
@@ -155,14 +299,23 @@ function wave(t) {
   return 7.4 + 6.9 * Math.sin(12 * Math.PI * t + .7) * Math.exp(-2.9 * t) * Math.min(1, 18 * t);
 }
 
-function graph(parent, left, right, top, bottom, clapped, count = 0) {
+function graph(parent, left, right, top, bottom, clapped, count = 0, {heightAxis = false, grid = false, extraTicks = false, odd = false} = {}) {
   const y = value => bottom - (bottom - top) * value / 15;
   const x = fraction => left + (right - left) * fraction;
+  if (heightAxis) {
+    for (const height of [0, 5, 10, 15]) {
+      text(parent, left - 15, y(height) + 4, height, 'number');
+      line(parent, left - 5, y(height), grid ? right : left, y(height), grid ? 'guide' : 'axis');
+    }
+  }
+  if (extraTicks) {
+    for (let index = 1; index < 16; index += 2) line(parent, x(index / 16), bottom, x(index / 16), bottom + 4, 'axis');
+  }
   line(parent, left, top, left, bottom, 'axis');
   line(parent, left, bottom, right + 13, bottom, 'flow');
   const samples = Array.from({length: count}, (_, index) => {
     const time = index / count;
-    return {x: x(time), value: wave(time)};
+    return {at: index * 16 / count, x: x(time), y: y(wave(time)), value: wave(time)};
   });
   for (const sample of samples) line(parent, sample.x, bottom, sample.x, y(sample.value), 'guide');
   const points = Array.from({length: 181}, (_, index) => {
@@ -172,31 +325,30 @@ function graph(parent, left, right, top, bottom, clapped, count = 0) {
   svg('path', {d: 'M' + points.join(' L'), class: 'signal'}, parent);
   for (const sample of samples) {
     line(parent, sample.x, bottom - 3, sample.x, bottom + 4, 'axis');
-    svg('circle', {cx: sample.x, cy: y(sample.value), r: 4.4, class: 'dot'}, parent);
+    const dot = svg('circle', {cx: sample.x, cy: sample.y, r: 4.4, class: 'dot'}, parent);
+    if (odd && sample.at % 2) dot.setAttribute('data-changed', '');
   }
   return samples;
 }
 
-function microphone(didClap) {
-  text(drawing, 87, 72, didClap ? '손뼉' : '손뼉 치기 전', 'heading');
+function microphone() {
+  text(drawing, 87, 72, '손뼉', 'heading');
   text(drawing, 245, 72, '마이크', 'heading');
   text(drawing, 465, 72, '시간에 따른 신호', 'heading');
-  svg('use', {href: '#sound-clap', x: 37, y: 102, width: 100, height: 80,
-    class: didClap ? '' : 'clap-ready'}, drawing);
+  svg('use', {href: '#sound-clap', x: 37, y: 102, width: 100, height: 80}, drawing);
   svg('use', {href: '#sound-mic', x: 210, y: 104, width: 70, height: 87}, drawing);
-  if (didClap) {
-    line(drawing, 144, 146, 198, 146, 'flow');
-    line(drawing, 286, 146, 335, 146, 'flow');
-  }
-  graph(drawing, 355, 586, 102, 186, didClap);
+  line(drawing, 144, 146, 198, 146, 'flow');
+  line(drawing, 286, 146, 335, 146, 'flow');
+  graph(drawing, 355, 586, 102, 186, true);
   text(drawing, 561, 214, '시간');
 }
 
-function sampledWave(count, depth, withRecords) {
+function sampledWave(count, depth, withRecords, options = {}) {
+  const {blank, heightAxis, grid, extraTicks, odd, changedHeights} = options;
   text(drawing, 310, 37, '같은 손뼉의 신호', 'heading');
-  text(drawing, 35, 76, '높이');
+  text(drawing, 40, 37, '높이');
   const bottom = 174;
-  const samples = graph(drawing, 75, 568, 56, bottom, true, count);
+  const samples = graph(drawing, 75, 568, 56, bottom, true, count, {heightAxis, grid, extraTicks, odd});
   text(drawing, 568, bottom + (withRecords ? -10 : 20), '16 ms', 'number');
 
   if (!withRecords) {
@@ -209,114 +361,36 @@ function sampledWave(count, depth, withRecords) {
     return;
   }
 
-  const maxCode = 2 ** depth - 1;
-  const spacing = 15 / maxCode;
+  const spacing = 15 / (2 ** depth - 1);
   text(drawing, 29, 193, '잰 높이', 'row-label');
   text(drawing, 29, 237, '기록', 'row-label');
-  for (const {x, value} of samples) {
+  for (const {at, x, y, value} of samples) {
     const code = Math.round(value / spacing);
     const level = code * spacing;
-    const width = count === 16 ? 26 : 43;
+    const width = count === 16 ? 28 : 43;
     const numberStyle = count === 16 ? 'number dense' : 'number';
     text(drawing, x, 192, value.toFixed(2), numberStyle);
+    if (odd && at === 3) text(drawing, x, y - 10, '11.39', 'number');
     line(drawing, x, 195, x, 212, 'flow');
-    svg('rect', {x: x - width / 2, y: 216, width, height: 30, rx: 5, class: 'code'}, drawing);
+    const box = svg('rect', {x: x - width / 2, y: 216, width, height: 30, rx: 5, class: 'code'}, drawing);
+    if ((odd && at % 2) || (changedHeights && level !== Math.round(value))) box.setAttribute('data-changed', '');
+    if (blank) continue;
     text(drawing, x, 229, String(level), 'number');
     text(drawing, x, 242, code.toString(2).padStart(depth, '0'), numberStyle);
   }
-  text(drawing, 315, 271, `${count}개 × ${depth}비트 = ${count * depth}비트 기록`);
+  if (!blank) text(drawing, 315, 271, `${count}개 × ${depth}비트 = ${count * depth}비트 기록`);
 }
 
-function practiceDescription() {
-  if (state.index === 0) return state.clapped ? lesson[0].description
-    : '손뼉을 치기 전입니다. 마이크 신호는 평평합니다.';
-  if (state.index === 1) return state.count === 8 ? lesson[1].description
-    : '같은 파형의 같은 16밀리초에서 한 밀리초마다 높이를 재니 점이 열여섯 개입니다.';
-  if (state.depth === 4 && state.count === 8) return lesson[2].description;
-  if (state.depth === 4) return '열여섯 높이마다 가장 가까운 0부터 15까지의 정수를 기록합니다. 4비트씩 열여섯 값이라 모두 64비트입니다.';
-  return '측정 시각과 원래 높이는 같습니다. 2비트로 정한 네 높이 0, 5, 10, 15 중 가까운 것을 고릅니다.';
+function drawFigure(index, {hide, changed}) {
+  const preview = hide.includes('answer');
+  if (index === 0) microphone();
+  else if (index === 1) sampledWave(8, 4, false);
+  else if (index === 2) sampledWave(8, 4, true, {heightAxis: true, blank: preview});
+  else if (index === 3 && preview) sampledWave(8, 4, true, {heightAxis: true, extraTicks: true});
+  else if (index === 3) sampledWave(16, 4, true, {heightAxis: true, odd: changed.includes('odd-samples')});
+  else sampledWave(16, preview ? 4 : 2, true, {heightAxis: true, grid: true, blank: preview, changedHeights: changed.includes('record-levels')});
 }
 
-function renderScene() {
-  const practicing = coursePracticeStarted && !workspace.classList.contains('course-reading');
-  drawing.replaceChildren();
-  const {index, clapped, count, depth} = state;
-  if (index === 0) microphone(!practicing || clapped);
-  else sampledWave(practicing ? count : 8, practicing ? depth : 4, index === 2);
-  byId('scene-desc').textContent = practicing ? practiceDescription() : lesson[index].description;
-}
-
-const practiceOptions = [
-  [['모형 손뼉 치기', 'clapped', true]],
-  [['8번 측정', 'count', 8], ['16번 측정', 'count', 16]],
-  [['4비트로 기록', 'depth', 4], ['2비트로 기록', 'depth', 2]]
-];
-
-function renderPractice(step) {
-  byId('sound-prompt').textContent = step.prompt;
-  byId('sound-status').textContent = '';
-  const choices = byId('choices');
-  const options = practiceOptions[state.index];
-  choices.replaceChildren(...options.map(([label, key, value]) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'action';
-    button.textContent = label;
-    button.setAttribute('aria-pressed', String(state[key] === value));
-    button.onclick = () => {
-      state[key] = value;
-      for (const [i, option] of options.entries()) choices.children[i].setAttribute('aria-pressed', String(option[2] === value));
-      renderScene();
-      byId('sound-status').textContent = practiceDescription();
-    };
-    return button;
-  }));
-  renderScene();
-}
-
-function showStep(index, announce = true) {
-  if (state.index < 1 || index < 1) {
-    state.clapped = false;
-    state.count = 8;
-    state.depth = 4;
-  }
-  state.index = index;
-  const step = lesson[index];
-  byId('step-title').textContent = step.title;
-  byId('body').textContent = step.body;
-  byId('takeaway').textContent = step.takeaway;
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  for (const [position, button] of stepButtons.entries()) {
-    if (position === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  }
-  renderPractice(step);
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
-}
-
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/${slug}/${index + 1}`);
-  showStep(index);
-}
-
-const stepButtons = lesson.map(({label}, index) => {
-  const item = document.createElement('li');
-  const button = document.createElement('button');
-  const number = document.createElement('span');
-  button.type = 'button';
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.onclick = () => goToStep(index);
-  item.append(button);
-  byId('steps').append(item);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
 byId('zoom-in').onclick = () => zoomBy(.3);
 byId('zoom-out').onclick = () => zoomBy(-.3);
 enableCameraDrag();
@@ -329,28 +403,16 @@ viewport.addEventListener('keydown', event => {
   setCamera(camera.x + direction[0] * 18, camera.y + direction[1] * 18, camera.zoom);
 });
 
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
 window.addEventListener('keydown', event => {
   if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
       event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  const action = {
-    ArrowLeft: () => goToStep(state.index - 1),
-    ArrowRight: () => goToStep(state.index + 1),
-    '+': () => zoomBy(.3),
-    '-': () => zoomBy(-.3),
-    '0': resetView
-  }[event.key];
-  if (!action) return;
-  event.preventDefault();
-  action();
+  const zoom = {'+': () => zoomBy(.3), '-': () => zoomBy(-.3), '0': resetView}[event.key];
+  if (zoom) {
+    event.preventDefault();
+    zoom();
+  }
 });
-
-new MutationObserver(renderScene).observe(workspace, {attributes: true, attributeFilter: ['class']});
-const initial = routeIndex();
-history.replaceState(null, '', `#/${slug}/${initial + 1}`);
 setCamera(0, 0, 1);
-showStep(initial, false);
 </script>
 </body>
 </html>

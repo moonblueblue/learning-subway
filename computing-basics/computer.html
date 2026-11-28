@@ -4,43 +4,50 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="같은 카드를 그리고 저장 여부를 바꿔 보며 메모리와 저장장치의 역할을 살펴보세요.">
+<meta name="description" content="똑같이 만든 두 작업 중 창을 닫은 뒤 다시 열 수 있는 것은 어느 쪽일까요?">
 <title>일하는 동안의 기억과 저장</title>
-<link rel="stylesheet" href="../shared/reading-lesson.css">
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="computer-tasks.items.js?v=2f7ceb00b5fdefd8">
 <style>
-#storage-drawing { text-anchor: middle; fill: var(--ink); }
-#storage-drawing .heading { font: 720 17px system-ui, sans-serif; }
-#storage-drawing .caption { font: 700 14px system-ui, sans-serif; }
-#storage-drawing .small { font: 650 12px system-ui, sans-serif; }
-#storage-drawing .window { fill: #f8fcfa; stroke: #617e70; stroke-width: 1.6; }
-#storage-drawing .window-bar { fill: #d0e5da; }
-#storage-drawing .icon-stroke { fill: #497163; }
-#storage-drawing .empty { fill: #fbfdfa; stroke: #879d90; stroke-width: 1.5; stroke-dasharray: 4 4; }
-#storage-drawing .folder { fill: #faf3de; stroke: #8a723b; stroke-width: 1.5; }
-#storage-drawing .flow { fill: none; stroke: #176b57; stroke-width: 2.4; marker-end: url(#storage-tip); }
-#storage-drawing .copy { stroke: #445789; marker-end: url(#storage-copy-tip); }
-#storage-drawing .reading { stroke-dasharray: 5 4; }
-#storage-drawing .quiet { fill: #4c6256; }
-#storage-drawing .rule { stroke: #9cb3a5; stroke-width: 1; }
+#figure { text-anchor: middle; fill: var(--ink); }
+#figure .heading { font: 720 17px system-ui, sans-serif; }
+#figure .caption { font: 700 14px system-ui, sans-serif; }
+#figure .small { font: 650 12px system-ui, sans-serif; }
+#figure .window { fill: #f8fcfa; stroke: #617e70; stroke-width: 1.6; }
+#figure .window-bar { fill: #d0e5da; }
+#figure .icon-stroke { fill: #497163; }
+#figure .empty { fill: #fbfdfa; stroke: #879d90; stroke-width: 1.5; stroke-dasharray: 4 4; }
+#figure .folder { fill: #faf3de; stroke: #8a723b; stroke-width: 1.5; }
+#figure .flow { fill: none; stroke: #176b57; stroke-width: 2.4; marker-end: url(#storage-tip); }
+#figure .copy { stroke: #445789; marker-end: url(#storage-copy-tip); }
+#figure .reading { stroke-dasharray: 5 4; }
+#figure .quiet { fill: #4c6256; }
+#figure .rule { stroke: #9cb3a5; stroke-width: 1; }
 #scene.is-zoomed { cursor: grab; touch-action: none; }
 #scene.is-dragging { cursor: grabbing; }
 .storage-actions .action { min-height: 44px; }
+#figure .star-outline { fill: none; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./computer.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=43626da713e5fe4e">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=664b1e5738d1a909"></script>
+<script defer blocking="render" src="./computer.items.js?v=1442ab25743363ea"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=786b62ca9e83ae58"></script>
+<script defer blocking="render" src="./computer.en.js?v=c250a12e3dc5f237"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
   <header>
     <p class="eyebrow">0장 컴퓨팅 둘러보기</p>
     <h1>일하는 동안의 기억과 저장</h1>
-    <p>창을 닫고 나서 어떤 그림을 다시 열 수 있을까요?</p>
+    <p>똑같이 만든 두 작업 중 창을 닫은 뒤 다시 열 수 있는 것은 어느 쪽일까요?</p>
   </header>
   <div class="workspace">
     <div>
@@ -66,7 +73,7 @@
                 <path d="M5 16h3l2-5 3 10 3-14 3 18 3-16 3 12 3-7 2 2h3" fill="none" stroke="#285d7c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </symbol>
             </defs>
-            <g id="storage-drawing" aria-hidden="true"></g>
+            <g id="figure" aria-hidden="true"></g>
           </svg>
         </div>
         <div class="view-controls" role="group" aria-label="장면 보기">
@@ -80,11 +87,6 @@
           <ol class="steps" id="steps"></ol>
         </nav>
       </section>
-      <div class="hands-on">
-        <p id="storage-prompt" class="try"></p>
-        <p id="storage-status" class="readout" role="status"></p>
-        <div id="choices" class="storage-actions"></div>
-      </div>
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
       <h2 id="step-title"></h2>
@@ -107,95 +109,348 @@ const pending = 'pending';
 const starFile = '별 카드';
 const audioFile = '녹음 파일';
 
-const lesson = [
-  {
-    label: '카드 그리기',
-    title: '별을 그리면 먼저 작업 창에 보입니다',
-    body: '자동 저장을 끈 그림 앱에서 새 카드를 엽니다. 별을 그리면 작업 창에 별이 생깁니다. 파일 목록은 비어 있습니다.',
-    takeaway: '새로 생긴 별은 오른쪽 위 작업 창에 있습니다. 아래의 두 파일 목록은 그대로 비어 있습니다.',
-    example: ['새 작업 창', '별 그리기', '작업 창에만 별'],
-    prompt: '빈 카드에 별을 그려 보세요. 파일 목록에도 별이 생길까요?',
-    actions: ['별 그리기'],
-    moments: [
-      ['새 작업', null, null, '새 작업 창과 파일 목록이 비어 있습니다.'],
-      ['별 그린 뒤', star, null, '작업 창에 별이 생겼습니다. 파일 목록은 비어 있습니다.']
+const lesson = {
+  "question": "똑같이 만든 두 작업 중 창을 닫은 뒤 다시 열 수 있는 것은 어느 쪽일까요?",
+  "terms": [
+    {
+      "term": "자동 저장",
+      "meaning": "앱이 알아서 파일로 저장해 주는 기능. 이 레슨의 앱은 꺼 두었다",
+      "step": 1
+    },
+    {
+      "term": "작업 창",
+      "meaning": "지금 만들고 있는 것을 보여 주는 앱의 창",
+      "step": 1
+    },
+    {
+      "term": "파일 목록",
+      "meaning": "저장해 둔 파일이 보이는 곳",
+      "step": 1
+    },
+    {
+      "term": "저장",
+      "meaning": "작업 창의 내용을 파일로 복사해 두는 일",
+      "step": 3
+    },
+    {
+      "term": "파일 열기",
+      "meaning": "파일 목록의 파일을 작업 창으로 다시 불러오는 일",
+      "step": 3
+    },
+    {
+      "term": "메모리",
+      "meaning": "컴퓨터가 작업 중인 내용을 두는 곳",
+      "step": 4
+    },
+    {
+      "term": "저장장치",
+      "meaning": "컴퓨터가 파일을 보관하는 곳",
+      "step": 4
+    }
+  ],
+  "steps": [
+    {
+      "label": "카드 그리기",
+      "title": "별을 그리면 먼저 작업 창에 보입니다",
+      "body": "그림 앱에서 새 카드를 엽니다. 별을 그리면 작업 창에 별이 생깁니다. 파일 목록은 비어 있습니다. 이 앱은 자동 저장을 꺼 두었습니다. 저장은 우리가 직접 골라야 합니다.",
+      "takeaway": "새로 생긴 별은 오른쪽 위 작업 창에 있습니다. 아래의 두 파일 목록은 그대로 비어 있습니다.",
+      "moments": [
+        [
+          "새 작업",
+          null,
+          null
+        ],
+        [
+          "별 그린 뒤",
+          "star",
+          null
+        ]
+      ],
+      "description": "왼쪽 작업 창은 빈 카드입니다. 별을 그리면 오른쪽 작업 창에 별이 생깁니다. 아래 파일 목록은 두 시점 모두 비어 있습니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "drawn-star"
+        ]
+      }
+    },
+    {
+      "label": "저장 없이 닫기",
+      "title": "저장하지 않고 닫으면 새 창에 별이 돌아오지 않습니다",
+      "body": "‘저장 안 함’을 고르고 창을 닫습니다. 별을 담은 파일을 만들지 않았으므로 앱에서 새 작업을 열면 빈 카드가 나옵니다.",
+      "takeaway": "위쪽 별 카드는 창을 닫을 때 없어집니다. 네 시점 모두 아래 파일 목록이 비어 있습니다.",
+      "moments": [
+        [
+          "그린 카드",
+          "star",
+          null
+        ],
+        [
+          "저장 안 함",
+          "star",
+          null
+        ],
+        [
+          "창 닫힘",
+          "closed",
+          null
+        ],
+        [
+          "새 작업 열기",
+          null,
+          null
+        ]
+      ],
+      "description": "별이 있는 작업 창에서 저장 안 함을 고르고 창을 닫습니다. 앱에서 새 작업을 열면 빈 카드입니다. 처음부터 끝까지 아래 파일 목록에는 별 카드가 없습니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "closed-and-new"
+        ]
+      },
+      "predict": {
+        "prompt": "'저장 안 함'을 고르고 창을 닫은 뒤 새 작업을 엽니다. 별은 어디에 있을까요?",
+        "options": [
+          {
+            "text": "어디에도 없다",
+            "why": "파일 목록이 처음부터 비어 있어서 창을 닫으면 별을 다시 가져올 곳이 없습니다.",
+            "correct": true
+          },
+          {
+            "text": "새 작업 창에 다시 보인다",
+            "why": "앱이 마지막 그림을 기억한다고 본 것인데, 이 앱은 자동 저장을 꺼 두었고 파일 목록도 비어 있습니다."
+          },
+          {
+            "text": "파일 목록에 남아 있다",
+            "why": "창을 닫으면 알아서 보관된다고 본 것인데, 1단계에서 별을 그려도 파일 목록은 비어 있었습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "result"
+          ],
+          "description": "그린 카드와 저장 안 함 열이 보입니다. 두 열의 위쪽에는 별이 있고 아래 파일 목록은 비어 있습니다."
+        }
+      }
+    },
+    {
+      "label": "저장하고 닫기",
+      "title": "저장한 별 카드는 파일 목록에서 다시 열 수 있습니다",
+      "body": "다시 같은 별 카드를 그리고 저장합니다. 별 카드 한 장이 파일로 복사됩니다. 창을 닫아도 파일 목록에 별 카드가 남아 있어서 다시 열 수 있습니다. 파일을 열 때는 작업 창으로 복사합니다. 목록의 파일은 그대로 남습니다.",
+      "takeaway": "둘째 열에는 별 카드가 두 곳에 보입니다. 셋째 열에서 창을 닫은 뒤에는 파일 목록에만 남습니다.",
+      "moments": [
+        [
+          "그린 카드",
+          "star",
+          null
+        ],
+        [
+          "저장",
+          "star",
+          "star"
+        ],
+        [
+          "창 닫힘",
+          "closed",
+          "star"
+        ],
+        [
+          "파일 열기",
+          "star",
+          "star"
+        ]
+      ],
+      "description": "같은 별 카드를 그립니다. 저장하면 별이 작업 창과 아래 파일 목록에 함께 있습니다. 창을 닫아도 목록에 파일이 남습니다. 저장 파일을 열면 같은 별이 위의 새 작업 창에도 보입니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "save-and-open"
+        ]
+      },
+      "predict": {
+        "prompt": "이번에는 저장하고 창을 닫습니다. 창을 닫은 뒤 별 카드는 어디에 남을까요?",
+        "options": [
+          {
+            "text": "파일 목록에만",
+            "why": "저장할 때 파일 목록에 복사본이 생겼고, 창을 닫으면 작업 창의 별만 사라집니다.",
+            "correct": true
+          },
+          {
+            "text": "어디에도 없다",
+            "why": "2단계처럼 창을 닫으면 모두 사라진다고 본 것인데, 저장으로 만든 복사본은 창과 따로 있습니다."
+          },
+          {
+            "text": "작업 창과 파일 목록 둘 다",
+            "why": "저장하면 창이 닫혀도 작업이 계속 보인다고 본 것인데, 닫힌 창에는 아무것도 보이지 않습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "result"
+          ],
+          "description": "그린 카드와 저장 열이 보입니다. 저장 열의 화살표가 작업 창에서 파일 목록으로 내려갑니다."
+        }
+      }
+    },
+    {
+      "label": "두 자리의 이름",
+      "title": "작업 중인 별과 저장한 별은 다른 곳에 있습니다",
+      "body": "작업 창의 별처럼 지금 하고 있는 일은 메모리에 있습니다. 파일 목록의 별 카드처럼 저장한 파일은 저장장치에 있습니다. 같은 별이 두 곳에 따로 있습니다.",
+      "takeaway": "위 줄 이름은 메모리, 아래 줄 이름은 저장장치입니다. 저장 열에서 별이 두 줄에 모두 있습니다.",
+      "description": "3단계와 같은 네 시점입니다. 위 줄은 작업 중인 내용을 두는 메모리, 아래 줄은 파일을 보관하는 저장장치입니다. 저장하면 별이 메모리에서 저장장치로 복사되고, 창을 닫으면 저장장치에만 남으며, 파일을 열면 다시 메모리로 불러옵니다.",
+      "moments": [
+        [
+          "그린 카드",
+          "star",
+          null
+        ],
+        [
+          "저장",
+          "star",
+          "star"
+        ],
+        [
+          "창 닫힘",
+          "closed",
+          "star"
+        ],
+        [
+          "파일 열기",
+          "star",
+          "star"
+        ]
+      ],
+      "figure": {
+        "custom": true,
+        "changed": [
+          "row-names"
+        ]
+      }
+    },
+    {
+      "label": "전원 끄기",
+      "title": "전원을 끄면 메모리는 비고 저장장치의 파일은 남습니다",
+      "body": "전원을 끄면 메모리의 내용이 사라집니다. 저장장치에 둔 파일은 남으므로 다시 켠 뒤 열 수 있습니다.",
+      "takeaway": "전원을 끈 열에서 위 메모리는 비고 아래 저장장치에는 별 카드가 남습니다. 파일을 열면 같은 별이 위로 올라옵니다.",
+      "moments": [
+        [
+          "저장 직후",
+          "star",
+          "star"
+        ],
+        [
+          "전원 끔",
+          "off",
+          "star"
+        ],
+        [
+          "다시 켠 뒤 파일 열기",
+          "star",
+          "star"
+        ]
+      ],
+      "description": "위는 작업 중인 내용을 두는 메모리이고 아래는 저장한 파일을 두는 저장장치입니다. 전원을 끄면 위 메모리는 비고 아래에 별 카드 파일이 남습니다. 다시 켜고 파일을 열면 아래 저장장치의 별 카드가 위 메모리로 읽힙니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "empty-memory"
+        ]
+      },
+      "predict": {
+        "prompt": "저장한 뒤 컴퓨터 전원을 끕니다. 꺼져 있는 동안 별은 어디에 남아 있을까요?",
+        "options": [
+          {
+            "text": "저장장치에만",
+            "why": "메모리는 전원이 꺼지면 비워지고, 저장장치에 둔 파일은 남습니다.",
+            "correct": true
+          },
+          {
+            "text": "메모리와 저장장치 둘 다",
+            "why": "전원을 꺼도 작업 중이던 내용이 그대로 보관된다고 본 것인데, 메모리는 전원이 있어야 내용을 지닙니다."
+          },
+          {
+            "text": "어디에도 없다",
+            "why": "전원을 끄면 컴퓨터 안이 모두 지워진다고 본 것인데, 저장장치의 파일은 전원 없이도 남습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "result"
+          ],
+          "description": "저장 직후 열만 보입니다. 위쪽 메모리에 작업 중인 별이 있고 아래 저장장치에 별 카드 파일이 있습니다."
+        }
+      }
+    },
+    {
+      "label": "녹음에도 적용",
+      "title": "녹음을 다시 열려면 소리도 파일로 저장합니다",
+      "body": "자동 저장을 끈 녹음 앱에서도 같은 일이 일어납니다. 녹음을 끝내면 소리가 작업 창에 보입니다. 녹음 파일을 만들어야 창을 닫은 뒤에도 다시 열고 보낼 수 있습니다.",
+      "takeaway": "두 줄의 왼쪽 소리 무늬는 같습니다. 아래 줄에서만 파일에 소리가 남아 다시 연 창에서도 같은 무늬를 볼 수 있습니다.",
+      "description": "두 줄 모두 같은 녹음으로 시작합니다. 위에서는 저장하지 않고 닫아서 파일 목록과 새 작업 창이 비어 있습니다. 아래에서는 파일로 저장하고 닫아서 파일 목록에 소리가 남고 다시 연 창에도 같은 소리 무늬가 보입니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "saved-recording"
+        ]
+      },
+      "predict": {
+        "prompt": "같은 녹음을 위에서는 저장 안 하고 닫고, 아래에서는 저장하고 닫았습니다. 다시 열었을 때 같은 소리 무늬가 나오는 줄은 어디일까요?",
+        "options": [
+          {
+            "text": "아래 '저장하고 닫기' 줄",
+            "why": "소리 파일이 남은 쪽만 그 파일을 작업 창으로 다시 불러올 수 있습니다.",
+            "correct": true
+          },
+          {
+            "text": "두 줄 모두",
+            "why": "녹음은 끝내기만 하면 저절로 보관된다고 본 것인데, 이 앱은 자동 저장을 꺼 두어 저장하지 않은 녹음은 파일이 없습니다."
+          },
+          {
+            "text": "어느 줄도 아니다",
+            "why": "소리는 그림과 달리 파일로 남길 수 없다고 본 것인데, 소리도 그림처럼 파일로 저장됩니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "result"
+          ],
+          "description": "위아래 줄은 같은 녹음으로 시작합니다. 파일 목록에는 아래 줄에만 파일이 있습니다. 오른쪽 두 창에는 아직 열지 않음이라고 적혀 있습니다."
+        }
+      }
+    }
+  ],
+  "review": {
+    "own": [
+      "computer-1",
+      "computer-3"
     ],
-    description: '왼쪽 작업 창은 빈 카드입니다. 별을 그리면 오른쪽 작업 창에 별이 생깁니다. 아래 파일 목록은 두 시점 모두 비어 있습니다.'
-  },
-  {
-    label: '저장 없이 닫기',
-    title: '저장하지 않고 닫으면 새 창에 별이 돌아오지 않습니다',
-    body: '‘저장 안 함’을 고르고 창을 닫습니다. 별을 담은 파일을 만들지 않았으므로 앱에서 새 작업을 열면 빈 카드가 나옵니다.',
-    takeaway: '위쪽 별 카드는 창을 닫을 때 없어집니다. 네 시점 모두 아래 파일 목록이 비어 있습니다.',
-    example: ['작업 창의 별', '저장 안 함 · 창 닫기', '새 작업은 빈 카드'],
-    prompt: '저장하지 않는 쪽을 따라가 보세요. 새 작업을 열고 별 카드가 있는지 확인합니다.',
-    actions: ['저장 안 함', '창 닫기', '새 작업 열기'],
-    moments: [
-      ['그린 카드', star, null, '작업 창에 별 카드가 있고 파일 목록은 비어 있습니다.'],
-      ['저장 안 함', star, null, '저장하지 않기로 했습니다. 창을 닫기 전에는 별이 보입니다.'],
-      ['창 닫힘', closed, null, '창을 닫아 작업 중인 별이 사라졌습니다. 파일 목록은 비어 있습니다.'],
-      ['새 작업 열기', null, null, '새 작업은 빈 카드입니다. 파일 목록에도 별 카드가 없습니다.']
-    ],
-    description: '별이 있는 작업 창에서 저장 안 함을 고르고 창을 닫습니다. 앱에서 새 작업을 열면 빈 카드입니다. 처음부터 끝까지 아래 파일 목록에는 별 카드가 없습니다.'
-  },
-  {
-    label: '저장하고 닫기',
-    title: '저장한 별 카드는 파일 목록에서 다시 열 수 있습니다',
-    body: '다시 같은 별 카드를 그리고 저장합니다. 별 카드 한 장이 파일로 복사됩니다. 창을 닫아도 파일 목록에 별 카드가 남아 있어서 다시 열 수 있습니다.',
-    takeaway: '둘째 열에는 별 카드가 두 곳에 보입니다. 셋째 열에서 창을 닫은 뒤에는 파일 목록에만 남습니다.',
-    example: ['같은 별 카드', '저장 · 창 닫기', '목록에서 별 카드 열기'],
-    prompt: '저장하고 창을 닫아 보세요. 파일 목록의 별 카드를 열면 어디에 보일까요?',
-    actions: ['파일에 저장', '창 닫기', '파일 열기'],
-    moments: [
-      ['그린 카드', star, null, '작업 창에 별 카드가 있고 파일 목록은 비어 있습니다.'],
-      ['저장', star, star, '별 카드가 파일로 복사되었습니다. 작업 창에도 별이 남아 있습니다.'],
-      ['창 닫힘', closed, star, '창을 닫았습니다. 작업 중인 별은 사라지고 파일 목록에는 별 카드가 남았습니다.'],
-      ['파일 열기', star, star, '파일에서 작업 창으로 별 카드가 다시 들어왔습니다. 파일도 그대로 남아 있습니다.']
-    ],
-    description: '같은 별 카드를 그립니다. 저장하면 별이 작업 창과 아래 파일 목록에 함께 있습니다. 창을 닫아도 목록에 파일이 남습니다. 저장 파일을 열면 같은 별이 위의 새 작업 창에도 보입니다.'
-  },
-  {
-    label: '메모리와 저장장치',
-    title: '작업 중인 내용과 보관한 파일은 다른 곳에 있습니다',
-    body: '컴퓨터는 작업 중인 내용을 메모리에 둡니다. 전원을 끄면 이 메모리의 내용이 사라집니다. 저장장치에 둔 파일은 남으므로 다시 켠 뒤 열 수 있습니다.',
-    takeaway: '전원을 끈 열에서 위 메모리는 비고 아래 저장장치에는 별 카드가 남습니다. 파일을 열면 같은 별이 위로 올라옵니다.',
-    example: ['메모리와 저장장치에 별', '전원 끄기 · 다시 켜기', '남은 파일을 메모리로 열기'],
-    prompt: '전원을 끈 뒤 다시 켜고 파일을 열어 보세요. 전원이 꺼진 동안 별은 어디에 남았나요?',
-    actions: ['전원 끄기', '다시 켜고 파일 열기'],
-    moments: [
-      ['저장 직후', star, star, '메모리의 작업 중인 별과 저장장치의 별 카드 파일이 함께 있습니다.'],
-      ['전원 끔', off, star, '전원을 껐습니다. 메모리는 비고 저장장치에는 별 카드 파일이 남았습니다.'],
-      ['다시 켠 뒤 파일 열기', star, star, '전원을 다시 켜고 별 카드 파일을 열었습니다. 별 카드가 메모리와 화면에 다시 나타났습니다.']
-    ],
-    description: '위는 작업 중인 내용을 두는 메모리이고 아래는 저장한 파일을 두는 저장장치입니다. 전원을 끄면 위 메모리는 비고 아래에 별 카드 파일이 남습니다. 다시 켜고 파일을 열면 아래 저장장치의 별 카드가 위 메모리로 읽힙니다.'
-  },
-  {
-    label: '녹음에도 적용',
-    title: '녹음을 다시 열려면 소리도 파일로 저장합니다',
-    body: '자동 저장을 끈 녹음 앱에서도 같은 일이 일어납니다. 녹음을 끝내면 소리가 작업 창에 보입니다. 녹음 파일을 만들어야 창을 닫은 뒤에도 다시 열고 보낼 수 있습니다.',
-    takeaway: '두 줄의 왼쪽 소리 무늬는 같습니다. 아래 줄에서만 파일에 소리가 남아 다시 연 창에서도 같은 무늬를 볼 수 있습니다.',
-    example: ['작업 창에 같은 녹음', '한쪽만 파일로 저장', '저장한 소리만 다시 열기'],
-    prompt: '친구에게 소리 파일을 보내려고 합니다. 이 앱에서 녹음을 어떻게 닫아야 다시 열 수 있을까요?',
-    description: '두 줄 모두 같은 녹음으로 시작합니다. 위에서는 저장하지 않고 닫아서 파일 목록과 새 작업 창이 비어 있습니다. 아래에서는 파일로 저장하고 닫아서 파일 목록에 소리가 남고 다시 연 창에도 같은 소리 무늬가 보입니다.'
+    "prereq": {
+      "ref": "computing-basics/computer-tasks",
+      "id": "computer-tasks-4"
+    },
+    "fallback": "computer-4"
   }
-];
+};
 
-const slug = 'computer';
 const byId = id => document.getElementById(id);
-const workspace = document.querySelector('.workspace');
 const viewport = byId('scene');
-const drawing = byId('storage-drawing');
+const drawing = byId('figure');
 const viewWidth = 620;
 const viewHeight = 280;
 const center = {x: viewWidth / 2, y: viewHeight / 2};
 const camera = {x: 0, y: 0, zoom: 1};
 const maxZoom = 2.2;
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-const state = {index: -1, phase: 0, saved: null};
 const columnCenters = {2: [157, 462], 3: [106, 310, 514], 4: [85, 235, 385, 535]};
 
 function text(parent, x, y, value, className = 'caption') {
-  svg('text', {x, y, class: className}, parent).textContent = value;
+  const label = svg('text', {x, y, class: className}, parent);
+  label.textContent = value;
+  return label;
 }
 
 function rect(parent, x, y, width, height, className, rx = 7) {
@@ -203,195 +458,109 @@ function rect(parent, x, y, width, height, className, rx = 7) {
 }
 
 function flow(parent, d, kind = '') {
-  svg('path', {d, class: 'flow ' + kind}, parent);
+  return svg('path', {d, class: 'flow ' + kind}, parent);
 }
 
 function thumbnail(parent, work, x, y, size = 38) {
   svg('use', {href: '#storage-' + work, x: x - size / 2, y: y - size / 2, width: size, height: size}, parent);
 }
 
-function workWindow(parent, x, y, content, compact = false) {
+function workWindow(parent, x, y, content, compact = false, highlight = false) {
   const height = compact ? 51 : 62;
   const top = y - height / 2;
   const bar = compact ? 10 : 13;
   if (content === closed || content === off || content === pending) {
-    rect(parent, x - 55, top, 110, height, 'empty');
+    mark(rect(parent, x - 55, top, 110, height, 'empty'), highlight);
     const label = content === pending ? '아직 열지 않음' : content === closed ? '창 닫힘' : '비어 있음';
     text(parent, x, y + 5, label, 'caption quiet');
     return;
   }
-  rect(parent, x - 55, top, 110, height, 'window');
+  mark(rect(parent, x - 55, top, 110, height, 'window'), highlight === true);
   rect(parent, x - 54, top + 1, 108, bar, 'window-bar', 5);
   svg('circle', {cx: x - 44, cy: top + bar / 2 + 1, r: 2, class: 'icon-stroke'}, parent);
   svg('circle', {cx: x - 37, cy: top + bar / 2 + 1, r: 2, class: 'icon-stroke'}, parent);
-  if (content) thumbnail(parent, content, x, y + bar / 2, compact ? 32 : 38);
+  if (content) {
+    const size = compact ? 32 : 38;
+    if (highlight === 'star') mark(rect(parent, x - size / 2, y + bar / 2 - size / 2, size, size, 'star-outline'), true);
+    thumbnail(parent, content, x, y + bar / 2, size);
+  }
   else rect(parent, x - 18, y + bar / 2 - 13, 36, 26, 'empty', 4);
 }
 
-function fileFolder(parent, x, y, content, compact = false) {
+function fileFolder(parent, x, y, content, compact = false, highlight = false) {
   if (!content) {
     rect(parent, x - 53, y - 17, 106, 34, 'empty');
     text(parent, x, y + 5, '비어 있음', 'small quiet');
     return;
   }
-  svg('path', {d: `M ${x - 55} ${y - 11} v -9 h 32 l 7 7 h 66 q 5 0 5 5 v 22 q 0 5 -5 5 h -100 q -5 0 -5 -5 Z`, class: 'folder'}, parent);
+  mark(svg('path', {d: `M ${x - 55} ${y - 11} v -9 h 32 l 7 7 h 66 q 5 0 5 5 v 22 q 0 5 -5 5 h -100 q -5 0 -5 -5 Z`, class: 'folder'}, parent), highlight);
   thumbnail(parent, content, x - 32, y + 1, compact ? 24 : 27);
   text(parent, x + 17, y + 6, content === star ? starFile : audioFile, 'small');
 }
 
-function columnDiagram(step, lastVisible) {
-  const centers = columnCenters[step.moments.length];
-  const previewed = step.moments.slice(0, lastVisible + 1);
-  previewed.forEach(([label, work, file], index) => {
-    const x = centers[index];
-    const parent = svg('g', {}, drawing);
-    text(parent, x, 33, label, 'heading');
-    workWindow(parent, x, 110, work);
-    fileFolder(parent, x, 225, file);
+function mark(element, highlight) {
+  if (highlight) element.setAttribute('data-changed', '');
+}
 
-    if (!index) {
-      text(parent, x, 64, state.index === 3 ? '메모리 · 작업 중' : '작업 창');
-      text(parent, x, 194, state.index === 3 ? '저장장치 · 보관' : '파일 목록');
+function columnDiagram(step, lastVisible, index, changed) {
+  const centers = columnCenters[step.moments.length];
+  const named = index === 3 || index === 4;
+  const saveAndOpen = changed.includes('save-and-open');
+  step.moments.slice(0, lastVisible + 1).forEach(([label, work, file], position) => {
+    const x = centers[position];
+    const parent = svg('g', {}, drawing);
+    mark(text(parent, x, 33, label, 'heading'), saveAndOpen && (position === 1 || position === 3));
+    const highlightWindow = (changed.includes('closed-and-new') && position >= 2)
+      || (saveAndOpen && position === 3) || (changed.includes('empty-memory') && position === 1);
+    const highlightStar = changed.includes('drawn-star') && position === 1;
+    workWindow(parent, x, 110, work, false, highlightStar ? 'star' : highlightWindow);
+    fileFolder(parent, x, 225, file, false, saveAndOpen && position > 0);
+    if (!position) {
+      const namesChanged = changed.includes('row-names');
+      mark(text(parent, x, 64, named ? '메모리 · 작업 중' : '작업 창'), namesChanged);
+      mark(text(parent, x, 194, named ? '저장장치 · 보관' : '파일 목록'), namesChanged);
       return;
     }
-    const previousX = centers[index - 1];
-    const previousFile = step.moments[index - 1][2];
+    const previousX = centers[position - 1];
+    const previousFile = step.moments[position - 1][2];
     flow(parent, `M ${previousX + 59} 110 H ${x - 61}`);
-    if (file && previousFile) flow(parent, `M ${previousX + 59} 225 H ${x - 61}`);
+    if (file && previousFile) mark(flow(parent, `M ${previousX + 59} 225 H ${x - 61}`), saveAndOpen && position === 2);
     if (file && !previousFile) {
-      flow(parent, `M ${x} 145 V 198`, 'copy');
+      mark(flow(parent, `M ${x} 145 V 198`, 'copy'), saveAndOpen);
       text(parent, x + 47, 174, '파일로 복사', 'small');
     }
-    const opened = work && file && previousFile && index === step.moments.length - 1;
-    if (opened) {
-      flow(parent, `M ${x} 198 V 146`, 'copy reading');
+    if (work && file && previousFile && position === step.moments.length - 1) {
+      mark(flow(parent, `M ${x} 198 V 146`, 'copy reading'), saveAndOpen);
       text(parent, x - 57, 175, '파일 불러오기', 'small');
     }
   });
 }
 
-function recordingRow(y, saved, reopened) {
+function recordingRow(y, saved, reopened, highlight = false) {
   workWindow(drawing, 106, y, wave, true);
-  fileFolder(drawing, 310, y, saved ? wave : null, true);
-  if (saved !== null) {
-    text(drawing, 310, y - 34, saved ? '저장하고 닫기' : '저장 안 하고 닫기');
-    flow(drawing, `M 166 ${y} H 250`);
-  }
-  workWindow(drawing, 514, y, reopened ? (saved ? wave : null) : pending, true);
+  fileFolder(drawing, 310, y, saved ? wave : null, true, highlight);
+  text(drawing, 310, y - 34, saved ? '저장하고 닫기' : '저장 안 하고 닫기');
+  flow(drawing, `M 166 ${y} H 250`);
+  workWindow(drawing, 514, y, reopened ? (saved ? wave : null) : pending, true, highlight);
   if (reopened) flow(drawing, `M 370 ${y} H 452`);
 }
 
-function compareRecordings(practicing) {
+function compareRecordings(reopened, changed) {
   text(drawing, 106, 31, '녹음한 소리', 'heading');
   text(drawing, 310, 31, '파일 목록', 'heading');
   text(drawing, 514, 31, '다시 연 창', 'heading');
-  if (practicing) {
-    recordingRow(150, state.saved, state.phase === 2);
-  } else {
-    recordingRow(104, false, true);
-    svg('line', {x1: 29, y1: 151, x2: 590, y2: 151, class: 'rule'}, drawing);
-    recordingRow(213, true, true);
-  }
+  recordingRow(104, false, reopened);
+  svg('line', {x1: 29, y1: 151, x2: 590, y2: 151, class: 'rule'}, drawing);
+  recordingRow(213, true, reopened, changed.includes('saved-recording'));
 }
 
-function practiceDescription() {
-  const step = lesson[state.index];
-  if (step.moments) return step.moments[state.phase][3];
-  if (state.phase === 0) return '작업 창에 녹음이 있습니다. 저장하고 닫을지 고르면 됩니다.';
-  if (state.phase === 1) return state.saved
-    ? '창을 닫았습니다. 파일 목록에 녹음이 남았습니다.'
-    : '창을 닫았습니다. 파일 목록에 녹음이 없습니다.';
-  return state.saved
-    ? '다시 연 창에 녹음이 있습니다. 이 파일을 친구에게 보낼 수 있습니다.'
-    : '다시 연 창이 비어 있고 보낼 파일이 없습니다. 다시 녹음하고 저장하는 쪽을 골라 보세요.';
+function drawFigure(index, {hide, changed}) {
+  const step = lesson.steps[index];
+  const hidden = hide.includes('result');
+  if (step.moments) columnDiagram(step, hidden ? (index === 4 ? 0 : 1) : step.moments.length - 1, index, changed);
+  else compareRecordings(!hidden, changed);
 }
 
-function renderScene() {
-  const practicing = coursePracticeStarted && !workspace.classList.contains('course-reading');
-  const step = lesson[state.index];
-  drawing.replaceChildren();
-  if (step.moments) columnDiagram(step, practicing ? state.phase : step.moments.length - 1);
-  else compareRecordings(practicing);
-  byId('scene-desc').textContent = practicing ? practiceDescription() : step.description;
-}
-
-function actionButton(label, perform, enabled = true) {
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'action';
-  button.textContent = label;
-  button.disabled = !enabled;
-  button.onclick = () => {
-    perform();
-    updatePractice(true);
-    byId('choices').querySelector('button:enabled')?.focus({preventScroll: true});
-  };
-  return button;
-}
-
-function updatePractice(announce) {
-  const step = lesson[state.index];
-  let buttons;
-  if (step.actions) {
-    buttons = step.actions.map((label, i) => actionButton(label, () => state.phase++, i === state.phase));
-  } else {
-    buttons = [
-      actionButton('저장하고 닫기', () => { state.saved = true; state.phase = 1; }, state.phase === 0),
-      actionButton('저장 안 하고 닫기', () => { state.saved = false; state.phase = 1; }, state.phase === 0),
-      actionButton('다시 열기', () => { state.phase = 2; }, state.phase === 1),
-      actionButton('다시 녹음', () => { state.saved = null; state.phase = 0; }, state.phase === 2)
-    ];
-  }
-  byId('choices').replaceChildren(...buttons);
-  byId('storage-status').textContent = announce ? practiceDescription() : '';
-  renderScene();
-}
-
-function renderPractice(step) {
-  byId('storage-prompt').textContent = step.prompt;
-  updatePractice(false);
-}
-
-function showStep(index, announce = true) {
-  state.index = index;
-  state.phase = 0;
-  state.saved = null;
-  const step = lesson[index];
-  byId('step-title').textContent = step.title;
-  byId('body').textContent = step.body;
-  byId('takeaway').textContent = step.takeaway;
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  for (const [position, button] of stepButtons.entries()) {
-    if (position === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  }
-  renderPractice(step);
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${step.title}`;
-}
-
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/${slug}/${index + 1}`);
-  showStep(index);
-}
-
-const stepButtons = lesson.map(({label}, index) => {
-  const item = document.createElement('li');
-  const button = document.createElement('button');
-  const number = document.createElement('span');
-  button.type = 'button';
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.onclick = () => goToStep(index);
-  item.append(button);
-  byId('steps').append(item);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
 byId('zoom-in').onclick = () => zoomBy(.3);
 byId('zoom-out').onclick = () => zoomBy(-.3);
 enableCameraDrag();
@@ -404,28 +573,16 @@ viewport.addEventListener('keydown', event => {
   setCamera(camera.x + direction[0] * 18, camera.y + direction[1] * 18, camera.zoom);
 });
 
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
 window.addEventListener('keydown', event => {
   if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
       event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  const action = {
-    ArrowLeft: () => goToStep(state.index - 1),
-    ArrowRight: () => goToStep(state.index + 1),
-    '+': () => zoomBy(.3),
-    '-': () => zoomBy(-.3),
-    '0': resetView
-  }[event.key];
-  if (!action) return;
-  event.preventDefault();
-  action();
+  const zoom = {'+': () => zoomBy(.3), '-': () => zoomBy(-.3), '0': resetView}[event.key];
+  if (zoom) {
+    event.preventDefault();
+    zoom();
+  }
 });
-
-new MutationObserver(renderScene).observe(workspace, {attributes: true, attributeFilter: ['class']});
-const initial = routeIndex();
-history.replaceState(null, '', `#/${slug}/${initial + 1}`);
 setCamera(0, 0, 1);
-showStep(initial, false);
 </script>
 </body>
 </html>

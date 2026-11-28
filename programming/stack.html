@@ -4,185 +4,49 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="함수를 부르고 돌아올 때 호출 스택에 층이 쌓이고 사라지는 모습을 코드를 한 줄씩 실행하며 살펴보세요.">
-<title>함수와 호출 스택 · 레슨 1.3</title>
-<style>
-:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
-button{font:inherit;color:inherit;cursor:pointer}
-button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
-:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
-.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
-header{margin-bottom:20px}
-h1,h2,p{margin:0}
-.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
-h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
-header p.lead{color:var(--muted);margin-top:10px}
-.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
-.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
-.stage-top h2,.timeline h2{font-size:1rem}
-.status{color:var(--accent);font-size:.875rem;font-weight:700}
-.stage{background:#eaf3eb;border-block:1px solid var(--border)}
-svg{display:block;width:100%;height:auto;max-height:520px}
-#scene{user-select:none}
-#scene:focus-visible{outline-offset:-4px}
-#scene.is-zoomed{cursor:grab;touch-action:none}
-#scene.is-dragging{cursor:grabbing}
-.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
-.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
-.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
-.try-result{color:var(--accent);font-weight:700}
-.try-result:empty{display:none}
-.try.solved{background:#d2f4dd}
-.readout{font-size:1rem;color:var(--muted)}
-.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
-.readout .total{color:var(--accent);font-size:1.3rem}
-.switch-area{display:flex;gap:10px 14px;align-items:stretch;flex-wrap:wrap}
-.switch-row{display:grid;grid-template-columns:repeat(var(--n,8),minmax(0,1fr));gap:6px;flex:1 1 320px;max-width:calc(var(--n,8) * 66px)}
-.bit-button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:54px;padding:4px 2px;border:1px solid #9fb7a9;border-radius:10px;background:#f6f8f5;line-height:1.2}
-.bit-button .place{font:600 .75rem var(--mono);color:var(--muted)}
-.bit-button .bit{font:700 1.15rem var(--mono);color:#7c8c85}
-.bit-button:hover{border-color:var(--accent)}
-.bit-button[aria-pressed=true]{background:#d2f4dd;border-color:var(--accent)}
-.bit-button[aria-pressed=true] .place,.bit-button[aria-pressed=true] .bit{color:#0f5a3c}
-.switch-actions{display:flex;gap:8px;align-items:center}
-.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
-.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
-.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
-.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
-.node .face{stroke-width:.8;stroke-linejoin:round}
-.node .shadow{fill:#1f4434;opacity:.16}
-.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
-.switch{cursor:pointer}
-.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
-.switch .left{fill:#d3dad6;stroke:#8c9d96}
-.switch .right{fill:#b9c4be;stroke:#8c9d96}
-.switch .top{fill:#eef1ef;stroke:#8c9d96}
-.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
-.switch.on .right{fill:#78b592;stroke:#4f8f6b}
-.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
-.switch .glow{fill:#4fcf87;opacity:0}
-.switch.on .glow{opacity:.55}
-.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
-.switch.on .digit{fill:#0f5a3c}
-.switch.on .tag rect{stroke:var(--accent)}
-.switch.on .tag text{fill:var(--accent)}
-.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
-.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.wire.signal{stroke:var(--request);stroke-width:2.6}
-.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.chevron.signal{stroke:var(--request)}
-.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
-.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
-.tag.place text{font:700 11.5px var(--mono)}
-.total rect{fill:#fff;stroke:var(--accent);stroke-width:1.2}
-.total text{font:700 20px var(--mono);fill:var(--accent);text-anchor:middle;dominant-baseline:central}
-.total.max rect{fill:#fff6ef;stroke:#a24c14}
-.total.max text{fill:#a24c14}
-.total{transform-box:fill-box;transform-origin:center}
-.board{transition:transform .35s ease-out}
-@media(prefers-reduced-motion:reduce){.board{transition:none}}
-.total.bump{animation:bump .32s ease-out}
-@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
-.note{animation:note 1.6s ease-out forwards}
-.note path{fill:none;stroke:#43574f;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
-.note .arc{stroke-dasharray:3 3.5}
-.note text{font:700 9.5px system-ui,sans-serif;fill:#43574f;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3.5px;stroke-linejoin:round}
-@keyframes note{0%{opacity:0}10%{opacity:1}72%{opacity:1}100%{opacity:0}}
-.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
-.packet-halo{opacity:.22;fill:var(--request)}
-.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
-@media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:none}.note,.total.bump{animation:none}}
-.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.sample{width:22px;border-top:3px solid var(--request)}
-.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
-.dot.on{border-color:#4f8f6b;background:#bfecce}
-.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
-.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
-.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
-.primary{background:var(--accent);color:white;border-color:var(--accent)}
-.primary:hover:not(:disabled){background:#115e59}
-.timeline{padding:15px 18px}
-.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0;margin:0;gap:8px}
-.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
-.steps button:hover{border-color:var(--accent)}
-.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
-.step-number{font:700 .875rem var(--mono);color:var(--accent)}
-.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
-.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
-.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
-.takeaway p{font-size:1rem}
-.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
-.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
-.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+<meta name="description" content="함수가 끝나기 전에 또 함수를 부르기만 하면 호출 스택은 어떻게 될까요?">
+<title>함수와 호출 스택</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="variables.items.js?v=12be7ba520120444">
 
-.cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
-.cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
-.cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
-.cell.changed .top{animation:flash 1s ease-out}
-@keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
-.cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
-.cell.empty .cell-value{fill:#9aa8a2}
-.address{font:600 9px var(--mono);fill:#6b7d76;text-anchor:start}
-.tag.name{transition:opacity .25s}
-.tag.name rect{stroke:var(--accent);stroke-width:1.1}
-.tag.name text{fill:var(--accent);font-weight:700}
-.bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.bus.active{stroke:#7fa891}
-.packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
-.packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
-.packet-group.read .packet-label{fill:#3b4880}
-.code-area{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
-.code{list-style:none;counter-reset:line;margin:0;padding:10px 0;background:#1f2d29;border-radius:12px;color:#e8f2ec;font:600 1rem/1.5 var(--mono);flex:1 1 300px}
-.code li{counter-increment:line;padding:5px 14px 5px 46px;position:relative;white-space:pre}
-.code li.block code{color:#f2c49a}
-.code li.jumped::after{content:'↩ 이동';position:absolute;right:14px;color:#f2c49a;font-size:.8125rem}
-.code li.current.jumped::after{content:'다음'}
-.code li::before{content:counter(line);position:absolute;left:16px;color:#6f8a80}
-.code li.done{color:#8fa79c}
-.code li.current{background:#2f4a41;color:#ffffff}
-.code li.current::after{content:'다음';position:absolute;right:14px;color:#9fe3b6;font-size:.8125rem}
-.code-actions{display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
-.try-choices{display:flex;gap:6px;flex-wrap:wrap}
-.try-choices:empty{display:none}
-.dot.read{background:var(--response);border-color:var(--response)}
-.dot.write{background:var(--request);border-color:var(--request)}
-@media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
-.frame{transition:transform .35s ease-out,opacity .35s ease-out}
-.frame.entering,.frame.leaving{opacity:0;transform:translateY(-34px)}
-/* A frame's label shows once the frame has landed and goes at once when it leaves: in flight the faded label sat
-   across the labels of the frames below (1.3 4, 1.5 2 review). */
-.frame .frame-label{transition:opacity .2s ease-out .3s}
-.frame.entering .frame-label,.frame.leaving .frame-label{opacity:0;transition:none}
-.frame .face{stroke-width:.8}
-.frame.outer .left{fill:#e6ebe8}.frame.outer .right{fill:#cfd8d4}.frame.outer .top{fill:#f6f8f7}.frame.outer .face{stroke:#8c9d96}
-.frame.inner .left{fill:#c6e6cf}.frame.inner .right{fill:#9fcdae}.frame.inner .top{fill:#e3f6e8}.frame.inner .face{stroke:#5f9474}
-.frame.top .face{stroke:var(--accent);stroke-width:1.4}
-.frame-label text{font-family:var(--mono);font-size:11.5px}
-.frame.top .frame-label rect{stroke:var(--accent)}
-@media(prefers-reduced-motion:reduce){.frame,.frame .frame-label{transition:none}}
+<style>
+.frame .face { stroke-width: .8; }
+.frame.outer .left { fill: #e6ebe8; }
+.frame.outer .right { fill: #cfd8d4; }
+.frame.outer .top { fill: #f6f8f7; }
+.frame.outer .face { stroke: #8c9d96; }
+.frame.inner .left { fill: #c6e6cf; }
+.frame.inner .right { fill: #9fcdae; }
+.frame.inner .top { fill: #e3f6e8; }
+.frame.inner .face { stroke: #5f9474; }
+.frame.top .face { stroke: var(--accent); stroke-width: 1.4; }
+.frame-label text { font: 650 13px ui-monospace, monospace; }
+.stack-base .highlight, .frame .highlight { fill: none; stroke: #658579; stroke-width: .6; }
+#figure .tag rect, #figure .total rect { fill: var(--panel, white); stroke: #86a494; }
+#figure .tag rect[data-changed], #figure .total rect[data-changed] { stroke: #0f766e; stroke-width: 3; }
+#figure .tag text, #figure .total text { text-anchor: middle; dominant-baseline: central; fill: var(--ink); }
+#figure .total text { font: 750 12px system-ui, sans-serif; }
 </style>
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./stack.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=43626da713e5fe4e">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=19c0019b554ff2c9"></script>
+<script defer blocking="render" src="./stack.items.js?v=e5380f6add214cc5"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=5955c1a45768b2a4"></script>
+<script defer blocking="render" src="./stack.en.js?v=d0614a83acf7d013"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
   <header>
-    <p class="eyebrow">1장 프로그래밍 입문 · 레슨 1.3</p>
+    <p class="eyebrow">1장 프로그래밍 입문</p>
     <h1>함수와 호출 스택</h1>
-    <p class="lead">함수를 부르고 돌아올 때 무엇이 쌓이고 사라질까요? 코드를 한 줄씩 실행하며 호출 스택을 지켜보세요.</p>
+    <p>함수가 끝나기 전에 또 함수를 부르기만 하면 호출 스택은 어떻게 될까요?</p>
   </header>
   <div class="workspace">
     <div>
@@ -190,43 +54,17 @@ svg{display:block;width:100%;height:auto;max-height:520px}
         <div class="stage-top"><h2 id="stage-heading">호출 스택</h2></div>
         <div class="stage">
           <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
-            <title id="scene-title">함수를 부를 때마다 층이 쌓이고 돌아올 때 사라지는 호출 스택</title><desc id="scene-desc"></desc>
-            <defs>
-              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
-              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
-              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
-            </defs>
-            <g id="world" aria-hidden="true">
-              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
-              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
-            </g>
+            <title id="scene-title">호출 스택의 층과 함수가 돌려준 값</title>
+            <desc id="scene-desc"></desc>
+            <g id="figure" aria-hidden="true"></g>
           </svg>
-        </div>
-        <div class="hands-on">
-          <div class="try" id="try">
-            <p><strong>해 보기</strong><span id="try-text"></span></p>
-            <p class="try-result" id="try-result" role="status"></p>
-            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
-          </div>
-          <p class="readout" id="readout"></p>
-          <div class="code-area">
-            <ol class="code" id="code" aria-label="프로그램"></ol>
-            <div class="code-actions">
-              <button class="action primary" id="run-line" type="button">한 줄 실행</button>
-              <button class="action" id="restart" type="button">처음부터</button>
-            </div>
-          </div>
         </div>
         <div class="view-controls" role="group" aria-label="장면 보기">
           <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
-          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <output id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
           <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
-          <span class="view-hint">확대 후 드래그로 이동</span>
         </div>
-        <div class="controls">
-          <div class="legend" aria-label="범례"><span><i class="dot"></i>층 = 함수 하나의 작업 공간</span><span><i class="dot on"></i>지금 실행 중인 층</span><span><i class="dot write"></i>돌려주는 값</span></div>
-        </div>
+        <div class="controls"></div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
           <ol class="steps" id="steps"></ol>
@@ -234,215 +72,489 @@ svg{display:block;width:100%;height:auto;max-height:520px}
       </section>
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
-      <h2 id="step-title"></h2><p id="body"></p>
+      <h2 id="step-title"></h2>
+      <p id="body"></p>
       <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
-      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
     </section>
   </div>
-  <div class="sr-only" id="announcement" role="status"></div>
+  <div id="announcement" class="sr-only" role="status"></div>
 </main>
 <script>
-const byId = (id) => document.getElementById(id);
+const lesson = {
+  "question": "함수가 끝나기 전에 또 함수를 부르기만 하면 호출 스택은 어떻게 될까요?",
+  "terms": [
+    {
+      "term": "함수",
+      "meaning": "이름을 붙여 둔 줄 묶음. def 두배(x): 처럼 적는다",
+      "step": 1
+    },
+    {
+      "term": "부르기(호출)",
+      "meaning": "함수 이름에 값을 넣어 그 줄들을 실행하게 하는 일. 예: 두배(5)",
+      "step": 1
+    },
+    {
+      "term": "매개변수",
+      "meaning": "함수가 받은 값을 담는 이름. 두배(5) 에서 x = 5",
+      "step": 1
+    },
+    {
+      "term": "층",
+      "meaning": "함수를 한 번 부를 때마다 생기는 작업 자리. 그 함수의 변수가 여기 있다",
+      "step": 1
+    },
+    {
+      "term": "호출 스택",
+      "meaning": "층을 쌓아 둔 더미. 맨 위층이 지금 실행 중인 함수다",
+      "step": 1
+    },
+    {
+      "term": "돌려주기(return)",
+      "meaning": "함수가 결과를 부른 쪽에 건네고 끝나는 일. 그 층은 사라진다",
+      "step": 2
+    },
+    {
+      "term": "지역 변수",
+      "meaning": "한 층 안에만 있는 변수. 층이 사라지면 함께 사라진다",
+      "step": 5
+    },
+    {
+      "term": "스택 넘침",
+      "meaning": "층이 너무 많이 쌓여 더 쌓을 수 없게 된 것",
+      "step": 7
+    }
+  ],
+  "steps": [
+    {
+      "label": "함수 부르기",
+      "title": "함수를 부르면 스택에 층이 하나 쌓입니다",
+      "body": "함수는 이름을 붙여 둔 줄 묶음입니다. * 는 곱하기(×)입니다. 두배(5)를 부르면 값을 받은 x가 5인 두배 층이 맨 바깥 위에 생깁니다. 이 층에는 함수가 받은 값(매개변수)과 돌아갈 곳이 적혀 있습니다. 층을 쌓아 둔 더미가 호출 스택입니다. 접시 한 장이 층 하나이고 맨 위 접시가 지금 실행 중인 함수라고 생각해 보세요. 함수의 층은 부를 때만 올리고, 돌려주기 전에는 꺼낼 수 없습니다.",
+      "description": "위층 글자에 x = 5 가 있고, 그 층이 맨 바깥 층 바로 위에 얹혀 있습니다.",
+      "takeaway": "위층 글자에 x = 5 가 있고, 그 층이 맨 바깥 층 바로 위에 얹혀 있습니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "층 2"
+        ]
+      },
+      "code": {
+        "lines": [
+          "def 두배(x):",
+          "    return x * 2",
+          "y = 두배(5)"
+        ]
+      }
+    },
+    {
+      "label": "돌려주기",
+      "title": "돌려주면 그 층은 사라집니다",
+      "body": "두배가 10을 돌려주면 맨 바깥 층의 y에 10을 적습니다. 돌려준 값만 부른 쪽으로 건너가고, 층 안의 x는 층과 함께 사라집니다.",
+      "description": "탑이 한 층으로 낮아지고, 남은 층에 y = 10 이 생겼습니다. x = 5 는 어디에도 없습니다.",
+      "takeaway": "탑이 한 층으로 낮아지고, 남은 층에 y = 10 이 생겼습니다. x = 5 는 어디에도 없습니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "층 1"
+        ]
+      },
+      "code": {
+        "lines": [
+          "def 두배(x):",
+          "    return x * 2",
+          "y = 두배(5)"
+        ]
+      }
+    },
+    {
+      "label": "함수 안의 함수",
+      "title": "함수 안에서 부르면 그 위에 또 쌓입니다",
+      "body": "함수 안에서 다른 함수를 부르면 층이 하나 더 쌓입니다. / 는 나누기(÷)입니다. 파이썬에서 / 로 나눈 값은 6.0 처럼 소수점이 붙습니다.",
+      "description": "평균 층이 그대로 남은 채 더하기 층이 그 위에 얹혀 세 층이 됩니다.",
+      "takeaway": "평균 층이 그대로 남은 채 더하기 층이 그 위에 얹혀 세 층이 됩니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "층 3"
+        ]
+      },
+      "code": {
+        "lines": [
+          "def 더하기(a, b):",
+          "    return a + b",
+          "def 평균(a, b):",
+          "    합 = 더하기(a, b)",
+          "    return 합 / 2",
+          "결과 = 평균(4, 8)"
+        ]
+      },
+      "predict": {
+        "prompt": "평균 층에서 더하기(a, b)를 부르면 스택은 어떻게 될까요?",
+        "options": [
+          {
+            "text": "평균 층 위에 더하기 층이 쌓여 3층이 된다",
+            "why": "1단계처럼 부를 때마다 층이 하나 생기고, 평균은 아직 끝나지 않아 그대로 있습니다.",
+            "correct": true
+          },
+          {
+            "text": "평균 층이 더하기 층으로 바뀌어 2층이다",
+            "why": "새 함수가 앞 함수를 대신한다고 본 것인데, 평균은 더하기의 결과를 받아야 하므로 남아 있습니다."
+          },
+          {
+            "text": "평균 층이 사라진 뒤 더하기 층이 생긴다",
+            "why": "한 번에 한 함수만 있다고 본 것인데, 층은 돌려줄 때만 사라지고 평균은 아직 돌려주지 않았습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "층 3"
+          ],
+          "description": "맨 바깥 층 위에 평균 층이 있고, 안내판에 더하기(a, b) 부르기가 적혀 있습니다."
+        }
+      }
+    },
+    {
+      "label": "평균(4, 8)",
+      "title": "나중에 부른 함수가 먼저 끝납니다",
+      "body": "이 축의 눈금은 시간의 길이가 아니라 일이 일어난 차례입니다. 구간의 길이는 층이 살아 있던 동안을 차례로 셉니다. 더하기가 먼저 12를 돌려주고 평균이 그 값으로 계산을 마친 뒤 6.0을 돌려줍니다. 끝날 때는 맨 위층부터 차례로 사라집니다.",
+      "description": "셋째 층 구간이 가장 늦게 시작해 가장 먼저 끝납니다. 둘째 층 구간이 그것을 감싸며 첫째 층 구간이 둘을 감쌉니다.",
+      "takeaway": "셋째 층 구간이 가장 늦게 시작해 가장 먼저 끝납니다. 둘째 층 구간이 그것을 감싸며 첫째 층 구간이 둘을 감쌉니다.",
+      "figure": {
+        "part": "timeline",
+        "axis": {
+          "kind": "order",
+          "unit": "실행 차례",
+          "max": 6,
+          "ticks": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        "rows": [
+          {
+            "label": "셋째 층",
+            "spans": [
+              {
+                "id": "add",
+                "start": 2,
+                "end": 4,
+                "kind": "c",
+                "label": "더하기(4, 8)"
+              }
+            ]
+          },
+          {
+            "label": "둘째 층",
+            "spans": [
+              {
+                "id": "avg",
+                "start": 1,
+                "end": 5,
+                "kind": "b",
+                "label": "평균(4, 8)"
+              }
+            ]
+          },
+          {
+            "label": "첫째 층",
+            "spans": [
+              {
+                "id": "out",
+                "start": 0,
+                "end": 6,
+                "kind": "a",
+                "label": "맨 바깥"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "at": 1,
+            "label": "평균 부름"
+          },
+          {
+            "at": 2,
+            "label": "더하기 부름"
+          },
+          {
+            "at": 4,
+            "label": "더하기 → 12"
+          },
+          {
+            "at": 5,
+            "label": "평균 → 6.0"
+          }
+        ],
+        "changed": [
+          "add",
+          "avg"
+        ]
+      },
+      "code": {
+        "lines": [
+          "def 더하기(a, b):",
+          "    return a + b",
+          "def 평균(a, b):",
+          "    합 = 더하기(a, b)",
+          "    return 합 / 2",
+          "결과 = 평균(4, 8)"
+        ]
+      },
+      "predict": {
+        "prompt": "평균과 더하기 중 어느 층이 먼저 사라질까요?",
+        "options": [
+          {
+            "text": "더하기",
+            "why": "맨 위의 더하기가 12를 돌려줘야 평균이 그 값으로 계산을 이어 갈 수 있습니다.",
+            "correct": true
+          },
+          {
+            "text": "평균",
+            "why": "먼저 부른 것이 먼저 끝난다고 본 것인데, 평균은 더하기가 돌려줄 때까지 기다립니다."
+          },
+          {
+            "text": "두 층이 함께 사라진다",
+            "why": "함수 안의 함수는 한 덩어리라고 본 것인데, 층은 하나씩 돌려주며 따로 사라집니다."
+          }
+        ],
+        "before": {
+          "part": "timeline",
+          "axis": {
+            "kind": "order",
+            "unit": "실행 차례",
+            "max": 6,
+            "ticks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          "rows": [
+            {
+              "label": "셋째 층",
+              "spans": [
+                {
+                  "id": "add",
+                  "start": 2,
+                  "end": 3,
+                  "kind": "c",
+                  "label": "더하기(4, 8)"
+                }
+              ]
+            },
+            {
+              "label": "둘째 층",
+              "spans": [
+                {
+                  "id": "avg",
+                  "start": 1,
+                  "end": 3,
+                  "kind": "b",
+                  "label": "평균(4, 8)"
+                }
+              ]
+            },
+            {
+              "label": "첫째 층",
+              "spans": [
+                {
+                  "id": "out",
+                  "start": 0,
+                  "end": 3,
+                  "kind": "a",
+                  "label": "맨 바깥"
+                }
+              ]
+            }
+          ],
+          "marks": [
+            {
+              "at": 1,
+              "label": "평균 부름"
+            },
+            {
+              "at": 2,
+              "label": "더하기 부름"
+            }
+          ],
+          "changed": [],
+          "description": "1층의 맨 바깥은 눈금 0에서, 2층의 평균은 1에서, 3층의 더하기는 2에서 시작합니다. 세 구간 모두 눈금 3까지만 보입니다."
+        }
+      }
+    },
+    {
+      "label": "x = 100",
+      "title": "층마다 자기 변수를 따로 가집니다",
+      "body": "이름이 같아도 맨 바깥의 x와 함수 안의 x는 서로 다른 칸입니다. 바꾸기를 부르면 바깥 x의 1을 안쪽 x에 복사합니다. x = 100 을 실행하면 바꾸기 층의 x에만 100을 적습니다. 한 층에서만 쓰는 이런 값을 담은 변수를 지역 변수라고 합니다.",
+      "description": "이름이 같은 x가 두 층에 따로 있고, 아래층은 1, 위층은 100입니다.",
+      "takeaway": "이름이 같은 x가 두 층에 따로 있고, 아래층은 1, 위층은 100입니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "층 2"
+        ]
+      },
+      "code": {
+        "lines": [
+          "x = 1",
+          "def 바꾸기(x):",
+          "    x = 100",
+          "    return x",
+          "y = 바꾸기(x)"
+        ]
+      },
+      "predict": {
+        "prompt": "바꾸기 층에서 x = 100 을 실행하면 맨 바깥 층의 x는 얼마일까요?",
+        "options": [
+          {
+            "text": "1",
+            "why": "3단계에서 평균과 더하기가 같은 이름 a, b를 따로 가졌듯이, 바꾸기의 x는 자기 층에만 있습니다.",
+            "correct": true
+          },
+          {
+            "text": "100",
+            "why": "이름이 같으면 같은 칸이라고 본 것인데, 층이 다르면 이름이 같아도 다른 칸입니다."
+          },
+          {
+            "text": "맨 바깥의 x가 지워진다",
+            "why": "새 x가 생기면 예전 x를 밀어낸다고 본 것인데, 맨 바깥 층에는 손대지 않습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "안내판"
+          ],
+          "description": "맨 바깥 층과 바꾸기 층에 각각 받은 값 x = 1이 표시됩니다. 안내판은 보이지 않습니다."
+        }
+      }
+    },
+    {
+      "label": "반환 뒤",
+      "title": "층이 사라지면 그 층의 변수도 사라집니다",
+      "body": "바꾸기가 100을 돌려주고 그 층이 사라집니다. 부른 쪽은 돌려받은 100을 y에 적습니다. 맨 바깥 x의 1은 그대로 남습니다.",
+      "description": "남은 한 층에 x = 1 이 그대로 있고, 100은 y로만 남았습니다.",
+      "takeaway": "남은 한 층에 x = 1 이 그대로 있고, 100은 y로만 남았습니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "층 1"
+        ]
+      },
+      "code": {
+        "lines": [
+          "x = 1",
+          "def 바꾸기(x):",
+          "    x = 100",
+          "    return x",
+          "y = 바꾸기(x)"
+        ]
+      }
+    },
+    {
+      "label": "세기(1)",
+      "title": "끝나지 않는 호출은 스택을 넘치게 합니다",
+      "body": "세기는 값을 돌려주기 전에 자신을 다시 부릅니다. 아래층은 기다리는 동안 그대로 있고 새 층은 계속 쌓입니다. 함수가 자기 자신을 부르는데 멈추는 조건이 없으면, 층이 끝없이 쌓입니다. 파이썬은 층이 정해진 한도(기본 1000층 안팎)를 넘으면 RecursionError 를 내고 멈춥니다. 이것을 스택 넘침(스택 오버플로)이라고 합니다. 이 그림은 보기 쉽게 9층에서 멈췄습니다.",
+      "description": "아래층이 하나도 사라지지 않은 채 n만 하나씩 큰 층이 위로 쌓입니다.",
+      "takeaway": "아래층이 하나도 사라지지 않은 채 n만 하나씩 큰 층이 위로 쌓입니다.",
+      "figure": {
+        "custom": true,
+        "changed": [
+          "층 9",
+          "안내판"
+        ]
+      },
+      "code": {
+        "lines": [
+          "def 세기(n):",
+          "    return 세기(n + 1)",
+          "세기(1)"
+        ]
+      },
+      "predict": {
+        "prompt": "세기(1)에서 시작해 세기(2)까지 쌓였고, 이제 세기(3)을 부릅니다. 이렇게 세기(8)까지 부른 뒤 스택에는 '맨 바깥' 말고 몇 층이 있을까요?",
+        "options": [
+          {
+            "text": "8층",
+            "why": "세기(1)부터 세기(8)까지 어느 층도 돌려주지 않아 여덟 층이 모두 남습니다.",
+            "correct": true
+          },
+          {
+            "text": "1층",
+            "why": "같은 함수는 같은 층을 다시 쓴다고 본 것인데, 부를 때마다 새 층이 생깁니다."
+          },
+          {
+            "text": "2층",
+            "why": "부르고 나면 앞 층이 끝난다고 본 것인데, 앞 층은 다음 호출이 돌려주기를 기다리며 남아 있습니다."
+          }
+        ],
+        "before": {
+          "custom": true,
+          "hide": [
+            "층 4",
+            "층 5",
+            "층 6",
+            "층 7",
+            "층 8",
+            "층 9"
+          ],
+          "description": "맨 바깥, 세기 · n = 1, 세기 · n = 2까지 보입니다. 안내판에는 세기(3) 부르기라고 적혀 있습니다."
+        }
+      }
+    }
+  ],
+  "review": {
+    "own": [
+      "stack-1",
+      "stack-2"
+    ],
+    "prereq": {
+      "ref": "programming/variables",
+      "id": "variables-3"
+    },
+    "fallback": "stack-3"
+  }
+};
+const byId = id => document.getElementById(id);
 const viewport = byId('scene');
 const viewWidth = 620;
 const viewHeight = 280;
-const maxZoom = 3;
-const center = { x: viewWidth / 2, y: viewHeight / 2 };
-const camera = { x: 0, y: 0, zoom: 1 };
-const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-
-
-
-// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
-
-
-// A press that starts on a scene object and ends without moving counts as a tap on it.
-// Track the press separately so clicking still works after a drag captures the pointer.
-let tap = null;
-viewport.addEventListener('pointerdown', (event) => {
-  const target = event.target.closest?.('[data-hit]');
-  tap = target && event.button === 0 && event.isPrimary
-    ? { hit: target.dataset.hit, x: event.clientX, y: event.clientY, id: event.pointerId }
-    : null;
-});
-viewport.addEventListener('pointerup', (event) => {
-  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
-    sceneTap(tap.hit);
-  }
-  tap = null;
-});
-viewport.addEventListener('pointercancel', () => { tap = null; });
-
+const center = {x: viewWidth / 2, y: viewHeight / 2};
+const camera = {x: 0, y: 0, zoom: 1};
+const maxZoom = 2.2;
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+document.getElementById('zoom-in').onclick = () => zoomBy(.25);
+document.getElementById('zoom-out').onclick = () => zoomBy(-.25);
 enableCameraDrag();
-
-
-
-byId('zoom-in').onclick = () => zoomBy(.25);
-byId('zoom-out').onclick = () => zoomBy(-.25);
-viewport.addEventListener('keydown', (event) => {
-  if (event.ctrlKey || event.metaKey || event.altKey) return;
-  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
-  const direction = directions[event.key];
-  if (direction && camera.zoom > 1) {
+viewport.addEventListener('keydown', event => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const pan = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1]}[event.key];
+  if (pan && camera.zoom > 1) {
     event.preventDefault();
-    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
-  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    setCamera(camera.x + pan[0] * 18, camera.y + pan[1] * 18, camera.zoom);
+  } else if (event.key === '+' || event.key === '-' || event.key === '0') {
     event.preventDefault();
-    zoomBy(event.key === '-' ? -.25 : .25);
-  } else if (event.key === '0') {
-    event.preventDefault();
-    resetView();
+    if (event.key === '0') resetView();
+    else zoomBy(event.key === '+' ? .25 : -.25);
   }
 });
 setCamera(0, 0, 1);
-
-const motion = matchMedia('(prefers-reduced-motion: reduce)');
-
-// Program lines (Python). Kinds:
-//   def    – a function header; running it just skips its body (to `skip`)
-//   set    – writes `write` in the current frame with `calc`
-//   call   – pushes a frame for `fn` with `params` bound to `args`, jumps to `entry`;
-//            the returned value goes into `write` of the calling frame
-//   return – computes a value, pops the frame and hands the value back
-const def = (code, skip) => ({ kind: 'def', code, skip });
-const set = (code, write, calc, show) => ({ kind: 'set', code, write, calc, show });
-const call = (code, write, fn, args, params, entry) => ({ kind: 'call', code, write, fn, args, params, entry });
-const ret = (code, calc, show) => ({ kind: 'return', code, calc, show });
-const lesson = [
-  {
-    label: '함수 부르기',
-    readingRows: [["호출", "바깥", "두배(5)", "x = 5"], ["반환", "10 전달", "두배 층 제거", "바깥"]],
-    example: ["두배(5) 호출", "x = 5인 호출 층 생성", "10 반환 후 그 층 제거"],
-    title: '함수를 부르면 스택에 층이 하나 쌓인다',
-    body: '함수를 부르면 컴퓨터는 그 함수만 쓸 작업 공간을 만들어 호출 스택 맨 위에 올립니다. 이 층에는 함수가 받은 값(매개변수)과 돌아갈 곳이 적혀 있습니다. 함수가 return으로 값을 돌려주면 그 층은 사라지고, 값은 부른 쪽으로 내려갑니다.',
-    takeaway: '"두배(5)"를 부르면 맨 바깥 층 위에 x = 5가 적힌 두배 층이 쌓입니다. return하면 그 층이 떠올라 사라지고, 10이 아래층의 y로 내려갑니다.',
-    description: '호출 스택에 맨 바깥 층이 있습니다. 두배(5)를 부르면 x = 5를 가진 두배 층이 위에 쌓이고, 10을 돌려준 뒤 사라집니다. 맨 바깥 층의 y는 10이 됩니다.',
-    start: 2,
-    program: [
-      def('def 두배(x):', 2),
-      ret('    return x * 2', (v) => v.x * 2, (v) => `${v.x} * 2 = ${v.x * 2}`),
-      call('y = 두배(5)', 'y', '두배', () => [5], ['x'], 1),
-    ],
-    asks: [
-      { line: 2, q: '두배(5)를 부르면 스택은 몇 층이 될까요?', choices: ['1층', '2층', '3층'], answer: '2층', why: '맨 바깥 층 위에 두배 층이 하나 더 쌓입니다.' },
-      { line: 1, q: 'return x * 2가 돌려주는 값은?', choices: ['5', '10', '25'], answer: '10', why: '이 층의 x는 5라서 5 * 2 = 10을 돌려줍니다.' },
-    ],
-  },
-  {
-    label: '함수 안의 함수',
-    readingRows: [["쌓이는 순서", "바깥", "평균(4, 8)", "더하기(4, 8)"], ["풀리는 순서", "더하기 → 12", "평균 → 6", "바깥"]],
-    example: ["평균(4, 8) 호출", "더하기가 먼저 12 반환", "평균이 6 반환"],
-    title: '나중에 부른 함수가 먼저 끝난다',
-    body: '함수 안에서 다른 함수를 부르면 층이 하나 더 쌓입니다. 끝날 때는 맨 위층부터 차례로 사라집니다. 접시를 쌓고 맨 위부터 꺼내는 것과 같아서, 이런 구조를 스택(쌓아 둔 더미)이라고 부릅니다.',
-    takeaway: '스택이 맨 바깥 → 평균 → 더하기 세 층까지 쌓였다가, 더하기가 먼저 12를 돌려주고 사라진 뒤, 평균이 6.0을 돌려주고 사라집니다.',
-    description: '평균(4, 8)을 부르면 평균 층이 쌓이고, 평균이 더하기(a, b)를 부르면 그 위에 더하기 층이 쌓입니다. 더하기가 12를 돌려주며 먼저 사라지고, 평균이 6.0을 돌려주며 사라집니다.',
-    start: 5,
-    program: [
-      def('def 더하기(a, b):', 2),
-      ret('    return a + b', (v) => v.a + v.b, (v) => `${v.a} + ${v.b} = ${v.a + v.b}`),
-      def('def 평균(a, b):', 5),
-      call('    합 = 더하기(a, b)', '합', '더하기', (v) => [v.a, v.b], ['a', 'b'], 1),
-      ret('    return 합 / 2', (v) => (v['합'] / 2).toFixed(1), (v) => `${v['합']} / 2 = ${(v['합'] / 2).toFixed(1)}`),
-      call('결과 = 평균(4, 8)', '결과', '평균', () => [4, 8], ['a', 'b'], 3),
-    ],
-    asks: [
-      { line: 3, q: '더하기를 부르면 스택 맨 위에는 어떤 층이 올까요?', choices: ['평균', '더하기', '맨 바깥'], answer: '더하기', why: '가장 최근에 부른 함수가 맨 위에 쌓입니다.' },
-      { line: 4, q: '이 줄이 돌려주는 값은?', choices: ['6.0', '12', '8'], answer: '6.0', why: '더하기가 돌려준 12가 합에 들어 있으니 12 / 2 = 6.0입니다.' },
-    ],
-  },
-  {
-    label: '지역 변수',
-    readingDiagram: {
-      title: "안쪽 x는 반환할 때 층과 함께 사라진다",
-      description: "바깥 x=1에서 호출하면 안쪽 층에 별도 x=100이 생깁니다. 반환 뒤 안쪽 층은 없어지고 바깥에는 x=1과 반환값 y=100이 남습니다.",
-      nodes: [
-        ["before", 104, 170, 136, 47, ["호출 전 · 바깥 층", "x = 1"], "plain"],
-        ["inner", 310, 104, 142, 47, ["바꾸기 층", "x = 100"], "active"],
-        ["outer", 310, 170, 142, 47, ["바깥 층", "x = 1"], "plain"],
-        ["after", 513, 170, 144, 47, ["반환 뒤 · 바깥만", "x = 1 · y = 100"], "active"],
-      ],
-      edges: [
-        ["before", "outer", "plain"],
-        ["inner", "after", "active"],
-        ["outer", "after", "plain"],
-      ],
-      labels: [
-        [446, 96, "안쪽 층 제거"],
-        [397, 123, "return 100"],
-      ],
-    },
-    example: ["바깥 x = 1", "함수 안의 x만 100으로 변경", "바깥 x는 여전히 1"],
-    title: '층마다 자기 변수를 따로 가진다',
-    body: '함수 안에서 만든 변수는 그 함수의 층에만 있습니다. 이름이 같아도 맨 바깥의 x와 함수 안의 x는 서로 다른 칸입니다. 그래서 함수 안에서 x를 100으로 바꿔도 바깥의 x는 그대로이고, 함수가 끝나면 함수 안의 x는 층과 함께 사라집니다.',
-    takeaway: '바꾸기 층에서 x가 100이 되어도 맨 바깥 층의 x는 1 그대로입니다. 바깥으로 전해지는 것은 return한 값 100뿐입니다.',
-    description: '맨 바깥 층에 x = 1이 있습니다. 바꾸기(x)를 부르면 바꾸기 층이 자기 x를 따로 가지며, 그 x를 100으로 바꾸고 돌려줍니다. 맨 바깥 층의 x는 1로 남고 y는 100이 됩니다.',
-    start: 0,
-    program: [
-      set('x = 1', 'x', () => 1, () => '1 적기'),
-      def('def 바꾸기(x):', 4),
-      set('    x = 100', 'x', () => 100, () => '100 적기'),
-      ret('    return x', (v) => v.x, (v) => `${v.x} 돌려주기`),
-      call('y = 바꾸기(x)', 'y', '바꾸기', (v) => [v.x], ['x'], 2),
-    ],
-    asks: [
-      { line: 2, q: '이 줄을 실행하면 맨 바깥 층의 x는 얼마가 될까요?', choices: ['1', '100'], answer: '1', why: '이 x는 바꾸기 층에만 있는 지역 변수라서, 맨 바깥 층의 x와는 다른 칸입니다.' },
-      { line: 3, q: 'y에는 어떤 값이 들어갈까요?', choices: ['1', '100'], answer: '100', why: 'return x는 바꾸기 층의 x, 곧 100을 돌려줍니다.' },
-    ],
-  },
-  {
-    label: '스택 넘침',
-    readingDiagram: {
-      title: "반환을 기다리는 호출 층이 계속 쌓인다",
-      description: "세기(1) 위에 세기(2), 그 위에 다음 호출이 쌓입니다. 이 시연은 바깥 층을 포함한 9층, 곧 세기(8)에서 멈춥니다. 아직 반환된 값은 없습니다.",
-      nodes: [
-        ["first", 223, 228, 180, 47, ["세기(1) · 2층", "반환 대기"], "plain"],
-        ["second", 223, 162, 180, 47, ["세기(2) · 3층", "반환 대기"], "plain"],
-        ["top", 223, 89, 180, 47, ["세기(8) · 9층", "시연 한도"], "blocked"],
-        ["end", 481, 89, 176, 47, ["시연 중단", "반환된 값 없음"], "blocked"],
-      ],
-      edges: [
-        ["first", "second", "plain"],
-        ["second", "top", "muted"],
-        ["top", "end", "blocked"],
-      ],
-      labels: [
-        [32, 120, "위로 쌓임"],
-        [145, 266, "그 아래 맨 바깥 · 1층"],
-        [320, 132, "4~8층 생략"],
-      ],
-    },
-    example: ["종료 조건 없는 호출", "이전 층이 끝나기 전에 새 층", "예시 스택 9층에서 중단"],
-    title: '끝나지 않는 호출은 스택을 넘치게 한다',
-    body: '함수가 자기 자신을 부르는데 멈추는 조건이 없으면, 층이 끝없이 쌓입니다. 메모리는 유한하므로 결국 더 쌓을 수 없게 되고, 파이썬은 RecursionError를 내며 멈춥니다. 이것을 스택 넘침(스택 오버플로)이라고 합니다. 이 실험은 아홉 층에서 멈춥니다.',
-    takeaway: '세기 층이 n = 1, 2, 3 …으로 계속 쌓이다가, 아홉 층에서 "스택 넘침"이 뜨고 멈춥니다. 아무 층도 return하지 못합니다.',
-    description: '세기(1)이 세기(2)를, 세기(2)가 세기(3)을 부르며 층이 계속 쌓입니다. 아홉 층이 되자 스택이 넘쳐 프로그램이 멈춥니다.',
-    start: 2,
-    limit: 9,
-    program: [
-      def('def 세기(n):', 2),
-      call('    return 세기(n + 1)', null, '세기', (v) => [v.n + 1], ['n'], 1),
-      call('세기(1)', null, '세기', () => [1], ['n'], 1),
-    ],
-    asks: [
-      { line: 1, when: (v) => v.n === 3, q: '이 호출은 언제 끝날까요?', choices: ['n이 10이 되면', '끝나지 않는다'], answer: '끝나지 않는다', why: '세기는 자기 자신을 다시 부를 뿐 멈추는 조건이 없습니다.' },
-    ],
-  },
-];
-
-const step = () => lesson[state.index];
-const state = { index: 0, playing: !motion.matches, wait: 0, pc: 0, busy: false,
-  frames: [], wrong: '', solvedText: '', halted: false, lastJump: null, ran: new Set() };
-const progress = lesson.map(() => 0);
 const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
 const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
-const mix = (a, b, t) => a + (b - a) * t;
-const gridLines = [];
-for (let i = -22; i <= 22; i += 2) {
-  gridLines.push(`M${point(i, -22, 0)}L${point(i, 22, 0)}M${point(-22, i, 0)}L${point(22, i, 0)}`);
-}
-byId('grid').setAttribute('d', gridLines.join(''));
-
-
 function drawFaces(node, h, H, fills) {
   const faces = {
     left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
@@ -459,10 +571,10 @@ function drawFaces(node, h, H, fills) {
 
 // Plates are small labels whose box is sized to the text.
 let plates = [];
-function addPlate(node, className, x, y, text, { pad = 1.5, round = true } = {}) {
+function makeStackPlate(node, className, x, y, text, { pad = 1.5, round = true } = {}) {
   const group = svg('g', { class: className }, node);
   const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
-  plate.label.textContent = text;
+  plate.label.textContent = stackText(text);
   plates.push(plate);
   sizePlate(plate);
   return plate;
@@ -473,19 +585,20 @@ function addPlate(node, className, x, y, text, { pad = 1.5, round = true } = {})
 // ---------- The call stack: frames piled up as flat slabs ----------
 // Frames are 23 apart and their labels 16.5 high, so a frame's label never touches the one below.
 const slabHalf = 2.3, slabHeight = 15, slabGap = 8;
-const worldX = 282, worldY = 236, worldScale = .92;
+// The stack sits in the middle of the figure; it grows upward from a fixed floor so frames keep their places.
+const worldX = 277, worldY = 254, worldScale = .92;
 const sceneRight = (620 - worldX) / worldScale - 14, sceneTop = -worldY / worldScale + 4;   // edges of the view, in world units
 const slabZ = (k) => 6 + k * (slabHeight + slabGap);
 const frameViews = [];
 let work;
 function buildScene() {
-  const base = svg('g', { class: 'node stack-base' }, byId('nodes'));
-  drawShadow(base, slabHalf + .4);
+  const base = svg('g', { class: 'node stack-base' }, stackNodes);
+
   drawFaces(base, slabHalf + .4, 5, { top: '#e9eeeb', left: '#cfd8d3', right: '#b7c3bd', stroke: '#93a39b' });
   const [bx, by] = project(-slabHalf - .4, -slabHalf - .4, 0);
-  addPlate(base, 'tag', bx - 30, by + 6, '호출 스택');
-  const holder = svg('g', { class: 'board' }, byId('packets'));
-  work = addPlate(svg('g', {}, holder), 'total', 0, 0, '대기', { pad: 1.1, round: false });
+  makeStackPlate(base, 'tag', bx - 30, by + 6, '호출 스택');
+  const holder = svg('g', { class: 'board' }, stackBoards);
+  work = makeStackPlate(svg('g', {}, holder), 'total', 0, 0, '', { pad: 1.1, round: false });
   work.holder = holder;
   placeBoard();
 }
@@ -521,33 +634,16 @@ function frameLabel(f) {
   return `${f.name}${vars ? ' · ' + vars : ''}`;
 }
 function pushView(f, k) {
-  const node = svg('g', { class: `node frame ${k === 0 ? 'outer' : 'inner'} entering` }, byId('nodes'));
+  const node = svg('g', { class: `node frame ${k === 0 ? 'outer' : 'inner'}` }, stackNodes);
   slabFaces(node, slabZ(k));
   const [x, y] = project(slabHalf, 0, slabZ(k) + slabHeight / 2);
-  const label = addPlate(node, 'tag frame-label', x + 16, y, frameLabel(f));
+  const label = makeStackPlate(node, 'tag frame-label', x + 16, y, frameLabel(f));
   label.left = true;
   sizePlate(label);
   frameViews.push({ node, label });
   placeBoard();
-  node.getBBox();
-  requestAnimationFrame(() => node.classList.remove('entering'));
+  return node;
 }
-function popView() {
-  const view = frameViews.pop();
-  placeBoard();
-  view.node.classList.add('leaving');
-  later(motion.matches ? 0 : 400, () => view.node.remove());
-}
-function syncViews() {
-  frameViews.forEach((view, k) => {
-    view.label.label.textContent = frameLabel(state.frames[k]);
-    sizePlate(view.label);
-    view.node.classList.toggle('top', k === frameViews.length - 1);
-  });
-}
-// i18n.js measures every plate again after it translates the text, through this function. Frame labels keep their
-// left edge, and the board, whose width just changed, is placed again. With the engine's sizePlate the frame
-// labels were centred again on every text change and the board kept its old half-width offset.
 function sizePlate(plate) {
   if (plate.left) { sizePlateLeft(plate); return; }
   const size = parseFloat(getComputedStyle(plate.label).fontSize);
@@ -569,321 +665,174 @@ function sizePlateLeft(plate) {
   Object.entries({ x: plate.x, y: plate.y - height / 2, width, height, rx: height / 2 }).forEach(([key, value]) => plate.rect.setAttribute(key, value));
 }
 
-// A returned value drops from the finished frame to the frame below.
-let packets = [];
-function sendDown(fromK, value) {
-  if (motion.matches) return;
-  const [x, y0] = project(slabHalf * .2, -slabHalf * .2, slabZ(fromK) + slabHeight + 4);
-  const [, y1] = project(slabHalf * .2, -slabHalf * .2, slabZ(fromK - 1) + slabHeight + 4);
-  const group = svg('g', { class: 'packet-group write' }, byId('packets'));
-  svg('circle', { class: 'packet-halo', r: 9 }, group);
-  svg('circle', { class: 'packet', r: 4.6 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = value;
-  packets.push({ group, x, y0, y1, start: performance.now(), duration: 700 });
-  kick();
-}
-function movePackets(now) {
-  packets = packets.filter((p) => {
-    const t = (now - p.start) / p.duration;
-    if (t >= 1) { p.group.remove(); return false; }
-    p.group.setAttribute('transform', `translate(${p.x} ${mix(p.y0, p.y1, t)})`);
-    return true;
-  });
-}
 
-// ---------- Running a line ----------
-const valuesByName = () => ({ ...(state.frames[state.frames.length - 1]?.vars ?? {}) });
-function runLine(done) {
-  const s = step();
-  const l = s.program[state.pc];
-  if (!l || state.halted) return;
-  const top = state.frames[state.frames.length - 1];
-  const v = { ...top.vars };
-  state.busy = true;
-  state.ran.add(state.pc);
-  const finish = (next) => {
-    state.lastJump = next !== state.pc + 1 ? state.pc : null;
-    state.pc = next;
-    state.busy = false;
-    paint();
-    done?.();
-  };
-  if (l.kind === 'def') {
-    setPlate(work, '함수 정의만 기억');
-    later(motion.matches ? 0 : 450, () => finish(l.skip));
-  } else if (l.kind === 'set') {
-    top.vars[l.write] = l.calc(v);
-    setPlate(work, l.show(v));
-    later(motion.matches ? 0 : 500, () => finish(state.pc + 1));
-  } else if (l.kind === 'call') {
-    const args = l.args(v);
-    const frame = { name: l.fn, vars: Object.fromEntries(l.params.map((p, i) => [p, args[i]])), ret: { pc: state.pc, write: l.write } };
-    state.frames.push(frame);
-    setPlate(work, `${l.fn}(${args.join(', ')}) 부르기`);
-    pushView(frame, state.frames.length - 1);
-    if (s.limit && state.frames.length >= s.limit) {
-      state.halted = true;
-      setPlate(work, '스택 넘침 · RecursionError');
-      work.group.classList.add('max');
-    }
-    later(motion.matches ? 0 : 600, () => finish(state.halted ? state.pc : l.entry));
-  } else {
-    const value = l.calc(v);
-    setPlate(work, `${l.show(v)} 돌려주기`);
-    const done = state.frames.pop();
-    sendDown(state.frames.length, String(value));
-    popView();
-    later(motion.matches ? 0 : 720, () => {
-      const caller = state.frames[state.frames.length - 1];
-      if (done.ret.write) caller.vars[done.ret.write] = value;
-      finish(done.ret.pc + 1);
-    });
-  }
-  paintCode();
-}
+let stackNodes, stackBoards;
+const stackText = value => window.courseI18n?.translate(value) ?? value;
+const stackSlots = [
+  [
+    [
+      {
+        "name": "맨 바깥",
+        "vars": {}
+      },
+      {
+        "name": "두배",
+        "vars": {
+          "x": 5
+        }
+      }
+    ],
+    "5 * 2 = 10"
+  ],
+  [
+    [
+      {
+        "name": "맨 바깥",
+        "vars": {
+          "y": 10
+        }
+      }
+    ],
+    "10 받음 · 두배 층 사라짐"
+  ],
+  [
+    [
+      {
+        "name": "맨 바깥",
+        "vars": {}
+      },
+      {
+        "name": "평균",
+        "vars": {
+          "a": 4,
+          "b": 8
+        }
+      },
+      {
+        "name": "더하기",
+        "vars": {
+          "a": 4,
+          "b": 8
+        }
+      }
+    ],
+    "4 + 8 = 12"
+  ],
+  null,
+  [
+    [
+      {
+        "name": "맨 바깥",
+        "vars": {
+          "x": 1
+        }
+      },
+      {
+        "name": "바꾸기",
+        "vars": {
+          "x": 100
+        }
+      }
+    ],
+    "x = 100 적기"
+  ],
+  [
+    [
+      {
+        "name": "맨 바깥",
+        "vars": {
+          "x": 1,
+          "y": 100
+        }
+      }
+    ],
+    "100 받음 · 바꾸기 층 사라짐"
+  ],
+  [
+    [
+      {
+        "name": "맨 바깥",
+        "vars": {}
+      },
+      {
+        "name": "세기",
+        "vars": {
+          "n": 1
+        }
+      },
+      {
+        "name": "세기",
+        "vars": {
+          "n": 2
+        }
+      },
+      {
+        "name": "세기",
+        "vars": {
+          "n": 3
+        }
+      },
+      {
+        "name": "세기",
+        "vars": {
+          "n": 4
+        }
+      },
+      {
+        "name": "세기",
+        "vars": {
+          "n": 5
+        }
+      },
+      {
+        "name": "세기",
+        "vars": {
+          "n": 6
+        }
+      },
+      {
+        "name": "세기",
+        "vars": {
+          "n": 7
+        }
+      },
+      {
+        "name": "세기",
+        "vars": {
+          "n": 8
+        }
+      }
+    ],
+    "시연 중단 · 9층 · 돌려준 값 없음"
+  ]
+];
 
-let timers = [];
-function later(ms, fn) {
-  if (ms === 0) { fn(); return; }
-  timers.push(setTimeout(fn, ms));
-}
-function cancelTimers() {
-  timers.forEach(clearTimeout);
-  timers = [];
-  packets.forEach((packet) => packet.group.remove());
-  packets = [];
-  state.busy = false;
-}
-function setPlate(plate, text) {
-  plate.label.textContent = text;
-  sizePlate(plate);
-}
-
-// ---------- Drawing ----------
-function paint() {
-  syncViews();
-  paintCode();
-  syncTask();
-  byId('readout').replaceChildren(...readout());
-}
-function paintCode() {
-  const program = step().program;
-  [...byId('code').children].forEach((li, i) => {
-    li.classList.toggle('done', state.ran.has(i) && i !== state.pc);
-    li.classList.toggle('current', i === state.pc);
-    li.classList.toggle('jumped', i === state.lastJump);
-    li.setAttribute('aria-current', i === state.pc ? 'step' : 'false');
-  });
-  const finished = state.pc >= program.length || state.halted;
-  // While the demo plays the button stays enabled, so a click can take over from it.
-  byId('run-line').disabled = !state.playing && (finished || state.busy || Boolean(pendingAsk()));
-  byId('run-line').textContent = state.halted ? '스택이 넘쳤습니다' : finished ? '끝까지 실행했습니다' : '한 줄 실행';
-}
-function readout() {
-  const strong = (text, className) => {
-    const element = document.createElement('b');
-    if (className) element.className = className;
-    element.textContent = text;
-    return element;
-  };
-  const top = state.frames[state.frames.length - 1];
-  return ['스택 ', strong(`${state.frames.length}층`, 'total'), ' · 맨 위 ', strong(top ? top.name : '없음'),
-    ...(top && Object.keys(top.vars).length ? [' · ', Object.entries(top.vars).map(([k, v]) => `${k} = ${v}`).join(', ')] : [])];
-}
-
-// ---------- Code panel and predictions ----------
-function buildCode() {
-  const list = byId('code');
-  list.replaceChildren();
-  step().program.forEach((l) => {
-    const li = document.createElement('li');
-    const code = document.createElement('code');
-    code.textContent = l.code;
-    li.classList.toggle('block', l.kind !== 'set');
-    li.append(code);
-    list.append(li);
-  });
-}
-// Asks answered in this step, by their position in `asks`. An ask is pending when the next line is
-// its line and its `when` holds. `at: 'before-next'` asks about the line after a branch, so it belongs to the next line.
-const answeredAsks = lesson.map(() => new Set());
-function pendingAsk() {
-  if (state.playing || state.busy || state.halted) return null;
-  const v = valuesByName();
-  const asks = step().asks;
-  const i = asks.findIndex((ask, k) => !answeredAsks[state.index].has(k) && ask.line === state.pc && (!ask.when || ask.when(v)));
-  return i >= 0 ? { ...asks[i], id: i } : null;
-}
-function syncTask() {
-  const program = step().program;
-  const ask = pendingAsk();
-  const choices = byId('try-choices');
-  choices.replaceChildren();
-  const allDone = answeredAsks[state.index].size >= step().asks.length;
-  if (ask) {
-    byId('try').classList.remove('solved');
-    byId('try-text').textContent = `${ask.line + 1}번째 줄 "${program[ask.line].code.trim()}" · ${ask.q}`;
-    byId('try-result').textContent = state.wrong || state.solvedText;
-    for (const choice of ask.choices) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'action choice-button';
-      button.textContent = choice;
-      button.addEventListener('click', () => answer(ask, choice));
-      choices.append(button);
-    }
-  } else if (state.solvedText) {
-    byId('try').classList.add('solved');
-    byId('try-text').textContent = state.solvedText;
-    byId('try-result').textContent = '';
-  } else {
-    byId('try').classList.remove('solved');
-    byId('try-result').textContent = '';
-    byId('try-text').textContent = state.halted ? '스택이 넘쳐 멈췄습니다. 처음부터 다시 볼 수 있습니다.'
-      : state.pc >= program.length
-        ? (allDone ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 실행해 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
-        : '"한 줄 실행"을 눌러 다음 줄을 실행해 보세요. 예측 문제가 나오면 먼저 답을 고릅니다.';
-  }
-}
-function answer(ask, choice) {
-  if (choice !== ask.answer) {
-    state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`;
-    byId('announcement').textContent = state.wrong;
-    syncTask();
-    return;
-  }
-  state.wrong = '';
-  answeredAsks[state.index].add(ask.id);
-  progress[state.index] = answeredAsks[state.index].size;
-  state.solvedText = `✓ 맞았습니다. ${ask.why}`;
-  byId('announcement').textContent = state.solvedText;
-  if (!pendingAsk()) runLine(() => syncTask());
-  syncTask();
-  paintCode();
-}
-
-
-function takeOver() {
-  if (!state.playing) return;
-  state.playing = false;
-  resetProgram();
-  syncPlayback();
-}
-function resetProgram() {
-  cancelTimers();
+function drawFigure(index, {hide, changed}) {
+  const layer = svg('g', {transform: `translate(${worldX} ${worldY}) scale(${worldScale})`}, byId('figure'));
+  stackNodes = svg('g', {}, layer);
+  stackBoards = svg('g', {}, layer);
   frameViews.length = 0;
-  byId('nodes').querySelectorAll('.frame').forEach((node) => node.remove());
-  state.frames = [{ name: '맨 바깥', vars: {}, ret: null }];
-  pushView(state.frames[0], 0);
-  state.pc = step().start;
-  state.wrong = '';
-  state.solvedText = '';
-  state.halted = false;
-  state.lastJump = null;
-  state.ran = new Set();
-  work.group.classList.remove('max');
-  setPlate(work, '대기');
-  paint();
-}
-byId('run-line').onclick = () => {
-  takeOver();
-  if (state.busy) return;
-  state.solvedText = '';
-  runLine(() => syncTask());
-  syncTask();
-  byId('announcement').textContent = `${state.pc + 1}번째 줄 실행: ${step().program[state.pc]?.code ?? ''}`;
-};
-byId('restart').onclick = () => {
-  state.playing = false;
-  resetProgram();
-  syncPlayback();
-  byId('announcement').textContent = '처음부터 다시 시작합니다.';
-};
-
-
-// ---------- Demo playback ----------
-let frame = null, lastFrame = null;
-function demoTick() {
-  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
-  if (state.busy) { state.wait = 200; return; }
-  if (state.pc >= step().program.length || state.halted) {
-    resetProgram();
-    state.wait = 900;
-    return;
+  plates = [];
+  buildScene();
+  const [frames, note] = stackSlots[index];
+  for (const [position, frame] of frames.entries()) {
+    const id = '층 ' + (position + 1);
+    if (hide.includes(id)) continue;
+    const input = index === 4 && hide.includes('안내판') && position === 1
+      ? {name: frame.name, vars: {x: 1}} : frame;
+    const node = pushView(input, position);
+    if (changed.includes(id)) for (const face of node.querySelectorAll('.face, .frame-label rect'))
+      face.setAttribute('data-changed', '');
   }
-  runLine();
-  state.wait = 1700;
+  frameViews.at(-1)?.node.classList.add('top');
+  if (hide.includes('안내판')) stackBoards.setAttribute('visibility', 'hidden');
+  const before = index === 2 && hide.length ? '더하기(a, b) 부르기'
+    : index === 6 && hide.length ? '세기(3) 부르기' : note;
+  setPlate(work, stackText(before));
+  placeBoard();
+  if (changed.includes('안내판')) work.rect.setAttribute('data-changed', '');
 }
-function syncPlayback() {
-  const reduced = motion.matches;
-  if (reduced) state.playing = false;
-  if (state.playing) kick();
-  syncTask();
-}
-function sceneTap() {}
-// ---------- Steps and routing ----------
-function showStep(index, announce = true) {
-  state.index = index;
-  state.playing = lessonDemoEnabled();
-  const s = step();
-  byId('step-title').textContent = s.title;
-  byId('body').textContent = s.body;
-  byId('takeaway').textContent = s.takeaway;
-  byId('scene-desc').textContent = s.description;
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  stepButtons.forEach((button, i) => {
-    if (i === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  buildCode();
-  resetProgram();
-  state.wait = 1000;
-  syncPlayback();
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
-}
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/stack/${index + 1}`);
-  showStep(index);
-}
-const stepButtons = lesson.map(({ label }, index) => {
-  const listItem = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  const number = document.createElement('span');
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.addEventListener('click', () => goToStep(index));
-  listItem.append(button);
-  byId('steps').append(listItem);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
-motion.addEventListener('change', () => {
-  if (lessonDemoEnabled()) state.playing = true;
-  syncPlayback();
-});
-window.addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-    event.preventDefault();
-    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
-  }
-});
 
-buildScene();
-byId('world').setAttribute('transform', `translate(${worldX} ${worldY}) scale(${worldScale})`);
-const initial = routeIndex();
-history.replaceState(null, '', `#/stack/${initial + 1}`);
-state.index = initial;
-showStep(initial, false);
 </script>
 </body>
 </html>

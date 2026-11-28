@@ -246,7 +246,8 @@ const lessonFrame = (() => {
       heading.focus();
       workspace.dispatchEvent(new Event('lesson-frame-change'));
     }));
-    const example = waiting ? step.predict.before.code : step.code;
+    // The program is the step's input, so it shows before the answer too. Only before.code: null hides it (3.8 #7).
+    const example = waiting && step.predict.before.code !== undefined ? step.predict.before.code : step.code;
     if (example) {
       code.append(...example.lines.map((line, position) => {
         const item = create('li', line);

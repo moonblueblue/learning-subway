@@ -231,7 +231,8 @@ window.drawLessonPart = function drawLessonPart(target, figure) {
         for (const note of annotations) label(noteGroup, note.x, baseline, note.text, {size: 10, anchor: note.anchor});
       }
       if (disparity && bar.total === shortest) {
-        label(g, x0 + (dense ? 30 : 12), baseline, `${shortest.toLocaleString('en-US')} ${window.courseI18n?.translate(unit) ?? unit} · ${longest.toLocaleString('en-US')} ${window.courseI18n?.translate(unit) ?? unit} · ${(longest / shortest).toLocaleString('en-US')}×`, {anchor: 'start'});
+        // One line, once, beside the short bar: '<short> 대 <long> · <N>배' (English '<a> vs <b> · <N>×', spec 3.8 rule 13).
+        label(g, x0 + (dense ? 30 : 12), baseline, `${shortest.toLocaleString('en-US')} 대 ${longest.toLocaleString('en-US')} · ${(longest / shortest).toLocaleString('en-US')}배`, {anchor: 'start'});
       }
     });
     legend(figure.legend, 262);

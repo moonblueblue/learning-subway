@@ -51,7 +51,7 @@
     '{#0}장 {1} · 레슨 {#2}': 'Chapter {0}: {1} · Lesson {2}', '{0} · 레슨 {#1}': '{0} · Lesson {1}',
     // Track lessons (chapter 8): "8장 심화 트랙 · 8B 인공지능 · 레슨 8B.1".
     '{#0}장 {1} · {2} · 레슨 {3}': 'Chapter {0}: {1} · {2} · Lesson {3}', '{#0}장 {1} · {2} · 레슨 {3} · 실습': 'Chapter {0}: {1} · {2} · Lesson {3} · Practice',
-    '{#0}단계. {1}': 'Step {0}. {1}', '{#0}단계 / {#1}': 'Step {0} / {1}', '{#0}단계: {1}': 'Step {0}: {1}', '이전 단계': 'Previous step', '다음 단계': 'Next step',
+    '{#0}단계. {1}': 'Step {0}. {1}', '{#0}단계 / {#1}': 'Step {0} / {1}', '{#0} 대 {#1} · {#2}배': '{0} vs {1} · {2}×', '{#0}단계: {1}': 'Step {0}: {1}', '이전 단계': 'Previous step', '다음 단계': 'Next step',
     '이전 및 다음 단계': 'Previous and next step', '장면 보기': 'Scene', '장면 확대': 'Zoom in on the scene',
     '장면 축소': 'Zoom out of the scene', '현재 배율': 'Current zoom', '범례': 'Legend', '다음 문제': 'Next problem',
     '✓ 맞았습니다. {0}': '✓ Correct. {0}', '{0} · 이 단계의 문제를 모두 풀었습니다.': '{0} · You solved every problem in this step.',

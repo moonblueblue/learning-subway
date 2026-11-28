@@ -1,4 +1,6 @@
 {
-  "lessons": {},
-  "source_tip": "3fc0c975d12fae3fe17a529e32830fc5ebe62b37"
+  "lessons": {
+    "computing-basics/computer-tasks": "692ecb61d57b53b408b319586030c909f359f60f"
+  },
+  "source_tip": "692ecb61d57b53b408b319586030c909f359f60f"
 }

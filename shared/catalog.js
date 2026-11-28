@@ -3214,8 +3214,8 @@ const courseCatalog = {
           "id": "repeatable-instructions",
           "title": "따라 할 수 있는 지시",
           "titleEn": "Instructions someone can follow",
-          "question": "다른 사람도 같은 무늬를 만들도록 무슨 일을 어떤 순서로 전할까?",
-          "format": "실험",
+          "question": "다른 사람이 받아서 같은 무늬를 만들 수 있으려면 지시에 무엇을 적어야 할까요?",
+          "format": "조작 포함",
           "requires": [
             "computing-basics/computer-tasks"
           ],
@@ -3225,8 +3225,8 @@ const courseCatalog = {
           "id": "computer",
           "title": "일하는 동안의 기억과 저장",
           "titleEn": "Working memory and saved files",
-          "question": "저장하고 닫은 그림과 저장하지 않고 닫은 그림 중 무엇을 다시 열 수 있을까?",
-          "format": "실험",
+          "question": "똑같이 만든 두 작업 중 창을 닫은 뒤 다시 열 수 있는 것은 어느 쪽일까요?",
+          "format": "단계 그림",
           "requires": [
             "computing-basics/computer-tasks"
           ],
@@ -3256,8 +3256,8 @@ const courseCatalog = {
           "id": "text",
           "title": "글자의 번호표",
           "titleEn": "Number tables for characters",
-          "question": "같은 번호를 받았는데 어떤 때 다른 글자가 나타날까?",
-          "format": "실험",
+          "question": "받은 바이트를 어떤 글자로 읽을지는 무엇이 정할까?",
+          "format": "조작 포함",
           "requires": [
             "computing-basics/bits"
           ],
@@ -3278,8 +3278,8 @@ const courseCatalog = {
           "id": "sound",
           "title": "소리를 시간마다 재기",
           "titleEn": "Measuring sound over time",
-          "question": "손뼉 소리를 기록할 때 언제 무엇을 재야 할까?",
-          "format": "실험",
+          "question": "컴퓨터는 손뼉 소리를 어느 시각마다 어떤 수로 적어 둘까?",
+          "format": "단계 그림",
           "requires": [
             "computing-basics/media"
           ],
@@ -3289,9 +3289,11 @@ const courseCatalog = {
           "id": "compress",
           "title": "압축",
           "titleEn": "Compression",
-          "question": "같은 정보를 더 적은 비트로 담을 수 있을까?",
-          "format": "실험",
-          "requires": [],
+          "question": "평균 하나로 줄여 저장한 그림은 펼치면 어떻게 될까?",
+          "format": "단계 그림",
+          "requires": [
+            "computing-basics/media"
+          ],
           "page": "computing-basics/compress.html"
         },
         {
@@ -3323,36 +3325,44 @@ const courseCatalog = {
           "id": "variables",
           "title": "변수와 값",
           "titleEn": "Variables and values",
-          "question": "변수에 값을 넣으면 컴퓨터 안에서는 무슨 일이 생길까?",
-          "format": "실험",
-          "requires": [],
+          "question": "a의 5와 b의 7을 서로 바꾸려면 어떻게 해야 할까요?",
+          "format": "단계 그림",
+          "requires": [
+            "computing-basics/computer"
+          ],
           "page": "programming/variables.html"
         },
         {
           "id": "control",
           "title": "조건과 반복",
           "titleEn": "Conditions and loops",
-          "question": "프로그램은 어떻게 갈림길을 고르고 같은 일을 되풀이할까?",
-          "format": "실습",
-          "requires": [],
+          "question": "while 반복에서 i를 1 늘리는 줄을 빼면 어떻게 될까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming/variables"
+          ],
           "page": "programming/control.html"
         },
         {
           "id": "stack",
           "title": "함수와 호출 스택",
           "titleEn": "Functions and the call stack",
-          "question": "함수를 부르고 돌아올 때 무엇이 쌓이고 사라질까?",
-          "format": "실험",
-          "requires": [],
+          "question": "함수가 끝나기 전에 또 함수를 부르기만 하면 호출 스택은 어떻게 될까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming/variables"
+          ],
           "page": "programming/stack.html"
         },
         {
           "id": "collections",
           "title": "리스트와 딕셔너리",
           "titleEn": "Lists and dictionaries",
-          "question": "값 여러 개를 담는 두 방법은 무엇이 다를까?",
-          "format": "실습",
-          "requires": [],
+          "question": "지아의 점수를 이름으로 찾을 때, 리스트와 딕셔너리는 각각 몇 칸을 읽을까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming/variables"
+          ],
           "page": "programming/collections.html"
         },
         {
@@ -3418,44 +3428,52 @@ const courseCatalog = {
           "id": "logic",
           "title": "명제와 논리",
           "titleEn": "Propositions and logic",
-          "question": "참과 거짓을 어떻게 조합하고 따질까?",
-          "format": "실습",
-          "requires": [],
+          "question": "두 문장을 '그리고', '또는', '이면'으로 이은 문장이 참인지 거짓인지는 무엇으로 정해질까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming/control"
+          ],
           "page": "math/logic.html"
         },
         {
           "id": "sets",
           "title": "집합과 함수",
           "titleEn": "Sets and functions",
-          "question": "모음과 대응을 어떻게 정확하게 말할까?",
-          "format": "실습",
-          "requires": [],
+          "question": "입력과 출력을 선으로 이을 때, 어떤 모양이어야 함수일까요?",
+          "format": "단계 그림",
+          "requires": [
+            "math/logic"
+          ],
           "page": "math/sets.html"
         },
         {
           "id": "proof",
           "title": "증명과 귀납법",
           "titleEn": "Proof and induction",
-          "question": "무한히 많은 경우가 모두 맞다고 어떻게 확신할까?",
-          "format": "실습",
-          "requires": [],
+          "question": "모든 n에서 참이라는 것은 어떻게 보일 수 있을까요?",
+          "format": "단계 그림",
+          "requires": [
+            "math/logic"
+          ],
           "page": "math/proof.html"
         },
         {
           "id": "counting",
           "title": "경우의 수와 확률",
           "titleEn": "Counting and probability",
-          "question": "가능한 경우는 몇 가지이고, 그중 무엇이 얼마나 자주 일어날까?",
-          "format": "실습",
-          "requires": [],
+          "question": "동전 두 개를 던져 앞면이 적어도 하나 나올 확률은 얼마이고, 어떻게 셀까요?",
+          "format": "단계 그림",
+          "requires": [
+            "computing-basics/bits"
+          ],
           "page": "math/counting.html"
         },
         {
           "id": "graph",
           "title": "그래프",
           "titleEn": "Graphs",
-          "question": "점과 선으로 연결 관계를 어떻게 나타낼까?",
-          "format": "실험",
+          "question": "가람의 소식이 마루에게 닿으려면 어떤 선들을 따라가야 할까요?",
+          "format": "단계 그림",
           "requires": [],
           "page": "math/graph.html"
         },
@@ -3463,17 +3481,19 @@ const courseCatalog = {
           "id": "modular",
           "title": "나머지 연산",
           "titleEn": "Modular arithmetic",
-          "question": "시계처럼 도는 수는 암호와 해시에서 어떻게 쓰일까?",
-          "format": "실습",
-          "requires": [],
+          "question": "나머지로 자리를 정하면, 수마다 들어갈 자리는 어떻게 정해질까요?",
+          "format": "단계 그림",
+          "requires": [
+            "computing-basics/bits"
+          ],
           "page": "math/modular.html"
         },
         {
           "id": "vectors",
           "title": "벡터와 행렬",
           "titleEn": "Vectors and matrices",
-          "question": "데이터를 숫자 묶음으로 담고 바꾸는 방법은 무엇일까?",
-          "format": "실험",
+          "question": "모눈 위의 점 (1, 2)를 원점을 중심으로 왼쪽으로 90° 돌리면 어디로 가고, 그 계산은 어떻게 할까요?",
+          "format": "단계 그림",
           "requires": [],
           "page": "math/vectors.html"
         },
@@ -3481,9 +3501,11 @@ const courseCatalog = {
           "id": "statistics",
           "title": "확률과 통계",
           "titleEn": "Probability and statistics",
-          "question": "불확실한 것을 어떻게 수로 다룰까?",
-          "format": "실습",
-          "requires": [],
+          "question": "설문 비율 같은 숫자 하나를 믿기 전에, 그 숫자가 누구 가운데에서 센 것인지를 왜 확인해야 할까요?",
+          "format": "단계 그림",
+          "requires": [
+            "math/counting"
+          ],
           "page": "math/statistics.html"
         }
       ]
@@ -3497,9 +3519,11 @@ const courseCatalog = {
           "id": "gates",
           "title": "논리 게이트",
           "titleEn": "Logic gates",
-          "question": "AND, OR, NOT은 신호를 어떻게 바꿀까?",
-          "format": "실험",
-          "requires": [],
+          "question": "OR, AND, NOT 을 엮은 회로에서 램프는 어떤 입력일 때 켜질까요?",
+          "format": "단계 그림",
+          "requires": [
+            "math/logic"
+          ],
           "page": "computer-architecture/gates.html"
         },
         {
@@ -3575,19 +3599,24 @@ const courseCatalog = {
         {
           "id": "interpreter",
           "title": "인터프리터",
-          "titleEn": "Interpreters",
-          "question": "코드 한 줄은 어떻게 읽히고 실행될까?",
-          "format": "실험",
-          "requires": [],
+          "titleEn": "Interpreter",
+          "question": "잘못 쓴 곳이 있는 줄은 인터프리터의 어느 단계까지 가고, 그다음 어떻게 될까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming-languages/toolchain",
+            "programming/variables"
+          ],
           "page": "programming-languages/interpreter.html"
         },
         {
           "id": "compiler",
           "title": "컴파일러",
-          "titleEn": "Compilers",
-          "question": "소스 코드는 어떤 단계를 거쳐 기계어가 될까?",
-          "format": "실험",
-          "requires": [],
+          "titleEn": "Compiler",
+          "question": "`int x = 2 * 3 + y;` 한 줄은 구문 트리로 엮인 뒤, 컴파일러 안에서 어떤 모습들을 거쳐 기계어가 될까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming-languages/interpreter"
+          ],
           "page": "programming-languages/compiler.html"
         }
       ]
@@ -3601,18 +3630,24 @@ const courseCatalog = {
           "id": "complexity",
           "title": "시간 복잡도",
           "titleEn": "Time complexity",
-          "question": "데이터가 10배 늘면 일은 몇 배 늘어날까?",
-          "format": "실험",
-          "requires": [],
+          "question": "입력이 두 배가 되면, 첫 값 읽기·이진 탐색·모두 더하기·모든 쌍 비교의 일은 각각 몇 배가 될까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming/control",
+            "computing-basics/search"
+          ],
           "page": "algorithms/complexity.html"
         },
         {
           "id": "linked",
           "title": "배열과 연결 리스트",
           "titleEn": "Arrays and linked lists",
-          "question": "중간에 값을 끼워 넣을 때 두 구조는 무엇이 다를까?",
-          "format": "실험",
-          "requires": [],
+          "question": "같은 값 A~F에서, 맨 앞에 값을 넣는 일과 마지막 값 F를 읽는 일은 배열과 연결 리스트 중 어느 쪽이 걸음이 적을까요?",
+          "format": "단계 그림",
+          "requires": [
+            "algorithms/complexity",
+            "programming/collections"
+          ],
           "page": "algorithms/linked.html"
         },
         {
@@ -3628,9 +3663,12 @@ const courseCatalog = {
           "id": "sorting",
           "title": "정렬",
           "titleEn": "Sorting",
-          "question": "여러 정렬 방법은 비교와 교환을 얼마나 할까?",
-          "format": "실험",
-          "requires": [],
+          "question": "여러 정렬 방법은 같은 값 16개를 정렬할 때 비교를 얼마나 할까요?",
+          "format": "단계 그림",
+          "requires": [
+            "algorithms/complexity",
+            "programming/recursion"
+          ],
           "page": "algorithms/sorting.html"
         },
         {
@@ -3646,36 +3684,47 @@ const courseCatalog = {
           "id": "bst",
           "title": "트리와 이진 탐색 트리",
           "titleEn": "Trees and binary search trees",
-          "question": "값을 나무 모양으로 두면 찾기가 왜 빨라질까?",
-          "format": "실험",
-          "requires": [],
+          "question": "같은 일곱 값 10, 20, …, 70으로 트리를 만들 때, 70을 찾는 데 드는 비교 수는 무엇이 정할까요?",
+          "format": "단계 그림",
+          "requires": [
+            "algorithms/linked",
+            "programming/recursion"
+          ],
           "page": "algorithms/bst.html"
         },
         {
           "id": "traversal",
           "title": "그래프 탐색",
           "titleEn": "Graph traversal",
-          "question": "너비 우선과 깊이 우선은 어떤 순서로 길을 찾을까?",
-          "format": "실험",
-          "requires": [],
+          "question": "같은 그래프에서 A부터 I를 찾을 때, 너비 우선과 깊이 우선은 왜 서로 다른 길을 찾을까요?",
+          "format": "단계 그림",
+          "requires": [
+            "algorithms/stackqueue",
+            "math/graph"
+          ],
           "page": "algorithms/traversal.html"
         },
         {
           "id": "shortest",
           "title": "최단 경로",
           "titleEn": "Shortest paths",
-          "question": "지도 앱은 가장 빠른 길을 어떻게 찾을까?",
-          "format": "실험",
-          "requires": [],
+          "question": "선마다 걸리는 시간이 다를 때, 지도 앱은 가장 빠른 길을 어떻게 찾을까요?",
+          "format": "단계 그림",
+          "requires": [
+            "algorithms/traversal"
+          ],
           "page": "algorithms/shortest.html"
         },
         {
           "id": "dynamic",
           "title": "동적 계획법",
           "titleEn": "Dynamic programming",
-          "question": "같은 계산을 반복하지 않으려면 무엇을 기억해 둘까?",
-          "format": "실습",
-          "requires": [],
+          "question": "같은 작은 문제가 다시 나올 때 다시 계산하지 않으려면 무엇을 적어 두어야 할까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming/recursion",
+            "algorithms/complexity"
+          ],
           "page": "algorithms/dynamic.html"
         },
         {
@@ -4288,10 +4337,12 @@ const courseCatalog = {
         {
           "id": "graphics",
           "title": "화면 그리기",
-          "titleEn": "Drawing on screen",
-          "question": "점, 선, 삼각형은 어떻게 화면의 픽셀이 될까?",
-          "format": "실험",
-          "requires": [],
+          "titleEn": "Drawing pixels",
+          "question": "두 삼각형이 겹쳐 있으면, 화면의 각 칸에는 어느 삼각형의 색이 남을까요?",
+          "format": "단계 그림",
+          "requires": [
+            "computing-basics/media"
+          ],
           "page": "graphics/graphics.html"
         },
         {
@@ -4306,10 +4357,13 @@ const courseCatalog = {
         {
           "id": "transforms",
           "title": "변환과 카메라",
-          "titleEn": "Transforms and cameras",
-          "question": "물체를 움직이고 바라보는 일을 어떻게 수로 나타낼까?",
-          "format": "실험",
-          "requires": [],
+          "titleEn": "Transforms and camera",
+          "question": "카메라를 오른쪽으로 옮기면, 화면에 그릴 점의 좌표는 어떤 계산으로 바뀔까요?",
+          "format": "단계 그림",
+          "requires": [
+            "graphics/graphics",
+            "math/vectors"
+          ],
           "page": "graphics/transforms.html"
         },
         {
@@ -4325,9 +4379,11 @@ const courseCatalog = {
           "id": "animation",
           "title": "애니메이션과 물리",
           "titleEn": "Animation and physics",
-          "question": "움직임을 자연스럽게 보이게 하려면 무엇을 계산할까?",
-          "format": "실험",
-          "requires": [],
+          "question": "한 장을 그리는 시간이 컴퓨터마다 달라도, 공이 어디서나 같은 길로 움직이게 하려면 위치를 어떻게 계산해야 할까요?",
+          "format": "단계 그림",
+          "requires": [
+            "graphics/graphics"
+          ],
           "page": "graphics/animation.html"
         }
       ]
@@ -7517,9 +7573,13 @@ const courseCatalog = {
           "id": "handbuilt",
           "title": "손으로 만든 컴퓨터",
           "titleEn": "A hand-built computer",
-          "question": "게이트로 만든 CPU 시뮬레이터 위에서 직접 쓴 프로그램을 돌립니다.",
-          "format": "프로젝트",
-          "requires": [],
+          "question": "명령 11줄로 옮긴 반복 프로그램이 맞게 돌았는지, 실행 기록의 무엇을 보고 판정할까요?",
+          "format": "과제",
+          "requires": [
+            "computer-architecture/machine",
+            "computer-architecture/alu",
+            "programming/control"
+          ],
           "page": "projects/handbuilt.html"
         },
         {

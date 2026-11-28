@@ -4,215 +4,46 @@
 <meta charset="utf-8">
 <script src="../shared/device-access.js?v=1f73c765843f36b1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="코드를 한 줄씩 실행하며 변수가 메모리 칸에 붙인 이름이라는 것과, 값을 읽고 쓰는 과정을 살펴보세요.">
-<title>변수와 값 · 레슨 1.1</title>
-<style>
-:root{color-scheme:light;--ink:#142620;--muted:#43574f;--border:#cbd9d0;--paper:#f4f7ef;--panel:#fff;--accent:#0f766e;--request:#187959;--response:#5362a0;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.65 system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
-button{font:inherit;color:inherit;cursor:pointer}
-button:disabled,button[aria-disabled=true]{cursor:default;opacity:.5}
-:focus-visible{outline:3px solid #a24c14;outline-offset:3px}
-.shell{max-width:1280px;margin:auto;padding:clamp(16px,2.5vw,32px)}
-header{margin-bottom:20px}
-h1,h2,p{margin:0}
-.eyebrow{color:var(--accent);font-size:.875rem;font-weight:700;margin-bottom:6px}
-h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;letter-spacing:-.065em}
-header p.lead{color:var(--muted);margin-top:10px}
-.workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);gap:20px;align-items:stretch}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden}
-.stage-top,.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
-.stage-top h2,.timeline h2{font-size:1rem}
-.status{color:var(--accent);font-size:.875rem;font-weight:700}
-.stage{background:#eaf3eb;border-block:1px solid var(--border)}
-svg{display:block;width:100%;height:auto;max-height:520px}
-#scene{user-select:none}
-#scene:focus-visible{outline-offset:-4px}
-#scene.is-zoomed{cursor:grab;touch-action:none}
-#scene.is-dragging{cursor:grabbing}
-.hands-on{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;gap:12px}
-.try{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0;min-height:64px}
-.try strong{color:var(--accent);font-size:.875rem;margin-right:6px}
-.try-result{color:var(--accent);font-weight:700}
-.try-result:empty{display:none}
-.try.solved{background:#d2f4dd}
-.readout{font-size:1rem;color:var(--muted)}
-.readout b{color:var(--ink);font:700 1.1rem var(--mono);letter-spacing:.04em}
-.readout .total{color:var(--accent);font-size:1.3rem}
-.switch-area{display:flex;gap:10px 14px;align-items:stretch;flex-wrap:wrap}
-.switch-row{display:grid;grid-template-columns:repeat(var(--n,8),minmax(0,1fr));gap:6px;flex:1 1 320px;max-width:calc(var(--n,8) * 66px)}
-.bit-button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:54px;padding:4px 2px;border:1px solid #9fb7a9;border-radius:10px;background:#f6f8f5;line-height:1.2}
-.bit-button .place{font:600 .75rem var(--mono);color:var(--muted)}
-.bit-button .bit{font:700 1.15rem var(--mono);color:#7c8c85}
-.bit-button:hover{border-color:var(--accent)}
-.bit-button[aria-pressed=true]{background:#d2f4dd;border-color:var(--accent)}
-.bit-button[aria-pressed=true] .place,.bit-button[aria-pressed=true] .bit{color:#0f5a3c}
-.switch-actions{display:flex;gap:8px;align-items:center}
-.view-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border)}
-.view-scale{min-width:4ch;text-align:center;color:var(--muted);font:700 .875rem var(--mono)}
-.view-hint{color:var(--muted);font-size:.875rem;margin-inline-start:auto}
-.iso-grid{fill:none;stroke:#86ad97;stroke-width:.6;stroke-opacity:.24}
-.node .face{stroke-width:.8;stroke-linejoin:round}
-.node .shadow{fill:#1f4434;opacity:.16}
-.node .highlight{fill:none;stroke:#fff;stroke-opacity:.75;stroke-width:1.1;stroke-linecap:round}
-.switch{cursor:pointer}
-.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:fill .18s,stroke .18s,opacity .18s}
-.switch .left{fill:#d3dad6;stroke:#8c9d96}
-.switch .right{fill:#b9c4be;stroke:#8c9d96}
-.switch .top{fill:#eef1ef;stroke:#8c9d96}
-.switch.on .left{fill:#a5d6b6;stroke:#4f8f6b}
-.switch.on .right{fill:#78b592;stroke:#4f8f6b}
-.switch.on .top{fill:#d2f4dd;stroke:#4f8f6b}
-.switch .glow{fill:#4fcf87;opacity:0}
-.switch.on .glow{opacity:.55}
-.switch .digit{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#7c8c85}
-.switch.on .digit{fill:#0f5a3c}
-.switch.on .tag rect{stroke:var(--accent)}
-.switch.on .tag text{fill:var(--accent)}
-.casing{fill:none;stroke:#eaf3eb;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
-.wire{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.wire.signal{stroke:var(--request);stroke-width:2.6}
-.chevron{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.chevron.signal{stroke:var(--request)}
-.tag rect{fill:#fff;fill-opacity:.94;stroke:#c9d6ce;stroke-width:.8}
-.tag text{font:600 12px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
-.tag.place text{font:700 11.5px var(--mono)}
-.total rect{fill:#fff;stroke:var(--accent);stroke-width:1.2}
-.total text{font:700 20px var(--mono);fill:var(--accent);text-anchor:middle;dominant-baseline:central}
-.total.max rect{fill:#fff6ef;stroke:#a24c14}
-.total.max text{fill:#a24c14}
-.total{transform-box:fill-box;transform-origin:center}
-.total.bump{animation:bump .32s ease-out}
-@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
-.note{animation:note 1.6s ease-out forwards}
-.note path{fill:none;stroke:#43574f;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
-.note .arc{stroke-dasharray:3 3.5}
-.note text{font:700 9.5px system-ui,sans-serif;fill:#43574f;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3.5px;stroke-linejoin:round}
-@keyframes note{0%{opacity:0}10%{opacity:1}72%{opacity:1}100%{opacity:0}}
-.packet{stroke:white;stroke-width:1.6;fill:var(--request)}
-.packet-halo{opacity:.22;fill:var(--request)}
-.packet-label{font:700 9.5px var(--mono);fill:#0f5a3c;text-anchor:middle;paint-order:stroke;stroke:#eaf3eb;stroke-width:3px;stroke-linejoin:round}
-@media(prefers-reduced-motion:reduce){.switch .face,.switch .glow,.switch .digit,.switch .tag rect,.switch .tag text{transition:none}.note,.total.bump{animation:none}}
-.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.875rem}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.sample{width:22px;border-top:3px solid var(--request)}
-.dot{width:13px;height:13px;border-radius:4px;border:1px solid #8c9d96;background:#eef1ef}
-.dot.on{border-color:#4f8f6b;background:#bfecce}
-.actions,.navigation{display:flex;gap:8px;flex-wrap:wrap}
-.action{border:1px solid #9fb7a9;background:white;border-radius:9px;padding:7px 12px;min-height:44px;font-size:.875rem;font-weight:650}
-.action:hover:not(:disabled):not([aria-disabled=true]){background:#e4f3f1}
-.primary{background:var(--accent);color:white;border-color:var(--accent)}
-.primary:hover:not(:disabled){background:#115e59}
-.timeline{padding:15px 18px}
-.timeline-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.timeline-top span{font:700 .875rem var(--mono);color:var(--muted)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:0;margin:0;gap:8px}
-.steps button{height:100%;min-height:52px;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#f6f8f5;font-size:.875rem;line-height:1.45;display:flex;gap:7px;align-items:center}
-.steps button:hover{border-color:var(--accent)}
-.steps button[aria-current=step]{background:#d5efeb;border-color:var(--accent);font-weight:750}
-.step-number{font:700 .875rem var(--mono);color:var(--accent)}
-.explanation{padding:clamp(20px,2.4vw,32px);display:flex;flex-direction:column;gap:20px}
-.explanation h2{font-size:clamp(1.5rem,2.3vw,2.1rem);letter-spacing:-.055em;line-height:1.3}
-.explanation p{color:var(--muted);font-size:1.0625rem;line-height:1.75}
-.takeaway p{font-size:1rem}
-.takeaway{padding:12px 14px;background:#e9f5f3;border-left:3px solid var(--accent);border-radius:0 9px 9px 0}
-.takeaway strong{display:block;color:var(--accent);font-size:.875rem}
-.navigation{justify-content:space-between;margin-top:auto;padding-top:8px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-
-.cell .face{stroke:#8c9d96;stroke-width:.8;transition:fill .2s}
-.cell.empty .left{fill:#d3dad6}.cell.empty .right{fill:#b9c4be}.cell.empty .top{fill:#eef1ef}
-.cell.used .left{fill:#e6ebe8}.cell.used .right{fill:#cfd8d4}.cell.used .top{fill:#ffffff}
-.cell.changed .top{animation:flash 1s ease-out}
-@keyframes flash{0%{fill:#bfeccc}100%{fill:#ffffff}}
-.cell-value{font:700 12px var(--mono);text-anchor:middle;dominant-baseline:central;fill:#142620}
-.cell.empty .cell-value{fill:#9aa8a2}
-.address{font:600 10px var(--mono);fill:#6b7d76;text-anchor:middle}
-.tag.name{transition:opacity .25s}
-.tag.name rect{stroke:var(--accent);stroke-width:1.1}
-.tag.name text{fill:var(--accent);font-weight:700}
-.bus{fill:none;stroke:#b9cdc2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.bus.live,.bus.held-read,.bus.held-write{stroke-width:3}
-.bus.held-read{stroke:var(--response)}
-.bus.held-write{stroke:var(--request)}
-.bus.write-lane:not(.live):not(.held-write){display:none}
-.bus.live.read{stroke:var(--response)}
-.bus.live.write{stroke:var(--request)}
-.packet-group.read .packet,.packet-group.read .packet-halo{fill:var(--response)}
-.packet-group.write .packet,.packet-group.write .packet-halo{fill:var(--request)}
-.packet-group.read .packet-label{fill:#3b4880}
-.code-area{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
-.code{list-style:none;counter-reset:line;margin:0;padding:10px 0;background:#1f2d29;border-radius:12px;color:#e8f2ec;font:600 1rem/1.5 var(--mono);flex:1 1 300px}
-.code li{counter-increment:line;padding:5px 14px 5px 46px;position:relative}
-.code li::before{content:counter(line);position:absolute;left:16px;color:#6f8a80}
-.code li.done{color:#8fa79c}
-.code li.current{background:#2f4a41;color:#ffffff}
-.code li.current::after{content:'다음';position:absolute;right:14px;color:#9fe3b6;font-size:.8125rem}
-.code-actions{display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
-.try-choices{display:flex;gap:6px;flex-wrap:wrap}
-.try-choices:empty{display:none}
-.dot.read{background:var(--response);border-color:var(--response)}
-.dot.write{background:var(--request);border-color:var(--request)}
-@media(prefers-reduced-motion:reduce){.cell .face,.tag.name{transition:none}.cell.changed .top{animation:none}}
-</style>
+<meta name="description" content="a의 5와 b의 7을 서로 바꾸려면 어떻게 해야 할까요?">
+<title>변수와 값</title>
+<meta name="lesson-frame" content="2">
+<meta name="lesson-prereq-items" content="../computing-basics/computer.items.js?v=1442ab25743363ea">
 <link rel="icon" href="../shared/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../shared/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="../shared/course.css?v=d9c4c7ece46ac390">
-<script src="../shared/engine.js?v=fc4c2853ab27cdf0"></script>
-<script defer blocking="render" src="../shared/catalog.js"></script>
-<script defer blocking="render" src="./variables.en.js"></script>
-<script defer blocking="render" src="../shared/i18n.js"></script>
-<script defer blocking="render" src="../shared/course.js?v=09b179d99f959295"></script>
+<link rel="stylesheet" href="../shared/course.css?v=b27fe2f7eadd5950">
+<link rel="stylesheet" href="../shared/lesson-frame.css?v=43626da713e5fe4e">
+<link rel="stylesheet" href="../shared/figures.css?v=8d3ffbfa712122d6">
+<script src="../shared/engine.js?v=4979a8e0f4988aed"></script>
+<script defer blocking="render" src="../shared/figures.js?v=19c0019b554ff2c9"></script>
+<script defer blocking="render" src="./variables.items.js?v=12be7ba520120444"></script>
+<script defer blocking="render" src="../shared/lesson-frame.js?v=9a3590e2c4cb37b6"></script>
+<script defer blocking="render" src="../shared/catalog.js?v=5955c1a45768b2a4"></script>
+<script defer blocking="render" src="./variables.en.js?v=1901dd1b8208b0e4"></script>
+<script defer blocking="render" src="../shared/i18n.js?v=2465e7fc02b94d15"></script>
+<script defer blocking="render" src="../shared/course.js?v=850c84ea61b4101f"></script>
 </head>
 <body>
 <main class="shell">
   <header>
-    <p class="eyebrow">1장 프로그래밍 입문 · 레슨 1.1</p>
+    <p class="eyebrow">1장 프로그래밍 입문</p>
     <h1>변수와 값</h1>
-    <p class="lead">변수에 값을 넣으면 컴퓨터 안에서는 무슨 일이 생길까요? 코드를 한 줄씩 실행하며 메모리 칸을 지켜보세요.</p>
+    <p>a의 5와 b의 7을 서로 바꾸려면 어떻게 해야 할까요?</p>
   </header>
   <div class="workspace">
     <div>
       <section class="panel" aria-labelledby="stage-heading">
-        <div class="stage-top"><h2 id="stage-heading">메모리와 CPU</h2></div>
+        <div class="stage-top"><h2 id="stage-heading">변수와 메모리 칸</h2></div>
         <div class="stage">
           <svg id="scene" viewBox="0 0 620 280" role="img" tabindex="0" aria-labelledby="scene-title scene-desc">
-            <title id="scene-title">코드 한 줄이 메모리 칸을 읽고 쓰는 장면</title><desc id="scene-desc"></desc>
-            <defs>
-              <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
-              <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
-              <radialGradient id="grid-fade"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-              <mask id="grid-mask"><rect x="-460" y="-260" width="920" height="520" fill="url(#grid-fade)"/></mask>
-            </defs>
-            <g id="world" aria-hidden="true">
-              <path id="grid" class="iso-grid" mask="url(#grid-mask)"></path>
-              <g id="casings"></g><g id="links"></g><g id="nodes"></g><g id="packets"></g>
-            </g>
+            <title id="scene-title">이름과 메모리 칸의 값</title>
+            <desc id="scene-desc"></desc>
+            <g id="figure" aria-hidden="true"></g>
           </svg>
-        </div>
-        <div class="hands-on">
-          <div class="try" id="try">
-            <p><strong>해 보기</strong><span id="try-text"></span></p>
-            <p class="try-result" id="try-result" role="status"></p>
-            <div class="try-choices" id="try-choices" role="group" aria-label="예측 고르기"></div>
-          </div>
-          <p class="readout" id="readout"></p>
-          <div class="code-area">
-            <ol class="code" id="code" aria-label="프로그램"></ol>
-            <div class="code-actions">
-              <button class="action primary" id="run-line" type="button">한 줄 실행</button>
-              <button class="action" id="restart" type="button">처음부터</button>
-            </div>
-          </div>
         </div>
         <div class="view-controls" role="group" aria-label="장면 보기">
           <button class="action" id="zoom-out" type="button" aria-label="장면 축소">−</button>
-          <output class="view-scale" id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
+          <output id="view-scale" aria-label="현재 배율" aria-live="off">100%</output>
           <button class="action" id="zoom-in" type="button" aria-label="장면 확대">+</button>
-          <span class="view-hint">확대 후 드래그로 이동</span>
-        </div>
-        <div class="controls">
-          <div class="legend" aria-label="범례"><span><i class="dot read"></i>읽기 · 칸 → CPU</span><span><i class="dot write"></i>쓰기 · CPU → 칸</span><span><i class="dot"></i>빈 칸</span></div>
         </div>
         <nav class="timeline" aria-labelledby="timeline-heading">
           <div class="timeline-top"><h2 id="timeline-heading">타임라인</h2><span id="count"></span></div>
@@ -221,647 +52,976 @@ svg{display:block;width:100%;height:auto;max-height:520px}
       </section>
     </div>
     <section class="panel explanation" aria-labelledby="step-title">
-      <h2 id="step-title"></h2><p id="body"></p>
+      <h2 id="step-title"></h2>
+      <p id="body"></p>
       <div class="takeaway"><strong>관찰 포인트</strong><p id="takeaway"></p></div>
-      <nav class="navigation" aria-label="이전 및 다음 단계"><button class="action" id="prev" type="button">이전 단계</button><button class="action primary" id="next" type="button">다음 단계</button></nav>
+      <nav class="navigation" aria-label="이전 및 다음 단계">
+        <button class="action" id="prev" type="button">이전 단계</button>
+        <button class="action primary" id="next" type="button">다음 단계</button>
+      </nav>
     </section>
   </div>
-  <div class="sr-only" id="announcement" role="status"></div>
+  <div id="announcement" class="sr-only" role="status"></div>
 </main>
 <script>
-const byId = (id) => document.getElementById(id);
+const lesson = {
+  "question": "a의 5와 b의 7을 서로 바꾸려면 어떻게 해야 할까요?",
+  "terms": [
+    {
+      "term": "칸",
+      "meaning": "메모리에서 값 하나를 담는 자리",
+      "step": 1
+    },
+    {
+      "term": "주소(번지)",
+      "meaning": "칸마다 붙은 번호. 100번지, 101번지처럼 부른다",
+      "step": 1
+    },
+    {
+      "term": "변수",
+      "meaning": "칸에 붙인 이름. 이름으로 그 칸의 값을 넣고 꺼낸다",
+      "step": 1
+    },
+    {
+      "term": "줄",
+      "meaning": "프로그램에 적힌 지시 하나. 위에서 아래로 한 줄씩 실행한다",
+      "step": 1
+    },
+    {
+      "term": "적기(쓰기)",
+      "meaning": "칸에 값을 넣는 일. 칸에 있던 값은 지워진다",
+      "step": 3
+    },
+    {
+      "term": "읽기",
+      "meaning": "칸의 값을 복사해 오는 일. 칸의 값은 그대로 남는다",
+      "step": 3
+    }
+  ],
+  "steps": [
+    {
+      "label": "변수 만들기",
+      "title": "변수는 메모리 칸에 붙인 이름입니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "이름",
+            "cells": [
+              {
+                "id": "n-age",
+                "label": "나이"
+              }
+            ]
+          },
+          {
+            "title": "메모리 칸",
+            "cells": [
+              {
+                "id": "c100",
+                "label": "15",
+                "sub": "100번지"
+              },
+              {
+                "id": "c101",
+                "label": "비어 있음",
+                "sub": "101번지"
+              },
+              {
+                "id": "c102",
+                "label": "비어 있음",
+                "sub": "102번지"
+              },
+              {
+                "id": "c103",
+                "label": "비어 있음",
+                "sub": "103번지"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "n-age",
+            "to": "c100",
+            "kind": "new"
+          }
+        ],
+        "changed": [
+          "n-age",
+          "c100"
+        ]
+      },
+      "body": "메모리는 번호(주소)가 붙은 칸이 줄지어 있는 곳입니다. 일하는 동안의 기억과 저장 레슨에서 작업 중인 별을 두었던 메모리와 같은 곳입니다. \"나이 = 15\"라고 쓰면 컴퓨터는 빈 칸 하나를 골라 15를 적고 그 칸에 \"나이\"라는 이름표를 붙입니다. 그래서 주소를 외우지 않고 이름으로 값을 다룰 수 있습니다.",
+      "description": "이름 나이가 15가 든 100번지 칸을 가리킵니다. 나머지 세 칸은 비어 있습니다.",
+      "takeaway": "이름 나이가 15가 든 100번지 칸을 가리킵니다. 나머지 세 칸은 비어 있습니다.",
+      "code": {
+        "lines": [
+          "나이 = 15"
+        ],
+        "current": 1
+      }
+    },
+    {
+      "label": "둘째 변수",
+      "title": "다음 변수는 다음 빈 칸에 들어갑니다",
+      "figure": {
+        "part": "map",
+        "columns": [
+          {
+            "title": "이름",
+            "cells": [
+              {
+                "id": "n-age",
+                "label": "나이"
+              },
+              {
+                "id": "n-height",
+                "label": "키"
+              }
+            ]
+          },
+          {
+            "title": "메모리 칸",
+            "cells": [
+              {
+                "id": "c100",
+                "label": "15",
+                "sub": "100번지"
+              },
+              {
+                "id": "c101",
+                "label": "160",
+                "sub": "101번지"
+              },
+              {
+                "id": "c102",
+                "label": "비어 있음",
+                "sub": "102번지"
+              },
+              {
+                "id": "c103",
+                "label": "비어 있음",
+                "sub": "103번지"
+              }
+            ]
+          }
+        ],
+        "links": [
+          {
+            "from": "n-age",
+            "to": "c100",
+            "kind": "solid"
+          },
+          {
+            "from": "n-height",
+            "to": "c101",
+            "kind": "new"
+          }
+        ],
+        "changed": [
+          "n-height",
+          "c101"
+        ]
+      },
+      "body": "키의 160은 나이 칸에 덮어쓰지 않고 다음 빈 칸에 적습니다. 이 그림에서는 빈 칸을 왼쪽부터 차례로 씁니다. 실제 컴퓨터가 칸을 고르는 방법은 더 복잡합니다.",
+      "description": "나이는 100번지의 15를, 키는 101번지의 160을 가리킵니다.",
+      "takeaway": "나이는 100번지의 15를, 키는 101번지의 160을 가리킵니다.",
+      "code": {
+        "lines": [
+          "나이 = 15",
+          "키 = 160"
+        ],
+        "current": 2
+      },
+      "predict": {
+        "prompt": "키 = 160 을 실행하면 나이 칸의 15는 어떻게 될까요?",
+        "options": [
+          {
+            "text": "그대로 15",
+            "why": "키는 빈 칸에 들어가고, 나이 칸에는 아무것도 적지 않았습니다.",
+            "correct": true
+          },
+          {
+            "text": "160으로 바뀐다",
+            "why": "새 값이 첫 칸에 들어간다고 본 것인데, 쓰고 있는 칸에 적으면 15가 지워지므로 다른 빈 칸을 씁니다."
+          },
+          {
+            "text": "15와 160이 함께 들어간다",
+            "why": "칸이 값을 모은다고 본 것인데, 칸 하나에는 값이 하나만 들어갑니다."
+          }
+        ],
+        "before": {
+          "part": "map",
+          "columns": [
+            {
+              "title": "이름",
+              "cells": [
+                {
+                  "id": "n-age",
+                  "label": "나이"
+                },
+                {
+                  "id": "n-height",
+                  "label": "키"
+                }
+              ]
+            },
+            {
+              "title": "메모리 칸",
+              "cells": [
+                {
+                  "id": "c100",
+                  "label": "15",
+                  "sub": "100번지"
+                },
+                {
+                  "id": "c101",
+                  "label": "비어 있음",
+                  "sub": "101번지"
+                },
+                {
+                  "id": "c102",
+                  "label": "비어 있음",
+                  "sub": "102번지"
+                },
+                {
+                  "id": "c103",
+                  "label": "비어 있음",
+                  "sub": "103번지"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "from": "n-age",
+              "to": "c100",
+              "kind": "solid"
+            }
+          ],
+          "changed": [],
+          "description": "이름 나이와 키가 보입니다. 나이는 15가 든 100번지를 가리키고, 키에서 나가는 선은 보이지 않습니다."
+        }
+      }
+    },
+    {
+      "label": "다시 적기",
+      "title": "새 값을 적으면 예전 값은 지워집니다",
+      "figure": {
+        "part": "timeline",
+        "axis": {
+          "kind": "order",
+          "unit": "실행한 줄 차례",
+          "max": 3,
+          "ticks": [
+            1,
+            2,
+            3
+          ]
+        },
+        "rows": [
+          {
+            "label": "100번지 · 나이",
+            "spans": [
+              {
+                "id": "v15",
+                "start": 1,
+                "end": 2,
+                "kind": "a",
+                "label": "15"
+              },
+              {
+                "id": "v16",
+                "start": 2,
+                "end": 3,
+                "kind": "b",
+                "label": "16"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "at": 2,
+            "label": "15 읽고 1 더해 16 적기"
+          },
+          {
+            "at": 3,
+            "label": "끝"
+          }
+        ],
+        "changed": [
+          "v16"
+        ]
+      },
+      "body": "나이 = 나이 + 1 은 같다는 뜻의 식이 아니라, 오른쪽을 계산해 왼쪽 칸에 적으라는 지시입니다. 컴퓨터는 나이 칸의 15를 읽고 1을 더한 뒤 같은 칸에 16을 적습니다. 칸에는 값이 하나만 들어가므로 15는 사라집니다.",
+      "description": "100번지에서 15 구간은 눈금 2에서 끝나고, 같은 자리에서 16 구간이 시작됩니다.",
+      "takeaway": "100번지에서 15 구간은 눈금 2에서 끝나고, 같은 자리에서 16 구간이 시작됩니다.",
+      "code": {
+        "lines": [
+          "나이 = 15",
+          "나이 = 나이 + 1"
+        ],
+        "current": 2
+      }
+    },
+    {
+      "label": "한 번 더",
+      "title": "같은 줄도 지금 칸의 값을 읽습니다",
+      "figure": {
+        "part": "timeline",
+        "axis": {
+          "kind": "order",
+          "unit": "실행한 줄 차례",
+          "max": 4,
+          "ticks": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "rows": [
+          {
+            "label": "100번지 · 나이",
+            "spans": [
+              {
+                "id": "v15",
+                "start": 1,
+                "end": 2,
+                "kind": "a",
+                "label": "15"
+              },
+              {
+                "id": "v16",
+                "start": 2,
+                "end": 3,
+                "kind": "b",
+                "label": "16"
+              },
+              {
+                "id": "v17",
+                "start": 3,
+                "end": 4,
+                "kind": "c",
+                "label": "17"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "at": 2,
+            "label": "15 + 1 = 16"
+          },
+          {
+            "at": 3,
+            "label": "16 + 1 = 17"
+          },
+          {
+            "at": 4,
+            "label": "끝"
+          }
+        ],
+        "changed": [
+          "v17"
+        ]
+      },
+      "body": "같은 줄을 다시 실행합니다. 나이 칸에는 이제 16이 있으므로, 16을 읽고 1을 더해 17을 적습니다.",
+      "description": "3번째 줄은 16을 읽습니다. 같은 칸에서 16 구간 뒤에 17이 이어집니다.",
+      "takeaway": "3번째 줄은 16을 읽습니다. 같은 칸에서 16 구간 뒤에 17이 이어집니다.",
+      "code": {
+        "lines": [
+          "나이 = 15",
+          "나이 = 나이 + 1",
+          "나이 = 나이 + 1"
+        ],
+        "current": 3
+      },
+      "predict": {
+        "prompt": "나이 = 나이 + 1 을 한 번 더 실행하면 나이 칸은 얼마가 될까요?",
+        "options": [
+          {
+            "text": "17",
+            "why": "칸에는 지금 16이 있으니 16을 읽어 1을 더한 17을 적습니다.",
+            "correct": true
+          },
+          {
+            "text": "16",
+            "why": "줄이 같으면 결과도 같다고 본 것인데, 이 줄은 실행할 때마다 지금 칸의 값을 읽습니다."
+          },
+          {
+            "text": "16과 17이 함께 남는다",
+            "why": "새 값이 옆에 쌓인다고 본 것인데, 칸에 적으면 예전 값 16은 지워집니다."
+          }
+        ],
+        "before": {
+          "part": "timeline",
+          "axis": {
+            "kind": "order",
+            "unit": "실행한 줄 차례",
+            "max": 4,
+            "ticks": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "rows": [
+            {
+              "label": "100번지 · 나이",
+              "spans": [
+                {
+                  "id": "v15",
+                  "start": 1,
+                  "end": 2,
+                  "kind": "a",
+                  "label": "15"
+                },
+                {
+                  "id": "v16",
+                  "start": 2,
+                  "end": 3,
+                  "kind": "b",
+                  "label": "16"
+                }
+              ]
+            }
+          ],
+          "marks": [
+            {
+              "at": 2,
+              "label": "15 읽고 1 더해 16 적기"
+            }
+          ],
+          "changed": [],
+          "description": "나이 칸에서 15 다음에 16이 보입니다. 3과 4 사이에는 아직 구간이 없습니다."
+        }
+      }
+    },
+    {
+      "label": "두 칸 읽기",
+      "title": "읽은 칸의 값은 그대로 남습니다",
+      "figure": {
+        "part": "timeline",
+        "axis": {
+          "kind": "order",
+          "unit": "실행한 줄 차례",
+          "max": 4,
+          "ticks": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "rows": [
+          {
+            "label": "100번지 · 가격",
+            "spans": [
+              {
+                "id": "p",
+                "start": 1,
+                "end": 4,
+                "kind": "a",
+                "label": "3000"
+              }
+            ]
+          },
+          {
+            "label": "101번지 · 개수",
+            "spans": [
+              {
+                "id": "q",
+                "start": 2,
+                "end": 4,
+                "kind": "b",
+                "label": "2"
+              }
+            ]
+          },
+          {
+            "label": "102번지 · 합계",
+            "spans": [
+              {
+                "id": "t",
+                "start": 3,
+                "end": 4,
+                "kind": "c",
+                "label": "6000"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "at": 3,
+            "label": "가격·개수 읽기 → 3000 × 2 = 6000 적기"
+          },
+          {
+            "at": 4,
+            "label": "끝"
+          }
+        ],
+        "changed": [
+          "t"
+        ]
+      },
+      "body": "합계 = 가격 × 개수 를 실행하면 컴퓨터는 가격 칸과 개수 칸을 모두 읽어 곱하고, 결과를 새 칸 합계에 적습니다. 읽은 칸의 값은 그대로 남습니다. 읽기는 값을 복사해 오는 일이기 때문입니다.",
+      "description": "가격 3000과 개수 2가 끝까지 남으며, 눈금 3에서 합계 6000 구간이 시작됩니다.",
+      "takeaway": "가격 3000과 개수 2가 끝까지 남으며, 눈금 3에서 합계 6000 구간이 시작됩니다.",
+      "code": {
+        "lines": [
+          "가격 = 3000",
+          "개수 = 2",
+          "합계 = 가격 × 개수"
+        ],
+        "current": 3
+      },
+      "predict": {
+        "prompt": "3번째 줄을 실행한 뒤 가격, 개수, 합계 칸에는 각각 무엇이 있을까요?",
+        "options": [
+          {
+            "text": "3000, 2, 6000",
+            "why": "합계 칸에는 식이 아니라 계산을 마친 값 3000 × 2 = 6000 이 들어가고, 읽은 두 칸은 그대로입니다.",
+            "correct": true
+          },
+          {
+            "text": "3000, 2, '가격 × 개수'",
+            "why": "칸이 계산 방법을 기억한다고 본 것인데, 적히는 것은 그 순간의 결과 값 하나입니다."
+          },
+          {
+            "text": "빈 칸, 빈 칸, 6000",
+            "why": "읽으면 값을 가져가 버린다고 본 것인데, 읽기는 복사라 두 칸은 그대로입니다."
+          }
+        ],
+        "before": {
+          "part": "timeline",
+          "axis": {
+            "kind": "order",
+            "unit": "실행한 줄 차례",
+            "max": 4,
+            "ticks": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "rows": [
+            {
+              "label": "100번지 · 가격",
+              "spans": [
+                {
+                  "id": "p",
+                  "start": 1,
+                  "end": 3,
+                  "kind": "a",
+                  "label": "3000"
+                }
+              ]
+            },
+            {
+              "label": "101번지 · 개수",
+              "spans": [
+                {
+                  "id": "q",
+                  "start": 2,
+                  "end": 3,
+                  "kind": "b",
+                  "label": "2"
+                }
+              ]
+            },
+            {
+              "label": "102번지 · 합계",
+              "spans": []
+            }
+          ],
+          "marks": [],
+          "changed": [],
+          "description": "가격 3000과 개수 2는 눈금 3까지 보입니다. 합계 행은 비어 있습니다."
+        }
+      }
+    },
+    {
+      "label": "a = b, b = a",
+      "title": "먼저 덮어쓰면 5가 사라집니다",
+      "figure": {
+        "part": "timeline",
+        "axis": {
+          "kind": "order",
+          "unit": "실행한 줄 차례",
+          "max": 5,
+          "ticks": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "rows": [
+          {
+            "label": "100번지 · a",
+            "spans": [
+              {
+                "id": "a5",
+                "start": 1,
+                "end": 3,
+                "kind": "a",
+                "label": "5"
+              },
+              {
+                "id": "a7",
+                "start": 3,
+                "end": 5,
+                "kind": "b",
+                "label": "7"
+              }
+            ]
+          },
+          {
+            "label": "101번지 · b",
+            "spans": [
+              {
+                "id": "b7",
+                "start": 2,
+                "end": 4,
+                "kind": "b",
+                "label": "7"
+              },
+              {
+                "id": "b7again",
+                "start": 4,
+                "end": 5,
+                "kind": "b",
+                "label": "7 (다시 적음)"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "at": 3,
+            "label": "a = b: 5 지워짐"
+          },
+          {
+            "at": 4,
+            "label": "b = a: 읽은 값 7"
+          },
+          {
+            "at": 5,
+            "label": "끝"
+          }
+        ],
+        "changed": [
+          "a7",
+          "b7again"
+        ]
+      },
+      "body": "a에는 5, b에는 7이 있을 때 두 값을 서로 바꾸고 싶다고 해 봅시다. a = b 를 실행하면 a 칸에 7이 적히면서 원래 있던 5는 사라집니다. 그다음 b = a 를 해도 a에는 이미 7뿐이라, 두 칸 모두 7이 됩니다.",
+      "description": "눈금 3 뒤에는 a와 b 어느 행에도 5가 없습니다. 두 행은 모두 7로 끝납니다.",
+      "takeaway": "눈금 3 뒤에는 a와 b 어느 행에도 5가 없습니다. 두 행은 모두 7로 끝납니다.",
+      "code": {
+        "lines": [
+          "a = 5",
+          "b = 7",
+          "a = b",
+          "b = a"
+        ],
+        "current": 4
+      },
+      "predict": {
+        "prompt": "a = b 다음 b = a 를 실행하면 끝에 a와 b는 얼마일까요?",
+        "options": [
+          {
+            "text": "a 7, b 7",
+            "why": "a = b 에서 a의 5가 7로 덮였으니, b = a 는 7을 읽어 b에 적습니다.",
+            "correct": true
+          },
+          {
+            "text": "a 7, b 5",
+            "why": "두 줄이 동시에 일어난다고 본 것인데, 줄은 하나씩 실행되어 4번째 줄이 읽을 때 5는 이미 없습니다."
+          },
+          {
+            "text": "a 5, b 7",
+            "why": "두 줄이 서로 되돌린다고 본 것인데, 3번째 줄에서 a에 7이 적힌 것은 되돌아가지 않습니다."
+          }
+        ],
+        "before": {
+          "part": "timeline",
+          "axis": {
+            "kind": "order",
+            "unit": "실행한 줄 차례",
+            "max": 5,
+            "ticks": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "rows": [
+            {
+              "label": "100번지 · a",
+              "spans": [
+                {
+                  "id": "a5",
+                  "start": 1,
+                  "end": 3,
+                  "kind": "a",
+                  "label": "5"
+                }
+              ]
+            },
+            {
+              "label": "101번지 · b",
+              "spans": [
+                {
+                  "id": "b7",
+                  "start": 2,
+                  "end": 3,
+                  "kind": "b",
+                  "label": "7"
+                }
+              ]
+            }
+          ],
+          "marks": [
+            {
+              "at": 3,
+              "label": "a = b"
+            },
+            {
+              "at": 4,
+              "label": "b = a"
+            }
+          ],
+          "changed": [],
+          "description": "3번째 줄을 실행하기 전의 값 a 5, b 7과 실행할 두 줄 a = b, b = a가 보입니다."
+        }
+      }
+    },
+    {
+      "label": "임시 칸",
+      "title": "지워질 값을 먼저 맡겨 두면 바꿀 수 있습니다",
+      "figure": {
+        "part": "timeline",
+        "axis": {
+          "kind": "order",
+          "unit": "실행한 줄 차례",
+          "max": 6,
+          "ticks": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        "rows": [
+          {
+            "label": "100번지 · a",
+            "spans": [
+              {
+                "id": "a5",
+                "start": 1,
+                "end": 4,
+                "kind": "a",
+                "label": "5"
+              },
+              {
+                "id": "a7",
+                "start": 4,
+                "end": 6,
+                "kind": "b",
+                "label": "7"
+              }
+            ]
+          },
+          {
+            "label": "101번지 · b",
+            "spans": [
+              {
+                "id": "b7",
+                "start": 2,
+                "end": 5,
+                "kind": "b",
+                "label": "7"
+              },
+              {
+                "id": "b5",
+                "start": 5,
+                "end": 6,
+                "kind": "a",
+                "label": "5"
+              }
+            ]
+          },
+          {
+            "label": "102번지 · 임시",
+            "spans": [
+              {
+                "id": "t5",
+                "start": 3,
+                "end": 6,
+                "kind": "a",
+                "label": "5"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "at": 3,
+            "label": "5를 임시에 복사"
+          },
+          {
+            "at": 4,
+            "label": "a에 7 적기"
+          },
+          {
+            "at": 5,
+            "label": "b에 임시의 5 적기"
+          },
+          {
+            "at": 6,
+            "label": "끝"
+          }
+        ],
+        "changed": [
+          "t5",
+          "b5"
+        ]
+      },
+      "body": "사라질 값을 먼저 다른 칸에 적어 두면 됩니다. 임시 = a 로 5를 맡겨 둔 뒤 a에 b의 7을 적고, 마지막으로 b에 임시의 5를 적습니다. 칸 하나를 더 쓰는 대신 값을 잃지 않습니다.",
+      "description": "a 행의 5가 사라지기 전에 임시 행에 5가 들어갑니다. 끝에서 a는 7, b는 5입니다.",
+      "takeaway": "a 행의 5가 사라지기 전에 임시 행에 5가 들어갑니다. 끝에서 a는 7, b는 5입니다.",
+      "code": {
+        "lines": [
+          "a = 5",
+          "b = 7",
+          "임시 = a",
+          "a = b",
+          "b = 임시"
+        ],
+        "current": 5
+      },
+      "predict": {
+        "prompt": "5를 임시 칸에 먼저 복사한 뒤 a = b, b = 임시 를 실행합니다. 끝에 b 칸과 임시 칸에는 각각 무엇이 있을까요?",
+        "options": [
+          {
+            "text": "b 5, 임시 5",
+            "why": "a의 5는 지워졌지만 임시 칸에 복사본이 있어 그것을 b에 적고, 읽은 임시 칸은 그대로입니다.",
+            "correct": true
+          },
+          {
+            "text": "b 7, 임시 5",
+            "why": "6단계처럼 5를 잃는다고 본 것인데, 5는 a가 덮이기 전에 임시 칸에 복사되어 있습니다."
+          },
+          {
+            "text": "b 5, 임시 비어 있음",
+            "why": "읽으면 값이 옮겨 간다고 본 것인데, 읽기는 복사라 임시 칸에도 5가 남습니다."
+          }
+        ],
+        "before": {
+          "part": "timeline",
+          "axis": {
+            "kind": "order",
+            "unit": "실행한 줄 차례",
+            "max": 6,
+            "ticks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          "rows": [
+            {
+              "label": "100번지 · a",
+              "spans": [
+                {
+                  "id": "a5",
+                  "start": 1,
+                  "end": 3,
+                  "kind": "a",
+                  "label": "5"
+                }
+              ]
+            },
+            {
+              "label": "101번지 · b",
+              "spans": [
+                {
+                  "id": "b7",
+                  "start": 2,
+                  "end": 3,
+                  "kind": "b",
+                  "label": "7"
+                }
+              ]
+            },
+            {
+              "label": "102번지 · 임시",
+              "spans": []
+            }
+          ],
+          "marks": [
+            {
+              "at": 3,
+              "label": "5를 임시에 복사"
+            }
+          ],
+          "changed": [],
+          "description": "a의 5와 b의 7이 눈금 3까지 이어집니다. 눈금 3에는 5를 임시에 복사하는 표시가 있습니다."
+        }
+      }
+    }
+  ],
+  "review": {
+    "own": [
+      "variables-1",
+      "variables-2"
+    ],
+    "prereq": {
+      "ref": "computing-basics/computer",
+      "id": "computer-4"
+    },
+    "fallback": "variables-3"
+  }
+};
+const byId = id => document.getElementById(id);
 const viewport = byId('scene');
 const viewWidth = 620;
 const viewHeight = 280;
-const maxZoom = 3;
-const center = { x: viewWidth / 2, y: viewHeight / 2 };
-const camera = { x: 0, y: 0, zoom: 1 };
-const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-
-
-
-// Convert from screen pixels to fixed viewport coordinates, accounting for SVG letterboxing.
-
-
-// A press that starts on a scene object and ends without moving counts as a tap on it.
-// Track the press separately so clicking still works after a drag captures the pointer.
-let tap = null;
-viewport.addEventListener('pointerdown', (event) => {
-  const target = event.target.closest?.('[data-hit]');
-  tap = target && event.button === 0 && event.isPrimary
-    ? { hit: target.dataset.hit, x: event.clientX, y: event.clientY, id: event.pointerId }
-    : null;
-});
-viewport.addEventListener('pointerup', (event) => {
-  if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) < 8) {
-    sceneTap(tap.hit);
-  }
-  tap = null;
-});
-viewport.addEventListener('pointercancel', () => { tap = null; });
-
+const center = {x: viewWidth / 2, y: viewHeight / 2};
+const camera = {x: 0, y: 0, zoom: 1};
+const maxZoom = 2.2;
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+document.getElementById('zoom-in').onclick = () => zoomBy(.25);
+document.getElementById('zoom-out').onclick = () => zoomBy(-.25);
 enableCameraDrag();
-
-
-
-byId('zoom-in').onclick = () => zoomBy(.25);
-byId('zoom-out').onclick = () => zoomBy(-.25);
-viewport.addEventListener('keydown', (event) => {
-  if (event.ctrlKey || event.metaKey || event.altKey) return;
-  const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
-  const direction = directions[event.key];
-  if (direction && camera.zoom > 1) {
+viewport.addEventListener('keydown', event => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const pan = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1]}[event.key];
+  if (pan && camera.zoom > 1) {
     event.preventDefault();
-    setCamera(camera.x + direction[0] * 28 / camera.zoom, camera.y + direction[1] * 28 / camera.zoom, camera.zoom);
-  } else if (event.key === '+' || event.key === '=' || event.key === '-') {
+    setCamera(camera.x + pan[0] * 18, camera.y + pan[1] * 18, camera.zoom);
+  } else if (event.key === '+' || event.key === '-' || event.key === '0') {
     event.preventDefault();
-    zoomBy(event.key === '-' ? -.25 : .25);
-  } else if (event.key === '0') {
-    event.preventDefault();
-    resetView();
+    if (event.key === '0') resetView();
+    else zoomBy(event.key === '+' ? .25 : -.25);
   }
 });
 setCamera(0, 0, 1);
-
-const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const cellCount = 6;
-const firstAddress = 100;
-
-// A program is a list of lines. Each line may read variables, then writes one variable with `calc`.
-// `show` is what the CPU displays while it works. `ask` is a prediction the learner answers before the line runs.
-const line = (code, write, calc, reads = [], show = null, ask = null) => ({ code, write, calc, reads, show, ask });
-const lesson = [
-  {
-    label: '변수 만들기',
-    readingDiagram: {
-      title: "같은 칸에 이름과 값이 붙는다",
-      description: "나이 = 15 → 100번지 빈 칸에 쓰기 → 100번지 나이: 15",
-      nodes: [
-        ["a", 102, 142, 126, 26, ["나이 = 15"]],
-        ["b", 310, 142, 126, 46, ["100번지", "빈 칸에 쓰기"]],
-        ["c", 517, 142, 126, 46, ["100번지", "나이: 15"], "active"],
-      ],
-      edges: [
-        ["a", "b", "active"],
-        ["b", "c", "active"],
-      ],
-    },
-    readingMemory: [["나이", 15]],
-    // The still picture lights the routes of the line that decided this step: reads purple, writes green.
-    readingRoutes: {write: ["나이"]},
-    example: ["나이 = 15", "빈 칸에 이름과 값 저장", "이름 ‘나이’로 15 읽기"],
-    title: '변수는 메모리 칸에 붙인 이름이다',
-    body: '메모리는 번호(주소)가 붙은 칸이 줄지어 있는 곳입니다. "나이 = 15"라고 쓰면 컴퓨터는 빈 칸 하나를 골라 15를 적고, 그 칸에 "나이"라는 이름표를 붙입니다. 이름표 덕분에 우리는 100번지 같은 주소를 외우지 않고 이름으로 값을 다룰 수 있습니다.',
-    takeaway: 'CPU에서 메모리 칸으로 값이 가고, 칸 위에 이름표가 붙습니다. 왼쪽부터 빈 칸을 차례로 씁니다.',
-    description: '메모리 칸 여섯 개(100–105번지)와 CPU가 있습니다. 한 줄을 실행할 때마다 CPU가 값을 빈 칸에 적고 그 칸에 변수 이름표를 붙입니다.',
-    program: [
-      line('나이 = 15', '나이', () => 15, [], () => '15 적기'),
-      line('키 = 160', '키', () => 160, [], () => '160 적기',
-        { q: '"키"는 몇 번지 칸에 들어갈까요?', choices: ['100번지', '101번지', '102번지'], answer: '101번지', why: '100번지는 "나이"가 쓰고 있으니 다음 빈 칸인 101번지를 씁니다.' }),
-    ],
-  },
-  {
-    label: '값 바꾸기',
-    readingDiagram: {
-      title: "나이를 읽고 같은 주소에 다시 쓴다",
-      description: "100번지 나이: 15 → CPU 15 + 1 = 16 → 100번지 나이: 16",
-      nodes: [
-        ["a", 102, 142, 126, 46, ["100번지", "나이: 15"]],
-        ["b", 310, 142, 126, 46, ["CPU", "15 + 1 = 16"], "active"],
-        ["c", 517, 142, 126, 46, ["100번지", "나이: 16"], "active"],
-      ],
-      edges: [
-        ["a", "b", "active"],
-        ["b", "c", "active"],
-      ],
-    },
-    readingMemory: [["나이", 16]],
-    // The still picture lights the routes of the line that decided this step: reads purple, writes green.
-    readingRoutes: {read: ["나이"], write: ["나이"]},
-    example: ["나이 15", "같은 칸에 15 + 1 쓰기", "나이 16"],
-    title: '새 값을 넣으면 예전 값은 지워진다',
-    body: '"나이 = 나이 + 1"은 수학의 등식이 아니라 명령입니다. 오른쪽부터 읽어서, 나이 칸의 값을 CPU로 가져오고, 1을 더한 뒤, 그 결과를 다시 나이 칸에 적으라는 뜻입니다. 칸에는 값이 하나만 들어가므로 예전 값은 사라집니다.',
-    takeaway: '파란 점(읽기)이 칸에서 CPU로 가고, CPU 위에 "15 + 1 = 16"이 뜬 뒤, 초록 점(쓰기)이 다시 칸으로 돌아와 값을 바꿉니다.',
-    description: '"나이" 칸의 값을 CPU가 읽어 1을 더하고, 결과를 같은 칸에 다시 적습니다. 칸의 값은 15에서 16, 17로 바뀝니다.',
-    program: [
-      line('나이 = 15', '나이', () => 15, [], () => '15 적기'),
-      line('나이 = 나이 + 1', '나이', (v) => v['나이'] + 1, ['나이'], (v) => `${v['나이']} + 1 = ${v['나이'] + 1}`,
-        { q: '이 줄을 실행하면 "나이" 칸의 값은?', choices: ['15', '16', '1'], answer: '16', why: '나이 칸의 15를 읽어 1을 더한 16을 다시 나이 칸에 적습니다.' }),
-      line('나이 = 나이 + 1', '나이', (v) => v['나이'] + 1, ['나이'], (v) => `${v['나이']} + 1 = ${v['나이'] + 1}`,
-        { q: '같은 줄을 한 번 더 실행하면?', choices: ['16', '17', '2'], answer: '17', why: '이제 칸에는 16이 있으므로 16 + 1 = 17이 됩니다.' }),
-    ],
-  },
-  {
-    label: '여러 변수로 계산',
-    readingDiagram: {
-      title: "두 값을 읽고 결과만 새 칸에 쓴다",
-      description: "두 값을 읽고 결과만 새 칸에 쓴다",
-      nodes: [
-        ["a", 105, 94, 134, 46, ["100번지", "가격: 3000"]],
-        ["b", 105, 200, 134, 46, ["101번지", "개수: 2"]],
-        ["mul", 310, 147, 148, 46, ["CPU", "3000 × 2"]],
-        ["c", 515, 147, 148, 46, ["102번지", "합계: 6000"], "active"],
-      ],
-      edges: [
-        ["a", "mul", "active"],
-        ["b", "mul", "active"],
-        ["mul", "c", "active"],
-      ],
-    },
-    readingMemory: [["가격", 3000], ["개수", 2], ["합계", 6000]],
-    // The still picture lights the routes of the line that decided this step: reads purple, writes green.
-    readingRoutes: {read: ["가격", "개수"], write: ["합계"]},
-    example: ["가격 3000 · 개수 2", "두 칸을 읽어 곱셈", "합계 칸 6000"],
-    title: '계산은 여러 칸을 읽어 한 칸에 적는다',
-    body: '"합계 = 가격 × 개수"를 실행하면 CPU는 가격 칸과 개수 칸을 모두 읽어 와서 곱하고, 결과를 새 칸 "합계"에 적습니다. 읽은 칸의 값은 그대로 남습니다. 읽기는 값을 복사해 오는 것이지 가져가 버리는 것이 아니기 때문입니다.',
-    takeaway: '마지막 줄에서 파란 점 두 개가 가격 칸과 개수 칸에서 CPU로 가고, 초록 점 하나가 합계 칸으로 갑니다. 가격과 개수 칸의 값은 바뀌지 않습니다.',
-    description: '가격 3000과 개수 2를 각각 칸에 적은 뒤, CPU가 두 칸을 읽어 곱한 6000을 합계 칸에 적습니다.',
-    program: [
-      line('가격 = 3000', '가격', () => 3000, [], () => '3000 적기'),
-      line('개수 = 2', '개수', () => 2, [], () => '2 적기'),
-      line('합계 = 가격 × 개수', '합계', (v) => v['가격'] * v['개수'], ['가격', '개수'], (v) => `${v['가격']} × ${v['개수']} = ${v['가격'] * v['개수']}`,
-        { q: '"합계" 칸에는 무엇이 들어갈까요?', choices: ['3002', '6000', '가격 × 개수'], answer: '6000', why: '칸에는 식이 아니라 계산한 결과 값이 들어갑니다. 3000 × 2 = 6000입니다.' }),
-    ],
-  },
-  {
-    label: '두 값 바꾸기',
-    readingDiagram: {
-      title: "먼저 덮어쓰면 원래 값 5가 사라진다",
-      description: "먼저 덮어쓰면 원래 값 5가 사라진다",
-      nodes: [
-        ["a", 102, 105, 126, 26, ["a = 5"]],
-        ["b", 310, 105, 126, 46, ["1. a ← b", "a = 7"], "blocked"],
-        ["c", 517, 105, 126, 46, ["2. b ← a", "b = 7"], "blocked"],
-        ["d", 102, 223, 126, 26, ["b = 7"]],
-        ["e", 310, 223, 126, 26, ["a: 5 → 7"], "blocked"],
-        ["f", 517, 223, 126, 46, ["결과", "a = 7 · b = 7"], "blocked"],
-      ],
-      edges: [
-        ["d", "b", "blocked"],
-        ["a", "b", "blocked"],
-        ["b", "c", "blocked"],
-        ["b", "e", "muted"],
-        ["c", "f", "blocked"],
-      ],
-    },
-    readingMemory: [["a", 7], ["b", 7]],
-    // The still picture lights the routes of the line that decided this step: reads purple, writes green.
-    readingRoutes: {read: ["a"], write: ["b"]},
-    example: ["a = 5 · b = 7", "a = b 후 b = a", "a = 7 · b = 7"],
-    title: '두 값을 바꾸려다 하나를 잃는다',
-    body: 'a에는 5, b에는 7이 있을 때 두 값을 서로 바꾸고 싶다고 해 봅시다. "a = b"를 실행하면 a 칸에 7이 적히면서 원래 있던 5는 사라집니다. 그다음 "b = a"를 해도 a에는 이미 7뿐이라, 두 칸 모두 7이 됩니다.',
-    takeaway: '세 번째 줄에서 a 칸의 5가 7로 덮입니다. 네 번째 줄에서 b에 a를 적어도 7이 그대로 들어갑니다.',
-    description: 'a에 5, b에 7을 적은 뒤 a = b, b = a를 실행합니다. a의 원래 값 5가 먼저 지워져서 두 칸 모두 7이 됩니다.',
-    program: [
-      line('a = 5', 'a', () => 5, [], () => '5 적기'),
-      line('b = 7', 'b', () => 7, [], () => '7 적기'),
-      line('a = b', 'a', (v) => v.b, ['b'], (v) => `읽은 값 ${v.b}`),
-      line('b = a', 'b', (v) => v.a, ['a'], (v) => `읽은 값 ${v.a}`,
-        { q: '이 줄을 실행하면 b는 얼마가 될까요?', choices: ['5', '7'], answer: '7', why: 'a 칸은 앞 줄에서 이미 7로 바뀌었습니다. 5는 어디에도 남아 있지 않습니다.' }),
-    ],
-  },
-  {
-    label: '임시 변수',
-    readingDiagram: {
-      title: "5를 임시에 보관한 뒤 두 칸을 바꾼다",
-      description: "a의 5를 임시에 복사한 후 b의 7을 a에 쓰고, 임시의 5를 b에 씁니다.",
-      nodes: [
-        ["a", 102, 96, 126, 26, ["a = 5"]],
-        ["b", 102, 162, 126, 26, ["b = 7"]],
-        ["keep", 310, 96, 126, 46, ["1. 임시 ← a", "임시 = 5"], "active"],
-        ["replace", 310, 162, 126, 46, ["2. a ← b", "a = 7"], "active"],
-        ["dst", 310, 228, 126, 46, ["3. b ← 임시", "b = 5"], "active"],
-        ["end", 517, 228, 126, 46, ["교환 완료", "a = 7 · b = 5"], "active"],
-      ],
-      edges: [
-        ["a", "keep", "active"],
-        ["b", "replace", "active"],
-        ["keep", "replace", "active"],
-        ["replace", "dst", "active"],
-        ["dst", "end", "active"],
-      ],
-    },
-    readingMemory: [["a", 7], ["b", 5], ["임시", 5]],
-    // The still picture lights the routes of the line that decided this step: reads purple, writes green.
-    readingRoutes: {read: ["임시"], write: ["b"]},
-    example: ["a = 5 · b = 7", "임시에 5를 보관하고 교환", "a = 7 · b = 5"],
-    title: '잠깐 맡겨 둘 칸이 있으면 바꿀 수 있다',
-    body: '사라질 값을 먼저 다른 칸에 적어 두면 됩니다. "임시 = a"로 5를 맡겨 둔 뒤 a에 b의 7을 적고, 마지막으로 b에 임시의 5를 적습니다. 칸 하나를 더 쓰는 대신 값을 잃지 않습니다.',
-    takeaway: '세 번째 줄에서 5가 임시 칸으로 복사되고, 마지막 줄에서 임시 칸의 5가 b 칸으로 갑니다.',
-    description: 'a의 5를 임시 칸에 먼저 적어 두고, a에 b의 7을, b에 임시의 5를 적어 두 값을 바꿉니다.',
-    program: [
-      line('a = 5', 'a', () => 5, [], () => '5 적기'),
-      line('b = 7', 'b', () => 7, [], () => '7 적기'),
-      line('임시 = a', '임시', (v) => v.a, ['a'], (v) => `읽은 값 ${v.a}`),
-      line('a = b', 'a', (v) => v.b, ['b'], (v) => `읽은 값 ${v.b}`),
-      line('b = 임시', 'b', (v) => v['임시'], ['임시'], (v) => `읽은 값 ${v['임시']}`,
-        { q: '마지막 줄을 실행하면 b는?', choices: ['5', '7'], answer: '5', why: '임시 칸에 맡겨 둔 5를 읽어 b에 적습니다. 이제 a는 7, b는 5입니다.' }),
-    ],
-  },
-];
-
-const step = () => lesson[state.index];
-const state = { index: 0, playing: !motion.matches, wait: 0, pc: 0, busy: false,
-  cells: Array(cellCount).fill(null), names: Array(cellCount).fill(null), wrong: '', solvedText: '' };
-const progress = lesson.map(() => 0);
-const asksOf = (s) => s.program.filter((l) => l.ask);
-
-const project = (x, y, z = 0) => [14 * (x + y), 7 * (x - y) - z];
-const point = (x, y, z) => project(x, y, z).map((value) => +value.toFixed(2)).join(',');
-const mix = (a, b, t) => a + (b - a) * t;
-const gridLines = [];
-for (let i = -22; i <= 22; i += 2) {
-  gridLines.push(`M${point(i, -22, 0)}L${point(i, 22, 0)}M${point(-22, i, 0)}L${point(22, i, 0)}`);
-}
-byId('grid').setAttribute('d', gridLines.join(''));
-
-
-function drawFaces(node, h, H, fills) {
-  const faces = {
-    left: [[-h, -h, 0], [h, -h, 0], [h, -h, H], [-h, -h, H]],
-    right: [[h, -h, 0], [h, h, 0], [h, h, H], [h, -h, H]],
-    top: [[-h, -h, H], [h, -h, H], [h, h, H], [-h, h, H]],
-  };
-  for (const [name, corners] of Object.entries(faces)) {
-    const attrs = { class: 'face ' + name, points: corners.map((p) => point(...p)).join(' ') };
-    if (fills) Object.assign(attrs, { fill: fills[name], stroke: fills.stroke });
-    svg('polygon', attrs, node);
-  }
-  svg('path', { class: 'highlight', d: `M${point(-h, -h, H)}L${point(h, -h, H)}L${point(h, h, H)}` }, node);
-}
-
-// Plates are small labels whose box is sized to the text.
-let plates = [];
-function addPlate(node, className, x, y, text, { pad = 1.5, round = true } = {}) {
-  const group = svg('g', { class: className }, node);
-  const plate = { group, rect: svg('rect', {}, group), label: svg('text', {}, group), x, y, pad, round };
-  plate.label.textContent = text;
-  plates.push(plate);
-  sizePlate(plate);
-  return plate;
-}
-
-// ---------- Memory cells in a row, the CPU at the end of the row ----------
-// The cells lie in a row across the screen with the CPU at the end. One shared bus runs just in front of the row:
-// each cell drops straight onto it, and it rises into the CPU (visual-language.md "메모리와 CPU").
-const spacing = 2.1;
-const cpuGap = 3.8;
-const cellHalf = .82, cellHeight = 14;
-const start = -((cellCount - 1) * spacing + cpuGap) / 2 + 1.2;
-const cellAt = (k) => start + spacing * k;
-const cpuAt = start + spacing * (cellCount - 1) + cpuGap;
-const laneHeight = 3;
-const busFront = 2.1;   // how far in front of the row the shared bus runs (straight down on screen)
-const writeLane = .75;   // writes run on their own lane just below the bus, shown only while lit, so a read
-                         // and a write in one picture never share (and hide) a stretch of line
-const cells = [];
-let cpu;
-function buildScene() {
-  for (let k = 0; k < cellCount; k++) {
-    const c = cellAt(k);
-    const d = 'M' + [[c, c], [c + busFront, c - busFront], [cpuAt + busFront, cpuAt - busFront], [cpuAt, cpuAt]].map(([x, y]) => project(x, y, laneHeight).join(' ')).join('L');
-    svg('path', { class: 'casing', d }, byId('casings'));
-    const wire = svg('path', { class: 'bus', d }, byId('links'));
-    const w = busFront + writeLane;
-    const writeWire = svg('path', { class: 'bus write-lane', d: 'M' + [[c, c], [c + w, c - w], [cpuAt + w, cpuAt - w], [cpuAt, cpuAt]].map(([x, y]) => project(x, y, laneHeight).join(' ')).join('L') }, byId('links'));
-    const node = svg('g', { class: 'node cell empty', transform: `translate(${28 * c} 0)` }, byId('nodes'));
-    drawShadow(node, cellHalf);
-    drawFaces(node, cellHalf, cellHeight);
-    const value = svg('text', { class: 'cell-value', x: 0, y: -cellHeight + .5 }, node);
-    // The address sits under both lanes, straight below its cell, so no wire crosses it.
-    const address = svg('text', { class: 'address', x: 0, y: project(busFront + writeLane, -busFront - writeLane, 0)[1] + 14, 'text-anchor': 'middle' }, node);
-    address.textContent = `${firstAddress + k}번지`;
-    const name = addPlate(node, 'tag name', 0, -cellHeight - 14 * cellHalf - 14, '');
-    cells.push({ node, value, name, wire, writeWire });
-  }
-  const node = svg('g', { class: 'node cpu', transform: `translate(${28 * cpuAt} 0)` }, byId('nodes'));
-  const h = 1.6, H = 9;
-  drawShadow(node, h);
-  drawFaces(node, h, H, { top: '#5d6f69', left: '#3f4f4a', right: '#2f3d39', stroke: '#26322e' });
-  for (let k = 1; k < 7; k++) {
-    const t = -h + k * 2 * h / 7;
-    svg('path', { d: `M${point(t, -h, 2)}L${point(t, -h - .45, 0)}`, stroke: '#b8a25f', 'stroke-width': 1.3, 'stroke-linecap': 'round' }, node);
-    svg('path', { d: `M${point(h, t, 2)}L${point(h + .45, t, 0)}`, stroke: '#9a8749', 'stroke-width': 1.3, 'stroke-linecap': 'round' }, node);
-  }
-  const mark = [[-.7, -.7, H], [.7, -.7, H], [.7, .7, H], [-.7, .7, H]];
-  svg('polygon', { points: mark.map((p) => point(...p)).join(' '), fill: '#c9b46b', opacity: .85 }, node);
-  const [cx, cy] = project(h, -h, 0);
-  addPlate(node, 'tag', cx + 30, cy + 6, 'CPU');   // right of the wires that rise into the chip
-  const work = addPlate(node, 'total', 0, -H - 14 * h - 18, '대기', { pad: 1.1, round: false });
-  cpu = { node, work };
-}
-
-// ---------- Packets: reads travel cell → CPU, writes travel CPU → cell ----------
-let packets = [];
-function sendPacket(k, kind, label, delay = 0) {
-  if (motion.matches) return;
-  const group = svg('g', { class: `packet-group ${kind}` }, byId('packets'));
-  svg('circle', { class: 'packet-halo', r: 9 }, group);
-  svg('circle', { class: 'packet', r: 4.6 }, group);
-  svg('text', { class: 'packet-label', y: -10 }, group).textContent = label;
-  group.setAttribute('visibility', 'hidden');
-  const route = kind === 'write' ? cells[k].writeWire : cells[k].wire;
-  packets.push({ group, wire: route, reverse: kind === 'write', start: performance.now() + delay, duration: 760 });
-  // The route lights in the legend's colour (read purple, write green) only while its packet travels.
-  setTimeout(() => { route.parentNode.append(route); route.classList.add('live', kind); }, delay);
-  setTimeout(() => route.classList.remove('live', kind), delay + 760);
-  kick();
-}
-function movePackets(now) {
-  packets = packets.filter((packet) => {
-    const t = (now - packet.start) / packet.duration;
-    if (t >= 1) { packet.group.remove(); return false; }
-    if (t < 0) return true;
-    const total = packet.wire.getTotalLength();
-    const along = mix(16, total - 22, packet.reverse ? 1 - t : t);
-    const at = packet.wire.getPointAtLength(along);
-    packet.group.setAttribute('visibility', 'visible');
-    packet.group.setAttribute('transform', `translate(${at.x} ${at.y})`);
-    return true;
-  });
-}
-
-// ---------- Running a line ----------
-const valuesByName = () => Object.fromEntries(state.names.map((name, k) => [name, state.cells[k]]).filter(([name]) => name));
-function cellOf(name) {
-  const k = state.names.indexOf(name);
-  return k >= 0 ? k : state.names.indexOf(null);
-}
-function runLine(done) {
-  const l = step().program[state.pc];
-  if (!l) return;
-  const before = valuesByName();
-  const target = cellOf(l.write);
-  const result = l.calc(before);
-  const readMs = l.reads.length && !motion.matches ? 820 : 0;
-  state.busy = true;
-  l.reads.forEach((name) => sendPacket(state.names.indexOf(name), 'read', String(before[name])));
-  setPlate(cpu.work, l.reads.length ? '읽는 중' : '대기');
-  later(readMs, () => {
-    setPlate(cpu.work, l.show ? l.show(before) : String(result));
-    sendPacket(target, 'write', String(result));
-    later(motion.matches ? 0 : 780, () => {
-      state.names[target] = l.write;
-      state.cells[target] = result;
-      state.pc++;
-      state.busy = false;
-      paint(target);
-      done?.();
-    });
-  });
-  paintCode();
-}
-// Timers that a step change or reset cancels.
-let timers = [];
-function later(ms, fn) {
-  if (ms === 0) { fn(); return; }
-  timers.push(setTimeout(fn, ms));
-}
-function cancelTimers() {
-  timers.forEach(clearTimeout);
-  timers = [];
-  packets.forEach((packet) => packet.group.remove());
-  packets = [];
-  state.busy = false;
-}
-function setPlate(plate, text) {
-  plate.label.textContent = text;
-  sizePlate(plate);
-}
-
-// ---------- Drawing ----------
-function paint(changed = -1) {
-  const preview = document.querySelector(motion.matches ? '.workspace.course-reading' : '.workspace.course-reading.course-step-preview') ? step().readingMemory : null;
-  cells.forEach((cell, k) => {
-    const name = preview ? preview[k]?.[0] : state.names[k];
-    cell.node.setAttribute('class', `node cell ${name ? 'used' : 'empty'}${k === changed ? ' changed' : ''}`);
-    cell.value.textContent = name ? String(preview ? preview[k][1] : state.cells[k]) : '–';
-    setPlate(cell.name, name ?? '');
-    cell.name.group.style.opacity = name ? 1 : 0;
-    // In the still picture the routes that decided the step stay lit in the legend's colours (visual-language.md).
-    const routes = preview ? step().readingRoutes : null;
-    cell.wire.classList.toggle('held-read', Boolean(name && routes?.read?.includes(name)));
-    cell.writeWire.classList.toggle('held-write', Boolean(name && routes?.write?.includes(name)));
-  });
-  // Lit routes share the bus with grey ones: draw them last, reads then writes, so no grey wire covers them.
-  for (const cell of cells) if (cell.wire.classList.contains('held-read')) cell.wire.parentNode.append(cell.wire);
-  for (const cell of cells) if (cell.writeWire.classList.contains('held-write')) cell.writeWire.parentNode.append(cell.writeWire);
-  if (changed >= 0) {
-    const node = cells[changed].node;
-    node.classList.remove('changed');
-    node.getBBox();
-    node.classList.add('changed');
-  }
-  paintCode();
-  syncTask();
-  byId('readout').replaceChildren(...readout());
-}
-function paintCode() {
-  const program = step().program;
-  [...byId('code').children].forEach((li, i) => {
-    li.classList.toggle('done', i < state.pc);
-    li.classList.toggle('current', i === state.pc);
-    li.setAttribute('aria-current', i === state.pc ? 'step' : 'false');
-  });
-  const finished = state.pc >= program.length;
-  // While the demo plays the button stays enabled, so a click can take over from it.
-  byId('run-line').disabled = !state.playing && (finished || state.busy || Boolean(program[state.pc]?.ask && !answered(state.pc)));
-  byId('run-line').textContent = finished ? '끝까지 실행했습니다' : '한 줄 실행';
-}
-function readout() {
-  const strong = (text, className) => {
-    const element = document.createElement('b');
-    if (className) element.className = className;
-    element.textContent = text;
-    return element;
-  };
-  const used = state.names.map((name, k) => [name, k]).filter(([name]) => name);
-  if (!used.length) return ['메모리가 비어 있습니다.'];
-  const parts = ['메모리 '];
-  used.forEach(([name, k], i) => {
-    if (i) parts.push(' · ');
-    parts.push(`${firstAddress + k}번지 `, strong(`${name} = ${state.cells[k]}`, i === used.length - 1 ? 'total' : ''));
-  });
-  return parts;
-}
-
-// ---------- Code panel and predictions ----------
-function buildCode() {
-  const list = byId('code');
-  list.replaceChildren();
-  step().program.forEach((l) => {
-    const li = document.createElement('li');
-    const code = document.createElement('code');
-    code.textContent = l.code;
-    li.append(code);
-    list.append(li);
-  });
-}
-const answeredLines = lesson.map(() => new Set());
-const answered = (i) => answeredLines[state.index].has(i);
-function syncTask() {
-  const program = step().program;
-  const l = program[state.pc];
-  const choices = byId('try-choices');
-  choices.replaceChildren();
-  const allDone = progress[state.index] >= asksOf(step()).length;
-  if (l?.ask && !answered(state.pc) && !state.playing && !state.busy) {
-    // The next line needs a prediction. The last result, if any, stays visible underneath.
-    byId('try').classList.remove('solved');
-    byId('try-text').textContent = `${state.pc + 1}번째 줄 "${l.code}" · ${l.ask.q}`;
-    byId('try-result').textContent = state.wrong || state.solvedText;
-    for (const choice of l.ask.choices) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'action choice-button';
-      button.textContent = choice;
-      button.addEventListener('click', () => answer(choice));
-      choices.append(button);
-    }
-  } else if (state.solvedText) {
-    byId('try').classList.add('solved');
-    byId('try-text').textContent = state.solvedText;
-    byId('try-result').textContent = '';
-  } else {
-    byId('try').classList.remove('solved');
-    byId('try-result').textContent = '';
-    byId('try-text').textContent = state.pc >= program.length
-      ? (allDone ? '이 단계의 예측을 모두 맞혔습니다. 처음부터 다시 실행해 볼 수도 있습니다.' : '처음부터를 눌러 다시 해 보세요.')
-      : '"한 줄 실행"을 눌러 다음 줄을 실행해 보세요. 예측 문제가 있는 줄에서는 먼저 답을 고릅니다.';
-  }
-}
-function answer(choice) {
-  const l = step().program[state.pc];
-  if (choice !== l.ask.answer) {
-    state.wrong = `✗ ${choice}이(가) 아닙니다. 다시 골라 보세요.`;
-    byId('announcement').textContent = state.wrong;
-    syncTask();
-    return;
-  }
-  state.wrong = '';
-  answeredLines[state.index].add(state.pc);
-  progress[state.index] = answeredLines[state.index].size;
-  state.solvedText = `✓ 맞았습니다. ${l.ask.why}`;
-  byId('announcement').textContent = state.solvedText;
-  runLine(() => syncTask());
-  syncTask();
-}
-
-function takeOver() {
-  if (!state.playing) return;
-  state.playing = false;
-  resetProgram();
-  syncPlayback();
-}
-function resetProgram() {
-  cancelTimers();
-  state.pc = 0;
-  state.cells = Array(cellCount).fill(null);
-  state.names = Array(cellCount).fill(null);
-  state.wrong = '';
-  state.solvedText = '';
-  setPlate(cpu.work, '대기');
-  paint();
-}
-byId('run-line').onclick = () => {
-  takeOver();
-  if (state.busy) return;
-  state.solvedText = '';
-  runLine(() => syncTask());
-  syncTask();
-  byId('announcement').textContent = `${state.pc + 1}번째 줄 실행: ${step().program[state.pc]?.code ?? ''}`;
-};
-byId('restart').onclick = () => {
-  state.playing = false;
-  resetProgram();
-  syncPlayback();
-  byId('announcement').textContent = '처음부터 다시 시작합니다.';
-};
-
-// ---------- Demo playback ----------
-let frame = null, lastFrame = null;
-function demoTick() {
-  document.querySelector('.course-step-preview')?.dispatchEvent(new Event('course-playback-start'));
-  if (state.busy) { state.wait = 200; return; }
-  if (state.pc >= step().program.length) {
-    resetProgram();
-    state.wait = 900;
-    return;
-  }
-  runLine();
-  state.wait = state.pc + 1 >= step().program.length ? 3600 : 2400;
-}
-function syncPlayback() {
-  const reduced = motion.matches;
-  if (reduced) state.playing = false;
-  if (state.playing) kick();
-  syncTask();
-}
-function sceneTap() {}
-
-// ---------- Steps and routing ----------
-function showStep(index, announce = true) {
-  state.index = index;
-  state.playing = lessonDemoEnabled();
-  const s = step();
-  byId('step-title').textContent = s.title;
-  byId('body').textContent = s.body;
-  byId('takeaway').textContent = s.takeaway;
-  byId('scene-desc').textContent = s.description;
-  byId('count').textContent = `${index + 1} / ${lesson.length}`;
-  byId('prev').disabled = index === 0;
-  byId('next').disabled = index === lesson.length - 1;
-  stepButtons.forEach((button, i) => {
-    if (i === index) button.setAttribute('aria-current', 'step');
-    else button.removeAttribute('aria-current');
-  });
-  buildCode();
-  resetProgram();
-  state.wait = 1000;
-  syncPlayback();
-  if (announce) byId('announcement').textContent = `${index + 1}단계. ${s.title}`;
-}
-function goToStep(index) {
-  if (index < 0 || index >= lesson.length || index === state.index) return;
-  history.pushState(null, '', `#/variables/${index + 1}`);
-  showStep(index);
-}
-const stepButtons = lesson.map(({ label }, index) => {
-  const listItem = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  const number = document.createElement('span');
-  number.className = 'step-number';
-  number.textContent = index + 1;
-  button.append(number, document.createTextNode(label));
-  button.addEventListener('click', () => goToStep(index));
-  listItem.append(button);
-  byId('steps').append(listItem);
-  return button;
-});
-byId('prev').onclick = () => goToStep(state.index - 1);
-byId('next').onclick = () => goToStep(state.index + 1);
-window.addEventListener('hashchange', syncRoute);
-window.addEventListener('popstate', syncRoute);
-motion.addEventListener('change', () => {
-  if (lessonDemoEnabled()) state.playing = true;
-  syncPlayback();
-});
-window.addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target.closest?.('input, textarea, select, [contenteditable], [role="dialog"]')) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-    event.preventDefault();
-    goToStep(state.index + (event.key === 'ArrowRight' ? 1 : -1));
-  }
-});
-
-buildScene();
-byId('world').setAttribute('transform', 'translate(300 152) scale(1.02)');
-const initial = routeIndex();
-history.replaceState(null, '', `#/variables/${initial + 1}`);
-state.index = initial;
-showStep(initial, false);
 </script>
 </body>
 </html>

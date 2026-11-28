@@ -149,8 +149,9 @@ window.drawLessonPart = function drawLessonPart(target, figure) {
       const position = x(markData.at);
       const left = marks[index - 1];
       const right = marks[index + 1];
-      const low = left ? (position + x(left.at)) / 2 + 3 : 9;
-      const high = right ? (position + x(right.at)) / 2 - 3 : grid - 9;
+      // Neighbouring mark captions keep a clear gap, so two captions never read as one sentence.
+      const low = left ? (position + x(left.at)) / 2 + 9 : 9;
+      const high = right ? (position + x(right.at)) / 2 - 9 : grid - 9;
       const available = Math.min(174, high - low);
       const center = Math.max(low + available / 2, Math.min(high - available / 2, position));
       line(target, position, 55, position, 220, 'part-guide');

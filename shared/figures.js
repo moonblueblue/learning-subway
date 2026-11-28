@@ -164,7 +164,7 @@ window.drawLessonPart = function drawLessonPart(target, figure) {
       probe.remove();
       const center = Math.max(low + natural / 2, Math.min(high - natural / 2, position));
       line(target, position, 55, position, 220, 'part-guide');
-      label(target, center, 234, markData.label, {width: available});
+      label(target, center, Math.max(234, 58 + (rows.length - 1) * pitch + Math.min(pitch - (pitch < 26 ? 2 : 6), 20) + 15), markData.label, {width: available});
     }
     rows.forEach((row, index) => {
       const y = 58 + index * pitch;
@@ -172,9 +172,11 @@ window.drawLessonPart = function drawLessonPart(target, figure) {
       for (const span of row.spans) {
         const g = group(span.id);
         const left = x(span.start), right = x(span.end);
-        const segment = mark(box(g, left, y, right - left, Math.min(pitch - 6, 20), 'part-segment kind-' + span.kind), span.id);
+        // Many rows leave little pitch: the gap between rows shrinks first, so a caption still fits inside its span.
+        const height = Math.min(pitch - (pitch < 26 ? 2 : 6), 20);
+        const segment = mark(box(g, left, y, right - left, height, 'part-segment kind-' + span.kind), span.id);
         if (span.label) {
-          const caption = label(g, (left + right) / 2, y + 14, span.label, {width: right - left - 4});
+          const caption = label(g, (left + right) / 2, y + Math.min(14, height / 2 + 5), span.label, {width: right - left - 4});
           if (caption.childElementCount === 2) segment.setAttribute('height', Math.min(pitch - 6, 30));
         }
         if (!hide.has(span.id)) say(row.label, span.label, `${span.start}–${span.end}`, axis.unit);

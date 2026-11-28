@@ -3558,9 +3558,11 @@ const courseCatalog = {
           "id": "adder",
           "title": "덧셈기",
           "titleEn": "Adders",
-          "question": "게이트를 엮으면 어떻게 1 + 1을 계산할까?",
-          "format": "실험",
-          "requires": [],
+          "question": "여러 자리 이진수를 더할 때 윗자리의 답은 왜 늦게 정해질까요?",
+          "format": "단계 그림",
+          "requires": [
+            "computer-architecture/gates"
+          ],
           "page": "computer-architecture/adder.html"
         },
         {

@@ -1,5 +1,6 @@
 {
   "lessons": {
+    "computer-architecture/adder": "8059e41fe1b95274ba0fb1165add6218eb537ded",
     "computer-architecture/gates": "7462e486e037051802a0d2563eb71bd9a85dfddd",
     "computing-basics/bits": "7aa44d952a3e0bc69a68975782797e294a0dcbef",
     "computing-basics/compress": "7aa44d952a3e0bc69a68975782797e294a0dcbef",
@@ -24,5 +25,5 @@
     "programming/stack": "6a3a68f632c178a93a4947be5679e79d436cba8c",
     "programming/variables": "8291a9110901af3e6035bf8a33dcff9aa2b0a123"
   },
-  "source_tip": "7462e486e037051802a0d2563eb71bd9a85dfddd"
+  "source_tip": "8059e41fe1b95274ba0fb1165add6218eb537ded"
 }

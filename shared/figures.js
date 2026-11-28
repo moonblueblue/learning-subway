@@ -153,7 +153,11 @@ window.drawLessonPart = function drawLessonPart(target, figure) {
       const low = left ? (position + x(left.at)) / 2 + 9 : 9;
       const high = right ? (position + x(right.at)) / 2 - 9 : grid - 9;
       const available = Math.min(174, high - low);
-      const center = Math.max(low + available / 2, Math.min(high - available / 2, position));
+      // A caption sits under its own tick and moves aside only as far as it must to stay clear of its neighbours.
+      const probe = label(target, 0, -99, markData.label);
+      const natural = Math.min(available, probe.getComputedTextLength());
+      probe.remove();
+      const center = Math.max(low + natural / 2, Math.min(high - natural / 2, position));
       line(target, position, 55, position, 220, 'part-guide');
       label(target, center, 234, markData.label, {width: available});
     }

@@ -12,8 +12,9 @@
     "os/what-os-does": "31321ad4a532fbfa4f1fc3f21ab12dd2434e2ec1",
     "programming/collections": "a603c6bf0de7bda3c6a5b7c03d87519f04e5c75d",
     "programming/control": "8f294ec93701c2f91457ff87d126f2b7ff890015",
+    "programming/recursion": "c98610fa257eff0621e62eaa14a29f18b189420f",
     "programming/stack": "6a3a68f632c178a93a4947be5679e79d436cba8c",
     "programming/variables": "8291a9110901af3e6035bf8a33dcff9aa2b0a123"
   },
-  "source_tip": "31321ad4a532fbfa4f1fc3f21ab12dd2434e2ec1"
+  "source_tip": "c98610fa257eff0621e62eaa14a29f18b189420f"
 }

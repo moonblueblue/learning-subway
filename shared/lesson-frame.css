@@ -15,7 +15,7 @@
 .lesson-prediction-label { display: inline-block; margin-inline-start: .55em; color: var(--accent); font-weight: 800; }
 .lesson-feedback { display: grid; gap: 6px; }
 .lesson-terms { margin: 0; padding-left: 1.25em; }
-.lesson-code { margin: 0; font-family: ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.lesson-code { margin: 0; font-family: ui-monospace, monospace; font-size: .875rem; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
 .lesson-code:empty { display: none; }
 .lesson-code [aria-current] { background: var(--active); }
 .review-step { align-self: center; }

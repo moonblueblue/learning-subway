@@ -3369,9 +3369,12 @@ const courseCatalog = {
           "id": "recursion",
           "title": "재귀",
           "titleEn": "Recursion",
-          "question": "자기 자신을 부르는 함수는 어떻게 끝날까?",
-          "format": "실험",
-          "requires": [],
+          "question": "자기 자신을 부르는 함수에서 멈추는 조건을 빼면 어떻게 될까요?",
+          "format": "단계 그림",
+          "requires": [
+            "programming/stack",
+            "programming/control"
+          ],
           "page": "programming/recursion.html"
         }
       ]
